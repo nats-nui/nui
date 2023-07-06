@@ -1,9 +1,5 @@
 package ws
 
-const STRING = "string"
-const JSON = "json"
-const BINARY = "binary"
-
 type Message struct {
 	Subject  string   `json:"subject"`
 	Payload  []byte   `json:"Payload"`
