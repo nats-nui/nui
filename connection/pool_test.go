@@ -17,27 +17,32 @@ func mockBuilder(connection *Connection) (*ConnMock, error) {
 	return &ConnMock{}, nil
 }
 
-var repo ConnRepo
-var pool *ConnPool[*ConnMock]
+type poolSuite struct {
+	repo ConnRepo
+	pool *ConnPool[*ConnMock]
+}
 
-func TestMain(m *testing.M) {
-	repo = NewMemConnRepo()
-	pool = NewConnPool[*ConnMock](repo, mockBuilder)
-	_ = repo.Save(&Connection{Id: "c1"})
-	m.Run()
+func setupPoolSuite() *poolSuite {
+	s := &poolSuite{}
+	s.repo = NewMemConnRepo()
+	s.pool = NewConnPool[*ConnMock](s.repo, mockBuilder)
+	_ = s.repo.Save(&Connection{Id: "c1"})
+	return s
 }
 
 func TestConnPool_Get(t *testing.T) {
-	c, err := pool.Get("c1")
+	s := setupPoolSuite()
+	c, err := s.pool.Get("c1")
 	require.Nil(t, err)
-	c2, _ := pool.Get("c1")
+	c2, _ := s.pool.Get("c1")
 	require.Equal(t, c, c2)
 }
 
 func TestConnPool_Refresh(t *testing.T) {
-	c, _ := pool.Get("c1")
-	pool.Refresh("c1")
-	c2, _ := pool.Get("c1")
+	s := setupPoolSuite()
+	c, _ := s.pool.Get("c1")
+	s.pool.Refresh("c1")
+	c2, _ := s.pool.Get("c1")
 	fmt.Println(c, c2)
 	require.NotSame(t, c, c2)
 }

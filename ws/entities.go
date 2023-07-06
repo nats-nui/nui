@@ -6,6 +6,10 @@ type Message struct {
 	Metadata Metadata `json:"metadata"`
 }
 
+type Error struct {
+	Error string `json:"error"`
+}
+
 type Metadata struct {
 }
 
