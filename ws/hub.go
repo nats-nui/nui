@@ -51,7 +51,6 @@ func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan Request, messages
 			if err != nil {
 				go func() {
 					select {
-					case <-done:
 					case errors <- err:
 					default:
 					}
@@ -88,11 +87,11 @@ func (h *Hub[S, T]) registerConnection(clientId string, req Request, messages ch
 	}
 	h.reg[clientId] = ClientConn[S]{Subs: subs}
 	allSubsChan := lo.FanIn(10, chans...)
-	go processNatsMessage(allSubsChan, messages)
+	go parseToClientMessage(allSubsChan, messages)
 	return nil
 }
 
-func processNatsMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- *Message) {
+func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- *Message) {
 	for {
 		select {
 		case msg, ok := <-natsMsg:

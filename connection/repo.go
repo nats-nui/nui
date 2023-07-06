@@ -24,7 +24,7 @@ func NewMemConnRepo() *MemConnRepo {
 }
 
 func (r *MemConnRepo) All() map[string]*Connection {
-	var conns map[string]*Connection
+	conns := make(map[string]*Connection)
 	r.conns.Range(func(key, value interface{}) bool {
 		conns[key.(string)] = value.(*Connection)
 		return true
