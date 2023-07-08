@@ -20,12 +20,10 @@ func main() {
 
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-
 	go func() {
 		sig := <-sigCh
 		log.Println("Shutting down", sig)
 		cancel()
 	}()
-	// Wait for the context to be canceled
 	<-ctx.Done()
 }
