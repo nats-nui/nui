@@ -11,8 +11,8 @@ type Conn interface {
 	Close()
 }
 
-type Pool interface {
-	Get(id string) (Conn, error)
+type Pool[T Conn] interface {
+	Get(id string) (T, error)
 	Refresh(id string) error
 }
 

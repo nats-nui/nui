@@ -4,8 +4,7 @@ import "sync"
 
 type ClientConn[S Subscription] struct {
 	Req      <-chan Request
-	Messages chan<- Message
-	Errors   chan<- error
+	Messages chan<- *Message
 	Subs     []ClientSub[S]
 	l        sync.Mutex
 }
@@ -19,9 +18,8 @@ func (c *ClientConn[S]) UnsubscribeAll() {
 	}
 }
 
-func NewWClientConn[S Subscription](req <-chan Request, messages chan<- Message, subs []ClientSub[S]) *ClientConn[S] {
+func NewWClientConn[S Subscription](messages chan<- *Message, subs []ClientSub[S]) *ClientConn[S] {
 	return &ClientConn[S]{
-		Req:      req,
 		Messages: messages,
 		Subs:     subs,
 	}
