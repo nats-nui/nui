@@ -3,7 +3,7 @@ package ws
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	"github.com/samber/lo"
+	"sync"
 )
 
 type Pool[S Subscription, T Conn[S]] interface {
@@ -18,15 +18,19 @@ type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
 }
 
+type IHub interface {
+	Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- *Message, errors chan<- error)
+}
+
 type Hub[S Subscription, T Conn[S]] struct {
 	pool Pool[S, T]
-	reg  map[string]ClientConn[S]
+	reg  map[string]*ClientConn[S]
 }
 
 func NewHub[S Subscription, T Conn[S]](pool Pool[S, T]) *Hub[S, T] {
 	return &Hub[S, T]{
 		pool: pool,
-		reg:  make(map[string]ClientConn[S]),
+		reg:  make(map[string]*ClientConn[S]),
 	}
 }
 
@@ -85,9 +89,8 @@ func (h *Hub[S, T]) registerConnection(clientId string, req Request, messages ch
 		subs = append(subs, s)
 		chans = append(chans, s.Messages)
 	}
-	h.reg[clientId] = ClientConn[S]{Subs: subs}
-	allSubsChan := lo.FanIn(10, chans...)
-	go parseToClientMessage(allSubsChan, messages)
+	h.reg[clientId] = NewWClientConn[S](messages, subs)
+	go parseToClientMessage(fanIn(10, chans...), messages)
 	return nil
 }
 
@@ -106,4 +109,20 @@ func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- *Message) {
 			clientMgs <- cm
 		}
 	}
+}
+
+func fanIn(buffer int, ins ...<-chan *nats.Msg) <-chan *nats.Msg {
+	var wg sync.WaitGroup
+	out := make(chan *nats.Msg, buffer)
+	// Start an output goroutine for each input channel in upstreams.
+	wg.Add(len(ins))
+	for _, c := range ins {
+		go func(c <-chan *nats.Msg) {
+			for n := range c {
+				out <- n
+			}
+			wg.Done()
+		}(c)
+	}
+	return out
 }

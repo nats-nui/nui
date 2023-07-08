@@ -7,9 +7,9 @@ import (
 import "github.com/google/uuid"
 
 type ConnRepo interface {
-	All() map[string]*Connection
+	All() (map[string]*Connection, error)
 	GetById(id string) (*Connection, error)
-	Save(c *Connection) error
+	Save(c *Connection) (*Connection, error)
 	Remove(id string) error
 }
 
@@ -23,28 +23,28 @@ func NewMemConnRepo() *MemConnRepo {
 	}
 }
 
-func (r *MemConnRepo) All() map[string]*Connection {
+func (r *MemConnRepo) All() (map[string]*Connection, error) {
 	conns := make(map[string]*Connection)
 	r.conns.Range(func(key, value interface{}) bool {
 		conns[key.(string)] = value.(*Connection)
 		return true
 	})
-	return conns
+	return conns, nil
 }
 
 func (r *MemConnRepo) GetById(id string) (*Connection, error) {
 	if c, ok := r.conns.Load(id); ok {
 		return c.(*Connection), nil
 	}
-	return nil, errors.New("cannot find connection in pool")
+	return nil, errors.New("record not found")
 }
 
-func (r *MemConnRepo) Save(c *Connection) error {
+func (r *MemConnRepo) Save(c *Connection) (*Connection, error) {
 	if c.Id == "" {
 		c.Id = uuid.New().String()
 	}
 	r.conns.Store(c.Id, c)
-	return nil
+	return c, nil
 }
 
 func (r *MemConnRepo) Remove(id string) error {
