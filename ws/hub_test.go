@@ -59,13 +59,13 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		s.hub.Register(context.Background(), "test", make(chan Request), make(chan *Message), make(chan error))
+		s.hub.Register(context.Background(), "test", make(chan *Request), make(chan *Message), make(chan error))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
-	req := make(chan Request, 1)
+	req := make(chan *Request, 1)
 	msg := make(chan *Message, 1)
 	s.hub.Register(context.Background(), "test", req, msg, make(chan error))
 
@@ -82,7 +82,7 @@ func TestHub_ListenRequests(t *testing.T) {
 	}()
 
 	go func() {
-		req <- Request{
+		req <- &Request{
 			ConnectionId: "test",
 			Subjects:     []string{"sub1", "sub2"},
 		}

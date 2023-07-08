@@ -26,7 +26,7 @@ func setupPoolSuite() *poolSuite {
 	s := &poolSuite{}
 	s.repo = NewMemConnRepo()
 	s.pool = NewConnPool[*ConnMock](s.repo, mockBuilder)
-	_ = s.repo.Save(&Connection{Id: "c1"})
+	_, _ = s.repo.Save(&Connection{Id: "c1"})
 	return s
 }
 
