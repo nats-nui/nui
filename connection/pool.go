@@ -14,6 +14,7 @@ type Conn interface {
 type Pool[T Conn] interface {
 	Get(id string) (T, error)
 	Refresh(id string) error
+	Purge()
 }
 
 type ConnPool[T Conn] struct {
@@ -55,6 +56,15 @@ func (p *ConnPool[T]) Refresh(id string) error {
 	p.m.Lock()
 	defer p.m.Unlock()
 	return p.refresh(id)
+}
+
+func (p *ConnPool[T]) Purge() {
+	for k, c := range p.conns {
+		if _, err := p.repo.GetById(k); err != nil {
+			c.Close()
+			delete(p.conns, k)
+		}
+	}
 }
 
 func (p *ConnPool[T]) refresh(id string) error {

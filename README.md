@@ -27,6 +27,7 @@
 GET /api/cconnection
 POST /api/connection
 POST /api/connection/:id
+DELETE /api/connection/:id
 ```
 
 ### TO publish a message

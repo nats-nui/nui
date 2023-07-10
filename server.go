@@ -32,6 +32,7 @@ func (a *App) registerHandlers() {
 	a.Get("/api/connection/:id", a.handleGetConnection)
 	a.Post("/api/connection", a.HandleSaveConnection)
 	a.Post("/api/connection/:id", a.HandleSaveConnection)
+	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
@@ -98,6 +99,18 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 		return c.Status(500).JSON(err)
 	}
 	return c.JSON(conn)
+}
+
+func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
+	if ctx.Params("id") == "" {
+		return ctx.Status(422).JSON("id is required")
+	}
+	err := a.nui.ConnRepo.Remove(ctx.Params("id"))
+	if err != nil {
+		return ctx.Status(500).JSON(err)
+	}
+	a.nui.ConnPool.Purge()
+	return ctx.SendStatus(200)
 }
 
 func (a *App) handlePublish(c *fiber.Ctx) error {
