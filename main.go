@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	/*dbPath := flag.String("db", "/tmp/nui.db", "path to db")
+	flag.Parse()*/
 
 	nui := NewNui()
 	server := NewServer("3111", nui)
