@@ -40,13 +40,35 @@ func (r *DocStoreConnRepo) GetById(id string) (*Connection, error) {
 	if doc == nil {
 		return nil, errors.New("record not found")
 	}
-	c := &Connection{}
-	err = doc.Unmarshal(c)
+	conn := &Connection{}
+	err = doc.Unmarshal(conn)
 	if err != nil {
 		return nil, err
 	}
-	c.Id = doc.ObjectId()
+	conn.Id = doc.ObjectId()
+	return conn, nil
+}
+
+func (r *DocStoreConnRepo) Save(c *Connection) (*Connection, error) {
+	if c.Id == "" {
+		doc := r.db.DocFromType(c)
+		id, err := r.db.InsertOne(docstore.CONN_COLLECTION, doc)
+		if err != nil {
+			return nil, err
+		}
+		c.Id = id
+		return c, nil
+	}
+	doc := r.db.DocFromType(c)
+	err := r.db.Query(docstore.CONN_COLLECTION).ReplaceById(c.Id, doc)
+	if err != nil {
+		return nil, err
+	}
 	return c, nil
+}
+
+func (r *DocStoreConnRepo) Remove(id string) error {
+	return r.db.Query(docstore.CONN_COLLECTION).DeleteById(id)
 }
 
 func unmarshalDoc(doc *c.Document) (*Connection, error) {
