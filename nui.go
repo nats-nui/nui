@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
+	docstore "github.com/pricelessrabbit/nui/pkg/storage"
 	"github.com/pricelessrabbit/nui/ws"
 )
 
@@ -12,10 +13,14 @@ type Nui struct {
 	Hub      ws.IHub
 }
 
-func NewNui() *Nui {
+func Setup(dbPath string) (*Nui, error) {
 	n := &Nui{}
-	n.ConnRepo = connection.NewMemConnRepo()
+	store, err := docstore.NewDocStore(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	n.ConnRepo = connection.NewDocStoreConnRepo(store)
 	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
 	n.Hub = ws.NewNatsHub(n.ConnPool)
-	return n
+	return n, nil
 }
