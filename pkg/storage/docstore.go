@@ -1,6 +1,8 @@
 package docstore
 
-import c "github.com/ostafen/clover"
+import (
+	c "github.com/ostafen/clover"
+)
 
 const CONN_COLLECTION = "connections"
 
@@ -8,8 +10,13 @@ type DB struct {
 	*c.DB
 }
 
-func NewDocDb(path string) (*DB, error) {
-	store, err := c.Open(path)
+func NewDocStore(path string) (*DB, error) {
+	var opts []c.Option
+	if path == "" || path == ":memory:" {
+		path = ""
+		opts = append(opts, c.InMemoryMode(true))
+	}
+	store, err := c.Open(path, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -18,6 +25,10 @@ func NewDocDb(path string) (*DB, error) {
 		return nil, err
 	}
 	return &DB{DB: store}, nil
+}
+
+func (d *DB) DocFromType(obj any) *c.Document {
+	return c.NewDocumentOf(obj)
 }
 
 func createCollection(db *c.DB, name string) error {

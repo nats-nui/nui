@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -9,13 +10,17 @@ import (
 )
 
 func main() {
-	/*dbPath := flag.String("db", "/tmp/nui.db", "path to db")
-	flag.Parse()*/
+	port := flag.String("port", "3111", "port to listen on")
+	dbPath := flag.String("db", ":memory:", "path to db")
+	flag.Parse()
 
-	nui := NewNui()
-	server := NewServer("3111", nui)
+	nui, err := Setup(*dbPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	server := NewServer(*port, nui)
 	ctx, cancel := context.WithCancel(context.Background())
-	err := server.Start(ctx)
+	err = server.Start(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
