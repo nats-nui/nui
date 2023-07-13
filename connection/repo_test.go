@@ -29,13 +29,13 @@ func setupRepoSuite() *repoSuite {
 
 func TestMemConnRepo_Save(t *testing.T) {
 	s := setupRepoSuite()
-	err := s.mRepo.Save(s.c1)
+	_, err := s.mRepo.Save(s.c1)
 	require.Nil(t, err)
 }
 
 func TestMemConnRepo_GetById(t *testing.T) {
 	s := setupRepoSuite()
-	_ = s.mRepo.Save(s.c1)
+	_, _ = s.mRepo.Save(s.c1)
 	retrieved, err := s.mRepo.GetById("id1")
 	require.Nil(t, err)
 	require.Equal(t, *s.c1, *retrieved)
@@ -43,9 +43,9 @@ func TestMemConnRepo_GetById(t *testing.T) {
 
 func TestMemConnRepo_All(t *testing.T) {
 	s := setupRepoSuite()
-	_ = s.mRepo.Save(s.c1)
-	_ = s.mRepo.Save(s.c2)
-	conns := s.mRepo.All()
+	_, _ = s.mRepo.Save(s.c1)
+	_, _ = s.mRepo.Save(s.c2)
+	conns, _ := s.mRepo.All()
 	require.Equal(t, 2, len(conns))
 	require.Equal(t, *s.c1, *conns["id1"])
 	require.Equal(t, *s.c2, *conns["id2"])
