@@ -9,7 +9,8 @@
 ```json
 {
   "id" <uuid>,
-  "name: <string>
+  "name: <string>,
+  "hosts": ["host1","host2"],
   "subscriptions": []<subscribtion>
 }
 ```
