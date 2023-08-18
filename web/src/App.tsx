@@ -1,6 +1,6 @@
 import docSo, { DRAG_ZONE, DocState } from "@/stores/docs"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { DragEvent, FunctionComponent } from "react"
 import DocViewCmp from "./components/DocViewCmp"
 import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils"
@@ -14,31 +14,34 @@ const App: FunctionComponent = () => {
 	const docSa = useStore(docSo) as DocState
 
 	// HANDLERS
-	const handleDragOver: React.DragEventHandler = (e) => {
+	const handleDragOver = (e: DragEvent<HTMLDivElement>, index: number) => {
 		e.preventDefault()
+		if ( docSa.drag?.srcView == null ) return
 		docSo.setDrag({
 			...docSa.drag,
 			crrView: null,
 			zone: DRAG_ZONE.LAST,
+			index,
 		})
 	}
-	const handleDragOver2: React.DragEventHandler = (e) => {
-		e.preventDefault()
-		docSo.setDrag({
-			...docSa.drag,
-			crrView: null,
-			zone: DRAG_ZONE.FIRST,
-		})
-	}
-	const handleDragLeave = (e) => {
-		console.log("leave")
+	// const handleDragOver2: React.DragEventHandler = (e) => {
+	// 	e.preventDefault()
+	// 	docSo.setDrag({
+	// 		...docSa.drag,
+	// 		crrView: null,
+	// 		zone: DRAG_ZONE.FIRST,
+	// 	})
+	// }
+	const handleDragLeave = () => {
 		docSo.setDrag({
 			...docSa.drag,
 			crrView: null,
 			zone: DRAG_ZONE.NONE,
+			index: null,
 		})
 	}
-	const handleDrop = (e) => {
+	const handleDrop = () => {
+		if ( docSa.drag?.srcView == null ) return
 		docSo.drop()
 	}
 
@@ -50,21 +53,21 @@ const App: FunctionComponent = () => {
 		<div style={cssApp}>
 			<MainMenu />
 			<div style={cssContent}>
-				<div style={cssDroppable}
-					onDragOver={handleDragOver2}
+				<div style={cssDroppable} draggable={false}
+					onDragOver={(e) => handleDragOver(e, 0)}
 					onDragLeave={handleDragLeave}
 					//onDragEnd={handleDragEnd}
 					onDrop={handleDrop}
 				/>
-				{views.map((view: ViewStore) =>
-					<DocViewCmp key={getID(view)} view={view} />
-				)}
-				<div style={cssDroppable}
-					onDragOver={handleDragOver}
-					onDragLeave={handleDragLeave}
-					//onDragEnd={handleDragEnd}
-					onDrop={handleDrop}
-				/>
+				{views.map((view: ViewStore, index: number) => <div style={{ display: "flex" }} >
+					<DocViewCmp view={view} key={index+getID(view)}/>
+					<div style={cssDroppable} key={index} draggable={false}
+						onDragOver={(e) => handleDragOver(e, index + 1)}
+						onDragLeave={handleDragLeave}
+						//onDragEnd={handleDragEnd}
+						onDrop={handleDrop}
+					/>
+				</div>)}
 			</div>
 		</div>
 	)

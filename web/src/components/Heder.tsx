@@ -106,12 +106,12 @@ const Header: FunctionComponent<Props> = ({
 
 	return (
 		<div style={cssContainer}
-			onDragOver={isDroppable ? handleDragOver : null}
-			onDragLeave={isDroppable ? handleDragLeave : null}
-			//onDragEnd={handleDragEnd}
-			onDrop={isDroppable ? handleDrop : null}
+			// onDragOver={isDroppable ? handleDragOver : null}
+			// onDragLeave={isDroppable ? handleDragLeave : null}
+			// //onDragEnd={handleDragEnd}
+			// onDrop={isDroppable ? handleDrop : null}
 		>
-			{isDragLeft && <div style={cssPlaceholder} />}
+			{/* {isDragLeft && <div style={cssPlaceholder} />} */}
 
 			{icon}
 
@@ -124,7 +124,7 @@ const Header: FunctionComponent<Props> = ({
 				<CloseBtt onClick={handleClose} />
 			</div>
 
-			{isDragRight && <div style={cssPlaceholder} />}
+			{/* {isDragRight && <div style={cssPlaceholder} />} */}
 		</div>
 	)
 }

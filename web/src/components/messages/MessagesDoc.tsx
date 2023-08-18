@@ -39,4 +39,5 @@ const cssContainer: React.CSSProperties = {
 	display: "flex", 
 	flexDirection: "column",
 	backgroundColor: "#3E3E3E",
+	color: "white",
 }
