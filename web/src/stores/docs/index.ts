@@ -1,5 +1,5 @@
 import navSo from "@/stores/navigation"
-import {  POSITION_TYPE } from "@/types/Doc"
+import { POSITION_TYPE } from "@/types/Doc"
 import { StoreCore, createStore } from "@priolo/jon"
 import { docsFromString, getID, stringFromDocs } from "./utils"
 import { initView } from "./utils/factory"
@@ -15,6 +15,8 @@ export interface DragDoc {
 	crrView?: ViewStore
 	/** zona, del DOC currIndex, dove è attualmente il DRAG */
 	zone?: DRAG_ZONE
+	/** in alternativa indica l'indice della posizione nella "root" */
+	index?: number
 }
 
 export enum DRAG_ZONE {
@@ -47,8 +49,11 @@ const setup = {
 			store?: DocStore
 		) {
 			// se esiste gia' setto il fuoco e basta
-			const find = getById(store.state.all, getID(view))
-			if (find) {	/* set focus */ return }
+			// per il momento lo levo ma dovro' cercare le finestre UNICHE
+			// cioe' se un ViewStore è settato come "unico" allora non si possono aprire piu' istanze di quello
+			//const find = getById(store.state.all, getID(view))
+			//if (find) {	/* set focus */ return }
+
 			// se non c'è lo store lo creo
 			view.state.parent = null
 			view.state.position = POSITION_TYPE.DETACHED
@@ -65,7 +70,7 @@ const setup = {
 			if (!parent || !view) return
 			// se c'e' gia' una view la rimuovo
 			if (parent.state.linked) store.remove(parent.state.linked)
-			
+
 			// se non c'è lo store lo creo
 			view.state.parent = parent
 			view.state.position = POSITION_TYPE.LINKED
@@ -110,7 +115,7 @@ const setup = {
 			if (!view.state.parent) {
 				index = views.findIndex(v => v == view)
 				if (index != -1) views.splice(index, 1)
-			
+
 			} else if (view == view.state.parent.state.linked) {
 				view.state.parent.state.linked = null
 			} else if ((index = view.state.parent.state.stacked?.indexOf(view)) != -1) {
@@ -122,9 +127,33 @@ const setup = {
 		},
 
 		drop(dstView?: ViewStore, store?: DocStore) {
-			const { srcView, zone } = store.state.drag
+			const { srcView, zone, index } = store.state.drag
 
-			if (zone == DRAG_ZONE.LAST) {
+			// se c'e' un index allora mettilo li e basta!
+			if (index != null) {
+				if (srcView.state.parent == null) {
+					const srcIndex = store.state.all.indexOf(srcView)
+					console.log(srcIndex, index)
+					if (srcIndex == index || srcIndex+1 == index) {
+						console.log("no")
+						return
+					}
+					
+					store.remove(srcView)
+					if ( srcIndex > index ) {
+						console.log( "mnor")
+						store.add({ view: srcView, index: index })
+					} else {
+						console.log( "max")
+						store.add({ view: srcView, index: index-1 })
+					}
+					
+				} else {
+					store.remove(srcView)
+					store.add({ view: srcView, index })
+				}
+
+			} else if (zone == DRAG_ZONE.LAST) {
 				store.remove(srcView)
 				store.add({ view: srcView })
 
@@ -141,7 +170,6 @@ const setup = {
 				if (dstView.state.parent) dstView = dstView.state.parent
 				store.remove(srcView)
 				const dstIndex = store.state.all.indexOf(dstView) + (zone == DRAG_ZONE.RIGHT ? 1 : 0)
-
 				store.add({ view: srcView, index: dstIndex })
 			}
 			store.setDrag({ zone: DRAG_ZONE.NONE })
