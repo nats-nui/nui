@@ -1,11 +1,11 @@
 
-
 export interface Connection {
 	id: string
 	name: string
-	subscriptions: Service[]
+	hosts: string[]
+	subscriptions: Subscription[]
 }
 
-export interface Service {
-	name: string
+export interface Subscription {
+	subject: string
 }

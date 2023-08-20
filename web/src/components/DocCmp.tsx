@@ -1,12 +1,12 @@
+import MessagesDoc from "@/components/stacks/messages/MessagesDoc"
+import ServicesDoc from "@/components/stacks/services/ServicesDoc"
+import { ConnectionStore } from "@/stores/connection"
+import { ViewStore } from "@/stores/docs/docBase"
+import { MessagesStore } from "@/stores/messages"
+import { ServicesStore } from "@/stores/services"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
-import ConnectionsDoc from "./connections/ConnectionsDoc"
-import ServicesDoc from "./services/ServicesDoc"
-import MessagesDoc from "./messages/MessagesDoc"
-import { ViewStore } from "@/stores/docs/doc"
-import { ConnectionStore } from "@/stores/connection"
-import { ServicesStore } from "@/stores/services"
-import { MessagesStore } from "@/stores/messages"
+import ConnectionsDoc from "./stacks/connections/ConnectionsDoc"
 
 
 

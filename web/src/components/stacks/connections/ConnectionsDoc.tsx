@@ -1,9 +1,10 @@
+import Header from "@/components/Heder"
 import { Connection, POSITION_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import Header from "../Heder"
-//import docsSo from "@/stores/docs"
 import { ConnectionState, ConnectionStore } from "@/stores/connection"
+import DetailCmp from "./DetailCmp"
+
 
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const ConnectionsDoc: FunctionComponent<Props> = ({
-	store:cnnSo,
+	store: cnnSo,
 }) => {
 
 	// STORE
@@ -32,7 +33,7 @@ const ConnectionsDoc: FunctionComponent<Props> = ({
 	if (!connnections) return null
 	const isStacked = cnnSa.position == POSITION_TYPE.STACKED
 	const selected = cnnSo.getSelectIndex()
-	const isSelected = (index:number) => selected == index
+	const isSelected = (index: number) => selected == index
 
 	return (
 		<div style={cssContainer}>
@@ -42,6 +43,7 @@ const ConnectionsDoc: FunctionComponent<Props> = ({
 					onClick={_ => handleClick(cnn)}
 				>{cnn.name}</div>
 			))}
+			{/* <DetailCmp store={cnnSo}/> */}
 		</div>
 	)
 }
@@ -50,14 +52,11 @@ export default ConnectionsDoc
 
 const cssContainer: React.CSSProperties = {
 	flex: 1,
-	display: "flex", 
+	display: "flex",
 	flexDirection: "column",
-	backgroundColor: "#3E3E3E",
 	width: "223px",
-	
 }
 
-const cssItem = (select:boolean):React.CSSProperties => ({
-	color: "black",
+const cssItem = (select: boolean): React.CSSProperties => ({
 	backgroundColor: select ? "red" : "unset"
 })

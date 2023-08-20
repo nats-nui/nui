@@ -1,4 +1,4 @@
-import { DOC_TYPE, Entity, POSITION_TYPE } from "@/types/Doc"
+import { DOC_TYPE, Entity, POSITION_TYPE } from "@/stores/docs/types"
 import { PARAM_KEY, docsFromString, stringFromDocs } from ".."
 
 

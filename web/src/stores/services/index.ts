@@ -1,6 +1,6 @@
 import docsSo from "@/stores/docs"
-import docSetup, { ViewState, ViewStore } from "@/stores/docs/doc"
-import { Connection, DOC_TYPE, Service } from "@/types"
+import docSetup, { ViewState, ViewStore } from "@/stores/docs/docBase"
+import { Connection, DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConnectionStore } from "../connection"
 import { initView } from "../docs/utils/factory"
@@ -15,18 +15,12 @@ const setup = {
 	},
 
 	getters: {
-		getServices(_: void, store?: ServicesStore): Service[] {
-			return [
-				{ name: "MESSAGES" },
-				{ name: "DATABASES" },
-				{ name: "SETTINGS" },
-			]
-		}
 	},
 
 	actions: {
-		select(service: Service, store?: ServicesStore) {
-			const cnnId = (store.state.parent as ConnectionStore).getSelect()?.id ?? -1
+		openMessages(_:void, store?: ServicesStore) {
+			const cnnId = (store.state.parent as ConnectionStore).getSelect()?.id
+			if ( !cnnId ) return 
 			const msgStore = initView({
 				type: DOC_TYPE.MESSAGES,
 				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnnId] }

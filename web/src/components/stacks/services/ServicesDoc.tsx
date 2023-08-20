@@ -1,8 +1,12 @@
 import { ServicesState, ServicesStore } from "@/stores/services"
-import { Service } from "@/types"
+import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import Header from "../Heder"
+import Header from "@/components/Heder"
+import SubscriptionsDialog from "../connections/SubscriptionsDialog"
+import { ConnectionStore } from "@/stores/connection"
+import DetailCmp from "../connections/DetailCmp"
+
 
 
 interface Props {
@@ -10,7 +14,7 @@ interface Props {
 }
 
 const ServicesDoc: FunctionComponent<Props> = ({
-	store:serviceSo,
+	store: serviceSo,
 }) => {
 
 	// STORE
@@ -20,21 +24,23 @@ const ServicesDoc: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleClick = (service: Service) => {
-		serviceSo.select(service)
+	const handleClickMessages = () => {
+		serviceSo.openMessages()
 	}
 
 	// RENDER
-	const services = serviceSo.getServices()
-	if (!services) return null
 	return (
 		<div style={cssContainer}>
 			<Header view={serviceSo} />
-			{services.map((service, index) => (
-				<div key={index} style={cssItem}
-					onClick={_ => handleClick(service)}
-				>{service.name}</div>
-			))}
+			<div style={cssItem}
+				onClick={handleClickMessages}
+			>MESSAGES</div>
+			<div style={cssItem}>DATABASES</div>
+			<div style={cssItem}>SETTINGS</div>
+			<DetailCmp 
+				store={serviceSa.parent as ConnectionStore} 
+				parentSo={serviceSo}
+			/>
 		</div>
 	)
 }
@@ -42,6 +48,7 @@ const ServicesDoc: FunctionComponent<Props> = ({
 export default ServicesDoc
 
 const cssContainer: React.CSSProperties = {
+	paddingLeft: "15px",
 	flex: 1,
 	display: "flex", flexDirection: "column",
 	backgroundColor: "#BBFB35",
