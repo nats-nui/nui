@@ -1,6 +1,6 @@
 import docSo from "@/stores/docs"
 import { initView } from "@/stores/docs/utils/factory"
-import { DOC_TYPE } from "@/types/Doc"
+import { DOC_TYPE } from "@/stores/docs/types"
 import React, { FunctionComponent } from "react"
 
 

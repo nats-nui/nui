@@ -1,6 +1,6 @@
 import { POSITION_TYPE } from "@/types"
 import { fromID } from "."
-import { PARAMS_DOC, ViewState, ViewStore } from "../doc"
+import { PARAMS_DOC, ViewState, ViewStore } from "../docBase"
 
 
 

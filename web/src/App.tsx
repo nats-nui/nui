@@ -4,7 +4,7 @@ import { DragEvent, FunctionComponent } from "react"
 import DocViewCmp from "./components/DocViewCmp"
 import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils"
-import { ViewStore } from "./stores/docs/doc"
+import { ViewStore } from "./stores/docs/docBase"
 
 
 
@@ -16,7 +16,7 @@ const App: FunctionComponent = () => {
 	// HANDLERS
 	const handleDragOver = (e: DragEvent<HTMLDivElement>, index: number) => {
 		e.preventDefault()
-		if ( docSa.drag?.srcView == null ) return
+		if (docSa.drag?.srcView == null) return
 		docSo.setDrag({
 			...docSa.drag,
 			crrView: null,
@@ -41,7 +41,7 @@ const App: FunctionComponent = () => {
 		})
 	}
 	const handleDrop = () => {
-		if ( docSa.drag?.srcView == null ) return
+		if (docSa.drag?.srcView == null) return
 		docSo.drop()
 	}
 
@@ -53,21 +53,25 @@ const App: FunctionComponent = () => {
 		<div style={cssApp}>
 			<MainMenu />
 			<div style={cssContent}>
-				<div style={cssDroppable} draggable={false}
+				<div style={cssDroppable(false)} draggable={false}
 					onDragOver={(e) => handleDragOver(e, 0)}
 					onDragLeave={handleDragLeave}
 					//onDragEnd={handleDragEnd}
 					onDrop={handleDrop}
 				/>
-				{views.map((view: ViewStore, index: number) => <div style={{ display: "flex" }} >
-					<DocViewCmp view={view} key={index+getID(view)}/>
-					<div style={cssDroppable} key={index} draggable={false}
-						onDragOver={(e) => handleDragOver(e, index + 1)}
-						onDragLeave={handleDragLeave}
-						//onDragEnd={handleDragEnd}
-						onDrop={handleDrop}
-					/>
-				</div>)}
+				{views.map((view: ViewStore, index: number) =>
+					<div style={{ display: "flex", zIndex: views.length - index }} key={index/*getID(view)*/}>
+
+						<DocViewCmp view={view} />
+						<div style={cssDroppable(index == views.length - 1)} draggable={false}
+							onDragOver={(e) => handleDragOver(e, index + 1)}
+							onDragLeave={handleDragLeave}
+							//onDragEnd={handleDragEnd}
+							onDrop={handleDrop}
+						/>
+
+					</div>
+				)}
 			</div>
 		</div>
 	)
@@ -84,10 +88,10 @@ const cssApp: React.CSSProperties = {
 const cssContent: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
-	gap: "5px",
+	//gap: "5px",
 }
 
-const cssDroppable: React.CSSProperties = {
-	width: "100px",
+const cssDroppable = (last: boolean): React.CSSProperties => ({
+	width: last ? "200px" : "35px",
 	backgroundColor: "green",
-}
+})

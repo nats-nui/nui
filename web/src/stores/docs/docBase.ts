@@ -13,10 +13,17 @@ const setup = {
 		uuid: <string>null,
 		type: DOC_TYPE.EMPTY,
 		params: <{ [name: string]: any[] }>{},
+
+		draggable: true,
+		temporary: false,
+
 		position: POSITION_TYPE.DETACHED,
 		parent: <ViewStore>null,
 		linked: <ViewStore>null,
 		stacked: <ViewStore[]>[],
+
+		dialogCmp: <React.ReactNode>null,
+
 	},
 
 	getters: {
@@ -32,7 +39,8 @@ const setup = {
 		setParams(ps: { [name: string]: any }, store?: ViewStore) {
 			const params = { ...store.state.params, ...ps }
 			return { params }
-		}
+		},
+		setDialogCmp: (dialogCmp:React.ReactNode) => ({dialogCmp})
 	},
 }
 

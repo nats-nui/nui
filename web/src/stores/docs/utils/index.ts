@@ -1,5 +1,5 @@
-import { DOC_TYPE } from "@/types/Doc"
-import { ViewState, ViewStore } from "../doc"
+import { DOC_TYPE } from "@/stores/docs/types"
+import { ViewState, ViewStore } from "../docBase"
 
 export * from "./urlTransform"
 

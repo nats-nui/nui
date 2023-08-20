@@ -1,10 +1,10 @@
 import navSo from "@/stores/navigation"
-import { POSITION_TYPE } from "@/types/Doc"
+import { POSITION_TYPE } from "@/stores/docs/types"
 import { StoreCore, createStore } from "@priolo/jon"
 import { docsFromString, getID, stringFromDocs } from "./utils"
 import { initView } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
-import { ViewStore } from "./doc"
+import { ViewStore } from "./docBase"
 
 
 
@@ -135,19 +135,14 @@ const setup = {
 					const srcIndex = store.state.all.indexOf(srcView)
 					console.log(srcIndex, index)
 					if (srcIndex == index || srcIndex+1 == index) {
-						console.log("no")
 						return
 					}
-					
 					store.remove(srcView)
 					if ( srcIndex > index ) {
-						console.log( "mnor")
 						store.add({ view: srcView, index: index })
 					} else {
-						console.log( "max")
 						store.add({ view: srcView, index: index-1 })
 					}
-					
 				} else {
 					store.remove(srcView)
 					store.add({ view: srcView, index })

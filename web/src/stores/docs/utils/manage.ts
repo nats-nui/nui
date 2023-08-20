@@ -1,6 +1,6 @@
 import { POSITION_TYPE } from "@/types";
 import { getID } from ".";
-import { ViewStore } from "../doc";
+import { ViewStore } from "../docBase";
 
 
 
@@ -33,8 +33,10 @@ export function aggregate(views: ViewStore[]): ViewStore[] {
  * Disgrega un array di DocView in maniera da ottenere un array di Doc
  */
 export function disgregate(docsView: ViewStore[]): ViewStore[] {
-	const views: ViewStore[] = []
+	let views: ViewStore[] = []
 	forEachDocsView(docsView, (docView) => views.push(docView))
+	// elimino le VIEW temporanee
+	views = views.filter(view => !view.state.temporary)
 	return views
 }
 
@@ -54,9 +56,9 @@ function forEachDocView(view: ViewStore, callback: (view: ViewStore) => any): bo
 	if (view.state.stacked) {
 		for (const v of view.state.stacked) if (callback(v) === true) return true
 	}
-	if (view.state.linked ) {
-		return forEachDocView(view.state.linked, callback )
-	} 
+	if (view.state.linked) {
+		return forEachDocView(view.state.linked, callback)
+	}
 }
 
 /** recupera una VIEW traite l'id del DOC che è contenuto */

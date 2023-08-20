@@ -1,3 +1,3 @@
 
 export * from "./Connection"
-export * from "./Doc"
+export * from "../stores/docs/types"

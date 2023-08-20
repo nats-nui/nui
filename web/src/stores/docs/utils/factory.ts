@@ -1,27 +1,21 @@
-import cnnSetup, { ConnectionStore } from "@/stores/connection";
-import messagesSetup, { MessagesStore } from "@/stores/messages";
-import servicesSetup, { ServicesStore } from "@/stores/services";
+import cnnSetup from "@/stores/connection";
+import messagesSetup from "@/stores/messages";
+import servicesSetup from "@/stores/services";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
-import { ViewState, ViewStore } from "../doc";
+import { ViewState, ViewStore } from "../docBase";
+
 
 
 /** crea crea lo STORE adeguato */
 export function initView(state: Partial<ViewState>): ViewStore {
-	let store: ViewStore = null
-	switch (state.type) {
-		case DOC_TYPE.CONNECTIONS:
-			store = createStore(cnnSetup) as ConnectionStore
-			break
-		case DOC_TYPE.SERVICES:
-			store = createStore(servicesSetup) as ServicesStore
-			break
-		case DOC_TYPE.MESSAGES:
-			store = createStore(messagesSetup) as MessagesStore
-			break
-		default:
-			return
-	}
-	store.state = state
+	const setup = {
+		[DOC_TYPE.CONNECTIONS]: cnnSetup,
+		[DOC_TYPE.SERVICES]: servicesSetup,
+		[DOC_TYPE.MESSAGES]: messagesSetup,
+	}[state.type]
+	if (!setup) return
+	setup.state = {...setup.state, ...state}
+	const store: ViewStore = createStore(setup)
 	return store
 }

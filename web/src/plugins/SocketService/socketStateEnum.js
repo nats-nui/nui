@@ -1,0 +1,8 @@
+
+
+export const SOCKET_STATE = {
+	CONNECT: 0,
+	WARNING: 1,
+	ERROR: 2,
+	CONNECT_ERROR_PING: 3
+}

@@ -1,5 +1,5 @@
 import docSo, { DRAG_ZONE, DocState } from "@/stores/docs"
-import { DOC_TYPE, DocView, POSITION_TYPE } from "@/types/Doc"
+import { DOC_TYPE, DocView, POSITION_TYPE } from "@/stores/docs/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import img from "@/assets/cnn-hdr2.svg"

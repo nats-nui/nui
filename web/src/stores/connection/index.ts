@@ -1,12 +1,12 @@
 import connectionApi from "@/api/connection"
 import docsSo from "@/stores/docs"
-import docSetup, { ViewState, ViewStore } from "@/stores/docs/doc"
+import docSetup, { ViewState, ViewStore } from "@/stores/docs/docBase"
 
 import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { initView } from "../docs/utils/factory"
-import superDoc from "@/stores/docs/doc"
+import superDoc from "@/stores/docs/docBase"
 
 
 
@@ -33,7 +33,7 @@ const setup = {
 		},
 		getSelect(_: void, store?: ConnectionStore) {
 			const index = store.getSelectIndex()
-			return index == -1 ? null : store.state.all[index]
+			return index == -1 ? null : store.state.all?.[index]
 		},
 	},
 
@@ -61,6 +61,13 @@ const setup = {
 		setSelectIndex: (select: number, store?: ConnectionStore) => {
 			return superDoc.mutators.setParams({ [CONNECTIONS_PARAMS.SELECT]: [select.toString()] }, store)
 		},
+		updateSelected: (connection: Connection, store?: ConnectionStore) => {
+			const index = store.getSelectIndex()
+			if (index == -1) return
+			const all = [...store.state.all]
+			all[index] = connection
+			return { all }
+		}
 	},
 }
 

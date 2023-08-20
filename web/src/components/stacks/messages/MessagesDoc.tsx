@@ -1,7 +1,7 @@
+import Header from "@/components/Heder"
 import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/messages"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import Header from "../Heder"
 
 
 
@@ -22,7 +22,7 @@ const MessagesDoc: FunctionComponent<Props> = ({
 	// }, [msgSa])
 
 	// HANDLER
-
+	
 	// RENDER
 	return (
 		<div style={cssContainer}>
@@ -38,6 +38,4 @@ const cssContainer: React.CSSProperties = {
 	flex: 1,
 	display: "flex", 
 	flexDirection: "column",
-	backgroundColor: "#3E3E3E",
-	color: "white",
 }
