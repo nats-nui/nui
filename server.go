@@ -183,7 +183,6 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 		cancel()
 		return nil
 	})
-	a.nui.Hub.Register(ctx, clientId, reqCh, msgCh, errCh)
 	<-ctx.Done()
 }
 
