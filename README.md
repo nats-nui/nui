@@ -40,7 +40,7 @@ POST /api/connection/:id/publish
 
 {
     "subject": <string>,
-    "payload": <string>
+    "payload": <string>  // base64 encoded
 }
 ```
 

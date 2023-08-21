@@ -146,7 +146,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	}
 	req := &struct {
 		Subject   string `json:"subject"`
-		Payload   string `json:"payload"`
+		Payload   []byte `json:"payload"`
 		TimeoutMs int    `json:"timeout_ms"`
 	}{}
 	err = c.BodyParser(req)
@@ -157,7 +157,10 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	if req.TimeoutMs > 0 {
 		timeout = time.Duration(req.TimeoutMs) * time.Millisecond
 	}
-	msg, err := conn.Request(req.Subject, []byte(req.Payload), timeout)
+	if err != nil {
+		return c.Status(422).JSON(err)
+	}
+	msg, err := conn.Request(req.Subject, req.Payload, timeout)
 	if err != nil {
 		return c.Status(500).SendString(err.Error())
 	}
