@@ -1,39 +1,17 @@
-import navSo from "@/stores/navigation"
 import { POSITION_TYPE } from "@/stores/docs/types"
+import navSo from "@/stores/navigation"
 import { StoreCore, createStore } from "@priolo/jon"
-import { docsFromString, getID, stringFromDocs } from "./utils"
+import { ViewStore } from "./docBase"
+import { docsFromString, stringFromDocs } from "./utils"
 import { initView } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
-import { ViewStore } from "./docBase"
 
-
-
-export interface DragDoc {
-	/** indice del DOC da cui è partito il DRAG */
-	srcView?: ViewStore
-	/** indice del DOC correntemente sotto al DRAG */
-	crrView?: ViewStore
-	/** zona, del DOC currIndex, dove è attualmente il DRAG */
-	zone?: DRAG_ZONE
-	/** in alternativa indica l'indice della posizione nella "root" */
-	index?: number
-}
-
-export enum DRAG_ZONE {
-	NONE,
-	LEFT,
-	CENTER,
-	RIGHT,
-	FIRST,
-	LAST,
-}
 
 const setup = {
 
 	state: {
 		focus: <number>null,
 		all: <ViewStore[]>[],
-		drag: <DragDoc>null,
 	},
 
 	getters: {
@@ -67,9 +45,12 @@ const setup = {
 			{ view, parent }: { view: ViewStore, parent: ViewStore },
 			store?: DocStore
 		) {
-			if (!parent || !view) return
+			if (!parent) return
+
 			// se c'e' gia' una view la rimuovo
 			if (parent.state.linked) store.remove(parent.state.linked)
+
+			if (!view) return
 
 			// se non c'è lo store lo creo
 			view.state.parent = parent
@@ -126,48 +107,21 @@ const setup = {
 			store.setAll(views)
 		},
 
-		drop(dstView?: ViewStore, store?: DocStore) {
-			const { srcView, zone, index } = store.state.drag
-
-			// se c'e' un index allora mettilo li e basta!
-			if (index != null) {
-				if (srcView.state.parent == null) {
-					const srcIndex = store.state.all.indexOf(srcView)
-					console.log(srcIndex, index)
-					if (srcIndex == index || srcIndex+1 == index) {
-						return
-					}
-					store.remove(srcView)
-					if ( srcIndex > index ) {
-						store.add({ view: srcView, index: index })
-					} else {
-						store.add({ view: srcView, index: index-1 })
-					}
+		move({ view, index }: { view: ViewStore, index: number }, store?: DocStore) {
+			if (view == null || index == null) return
+			if (view.state.parent == null) {
+				const srcIndex = store.state.all.indexOf(view)
+				if (srcIndex == index || srcIndex + 1 == index) return
+				store.remove(view)
+				if (srcIndex > index) {
+					store.add({ view, index })
 				} else {
-					store.remove(srcView)
-					store.add({ view: srcView, index })
+					store.add({ view, index: index - 1 })
 				}
-
-			} else if (zone == DRAG_ZONE.LAST) {
-				store.remove(srcView)
-				store.add({ view: srcView })
-
-			} else if (zone == DRAG_ZONE.FIRST) {
-				store.remove(srcView)
-				store.add({ view: srcView, index: 0 })
-
-			} else if (zone == DRAG_ZONE.CENTER) {
-				store.remove(srcView)
-				store.addStack({ view: srcView, parent: dstView })
-
 			} else {
-				// se la destinazione ha un parent usa il parent
-				if (dstView.state.parent) dstView = dstView.state.parent
-				store.remove(srcView)
-				const dstIndex = store.state.all.indexOf(dstView) + (zone == DRAG_ZONE.RIGHT ? 1 : 0)
-				store.add({ view: srcView, index: dstIndex })
+				store.remove(view)
+				store.add({ view, index })
 			}
-			store.setDrag({ zone: DRAG_ZONE.NONE })
 		},
 		/** sostituisco tutti i DOC con quelli ricavati da una stringa (tipicamente URL) */
 		updateFromString(docsStr: string, store?: DocStore) {
@@ -185,7 +139,6 @@ const setup = {
 			return { all }
 		},
 		setFocus: (focus: number) => ({ focus }),
-		setDrag: (drag: DragDoc) => ({ drag }),
 	},
 }
 

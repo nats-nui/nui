@@ -1,10 +1,9 @@
+import mouseSo, { MouseState } from "@/stores/mouse"
+import { ViewStore } from "@/stores/docs/docBase"
 import { getID } from "@/stores/docs/utils"
-import { numLinkedParent } from "@/stores/docs/utils/manage"
+import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import DocCmp from "./DocCmp"
-import { ViewStore } from "@/stores/docs/docBase"
-import { useStore } from "@priolo/jon"
-
 
 
 interface Props {
@@ -21,7 +20,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view)
-
+	const mouseSa: MouseState = useStore(mouseSo)
 	// HANDLER
 
 	// RENDER
@@ -31,9 +30,17 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const haveLinked = !!view.state.linked
 	const haveStacked = view.state.stacked && view.state.stacked.length > 0
 
+	const inDrag = mouseSa.drag?.srcView == view
+
+	const cssDoc2 = {
+		...cssDoc(deep, inRoot),
+		...(inDrag ? cssDetached : cssAttached)
+	}
+	const cssDoc3 = inDrag  ? { opacity: .3 } : null
+
 	return <div style={{ ...cssContainer(deep), ...style }}>
 
-		<div style={cssDoc(deep, inRoot)}>
+		<div style={cssDoc2}>
 
 			{/* STACKED */}
 			{haveStacked && <div style={cssStacked}>
@@ -41,7 +48,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 			</div>}
 
 			{/* BODY */}
-			<DocCmp view={view} />
+			<DocCmp view={view} style={cssDoc3} />
 
 		</div>
 
@@ -71,18 +78,30 @@ const cssContainer = (deep: number): React.CSSProperties => ({
 	height: "100%",
 	zIndex: deep,
 })
+
+
+
 const cssDoc = (deep: number, inRoot: boolean): React.CSSProperties => ({
 	display: "flex",
 	flexDirection: "column",
 	zIndex: deep,
-
 	overflow: "hidden",
 	borderRadius: inRoot ? 10 : '0px 10px 10px 0px',
-
+})
+const cssAttached: React.CSSProperties = {
 	color: "white",
 	backgroundColor: "#3E3E3E",
 	boxShadow: "2px 2px 2px 0px rgba(0, 0, 0, 0.40)",
-})
+}
+const cssDetached: React.CSSProperties = {
+	color: "white",
+	backgroundColor: "black",
+	boxShadow: 'none',
+	border: '2px dashed white',
+}
+
+
+
 
 const cssDialog = (deep: number): React.CSSProperties => ({
 	position: "absolute",

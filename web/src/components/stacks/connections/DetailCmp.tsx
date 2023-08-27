@@ -1,24 +1,26 @@
-import { ConnectionState, ConnectionStore } from "@/stores/connection"
+import cnnSo, { ConnectionState } from "@/stores/connections"
 import { ViewStore } from "@/stores/docs/docBase"
+import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import SubscriptionsDialog from "./SubscriptionsDialog"
+import SubscriptionsDlg from "./SubscriptionsDlg"
 
 
 
 interface Props {
-	store?: ConnectionStore
+	store?: CnnViewStore
 	parentSo?: ViewStore
 }
 
 const DetailCmp: FunctionComponent<Props> = ({
-	store: cnnSo,
+	store: viewSo,
 	parentSo,
 }) => {
 
 	// STORE
+	const viewSa = useStore(viewSo) as CnnViewState
 	const cnnSa = useStore(cnnSo) as ConnectionState
-	if (!parentSo) parentSo = cnnSo
+	if (!parentSo) parentSo = viewSo
 
 	// HOOKs
 
@@ -26,7 +28,7 @@ const DetailCmp: FunctionComponent<Props> = ({
 	const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const name = e.target.value
 		const cnn = { ...connection, name }
-		cnnSo.updateSelected(cnn)
+		cnnSo.updateConnection(cnn)
 	}
 	const handleClickSubs = () => {
 		// docsSo.addLink({
@@ -41,11 +43,11 @@ const DetailCmp: FunctionComponent<Props> = ({
 
 
 	// RENDER
-	const connection = cnnSo.getSelect()
+	const connection = cnnSo.getById(viewSo.getSelectId())
 	if (!connection) return null
 
-	const subscrsDlg = <SubscriptionsDialog
-		store={cnnSo}
+	const subscrsDlg = <SubscriptionsDlg
+		store={viewSo}
 		parentSo={parentSo}
 	/>
 

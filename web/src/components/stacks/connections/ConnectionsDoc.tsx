@@ -1,46 +1,49 @@
 import Header from "@/components/Heder"
+import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
 import { Connection, POSITION_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect } from "react"
-import { ConnectionState, ConnectionStore } from "@/stores/connection"
-import DetailCmp from "./DetailCmp"
-
+import React, { FunctionComponent } from "react"
+import cnnSo, { ConnectionState } from "@/stores/connections"
+import imgCnn from "@/assets/cnn-hdr.svg"
 
 
 interface Props {
-	store?: ConnectionStore
+	store?: CnnViewStore
+	style?: React.CSSProperties,
 }
 
 const ConnectionsDoc: FunctionComponent<Props> = ({
-	store: cnnSo,
+	store: viewSo,
+	style,
 }) => {
 
 	// STORE
+	const viewSa = useStore(viewSo) as CnnViewState
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
-	useEffect(() => {
-		cnnSo.fetch()
-	}, [])
 
 	// HANDLER
-	const handleClick = (cnn: Connection) => {
-		cnnSo.select(cnn)
+	const handleSelectConnection = (cnn: Connection) => {
+		viewSo.select(cnn)
 	}
 
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const isStacked = cnnSa.position == POSITION_TYPE.STACKED
-	const selected = cnnSo.getSelectIndex()
+	const isStacked = viewSa.position == POSITION_TYPE.STACKED
+	const selected = viewSo.getSelectId()
 	const isSelected = (index: number) => selected == index
 
 	return (
-		<div style={cssContainer}>
-			<Header view={cnnSo} />
+		<div style={{...cssContainer, ...style}}>
+
+			<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />}/>
+
+			<button>new</button>
 			{!isStacked && connnections.map((cnn, index) => (
 				<div key={cnn.id} style={cssItem(isSelected(index))}
-					onClick={_ => handleClick(cnn)}
+					onClick={_ => handleSelectConnection(cnn)}
 				>{cnn.name}</div>
 			))}
 			{/* <DetailCmp store={cnnSo}/> */}
@@ -58,5 +61,5 @@ const cssContainer: React.CSSProperties = {
 }
 
 const cssItem = (select: boolean): React.CSSProperties => ({
-	backgroundColor: select ? "red" : "unset"
+	backgroundColor: select ? "gray" : "unset"
 })

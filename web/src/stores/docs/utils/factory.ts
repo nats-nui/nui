@@ -1,6 +1,6 @@
-import cnnSetup from "@/stores/connection";
-import messagesSetup from "@/stores/messages";
-import servicesSetup from "@/stores/services";
+import cnnSetup from "@/stores/stacks/connection";
+import messagesSetup from "@/stores/stacks/messages";
+import servicesSetup from "@/stores/stacks/services";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../docBase";
