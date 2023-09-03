@@ -1,5 +1,5 @@
 import docSo from "@/stores/docs"
-import { initView } from "@/stores/docs/utils/factory"
+import { buildStore } from "@/stores/docs/utils/factory"
 import { DOC_TYPE } from "@/stores/docs/types"
 import React, { FunctionComponent } from "react"
 
@@ -14,7 +14,7 @@ const MainMenu: FunctionComponent<Props> = ({
 
 	// HANDLERS
 	const handleNodes = () => {
-		const cnnStore = initView({
+		const cnnStore = buildStore({
 			type: DOC_TYPE.CONNECTIONS,
 		})
 		docSo.add({ view: cnnStore })

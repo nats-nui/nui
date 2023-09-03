@@ -1,6 +1,6 @@
 import { POSITION_TYPE } from "@/types"
-import { fromID } from "."
 import { PARAMS_DOC, ViewState, ViewStore } from "../docBase"
+import { fromID, getID } from "./factory"
 
 
 
@@ -8,10 +8,10 @@ import { PARAMS_DOC, ViewState, ViewStore } from "../docBase"
  * trasformo una stringa in un array di VIEWs
  * "doc1~doc2~doc3 ..."
  */
-export function docsFromString(ser: string): ViewState[] {
+export function stringToViewsState(ser: string): ViewState[] {
 	if (!ser) return []
 	const docsSer = ser.split("~")
-	const docs = docsSer.map(docSer => docFromString(docSer))
+	const docs = docsSer.map(docSer => stringToViewState(docSer))
 	return docs
 }
 
@@ -20,7 +20,7 @@ export function docsFromString(ser: string): ViewState[] {
  * i carateri ammessi sono .-_~
  * "type-uuid.key1_value1-value1-value1.key2_value2.key3_value3 ..."
   */
-function docFromString(param: string): ViewState {
+function stringToViewState(param: string): ViewState {
 	const sub = param.split(".")
 	const viewState = fromID(sub[0])
 	setParams(viewState, sub.slice(1))
@@ -58,17 +58,17 @@ function setParams(view: ViewState, params: string[]): ViewState {
  * data una serie di DOCs restituisco una stringa che li rappresenta
  * tipicamente usato per l'URL
  */
-export function stringFromDocs(view: ViewStore[]): string {
-	const viewsStr = view.reduce((acc, doc) => {
-		return `${acc ? `${acc}~` : ""}${stringFromDoc(doc)}`
+export function viewsToString(views: ViewStore[]): string {
+	const viewsStr = views.reduce((acc, doc) => {
+		return `${acc ? `${acc}~` : ""}${viewToString(doc)}`
 	}, null as string)
 	return viewsStr
 }
 /**
  * Stesa cosa di prima ma per un singolo DOC
  */
-function stringFromDoc(view: ViewStore): string {
-	let str = `${view.state.type}${view.state.uuid ? `-${view.state.uuid}` : ""}`
+export function viewToString(view: ViewStore): string {
+	let str = getID(view.state)
 	// scrivo la "position"
 	if (view.state.position && view.state.position != POSITION_TYPE.DETACHED) str += `.${PARAMS_DOC.POSITION}_${view.state.position}`
 	// scrivo i "params"
@@ -84,4 +84,3 @@ function stringFromDoc(view: ViewStore): string {
 	}, str)
 	return str
 }
-

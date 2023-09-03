@@ -28,7 +28,7 @@ const setup = {
 	actions: {
 		startDrag(drag: DragDoc, store?: MouseStore) {
 			function fnMouseMove(e) {
-				store.setPosition({ x: e.clientX, y: e.clientY })
+				store.setPosition({ x: e.pageX, y: e.pageY })
 			}
 			function fnMouseUp(e) {
 				document.removeEventListener('mousemove', fnMouseMove)
@@ -41,7 +41,6 @@ const setup = {
 		},
 		stopDrag(_: void, store?: MouseStore) {
 			const { srcView, index } = store.state.drag
-			store.setPosition(null)
 			store.setDrag(null)
 			docSo.move({view: srcView, index})
 		}

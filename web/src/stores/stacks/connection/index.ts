@@ -3,7 +3,7 @@ import { ViewState, ViewStore, default as docSetup, default as superDoc } from "
 import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { initView } from "../../docs/utils/factory"
+import { buildStore } from "../../docs/utils/factory"
 
 
 
@@ -31,8 +31,7 @@ const setup = {
 			let idSel = idSelPrev != cnn.id ? cnn.id : null
 			store.setSelectId(idSel)
 			let srvStore = null
-			if ( idSel != null ) srvStore = initView({
-				uuid: cnn.id,
+			if ( idSel != null ) srvStore = buildStore({
 				type: DOC_TYPE.SERVICES,
 			})
 			docsSo.addLink({

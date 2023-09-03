@@ -1,6 +1,6 @@
-import mouseSo, { MouseState } from "@/stores/mouse"
+import mouseSo, { MouseState, Position } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { useEffect, useState, useMemo, FunctionComponent } from "react"
 
 
 
@@ -10,22 +10,49 @@ const DragCmp: FunctionComponent = () => {
 	const mouseSa = useStore(mouseSo) as MouseState
 
 	// HOOKS
-
+	const [hide, setHide] = useState(true)
+	const inShow = mouseSa.drag != null
+	useEffect(() => {
+		if (inShow == false) {
+			setTimeout(() => setHide(true), 400)
+		} else {
+			setHide(false)
+		}
+	}, [inShow])
 
 	// HANDLERS
 
 	// RENDER
-	if ( !mouseSa.position ) return null
-	return <div
-		style={{
-			pointerEvents: "none",
-			position: 'absolute',
-			left: mouseSa.position.x,
-			top: mouseSa.position.y,
-			backgroundColor: "white",
-			zIndex: 99999,
-		}}
-	>CIAO</div>
+	const styRoot: React.CSSProperties = {
+		...cssRoot,
+		...cssPosition(mouseSa.position),
+		...(inShow ? cssInShow : cssInHide),
+		...(hide ? { visibility: "hidden" } : {})
+	}
+
+	return <div style={styRoot}>
+		CIAO
+	</div>
 }
 
 export default DragCmp
+
+const cssRoot: React.CSSProperties = {
+	pointerEvents: "none",
+	position: 'absolute',
+	backgroundColor: "white",
+	zIndex: 99999,
+	transition: 'opacity 2s',
+}
+
+const cssPosition = (pos: Position): React.CSSProperties => ({
+	left: pos?.x,
+	top: pos?.y,
+})
+
+const cssInShow = {
+	opacity: 1,
+}
+const cssInHide = {
+	opacity: 0,
+}

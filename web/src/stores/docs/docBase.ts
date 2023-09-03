@@ -15,7 +15,6 @@ const setup = {
 		params: <{ [name: string]: any[] }>{},
 
 		draggable: true,
-		temporary: false,
 
 		position: POSITION_TYPE.DETACHED,
 		parent: <ViewStore>null,

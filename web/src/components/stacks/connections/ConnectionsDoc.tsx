@@ -1,10 +1,10 @@
+import imgCnn from "@/assets/cnn-hdr.svg"
 import Header from "@/components/Heder"
+import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
-import { Connection, POSITION_TYPE } from "@/types"
+import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import cnnSo, { ConnectionState } from "@/stores/connections"
-import imgCnn from "@/assets/cnn-hdr.svg"
 
 
 interface Props {
@@ -31,22 +31,18 @@ const ConnectionsDoc: FunctionComponent<Props> = ({
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const isStacked = viewSa.position == POSITION_TYPE.STACKED
 	const selected = viewSo.getSelectId()
 	const isSelected = (index: number) => selected == index
 
 	return (
 		<div style={{...cssContainer, ...style}}>
-
 			<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />}/>
-
 			<button>new</button>
-			{!isStacked && connnections.map((cnn, index) => (
+			{connnections.map((cnn, index) => (
 				<div key={cnn.id} style={cssItem(isSelected(index))}
 					onClick={_ => handleSelectConnection(cnn)}
 				>{cnn.name}</div>
 			))}
-			{/* <DetailCmp store={cnnSo}/> */}
 		</div>
 	)
 }

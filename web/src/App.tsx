@@ -7,6 +7,7 @@ import DropArea from "./DropArea"
 import DocViewCmp from "./components/DocViewCmp"
 import MainMenu from "./components/MainMenu"
 import DragCmp from "./DragCmp"
+import { getID } from "./stores/docs/utils/factory"
 
 
 
@@ -34,7 +35,7 @@ const App: FunctionComponent = () => {
 				<DropArea index={0} />
 
 				{views.map((view: ViewStore, index: number) =>
-					<div style={{ display: "flex", zIndex: views.length - index }} key={index/*getID(view)*/}>
+					<div style={{ display: "flex", zIndex: views.length - index }} key={getID(view.state)}>
 						<DocViewCmp view={view} />
 						<DropArea index={index + 1} />
 					</div>
