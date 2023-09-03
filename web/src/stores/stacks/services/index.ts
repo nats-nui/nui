@@ -2,9 +2,10 @@ import docsSo from "@/stores/docs"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/docBase"
 import { Connection, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { initView } from "../../docs/utils/factory"
+import { buildStore } from "../../docs/utils/factory"
 import { CnnViewStore } from "../connection"
 import { PARAMS_MESSAGES } from "../messages"
+import { createUUID } from "@/mocks/data/utils"
 
 
 
@@ -22,7 +23,8 @@ const setup = {
 		openMessages(_: void, store?: ServicesStore) {
 			const cnnId = (store.state.parent as CnnViewStore).getSelectId()
 			if (!cnnId) return
-			const msgStore = initView({
+			const msgStore = buildStore({
+				uuid: createUUID(),
 				type: DOC_TYPE.MESSAGES,
 				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnnId] }
 			})

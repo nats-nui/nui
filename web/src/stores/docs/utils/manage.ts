@@ -1,6 +1,6 @@
 import { POSITION_TYPE } from "@/types";
-import { getID } from ".";
 import { ViewStore } from "../docBase";
+import { getID } from "./factory";
 
 
 
@@ -14,11 +14,6 @@ export function aggregate(views: ViewStore[]): ViewStore[] {
 		if (view.state.position == POSITION_TYPE.DETACHED) {
 			lastParent = view
 			return acc.concat(lastParent)
-		}
-		if (view.state.position == POSITION_TYPE.STACKED) {
-			view.state.parent = lastParent
-			if (!lastParent.state.stacked) lastParent.state.stacked = []
-			lastParent.state.stacked.push(view)
 		}
 		if (view.state.position == POSITION_TYPE.LINKED) {
 			view.state.parent = lastParent
@@ -65,7 +60,7 @@ function forEachDocView(view: ViewStore, callback: (view: ViewStore) => any): bo
 export function getById(docsView: ViewStore[], id: string): ViewStore {
 	let finded: ViewStore = null
 	forEachDocsView(docsView, (docView) => {
-		if (getID(docView) === id) {
+		if (getID(docView.state) === id) {
 			finded = docView
 			return true
 		}

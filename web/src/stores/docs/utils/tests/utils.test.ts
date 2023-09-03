@@ -1,5 +1,5 @@
 import { DOC_TYPE, Entity, POSITION_TYPE } from "@/stores/docs/types"
-import { PARAM_KEY, docsFromString, stringFromDocs } from ".."
+import { PARAM_KEY, stringToViewsState, viewsToString } from ".."
 
 
 describe("docsFromString", () => {
@@ -8,7 +8,7 @@ describe("docsFromString", () => {
 		const doc2 = `${DOC_TYPE.EMPTY}.${PARAM_KEY.POSITION}_${POSITION_TYPE.LINKED}`
 		const doc3 = `${DOC_TYPE.EMPTY}`
 		const docs = `${doc1}~${doc2}~${doc3}`
-		const result = docsFromString(docs)
+		const result = stringToViewsState(docs)
 		const expected = [
   			{ uuid: "uuid123", type: "cns", position: "dtc" },
   			{ uuid: undefined, type: "emp", position: "lnk" },
@@ -17,7 +17,7 @@ describe("docsFromString", () => {
 		expect(result).toStrictEqual(expected)
 	})
 	it("caso null", () => {
-		const result = docsFromString(null)
+		const result = stringToViewsState(null)
 		expect(result).toHaveLength(0)
 	})
 })
@@ -31,7 +31,7 @@ describe("stringFromDocs", () => {
 			{ type: DOC_TYPE.CONNECTIONS, uuid: "c3", position: POSITION_TYPE.DETACHED },
 		]
 		const expected = 'emp~cns-c1.dtc~cns-c2.lnk~cns-c3.dtc'
-		const result = stringFromDocs(docs)
+		const result = viewsToString(docs)
 		expect(result).toBe(expected)
 	})
 })

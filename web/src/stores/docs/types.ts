@@ -7,7 +7,12 @@ export enum DOC_TYPE {
 }
 
 export enum POSITION_TYPE {
-	STACKED = "stk",
 	LINKED = "lnk",
 	DETACHED = "dtc"
+}
+
+export enum DOC_ANIM {
+	FIX,
+	DRAGGING,
+	
 }

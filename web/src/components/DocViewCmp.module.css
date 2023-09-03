@@ -1,0 +1,37 @@
+.container {
+	display: flex;
+	height: 100%;
+	/* width: 0px;
+	transition: width 1s ease; */
+}
+.container.appear {
+	/* width: 200px; */
+}
+
+
+.doc {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border-radius: 10px;
+	width: 0px;
+	transition: width 1s ease;
+}
+.doc_appear {
+	width: 300px;
+}
+.doc_sub {
+	border-radius: 0px 10px 10px 0px;
+}
+.doc_attached {
+	color: white;
+	background-color: #3E3E3E;
+	box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.40);
+}
+.doc_detached {
+	color: white;
+	background-color: black;
+	box-shadow: none;
+	border: 2px dashed white;
+	opacity: 0.3;
+}

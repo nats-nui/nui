@@ -29,11 +29,8 @@ const Header: FunctionComponent<Props> = ({
 
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
+		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
 		mouseSo.startDrag({ srcView: view })
-	}
-	
-	const handleClick = (e) => {
-		docSo.showStack(view)
 	}
 
 	// RENDER
@@ -45,7 +42,6 @@ const Header: FunctionComponent<Props> = ({
 		<div style={cssContainer}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
-			onClick={handleClick}
 		>
 			{icon}
 			<span style={cssLabel}>{title}</span>
