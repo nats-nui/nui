@@ -1,11 +1,11 @@
 import { POSITION_TYPE } from "@/types";
-import { ViewStore } from "../docBase";
+import { ViewStore } from "../viewBase";
 import { getID } from "./factory";
 
 
 
 /**
- * Permette di aggregare l'array di "docs" 
+ * Permette di aggregare l'array di VIEWs
  */
 export function aggregate(views: ViewStore[]): ViewStore[] {
 	if (!views) return []
@@ -25,51 +25,48 @@ export function aggregate(views: ViewStore[]): ViewStore[] {
 }
 
 /**
- * Disgrega un array di DocView in maniera da ottenere un array di Doc
+ * Disgrega un array di ViewStore in maniera da ottenere un array di VIEWs
  */
 export function disgregate(docsView: ViewStore[]): ViewStore[] {
 	let views: ViewStore[] = []
 	forEachDocsView(docsView, (docView) => views.push(docView))
-	// elimino le VIEW temporanee
-	views = views.filter(view => !view.state.temporary)
 	return views
 }
 
 /**
- * Cicla tutti i docs di questo array compresi i children
+ * Cicla tutte le VIEWs di un array compresi i children
  */
-export function forEachDocsView(view: ViewStore[], callback: (view: ViewStore) => any): boolean {
-	if (!view) return
-	for (const v of view) {
-		if (forEachDocView(v, callback) === true) return true
+export function forEachDocsView(views: ViewStore[], callback: (view: ViewStore) => any): boolean {
+	if (!views) return
+	for (const view of views) {
+		if (forEachDocView(view, callback) === true) return true
 	}
 }
-
 function forEachDocView(view: ViewStore, callback: (view: ViewStore) => any): boolean {
 	if (!view) return
 	if (callback(view) === true) return true
-	if (view.state.stacked) {
-		for (const v of view.state.stacked) if (callback(v) === true) return true
-	}
 	if (view.state.linked) {
 		return forEachDocView(view.state.linked, callback)
 	}
 }
 
-/** recupera una VIEW traite l'id del DOC che è contenuto */
-export function getById(docsView: ViewStore[], id: string): ViewStore {
+/** 
+ * restituisce una VIEW tramite l'id cercando nei "child" in un array di VIEW 
+ */
+export function getById(views: ViewStore[], id: string): ViewStore {
 	let finded: ViewStore = null
-	forEachDocsView(docsView, (docView) => {
-		if (getID(docView.state) === id) {
-			finded = docView
+	forEachDocsView(views, (view) => {
+		if (getID(view.state) === id) {
+			finded = view
 			return true
 		}
 	})
 	return finded
 }
 
-
-/** cicla tutti i parent di questo doc-view */
+/** 
+ * cicla tutti i parent di "view" 
+ */
 export function forEachParent(view: ViewStore, callback: (view: ViewStore) => void): void {
 	let parent = view?.state.parent
 	while (parent != null) {
@@ -77,11 +74,12 @@ export function forEachParent(view: ViewStore, callback: (view: ViewStore) => vo
 		parent = parent.state.parent
 	}
 }
-/** Restituisce il deep di una view rispetto i suoi parents */
+
+/** 
+ * Restituisce il deep di una view rispetto i suoi parents 
+ */
 export function numLinkedParent(view: ViewStore): number {
 	let count = 0
 	forEachParent(view, () => count++)
 	return count
 }
-
-

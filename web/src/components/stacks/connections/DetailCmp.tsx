@@ -1,5 +1,5 @@
 import cnnSo, { ConnectionState } from "@/stores/connections"
-import { ViewStore } from "@/stores/docs/docBase"
+import { ViewStore } from "@/stores/docs/viewBase"
 import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"

@@ -1,10 +1,11 @@
-import { POSITION_TYPE } from "@/stores/docs/types"
+import { DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
 import navSo from "@/stores/navigation"
 import { StoreCore, createStore } from "@priolo/jon"
-import { ViewStore } from "./docBase"
+import { ViewStore } from "./viewBase"
 import { stringToViewsState, viewsToString } from "./utils/urlTransform"
 import { buildStore } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
+import { debounce, debounceExist } from "@/utils/time"
 
 
 const setup = {
@@ -61,7 +62,7 @@ const setup = {
 			// ---
 			store.setAll([...store.state.all])
 		},
-		
+
 		/** inserisco una VIEW nello STACK di un altra VIEW */
 		remove(view: ViewStore, store?: DocStore) {
 			const views = [...store.state.all]
@@ -106,10 +107,42 @@ const setup = {
 	},
 
 	mutators: {
-		setAll: (all: ViewStore[]) => {
+		setAll: (all: ViewStore[], store?: DocStore) => {
 			const views: ViewStore[] = disgregate(all)
 			navSo.setParams(["docs", viewsToString(views)])
-			return { all }
+
+
+			//let updateAdd = false
+			let updateDel = false
+			const deleted = [...store.state.all]
+			for (const view of all) {
+				const index = deleted.indexOf(view)
+				if (index == -1) {
+					view.setDocAnim(DOC_ANIM.SHOWING)
+					//updateAdd = true
+				} else {
+					deleted.splice(index, 1)
+				}
+			}
+			for (const view of deleted) {
+				updateDel = true
+				view.setDocAnim(DOC_ANIM.EXITING)
+			}
+
+			if ( !debounceExist("setAllInShow") && !updateDel ) {
+				return { all, allInShow: all }
+			}
+
+			//if ( needUpdate) {
+				debounce("setAllInShow", ()=>store.setAllInShow(), 400)
+				return { all }
+			//}
+			//return { all, allInShow: all }
+			
+		},
+		setAllInShow: (_: void, store?: DocStore) => {
+			console.log("***setAllInShow***")
+			return { allInShow: store.state.all }
 		},
 		setFocus: (focus: number) => ({ focus }),
 	},

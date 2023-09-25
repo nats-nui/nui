@@ -1,7 +1,7 @@
-import { ViewStore } from "@/stores/docs/docBase"
-import mouseSo, { MouseState } from "@/stores/mouse"
+import { ViewState, ViewStore } from "@/stores/docs/viewBase"
+import { DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useState } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
 import styles from './DocViewCmp.module.css'
 
@@ -18,14 +18,14 @@ const DocViewCmp: FunctionComponent<Props> = ({
 }) => {
 
 	// STORES
-	const viewSa = useStore(view)
-	const mouseSa: MouseState = useStore(mouseSo)
+	const viewSa = useStore(view) as ViewState
 
 	// HOOKS
-	const [isVisible, setIsVisible] = useState(false);
-	useEffect(() => {
-		setIsVisible(true);
-	}, []);
+	useEffect(()=>{
+		console.log("pippo")
+		view.setDocAnim(DOC_ANIM.EXIT)
+		window.requestAnimationFrame(()=>view.setDocAnim(DOC_ANIM.SHOWING));
+	},[])
 
 	// HANDLER
 
@@ -34,11 +34,9 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const haveDialog = !!view.state.dialogCmp
 	const haveLinked = !!view.state.linked
-	const inDrag = mouseSa.drag?.srcView == view
-
 	// style
-	const clsContainer = `${styles.container} ${isVisible ? styles.appear : ''}`
-	const clsDoc = `${styles.doc} ${isVisible ? styles.doc_appear : ''} ${inRoot ? "" : styles.doc_sub} ${inDrag ? styles.doc_detached : styles.doc_attached}`
+	const clsDocAnim = styles[`doc_${viewSa.docAnim}`]
+	const clsDoc = `${styles.doc} ${inRoot ? "" : styles.doc_sub} ${clsDocAnim}`
 	const styContainer = {
 		...{ zIndex: deep },
 	}
@@ -46,7 +44,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		...{ zIndex: deep },
 	}
 
-	return <div style={styContainer} className={clsContainer}>
+	return <div style={styContainer} className={styles.container}>
 
 		<div style={styContainerDoc} className={clsDoc}>
 

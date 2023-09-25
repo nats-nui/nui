@@ -1,6 +1,7 @@
 import { StoreCore, createStore } from "@priolo/jon"
-import { ViewStore } from "../docs/docBase"
+import { ViewStore } from "../docs/viewBase"
 import docSo from "@/stores/docs"
+import { DOC_ANIM } from "../docs/types"
 
 
 export interface DragDoc {
@@ -37,11 +38,13 @@ const setup = {
 			}
 			document.addEventListener('mousemove', fnMouseMove);
 			document.addEventListener('mouseup', fnMouseUp);
+			drag.srcView.setDocAnim(DOC_ANIM.DRAGGING)
 			store.setDrag(drag)
 		},
 		stopDrag(_: void, store?: MouseStore) {
 			const { srcView, index } = store.state.drag
 			store.setDrag(null)
+			srcView.setDocAnim(DOC_ANIM.SHOW)
 			docSo.move({view: srcView, index})
 		}
 	},
