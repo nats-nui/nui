@@ -1,21 +1,16 @@
-import commands from "./commands.mjs"
-import WebSocket from "ws"
+import commands from "./commands.js"
+import WebSocket, { WebSocketServer } from "ws"
 
-//#region STARTUP
+
 
 let server = null
 let client = null
 
 serverStart()
 
-//#region STARTUP
-
-
-//#region SERVER
-
 function serverStart(port = 8080) {
 	if (server) return
-	server = new WebSocket.Server({ port });
+	server = new WebSocketServer({ port });
 	console.log("server:start:" + port)
 
 	server.on('connection', cws => {
@@ -46,8 +41,6 @@ function serverStop() {
 	if (!server) return
 	server.close()
 }
-
-//#endregion
 
 
 

@@ -2,7 +2,7 @@ import docSo from "@/stores/docs"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { DOC_TYPE } from "@/stores/docs/types"
 import React, { FunctionComponent } from "react"
-
+import ss from "@/plugins/SocketService"
 
 interface Props {
 	style?: React.CSSProperties
@@ -19,13 +19,14 @@ const MainMenu: FunctionComponent<Props> = ({
 		})
 		docSo.add({ view: cnnStore })
 	}
+	const handleDebugMessage = () => {
+		
+	}
 
 	// RENDER
 	return <div style={{ ...cssContainer, ...style }}>
 		<button onClick={handleNodes}>NODES</button>
-		<button>TOPIC</button>
-		<button>TEST</button>
-		<button>CREDIT</button>
+		<button onClick={handleDebugMessage}>DEBUG: message</button>
 	</div>
 }
 

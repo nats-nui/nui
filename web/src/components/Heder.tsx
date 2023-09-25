@@ -1,5 +1,5 @@
 import docSo, { DocState } from "@/stores/docs"
-import { ViewStore } from "@/stores/docs/docBase"
+import { ViewStore } from "@/stores/docs/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import CloseBtt from "./buttons/CloseBtt"

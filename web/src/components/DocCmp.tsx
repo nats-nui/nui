@@ -1,7 +1,7 @@
 import MessagesDoc from "@/components/stacks/messages/MessagesDoc"
 import ServicesDoc from "@/components/stacks/services/ServicesDoc"
 import { CnnViewStore } from "@/stores/stacks/connection"
-import { ViewStore } from "@/stores/docs/docBase"
+import { ViewStore } from "@/stores/docs/viewBase"
 import { MessagesStore } from "@/stores/stacks/messages"
 import { ServicesStore } from "@/stores/stacks/services"
 import { DOC_TYPE } from "@/types"

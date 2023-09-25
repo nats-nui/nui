@@ -3,14 +3,15 @@ import messagesSetup from "@/stores/stacks/messages";
 import servicesSetup from "@/stores/stacks/services";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
-import { ViewState, ViewStore } from "../docBase";
+import { ViewState, ViewStore } from "../viewBase";
 
 /** restituisce un identificativo sringa di una VIEW STORE */
 export function getID(viewState: ViewState): string {
 	if (!viewState.type && viewState.uuid) return viewState.uuid
 	return `${viewState.type}${viewState.uuid ? `-${viewState.uuid}` : ""}`
 }
-/** da un ìidentificativo stringa restituisce una VIEW STATE parziale */
+
+/** da un identificativo stringa restituisce una VIEW STATE parziale */
 export function fromID(str: string): ViewState {
 	const index = str.indexOf("-")
 	if (index == -1) return { type: str as DOC_TYPE}
@@ -19,6 +20,7 @@ export function fromID(str: string): ViewState {
 	return { type, uuid }
 }
 
+/** genera un uuid per un DOC */
 export function createUUID(): string {
 	var dt = new Date().getTime();
 	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(

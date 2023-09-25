@@ -12,7 +12,10 @@ export enum POSITION_TYPE {
 }
 
 export enum DOC_ANIM {
-	FIX,
-	DRAGGING,
-	
+	INIT="init",
+	SHOW="show",
+	EXIT="exit",
+	DRAGGING="dragging",
+	EXITING="exiting",
+	SHOWING="showing",
 }

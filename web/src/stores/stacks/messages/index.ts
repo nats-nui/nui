@@ -1,6 +1,6 @@
-import docSetup, { ViewStore } from "@/stores/docs/docBase"
+import docSetup, { ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore } from "@priolo/jon"
-import { ViewState } from "../../docs/docBase"
+import { ViewState } from "../../docs/viewBase"
 import { mixStores } from "@priolo/jon"
 
 

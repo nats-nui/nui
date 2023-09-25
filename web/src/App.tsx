@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import docSo, { DocState } from "@/stores/docs"
-import { ViewStore } from "@/stores/docs/docBase"
+import { ViewStore } from "@/stores/docs/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import DropArea from "./DropArea"
@@ -25,7 +25,7 @@ const App: FunctionComponent = () => {
 	
 
 	// RENDER
-	const views = docSa.all
+	const views = docSa.allInShow
 	return (
 		<div style={cssApp}>
 			

@@ -6,3 +6,8 @@ export const SOCKET_STATE = {
 	ERROR: 2,
 	CONNECT_ERROR_PING: 3
 }
+
+export interface SocketData {
+	subject: string
+	payload?: any
+}

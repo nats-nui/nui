@@ -1,5 +1,5 @@
 import docsSo from "@/stores/docs"
-import { ViewState, ViewStore, default as docSetup, default as superDoc } from "@/stores/docs/docBase"
+import { ViewState, ViewStore, default as docSetup, default as superDoc } from "@/stores/docs/viewBase"
 import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
