@@ -1,4 +1,4 @@
-import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
+import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { ViewStore } from "@/stores/docs/viewBase"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -8,7 +8,7 @@ import cnnSo from "@/stores/connections"
 
 
 interface Props {
-	store?: CnnViewStore
+	store?: CnnListStore
 	parentSo?: ViewStore
 }
 
@@ -18,7 +18,7 @@ const SubscriptionsDlg: FunctionComponent<Props> = ({
 }) => {
 
 	// STORES
-	const viewSa = useStore(viewSo) as CnnViewState
+	const viewSa = useStore(viewSo) as CnnListState
 	if (!parentSo) parentSo = viewSo
 
 	// HOOKS

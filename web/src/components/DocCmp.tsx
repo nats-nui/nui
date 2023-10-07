@@ -1,12 +1,12 @@
-import MessagesDoc from "@/components/stacks/messages/MessagesDoc"
-import ServicesDoc from "@/components/stacks/services/ServicesDoc"
-import { CnnViewStore } from "@/stores/stacks/connection"
+import MessagesView from "@/components/stacks/messages/MessagesView"
+import CnnDetailView from "@/components/stacks/connections/CnnDetailView"
 import { ViewStore } from "@/stores/docs/viewBase"
+import { CnnListStore } from "@/stores/stacks/connection/list"
 import { MessagesStore } from "@/stores/stacks/messages"
-import { ServicesStore } from "@/stores/stacks/services"
+import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
-import ConnectionsDoc from "./stacks/connections/ConnectionsDoc"
+import CnnListView from "./stacks/connections/CnnListView"
 
 
 
@@ -21,11 +21,11 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 	const content = useMemo(() => {
 		switch (view.state.type) {
 			case DOC_TYPE.CONNECTIONS:
-				return <ConnectionsDoc store={view as CnnViewStore} style={style}/>
+				return <CnnListView store={view as CnnListStore} style={style}/>
 			case DOC_TYPE.SERVICES:
-				return <ServicesDoc store={view as ServicesStore} style={style}/>
+				return <CnnDetailView store={view as CnnDetailStore} style={style}/>
 			case DOC_TYPE.MESSAGES:
-				return <MessagesDoc store={view as MessagesStore} style={style}/>
+				return <MessagesView store={view as MessagesStore} style={style}/>
 			default:
 				return null
 		}

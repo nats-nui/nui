@@ -22,7 +22,6 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 	// HOOKS
 	useEffect(()=>{
-		console.log("pippo")
 		view.setDocAnim(DOC_ANIM.EXIT)
 		window.requestAnimationFrame(()=>view.setDocAnim(DOC_ANIM.SHOWING));
 	},[])

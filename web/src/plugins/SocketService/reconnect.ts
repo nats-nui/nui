@@ -39,7 +39,7 @@ export class Reconnect {
 
 	tryUp() {
 		this.try++
-		console.log(`socket:reconnect:try:${this.try}`)
+		//console.log(`socket:reconnect:try:${this.try}`)
 		if (this.try == 1) return // primo tentativo non è un problema
 		// this.layout().setFiSocket(this.try >= this.options.tryMax
 		// 	? SOCKET_STATE.ERROR

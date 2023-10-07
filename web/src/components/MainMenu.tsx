@@ -19,14 +19,19 @@ const MainMenu: FunctionComponent<Props> = ({
 		})
 		docSo.add({ view: cnnStore })
 	}
-	const handleDebugMessage = () => {
-		
+	
+	const handleDebugPingStop = () => {
+		ss.send({ type: "mock", cmm: "ping:stop", data: null })
+	}
+	const handleDebugPingStart = () => {
+		ss.send({ type: "mock", cmm: "ping:start", data: null })
 	}
 
 	// RENDER
 	return <div style={{ ...cssContainer, ...style }}>
 		<button onClick={handleNodes}>NODES</button>
-		<button onClick={handleDebugMessage}>DEBUG: message</button>
+		<button onClick={handleDebugPingStop}>DEBUG: ping:stop</button>
+		<button onClick={handleDebugPingStart}>DEBUG: ping:start</button>
 	</div>
 }
 

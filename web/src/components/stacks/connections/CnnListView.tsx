@@ -1,24 +1,27 @@
 import imgCnn from "@/assets/cnn-hdr.svg"
 import Header from "@/components/Heder"
 import cnnSo, { ConnectionState } from "@/stores/connections"
-import { CnnViewState, CnnViewStore } from "@/stores/stacks/connection"
+import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 
 
 interface Props {
-	store?: CnnViewStore
+	store?: CnnListStore
 	style?: React.CSSProperties,
 }
 
-const ConnectionsDoc: FunctionComponent<Props> = ({
+/**
+ * Lo STACK di una collezione di CONNECTIONs
+ */
+const CnnListView: FunctionComponent<Props> = ({
 	store: viewSo,
 	style,
 }) => {
 
 	// STORE
-	const viewSa = useStore(viewSo) as CnnViewState
+	const viewSa = useStore(viewSo) as CnnListState
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
@@ -31,23 +34,25 @@ const ConnectionsDoc: FunctionComponent<Props> = ({
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const selected = viewSo.getSelectId()
-	const isSelected = (index: number) => selected == index
+	const selectedId = viewSo.getSelectId()
+	const isSelected = (cnn: Connection) => selectedId == cnn.id
 
-	return (
-		<div style={{...cssContainer, ...style}}>
-			<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />}/>
-			<button>new</button>
-			{connnections.map((cnn, index) => (
-				<div key={cnn.id} style={cssItem(isSelected(index))}
-					onClick={_ => handleSelectConnection(cnn)}
-				>{cnn.name}</div>
-			))}
-		</div>
-	)
+	return <div style={{ ...cssContainer, ...style }}>
+
+		<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
+
+		<button>new</button>
+
+		{connnections.map(cnn => (
+			<div key={cnn.id} style={cssItem(isSelected(cnn))}
+				onClick={_ => handleSelectConnection(cnn)}
+			>{cnn.name}</div>
+		))}
+
+	</div>
 }
 
-export default ConnectionsDoc
+export default CnnListView
 
 const cssContainer: React.CSSProperties = {
 	flex: 1,
@@ -57,5 +62,6 @@ const cssContainer: React.CSSProperties = {
 }
 
 const cssItem = (select: boolean): React.CSSProperties => ({
-	backgroundColor: select ? "gray" : "unset"
+	cursor: "pointer",
+	backgroundColor: select ? "red" : "unset"
 })

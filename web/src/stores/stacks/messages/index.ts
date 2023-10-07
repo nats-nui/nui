@@ -2,6 +2,7 @@ import docSetup, { ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
 import { mixStores } from "@priolo/jon"
+import ss from "@/plugins/SocketService"
 
 
 
@@ -21,6 +22,22 @@ const setup = {
 	},
 
 	actions: {
+		connect ( _:void, store?:MessagesStore ) {
+			ss.send({
+				type: "mock", 
+				cmm: "connections:subscribe", 
+				cnnId: store.state.params[PARAMS_MESSAGES.CONNECTION_ID],
+				subjects: [],
+			})
+		},
+		disconnect( _:void, store?:MessagesStore ) {
+			ss.send({
+				type: "mock", 
+				cmm: "connections:subscribe", 
+				cnnId: store.state.params[PARAMS_MESSAGES.CONNECTION_ID],
+				subjects: [],
+			})
+		}
 	},
 
 	mutators: {
