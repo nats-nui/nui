@@ -1,4 +1,3 @@
-/* eslint eqeqeq: "off" */
 import { Ping } from "./ping.js";
 import { Reconnect } from "./reconnect.js";
 import { Commands } from "./commands.js"
@@ -96,7 +95,7 @@ export class SocketService {
 	//#region SOCKET EVENT
 
 	onOpen(e: Event) {
-		console.log("socket:open")
+		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		this.ping.start()
@@ -104,10 +103,9 @@ export class SocketService {
 	}
 
 	onClose(e: CloseEvent) {
-		console.log("socket:close")
+		//console.log("socket:close")
 		this.ping.stop()
 		this.clear()
-		if (!this.tokenLast) return
 		this.reconnect.start()
 	}
 
@@ -118,7 +116,7 @@ export class SocketService {
 	}
 
 	onError(e: Event) {
-		console.log("socket:error:", e)
+		//console.log("socket:error:", e)
 	}
 
 	//#endregion

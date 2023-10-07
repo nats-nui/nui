@@ -1,7 +1,7 @@
 import Header from "@/components/Heder"
 import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/stacks/messages"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { useEffect, FunctionComponent } from "react"
 import imgMsg from "@/assets/msg-hdr.svg"
 import cnnSo from "@/stores/connections"
 
@@ -12,7 +12,7 @@ interface Props {
 	style?: React.CSSProperties,
 }
 
-const MessagesDoc: FunctionComponent<Props> = ({
+const MessagesView: FunctionComponent<Props> = ({
 	store: msgSo,
 	style,
 }) => {
@@ -21,6 +21,10 @@ const MessagesDoc: FunctionComponent<Props> = ({
 	const msgSa = useStore(msgSo) as MessagesState
 
 	// HOOKs
+	useEffect(() => {
+		console.log("start connection " + msgSa.params[PARAMS_MESSAGES.CONNECTION_ID])
+		msgSo.connect()
+	}, [])
 
 	// HANDLER
 
@@ -29,14 +33,14 @@ const MessagesDoc: FunctionComponent<Props> = ({
 	const cnn = cnnSo.getById(id)
 
 	return (
-		<div style={{...cssContainer, ...style}}>
+		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
 			i messages di {id}
 		</div>
 	)
 }
 
-export default MessagesDoc
+export default MessagesView
 
 const cssContainer: React.CSSProperties = {
 	flex: 1,

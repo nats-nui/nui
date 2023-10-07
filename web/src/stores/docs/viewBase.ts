@@ -72,7 +72,7 @@ const setup = {
 				if (noSet) return
 			}
 
-			console.log("setDocAnim", docAnim)
+//console.log("setDocAnim", docAnim)
 			return { docAnim }
 		},
 	},

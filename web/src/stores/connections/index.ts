@@ -8,11 +8,12 @@ const setup = {
 
 	state: {
 		all: <Connection[]>null,
+		//selectId: <string>null,
 	},
 
 	getters: {
 		getById(id: string, store?: ConnectionStore) {
-			if ( !id ) return null
+			if (!id) return null
 			return store.state.all?.find(cnn => cnn.id == id)
 		},
 	},
@@ -22,14 +23,16 @@ const setup = {
 			const { data: connections } = await connectionApi.index()
 			store.setAll(connections)
 		},
+		
 	},
 
 	mutators: {
 		setAll: (all: Connection[]) => ({ all }),
+		//setSelectId: (selectId: string) => ({ selectId }),
 		updateConnection: (cnn: Connection, store?: ConnectionStore) => {
 			const all = [...store.state.all]
-			const index = all.findIndex( c => c.id == cnn.id)
-			if ( index == -1 ) return
+			const index = all.findIndex(c => c.id == cnn.id)
+			if (index == -1) return
 			all[index] = cnn
 			return { all }
 		},

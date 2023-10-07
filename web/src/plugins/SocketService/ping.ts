@@ -50,7 +50,7 @@ export class Ping {
 
 	/**
 	 * su intervall
-	 * controllare non sia passato troppo tempo dall'ultimo messaggio arrivato
+	 * controlla non sia passato troppo tempo dall'ultimo messaggio arrivato
 	 */
 	onInterval() {
 		const current = Date.now()

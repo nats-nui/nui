@@ -1,6 +1,6 @@
-import cnnSetup from "@/stores/stacks/connection";
+import cnnSetup from "@/stores/stacks/connection/list";
 import messagesSetup from "@/stores/stacks/messages";
-import servicesSetup from "@/stores/stacks/services";
+import servicesSetup from "@/stores/stacks/connection/detail";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../viewBase";
@@ -42,8 +42,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 	}[state.type]
 	if (!setup) return
-	setup.state = { ...setup.state, ...state }
 	const store: ViewStore = createStore(setup)
+	store.state = { ...store.state, ...state }
 	// se non c'e' l'uuid lo creo IO!
 	//if ( store.state.uuid == null ) store.state.uuid = createUUID()
 	return store

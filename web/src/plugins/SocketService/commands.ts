@@ -14,31 +14,13 @@ export class Commands {
 
 		"ping": payload => this.server.ping.onMessage(),
 
-		// "rulesengine.event.antennasystem.status": activity => {
-		// 	setAntenna(activity.antennas[0])
-		// 	setAntenna(activity.antennas[1])
-		// 	setSlu(activity.slu)
-		// 	setAntennaSys(activity)
-		// 	setBucs(activity.bucs)
-		// },
-
-		// "rulesengine.event.ship.status": activity => {
-		// 	setShip(activity.ship_params)
-		// },
-
-		// "diagnostics.event.subsystems.status": activity => {
-		// 	setDiagnostic(activity.subsystems)
-		// },
-
-		// "rulesengine.event.antennasystem.currentconnections": activity => {
-		// 	setCurrentConnection(activity)
-		// },
-
-
-		// "measure_response": activity => {
-		// 	setChart(activity)
-		// }
-
+		"connections:subscribe": payload => {
+			this.server.send({
+				cmm: "connections:subscribe",
+				cnnId: "cnn1",
+				sjbs: "topolino",
+			})
+		}
 	}
 
 	exe(data:SocketData) {
