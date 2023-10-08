@@ -27,9 +27,9 @@ const CnnListView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleSelectConnection = (cnn: Connection) => {
-		viewSo.select(cnn)
-	}
+	const handleSelectConnection = (cnn: Connection) => viewSo.select(cnn)
+	const handleNewConnection = () => viewSo.create()
+	const handleDelConnection = () => cnnSo.delete(selectedId)
 
 	// RENDER
 	const connnections = cnnSa.all
@@ -41,7 +41,15 @@ const CnnListView: FunctionComponent<Props> = ({
 
 		<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
 
-		<button>new</button>
+		<div style={{ display: "flex" }}>
+			<button
+				onClick={handleNewConnection}
+			>new</button>
+			<button
+				onClick={handleDelConnection}
+			>del</button>
+		</div>
+
 
 		{connnections.map(cnn => (
 			<div key={cnn.id} style={cssItem(isSelected(cnn))}

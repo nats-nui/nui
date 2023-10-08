@@ -1,68 +1,70 @@
-import { Connection } from "@/types"
+import cnnSo from "@/stores/connections"
+import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import SubscriptionsDlg from "./SubscriptionsDlg"
 
 
 
 interface Props {
-	connection: Connection
-	onChangeConnection?: (connection:Connection)=>void
+	parentSo: CnnDetailStore
 }
 
 /**
  * dettaglio di una CONNECTION
  */
 const CnnDetailCmp: FunctionComponent<Props> = ({
-	connection,
-	onChangeConnection,
+	parentSo,
 }) => {
 
 	// STORE
+	const cnnDetailSa = useStore(parentSo) as CnnDetailState
 
 	// HOOKs
 
 	// HANDLER
 	const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const name = e.target.value
-		const cnn = { ...connection, name }
-		onChangeConnection(cnn)
+		const cnn = { ...cnnDetailSa.connection, name }
+		parentSo.setConnection(cnn)
+		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleClickSubs = () => {
-		// docsSo.addLink({
-		// 	view: initView({
-		// 		type: DOC_TYPE.LIST,
-		// 		items: ["primo", "secondo", "terzo"]
-		// 	} as ViewState),
-		// 	parent: cnnSo
-		// })
-
-
-
-		//parentSo.setDialogCmp(!!parentSo.state.dialogCmp ? null : subscrsDlg)
+		parentSo.setDialogCmp(subscrsDlg)
+	}
+	const handleCreate = async () => {
+		const cnn = await cnnSo.create(cnnDetailSa.connection)
+		parentSo.setConnection(cnn)
 	}
 
-
 	// RENDER
-	//const connection = cnnSo.getById(viewSo.getSelectId())
-	if (!connection) return null
+	const subscrsDlg = <SubscriptionsDlg
+		parentSo={parentSo}
+		onClose={() => parentSo.setDialogCmp(null)}
+	/>
 
-	// const subscrsDlg = <SubscriptionsDlg
-	// 	store={viewSo}
-	// 	parentSo={parentSo}
-	// />
+	const isNew = cnnDetailSa.connection?.id == null
+
+	if (cnnDetailSa.connection == null) return null
 
 	return (<div>
 
 		<div>NAME</div>
 		<input
-			value={connection.name}
+			value={cnnDetailSa.connection.name}
 			onChange={handleChangeName}
 		/>
 
 		<div>SUBSCRIPTIONS</div>
 		<button
 			onClick={handleClickSubs}
-		>{connection.subscriptions.map(s => s.subject).join(",")}</button>
+		>{cnnDetailSa.connection.subscriptions?.map(s => s.subject).join(",")}</button>
 
+		{isNew &&
+			<button
+				onClick={handleCreate}
+			>CREATE</button>
+		}
 	</div>)
 }
 

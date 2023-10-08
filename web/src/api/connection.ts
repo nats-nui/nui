@@ -20,9 +20,9 @@ function remove(id: string): Promise<void> {
 /**
  * Modifica/crea un CONNECTION
  */
-function save(meta: Connection): Promise<{ data: Connection }> {
-	const blockId = meta.id ? `/${meta.id}` : ""
-	return ajax.post(`metadata${blockId}`, meta)
+function save(cnn: Connection): Promise<{ data: Connection }> {
+	const blockId = cnn.id ? `/${cnn.id}` : ""
+	return ajax.post(`connection${blockId}`, cnn)
 }
 
 const api = {

@@ -1,68 +1,60 @@
-import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
-import { ViewStore } from "@/stores/docs/viewBase"
-import { Subscription } from "@/types"
+import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import cnnSo from "@/stores/connections"
 
 
 
 interface Props {
-	store?: CnnListStore
-	parentSo?: ViewStore
+	parentSo: CnnDetailStore
+	onClose?: () => void
 }
 
 const SubscriptionsDlg: FunctionComponent<Props> = ({
-	store: viewSo,
 	parentSo,
+	onClose,
 }) => {
 
 	// STORES
-	const viewSa = useStore(viewSo) as CnnListState
-	if (!parentSo) parentSo = viewSo
+	const cnnDetailSa = useStore(parentSo) as CnnDetailState
 
 	// HOOKS
-	const [select, setSelect] = useState<Subscription>(null)
+	const [select, setSelect] = useState<number>(null)
 
 	// HANDLERS
-	const onClickSub = (sub: Subscription) => {
-		setSelect(sub)
+	const onClickSub = (index: number) => {
+		setSelect(index)
 	}
 	const handleChangeSubject = (e: React.ChangeEvent<HTMLInputElement>) => {
-		select.subject = e.target.value
-		cnnSo.updateConnection({ ...connection })
+		cnnDetailSa.connection.subscriptions[select].subject = e.target.value
+		parentSo.setConnection({ ...cnnDetailSa.connection })
 	}
 	const handleDelete = () => {
-		const subscriptions = connection.subscriptions.filter(sub => sub != select)
-		const cnn = { ...connection, subscriptions }
-		cnnSo.updateConnection(cnn)
+		cnnDetailSa.connection.subscriptions.splice(select, 1)
+		parentSo.setConnection({ ...cnnDetailSa.connection })
 	}
 	const handleNew = () => {
 		const newSubscription = { subject: "<new>" }
-		connection.subscriptions.push(newSubscription)
-		setSelect(newSubscription)
-		//const cnn = { ...connection, subscriptions }
-		//cnnSo.updateSelected(cnn)
+		cnnDetailSa.connection.subscriptions.push(newSubscription)
+		parentSo.setConnection({ ...cnnDetailSa.connection })
 	}
-	const handleClose = () => parentSo.setDialogCmp(null)
+	const handleClose = () => onClose()
 
 	// RENDER
-	const connection = cnnSo.getById(viewSo.getSelectId())
-	if (!connection) return null
+	if (!cnnDetailSa.connection) return null
 
 	return <div style={cssContainer}>
 
 		<div onClick={handleClose}>X</div>
 
-		{connection.subscriptions?.map((sub, index) =>
-			<div key={index} style={{ backgroundColor: sub == select ? "white" : null }}
-				onClick={() => onClickSub(sub)}
+		{cnnDetailSa.connection.subscriptions?.map((sub, index) =>
+			<div key={index} style={{ backgroundColor: index == select ? "red" : null }}
+				onClick={() => onClickSub(index)}
 			>{sub.subject}</div>
 		)}
 
-		{select && <>
+		{select != null && <>
 			<input
-				value={select.subject}
+				value={cnnDetailSa.connection.subscriptions[select]?.subject ?? ""}
 				onChange={handleChangeSubject}
 			/>
 			<button
@@ -73,7 +65,6 @@ const SubscriptionsDlg: FunctionComponent<Props> = ({
 		<button
 			onClick={handleNew}
 		>NEW</button>
-
 
 	</div>
 }
