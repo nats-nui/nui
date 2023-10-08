@@ -1,4 +1,4 @@
-import connectionApi from "@/api/connection"
+import cnnApi from "@/api/connection"
 import { Connection } from "@/types/Connection"
 import { StoreCore, createStore } from "@priolo/jon"
 
@@ -8,7 +8,6 @@ const setup = {
 
 	state: {
 		all: <Connection[]>null,
-		//selectId: <string>null,
 	},
 
 	getters: {
@@ -20,15 +19,22 @@ const setup = {
 
 	actions: {
 		async fetch(_: void, store?: ConnectionStore) {
-			const { data: connections } = await connectionApi.index()
-			store.setAll(connections)
+			const { data: cnn } = await cnnApi.index()
+			store.setAll(cnn)
 		},
-		
+		async create(cnn: Connection, store?: ConnectionStore): Promise<Connection> {
+			const { data: cnnNew } = await cnnApi.save(cnn)
+			store.setAll([...store.state.all, cnnNew])
+			return cnnNew
+		},
+		async delete(id: string, store?: ConnectionStore): Promise<void> {
+			await cnnApi.remove(id)
+			store.setAll(store.state.all.filter(c => c.id != id))
+		}
 	},
 
 	mutators: {
 		setAll: (all: Connection[]) => ({ all }),
-		//setSelectId: (selectId: string) => ({ selectId }),
 		updateConnection: (cnn: Connection, store?: ConnectionStore) => {
 			const all = [...store.state.all]
 			const index = all.findIndex(c => c.id == cnn.id)

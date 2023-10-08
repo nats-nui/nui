@@ -12,7 +12,7 @@ import { createUUID } from "@/mocks/data/utils"
 const setup = {
 
 	state: {
-		connectionId: <string>null,
+		connection: <Connection>null,
 		draggable: false,
 	},
 
@@ -36,7 +36,7 @@ const setup = {
 	},
 
 	mutators: {
-		setConnectionId: (connection: Connection) => ({ connection })
+		setConnection: (connection: Connection) => ({ connection })
 	},
 }
 

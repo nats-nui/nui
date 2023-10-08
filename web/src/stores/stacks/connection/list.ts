@@ -13,6 +13,9 @@ export enum CONNECTIONS_PARAMS {
 	SELECT_ID = "slc"
 }
 
+/**
+ * Gestione della VIEW che visualizza la lista di CONNECTIONs
+ */
 const setup = {
 
 	state: {
@@ -35,12 +38,22 @@ const setup = {
 			let srvStore = null
 			if ( idSel != null ) srvStore = buildStore({
 				type: DOC_TYPE.SERVICES,
-				connectionId: cnn.id,
+				connection: cnn,
 			} as CnnDetailState)
 			docsSo.addLink({
 				view: srvStore,
 				parent: store,
 			})
+		},
+		create(_:void, store?: CnnListStore) {
+			const view = buildStore({
+				type: DOC_TYPE.SERVICES,
+				connection: {
+					name: "<new>",
+					subscriptions: [],
+				},
+			} as CnnDetailState)
+			docsSo.addLink({ view, parent: store })
 		},
 	},
 

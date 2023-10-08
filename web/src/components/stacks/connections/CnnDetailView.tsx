@@ -1,7 +1,6 @@
 import Header from "@/components/Heder"
 import connSo, { ConnectionState } from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useMemo } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
@@ -9,50 +8,43 @@ import CnnDetailCmp from "./CnnDetailCmp"
 
 
 interface Props {
-	store?: CnnDetailStore
+	cnnDetailSo?: CnnDetailStore
 	style?: React.CSSProperties,
 }
 
 const CnnDetailView: FunctionComponent<Props> = ({
-	store: serviceSo,
+	cnnDetailSo,
 	style,
 }) => {
 
 	// STORE
-	const serviceSa = useStore(serviceSo) as CnnDetailState
+	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
 	const connSa = useStore(connSo) as ConnectionState
 
 	// HOOKs
 
 	// HANDLER
 	const handleClickMessages = () => {
-		serviceSo.openMessages()
-	}
-	const handleChangeConnection = (connection: Connection) => {
-		connSo.updateConnection(connection)
+		cnnDetailSo.openMessages()
 	}
 
 	// RENDER
-	const connection = useMemo(
-		() => connSo.getById(serviceSa.connectionId), 
-		[serviceSa.connectionId, connSa.all]
-	)
+	return <div style={{ ...cssContainer, ...style }}>
 
-	return (
-		<div style={{ ...cssContainer, ...style }}>
-			<Header view={serviceSo} title="SERVICES" />
-			<div style={cssItem}
-				onClick={handleClickMessages}
-			>MESSAGES</div>
-			<div style={cssItem}>DATABASES</div>
-			<div style={cssItem}>SETTINGS</div>
-			<hr />
-			<CnnDetailCmp
-				connection={connection}
-				onChangeConnection={handleChangeConnection}
-			/>
-		</div>
-	)
+		<Header view={cnnDetailSo} title="DETAIL" />
+
+		<div style={cssItem}
+			onClick={handleClickMessages}
+		>MESSAGES</div>
+		<div style={cssItem}>DATABASES</div>
+		<div style={cssItem}>SETTINGS</div>
+		
+		<hr />
+
+		<CnnDetailCmp
+			parentSo={cnnDetailSo}
+		/>
+	</div>
 }
 
 export default CnnDetailView
