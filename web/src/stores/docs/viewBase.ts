@@ -21,7 +21,7 @@ const setup = {
 		parent: <ViewStore>null,
 		linked: <ViewStore>null,
 
-		dialogCmp: <React.ReactNode>null,
+		dialogOpen: false,
 	},
 
 	getters: {
@@ -38,7 +38,7 @@ const setup = {
 			const params = { ...store.state.params, ...ps }
 			return { params }
 		},
-		setDialogCmp: (dialogCmp: React.ReactNode) => ({ dialogCmp }),
+		setDialogOpen: (dialogOpen: boolean) => ({ dialogOpen }),
 		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
 
 

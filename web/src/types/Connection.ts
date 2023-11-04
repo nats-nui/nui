@@ -2,7 +2,8 @@
 export interface Connection {
 	id: string
 	name: string
-	hosts: string[]
+	//hosts: string[]
+	host: string
 	subscriptions: Subscription[]
 }
 

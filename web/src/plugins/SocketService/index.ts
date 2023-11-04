@@ -1,6 +1,6 @@
-import { Ping } from "./ping.js";
+//import { Ping } from "./ping.js";
 import { Reconnect } from "./reconnect.js";
-import { Commands } from "./commands.js"
+//import { Commands } from "./commands.js"
 
 
 
@@ -9,6 +9,12 @@ export interface SocketOptions {
 	host?: string
 	port?: string
 	base?: string
+	onMessage?: (message:SocketMessage) => void
+}
+
+export interface SocketMessage {
+	subject: string
+	payload: any
 }
 
 const optionsDefault: SocketOptions = {
@@ -18,6 +24,11 @@ const optionsDefault: SocketOptions = {
 	base: "",
 }
 
+
+
+export interface ISocket {
+
+}
 /**
  * Crea una connessione WS
  * gestisce le riconnessioni
@@ -29,17 +40,19 @@ export class SocketService {
 	options: SocketOptions;
 	websocket: WebSocket;
 	tokenLast: string = null
-	ping: Ping;
+	//ping: Ping;
 	reconnect: Reconnect;
-	commands: Commands;
+	//commands: Commands;
+
+	onOpen: () => void = null;
 
 	constructor(options: SocketOptions = {}) {
 		this.options = { ...optionsDefault, ...options }
 		this.websocket = null
 
-		this.ping = new Ping(this)
+		//this.ping = new Ping(this)
 		this.reconnect = new Reconnect(this)
-		this.commands = new Commands(this)
+		//this.commands = new Commands(this)
 	}
 
 	/** 
@@ -52,15 +65,15 @@ export class SocketService {
 
 		try {
 			let url = `${protocol}//${host}:${port}`
-			if ( base ) url = `${url}/${base}`
-			if ( token ) url = `${url}?token=${token}`
+			if (base) url = `${url}/${base}`
+			if (token) url = `${url}?token=${token}`
 			this.websocket = new WebSocket(url);
 		} catch (error) {
 			console.error(error)
 			return
 		}
 
-		this.websocket.onopen = this.onOpen.bind(this);
+		this.websocket.onopen = this.onopen.bind(this);
 		this.websocket.onclose = this.onClose.bind(this);
 		this.websocket.onmessage = this.onMessage.bind(this);
 		this.websocket.onerror = this.onError.bind(this);
@@ -94,25 +107,26 @@ export class SocketService {
 
 	//#region SOCKET EVENT
 
-	onOpen(e: Event) {
+	onopen(e: Event) {
 		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
-		this.ping.start()
+		//this.ping.start()
 		//this.layout().setFiSocket(this.ping.inAlert == false ? SOCKET_STATE.CONNECT : SOCKET_STATE.CONNECT_ERROR_PING)
+		this.onOpen?.()
 	}
 
 	onClose(e: CloseEvent) {
 		//console.log("socket:close")
-		this.ping.stop()
+		//this.ping.stop()
 		this.clear()
 		this.reconnect.start()
 	}
 
 	onMessage(e: MessageEvent) {
-		const data = JSON.parse(e.data)
-		console.log("socket:data:", data)
-		this.commands.exe(data)
+		if (!this.options.onMessage ) return
+		const message:SocketMessage = JSON.parse(e.data) as SocketMessage
+		this.options.onMessage(message)
 	}
 
 	onError(e: Event) {
@@ -123,5 +137,4 @@ export class SocketService {
 
 }
 
-const ss = new SocketService()
-export default ss
+

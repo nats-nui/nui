@@ -1,5 +1,5 @@
-import commands from "./commands.js"
-import WebSocket, { WebSocketServer } from "ws"
+import { WebSocketServer } from "ws"
+import { Thread } from "./thread.js"
 
 
 
@@ -14,12 +14,12 @@ function serverStart(port = 8080) {
 	console.log("server:start:" + port)
 
 	server.on('connection', cws => {
-		console.log("server:connection")
+		console.log("server:connection", cws.protocol, cws.url)
 		client = cws
 		// events
 		client.on('message', onMessage)
 		// startup
-		pingStart()
+		//pingStart()
 	})
 
 	server.on("error", (error) => {
@@ -46,66 +46,38 @@ function serverStop() {
 
 //#region COMMANDS
 
-// {
-// 	type: "mock",
-// 	cmm: "antenna:position",
-// 	data: data
-// }
+/** Gestisco il messaggio arrivato */
 const onMessage = msg => {
-	console.log("client:message:")
-	console.log(msg)
-	console.log("---")
 	const data = JSON.parse(msg)
-	typeCmm[data.type](data)
-}
 
-const typeCmm = {
-	"mock": data => commands[data.cmm](data)
-}
+	console.log("client:message:")
+	console.log(data)
+	console.log("---")
 
-//#endregion
-
-
-
-//#region  PING
-
-let idPing = null
-let timePing = 2000
-let pingEnabled = true
-
-const pingStart = () => {
-	if (idPing || pingEnabled==false) return;
-	idPing = setInterval(() => {
-		if (!client) return
-		pingSend()
-	}, timePing)
-}
-const pingStop = () => {
-	if (!idPing || pingEnabled==true) return
-	clearInterval(idPing)
-	idPing=null
-}
-const pingSend = () => {
-	const data = {
-		subject: "ping",
-		activity: "ping at 2020-09-17 17:01:58.416460684 +0300 EEST m=+540.070420680"
-	}
-	client.send(JSON.stringify(data))
-}
-const pingSetEnabled = ( enable ) => {
-	pingEnabled = enable
-	if ( pingEnabled ) {
-		pingStart()
-	} else {
-		pingStop()
+	if (data.connection_id && data.subjects) {
+		if (Array.isArray(data.subjects) && data.subjects.length > 0) {
+			new Thread(
+				() => sendTestMessages(data.connection_id, data.subjects),
+				{ cnnId: data.connection_id }
+			).start()
+		} else {
+			Thread.Find({ cnnId: data.connection_id })?.stop()
+		}
 	}
 }
 
+function sendTestMessages(connectionId, subjects) {
+	subjects.forEach(subject => send({
+		subject,
+		payload: `cnn:${connectionId} - ${"a".repeat(Math.round(Math.random()*200))}`,
+	}))
+}
 //#endregion
+
+
 
 
 export {
 	send,
-	pingSetEnabled,
-	serverStop,
+	serverStop
 }

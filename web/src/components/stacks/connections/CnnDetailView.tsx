@@ -2,7 +2,7 @@ import Header from "@/components/Heder"
 import connSo, { ConnectionState } from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useMemo } from "react"
+import React, { FunctionComponent } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
 
 
@@ -42,7 +42,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		<hr />
 
 		<CnnDetailCmp
-			parentSo={cnnDetailSo}
+			cnnDetailSo={cnnDetailSo}
 		/>
 	</div>
 }

@@ -1,4 +1,5 @@
-import { pingSetEnabled, send, serverStop } from "./index.js"
+import { send, serverStop } from "./index.js"
+import { pingSetEnabled } from "./ping.js"
 import { Thread } from "./thread.js"
 
 

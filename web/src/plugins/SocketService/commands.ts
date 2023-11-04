@@ -12,7 +12,7 @@ export class Commands {
 
 	table = {
 
-		"ping": payload => this.server.ping.onMessage(),
+		//"ping": payload => this.server.ping.onMessage(),
 
 		"connections:subscribe": payload => {
 			this.server.send({

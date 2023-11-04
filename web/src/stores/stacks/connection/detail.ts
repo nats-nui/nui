@@ -4,8 +4,7 @@ import { Connection, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
 import { CnnListStore } from "./list"
-import { PARAMS_MESSAGES } from "../messages"
-import { createUUID } from "@/mocks/data/utils"
+import { MessagesState, PARAMS_MESSAGES } from "../messages"
 
 
 
@@ -24,10 +23,10 @@ const setup = {
 			const cnnId = (store.state.parent as CnnListStore).getSelectId()
 			if (!cnnId) return
 			const msgStore = buildStore({
-				uuid: createUUID(),
 				type: DOC_TYPE.MESSAGES,
-				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnnId] }
-			})
+				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnnId] },
+				subscriptions: [...store.state.connection.subscriptions]
+			} as MessagesState)
 			docsSo.addLink({
 				view: msgStore,
 				parent: store,
