@@ -31,7 +31,6 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!view) return null
 	const inRoot = !view.state.parent
-	const haveDialog = !!view.state.dialogCmp
 	const haveLinked = !!view.state.linked
 	// style
 	const clsDocAnim = styles[`doc_${viewSa.docAnim}`]
@@ -55,9 +54,10 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		<div style={cssDesk}>
 
 			{/* DIALOG */}
-			{haveDialog && <div style={cssDialog(deep - 1)}>
-				{view.state.dialogCmp}
-			</div>}
+			<div 
+				style={cssDialog(deep - 1)} 
+				id={`dialog_${view.state.uuid}`}
+			/>
 
 			{/* LINKED */}
 			{haveLinked && <div >

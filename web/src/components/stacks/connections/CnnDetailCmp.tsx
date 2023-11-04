@@ -1,47 +1,70 @@
 import cnnSo from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
-import SubscriptionsDlg from "./SubscriptionsDlg"
+import { FunctionComponent, useMemo } from "react"
+import { createPortal } from "react-dom"
+import ListEditDlg from "../dialogs/ListEditDlg"
+import Dialog from "../dialogs/Dialog"
 
 
 
 interface Props {
-	parentSo: CnnDetailStore
+	cnnDetailSo: CnnDetailStore
 }
 
 /**
  * dettaglio di una CONNECTION
  */
 const CnnDetailCmp: FunctionComponent<Props> = ({
-	parentSo,
+	cnnDetailSo,
 }) => {
 
 	// STORE
-	const cnnDetailSa = useStore(parentSo) as CnnDetailState
+	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
 
 	// HOOKs
+	const refDialog = useMemo(() => {
+		if (!cnnDetailSa.dialogOpen) return null
+		const elm = document.getElementById(`dialog_${cnnDetailSa.uuid}`)
+		return elm
+	}, [cnnDetailSa.dialogOpen])
+
 
 	// HANDLER
 	const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const name = e.target.value
 		const cnn = { ...cnnDetailSa.connection, name }
-		parentSo.setConnection(cnn)
+		cnnDetailSo.setConnection(cnn)
+		if (!isNew) cnnSo.updateConnection(cnn)
+	}
+	const handleChangeHost = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const host = e.target.value
+		const cnn = { ...cnnDetailSa.connection, host }
+		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleClickSubs = () => {
-		parentSo.setDialogCmp(subscrsDlg)
+		cnnDetailSo.setDialogOpen(true)
+	}
+	const handleCloseDetail = () => {
+		cnnDetailSo.setDialogOpen(false)
 	}
 	const handleCreate = async () => {
 		const cnn = await cnnSo.create(cnnDetailSa.connection)
-		parentSo.setConnection(cnn)
+		cnnDetailSo.setConnection(cnn)
+	}
+
+	const handleChangeSubject = (newItems: Subscription[]) => {
+		cnnDetailSa.connection.subscriptions = newItems
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
 	}
 
 	// RENDER
-	const subscrsDlg = <SubscriptionsDlg
-		parentSo={parentSo}
-		onClose={() => parentSo.setDialogCmp(null)}
-	/>
+	// const subscrsDlg = <SubscriptionsDlg
+	// 	parentSo={parentSo}
+	// 	onClose={() => parentSo.setDialogCmp(null)}
+	// />
 
 	const isNew = cnnDetailSa.connection?.id == null
 
@@ -55,6 +78,12 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			onChange={handleChangeName}
 		/>
 
+		<div>HOST</div>
+		<input
+			value={cnnDetailSa.connection.host}
+			onChange={handleChangeHost}
+		/>
+
 		<div>SUBSCRIPTIONS</div>
 		<button
 			onClick={handleClickSubs}
@@ -65,6 +94,17 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 				onClick={handleCreate}
 			>CREATE</button>
 		}
+
+		<Dialog store={cnnDetailSo}>
+			<ListEditDlg<Subscription>
+				items={cnnDetailSa.connection.subscriptions}
+				fnLabel={(sub) => sub.subject}
+				fnNewItem={() => ({ subject: "<new>" })}
+				onChange={handleChangeSubject}
+				onClose={handleCloseDetail}
+			/>
+		</Dialog>
+
 	</div>)
 }
 

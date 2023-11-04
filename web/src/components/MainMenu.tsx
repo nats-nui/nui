@@ -2,7 +2,8 @@ import docSo from "@/stores/docs"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { DOC_TYPE } from "@/stores/docs/types"
 import React, { FunctionComponent } from "react"
-import ss from "@/plugins/SocketService"
+
+
 
 interface Props {
 	style?: React.CSSProperties
@@ -21,10 +22,10 @@ const MainMenu: FunctionComponent<Props> = ({
 	}
 	
 	const handleDebugPingStop = () => {
-		ss.send({ type: "mock", cmm: "ping:stop", data: null })
+		//ss.send({ type: "mock", cmm: "ping:stop", data: null })
 	}
 	const handleDebugPingStart = () => {
-		ss.send({ type: "mock", cmm: "ping:start", data: null })
+		//ss.send({ type: "mock", cmm: "ping:start", data: null })
 	}
 
 	// RENDER

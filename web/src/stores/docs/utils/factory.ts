@@ -45,6 +45,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	const store: ViewStore = createStore(setup)
 	store.state = { ...store.state, ...state }
 	// se non c'e' l'uuid lo creo IO!
-	//if ( store.state.uuid == null ) store.state.uuid = createUUID()
+	if ( store.state.uuid == null ) store.state.uuid = createUUID()
 	return store
 }

@@ -1,9 +1,13 @@
-import Header from "@/components/Heder"
-import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/stacks/messages"
-import { useStore } from "@priolo/jon"
-import React, { useEffect, FunctionComponent } from "react"
 import imgMsg from "@/assets/msg-hdr.svg"
-import cnnSo from "@/stores/connections"
+import Header from "@/components/Heder"
+import cnnSo, { ConnectionState } from "@/stores/connections"
+import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/stacks/messages"
+import { Subscription } from "@/types"
+import { useStore } from "@priolo/jon"
+import React, { FunctionComponent, useEffect, useRef } from "react"
+import Dialog from "../dialogs/Dialog"
+import ListEditDlg from "../dialogs/ListEditDlg"
+import MessageRow from "./MessageRow"
 
 
 
@@ -19,14 +23,43 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	// STORE
 	const msgSa = useStore(msgSo) as MessagesState
+	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
 	useEffect(() => {
-		console.log("start connection " + msgSa.params[PARAMS_MESSAGES.CONNECTION_ID])
+		if (!cnnSa.all || cnnSa.all.length == 0) return
+		//console.log("start connection " + msgSa.params[PARAMS_MESSAGES.CONNECTION_ID])
 		msgSo.connect()
-	}, [])
+	}, [cnnSa.all])
+	const scrollRef = useRef(null)
+	const noScroll = useRef(false)
+	useEffect(() => {
+		if ( noScroll.current ) return
+		const node = scrollRef.current
+		if (!node) return
+		node.scrollTop = node.scrollHeight - node.clientHeight
+		console.log(node.scrollTop, node.scrollHeight, node.clientHeight)
+	}, [msgSa.history])
 
 	// HANDLER
+	const handleClickDetail = () => {
+		msgSo.setDialogOpen(true)
+	}
+	const handleCloseDetail = () => {
+		msgSo.setDialogOpen(false)
+	}
+	const handleChangeSubs = (newSubs: Subscription[]) => {
+		msgSo.setSubscriptions(newSubs)
+	}
+	const handleDown = ( e:React.MouseEvent) => {
+		noScroll.current = true
+	}
+	const handleUp = ( e:React.MouseEvent) => {
+		const node = scrollRef.current
+		if ( node.scrollTop >= node.scrollHeight - node.clientHeight-200) {
+			noScroll.current = false
+		}
+	}
 
 	// RENDER
 	const [id] = msgSa.params?.[PARAMS_MESSAGES.CONNECTION_ID]
@@ -35,7 +68,31 @@ const MessagesView: FunctionComponent<Props> = ({
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
-			i messages di {id}
+			<button onClick={handleClickDetail}>detail</button>
+			<button onClick={handleCloseDetail}>close</button>
+			<div>i messages di {id}</div>
+
+			<div ref={scrollRef}
+				onMouseDown={handleDown}
+				onMouseUp={handleUp}
+				
+				style={{ flex: 1, width: "250px", height: "100%", overflowY: "auto" }}
+			>
+				{msgSa.history.map((message, index )=> <MessageRow key={index}
+					message={message}
+				/>)}
+			</div>
+
+			<Dialog store={msgSo}>
+				<ListEditDlg<Subscription>
+					items={msgSa.subscriptions}
+					fnLabel={(sub) => sub.subject}
+					fnNewItem={() => ({ subject: "<new>" })}
+					onChange={handleChangeSubs}
+					onClose={handleCloseDetail}
+				/>
+			</Dialog>
+
 		</div>
 	)
 }
@@ -46,4 +103,5 @@ const cssContainer: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
 	flexDirection: "column",
+	height: "100%",
 }

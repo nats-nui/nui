@@ -31,6 +31,7 @@ const setup = {
 	},
 
 	actions: {
+		/** ho selezionato una connection quindi creo e visualizzo lo STACK del dettaglio */
 		select(cnn: Connection, store?: CnnListStore) {
 			const idSelPrev = store.getSelectId()
 			let idSel = idSelPrev != cnn.id ? cnn.id : null
@@ -45,6 +46,7 @@ const setup = {
 				parent: store,
 			})
 		},
+		/** ho creato una nuova connection quindi creo e visualizzo lo STACK del dettaglio */
 		create(_:void, store?: CnnListStore) {
 			const view = buildStore({
 				type: DOC_TYPE.SERVICES,
