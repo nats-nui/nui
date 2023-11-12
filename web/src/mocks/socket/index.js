@@ -50,18 +50,17 @@ function serverStop() {
 const onMessage = msg => {
 	const data = JSON.parse(msg)
 
-	console.log("client:message:")
+	console.log("FE > BE")
 	console.log(data)
-	console.log("---")
 
 	if (data.connection_id && data.subjects) {
+		const thread = Thread.Find({ cnnId: data.connection_id })
+		if ( thread )  thread?.stop()
 		if (Array.isArray(data.subjects) && data.subjects.length > 0) {
 			new Thread(
 				() => sendTestMessages(data.connection_id, data.subjects),
 				{ cnnId: data.connection_id }
 			).start()
-		} else {
-			Thread.Find({ cnnId: data.connection_id })?.stop()
 		}
 	}
 }

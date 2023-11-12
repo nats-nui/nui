@@ -25,9 +25,18 @@ function save(cnn: Connection): Promise<{ data: Connection }> {
 	return ajax.post(`connection${blockId}`, cnn)
 }
 
+function publish(cnnId:string, subject:string, payload:string) {
+	const data = {
+		subject,
+		payload
+	}
+	return ajax.post(`connection/${cnnId}/piblish`, data)
+}
+
 const api = {
 	index,
 	remove,
 	save,
+	publish,
 }
 export default api

@@ -7,7 +7,7 @@ import { Subscription } from "@/types"
 import cnnSo from "@/stores/connections"
 import { SocketMessage } from "@/plugins/SocketService"
 import { createUUID } from "@/stores/docs/utils/factory"
-
+import cnnApi from "@/api/connection"
 
 
 export interface HistoryMessage {
@@ -40,6 +40,9 @@ const setup = {
 		},
 		subscriptions: <Subscription[]>[],
 		history: <HistoryMessage[]>[],
+
+		subject:<string>null,
+		message: <string>null,
 	},
 
 	getters: {
@@ -93,11 +96,18 @@ const setup = {
 				subjects,
 			})
 		},
+		publishMessage: (_:void, store?: MessagesStore) => {
+			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
+			cnnApi.publish(cnnId, store.state.subject, store.state.message )
+		},
 	},
 
 	mutators: {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setHistory: (history: HistoryMessage[]) => ({ history }),
+
+		setMessage: (message: string) => ({ message }),
+		setSubject: (subject: string) => ({ subject }),
 	},
 }
 

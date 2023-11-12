@@ -39,7 +39,7 @@ const MessageRow2: FunctionComponent<Props> = ({
 			<div>{message.title}</div>
 			<div>{message.height}</div>
 			<div 
-				style={{ overflowWrap: "break-word", marginBottom: "100px" }}
+				style={{ overflowWrap: "break-word" }}
 			>
 				{message.body}
 			</div>

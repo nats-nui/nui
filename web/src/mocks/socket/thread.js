@@ -15,7 +15,7 @@ export class Thread {
 
 	static Find(data) {
 		return Thread.All.find ( t => {
-			for ( let d in t.data ) if ( d == data ) return true
+			for ( let key in t.data ) if ( data[key] == t.data[key] ) return true
 			return false
 		})
 	}
