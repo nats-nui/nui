@@ -21,7 +21,7 @@ const CnnListView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const viewSa = useStore(viewSo) as CnnListState
+	useStore(viewSo) as CnnListState
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs

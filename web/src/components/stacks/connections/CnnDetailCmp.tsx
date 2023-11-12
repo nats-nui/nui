@@ -25,11 +25,11 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
 
 	// HOOKs
-	const refDialog = useMemo(() => {
-		if (!cnnDetailSa.dialogOpen) return null
-		const elm = document.getElementById(`dialog_${cnnDetailSa.uuid}`)
-		return elm
-	}, [cnnDetailSa.dialogOpen])
+	// const refDialog = useMemo(() => {
+	// 	if (!cnnDetailSa.dialogOpen) return null
+	// 	const elm = document.getElementById(`dialog_${cnnDetailSa.uuid}`)
+	// 	return elm
+	// }, [cnnDetailSa.dialogOpen])
 
 
 	// HANDLER

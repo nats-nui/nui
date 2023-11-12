@@ -2,9 +2,8 @@
 
 //const { getAppUrl } = require('stores/user/utils')
 
-//if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_MOCK === 'true') {
-	import { worker } from '../mocks/ajax/browser'
-
+if (process.env.NODE_ENV === 'development' && import.meta.env.VITE_API_MOCK === 'true') {
+	const { worker } = await import(`../mocks/ajax/browser.js`)
 	worker.start()
 
 	// worker.start({
@@ -18,4 +17,4 @@
 	// 	const { getStoreAuth } = require('../store/auth')
 	// 	return getStoreAuth();
 	// }
-//}
+}

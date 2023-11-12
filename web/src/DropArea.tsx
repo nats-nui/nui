@@ -17,7 +17,7 @@ const DropArea: FunctionComponent<Props> = ({
 	// HOOKS
 
 	// HANDLERS
-	const handleMouseOver = (e: DragEvent<HTMLDivElement>) => {
+	const handleMouseOver = (_: DragEvent<HTMLDivElement>) => {
 		if (mouseSa.drag?.srcView == null) return
 		mouseSo.setDrag({
 			...mouseSa.drag,

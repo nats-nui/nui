@@ -15,10 +15,10 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
+        "noUnusedLocals": false,
         "jsx": "react-jsx",
         /* Linting */
         "strict": false,
-        "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "checkJs": false,

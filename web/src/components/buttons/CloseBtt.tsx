@@ -1,9 +1,4 @@
-import docSo, { DRAG_ZONE, DocState } from "@/stores/docs"
-import { DOC_TYPE, DocView, POSITION_TYPE } from "@/stores/docs/types"
-import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import img from "@/assets/cnn-hdr2.svg"
-import imgClose from "@/assets/close.svg"
 
 
 interface Props {
