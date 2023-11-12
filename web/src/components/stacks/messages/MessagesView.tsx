@@ -43,6 +43,15 @@ const MessagesView: FunctionComponent<Props> = ({
 	const handleCloseDialog = () => {
 		msgSo.sendSubscriptions()
 	}
+	const handleMessageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+		msgSo.setMessage(e.target.value)
+	}
+	const handleMessageClick = (e:React.MouseEvent) => {
+		
+	}
+	const handleMessageSubClick = (e:React.MouseEvent) => {
+
+	}
 
 	// RENDER
 	const [id] = msgSa.params?.[PARAMS_MESSAGES.CONNECTION_ID]
@@ -56,6 +65,19 @@ const MessagesView: FunctionComponent<Props> = ({
 
 			<MessagesList2 messages={msgSa.history} />
 			{/* <MessagesList messages={msgSa.history} /> */}
+
+			<div style={{ display: "flex"}}>
+				<button
+					onClick={handleMessageClick}
+				>SEND</button>
+				<input 
+					value={msgSa.message}
+					onChange={handleMessageChange}
+				/>
+				<button
+					onClick={handleMessageSubClick}
+				>sub</button>
+			</div>
 
 			<Dialog 
 				store={msgSo}

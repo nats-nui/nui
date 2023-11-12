@@ -97,8 +97,10 @@ export class SocketService {
 	/** 
 	 * invia un messaggio al server
 	 */
-	send(data: any) {
-		this.websocket.send(JSON.stringify(data))
+	send(json: any) {
+		const data = JSON.stringify(json)
+		console.debug( "FE > BE", data)
+		this.websocket.send(data)
 	}
 
 	//#region SOCKET EVENT
