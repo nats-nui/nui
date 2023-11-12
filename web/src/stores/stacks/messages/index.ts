@@ -22,14 +22,14 @@ export enum PARAMS_MESSAGES {
 	CONNECTION_ID = "cid"
 }
 
-const h: HistoryMessage[] = Array.from({ length: 30 }, (x, i) => ({
-	id: createUUID(),
-	title: `title-${Math.random()} [${i}]`,
-	body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
-	//body: `body ${i}`,
-	timestamp: Date.now(),
-	height: null,
-}));
+// const h: HistoryMessage[] = Array.from({ length: 30 }, (_, i) => ({
+// 	id: createUUID(),
+// 	title: `title-${Math.random()} [${i}]`,
+// 	body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
+// 	//body: `body ${i}`,
+// 	timestamp: Date.now(),
+// 	height: null,
+// }));
 
 
 const setup = {

@@ -14,7 +14,7 @@ export class Commands {
 
 		//"ping": payload => this.server.ping.onMessage(),
 
-		"connections:subscribe": payload => {
+		"connections:subscribe": _payload => {
 			this.server.send({
 				cmm: "connections:subscribe",
 				cnnId: "cnn1",

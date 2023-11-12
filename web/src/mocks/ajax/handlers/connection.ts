@@ -9,7 +9,7 @@ const handlers = [
 	/**
 	 * Preleva tutte le CONNECTION
 	 */
-	rest.get('/api/connection', async (req, res, ctx) => {
+	rest.get('/api/connection', async (_req, res, ctx) => {
 		return res(
 			ctx.status(200),
 			ctx.json({ data: connections }),

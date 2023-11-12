@@ -28,10 +28,10 @@ const setup = {
 
 	actions: {
 		startDrag(drag: DragDoc, store?: MouseStore) {
-			function fnMouseMove(e) {
+			function fnMouseMove(e: any) {
 				store.setPosition({ x: e.pageX, y: e.pageY })
 			}
-			function fnMouseUp(e) {
+			function fnMouseUp() {
 				document.removeEventListener('mousemove', fnMouseMove)
 				document.removeEventListener('mouseup', fnMouseUp)
 				store.stopDrag()

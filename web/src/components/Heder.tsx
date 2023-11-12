@@ -18,7 +18,7 @@ const Header: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const docSa = useStore(docSo) as DocState
+	useStore(docSo) as DocState
 
 	// HOOK
 

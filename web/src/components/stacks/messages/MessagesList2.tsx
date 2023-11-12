@@ -31,10 +31,10 @@ const MessagesList2: FunctionComponent<Props> = ({
 	}, [messages])
 
 	// HANDLER
-	const handleDown = (e: React.MouseEvent) => {
+	const handleDown = (_: React.MouseEvent) => {
 		noScroll.current = true
 	}
-	const handleUp = (e: React.MouseEvent) => {
+	const handleUp = (_: React.MouseEvent) => {
 		const node = scrollRef.current
 		if (node.scrollTop >= node.scrollHeight - node.clientHeight - 200) {
 			noScroll.current = false

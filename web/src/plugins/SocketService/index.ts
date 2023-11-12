@@ -103,7 +103,7 @@ export class SocketService {
 
 	//#region SOCKET EVENT
 
-	onopen(e: Event) {
+	onopen(_: Event) {
 		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
@@ -112,7 +112,7 @@ export class SocketService {
 		this.onOpen?.()
 	}
 
-	onClose(e: CloseEvent) {
+	onClose(_: CloseEvent) {
 		//console.log("socket:close")
 		//this.ping.stop()
 		this.clear()
@@ -125,7 +125,7 @@ export class SocketService {
 		this.options.onMessage(message)
 	}
 
-	onError(e: Event) {
+	onError(_: Event) {
 		//console.log("socket:error:", e)
 	}
 
