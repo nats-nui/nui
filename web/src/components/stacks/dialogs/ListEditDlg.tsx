@@ -1,22 +1,35 @@
-import { useState } from "react"
+import { useState, FunctionComponent } from "react"
 
+export interface RenderRowBaseProps<T> {
+	item: T
+}
 
+export interface RenderDetailBaseProps<T> {
+	item: T
+	onChange: (item:T) => void
+}
 
 interface Props<T> {
 	items: T[]
-	fnLabel: (item: T) => string
+	
+	/** renderizza una ROW ITEM in lista */
+	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
+	/** renderizza la form per editare un ITEM */
+	RenderDetail?: FunctionComponent<RenderDetailBaseProps<T>>
+	/** restituisce nuovo ITEM (su click btt NEW) */
 	fnNewItem: () => T
-	renderDetail?: React.ReactNode
 
 	onChange?: (newItems: T[]) => void
 	onClose?: () => void
 }
 
+
 function ListEditDlg<T>({
 	items,
-	fnLabel = (item) => item?.toString() ?? "",
+
+	RenderRow,
+	RenderDetail,
 	fnNewItem,
-	renderDetail,
 
 	onChange,
 	onClose,
@@ -32,9 +45,9 @@ function ListEditDlg<T>({
 	const handleSelect = (index: number) => {
 		setSelect(index)
 	}
-	const handleChangeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeSelect = (item:T) => {
 		const newItems = [...items]
-		newItems[select] = e.target.value as any
+		newItems[select] = item
 		onChange?.(newItems)
 	}
 	const handleDelete = () => {
@@ -51,32 +64,33 @@ function ListEditDlg<T>({
 	const handleClose = () => onClose()
 
 	// RENDER
-	//if (!cnnDetailSa.connection) return null
 	const itemSel = items[select]
 
 	return <div style={cssContainer}>
 
+		{/* CHUSURA */}
 		<div onClick={handleClose}>X</div>
 
+		{/* LISTA */}
 		{items?.map((item, index) =>
-			<div key={index} style={{ backgroundColor: index == select ? "red" : null }}
+			<div 
+				key={index} 
+				style={{ backgroundColor: index == select ? "red" : null }}
 				onClick={() => handleSelect(index)}
-			>{fnLabel(item)}</div>
+			>
+				<RenderRow item={item} />
+			</div>
 		)}
 
+		{/* SE é SELEZONATO UN ITEM... */}
 		{itemSel != null && <>
-			{renderDetail || (
-				<input
-					value={fnLabel(itemSel)}
-					onChange={handleChangeSelect}
-				/>
-			)}
-
+			<RenderDetail item={itemSel} onChange={handleChangeSelect} />
 			<button
 				onClick={handleDelete}
 			>DELETE</button>
 		</>}
 
+		{/* BOTTONE NEW */}
 		<button onClick={handleNew}>NEW</button>
 	</div>
 }
@@ -91,5 +105,3 @@ const cssContainer: React.CSSProperties = {
 	color: "black",
 	width: "146px",
 }
-
-// { height: "100%", width: "200px", backgroundColor: "red", paddingLeft: "10px" }

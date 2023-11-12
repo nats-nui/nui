@@ -6,19 +6,29 @@ import { SocketService } from "@/plugins/SocketService"
 import { Subscription } from "@/types"
 import cnnSo from "@/stores/connections"
 import { SocketMessage } from "@/plugins/SocketService"
+import { createUUID } from "@/stores/docs/utils/factory"
+
+
 
 export interface HistoryMessage {
+	id: string
+	timestamp: number
 	title: string
 	body: string
+	height?: number
 }
 
 export enum PARAMS_MESSAGES {
 	CONNECTION_ID = "cid"
 }
 
-const h = Array.from({length: 200}, (x, i)=> ({
-	title: `title ${i} - ${Math.random()}`,
-	body: `body ${i} - ${"a".repeat(Math.round(Math.random()*200))}`,
+const h: HistoryMessage[] = Array.from({ length: 30 }, (x, i) => ({
+	id: createUUID(),
+	title: `title-${Math.random()} [${i}]`,
+	body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
+	//body: `body ${i}`,
+	timestamp: Date.now(),
+	height: null,
 }));
 
 
@@ -33,20 +43,27 @@ const setup = {
 	},
 
 	getters: {
+		getConnection: (_: void, store?: MessagesStore) => {
+			const [id] = store.state.params?.[PARAMS_MESSAGES.CONNECTION_ID]
+			return cnnSo.getById(id)
+		},
 	},
 
 	actions: {
+		/** mi connetto al websocket */
 		connect(_: void, store?: MessagesStore) {
-			const [id] = store.state.params?.[PARAMS_MESSAGES.CONNECTION_ID]
-			const cnn = cnnSo.getById(id)
+			const cnn = store.getConnection()
 			if (!cnn) return
+			store.setSubscriptions([...cnn.subscriptions])
+
 			store.ss = new SocketService({
 				//base: "/ws/sub",
 				onMessage: message => store.addInHistory(message)
 			})
-			store.ss.onOpen = () => store.setSubscriptions([...cnn.subscriptions])
+			store.ss.onOpen = () => store.sendSubscriptions()
 			store.ss.connect()
 		},
+		/** disconnessione websocket */
 		disconnect(_: void, store?: MessagesStore) {
 			store.ss.send({
 				connection_id: store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store),
@@ -55,25 +72,31 @@ const setup = {
 			store.ss.disconnect()
 			store.ss = null
 		},
+		/** aggiungo alla history di questo stack */
 		addInHistory(message: SocketMessage, store?: MessagesStore) {
 			const historyMessage: HistoryMessage = {
-				title: message.subject,
-				body: message.payload as string
+				id: createUUID(),
+				title: `${message.subject} [${store.state.history.length}]`,
+				body: message.payload as string,
+				timestamp: Date.now(),
 			}
 			store.setHistory([...store.state.history, historyMessage])
-		}
-	},
-
-	mutators: {
-		setSubscriptions: (subscriptions: Subscription[], store?: MessagesStore) => {
+		},
+		/** aggiorno i subjects di questo stack messages */
+		sendSubscriptions: (_:void, store?: MessagesStore) => {
 			const connection_id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
-			const subjects = subscriptions?.map(s => s.subject) ?? []
+			const subjects = store.state.subscriptions
+				?.filter( s => s!=null && !s.disabled )
+				.map(s => s.subject) ?? []
 			store.ss.send({
 				connection_id,
 				subjects,
 			})
-			return subscriptions
 		},
+	},
+
+	mutators: {
+		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setHistory: (history: HistoryMessage[]) => ({ history }),
 	},
 }

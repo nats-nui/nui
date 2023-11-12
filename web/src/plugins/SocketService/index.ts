@@ -1,6 +1,4 @@
-//import { Ping } from "./ping.js";
 import { Reconnect } from "./reconnect.js";
-//import { Commands } from "./commands.js"
 
 
 
@@ -24,11 +22,9 @@ const optionsDefault: SocketOptions = {
 	base: "",
 }
 
-
-
 export interface ISocket {
-
 }
+
 /**
  * Crea una connessione WS
  * gestisce le riconnessioni
@@ -134,7 +130,6 @@ export class SocketService {
 	}
 
 	//#endregion
-
 }
 
 
