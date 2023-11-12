@@ -9,4 +9,5 @@ export interface Connection {
 
 export interface Subscription {
 	subject: string
+	disabled?: boolean
 }

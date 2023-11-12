@@ -1,11 +1,12 @@
+import SubDetail from "@/components/subscription/Detail"
+import SubRow from "@/components/subscription/Row"
 import cnnSo from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
-import { createPortal } from "react-dom"
-import ListEditDlg from "../dialogs/ListEditDlg"
 import Dialog from "../dialogs/Dialog"
+import ListEditDlg from "../dialogs/ListEditDlg"
 
 
 
@@ -55,7 +56,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		cnnDetailSo.setConnection(cnn)
 	}
 
-	const handleChangeSubject = (newItems: Subscription[]) => {
+	const handleChangeSubs = (newItems: Subscription[]) => {
 		cnnDetailSa.connection.subscriptions = newItems
 		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
 	}
@@ -98,9 +99,10 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		<Dialog store={cnnDetailSo}>
 			<ListEditDlg<Subscription>
 				items={cnnDetailSa.connection.subscriptions}
-				fnLabel={(sub) => sub.subject}
+				RenderRow={SubRow}
+				RenderDetail={SubDetail}
 				fnNewItem={() => ({ subject: "<new>" })}
-				onChange={handleChangeSubject}
+				onChange={handleChangeSubs}
 				onClose={handleCloseDetail}
 			/>
 		</Dialog>

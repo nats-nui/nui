@@ -4,10 +4,12 @@ import cnnSo, { ConnectionState } from "@/stores/connections"
 import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/stacks/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import Dialog from "../dialogs/Dialog"
 import ListEditDlg from "../dialogs/ListEditDlg"
-import MessageRow from "./MessageRow"
+import MessagesList2 from "./MessagesList2"
+import SubRow from "@/components/subscription/Row"
+import SubDetail from "@/components/subscription/Detail"
 
 
 
@@ -28,37 +30,18 @@ const MessagesView: FunctionComponent<Props> = ({
 	// HOOKs
 	useEffect(() => {
 		if (!cnnSa.all || cnnSa.all.length == 0) return
-		//console.log("start connection " + msgSa.params[PARAMS_MESSAGES.CONNECTION_ID])
 		msgSo.connect()
 	}, [cnnSa.all])
-	const scrollRef = useRef(null)
-	const noScroll = useRef(false)
-	useEffect(() => {
-		if ( noScroll.current ) return
-		const node = scrollRef.current
-		if (!node) return
-		node.scrollTop = node.scrollHeight - node.clientHeight
-		console.log(node.scrollTop, node.scrollHeight, node.clientHeight)
-	}, [msgSa.history])
-
+	
 	// HANDLER
 	const handleClickDetail = () => {
 		msgSo.setDialogOpen(true)
 	}
-	const handleCloseDetail = () => {
-		msgSo.setDialogOpen(false)
-	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
 		msgSo.setSubscriptions(newSubs)
 	}
-	const handleDown = ( e:React.MouseEvent) => {
-		noScroll.current = true
-	}
-	const handleUp = ( e:React.MouseEvent) => {
-		const node = scrollRef.current
-		if ( node.scrollTop >= node.scrollHeight - node.clientHeight-200) {
-			noScroll.current = false
-		}
+	const handleCloseDialog = () => {
+		msgSo.sendSubscriptions()
 	}
 
 	// RENDER
@@ -68,28 +51,22 @@ const MessagesView: FunctionComponent<Props> = ({
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
-			<button onClick={handleClickDetail}>detail</button>
-			<button onClick={handleCloseDetail}>close</button>
+			<button onClick={handleClickDetail}>subscriptions</button>
 			<div>i messages di {id}</div>
 
-			<div ref={scrollRef}
-				onMouseDown={handleDown}
-				onMouseUp={handleUp}
-				
-				style={{ flex: 1, width: "250px", height: "100%", overflowY: "auto" }}
-			>
-				{msgSa.history.map((message, index )=> <MessageRow key={index}
-					message={message}
-				/>)}
-			</div>
+			<MessagesList2 messages={msgSa.history} />
+			{/* <MessagesList messages={msgSa.history} /> */}
 
-			<Dialog store={msgSo}>
+			<Dialog 
+				store={msgSo}
+				onClose={handleCloseDialog}
+			>
 				<ListEditDlg<Subscription>
 					items={msgSa.subscriptions}
-					fnLabel={(sub) => sub.subject}
+					RenderRow={SubRow}
+					RenderDetail={SubDetail}
 					fnNewItem={() => ({ subject: "<new>" })}
 					onChange={handleChangeSubs}
-					onClose={handleCloseDetail}
 				/>
 			</Dialog>
 

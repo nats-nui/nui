@@ -1,7 +1,7 @@
 import { HistoryMessage } from "@/stores/stacks/messages"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 
-
+const debounceTime = 100
 
 interface Props {
 	message?: HistoryMessage
@@ -21,14 +21,21 @@ const MessageRow: FunctionComponent<Props> = ({
 	const [isVisible, setIsVisible] = useState(false);
 	const [height, setHeight] = useState<number>(null);
 	useEffect(() => {
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				setIsVisible(entry.isIntersecting)
-			}
-		);
+		let debounceTimeout: any;
+		const observerCallback = ([entry]) => {
+			clearTimeout(debounceTimeout);
+			debounceTimeout = setTimeout(() => {
+				setIsVisible(entry.isIntersecting);
+			}, debounceTime);
+		};
+		const observer = new IntersectionObserver(observerCallback, { rootMargin: "100px", })
 		observer.observe(ref.current);
-		return () => observer.disconnect();
-	}, [])
+		return () => {
+			setIsVisible(false);
+			observer.disconnect();
+			clearTimeout(debounceTimeout);
+		};
+	}, [ref])
 	useEffect(() => {
 		if (!isVisible) return
 		setHeight((ref.current.firstChild as HTMLElement).offsetHeight)
