@@ -45,6 +45,10 @@ func (a *App) registerHandlers() {
 		return fiber.ErrUpgradeRequired
 	})
 	a.Get("/ws/sub", websocket.New(a.handleWsSub))
+
+	a.Static("/", "./web/dist")
+	a.Static("/*", "./web/dist/index,html")
+
 }
 
 func (a *App) Start(ctx context.Context) error {
