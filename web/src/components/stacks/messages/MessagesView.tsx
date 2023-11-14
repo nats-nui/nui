@@ -46,10 +46,10 @@ const MessagesView: FunctionComponent<Props> = ({
 	const handleMessageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
 		msgSo.setMessage(e.target.value)
 	}
-	const handleMessageClick = (e:React.MouseEvent) => {
+	const handleMessageClick = (_:React.MouseEvent) => {
 		
 	}
-	const handleMessageSubClick = (e:React.MouseEvent) => {
+	const handleMessageSubClick = (_:React.MouseEvent) => {
 
 	}
 
