@@ -8,6 +8,7 @@ import { createPortal } from "react-dom"
 
 interface Props {
 	store: ViewStore
+	open: boolean
 	children?: React.ReactNode
 	/** se true(default) chiudo la dialog se clicco su un qualunque altro punto della pagina */
 	closeClickOut?: boolean
@@ -19,6 +20,7 @@ interface Props {
  */
 const Dialog: FunctionComponent<Props> = ({
 	store,
+	open,
 	children,
 	closeClickOut = true,
 	onClose,
@@ -29,21 +31,20 @@ const Dialog: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const refDialog = useMemo(() => {
-		if (!state.dialogOpen) return null
+		if (!open) return null
 		const elm = document.getElementById(`dialog_${state.uuid}`)
 		return elm
-	}, [state.dialogOpen])
+	}, [open])
 
 	useEffect(() => {
 		// se clicco fuori dalla dialog allora la chiude
 		const handleClick = (e: MouseEvent) => {
 			if ( !closeClickOut ) return
-			if (store.state.dialogOpen == true && refDialog && !refDialog.contains(e.target as any)) {
-				store.setDialogOpen(false)
+			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
 				onClose?.()
 			}
 		}
-		if (store.state.dialogOpen) {
+		if (open) {
 			if ( !closeClickOut ) return
 			setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
 		}
@@ -51,7 +52,7 @@ const Dialog: FunctionComponent<Props> = ({
 			if ( !closeClickOut ) return
 			document.removeEventListener('mousedown', handleClick)
 		}
-	}, [store.state.dialogOpen])
+	}, [open])
 
 	// HANDLER
 

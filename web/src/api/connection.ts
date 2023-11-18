@@ -30,7 +30,7 @@ function publish(cnnId:string, subject:string, payload:string) {
 		subject,
 		payload
 	}
-	return ajax.post(`connection/${cnnId}/piblish`, data)
+	return ajax.post(`connection/${cnnId}/publish`, data)
 }
 
 const api = {

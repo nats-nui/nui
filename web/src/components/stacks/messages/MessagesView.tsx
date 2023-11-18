@@ -32,25 +32,31 @@ const MessagesView: FunctionComponent<Props> = ({
 		if (!cnnSa.all || cnnSa.all.length == 0) return
 		msgSo.connect()
 	}, [cnnSa.all])
-	
+
 	// HANDLER
-	const handleClickDetail = () => {
-		msgSo.setDialogOpen(true)
+	const handleSubscriptions = () => {
+		msgSo.setSubscriptionsOpen(true)
 	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
 		msgSo.setSubscriptions(newSubs)
 	}
-	const handleCloseDialog = () => {
+	const handleCloseSubscriptionsDialog = () => {
+		msgSo.setSubscriptionsOpen(false)
 		msgSo.sendSubscriptions()
 	}
-	const handleMessageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+
+
+	const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		msgSo.setMessage(e.target.value)
 	}
-	const handleMessageClick = (_:React.MouseEvent) => {
-		
+	const handleMessagePublish = (_: React.MouseEvent) => {
+		msgSo.publishMessage()
 	}
-	const handleMessageSubClick = (_:React.MouseEvent) => {
-
+	const handleMessageSub = (_: React.MouseEvent) => {
+		msgSo.setSubjectOpen(true)
+	}
+	const handleCloseSubjectDialog = () => {
+		msgSo.setSubjectOpen(false)
 	}
 
 	// RENDER
@@ -60,28 +66,29 @@ const MessagesView: FunctionComponent<Props> = ({
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
-			<button onClick={handleClickDetail}>subscriptions</button>
+			<button onClick={handleSubscriptions}>subscriptions</button>
 			<div>i messages di {id}</div>
 
 			<MessagesList2 messages={msgSa.history} />
 			{/* <MessagesList messages={msgSa.history} /> */}
 
-			<div style={{ display: "flex"}}>
+			<div style={{ display: "flex" }}>
 				<button
-					onClick={handleMessageClick}
+					onClick={handleMessagePublish}
 				>SEND</button>
-				<input 
+				<input
 					value={msgSa.message}
 					onChange={handleMessageChange}
 				/>
 				<button
-					onClick={handleMessageSubClick}
+					onClick={handleMessageSub}
 				>sub</button>
 			</div>
 
-			<Dialog 
+			<Dialog
+				open={msgSa.subscriptionsOpen}
 				store={msgSo}
-				onClose={handleCloseDialog}
+				onClose={handleCloseSubscriptionsDialog}
 			>
 				<ListEditDlg<Subscription>
 					items={msgSa.subscriptions}
@@ -90,6 +97,27 @@ const MessagesView: FunctionComponent<Props> = ({
 					fnNewItem={() => ({ subject: "<new>" })}
 					onChange={handleChangeSubs}
 				/>
+			</Dialog>
+
+			<Dialog
+				open={msgSa.subjectOpen}
+				store={msgSo}
+				onClose={handleCloseSubjectDialog}
+			>
+				<div style={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "red" }}>
+					<div style={{ flex: 1 }} />
+					<ListEditDlg<Subscription>
+						items={msgSa.subscriptions}
+						RenderRow={SubRow}
+						onChangeSelect={index => {
+							msgSo.setSubject(msgSa.subscriptions[index].subject)
+							msgSo.setSubjectOpen(false)
+						}}
+					//RenderDetail={SubDetail}
+					//fnNewItem={() => ({ subject: "<new>" })}
+					//onChange={handleChangeSubs}
+					/>
+				</div>
 			</Dialog>
 
 		</div>

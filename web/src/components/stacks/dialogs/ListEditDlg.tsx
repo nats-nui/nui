@@ -6,20 +6,21 @@ export interface RenderRowBaseProps<T> {
 
 export interface RenderDetailBaseProps<T> {
 	item: T
-	onChange: (item:T) => void
+	onChange: (item: T) => void
 }
 
 interface Props<T> {
 	items: T[]
-	
+
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	/** renderizza la form per editare un ITEM */
 	RenderDetail?: FunctionComponent<RenderDetailBaseProps<T>>
 	/** restituisce nuovo ITEM (su click btt NEW) */
-	fnNewItem: () => T
+	fnNewItem?: () => T
 
 	onChange?: (newItems: T[]) => void
+	onChangeSelect?: (index: number) => void
 	onClose?: () => void
 }
 
@@ -32,6 +33,7 @@ function ListEditDlg<T>({
 	fnNewItem,
 
 	onChange,
+	onChangeSelect,
 	onClose,
 }: Props<T>) {
 
@@ -44,8 +46,9 @@ function ListEditDlg<T>({
 	// HANDLERS
 	const handleSelect = (index: number) => {
 		setSelect(index)
+		onChangeSelect?.(index)
 	}
-	const handleChangeSelect = (item:T) => {
+	const handleChangeSelect = (item: T) => {
 		const newItems = [...items]
 		newItems[select] = item
 		onChange?.(newItems)
@@ -73,8 +76,8 @@ function ListEditDlg<T>({
 
 		{/* LISTA */}
 		{items?.map((item, index) =>
-			<div 
-				key={index} 
+			<div
+				key={index}
 				style={{ backgroundColor: index == select ? "red" : null }}
 				onClick={() => handleSelect(index)}
 			>
@@ -83,7 +86,7 @@ function ListEditDlg<T>({
 		)}
 
 		{/* SE é SELEZONATO UN ITEM... */}
-		{itemSel != null && <>
+		{itemSel != null && RenderDetail && <>
 			<RenderDetail item={itemSel} onChange={handleChangeSelect} />
 			<button
 				onClick={handleDelete}
@@ -91,7 +94,9 @@ function ListEditDlg<T>({
 		</>}
 
 		{/* BOTTONE NEW */}
-		<button onClick={handleNew}>NEW</button>
+		{fnNewItem && (
+			<button onClick={handleNew}>NEW</button>
+		)}
 	</div>
 }
 
@@ -99,7 +104,7 @@ export default ListEditDlg
 
 const cssContainer: React.CSSProperties = {
 	paddingLeft: "15px",
-	flex: 1,
+	//flex: 1,
 	display: "flex", flexDirection: "column",
 	backgroundColor: "#a0e312",
 	color: "black",
