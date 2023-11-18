@@ -21,7 +21,7 @@ const setup = {
 		parent: <ViewStore>null,
 		linked: <ViewStore>null,
 
-		dialogOpen: false,
+		//dialogOpen: false,
 	},
 
 	getters: {
@@ -38,7 +38,7 @@ const setup = {
 			const params = { ...store.state.params, ...ps }
 			return { params }
 		},
-		setDialogOpen: (dialogOpen: boolean) => ({ dialogOpen }),
+		//setDialogOpen: (dialogOpen: boolean) => ({ dialogOpen }),
 		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
 
 

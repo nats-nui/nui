@@ -66,6 +66,18 @@ const handlers = [
 		)
 	}),
 
+	/**
+	 * modifica una CONNECTION
+	 */
+	rest.post('/api/connection/:id/publish', async (req, res, ctx) => {
+		const id = req.params.id
+		const { subject, payload } = await req.json()
+		if (!id || !subject || !payload) return res(ctx.status(500))
+		return res(
+			ctx.status(200),
+		)
+	}),
+
 ]
 
 export default handlers

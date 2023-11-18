@@ -43,6 +43,10 @@ const setup = {
 
 		subject:<string>null,
 		message: <string>null,
+		
+		subscriptionsOpen: false,
+		subjectOpen: false,
+
 	},
 
 	getters: {
@@ -108,6 +112,8 @@ const setup = {
 
 		setMessage: (message: string) => ({ message }),
 		setSubject: (subject: string) => ({ subject }),
+		setSubjectOpen: (subjectOpen: boolean) => ({ subjectOpen }),
+		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
 	},
 }
 
