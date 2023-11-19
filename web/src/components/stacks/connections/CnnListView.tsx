@@ -4,7 +4,7 @@ import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 
 
 interface Props {
@@ -25,6 +25,9 @@ const CnnListView: FunctionComponent<Props> = ({
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
+	useEffect(() => {
+		cnnSo.fetch()
+	}, [])
 
 	// HANDLER
 	const handleSelectConnection = (cnn: Connection) => viewSo.select(cnn)

@@ -15,6 +15,10 @@ const setup = {
 			if (!id) return null
 			return store.state.all?.find(cnn => cnn.id == id)
 		},
+		getIndexById(id: string, store?: ConnectionStore) {
+			if (!id) return null
+			return store.state.all?.findIndex(cnn => cnn.id == id)
+		},
 	},
 
 	actions: {
@@ -30,7 +34,13 @@ const setup = {
 		async delete(id: string, store?: ConnectionStore): Promise<void> {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
-		}
+		},
+		async modify(cnn:Connection, store?: ConnectionStore): Promise<void> {
+			const index = store.getIndexById(cnn.id)
+			const cnns = [...store.state.all]
+			cnns[index] = cnn
+			store.setAll(cnns)
+		},
 	},
 
 	mutators: {

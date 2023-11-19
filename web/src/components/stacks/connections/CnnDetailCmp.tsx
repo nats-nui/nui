@@ -46,10 +46,10 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleClickSubs = () => {
-		cnnDetailSo.setDialogOpen(true)
+		cnnDetailSo.setSubOpen(true)
 	}
 	const handleCloseDetail = () => {
-		cnnDetailSo.setDialogOpen(false)
+		cnnDetailSo.setSubOpen(false)
 	}
 	const handleCreate = async () => {
 		const cnn = await cnnSo.create(cnnDetailSa.connection)
@@ -96,14 +96,17 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			>CREATE</button>
 		}
 
-		<Dialog store={cnnDetailSo}>
-			<ListEditDlg<Subscription>
+		<Dialog
+			open={cnnDetailSa.subOpen}
+			store={cnnDetailSo}
+			onClose={handleCloseDetail}
+		>
+			<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
 				items={cnnDetailSa.connection.subscriptions}
 				RenderRow={SubRow}
 				RenderDetail={SubDetail}
 				fnNewItem={() => ({ subject: "<new>" })}
 				onChange={handleChangeSubs}
-				onClose={handleCloseDetail}
 			/>
 		</Dialog>
 

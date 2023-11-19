@@ -17,12 +17,8 @@ const App: FunctionComponent = () => {
 	const docSa = useStore(docSo) as DocState
 
 	// HOOKS
-	useEffect(() => {
-		cnnSo.fetch()
-	}, [])
-
-	// HANDLERS
 	
+	// HANDLERS
 
 	// RENDER
 	const views = docSa.allInShow

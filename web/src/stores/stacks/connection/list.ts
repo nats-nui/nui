@@ -25,7 +25,8 @@ const setup = {
 	},
 
 	getters: {
-		getSelectId(_: void, store?: CnnListStore) {
+		/** l'id della CONNECTION attualmente selezionata */
+		getSelectId(_: void, store?: CnnListStore):string {
 			return docSetup.getters.getParam(CONNECTIONS_PARAMS.SELECT_ID, store)
 		},
 	},

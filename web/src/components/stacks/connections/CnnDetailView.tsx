@@ -8,12 +8,12 @@ import CnnDetailCmp from "./CnnDetailCmp"
 
 
 interface Props {
-	cnnDetailSo?: CnnDetailStore
+	store?: CnnDetailStore
 	style?: React.CSSProperties,
 }
 
 const CnnDetailView: FunctionComponent<Props> = ({
-	cnnDetailSo,
+	store: cnnDetailSo,
 	style,
 }) => {
 

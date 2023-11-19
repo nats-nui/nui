@@ -45,23 +45,27 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.sendSubscriptions()
 	}
 
-
 	const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		msgSo.setMessage(e.target.value)
 	}
 	const handleMessagePublish = (_: React.MouseEvent) => {
 		msgSo.publishMessage()
 	}
-	const handleMessageSub = (_: React.MouseEvent) => {
+	const handleMessageSubOpen = (_: React.MouseEvent) => {
 		msgSo.setSubjectOpen(true)
 	}
-	const handleCloseSubjectDialog = () => {
+	const handleMessageSubSelect = (index: number) => {
+		msgSo.setSubject(msgSa.subscriptions[index].subject)
+		msgSo.setSubjectOpen(false)
+	}
+	const handleMessageSubClose = () => {
 		msgSo.setSubjectOpen(false)
 	}
 
 	// RENDER
 	const [id] = msgSa.params?.[PARAMS_MESSAGES.CONNECTION_ID]
 	const cnn = cnnSo.getById(id)
+	const labelSubscription = msgSa.subject ?? "subj"
 
 	return (
 		<div style={{ ...cssContainer, ...style }}>
@@ -81,8 +85,8 @@ const MessagesView: FunctionComponent<Props> = ({
 					onChange={handleMessageChange}
 				/>
 				<button
-					onClick={handleMessageSub}
-				>sub</button>
+					onClick={handleMessageSubOpen}
+				>{labelSubscription}</button>
 			</div>
 
 			<Dialog
@@ -90,7 +94,7 @@ const MessagesView: FunctionComponent<Props> = ({
 				store={msgSo}
 				onClose={handleCloseSubscriptionsDialog}
 			>
-				<ListEditDlg<Subscription>
+				<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
 					items={msgSa.subscriptions}
 					RenderRow={SubRow}
 					RenderDetail={SubDetail}
@@ -102,20 +106,13 @@ const MessagesView: FunctionComponent<Props> = ({
 			<Dialog
 				open={msgSa.subjectOpen}
 				store={msgSo}
-				onClose={handleCloseSubjectDialog}
+				onClose={handleMessageSubClose}
 			>
-				<div style={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "red" }}>
-					<div style={{ flex: 1 }} />
+				<div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: 'flex-end', backgroundColor: "#a0e312" }}>
 					<ListEditDlg<Subscription>
 						items={msgSa.subscriptions}
 						RenderRow={SubRow}
-						onChangeSelect={index => {
-							msgSo.setSubject(msgSa.subscriptions[index].subject)
-							msgSo.setSubjectOpen(false)
-						}}
-					//RenderDetail={SubDetail}
-					//fnNewItem={() => ({ subject: "<new>" })}
-					//onChange={handleChangeSubs}
+						onChangeSelect={handleMessageSubSelect}
 					/>
 				</div>
 			</Dialog>

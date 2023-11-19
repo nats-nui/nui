@@ -22,6 +22,8 @@ interface Props<T> {
 	onChange?: (newItems: T[]) => void
 	onChangeSelect?: (index: number) => void
 	onClose?: () => void
+
+	style?: React.CSSProperties
 }
 
 
@@ -35,6 +37,8 @@ function ListEditDlg<T>({
 	onChange,
 	onChangeSelect,
 	onClose,
+
+	style = {},
 }: Props<T>) {
 
 	// STORES
@@ -69,7 +73,7 @@ function ListEditDlg<T>({
 	// RENDER
 	const itemSel = items[select]
 
-	return <div style={cssContainer}>
+	return <div style={{ ...cssContainer, ...style }}>
 
 		{/* CHUSURA */}
 		<div onClick={handleClose}>X</div>
@@ -106,7 +110,6 @@ const cssContainer: React.CSSProperties = {
 	paddingLeft: "15px",
 	//flex: 1,
 	display: "flex", flexDirection: "column",
-	backgroundColor: "#a0e312",
 	color: "black",
 	width: "146px",
 }

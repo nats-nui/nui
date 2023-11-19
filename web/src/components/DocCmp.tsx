@@ -23,7 +23,7 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 			case DOC_TYPE.CONNECTIONS:
 				return <CnnListView store={view as CnnListStore} style={style}/>
 			case DOC_TYPE.SERVICES:
-				return <CnnDetailView cnnDetailSo={view as CnnDetailStore} style={style}/>
+				return <CnnDetailView store={view as CnnDetailStore} style={style}/>
 			case DOC_TYPE.MESSAGES:
 				return <MessagesView store={view as MessagesStore} style={style}/>
 			default:
