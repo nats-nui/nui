@@ -16,12 +16,12 @@ interface Props {
  * Lo STACK di una collezione di CONNECTIONs
  */
 const CnnListView: FunctionComponent<Props> = ({
-	store: viewSo,
+	store: cnnListSo,
 	style,
 }) => {
 
 	// STORE
-	useStore(viewSo) as CnnListState
+	useStore(cnnListSo) as CnnListState
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
@@ -30,19 +30,19 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelectConnection = (cnn: Connection) => viewSo.select(cnn)
-	const handleNewConnection = () => viewSo.create()
+	const handleSelectConnection = (cnn: Connection) => cnnListSo.select(cnn)
+	const handleNewConnection = () => cnnListSo.create()
 	const handleDelConnection = () => cnnSo.delete(selectedId)
 
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const selectedId = viewSo.getSelectId()
+	const selectedId = cnnListSo.getSelectId()
 	const isSelected = (cnn: Connection) => selectedId == cnn.id
 
 	return <div style={{ ...cssContainer, ...style }}>
 
-		<Header view={viewSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
+		<Header view={cnnListSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
 
 		<div style={{ display: "flex" }}>
 			<button

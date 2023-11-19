@@ -12,8 +12,11 @@ import { MessagesState, PARAMS_MESSAGES } from "../messages"
 const setup = {
 
 	state: {
+		/** dialog SUBSCRIPTION aperta/chiusa */
 		subOpen: false,
+		/** connection attualmente in editazione */
 		connection: <Connection>null,
+		/** OVERWRITING */
 		draggable: false,
 	},
 
@@ -26,6 +29,7 @@ const setup = {
 	},
 
 	actions: {
+		/** apertura STACK MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {
 			const cnn = store.getConnection()
 			if (!cnn) return
