@@ -12,7 +12,7 @@ const handlers = [
 	rest.get('/api/connection', async (_req, res, ctx) => {
 		return res(
 			ctx.status(200),
-			ctx.json({ data: connections }),
+			ctx.json(connections),
 		)
 	}),
 
@@ -31,7 +31,7 @@ const handlers = [
 
 		return res(
 			ctx.status(200),
-			ctx.json({ data: connections[index] }),
+			ctx.json(connections[index]),
 		)
 	}),
 
@@ -46,7 +46,7 @@ const handlers = [
 
 		return res(
 			ctx.status(201),
-			ctx.json({ data: newCnn }),
+			ctx.json(newCnn),
 		)
 	}),
 
