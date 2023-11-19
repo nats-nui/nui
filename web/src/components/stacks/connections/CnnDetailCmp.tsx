@@ -58,7 +58,9 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 	const handleChangeSubs = (newItems: Subscription[]) => {
 		cnnDetailSa.connection.subscriptions = newItems
-		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
+		const newConnection = { ...cnnDetailSa.connection }
+		cnnDetailSo.setConnection(newConnection)
+		cnnSo.modify(newConnection)
 	}
 
 	// RENDER
