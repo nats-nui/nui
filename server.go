@@ -177,7 +177,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 func (a *App) handleWsSub(c *websocket.Conn) {
 	ctx, cancel := context.WithCancel(a.ctx)
 	reqCh := make(chan *ws.Request, 1)
-	msgCh := make(chan *ws.Message, 10)
+	msgCh := make(chan *ws.Message, 1000)
 	errCh := make(chan error, 10)
 	clientId := uuid.NewString()
 	go handleWsMsgs(c, ctx, msgCh, errCh, cancel)

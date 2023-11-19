@@ -11,6 +11,6 @@ type ClientSub[S Subscription] struct {
 func NewClientSub[S Subscription](subject string) ClientSub[S] {
 	return ClientSub[S]{
 		Subject:  subject,
-		Messages: make(chan *nats.Msg),
+		Messages: make(chan *nats.Msg, 10),
 	}
 }
