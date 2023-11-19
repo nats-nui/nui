@@ -1,4 +1,5 @@
 import docsSo from "@/stores/docs"
+import cnnSo from "@/stores/connections"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { Connection, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -11,21 +12,27 @@ import { MessagesState, PARAMS_MESSAGES } from "../messages"
 const setup = {
 
 	state: {
+		subOpen: false,
 		connection: <Connection>null,
 		draggable: false,
 	},
 
 	getters: {
+		getConnection(_:void, store?: CnnDetailStore) {
+			const cnnId = (<CnnListStore>store.state.parent).getSelectId()
+			const cnn = cnnSo.getById(cnnId)
+			return cnn
+		}
 	},
 
 	actions: {
 		openMessages(_: void, store?: CnnDetailStore) {
-			const cnnId = (store.state.parent as CnnListStore).getSelectId()
-			if (!cnnId) return
+			const cnn = store.getConnection()
+			if (!cnn) return
 			const msgStore = buildStore({
 				type: DOC_TYPE.MESSAGES,
-				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnnId] },
-				subscriptions: [...store.state.connection.subscriptions]
+				params: { [PARAMS_MESSAGES.CONNECTION_ID]: [cnn.id] },
+				subscriptions: [...cnn.subscriptions]
 			} as MessagesState)
 			docsSo.addLink({
 				view: msgStore,
@@ -35,7 +42,8 @@ const setup = {
 	},
 
 	mutators: {
-		setConnection: (connection: Connection) => ({ connection })
+		setConnection: (connection: Connection) => ({ connection }),
+		setSubOpen: (subOpen: boolean) => ({ subOpen })
 	},
 }
 

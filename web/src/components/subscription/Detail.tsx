@@ -10,8 +10,9 @@ const SubDetail: FunctionComponent<RenderDetailBaseProps<Subscription>> = ({
 }) => {
 
 	// HANDLERS
-	const handleChangeSubject = ( e: React.ChangeEvent<HTMLInputElement>) => {
-		const newItem = {...item, subject: e.target.value}
+	const handleChangeSubject = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const subject = e.target.value
+		const newItem = { ...item, subject }
 		onChange?.(newItem)
 	}
 
