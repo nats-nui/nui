@@ -5,7 +5,7 @@ import { Connection } from "@/types/Connection"
 /**
  * Recupera tutte le CONNECTION
  */
-function index(): Promise<{ data: Connection[] }> {
+function index(): Promise<Connection[]> {
 	return ajax.get(`connection`)
 }
 
@@ -20,7 +20,7 @@ function remove(id: string): Promise<void> {
 /**
  * Modifica/crea un CONNECTION
  */
-function save(cnn: Connection): Promise<{ data: Connection }> {
+function save(cnn: Connection): Promise<Connection> {
 	const blockId = cnn.id ? `/${cnn.id}` : ""
 	return ajax.post(`connection${blockId}`, cnn)
 }
