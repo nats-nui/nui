@@ -1,5 +1,6 @@
 import cnnApi from "@/api/connection"
 import { Connection } from "@/types/Connection"
+import { debounce } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 
 
@@ -35,7 +36,7 @@ const setup = {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
 		},
-		async modify(cnn:Connection, store?: ConnectionStore): Promise<void> {
+		async modify(cnn: Connection, store?: ConnectionStore): Promise<void> {
 			const index = store.getIndexById(cnn.id)
 			const cnns = [...store.state.all]
 			cnns[index] = cnn
@@ -50,6 +51,7 @@ const setup = {
 			const index = all.findIndex(c => c.id == cnn.id)
 			if (index == -1) return
 			all[index] = cnn
+			debounce("updateconnection", () => cnnApi.save(cnn), 1000)
 			return { all }
 		},
 	},

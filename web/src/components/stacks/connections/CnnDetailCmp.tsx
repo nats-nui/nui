@@ -41,7 +41,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	}
 	const handleChangeHost = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const host = e.target.value
-		const cnn = { ...cnnDetailSa.connection, host }
+		const cnn = { ...cnnDetailSa.connection, hosts:[host] }
 		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
@@ -71,24 +71,28 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 	if (cnnDetailSa.connection == null) return null
 
+	const name = cnnDetailSa.connection.name ?? ""
+	const host = cnnDetailSa.connection.hosts?.[0] ?? ""
+	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
+
 	return (<div>
 
 		<div>NAME</div>
 		<input
-			value={cnnDetailSa.connection.name}
+			value={name}
 			onChange={handleChangeName}
 		/>
 
 		<div>HOST</div>
 		<input
-			value={cnnDetailSa.connection.host}
+			value={host}
 			onChange={handleChangeHost}
 		/>
 
 		<div>SUBSCRIPTIONS</div>
 		<button
 			onClick={handleClickSubs}
-		>{cnnDetailSa.connection.subscriptions?.map(s => s.subject).join(",")}</button>
+		>{subscriptions?.map(s => s.subject).join(",")}</button>
 
 		{isNew &&
 			<button
