@@ -23,11 +23,11 @@ const setup = {
 
 	actions: {
 		async fetch(_: void, store?: ConnectionStore) {
-			const { data: cnn } = await cnnApi.index()
+			const cnn = await cnnApi.index()
 			store.setAll(cnn)
 		},
 		async create(cnn: Connection, store?: ConnectionStore): Promise<Connection> {
-			const { data: cnnNew } = await cnnApi.save(cnn)
+			const cnnNew = await cnnApi.save(cnn)
 			store.setAll([...store.state.all, cnnNew])
 			return cnnNew
 		},
