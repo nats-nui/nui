@@ -28,7 +28,7 @@ function save(cnn: Connection): Promise<Connection> {
 function publish(cnnId:string, subject:string, payload:string) {
 	const data = {
 		subject,
-		payload
+		payload : btoa(payload)
 	}
 	return ajax.post(`connection/${cnnId}/publish`, data)
 }

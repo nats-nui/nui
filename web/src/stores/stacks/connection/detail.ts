@@ -43,6 +43,9 @@ const setup = {
 				parent: store,
 			})
 		},
+		updateConnection(_: void, store?: CnnDetailStore) {
+			
+		}
 	},
 
 	mutators: {

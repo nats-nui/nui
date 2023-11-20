@@ -122,8 +122,10 @@ export class SocketService {
 	}
 
 	onMessage(e: MessageEvent) {
+		//console.log(Buffer)
 		if (!this.options.onMessage ) return
 		const message:SocketMessage = JSON.parse(e.data) as SocketMessage
+		message.payload = atob(message.payload)
 		this.options.onMessage(message)
 	}
 
