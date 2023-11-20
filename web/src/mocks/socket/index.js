@@ -34,6 +34,8 @@ function serverStart(port = 8080) {
 }
 
 function send(data) {
+	const payload = Buffer.from(data.payload, "utf8").toString("base64")
+	data.payload = payload
 	client.send(JSON.stringify(data))
 }
 
