@@ -19,7 +19,7 @@ type Conn[S Subscription] interface {
 }
 
 type IHub interface {
-	Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- *Message, errors chan<- error)
+	Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- StrType)
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
@@ -38,12 +38,12 @@ func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscripti
 	return NewHub[*nats.Subscription, *nats.Conn](pool)
 }
 
-func (h *Hub[S, T]) Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- *Message, errors chan<- error) {
+func (h *Hub[S, T]) Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- StrType) {
 	h.purgeConnection(clientId)
-	go h.ListenRequests(clientId, req, messages, ctx.Done(), errors)
+	go h.ListenRequests(clientId, req, messages, ctx.Done())
 }
 
-func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan *Request, messages chan<- *Message, done <-chan struct{}, errors chan<- error) {
+func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan *Request, messages chan<- StrType, done <-chan struct{}) {
 	for {
 		select {
 		case <-done:
@@ -54,7 +54,7 @@ func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan *Request, message
 			err := h.registerConnection(clientId, r, messages)
 			if err != nil {
 				select {
-				case errors <- err:
+				case messages <- Error{Error: err.Error()}:
 				default:
 				}
 			}
@@ -70,7 +70,7 @@ func (h *Hub[S, T]) purgeConnection(clientId string) {
 	delete(h.reg, clientId)
 }
 
-func (h *Hub[S, T]) registerConnection(clientId string, req *Request, messages chan<- *Message) error {
+func (h *Hub[S, T]) registerConnection(clientId string, req *Request, messages chan<- StrType) error {
 	serverConn, err := h.pool.Get(req.ConnectionId)
 	if err != nil {
 		return err
@@ -92,17 +92,16 @@ func (h *Hub[S, T]) registerConnection(clientId string, req *Request, messages c
 	return nil
 }
 
-func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- *Message) {
+func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- StrType) {
 	for {
 		select {
 		case msg, ok := <-natsMsg:
 			if !ok {
 				return
 			}
-			cm := &Message{
-				Subject:  msg.Subject,
-				Payload:  msg.Data,
-				Metadata: Metadata{},
+			cm := &NatsMsg{
+				Subject: msg.Subject,
+				Payload: msg.Data,
 			}
 			clientMgs <- cm
 		}

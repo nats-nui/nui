@@ -59,15 +59,15 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		s.hub.Register(context.Background(), "test", make(chan *Request), make(chan *Message), make(chan error))
+		s.hub.Register(context.Background(), "test", make(chan *Request), make(chan StrType))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
 	req := make(chan *Request, 1)
-	msg := make(chan *Message, 1)
-	s.hub.Register(context.Background(), "test", req, msg, make(chan error))
+	msg := make(chan StrType, 1)
+	s.hub.Register(context.Background(), "test", req, msg)
 
 	go func() {
 		for range time.Tick(time.Millisecond * 20) {
@@ -88,12 +88,12 @@ func TestHub_ListenRequests(t *testing.T) {
 		}
 	}()
 
-	var received1 *Message
-	var received2 *Message
+	var received1 *NatsMsg
+	var received2 *NatsMsg
 
 	go func() {
-		received1 = <-msg
-		received2 = <-msg
+		received1 = (<-msg).(*NatsMsg)
+		received2 = (<-msg).(*NatsMsg)
 	}()
 	require.EventuallyWithT(t, func(c *assert.CollectT) {
 		assert.NotNil(c, received1)
