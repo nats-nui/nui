@@ -177,12 +177,11 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 func (a *App) handleWsSub(c *websocket.Conn) {
 	ctx, cancel := context.WithCancel(a.ctx)
 	reqCh := make(chan *ws.Request, 1)
-	msgCh := make(chan *ws.Message, 1000)
-	errCh := make(chan error, 10)
+	msgCh := make(chan ws.StrType, 1000)
 	clientId := uuid.NewString()
-	go handleWsMsgs(c, ctx, msgCh, errCh, cancel)
+	go handleWsMsgs(c, ctx, msgCh, cancel)
 	go handleWsRequest(c, ctx, reqCh, cancel)
-	a.nui.Hub.Register(ctx, clientId, reqCh, msgCh, errCh)
+	a.nui.Hub.Register(ctx, clientId, reqCh, msgCh)
 	c.SetCloseHandler(func(code int, text string) error {
 		cancel()
 		return nil
@@ -207,19 +206,17 @@ func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 	}
 }
 
-func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan *ws.Message, errCh chan error, cancel context.CancelFunc) {
+func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.StrType, cancel context.CancelFunc) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case msg := <-msgCh:
-			err := c.WriteJSON(msg)
-			if err != nil {
-				cancel()
-				return
+			message := &ws.Message{
+				Type:    msg.StrType(),
+				Payload: msg,
 			}
-		case errMsg := <-errCh:
-			err := c.WriteJSON(ws.Error{Error: errMsg.Error()})
+			err := c.WriteJSON(message)
 			if err != nil {
 				cancel()
 				return

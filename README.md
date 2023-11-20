@@ -73,7 +73,7 @@ POST /api/connection/:id/request
 }
 ```
 
-### To subscribe to subjects via websdocket 
+### To subscribe to websocket 
 
 ```
 GET /ws/sub
@@ -94,13 +94,32 @@ GET /ws/sub
 ```
 MESSAGE
 {
+  "type": <string>,
+  "payload": <object> // based on type
+}
+```
+
+```
+NATS MESSAGE 
+type: nats_msg
+{
   "subject": <string>,
   "payload": <string> // base64 encoded
 }
 ```
 
 ```
+NATS MESSAGE 
+type: connection_status
+{
+  "connection_id": <string>,
+  "status": <string> // connected - reconnecting - disconnected
+}
+```
+
+```
 ERROR MESSAGE
+type: error
 {
   "error": <string>
 }
