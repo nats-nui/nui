@@ -30,8 +30,8 @@ func NewServer(port string, nui *Nui) *App {
 func (a *App) registerHandlers() {
 	a.Get("/api/connection", a.handleGetConnections)
 	a.Get("/api/connection/:id", a.handleGetConnection)
-	a.Post("/api/connection", a.HandleSaveConnection)
-	a.Post("/api/connection/:id", a.HandleSaveConnection)
+	a.Post("/api/connection", a.handleSaveConnection)
+	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
@@ -85,7 +85,7 @@ func (a *App) handleGetConnection(c *fiber.Ctx) error {
 	return c.JSON(conn)
 }
 
-func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
+func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	conn := &connection.Connection{}
 	err := c.BodyParser(conn)
 	if err != nil {
@@ -175,13 +175,21 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 }
 
 func (a *App) handleWsSub(c *websocket.Conn) {
+	connId := c.Query("id")
+	if connId == "" {
+		return
+	}
+	conn, err := a.nui.ConnRepo.GetById(connId)
+	if err != nil {
+		return
+	}
 	ctx, cancel := context.WithCancel(a.ctx)
 	reqCh := make(chan *ws.Request, 1)
-	msgCh := make(chan ws.StrType, 1000)
+	msgCh := make(chan ws.Payload, 1000)
 	clientId := uuid.NewString()
 	go handleWsMsgs(c, ctx, msgCh, cancel)
 	go handleWsRequest(c, ctx, reqCh, cancel)
-	a.nui.Hub.Register(ctx, clientId, reqCh, msgCh)
+	a.nui.Hub.Register(ctx, clientId, conn.Id, reqCh, msgCh)
 	c.SetCloseHandler(func(code int, text string) error {
 		cancel()
 		return nil
@@ -206,14 +214,14 @@ func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 	}
 }
 
-func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.StrType, cancel context.CancelFunc) {
+func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.Payload, cancel context.CancelFunc) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case msg := <-msgCh:
 			message := &ws.Message{
-				Type:    msg.StrType(),
+				Type:    msg.GetType(),
 				Payload: msg,
 			}
 			err := c.WriteJSON(message)

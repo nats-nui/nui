@@ -59,15 +59,15 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		s.hub.Register(context.Background(), "test", make(chan *Request), make(chan StrType))
+		s.hub.Register(context.Background(), "test", "connection", make(chan *Request), make(chan Payload))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
 	req := make(chan *Request, 1)
-	msg := make(chan StrType, 1)
-	s.hub.Register(context.Background(), "test", req, msg)
+	msg := make(chan Payload, 1)
+	s.hub.Register(context.Background(), "test", "connection", req, msg)
 
 	go func() {
 		for range time.Tick(time.Millisecond * 20) {

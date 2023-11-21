@@ -1,7 +1,7 @@
 package ws
 
-type StrType interface {
-	StrType() string
+type Payload interface {
+	GetType() string
 }
 
 type Message struct {
@@ -9,12 +9,19 @@ type Message struct {
 	Payload any    `json:"payload"`
 }
 
+func NewWsMessage(p Payload) Message {
+	return Message{
+		Type:    p.GetType(),
+		Payload: p,
+	}
+}
+
 type NatsMsg struct {
 	Subject string `json:"subject"`
 	Payload []byte `json:"Payload"`
 }
 
-func (s NatsMsg) StrType() string {
+func (s NatsMsg) GetType() string {
 	return "subscription"
 }
 
@@ -26,7 +33,7 @@ type ConnectionStatus struct {
 	Status string `json:"status"`
 }
 
-func (s ConnectionStatus) StrType() string {
+func (s ConnectionStatus) GetType() string {
 	return "connection_status"
 }
 
@@ -34,7 +41,7 @@ type Error struct {
 	Error string `json:"error"`
 }
 
-func (e Error) StrType() string {
+func (e Error) GetType() string {
 	return "error"
 }
 
