@@ -2,6 +2,7 @@ package ws
 
 import (
 	"context"
+	"errors"
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/pkg/channels"
 )
@@ -19,7 +20,7 @@ type Conn[S Subscription] interface {
 }
 
 type IHub interface {
-	Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- StrType)
+	Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
@@ -38,20 +39,25 @@ func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscripti
 	return NewHub[*nats.Subscription, *nats.Conn](pool)
 }
 
-func (h *Hub[S, T]) Register(ctx context.Context, clientId string, req <-chan *Request, messages chan<- StrType) {
+func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
 	h.purgeConnection(clientId)
-	go h.ListenRequests(clientId, req, messages, ctx.Done())
+	err := h.registerConnection(clientId, connectionId, req, messages)
+	if err != nil {
+		return err
+	}
+	go h.ListenRequests(ctx, clientId, req, messages)
+	return nil
 }
 
-func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan *Request, messages chan<- StrType, done <-chan struct{}) {
+func (h *Hub[S, T]) ListenRequests(ctx context.Context, clientId string, req <-chan *Request, messages chan<- Payload) {
 	for {
 		select {
-		case <-done:
+		case <-ctx.Done():
 			h.purgeConnection(clientId)
 			return
 		case r := <-req:
-			h.purgeConnection(clientId)
-			err := h.registerConnection(clientId, r, messages)
+			h.purgeSubscriptions(clientId)
+			err := h.registerSubscriptions(clientId, r)
 			if err != nil {
 				select {
 				case messages <- Error{Error: err.Error()}:
@@ -65,17 +71,40 @@ func (h *Hub[S, T]) ListenRequests(clientId string, req <-chan *Request, message
 func (h *Hub[S, T]) purgeConnection(clientId string) {
 	currentConn, ok := h.reg[clientId]
 	if ok {
-		currentConn.UnsubscribeAll()
+		h.purgeClientSubscriptions(currentConn)
 	}
 	delete(h.reg, clientId)
 }
 
-func (h *Hub[S, T]) registerConnection(clientId string, req *Request, messages chan<- StrType) error {
-	serverConn, err := h.pool.Get(req.ConnectionId)
+func (h *Hub[S, T]) purgeSubscriptions(clientId string) {
+	currentConn, ok := h.reg[clientId]
+	if ok {
+		h.purgeClientSubscriptions(currentConn)
+	}
+}
+
+func (h *Hub[S, T]) purgeClientSubscriptions(clientConn *ClientConn[S]) {
+	clientConn.UnsubscribeAll()
+}
+
+func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
+	_, err := h.pool.Get(connectionId)
 	if err != nil {
 		return err
 	}
-	subs := make([]ClientSub[S], 0)
+	h.reg[clientId] = NewWClientConn[S](connectionId, req, messages)
+	return nil
+}
+
+func (h *Hub[S, T]) registerSubscriptions(clientId string, req *Request) error {
+	clientConn, ok := h.reg[clientId]
+	if !ok {
+		return errors.New("no client connection found")
+	}
+	serverConn, err := h.pool.Get(clientConn.ConnectionId)
+	if err != nil {
+		return err
+	}
 	chans := make([]<-chan *nats.Msg, 0)
 	for _, sbj := range req.Subjects {
 		s := NewClientSub[S](sbj)
@@ -84,15 +113,14 @@ func (h *Hub[S, T]) registerConnection(clientId string, req *Request, messages c
 			return err
 		}
 		s.Sub = sub
-		subs = append(subs, s)
 		chans = append(chans, s.Messages)
+		clientConn.AddSubscription(s)
 	}
-	h.reg[clientId] = NewWClientConn[S](messages, subs)
-	go parseToClientMessage(channels.FanIn(10, chans...), messages)
+	go parseToClientMessage(channels.FanIn(10, chans...), clientConn.Messages)
 	return nil
 }
 
-func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- StrType) {
+func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
 	for {
 		select {
 		case msg, ok := <-natsMsg:
