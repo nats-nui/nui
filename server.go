@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -177,10 +178,12 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 func (a *App) handleWsSub(c *websocket.Conn) {
 	connId := c.Query("id")
 	if connId == "" {
+		writeError(c, 4422, errors.New("id is required"))
 		return
 	}
 	conn, err := a.nui.ConnRepo.GetById(connId)
 	if err != nil {
+		writeError(c, 4404, err)
 		return
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
@@ -189,7 +192,11 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 	clientId := uuid.NewString()
 	go handleWsMsgs(c, ctx, msgCh, cancel)
 	go handleWsRequest(c, ctx, reqCh, cancel)
-	a.nui.Hub.Register(ctx, clientId, conn.Id, reqCh, msgCh)
+	err = a.nui.Hub.Register(ctx, clientId, conn.Id, reqCh, msgCh)
+	if err != nil {
+		writeError(c, 4500, err)
+		return
+	}
 	c.SetCloseHandler(func(code int, text string) error {
 		cancel()
 		return nil
@@ -231,4 +238,10 @@ func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.Payload,
 			}
 		}
 	}
+}
+
+func writeError(c *websocket.Conn, status int, err error) {
+	_ = c.WriteMessage(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(status, err.Error()))
 }
