@@ -20,7 +20,7 @@ type Conn[S Subscription] interface {
 }
 
 type IHub interface {
-	Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error
+	Register(ctx context.Context, clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
@@ -39,7 +39,7 @@ func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscripti
 	return NewHub[*nats.Subscription, *nats.Conn](pool)
 }
 
-func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
+func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error {
 	h.purgeConnection(clientId)
 	err := h.registerConnection(clientId, connectionId, req, messages)
 	if err != nil {
@@ -49,7 +49,7 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	return nil
 }
 
-func (h *Hub[S, T]) ListenRequests(ctx context.Context, clientId string, req <-chan *Request, messages chan<- Payload) {
+func (h *Hub[S, T]) ListenRequests(ctx context.Context, clientId string, req <-chan *SubsReq, messages chan<- Payload) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -87,7 +87,7 @@ func (h *Hub[S, T]) purgeClientSubscriptions(clientConn *ClientConn[S]) {
 	clientConn.UnsubscribeAll()
 }
 
-func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
+func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error {
 	_, err := h.pool.Get(connectionId)
 	if err != nil {
 		return err
@@ -96,7 +96,7 @@ func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan
 	return nil
 }
 
-func (h *Hub[S, T]) registerSubscriptions(clientId string, req *Request) error {
+func (h *Hub[S, T]) registerSubscriptions(clientId string, req *SubsReq) error {
 	clientConn, ok := h.reg[clientId]
 	if !ok {
 		return errors.New("no client connection found")
