@@ -9,8 +9,8 @@ type Message struct {
 	Payload any    `json:"payload"`
 }
 
-func NewWsMessage(p Payload) Message {
-	return Message{
+func NewWsMessage(p Payload) *Message {
+	return &Message{
 		Type:    p.GetType(),
 		Payload: p,
 	}
@@ -45,7 +45,6 @@ func (e Error) GetType() string {
 	return "error"
 }
 
-type Request struct {
-	ConnectionId string   `json:"connection_id"`
-	Subjects     []string `json:"subjects"`
+type SubsReq struct {
+	Subjects []string `json:"subjects"`
 }
