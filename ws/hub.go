@@ -2,7 +2,6 @@ package ws
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
@@ -22,7 +21,7 @@ type Conn[S Subscription] interface {
 }
 
 type IHub interface {
-	Register(ctx context.Context, clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error
+	Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
@@ -41,7 +40,7 @@ func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscripti
 	return NewHub[*nats.Subscription, *nats.Conn](pool)
 }
 
-func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
+func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
 	h.purgeConnection(clientId)
 	err := h.registerConnection(clientId, connectionId, req, messages)
 	if err != nil {
@@ -51,7 +50,7 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	return nil
 }
 
-func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-chan []byte, messages chan<- Payload) error {
+func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-chan *Request, messages chan<- Payload) error {
 	for {
 	nextRequest:
 		select {
@@ -59,38 +58,29 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-c
 			h.purgeConnection(clientId)
 			return nil
 		case r := <-req:
-			deserialized := make(map[string]any)
-			err := json.Unmarshal(r, &deserialized)
-			if err != nil {
-				select {
-				case messages <- Error{Error: err.Error()}:
-				default:
-				}
-				break nextRequest
-			}
-			val, ok := deserialized["type"]
-			if !ok {
-				select {
-				case messages <- Error{Error: err.Error()}:
-				default:
-				}
-				break nextRequest
-			}
-			switch val {
+			switch r.Type {
 			case subReqType:
 				subReq := &SubsReq{}
-				err := mapstructure.Decode(deserialized["payload"], subReq)
+				err := mapstructure.Decode(r.Payload, subReq)
 				if err != nil {
-					select {
-					case messages <- Error{Error: err.Error()}:
-					default:
-					}
+					messages = sendErr(messages, err)
 					break nextRequest
 				}
 				h.HandleSubRequest(ctx, clientId, subReq, messages)
+			default:
+				messages = sendErr(messages, errors.New("unknown request type"))
+				break nextRequest
 			}
 		}
 	}
+}
+
+func sendErr(messages chan<- Payload, err error) chan<- Payload {
+	select {
+	case messages <- Error{Error: err.Error()}:
+	default:
+	}
+	return messages
 }
 
 func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
@@ -123,7 +113,7 @@ func (h *Hub[S, T]) purgeClientSubscriptions(clientConn *ClientConn[S]) {
 	clientConn.UnsubscribeAll()
 }
 
-func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
+func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
 	_, err := h.pool.Get(connectionId)
 	if err != nil {
 		return err

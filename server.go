@@ -57,7 +57,7 @@ func (a *App) Start(ctx context.Context) error {
 	go func() {
 		select {
 		case <-ctx.Done():
-			a.Shutdown()
+			_ = a.Shutdown()
 		}
 	}()
 	return a.Listen(":" + a.port)
@@ -97,7 +97,7 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	}
 	conn, err = a.nui.ConnRepo.Save(conn)
 	if err != nil {
-		return c.Status(500).JSON(err)
+		return c.Status(500).JSON(err.Error())
 	}
 	err = a.nui.ConnPool.Refresh(conn.Id)
 	if err != nil {
@@ -187,7 +187,7 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 		return
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
-	reqCh := make(chan *ws.SubsReq, 1)
+	reqCh := make(chan *ws.Request, 1)
 	msgCh := make(chan ws.Payload, 1000)
 	clientId := uuid.NewString()
 	go handleWsMsgs(c, ctx, msgCh, cancel)
@@ -204,9 +204,9 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 	<-ctx.Done()
 }
 
-func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.SubsReq, cancel context.CancelFunc) {
+func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Request, cancel context.CancelFunc) {
 	for {
-		req := &ws.SubsReq{}
+		req := &ws.Request{}
 		err := c.ReadJSON(req)
 		if err != nil {
 			cancel()

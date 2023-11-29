@@ -4,7 +4,7 @@ import "sync"
 
 type ClientConn[S Subscription] struct {
 	ConnectionId string
-	Req          <-chan []byte
+	Req          <-chan *Request
 	Messages     chan<- Payload
 	Subs         []ClientSub[S]
 	l            sync.Mutex
@@ -26,7 +26,7 @@ func (c *ClientConn[S]) AddSubscription(subscription ClientSub[S]) {
 	c.Subs = append(c.Subs, subscription)
 }
 
-func NewWClientConn[S Subscription](connectionId string, req <-chan []byte, messages chan<- Payload) *ClientConn[S] {
+func NewWClientConn[S Subscription](connectionId string, req <-chan *Request, messages chan<- Payload) *ClientConn[S] {
 	return &ClientConn[S]{
 		ConnectionId: connectionId,
 		Req:          req,

@@ -7,25 +7,22 @@ const (
 	errorType            = "error"
 )
 
-type TypesMapping map[string]any
-
-var typesMap = TypesMapping{
-	natsMsgType:          NatsMsg{},
-	connectionStatusType: ConnectionStatus{},
-	subReqType:           SubsReq{},
-}
-
 type Payload interface {
 	GetType() string
 }
 
-type Message struct {
+type Request struct {
 	Type    string `json:"type"`
 	Payload any    `json:"payload"`
 }
 
-func NewWsMessage(p Payload) *Message {
-	return &Message{
+type Response struct {
+	Type    string `json:"type"`
+	Payload any    `json:"payload"`
+}
+
+func NewWsMessage(p Payload) *Response {
+	return &Response{
 		Type:    p.GetType(),
 		Payload: p,
 	}
