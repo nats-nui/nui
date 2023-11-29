@@ -8,31 +8,26 @@
 	/* width: 200px; */
 }
 
-
+/* IN ROOT */
 .doc {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
 	border-radius: 10px;
-	
-	transition: transform 500ms;
-	/* transform: translate(0px, 250px); */
 
 	color: white;
 	background-color: #3E3E3E;
 	box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.40);
 }
+/* IN LINK */
 .doc_sub {
 	border-radius: 0px 10px 10px 0px;
 }
 
 
-.doc_show {
-	transform: translate(0px, 0px);
-}
-.doc_exit {
-	transform: translate(0px, 250px);
-}
+
+
+
 .doc_dragging {
 	color: white;
 	background-color: black;
@@ -41,13 +36,3 @@
 	opacity: 0.3;
 }
 
-
-.doc_exiting {
-	transform: translate(0px, 250px);
-}
-.doc_showing {
-	transform: translate(0px, 0px);
-}
-.doc_moving {
-	transform: translate(0px, 0px);
-}

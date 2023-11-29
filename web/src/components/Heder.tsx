@@ -4,6 +4,9 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import CloseBtt from "./buttons/CloseBtt"
 import mouseSo from "@/stores/mouse"
+import layoutSo from "@/stores/layout"
+
+
 
 interface Props {
 	view?: ViewStore
@@ -24,7 +27,7 @@ const Header: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleClose = _ => {
-		docSo.remove(view)
+		docSo.removeWithAnim(view)
 	}
 
 	const handleDragStart: React.DragEventHandler = (e) => {
@@ -39,25 +42,26 @@ const Header: FunctionComponent<Props> = ({
 	const isDraggable = true //view.state.draggable
 
 	return (
-		<div style={cssContainer}
+		<div style={cssRoot}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
 			{icon}
-			<span style={cssLabel}>{title}</span>
-			<CloseBtt onClick={handleClose} />
+			<span style={cssTitle}>{title}</span>
+			<CloseBtt style={{margin: "3px 5px"}} onClick={handleClose} />
 		</div>
 	)
 }
 
 export default Header
 
-const cssContainer: React.CSSProperties = {
+const cssRoot: React.CSSProperties = {
 	display: "flex",
-	alignItems: "center",
+	alignItems: "flex-start",
 	height: "48px",
 }
-const cssLabel: React.CSSProperties = {
+const cssTitle: React.CSSProperties = {
+	...layoutSo.state.theme.texts.title,
 	flex: 1,
 	fontFamily: "Darker Grotesque",
 	fontSize: "22px",

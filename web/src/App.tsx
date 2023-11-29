@@ -1,20 +1,23 @@
-import cnnSo from "@/stores/connections"
 import docSo, { DocState } from "@/stores/docs"
 import { ViewStore } from "@/stores/docs/viewBase"
+import layoutSo, { LayoutState } from "@/stores/layout"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
+import DragCmp from "./DragCmp"
 import DropArea from "./DropArea"
 import DocViewCmp from "./components/DocViewCmp"
 import MainMenu from "./components/MainMenu"
-import DragCmp from "./DragCmp"
 import { getID } from "./stores/docs/utils/factory"
+import { Theme } from "./stores/layout/utils"
 
 
 
 const App: FunctionComponent = () => {
 
 	// STORES
-	const docSa = useStore(docSo) as DocState
+	const layoutSa:LayoutState = useStore(layoutSo)
+	const docSa:DocState = useStore(docSo)
+
 
 	// HOOKS
 	
@@ -23,7 +26,7 @@ const App: FunctionComponent = () => {
 	// RENDER
 	const views = docSa.allInShow
 	return (
-		<div style={cssApp}>
+		<div style={cssApp(layoutSa.theme)}>
 			
 			<MainMenu />
 			<div style={cssContent}>
@@ -46,11 +49,12 @@ const App: FunctionComponent = () => {
 
 export default App
 
-const cssApp: React.CSSProperties = {
+const cssApp = (theme:Theme): React.CSSProperties => ({
 	height: "100%",
 	display: "flex",
 	backgroundColor: "black",
-}
+	color: theme.palette.fg.default,
+})
 
 const cssContent: React.CSSProperties = {
 	flex: 1,

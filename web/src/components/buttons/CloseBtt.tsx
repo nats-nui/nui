@@ -3,10 +3,13 @@ import React, { FunctionComponent } from "react"
 
 interface Props {
 	onClick?: (e:React.MouseEvent) => void
+
+	style?: React.CSSProperties
 }
 
 const CloseBtt: FunctionComponent<Props> = ({
 	onClick,
+	style,
 }) => {
 	// STORE
 
@@ -17,7 +20,7 @@ const CloseBtt: FunctionComponent<Props> = ({
 	// RENDER
 
 	return (
-		<div style={cssContainer}
+		<div style={{...cssContainer, ...style}}
 			onClick={onClick}
 		>
 			<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,4 +33,6 @@ const CloseBtt: FunctionComponent<Props> = ({
 export default CloseBtt
 
 const cssContainer: React.CSSProperties = {
+	cursor: "pointer",
+	padding: 5,
 }

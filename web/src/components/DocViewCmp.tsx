@@ -4,6 +4,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
 import styles from './DocViewCmp.module.css'
+import layoutSo from "@/stores/layout"
 
 
 
@@ -21,10 +22,10 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const viewSa = useStore(view) as ViewState
 
 	// HOOKS
-	useEffect(()=>{
+	useEffect(() => {
 		view.setDocAnim(DOC_ANIM.EXIT)
-		window.requestAnimationFrame(()=>view.setDocAnim(DOC_ANIM.SHOWING));
-	},[])
+		window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
+	}, [])
 
 	// HANDLER
 
@@ -32,14 +33,20 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
+
 	// style
-	const clsDocAnim = styles[`doc_${viewSa.docAnim}`]
-	const clsDoc = `${styles.doc} ${inRoot ? "" : styles.doc_sub} ${clsDocAnim}`
+	//	const clsDocAnim = styles[`doc_${viewSa.docAnim}`]
+	const clsDoc = `${styles.doc} ${inRoot ? "" : styles.doc_sub}`//${clsDocAnim}`
+
 	const styContainer = {
-		...{ zIndex: deep },
+		zIndex: deep,
 	}
+
 	const styContainerDoc = {
-		...{ zIndex: deep },
+		...viewSa.styInit,
+		width: viewSa.width,
+		...viewSa.styAni,
+		zIndex: deep,
 	}
 
 	return <div style={styContainer} className={styles.container}>
@@ -54,14 +61,17 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		<div style={cssDesk}>
 
 			{/* DIALOG */}
-			<div 
-				style={cssDialog(deep - 1)} 
+			<div
+				style={cssDialog(deep - 1)}
 				id={`dialog_${view.state.uuid}`}
 			/>
 
 			{/* LINKED */}
 			{haveLinked && <div >
-				<DocViewCmp view={view.state.linked} deep={deep - 2} />
+				<DocViewCmp 
+					deep={deep - 2}
+					view={view.state.linked}
+				/>
 			</div>}
 
 		</div>
