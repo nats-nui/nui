@@ -2,7 +2,6 @@ package ws
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -60,13 +59,13 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		_ = s.hub.Register(context.Background(), "test", "connection", make(chan []byte), make(chan Payload))
+		_ = s.hub.Register(context.Background(), "test", "connection", make(chan *Request), make(chan Payload))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
-	req := make(chan []byte, 1)
+	req := make(chan *Request, 1)
 	msg := make(chan Payload, 1)
 	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
 
@@ -83,15 +82,13 @@ func TestHub_ListenRequests(t *testing.T) {
 	}()
 
 	go func() {
-		encoded, _ := json.Marshal(
-			&Message{
-				Type: subReqType,
-				Payload: &SubsReq{
-					Subjects: []string{"sub1", "sub2"},
-				},
+		r := &Request{
+			Type: subReqType,
+			Payload: &SubsReq{
+				Subjects: []string{"sub1", "sub2"},
 			},
-		)
-		req <- encoded
+		}
+		req <- r
 	}()
 
 	var received1 *NatsMsg
