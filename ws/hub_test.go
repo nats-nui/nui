@@ -2,6 +2,7 @@ package ws
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,7 +14,7 @@ type mockPool struct {
 	Conn *mockConnection
 }
 
-func (m *mockPool) Get(id string) (*mockConnection, error) {
+func (m *mockPool) Get(_ string) (*mockConnection, error) {
 	if m.Conn == nil {
 		m.Conn = new(mockConnection)
 	}
@@ -59,13 +60,13 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		_ = s.hub.Register(context.Background(), "test", "connection", make(chan *SubsReq), make(chan Payload))
+		_ = s.hub.Register(context.Background(), "test", "connection", make(chan []byte), make(chan Payload))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
-	req := make(chan *SubsReq, 1)
+	req := make(chan []byte, 1)
 	msg := make(chan Payload, 1)
 	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
 
@@ -82,9 +83,15 @@ func TestHub_ListenRequests(t *testing.T) {
 	}()
 
 	go func() {
-		req <- &SubsReq{
-			Subjects: []string{"sub1", "sub2"},
-		}
+		encoded, _ := json.Marshal(
+			&Message{
+				Type: subReqType,
+				Payload: &SubsReq{
+					Subjects: []string{"sub1", "sub2"},
+				},
+			},
+		)
+		req <- encoded
 	}()
 
 	var received1 *NatsMsg
