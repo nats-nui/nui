@@ -1,10 +1,15 @@
 import { DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
 import { StoreCore } from "@priolo/jon"
+import React from "react"
 
 
 
 export enum PARAMS_DOC {
 	POSITION = "pos",
+}
+export enum DOC_VARIANTS {
+	DEFAULT = "",
+	LINK = "_link",
 }
 
 const setup = {
@@ -16,12 +21,17 @@ const setup = {
 
 		draggable: true,
 		docAnim: DOC_ANIM.INIT,
+		width: 300,
+		styInit: {
+			transition: "transform 300ms, width 300ms",
+			transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+		},
+		styAni: <React.CSSProperties>null,
+
 
 		position: POSITION_TYPE.DETACHED,
 		parent: <ViewStore>null,
 		linked: <ViewStore>null,
-
-		//dialogOpen: false,
 	},
 
 	getters: {
@@ -38,9 +48,9 @@ const setup = {
 			const params = { ...store.state.params, ...ps }
 			return { params }
 		},
-		//setDialogOpen: (dialogOpen: boolean) => ({ dialogOpen }),
+		setWidth: (width: number, store?: ViewStore) => ({ width }),
+		setStyAni: (styAni: React.CSSProperties, store?: ViewStore) => ({ styAni }),
 		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
-
 
 			let delay = 0
 			let noSet = false
@@ -72,7 +82,7 @@ const setup = {
 				if (noSet) return
 			}
 
-//console.log("setDocAnim", docAnim)
+			//console.log("setDocAnim", docAnim)
 			return { docAnim }
 		},
 	},

@@ -5,6 +5,11 @@ import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
+import CnnRow from "./CnnRow"
+import layoutSo from "@/stores/layout"
+import ActionGroup from "../../buttons/ActionGroup"
+import Button from "@/components/buttons/Button"
+
 
 
 interface Props {
@@ -44,20 +49,17 @@ const CnnListView: FunctionComponent<Props> = ({
 
 		<Header view={cnnListSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
 
-		<div style={{ display: "flex" }}>
-			<button
-				onClick={handleNewConnection}
-			>new</button>
-			<button
-				onClick={handleDelConnection}
-			>del</button>
-		</div>
-
+		<ActionGroup>
+			<Button onClick={handleNewConnection} label="NEW" />
+			<Button onClick={handleDelConnection} label="DELETE" />
+		</ActionGroup>
 
 		{connnections.map(cnn => (
-			<div key={cnn.id} style={cssItem(isSelected(cnn))}
-				onClick={_ => handleSelectConnection(cnn)}
-			>{cnn.name}</div>
+			<CnnRow key={cnn.id}
+				cnn={cnn}
+				selected={isSelected(cnn)}
+				onClick={handleSelectConnection}
+			/>
 		))}
 
 	</div>
@@ -69,10 +71,5 @@ const cssContainer: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
 	flexDirection: "column",
-	width: "223px",
+	//width: "250px",
 }
-
-const cssItem = (select: boolean): React.CSSProperties => ({
-	cursor: "pointer",
-	backgroundColor: select ? "red" : "unset"
-})

@@ -7,7 +7,9 @@ import { buildStore } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
 import { debounce, debounceExist } from "@/utils/time"
 
-
+/**
+ * Gestisce la lista di DOCS presenti
+ */
 const setup = {
 
 	state: {
@@ -63,6 +65,10 @@ const setup = {
 			store.setAll([...store.state.all])
 		},
 
+		removeWithAnim(view: ViewStore, store?: DocStore) {
+			view.setDocAnim(DOC_ANIM.EXITING)
+			setTimeout(()=>store.remove(view), 300)
+		},
 		/** inserisco una VIEW nello STACK di un altra VIEW */
 		remove(view: ViewStore, store?: DocStore) {
 			const views = [...store.state.all]
@@ -145,6 +151,8 @@ const setup = {
 			return { allInShow: store.state.all }
 		},
 		setFocus: (focus: number) => ({ focus }),
+
+
 	},
 }
 

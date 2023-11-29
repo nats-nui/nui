@@ -99,17 +99,18 @@ const MessagesList2: FunctionComponent<Props> = ({
 			onMouseDown={handleDown}
 			onMouseUp={handleUp}
 			onScroll={handleScroll as any}
-			style={{ flex: 1, width: "250px", height: "100%", overflowY: "auto" }}
+			style={{ flex: 1,  overflowY: "auto" }}
 		>
 
 			<div style={{ height: scrollHeight, backgroundColor: "purple", overflowY: "hidden" }}>
 
 				<div style={{ height: upHeight, backgroundColor: "red" }} />
 
-				{messagesVisible.map(message => (
+				{messagesVisible.map((message, index) => (
 					<MessageRow2 
 						key={message.id} 
 						message={message} 
+						index={index}
 					/>
 				))}
 

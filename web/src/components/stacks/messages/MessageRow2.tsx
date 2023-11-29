@@ -5,10 +5,12 @@ import { FunctionComponent, useCallback,  useEffect, useRef, useState } from "re
 
 interface Props {
 	message?: HistoryMessage
+	index?: number
 }
 
 const MessageRow2: FunctionComponent<Props> = ({
 	message,
+	index,
 }) => {
 
 	// STORE

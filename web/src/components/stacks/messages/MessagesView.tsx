@@ -49,6 +49,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setMessage(e.target.value)
 	}
 	const handleMessagePublish = (_: React.MouseEvent) => {
+		
 		msgSo.publishMessage()
 	}
 	const handleMessageSubOpen = (_: React.MouseEvent) => {
@@ -128,4 +129,5 @@ const cssContainer: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	height: "100%",
+	width: "300px",
 }

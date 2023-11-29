@@ -1,6 +1,6 @@
 import docsSo from "@/stores/docs"
 import { ViewState, ViewStore, default as docSetup } from "@/stores/docs/viewBase"
-import { DOC_TYPE } from "@/types"
+import { DOC_ANIM, DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
@@ -21,7 +21,9 @@ const setup = {
 	state: {
 		params: {
 			[CONNECTIONS_PARAMS.SELECT_ID]: <string[]>null
-		}
+		},
+		/** OVERWRITING */
+		width: 250,
 	},
 
 	getters: {
@@ -64,6 +66,19 @@ const setup = {
 		setSelectId: (id: string, store?: CnnListStore) => {
 			return docSetup.mutators.setParams({ [CONNECTIONS_PARAMS.SELECT_ID]: [id] }, store)
 		},
+		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
+			console.log(docAnim)
+			if (docAnim == DOC_ANIM.EXITING || docAnim == DOC_ANIM.EXIT) {
+				//store.setStyAni({ width: 0, })
+				store.setStyAni({ 
+					width: 0,
+					//transform: `translate(${-store.state.width}px, 0px)`,
+				})
+			} else {
+				store.setStyAni(null)
+			}
+			return docSetup.mutators.setDocAnim(docAnim, store)
+		}
 	},
 }
 

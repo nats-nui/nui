@@ -55,7 +55,7 @@ const cssContainer: React.CSSProperties = {
 	display: "flex", flexDirection: "column",
 	backgroundColor: "#BBFB35",
 	color: "black",
-	width: "146px",
+	//width: "146px",
 }
 
 const cssItem: React.CSSProperties = {
