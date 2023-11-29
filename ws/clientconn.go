@@ -3,10 +3,11 @@ package ws
 import "sync"
 
 type ClientConn[S Subscription] struct {
-	Req      <-chan Request
-	Messages chan<- *Message
-	Subs     []ClientSub[S]
-	l        sync.Mutex
+	ConnectionId string
+	Req          <-chan *Request
+	Messages     chan<- Payload
+	Subs         []ClientSub[S]
+	l            sync.Mutex
 }
 
 func (c *ClientConn[S]) UnsubscribeAll() {
@@ -16,11 +17,20 @@ func (c *ClientConn[S]) UnsubscribeAll() {
 		_ = sub.Sub.Unsubscribe()
 		close(sub.Messages)
 	}
+	c.Subs = []ClientSub[S]{}
 }
 
-func NewWClientConn[S Subscription](messages chan<- *Message, subs []ClientSub[S]) *ClientConn[S] {
+func (c *ClientConn[S]) AddSubscription(subscription ClientSub[S]) {
+	c.l.Lock()
+	defer c.l.Unlock()
+	c.Subs = append(c.Subs, subscription)
+}
+
+func NewWClientConn[S Subscription](connectionId string, req <-chan *Request, messages chan<- Payload) *ClientConn[S] {
 	return &ClientConn[S]{
-		Messages: messages,
-		Subs:     subs,
+		ConnectionId: connectionId,
+		Req:          req,
+		Messages:     messages,
+		Subs:         []ClientSub[S]{},
 	}
 }

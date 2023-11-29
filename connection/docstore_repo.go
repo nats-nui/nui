@@ -60,6 +60,7 @@ func (r *DocStoreConnRepo) Save(c *Connection) (*Connection, error) {
 		return c, nil
 	}
 	doc := r.db.DocFromType(c)
+	doc.Set("_id", c.Id)
 	err := r.db.Query(docstore.CONN_COLLECTION).ReplaceById(c.Id, doc)
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -30,8 +31,8 @@ func NewServer(port string, nui *Nui) *App {
 func (a *App) registerHandlers() {
 	a.Get("/api/connection", a.handleGetConnections)
 	a.Get("/api/connection/:id", a.handleGetConnection)
-	a.Post("/api/connection", a.HandleSaveConnection)
-	a.Post("/api/connection/:id", a.HandleSaveConnection)
+	a.Post("/api/connection", a.handleSaveConnection)
+	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
@@ -56,7 +57,7 @@ func (a *App) Start(ctx context.Context) error {
 	go func() {
 		select {
 		case <-ctx.Done():
-			a.Shutdown()
+			_ = a.Shutdown()
 		}
 	}()
 	return a.Listen(":" + a.port)
@@ -85,7 +86,7 @@ func (a *App) handleGetConnection(c *fiber.Ctx) error {
 	return c.JSON(conn)
 }
 
-func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
+func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	conn := &connection.Connection{}
 	err := c.BodyParser(conn)
 	if err != nil {
@@ -96,7 +97,7 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	}
 	conn, err = a.nui.ConnRepo.Save(conn)
 	if err != nil {
-		return c.Status(500).JSON(err)
+		return c.Status(500).JSON(err.Error())
 	}
 	err = a.nui.ConnPool.Refresh(conn.Id)
 	if err != nil {
@@ -175,14 +176,27 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 }
 
 func (a *App) handleWsSub(c *websocket.Conn) {
+	connId := c.Query("id")
+	if connId == "" {
+		writeError(c, 4422, errors.New("id is required"))
+		return
+	}
+	conn, err := a.nui.ConnRepo.GetById(connId)
+	if err != nil {
+		writeError(c, 4404, err)
+		return
+	}
 	ctx, cancel := context.WithCancel(a.ctx)
 	reqCh := make(chan *ws.Request, 1)
-	msgCh := make(chan *ws.Message, 1000)
-	errCh := make(chan error, 10)
+	msgCh := make(chan ws.Payload, 1000)
 	clientId := uuid.NewString()
-	go handleWsMsgs(c, ctx, msgCh, errCh, cancel)
+	go handleWsMsgs(c, ctx, msgCh, cancel)
 	go handleWsRequest(c, ctx, reqCh, cancel)
-	a.nui.Hub.Register(ctx, clientId, reqCh, msgCh, errCh)
+	err = a.nui.Hub.Register(ctx, clientId, conn.Id, reqCh, msgCh)
+	if err != nil {
+		writeError(c, 4500, err)
+		return
+	}
 	c.SetCloseHandler(func(code int, text string) error {
 		cancel()
 		return nil
@@ -196,6 +210,7 @@ func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 		err := c.ReadJSON(req)
 		if err != nil {
 			cancel()
+			writeError(c, 4422, err)
 			return
 		}
 		select {
@@ -207,23 +222,25 @@ func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 	}
 }
 
-func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan *ws.Message, errCh chan error, cancel context.CancelFunc) {
+func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.Payload, cancel context.CancelFunc) {
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case msg := <-msgCh:
-			err := c.WriteJSON(msg)
+			message := ws.NewWsMessage(msg)
+			err := c.WriteJSON(message)
 			if err != nil {
 				cancel()
-				return
-			}
-		case errMsg := <-errCh:
-			err := c.WriteJSON(ws.Error{Error: errMsg.Error()})
-			if err != nil {
-				cancel()
+				writeError(c, 4422, err)
 				return
 			}
 		}
 	}
+}
+
+func writeError(c *websocket.Conn, status int, err error) {
+	_ = c.WriteMessage(
+		websocket.CloseMessage,
+		websocket.FormatCloseMessage(status, err.Error()))
 }

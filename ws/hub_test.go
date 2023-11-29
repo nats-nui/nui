@@ -13,7 +13,7 @@ type mockPool struct {
 	Conn *mockConnection
 }
 
-func (m *mockPool) Get(id string) (*mockConnection, error) {
+func (m *mockPool) Get(_ string) (*mockConnection, error) {
 	if m.Conn == nil {
 		m.Conn = new(mockConnection)
 	}
@@ -59,15 +59,15 @@ func setupHubSuite() *hubSuite {
 func TestHub_Register(t *testing.T) {
 	s := setupHubSuite()
 	require.NotPanics(t, func() {
-		s.hub.Register(context.Background(), "test", make(chan *Request), make(chan *Message), make(chan error))
+		_ = s.hub.Register(context.Background(), "test", "connection", make(chan *Request), make(chan Payload))
 	})
 }
 
 func TestHub_ListenRequests(t *testing.T) {
 	s := setupHubSuite()
 	req := make(chan *Request, 1)
-	msg := make(chan *Message, 1)
-	s.hub.Register(context.Background(), "test", req, msg, make(chan error))
+	msg := make(chan Payload, 1)
+	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
 
 	go func() {
 		for range time.Tick(time.Millisecond * 20) {
@@ -82,18 +82,21 @@ func TestHub_ListenRequests(t *testing.T) {
 	}()
 
 	go func() {
-		req <- &Request{
-			ConnectionId: "test",
-			Subjects:     []string{"sub1", "sub2"},
+		r := &Request{
+			Type: subReqType,
+			Payload: &SubsReq{
+				Subjects: []string{"sub1", "sub2"},
+			},
 		}
+		req <- r
 	}()
 
-	var received1 *Message
-	var received2 *Message
+	var received1 *NatsMsg
+	var received2 *NatsMsg
 
 	go func() {
-		received1 = <-msg
-		received2 = <-msg
+		received1 = (<-msg).(*NatsMsg)
+		received2 = (<-msg).(*NatsMsg)
 	}()
 	require.EventuallyWithT(t, func(c *assert.CollectT) {
 		assert.NotNil(c, received1)

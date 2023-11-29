@@ -73,26 +73,40 @@ POST /api/connection/:id/request
 }
 ```
 
-### To subscribe to subjects via websdocket 
+### To subscribe to websocket 
 
 ```
-GET /ws/sub
+GET /ws/sub?id=<connection-id>
 ```
 
-#### Ws subscription request
+
+#### Ws messages
 
 ```
+MESSAGE WRAPPER
+wraps all the messages and events to and from the server.
 {
-    "connection_id": <uuid>,
+  "type": <string>,
+  "payload": <object> // based on type
+}
+```
+
+```
+SUBSCRIPTIONS REQUEST
+send an array of subject the client want to stream from
+sender: client
+type: subscriptions_req
+{
     "subjects": []<string>
 }
 ```
 
 
-#### Ws messages from subscribed subjects
-
 ```
-MESSAGE
+NATS MESSAGE
+message stream of subscribed subjects
+sender: server
+type: nats_msg
 {
   "subject": <string>,
   "payload": <string> // base64 encoded
@@ -100,7 +114,18 @@ MESSAGE
 ```
 
 ```
+CONNECTION STATUS
+sender: server
+type: connection_status
+{
+  "status": <string> // connected - reconnecting - disconnected
+}
+```
+    
+```
 ERROR MESSAGE
+sender: client, server
+type: error
 {
   "error": <string>
 }
