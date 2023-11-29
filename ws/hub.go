@@ -47,11 +47,11 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	if err != nil {
 		return err
 	}
-	go h.HandleRequests(ctx, clientId, connectionId, req, messages)
+	go func() { _ = h.HandleRequests(ctx, clientId, req, messages) }()
 	return nil
 }
 
-func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
+func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-chan []byte, messages chan<- Payload) error {
 	for {
 	nextRequest:
 		select {
@@ -59,8 +59,8 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId, connectionId s
 			h.purgeConnection(clientId)
 			return nil
 		case r := <-req:
-			deserialized := map[string]any{}
-			err := json.Unmarshal(r, deserialized)
+			deserialized := make(map[string]any)
+			err := json.Unmarshal(r, &deserialized)
 			if err != nil {
 				select {
 				case messages <- Error{Error: err.Error()}:
@@ -93,7 +93,7 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId, connectionId s
 	}
 }
 
-func (h *Hub[S, T]) HandleSubRequest(ctx context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
+func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
 	h.purgeSubscriptions(clientId)
 	err := h.registerSubscriptions(clientId, subReq)
 	if err != nil {
