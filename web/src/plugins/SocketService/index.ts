@@ -60,7 +60,7 @@ export class SocketService {
 		const { protocol, host, port, base } = this.options
 
 		try {
-			let url = `${protocol}//${host}:${port}`
+			let url = `${protocol}//${host}:${port}/ws/sub`
 			if (base) url = `${url}/${base}`
 			if (token) url = `${url}?token=${token}`
 			this.websocket = new WebSocket(url);

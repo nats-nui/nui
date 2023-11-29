@@ -2,7 +2,9 @@ package ws
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/pkg/channels"
 )
@@ -39,31 +41,65 @@ func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscripti
 	return NewHub[*nats.Subscription, *nats.Conn](pool)
 }
 
-func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error {
+func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
 	h.purgeConnection(clientId)
 	err := h.registerConnection(clientId, connectionId, req, messages)
 	if err != nil {
 		return err
 	}
-	go h.ListenRequests(ctx, clientId, req, messages)
+	go h.HandleRequests(ctx, clientId, connectionId, req, messages)
 	return nil
 }
 
-func (h *Hub[S, T]) ListenRequests(ctx context.Context, clientId string, req <-chan *SubsReq, messages chan<- Payload) {
+func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
 	for {
+	nextRequest:
 		select {
 		case <-ctx.Done():
 			h.purgeConnection(clientId)
-			return
+			return nil
 		case r := <-req:
-			h.purgeSubscriptions(clientId)
-			err := h.registerSubscriptions(clientId, r)
+			deserialized := map[string]any{}
+			err := json.Unmarshal(r, deserialized)
 			if err != nil {
 				select {
 				case messages <- Error{Error: err.Error()}:
 				default:
 				}
+				break nextRequest
 			}
+			val, ok := deserialized["type"]
+			if !ok {
+				select {
+				case messages <- Error{Error: err.Error()}:
+				default:
+				}
+				break nextRequest
+			}
+			switch val {
+			case subReqType:
+				subReq := &SubsReq{}
+				err := mapstructure.Decode(deserialized["payload"], subReq)
+				if err != nil {
+					select {
+					case messages <- Error{Error: err.Error()}:
+					default:
+					}
+					break nextRequest
+				}
+				h.HandleSubRequest(ctx, clientId, subReq, messages)
+			}
+		}
+	}
+}
+
+func (h *Hub[S, T]) HandleSubRequest(ctx context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
+	h.purgeSubscriptions(clientId)
+	err := h.registerSubscriptions(clientId, subReq)
+	if err != nil {
+		select {
+		case messages <- Error{Error: err.Error()}:
+		default:
 		}
 	}
 }
@@ -87,7 +123,7 @@ func (h *Hub[S, T]) purgeClientSubscriptions(clientConn *ClientConn[S]) {
 	clientConn.UnsubscribeAll()
 }
 
-func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *SubsReq, messages chan<- Payload) error {
+func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan []byte, messages chan<- Payload) error {
 	_, err := h.pool.Get(connectionId)
 	if err != nil {
 		return err
