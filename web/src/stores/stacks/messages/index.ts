@@ -1,13 +1,11 @@
-import docSetup, { ViewStore } from "@/stores/docs/viewBase"
-import { StoreCore } from "@priolo/jon"
-import { ViewState } from "../../docs/viewBase"
-import { mixStores } from "@priolo/jon"
-import { SocketService } from "@/plugins/SocketService"
-import { Subscription } from "@/types"
-import cnnSo from "@/stores/connections"
-import { SocketMessage } from "@/plugins/SocketService"
-import { createUUID } from "@/stores/docs/utils/factory"
 import cnnApi from "@/api/connection"
+import { PayloadMessage, SocketService } from "@/plugins/SocketService"
+import cnnSo from "@/stores/connections"
+import { createUUID } from "@/stores/docs/utils/factory"
+import docSetup, { ViewStore } from "@/stores/docs/viewBase"
+import { Subscription } from "@/types"
+import { StoreCore, mixStores } from "@priolo/jon"
+import { ViewState } from "../../docs/viewBase"
 
 
 export interface HistoryMessage {
@@ -51,7 +49,7 @@ const setup = {
 
 	getters: {
 		getConnection: (_: void, store?: MessagesStore) => {
-			const [id] = store.state.params?.[PARAMS_MESSAGES.CONNECTION_ID]
+			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
 		},
 	},
@@ -63,24 +61,21 @@ const setup = {
 			if (!cnn) return
 			store.setSubscriptions([...cnn.subscriptions])
 
+			//[II] mettere tutti i socketservices all'interno di un servizio esterno
 			store.ss = new SocketService({
-				//base: "/ws/sub",
 				onMessage: message => store.addInHistory(message)
 			})
 			store.ss.onOpen = () => store.sendSubscriptions()
-			store.ss.connect()
+			store.ss.connect(store.getParam(PARAMS_MESSAGES.CONNECTION_ID))
 		},
 		/** disconnessione websocket */
 		disconnect(_: void, store?: MessagesStore) {
-			store.ss.send({
-				connection_id: store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store),
-				subjects: [],
-			})
+			store.ss.sendSubjects([])
 			store.ss.disconnect()
 			store.ss = null
 		},
 		/** aggiungo alla history di questo stack */
-		addInHistory(message: SocketMessage, store?: MessagesStore) {
+		addInHistory(message: PayloadMessage, store?: MessagesStore) {
 			const historyMessage: HistoryMessage = {
 				id: createUUID(),
 				title: `${message.subject} [${store.state.history.length}]`,
@@ -91,14 +86,10 @@ const setup = {
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_:void, store?: MessagesStore) => {
-			const connection_id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
 			const subjects = store.state.subscriptions
 				?.filter( s => s!=null && !s.disabled )
 				.map(s => s.subject) ?? []
-			store.ss.send({
-				connection_id,
-				subjects,
-			})
+			store.ss.sendSubjects(subjects)
 		},
 		publishMessage: (_:void, store?: MessagesStore) => {
 			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
