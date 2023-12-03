@@ -48,34 +48,48 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	if err != nil {
 		return err
 	}
-	go func() { h.HandleConnectionEvents(ctx, clientId, messages) }()
+	go func() { _ = h.HandleConnectionEvents(ctx, clientId, messages) }()
 	go func() { _ = h.HandleRequests(ctx, clientId, req, messages) }()
 	return nil
 }
 
 func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-chan *Request, messages chan<- Payload) error {
 	for {
-	nextRequest:
 		select {
 		case <-ctx.Done():
 			h.purgeConnection(clientId)
 			return nil
-		case r := <-req:
-			switch r.Type {
-			case subReqType:
-				subReq := &SubsReq{}
-				err := mapstructure.Decode(r.Payload, subReq)
-				if err != nil {
-					messages = sendErr(messages, err)
-					break nextRequest
-				}
-				h.HandleSubRequest(ctx, clientId, subReq, messages)
-			default:
-				messages = sendErr(messages, errors.New("unknown request type"))
-				break nextRequest
+		case r, ok := <-req:
+			if !ok {
+				h.purgeConnection(clientId)
+				return nil
+			}
+			err := h.handleRequestsByType(ctx, clientId, r, messages)
+			if err != nil {
+				messages = sendErr(messages, err)
 			}
 		}
 	}
+}
+
+func (h *Hub[S, T]) handleRequestsByType(ctx context.Context, clientId string, r *Request, messages chan<- Payload) error {
+	switch r.Type {
+	case subReqType:
+		subReq := &SubsReq{}
+		return decodeAndHandleRequest(ctx, clientId, subReq, r.Payload, h.HandleSubRequest, messages)
+	}
+	return errors.New("unknown request type")
+}
+
+type reqHandler[T any] func(ctx context.Context, clientId string, req *T, messages chan<- Payload)
+
+func decodeAndHandleRequest[T any](ctx context.Context, clientId string, req *T, payload any, handler reqHandler[T], messages chan<- Payload) error {
+	err := mapstructure.Decode(payload, req)
+	if err != nil {
+		return err
+	}
+	handler(ctx, clientId, req, messages)
+	return nil
 }
 
 func sendErr(messages chan<- Payload, err error) chan<- Payload {
