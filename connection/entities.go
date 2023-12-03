@@ -10,3 +10,8 @@ type Connection struct {
 type Subscription struct {
 	Subject string `json:"subject"`
 }
+
+type ConnStatusChanged struct {
+	Status string
+	Err    error
+}

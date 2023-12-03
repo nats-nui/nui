@@ -39,7 +39,7 @@ func (s NatsMsg) GetType() string {
 
 const Connected = "connected"
 const Disconnected = "disconnected"
-const Reconnecting = "reconnecting"
+const Reconnected = "reconnected"
 
 type ConnectionStatus struct {
 	Status string `json:"status"`
