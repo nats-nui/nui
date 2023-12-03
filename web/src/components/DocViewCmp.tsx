@@ -4,7 +4,6 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
 import styles from './DocViewCmp.module.css'
-import layoutSo from "@/stores/layout"
 
 
 
@@ -23,9 +22,10 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 	// HOOKS
 	useEffect(() => {
-		view.setDocAnim(DOC_ANIM.EXIT)
+		//view.setDocAnim(DOC_ANIM.SHOW)
+		console.log("loading")
 		window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
-	}, [])
+	}, [view])
 
 	// HANDLER
 
@@ -35,17 +35,18 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const haveLinked = !!view.state.linked
 
 	// style
-	//	const clsDocAnim = styles[`doc_${viewSa.docAnim}`]
 	const clsDoc = `${styles.doc} ${inRoot ? "" : styles.doc_sub}`//${clsDocAnim}`
 
 	const styContainer = {
 		zIndex: deep,
 	}
 
+//if ( view.getParam(PARAMS_MESSAGES.CONNECTION_ID) == "cnn112345601") console.log("view",view.state.docAnim, view.getStyAni())
+
 	const styContainerDoc = {
 		...viewSa.styInit,
 		width: viewSa.width,
-		...viewSa.styAni,
+		...view.getStyAni(),
 		zIndex: deep,
 	}
 

@@ -7,6 +7,7 @@ const ThemeDefault: Theme = {
 	palette: {
 		bg: {
 			default: "#3E3E3E",
+			light: "#525252",
 			actionsGroup: "#000000",
 			acid: "#BBFB35",
 		},

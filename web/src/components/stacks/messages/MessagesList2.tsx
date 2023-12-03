@@ -1,6 +1,6 @@
-import { HistoryMessage } from "@/stores/stacks/messages"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import MessageRow2 from "./MessageRow2"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
 
 
 

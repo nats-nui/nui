@@ -1,5 +1,6 @@
-import { HistoryMessage } from "@/stores/stacks/messages"
-import { FunctionComponent, useCallback,  useEffect, useRef, useState } from "react"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -17,36 +18,57 @@ const MessageRow2: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const ref = useRef<HTMLDivElement>(null)
-	
-	useEffect(()=>{
-		if ( !ref.current || message.height || !ref.current.offsetHeight) return
+
+	useEffect(() => {
+		if (!ref.current || message.height || !ref.current.offsetHeight) return
 		message.height = ref.current.offsetHeight
-		setTimeout(()=>{
+		setTimeout(() => {
 			//console.log(ref.current.offsetHeight)
 			if (!ref.current) return
 			message.height = ref.current.offsetHeight
 		}, 100)
-	},[message])
-	
+	}, [message])
+
 	// HANDLER
 
 	// RENDER
-	const cssRoot = {
-		//height: "50px",
-		backgroundColor: "red",
-		//marginBottom: "5px",
+	const styRoot = {
+		...cssRoot,
+		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.bg.default : layoutSo.state.theme.palette.bg.light,
 	}
+	const time = dayjs
+
 	return (
-		<div ref={ref} style={cssRoot}>
-			<div>{message.title}</div>
-			<div>{message.height}</div>
-			<div 
-				style={{ overflowWrap: "break-word" }}
-			>
+		<div ref={ref} style={styRoot}>
+			<div style={cssTitle}>
+				{message.title}
+			</div>
+			<div style={cssBody}>
 				{message.body}
+			</div>
+			<div style={cssFooter}>
+				{message.timestamp}
 			</div>
 		</div>
 	)
 }
 
 export default MessageRow2
+
+const cssRoot: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
+}
+const cssTitle: React.CSSProperties = {
+	fontSize: 10,
+	opacity: .7,
+}
+const cssBody: React.CSSProperties = {
+	fontSize: 14,
+	overflowWrap: "break-word",
+}
+const cssFooter: React.CSSProperties = {
+	fontSize: 10,
+	opacity: .7,
+	alignSelf: "flex-end",
+}

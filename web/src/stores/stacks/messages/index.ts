@@ -3,22 +3,11 @@ import { PayloadMessage, SocketService } from "@/plugins/SocketService"
 import cnnSo from "@/stores/connections"
 import { createUUID } from "@/stores/docs/utils/factory"
 import docSetup, { ViewStore } from "@/stores/docs/viewBase"
-import { Subscription } from "@/types"
+import { DOC_ANIM, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
+import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 
-
-export interface HistoryMessage {
-	id: string
-	timestamp: number
-	title: string
-	body: string
-	height?: number
-}
-
-export enum PARAMS_MESSAGES {
-	CONNECTION_ID = "cid"
-}
 
 // const h: HistoryMessage[] = Array.from({ length: 30 }, (_, i) => ({
 // 	id: createUUID(),
@@ -39,9 +28,9 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		history: <HistoryMessage[]>[],
 
-		subject:<string>null,
+		subject: <string>null,
 		message: <string>null,
-		
+
 		subscriptionsOpen: false,
 		subjectOpen: false,
 
@@ -51,6 +40,17 @@ const setup = {
 		getConnection: (_: void, store?: MessagesStore) => {
 			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
+		},
+		getStyAni: (_: void, store?: ViewStore):React.CSSProperties => {
+			switch (store.state.docAnim) {
+				case DOC_ANIM.EXIT:
+				case DOC_ANIM.EXITING:
+					return { width: 0 }
+				case DOC_ANIM.SHOWING:
+					return null //{ width: 0 }
+				default:
+					return null
+			}
 		},
 	},
 
@@ -85,15 +85,15 @@ const setup = {
 			store.setHistory([...store.state.history, historyMessage])
 		},
 		/** aggiorno i subjects di questo stack messages */
-		sendSubscriptions: (_:void, store?: MessagesStore) => {
+		sendSubscriptions: (_: void, store?: MessagesStore) => {
 			const subjects = store.state.subscriptions
-				?.filter( s => s!=null && !s.disabled )
+				?.filter(s => s != null && !s.disabled)
 				.map(s => s.subject) ?? []
 			store.ss.sendSubjects(subjects)
 		},
-		publishMessage: (_:void, store?: MessagesStore) => {
+		publishMessage: (_: void, store?: MessagesStore) => {
 			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
-			cnnApi.publish(cnnId, store.state.subject, store.state.message )
+			cnnApi.publish(cnnId, store.state.subject, store.state.message)
 		},
 	},
 

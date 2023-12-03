@@ -4,6 +4,7 @@ export interface Theme {
 	palette: {
 		bg: {
 			default: Color
+			light: Color
 			actionsGroup: Color,
 			acid: Color
 		}

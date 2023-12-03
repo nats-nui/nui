@@ -28,7 +28,7 @@ const setup = {
 
 	getters: {
 		/** l'id della CONNECTION attualmente selezionata */
-		getSelectId(_: void, store?: CnnListStore):string {
+		getSelectId(_: void, store?: CnnListStore): string {
 			return docSetup.getters.getParam(CONNECTIONS_PARAMS.SELECT_ID, store)
 		},
 	},
@@ -40,7 +40,7 @@ const setup = {
 			let idSel = idSelPrev != cnn.id ? cnn.id : null
 			store.setSelectId(idSel)
 			let srvStore = null
-			if ( idSel != null ) srvStore = buildStore({
+			if (idSel != null) srvStore = buildStore({
 				type: DOC_TYPE.SERVICES,
 				connection: cnn,
 			} as CnnDetailState)
@@ -50,7 +50,7 @@ const setup = {
 			})
 		},
 		/** ho creato una nuova connection quindi creo e visualizzo lo STACK del dettaglio */
-		create(_:void, store?: CnnListStore) {
+		create(_: void, store?: CnnListStore) {
 			const view = buildStore({
 				type: DOC_TYPE.SERVICES,
 				connection: {
@@ -66,19 +66,6 @@ const setup = {
 		setSelectId: (id: string, store?: CnnListStore) => {
 			return docSetup.mutators.setParams({ [CONNECTIONS_PARAMS.SELECT_ID]: [id] }, store)
 		},
-		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
-			console.log(docAnim)
-			if (docAnim == DOC_ANIM.EXITING || docAnim == DOC_ANIM.EXIT) {
-				//store.setStyAni({ width: 0, })
-				store.setStyAni({ 
-					width: 0,
-					//transform: `translate(${-store.state.width}px, 0px)`,
-				})
-			} else {
-				store.setStyAni(null)
-			}
-			return docSetup.mutators.setDocAnim(docAnim, store)
-		}
 	},
 }
 

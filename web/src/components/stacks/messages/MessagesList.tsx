@@ -1,6 +1,6 @@
-import { HistoryMessage } from "@/stores/stacks/messages"
 import { FunctionComponent } from "react"
 import MessageRow from "./MessageRow"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
 
 
 

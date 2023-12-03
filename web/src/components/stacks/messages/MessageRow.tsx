@@ -1,4 +1,4 @@
-import { HistoryMessage } from "@/stores/stacks/messages"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 
 const debounceTime = 100

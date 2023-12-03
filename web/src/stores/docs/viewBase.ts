@@ -1,6 +1,7 @@
-import { DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
+import { ANIM_TIME, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
 import { StoreCore } from "@priolo/jon"
 import React from "react"
+import { PARAMS_MESSAGES } from "../stacks/messages/utils"
 
 
 
@@ -20,14 +21,12 @@ const setup = {
 		params: <{ [name: string]: any[] }>{},
 
 		draggable: true,
-		docAnim: DOC_ANIM.INIT,
+		docAnim: DOC_ANIM.EXIT,
 		width: 300,
 		styInit: {
-			transition: "transform 300ms, width 300ms",
+			transition: `transform 300ms, width ${ANIM_TIME}ms`,
 			transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
 		},
-		styAni: <React.CSSProperties>null,
-
 
 		position: POSITION_TYPE.DETACHED,
 		parent: <ViewStore>null,
@@ -37,6 +36,17 @@ const setup = {
 	getters: {
 		getParam(name: string, store?: ViewStore) {
 			return store.state.params?.[name]?.[0]
+		},
+		getStyAni: (_: void, store?: ViewStore):React.CSSProperties => {
+			switch (store.state.docAnim) {
+				case DOC_ANIM.EXIT:
+				case DOC_ANIM.EXITING:
+					return { width: 0, transform: `translate(${-store.state.width}px, 0px)` }
+				case DOC_ANIM.SHOWING:
+					return null //return { width: 0 }
+				default:
+					return null
+			}
 		},
 	},
 
@@ -49,28 +59,28 @@ const setup = {
 			return { params }
 		},
 		setWidth: (width: number, store?: ViewStore) => ({ width }),
-		setStyAni: (styAni: React.CSSProperties, store?: ViewStore) => ({ styAni }),
 		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
 
 			let delay = 0
 			let noSet = false
+			const currAnim = store.state.docAnim
 			let nextAnim = null
 
-			if (docAnim == DOC_ANIM.SHOWING && store.state.docAnim == DOC_ANIM.SHOW) {
+			if (docAnim == DOC_ANIM.SHOWING && currAnim == DOC_ANIM.SHOW) {
 				return
-			} else if (docAnim == DOC_ANIM.EXITING && store.state.docAnim == DOC_ANIM.EXIT) {
+			} else if (docAnim == DOC_ANIM.EXITING && currAnim == DOC_ANIM.EXIT) {
 				return
-			} else if (docAnim == DOC_ANIM.SHOWING && store.state.docAnim == DOC_ANIM.EXITING) {
-				delay = 500
+			} else if (docAnim == DOC_ANIM.SHOWING && currAnim == DOC_ANIM.EXITING) {
+				delay = ANIM_TIME + 100
 				noSet = true
-			} else if (docAnim == DOC_ANIM.EXITING && store.state.docAnim == DOC_ANIM.SHOWING) {
-				delay = 500
+			} else if (docAnim == DOC_ANIM.EXITING && currAnim == DOC_ANIM.SHOWING) {
+				delay = ANIM_TIME
 				noSet = true
 			} else if (docAnim == DOC_ANIM.EXITING) {
-				delay = 400
+				delay = ANIM_TIME
 				nextAnim = DOC_ANIM.EXIT
 			} else if (docAnim == DOC_ANIM.SHOWING) {
-				delay = 400
+				delay = ANIM_TIME
 				nextAnim = DOC_ANIM.SHOW
 			}
 
@@ -82,7 +92,7 @@ const setup = {
 				if (noSet) return
 			}
 
-			//console.log("setDocAnim", docAnim)
+if ( store.getParam(PARAMS_MESSAGES.CONNECTION_ID) == "cnn112345601") console.log("mutator", docAnim)
 			return { docAnim }
 		},
 	},
