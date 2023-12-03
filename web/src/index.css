@@ -16,3 +16,32 @@ html {
   height: 100%;
 }
 
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background: #282828;
+  /* background: ${palette.components.scrollbarBg};  */
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #424242;
+  /* background: ${palette.grey.dark};  */
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #BBFB35;
+  /* background: ${palette.secondary.main};  */
+}
+
+scrollacid2 > ::-webkit-scrollbar-thumb:hover  {
+  background: #10F3F3;
+  /* background: ${palette.secondary.main};  */
+}

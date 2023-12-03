@@ -1,6 +1,7 @@
 import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import layoutSo from "@/stores/layout"
+import dayjs from "dayjs"
 
 
 
@@ -36,7 +37,7 @@ const MessageRow2: FunctionComponent<Props> = ({
 		...cssRoot,
 		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.bg.default : layoutSo.state.theme.palette.bg.light,
 	}
-	const time = dayjs
+	const time = dayjs(message.timestamp).format("YYYY-MM-DD HH:MM")
 
 	return (
 		<div ref={ref} style={styRoot}>
@@ -47,7 +48,7 @@ const MessageRow2: FunctionComponent<Props> = ({
 				{message.body}
 			</div>
 			<div style={cssFooter}>
-				{message.timestamp}
+				{time}
 			</div>
 		</div>
 	)
@@ -58,6 +59,7 @@ export default MessageRow2
 const cssRoot: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
+	padding: 10,
 }
 const cssTitle: React.CSSProperties = {
 	fontSize: 10,

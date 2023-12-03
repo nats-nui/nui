@@ -9,11 +9,11 @@ const ThemeDefault: Theme = {
 			default: "#3E3E3E",
 			light: "#525252",
 			actionsGroup: "#000000",
-			acid: "#BBFB35",
+			acid: ["#BBFB35", "#10F3F3"],
 		},
 		fg: {
 			default: "#DEDEDE",
-			acid: "#393939",
+			acid: ["#393939", "#393939"],
 		},
 	},
 

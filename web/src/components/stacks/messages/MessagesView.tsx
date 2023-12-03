@@ -11,6 +11,9 @@ import MessagesList2 from "./MessagesList2"
 import SubRow from "@/components/subscription/Row"
 import SubDetail from "@/components/subscription/Detail"
 import { PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
+import ActionGroup from "@/components/buttons/ActionGroup"
+import Button from "@/components/buttons/Button"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -50,7 +53,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setMessage(e.target.value)
 	}
 	const handleMessagePublish = (_: React.MouseEvent) => {
-		
+
 		msgSo.publishMessage()
 	}
 	const handleMessageSubOpen = (_: React.MouseEvent) => {
@@ -69,16 +72,22 @@ const MessagesView: FunctionComponent<Props> = ({
 	const cnn = cnnSo.getById(id)
 	const labelSubscription = msgSa.subject ?? "subj"
 
+
 	return (
 		<div style={{ ...cssContainer, ...style }}>
+
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
-			<button onClick={handleSubscriptions}>subscriptions</button>
-			<div>i messages di {id}</div>
+
+			<ActionGroup>
+				<Button onClick={handleSubscriptions} label="SUBJECTS" colorVar={1}/>
+			</ActionGroup>
+
+			{/* <div>i messages di {id}</div> */}
 
 			<MessagesList2 messages={msgSa.history} />
 			{/* <MessagesList messages={msgSa.history} /> */}
 
-			<div style={{ display: "flex" }}>
+			{/* <div style={{ display: "flex" }}>
 				<button
 					onClick={handleMessagePublish}
 				>SEND</button>
@@ -89,14 +98,14 @@ const MessagesView: FunctionComponent<Props> = ({
 				<button
 					onClick={handleMessageSubOpen}
 				>{labelSubscription}</button>
-			</div>
+			</div> */}
 
 			<Dialog
 				open={msgSa.subscriptionsOpen}
 				store={msgSo}
 				onClose={handleCloseSubscriptionsDialog}
 			>
-				<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
+				<ListEditDlg<Subscription> style={cssDialogSubs}
 					items={msgSa.subscriptions}
 					RenderRow={SubRow}
 					RenderDetail={SubDetail}
@@ -131,4 +140,9 @@ const cssContainer: React.CSSProperties = {
 	flexDirection: "column",
 	height: "100%",
 	width: "300px",
+}
+
+const cssDialogSubs: React.CSSProperties = {
+	flex: 1,
+	backgroundColor: layoutSo.state.theme.palette.bg.acid[1],
 }
