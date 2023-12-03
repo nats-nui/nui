@@ -3,13 +3,13 @@ import { Thread } from "./thread.js"
 import url from "url"
 
 
+
 let server = null
 let clients = []
 
 function getClient(cnnId) {
 	return clients.find(c => c.cnnId == cnnId)
 }
-
 
 serverStart()
 
@@ -39,8 +39,6 @@ function serverStart(port = 3111) {
 		console.log("server:close:" + port)
 	})
 }
-
-
 
 function serverStop() {
 	if (!server) return
@@ -74,7 +72,6 @@ const onMessage = client => msgRaw => {
 	}
 }
 
-
 function send(cws, msg) {
 	msg.payload.payload = Buffer.from(msg.payload.payload, "utf8").toString("base64")
 	cws.send(JSON.stringify(msg))
@@ -89,7 +86,6 @@ function sendTestMessages(client, subjects) {
 		},
 	}))
 }
-
 
 //#endregion
 

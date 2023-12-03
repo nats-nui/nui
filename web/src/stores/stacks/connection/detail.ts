@@ -5,7 +5,9 @@ import { Connection, DOC_ANIM, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
 import { CnnListStore } from "./list"
-import { MessagesState, PARAMS_MESSAGES } from "../messages"
+import { MessagesState } from "../messages"
+import React from "react"
+import { PARAMS_MESSAGES } from "../messages/utils"
 
 
 
@@ -26,7 +28,7 @@ const setup = {
 			const cnnId = (<CnnListStore>store.state.parent).getSelectId()
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
-		}
+		},
 	},
 
 	actions: {
@@ -52,19 +54,6 @@ const setup = {
 	mutators: {
 		setConnection: (connection: Connection) => ({ connection }),
 		setSubOpen: (subOpen: boolean) => ({ subOpen }),
-		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
-			//console.log(docAnim)
-			if (docAnim == DOC_ANIM.EXITING || docAnim == DOC_ANIM.EXIT) {
-				//store.setStyAni({ width: 0, })
-				store.setStyAni({ 
-					width: 0,
-					transform: `translate(${-store.state.width}px, 0px)`,
-				})
-			} else {
-				store.setStyAni(null)
-			}
-			return docSetup.mutators.setDocAnim(docAnim, store)
-		}
 	},
 }
 

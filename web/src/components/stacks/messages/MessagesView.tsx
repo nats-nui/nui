@@ -1,7 +1,7 @@
 import imgMsg from "@/assets/msg-hdr.svg"
 import Header from "@/components/Heder"
 import cnnSo, { ConnectionState } from "@/stores/connections"
-import { MessagesState, MessagesStore, PARAMS_MESSAGES } from "@/stores/stacks/messages"
+import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
@@ -10,6 +10,7 @@ import ListEditDlg from "../dialogs/ListEditDlg"
 import MessagesList2 from "./MessagesList2"
 import SubRow from "@/components/subscription/Row"
 import SubDetail from "@/components/subscription/Detail"
+import { PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
 
 
 

@@ -1,6 +1,7 @@
 import mouseSo, { MouseState, Position } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { useEffect, useState, useMemo, FunctionComponent } from "react"
+import { ANIM_TIME } from "./types"
 
 
 
@@ -14,7 +15,7 @@ const DragCmp: FunctionComponent = () => {
 	const inShow = mouseSa.drag != null
 	useEffect(() => {
 		if (inShow == false) {
-			setTimeout(() => setHide(true), 400)
+			setTimeout(() => setHide(true), ANIM_TIME)
 		} else {
 			setHide(false)
 		}

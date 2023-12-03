@@ -1,4 +1,4 @@
-import { DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
+import { ANIM_TIME, DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
 import navSo from "@/stores/navigation"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "./viewBase"
@@ -66,21 +66,25 @@ const setup = {
 		},
 
 		removeWithAnim(view: ViewStore, store?: DocStore) {
+			if (view.state.position == POSITION_TYPE.DETACHED) store.remove(view)
 			view.setDocAnim(DOC_ANIM.EXITING)
-			setTimeout(()=>store.remove(view), 300)
+			setTimeout(() => store.remove(view), ANIM_TIME)
 		},
 		/** inserisco una VIEW nello STACK di un altra VIEW */
 		remove(view: ViewStore, store?: DocStore) {
 			const views = [...store.state.all]
 			let index: number
-			// se non c'e' il parent lo sfilo via e basta
+
+			// placed in ROOT
 			if (!view.state.parent) {
 				index = views.findIndex(v => v == view)
 				if (index != -1) views.splice(index, 1)
 
+				// LINKED
 			} else if (view == view.state.parent.state.linked) {
 				view.state.parent.state.linked = null
 			}
+
 			view.state.parent = null
 			view.state.position = null
 			store.setAll(views)
@@ -117,34 +121,31 @@ const setup = {
 			const views: ViewStore[] = disgregate(all)
 			navSo.setParams(["docs", viewsToString(views)])
 
-
-			//let updateAdd = false
 			let updateDel = false
 			const deleted = [...store.state.all]
 			for (const view of all) {
 				const index = deleted.indexOf(view)
+				// se prima non c'era allora fai lo SHOW
 				if (index == -1) {
-					view.setDocAnim(DOC_ANIM.SHOWING)
-					//updateAdd = true
+					//view.setDocAnim(DOC_ANIM.SHOWING)
+					window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
+				// se prima c'era allora NON lo cancellare
 				} else {
 					deleted.splice(index, 1)
 				}
 			}
+			// setto le animazioni a tutti quelli che devono essere eliminati
 			for (const view of deleted) {
 				updateDel = true
 				view.setDocAnim(DOC_ANIM.EXITING)
 			}
 
-			if ( !debounceExist("setAllInShow") && !updateDel ) {
+			if (!debounceExist("setAllInShow") && !updateDel) {
 				return { all, allInShow: all }
 			}
 
-			//if ( needUpdate) {
-				debounce("setAllInShow", ()=>store.setAllInShow(), 400)
-				return { all }
-			//}
-			//return { all, allInShow: all }
-			
+			debounce("setAllInShow", () => store.setAllInShow(), ANIM_TIME)
+			return { all }
 		},
 		setAllInShow: (_: void, store?: DocStore) => {
 			console.log("***setAllInShow***")

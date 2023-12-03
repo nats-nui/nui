@@ -12,10 +12,11 @@ export enum POSITION_TYPE {
 }
 
 export enum DOC_ANIM {
-	INIT="init",
 	SHOW="show",
 	EXIT="exit",
 	DRAGGING="dragging",
 	EXITING="exiting",
 	SHOWING="showing",
 }
+
+export const ANIM_TIME = 300
