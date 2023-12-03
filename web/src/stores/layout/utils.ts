@@ -6,11 +6,11 @@ export interface Theme {
 			default: Color
 			light: Color
 			actionsGroup: Color,
-			acid: Color
+			acid: Color[]
 		}
 		fg: {
 			default: Color
-			acid: Color
+			acid: Color[]
 		}
 	},
 	texts: {

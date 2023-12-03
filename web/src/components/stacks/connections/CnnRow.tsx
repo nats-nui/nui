@@ -41,8 +41,8 @@ export default CnnRow
 const cssRow = (select: boolean): React.CSSProperties => ({
 	display: "flex", flexDirection: "column",
 	cursor: "pointer",
-	backgroundColor: select ? layoutSo.state.theme.palette.bg.acid : "unset",
-	color: select ? layoutSo.state.theme.palette.fg.acid : "unset",
+	backgroundColor: select ? layoutSo.state.theme.palette.bg.acid[0] : "unset",
+	color: select ? layoutSo.state.theme.palette.fg.acid[0] : "unset",
 	margin: "3px 0px 3px 6px",
 	borderRadius: "20px 0px 0px 20px",
 	padding: "4px 15px",
