@@ -2,7 +2,6 @@ package connection
 
 import (
 	"errors"
-	"github.com/nats-io/nats.go"
 	"strings"
 	"sync"
 )
@@ -32,8 +31,8 @@ func NewConnPool[T Conn](repo ConnRepo, builder func(connection *Connection) (T,
 	}
 }
 
-func NewNatsConnPool(repo ConnRepo) *ConnPool[*nats.Conn] {
-	return NewConnPool[*nats.Conn](repo, natsBuilder)
+func NewNatsConnPool(repo ConnRepo) *ConnPool[*NatsConn] {
+	return NewConnPool[*NatsConn](repo, natsBuilder)
 }
 
 func (p *ConnPool[T]) Get(id string) (T, error) {
@@ -83,6 +82,6 @@ func (p *ConnPool[T]) refresh(id string) error {
 	return nil
 }
 
-func natsBuilder(connection *Connection) (*nats.Conn, error) {
-	return nats.Connect(strings.Join(connection.Hosts, ", "))
+func natsBuilder(connection *Connection) (*NatsConn, error) {
+	return NewNatsConn(strings.Join(connection.Hosts, ", "))
 }

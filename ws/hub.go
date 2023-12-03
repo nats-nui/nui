@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
+	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
 )
 
@@ -18,6 +19,7 @@ type Subscription interface {
 
 type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
+	ObserveConnectionEvents(ctx context.Context) <-chan connection.ConnStatusChanged
 }
 
 type IHub interface {
@@ -36,8 +38,8 @@ func NewHub[S Subscription, T Conn[S]](pool Pool[S, T]) *Hub[S, T] {
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscription, *nats.Conn] {
-	return NewHub[*nats.Subscription, *nats.Conn](pool)
+func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn]) *Hub[*nats.Subscription, *connection.NatsConn] {
+	return NewHub[*nats.Subscription, *connection.NatsConn](pool)
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
@@ -46,33 +48,48 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	if err != nil {
 		return err
 	}
+	go func() { _ = h.HandleConnectionEvents(ctx, clientId, messages) }()
 	go func() { _ = h.HandleRequests(ctx, clientId, req, messages) }()
 	return nil
 }
 
 func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-chan *Request, messages chan<- Payload) error {
 	for {
-	nextRequest:
 		select {
 		case <-ctx.Done():
 			h.purgeConnection(clientId)
 			return nil
-		case r := <-req:
-			switch r.Type {
-			case subReqType:
-				subReq := &SubsReq{}
-				err := mapstructure.Decode(r.Payload, subReq)
-				if err != nil {
-					messages = sendErr(messages, err)
-					break nextRequest
-				}
-				h.HandleSubRequest(ctx, clientId, subReq, messages)
-			default:
-				messages = sendErr(messages, errors.New("unknown request type"))
-				break nextRequest
+		case r, ok := <-req:
+			if !ok {
+				h.purgeConnection(clientId)
+				return nil
+			}
+			err := h.handleRequestsByType(ctx, clientId, r, messages)
+			if err != nil {
+				messages = sendErr(messages, err)
 			}
 		}
 	}
+}
+
+func (h *Hub[S, T]) handleRequestsByType(ctx context.Context, clientId string, r *Request, messages chan<- Payload) error {
+	switch r.Type {
+	case subReqType:
+		subReq := &SubsReq{}
+		return decodeAndHandleRequest(ctx, clientId, subReq, r.Payload, h.HandleSubRequest, messages)
+	}
+	return errors.New("unknown request type")
+}
+
+type reqHandler[T any] func(ctx context.Context, clientId string, req *T, messages chan<- Payload)
+
+func decodeAndHandleRequest[T any](ctx context.Context, clientId string, req *T, payload any, handler reqHandler[T], messages chan<- Payload) error {
+	err := mapstructure.Decode(payload, req)
+	if err != nil {
+		return err
+	}
+	handler(ctx, clientId, req, messages)
+	return nil
 }
 
 func sendErr(messages chan<- Payload, err error) chan<- Payload {
@@ -144,6 +161,30 @@ func (h *Hub[S, T]) registerSubscriptions(clientId string, req *SubsReq) error {
 	}
 	go parseToClientMessage(channels.FanIn(10, chans...), clientConn.Messages)
 	return nil
+}
+
+func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string, clientMgs chan<- Payload) error {
+	clientConn, ok := h.reg[clientId]
+	if !ok {
+		return errors.New("no client connection found")
+	}
+	serverConn, err := h.pool.Get(clientConn.ConnectionId)
+	if err != nil {
+		return err
+	}
+	events := serverConn.ObserveConnectionEvents(ctx)
+	for {
+		select {
+		case msg, ok := <-events:
+			if !ok {
+				return nil
+			}
+			cm := &ConnectionStatus{
+				Status: msg.Status,
+			}
+			clientMgs <- cm
+		}
+	}
 }
 
 func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
