@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
 	docstore "github.com/pricelessrabbit/nui/pkg/storage"
 	"github.com/pricelessrabbit/nui/ws"
@@ -9,7 +8,7 @@ import (
 
 type Nui struct {
 	ConnRepo connection.ConnRepo
-	ConnPool connection.Pool[*nats.Conn]
+	ConnPool connection.Pool[*connection.NatsConn]
 	Hub      ws.IHub
 }
 
