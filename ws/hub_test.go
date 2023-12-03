@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"github.com/nats-io/nats.go"
+	"github.com/pricelessrabbit/nui/connection"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -32,7 +33,8 @@ func (m *mockSubscription) Unsubscribe() error {
 }
 
 type mockConnection struct {
-	Subs map[string]*mockSubscription
+	Subs            map[string]*mockSubscription
+	StatusChangedCh []chan connection.ConnStatusChanged
 }
 
 func (m *mockConnection) ChanSubscribe(subj string, ch chan *nats.Msg) (*mockSubscription, error) {
@@ -42,6 +44,18 @@ func (m *mockConnection) ChanSubscribe(subj string, ch chan *nats.Msg) (*mockSub
 	s := &mockSubscription{Sbj: subj, Conn: m, Ch: ch}
 	m.Subs[subj] = s
 	return s, nil
+}
+
+func (m *mockConnection) ObserveConnectionEvents(ctx context.Context) <-chan connection.ConnStatusChanged {
+	ch := make(chan connection.ConnStatusChanged)
+	m.StatusChangedCh = append(m.StatusChangedCh, ch)
+	go func() {
+		select {
+		case <-ctx.Done():
+			close(ch)
+		}
+	}()
+	return ch
 }
 
 type hubSuite struct {
@@ -109,4 +123,36 @@ func TestHub_ListenRequests(t *testing.T) {
 		assert.Contains(c, subjects, "sub2")
 	}, 1*time.Second, time.Millisecond*20)
 
+}
+
+func TestHub_HandleConnectionEvents(t *testing.T) {
+	s := setupHubSuite()
+	req := make(chan *Request, 1)
+	msg := make(chan Payload, 1)
+	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
+
+	var received1 *ConnectionStatus
+	var received2 *ConnectionStatus
+
+	go func() {
+		received1 = (<-msg).(*ConnectionStatus)
+		received2 = (<-msg).(*ConnectionStatus)
+	}()
+
+	require.EventuallyWithT(t, func(c *assert.CollectT) {
+		assert.NotPanics(t, func() {
+			s.pool.Conn.StatusChangedCh[0] <- connection.ConnStatusChanged{Status: Disconnected}
+			s.pool.Conn.StatusChangedCh[0] <- connection.ConnStatusChanged{Status: Reconnected}
+		})
+	}, 1*time.Second, time.Millisecond*20)
+
+	require.EventuallyWithT(t, func(c *assert.CollectT) {
+		assert.NotNil(c, received1)
+		assert.NotNil(c, received2)
+		if received1 == nil || received2 == nil {
+			return
+		}
+		assert.Equal(c, received1.Status, Disconnected)
+		assert.Equal(c, received2.Status, Reconnected)
+	}, 1*time.Second, time.Millisecond*20)
 }

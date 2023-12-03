@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
+	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
 )
 
@@ -18,6 +19,7 @@ type Subscription interface {
 
 type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
+	ObserveConnectionEvents(ctx context.Context) <-chan connection.ConnStatusChanged
 }
 
 type IHub interface {
@@ -36,8 +38,8 @@ func NewHub[S Subscription, T Conn[S]](pool Pool[S, T]) *Hub[S, T] {
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *nats.Conn]) *Hub[*nats.Subscription, *nats.Conn] {
-	return NewHub[*nats.Subscription, *nats.Conn](pool)
+func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn]) *Hub[*nats.Subscription, *connection.NatsConn] {
+	return NewHub[*nats.Subscription, *connection.NatsConn](pool)
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
@@ -46,6 +48,7 @@ func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string,
 	if err != nil {
 		return err
 	}
+	go func() { h.HandleConnectionEvents(ctx, clientId, messages) }()
 	go func() { _ = h.HandleRequests(ctx, clientId, req, messages) }()
 	return nil
 }
@@ -144,6 +147,30 @@ func (h *Hub[S, T]) registerSubscriptions(clientId string, req *SubsReq) error {
 	}
 	go parseToClientMessage(channels.FanIn(10, chans...), clientConn.Messages)
 	return nil
+}
+
+func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string, clientMgs chan<- Payload) error {
+	clientConn, ok := h.reg[clientId]
+	if !ok {
+		return errors.New("no client connection found")
+	}
+	serverConn, err := h.pool.Get(clientConn.ConnectionId)
+	if err != nil {
+		return err
+	}
+	events := serverConn.ObserveConnectionEvents(ctx)
+	for {
+		select {
+		case msg, ok := <-events:
+			if !ok {
+				return nil
+			}
+			cm := &ConnectionStatus{
+				Status: msg.Status,
+			}
+			clientMgs <- cm
+		}
+	}
 }
 
 func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
