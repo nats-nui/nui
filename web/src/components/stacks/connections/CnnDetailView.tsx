@@ -4,6 +4,7 @@ import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detai
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -31,7 +32,10 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// RENDER
 	return <div style={{ ...cssContainer, ...style }}>
 
-		<Header view={cnnDetailSo} title="DETAIL" />
+		<Header view={cnnDetailSo} 
+			title="DETAIL" 
+			style={{color: layoutSo.state.theme.palette.fg.acid[0]}}
+		/>
 
 		<div style={cssItem}
 			onClick={handleClickMessages}

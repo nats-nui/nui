@@ -12,12 +12,15 @@ interface Props {
 	view?: ViewStore
 	title?: string
 	icon?: React.ReactNode
+
+	style?: React.CSSProperties
 }
 
 const Header: FunctionComponent<Props> = ({
 	view,
 	title,
 	icon,
+	style,
 }) => {
 
 	// STORE
@@ -42,13 +45,13 @@ const Header: FunctionComponent<Props> = ({
 	const isDraggable = true //view.state.draggable
 
 	return (
-		<div style={cssRoot}
+		<div style={{ ...cssRoot, ...style }}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
 			{icon}
 			<span style={cssTitle}>{title}</span>
-			<CloseBtt style={{margin: "3px 5px"}} onClick={handleClose} />
+			<CloseBtt style={{ margin: "3px 5px", ...style }} onClick={handleClose} />
 		</div>
 	)
 }
@@ -66,6 +69,6 @@ const cssTitle: React.CSSProperties = {
 	fontFamily: "Darker Grotesque",
 	fontSize: "22px",
 	fontWeight: 800,
-	color: "#FFF",
+	//color: "#FFF",
 	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 }
