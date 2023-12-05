@@ -1,14 +1,13 @@
 import imgCnn from "@/assets/cnn-hdr.svg"
 import Header from "@/components/Heder"
+import Button from "@/components/buttons/Button"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import CnnRow from "./CnnRow"
-import layoutSo from "@/stores/layout"
 import ActionGroup from "../../buttons/ActionGroup"
-import Button from "@/components/buttons/Button"
+import CnnRow from "./CnnRow"
 
 
 
