@@ -5,6 +5,12 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
 import layoutSo from "@/stores/layout"
+import RowButton from "@/components/buttons/RowButton"
+import MessagesIcon from "@/icons/MessagesIcon"
+import { DOC_TYPE } from "@/types"
+import docSo, { DocState } from "@/stores/docs"
+import DatabaseIcon from "@/icons/DatabaseIcon"
+import SettingsIcon from "@/icons/SettingsIcon"
 
 
 
@@ -19,7 +25,8 @@ const CnnDetailView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	useStore(cnnDetailSo) as CnnDetailState
+	useStore(docSo) as DocState
+	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
 	useStore(connSo) as ConnectionState
 
 	// HOOKs
@@ -30,6 +37,8 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
+
 	return <div style={{ ...cssContainer, ...style }}>
 
 		<Header view={cnnDetailSo} 
@@ -37,11 +46,24 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			style={{color: layoutSo.state.theme.palette.fg.acid[0]}}
 		/>
 
-		<div style={cssItem}
+		<RowButton style={cssItem}
+			icon={<MessagesIcon />}
+			label="MESSAGES"
+			select={isMessageOpen}
 			onClick={handleClickMessages}
-		>MESSAGES</div>
-		<div style={cssItem}>DATABASES</div>
-		<div style={cssItem}>SETTINGS</div>
+		/>
+		<RowButton style={cssItem}
+			icon={<DatabaseIcon />}
+			label="DATABASES"
+			//select={isMessageOpen}
+			//onClick={handleClickMessages}
+		/>
+		<RowButton style={cssItem}
+			icon={<SettingsIcon />}
+			label="SETTINGS"
+			//select={isMessageOpen}
+			//onClick={handleClickMessages}
+		/>
 		
 		<hr />
 
