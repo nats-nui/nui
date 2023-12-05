@@ -7,6 +7,8 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
 import Dialog from "../dialogs/Dialog"
 import ListEditDlg from "../dialogs/ListEditDlg"
+import TextInput from "@/components/input/TextInput"
+import Label from "@/components/input/Label"
 
 
 
@@ -33,15 +35,13 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 
 	// HANDLER
-	const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const name = e.target.value
+	const handleChangeName = (name: string) => {
 		const cnn = { ...cnnDetailSa.connection, name }
 		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
-	const handleChangeHost = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const host = e.target.value
-		const cnn = { ...cnnDetailSa.connection, hosts:[host] }
+	const handleChangeHost = (host: string) => {
+		const cnn = { ...cnnDetailSa.connection, hosts: [host] }
 		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
@@ -79,22 +79,36 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 	return (<div>
 
-		<div>NAME</div>
-		<input
+		<Label>NAME</Label>
+		<TextInput
 			value={name}
 			onChange={handleChangeName}
 		/>
 
-		<div>HOST</div>
-		<input
+		<Label>HOST</Label>
+		<TextInput
 			value={host}
 			onChange={handleChangeHost}
 		/>
 
-		<div>SUBSCRIPTIONS</div>
-		<button
+		<Label>SUBSCRIPTIONS</Label>
+		<TextInput
+			value={host}
+			onChange={handleClickSubs}
+		/>
+
+		<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
+			items={cnnDetailSa.connection.subscriptions}
+			RenderRow={SubRow}
+			RenderDetail={SubDetail}
+			fnNewItem={() => ({ subject: "<new>" })}
+			onChange={handleChangeSubs}
+		/>
+
+
+		{/* <button
 			onClick={handleClickSubs}
-		>{subscriptions?.map(s => s.subject).join(",")}</button>
+		>{subscriptions?.map(s => s.subject).join(",")}</button> */}
 
 		{isNew &&
 			<button
