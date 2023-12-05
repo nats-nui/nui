@@ -20,5 +20,6 @@ export interface Theme {
 			subtitle: React.CSSProperties
 		}
 		button: React.CSSProperties
+		rowButton: React.CSSProperties
 	},
 }

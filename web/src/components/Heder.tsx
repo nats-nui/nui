@@ -2,7 +2,7 @@ import docSo, { DocState } from "@/stores/docs"
 import { ViewStore } from "@/stores/docs/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import CloseBtt from "./buttons/CloseBtt"
+import CloseBtt from "./buttons/CloseButton"
 import mouseSo from "@/stores/mouse"
 import layoutSo from "@/stores/layout"
 
@@ -51,7 +51,7 @@ const Header: FunctionComponent<Props> = ({
 		>
 			{icon}
 			<span style={cssTitle}>{title}</span>
-			<CloseBtt style={{ margin: "3px 5px", ...style }} onClick={handleClose} />
+			<CloseBtt style={{ margin: "1px 5px", ...style }} onClick={handleClose} />
 		</div>
 	)
 }

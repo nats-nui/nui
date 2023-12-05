@@ -38,7 +38,7 @@ const App: FunctionComponent = () => {
 					<div style={{ display: "flex", zIndex: views.length - index }} key={getID(view.state)}>
 						<DocViewCmp view={view} />
 						<DropArea index={index + 1}
-							view={view} 
+							viewSo={view} 
 						/>
 					</div>
 				)}

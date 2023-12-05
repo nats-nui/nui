@@ -1,7 +1,7 @@
 {
   "name": "nats-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@fontsource/darker-grotesque": "^5.0.8",
-    "@priolo/jon": "^0.6.6",
+    "@priolo/jon": "^0.6.7",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -32,10 +32,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
     "jest-environment-jsdom": "^29.6.1",
-    "msw": "^1.2.2",
+    "msw": "^1",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.0"
+    "typescript": "^4",
+    "vite": "^5.0.5"
   },
   "msw": {
     "workerDirectory": "public"
