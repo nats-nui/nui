@@ -19,12 +19,14 @@
         "jsx": "react-jsx",
         /* Linting */
         "strict": false,
-        "noUnusedParameters": true,
+        "noUnusedParameters": false,
         "noFallthroughCasesInSwitch": true,
         "checkJs": false,
         "noImplicitAny": false,
         "strictNullChecks": false,
-        "typeRoots":  ["node_modules/@types", "node_modules/@priolo/jon/dist"],
+        "typeRoots": [
+            "node_modules/@types"
+        ],
         "baseUrl": ".",
         "paths": {
             "@/*": [
@@ -34,9 +36,11 @@
     },
     "include": [
         "src",
-        "node_modules/@priolo/jon/dist/**/*",
+        "node_modules/@priolo/jon/dist/**/*"
     ],
-    "exclude": ["node_modules"],
+    "exclude": [
+        "node_modules"
+    ],
     "references": [
         {
             "path": "./tsconfig.node.json"
