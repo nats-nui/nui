@@ -1,14 +1,11 @@
-import SubDetail from "@/components/subscription/Detail"
-import SubRow from "@/components/subscription/Row"
+import Label from "@/components/input/Label"
+import TextInput from "@/components/input/TextInput"
 import cnnSo from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useMemo } from "react"
-import Dialog from "../dialogs/Dialog"
-import ListEditDlg from "../dialogs/ListEditDlg"
-import TextInput from "@/components/input/TextInput"
-import Label from "@/components/input/Label"
+import { FunctionComponent } from "react"
+import EditList, { RenderRowBaseProps } from "../dialogs/EditList"
 
 
 
@@ -45,16 +42,16 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
-	const handleClickSubs = () => {
-		cnnDetailSo.setSubOpen(true)
-	}
-	const handleCloseDetail = () => {
-		cnnDetailSo.setSubOpen(false)
-	}
-	const handleCreate = async () => {
-		const cnn = await cnnSo.create(cnnDetailSa.connection)
-		cnnDetailSo.setConnection(cnn)
-	}
+	// const handleClickSubs = () => {
+	// 	cnnDetailSo.setSubOpen(true)
+	// }
+	// const handleCloseDetail = () => {
+	// 	cnnDetailSo.setSubOpen(false)
+	// }
+	// const handleCreate = async () => {
+	// 	const cnn = await cnnSo.create(cnnDetailSa.connection)
+	// 	cnnDetailSo.setConnection(cnn)
+	// }
 
 	const handleChangeSubs = (newItems: Subscription[]) => {
 		cnnDetailSa.connection.subscriptions = newItems
@@ -92,45 +89,42 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		/>
 
 		<Label>SUBSCRIPTIONS</Label>
-		<TextInput
-			value={host}
-			onChange={handleClickSubs}
-		/>
-
-		<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
+		<EditList<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
 			items={cnnDetailSa.connection.subscriptions}
 			RenderRow={SubRow}
-			RenderDetail={SubDetail}
 			fnNewItem={() => ({ subject: "<new>" })}
-			onChange={handleChangeSubs}
+			onChangeItems={handleChangeSubs}
 		/>
-
-
-		{/* <button
-			onClick={handleClickSubs}
-		>{subscriptions?.map(s => s.subject).join(",")}</button> */}
-
-		{isNew &&
-			<button
-				onClick={handleCreate}
-			>CREATE</button>
-		}
-
-		<Dialog
-			open={cnnDetailSa.subOpen}
-			store={cnnDetailSo}
-			onClose={handleCloseDetail}
-		>
-			<ListEditDlg<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
-				items={cnnDetailSa.connection.subscriptions}
-				RenderRow={SubRow}
-				RenderDetail={SubDetail}
-				fnNewItem={() => ({ subject: "<new>" })}
-				onChange={handleChangeSubs}
-			/>
-		</Dialog>
 
 	</div>)
 }
 
 export default CnnDetailCmp
+
+
+
+const SubRow: FunctionComponent<RenderRowBaseProps<Subscription>> = ({
+	item,
+	select,
+	onChangeItem,
+	onDelete,
+}) => {
+
+	const handleChangeSubject = (e) => {
+		const newItem: Subscription = {
+			...item,
+			subject: e.target.value
+		}
+		onChangeItem(newItem)
+	}
+
+	return select
+		? <div style={{ display: "flex" }}>
+			<input
+				value={item.subject}
+				onChange={handleChangeSubject}
+			/>
+			<button onClick={onDelete}>X</button>
+		</div>
+		: <div>{item.subject}</div>
+}
