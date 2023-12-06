@@ -1,12 +1,12 @@
 import { useState, FunctionComponent } from "react"
 
+
+
 export interface RenderRowBaseProps<T> {
 	item: T
-}
-
-export interface RenderDetailBaseProps<T> {
-	item: T
-	onChange: (item: T) => void
+	select?: boolean
+	onChangeItem?: (newItem: T) => void
+	onDelete?: ()=>void
 }
 
 interface Props<T> {
@@ -14,14 +14,11 @@ interface Props<T> {
 
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
-	/** renderizza la form per editare un ITEM */
-	RenderDetail?: FunctionComponent<RenderDetailBaseProps<T>>
 	/** restituisce nuovo ITEM (su click btt NEW) */
 	fnNewItem?: () => T
 
-	onChange?: (newItems: T[]) => void
+	onChangeItems?: (newItems: T[]) => void
 	onChangeSelect?: (index: number) => void
-	onClose?: () => void
 
 	style?: React.CSSProperties
 }
@@ -31,18 +28,15 @@ function EditList<T>({
 	items,
 
 	RenderRow,
-	RenderDetail,
 	fnNewItem,
 
-	onChange,
+	onChangeItems,
 	onChangeSelect,
-	onClose,
 
 	style = {},
 }: Props<T>) {
 
 	// STORES
-	//const cnnDetailSa = useStore(parentSo) as CnnDetailState
 
 	// HOOKS
 	const [select, setSelect] = useState<number>(null)
@@ -52,31 +46,33 @@ function EditList<T>({
 		setSelect(index)
 		onChangeSelect?.(index)
 	}
-	const handleChangeSelect = (item: T) => {
+	const handleChangeItem = (item: T) => {
 		const newItems = [...items]
 		newItems[select] = item
-		onChange?.(newItems)
+		onChangeItems?.(newItems)
 	}
-	const handleDelete = () => {
+	const handleDeleteItem = (index:number) => {
 		const newItems = [...items]
-		newItems.splice(select, 1)
-		onChange?.(newItems)
+		newItems.splice(index, 1)
+		onChangeItems?.(newItems)
 	}
-	const handleNew = () => {
+	const handleNewItem = () => {
 		const newItem = fnNewItem()
 		const newItems = [...items, newItem]
 		setSelect(newItems.length - 1)
-		onChange?.(newItems)
+		onChangeItems?.(newItems)
 	}
-	const handleClose = () => onClose()
+
 
 	// RENDER
 	const itemSel = items[select]
 
 	return <div style={{ ...cssContainer, ...style }}>
 
-		{/* CHUSURA */}
-		<div onClick={handleClose}>X</div>
+		{/* BOTTONE NEW */}
+		{fnNewItem && (
+			<button onClick={handleNewItem}>NEW</button>
+		)}
 
 		{/* LISTA */}
 		{items?.map((item, index) =>
@@ -85,22 +81,24 @@ function EditList<T>({
 				style={{ backgroundColor: index == select ? "red" : null }}
 				onClick={() => handleSelect(index)}
 			>
-				<RenderRow item={item} />
+				<RenderRow 
+					item={item} 
+					select={item==items[index]}
+					onChangeItem={handleChangeItem}
+					onDelete={()=>handleDeleteItem(index)}
+				/>
 			</div>
 		)}
 
 		{/* SE é SELEZONATO UN ITEM... */}
-		{itemSel != null && RenderDetail && <>
+		{/* {itemSel != null && RenderDetail && <>
 			<RenderDetail item={itemSel} onChange={handleChangeSelect} />
 			<button
 				onClick={handleDelete}
 			>DELETE</button>
-		</>}
+		</>} */}
 
-		{/* BOTTONE NEW */}
-		{fnNewItem && (
-			<button onClick={handleNew}>NEW</button>
-		)}
+
 	</div>
 }
 
