@@ -25,9 +25,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	useStore(docSo) as DocState
-	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
-	useStore(connSo) as ConnectionState
+	useStore(docSo)
+	const cnnDetailSa = useStore(cnnDetailSo)
+	useStore(connSo)
 
 	// HOOKs
 
