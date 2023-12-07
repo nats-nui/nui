@@ -42,7 +42,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 	}[state.type]
 	if (!setup) return
-	const store: ViewStore = createStore(setup)
+	const store: ViewStore = <ViewStore>createStore(setup)
 	store.state = { ...store.state, ...state }
 	// se non c'e' l'uuid lo creo IO!
 	if ( store.state.uuid == null ) store.state.uuid = createUUID()

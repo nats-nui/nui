@@ -25,7 +25,7 @@
         "noImplicitAny": false,
         "strictNullChecks": false,
         "typeRoots": [
-            "node_modules/@types"
+            "node_modules/@types",
         ],
         "baseUrl": ".",
         "paths": {
@@ -36,7 +36,6 @@
     },
     "include": [
         "src",
-        "node_modules/@priolo/jon/dist/**/*"
     ],
     "exclude": [
         "node_modules"

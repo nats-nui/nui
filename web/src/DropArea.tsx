@@ -19,7 +19,7 @@ const DropArea: FunctionComponent<Props> = ({
 
 	// STORES
 	const mouseSa = useStore(mouseSo) as MouseState
-	const viewSa =  viewSo  ? useStore(viewSo ?? {}) as ViewState : null
+	const viewSa =  viewSo  ? useStore(viewSo) as ViewState : null
 
 	// HOOKS
 
