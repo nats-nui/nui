@@ -1,3 +1,5 @@
+import IconButton from "@/components/buttons/IconButton"
+import AddIcon from "@/icons/AddIcon"
 import { useState, FunctionComponent } from "react"
 
 
@@ -71,7 +73,7 @@ function EditList<T>({
 
 		{/* BOTTONE NEW */}
 		{fnNewItem && (
-			<button onClick={handleNewItem}>NEW</button>
+			<IconButton onClick={handleNewItem}><AddIcon /></IconButton>
 		)}
 
 		{/* LISTA */}
@@ -105,9 +107,8 @@ function EditList<T>({
 export default EditList
 
 const cssContainer: React.CSSProperties = {
-	paddingLeft: "15px",
-	//flex: 1,
-	display: "flex", flexDirection: "column",
+	display: "flex", 
+	flexDirection: "column",
 	color: "black",
 	width: "146px",
 }

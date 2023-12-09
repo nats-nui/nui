@@ -23,6 +23,8 @@ const Label: FunctionComponent<Props> = ({
 export default Label
 
 const cssRoot: React.CSSProperties = {
+	display: "flex",
+	alignItems: "center",
 	fontSize: '12px',
 	fontWeight: '600',
 	marginTop: '5px',

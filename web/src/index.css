@@ -17,6 +17,20 @@ html {
 }
 
 
+/**** INPUT ****/
+input:focus {
+  outline: none;
+}
+input:disabled {
+  opacity: 0.6;
+}
+input::selection {
+  background: #BBFB35;
+  color: #393939;
+}
+
+
+/**** SCROLLBAR ****/
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

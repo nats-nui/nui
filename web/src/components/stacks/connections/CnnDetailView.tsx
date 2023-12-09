@@ -79,8 +79,8 @@ const cssContainer: React.CSSProperties = {
 	paddingLeft: "15px",
 	flex: 1,
 	display: "flex", flexDirection: "column",
-	backgroundColor: "#BBFB35",
-	color: "black",
+	backgroundColor: layoutSo.state.theme.palette.bg.acid[0],
+	color: layoutSo.state.theme.palette.fg.acid[0],
 	//width: "146px",
 }
 

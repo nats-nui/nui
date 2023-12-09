@@ -1,10 +1,12 @@
+import CloseIcon from "@/icons/CloseIcon"
 import docSo, { DocState } from "@/stores/docs"
 import { ViewStore } from "@/stores/docs/viewBase"
+import layoutSo from "@/stores/layout"
+import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import CloseBtt from "./buttons/CloseButton"
-import mouseSo from "@/stores/mouse"
-import layoutSo from "@/stores/layout"
+import IconButton from "./buttons/IconButton"
+import DetachIcon from "@/icons/DetachIcon"
 
 
 
@@ -51,7 +53,14 @@ const Header: FunctionComponent<Props> = ({
 		>
 			{icon}
 			<span style={cssTitle}>{title}</span>
-			<CloseBtt style={{ margin: "1px 5px", ...style }} onClick={handleClose} />
+			<div style={{ display: "flex", flexDirection: "column" }} >
+				<IconButton style={{ margin: "1px 5px" }} onClick={handleClose}>
+					<CloseIcon />
+				</IconButton>
+				<IconButton style={{ margin: "0px 5px" }}>
+					<DetachIcon />
+				</IconButton>
+			</div>
 		</div>
 	)
 }
