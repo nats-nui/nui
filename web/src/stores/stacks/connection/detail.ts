@@ -20,7 +20,7 @@ const setup = {
 		connection: <Connection>null,
 		/** OVERWRITING */
 		draggable: false,
-		width: 146,
+		width: 200,
 	},
 
 	getters: {

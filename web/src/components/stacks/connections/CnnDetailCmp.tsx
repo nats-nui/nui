@@ -5,7 +5,7 @@ import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detai
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import EditList, { RenderRowBaseProps } from "../dialogs/EditList"
+import SubscriptionsList from "./SubscriptionsList"
 
 
 
@@ -52,13 +52,18 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	// 	const cnn = await cnnSo.create(cnnDetailSa.connection)
 	// 	cnnDetailSo.setConnection(cnn)
 	// }
-
-	const handleChangeSubs = (newItems: Subscription[]) => {
-		cnnDetailSa.connection.subscriptions = newItems
-		const newConnection = { ...cnnDetailSa.connection }
+	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
+		const newConnection = { ...cnnDetailSa.connection, subscriptions }
 		cnnDetailSo.setConnection(newConnection)
 		cnnSo.modify(newConnection)
 	}
+
+	// const handleChangeSubs = (newItems: Subscription[]) => {
+	// 	cnnDetailSa.connection.subscriptions = newItems
+	// 	const newConnection = { ...cnnDetailSa.connection }
+	// 	cnnDetailSo.setConnection(newConnection)
+	// 	cnnSo.modify(newConnection)
+	// }
 
 	// RENDER
 	// const subscrsDlg = <SubscriptionsDlg
@@ -74,7 +79,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const host = cnnDetailSa.connection.hosts?.[0] ?? ""
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 
-	return (<div>
+	return (<div style={{ display: "flex", flexDirection: "column" }}>
 
 		<Label>NAME</Label>
 		<TextInput
@@ -88,43 +93,14 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			onChange={handleChangeHost}
 		/>
 
-		<Label>SUBSCRIPTIONS</Label>
-		<EditList<Subscription> style={{ flex: 1, backgroundColor: "#a0e312" }}
-			items={cnnDetailSa.connection.subscriptions}
-			RenderRow={SubRow}
-			fnNewItem={() => ({ subject: "<new>" })}
-			onChangeItems={handleChangeSubs}
-		/>
+		
 
+		<SubscriptionsList
+			subscriptions={subscriptions}
+			onChange={handleSubscriptionsChange}
+		/>
 	</div>)
 }
 
 export default CnnDetailCmp
 
-
-
-const SubRow: FunctionComponent<RenderRowBaseProps<Subscription>> = ({
-	item,
-	select,
-	onChangeItem,
-	onDelete,
-}) => {
-
-	const handleChangeSubject = (e) => {
-		const newItem: Subscription = {
-			...item,
-			subject: e.target.value
-		}
-		onChangeItem(newItem)
-	}
-
-	return select
-		? <div style={{ display: "flex" }}>
-			<input
-				value={item.subject}
-				onChange={handleChangeSubject}
-			/>
-			<button onClick={onDelete}>X</button>
-		</div>
-		: <div>{item.subject}</div>
-}
