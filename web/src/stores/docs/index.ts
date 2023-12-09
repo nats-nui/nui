@@ -22,6 +22,9 @@ const setup = {
 		getById(id: string, store?: DocStore): ViewStore {
 			return getById(store.state.all, id)
 		},
+		getIndexByView(view: ViewStore, store?: DocStore) {
+			return store.state.all.findIndex( v => v == view)
+		},
 	},
 
 	actions: {
@@ -58,18 +61,10 @@ const setup = {
 			if (!view) return
 
 			// imposto la view
-			view.state.parent = parent
-			view.state.position = POSITION_TYPE.LINKED
-			parent.state.linked = view
-			// ---
+			parent.setLinked(view)
 			store.setAll([...store.state.all])
 		},
-
-		removeWithAnim(view: ViewStore, store?: DocStore) {
-			if (view.state.position == POSITION_TYPE.DETACHED) store.remove(view)
-			view.setDocAnim(DOC_ANIM.EXITING)
-			setTimeout(() => store.remove(view), ANIM_TIME)
-		},
+		
 		/** inserisco una VIEW nello STACK di un altra VIEW */
 		remove(view: ViewStore, store?: DocStore) {
 			const views = [...store.state.all]
@@ -79,19 +74,26 @@ const setup = {
 			if (!view.state.parent) {
 				index = views.findIndex(v => v == view)
 				if (index != -1) views.splice(index, 1)
-
+				view.state.parent = null
+				view.state.position = null
+	
 				// LINKED
-			} else if (view == view.state.parent.state.linked) {
-				view.state.parent.state.linked = null
+			} else {
+				view.state.parent.setLinked(null)
 			}
 
-			view.state.parent = null
-			view.state.position = null
 			store.setAll(views)
 		},
+		removeWithAnim(view: ViewStore, store?: DocStore) {
+			if (view.state.position == POSITION_TYPE.DETACHED) store.remove(view)
+			view.setDocAnim(DOC_ANIM.EXITING)
+			setTimeout(() => store.remove(view), ANIM_TIME)
+		},
 
+		/** sposta una view in un indice preciso dello STACK */
 		move({ view, index }: { view: ViewStore, index: number }, store?: DocStore) {
 			if (view == null || index == null) return
+			// se è direttamente in ROOT...
 			if (view.state.parent == null) {
 				const srcIndex = store.state.all.indexOf(view)
 				if (srcIndex == index || srcIndex + 1 == index) return
@@ -101,6 +103,7 @@ const setup = {
 				} else {
 					store.add({ view, index: index - 1 })
 				}
+				// altrimenti la cancello e la ricreo in ROOT
 			} else {
 				store.remove(view)
 				store.add({ view, index })

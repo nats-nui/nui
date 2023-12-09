@@ -35,4 +35,5 @@ const cssRoot: React.CSSProperties = {
 	justifyContent: 'flex-end',
 	padding: 3,
 	backgroundColor: layoutSo.state.theme.palette.bg.actionsGroup,
+	color: layoutSo.state.theme.palette.fg.default,
 }

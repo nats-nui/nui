@@ -98,7 +98,7 @@ const cssDialog = (deep: number): React.CSSProperties => ({
 })
 
 const cssDesk: React.CSSProperties = {
-	marginLeft: "-8px",
+	marginLeft: -8,
 	display: "flex",
 	//height: "100%",
 	position: "relative",

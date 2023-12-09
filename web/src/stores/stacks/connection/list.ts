@@ -49,12 +49,14 @@ const setup = {
 				parent: store,
 			})
 		},
-		/** ho creato una nuova connection quindi creo e visualizzo lo STACK del dettaglio */
+		/** creo un nuovo STORE DETTAGLIO CONNECTION
+		 * e lo visualizzo nello STACK della lista CONNECTION */
 		create(_: void, store?: CnnListStore) {
 			const view = buildStore({
 				type: DOC_TYPE.SERVICES,
 				connection: {
 					name: "<new>",
+					hosts: ["<new>"],
 					subscriptions: [],
 				},
 			} as CnnDetailState)

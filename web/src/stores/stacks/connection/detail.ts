@@ -1,13 +1,12 @@
-import docsSo from "@/stores/docs"
 import cnnSo from "@/stores/connections"
+import docsSo from "@/stores/docs"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
-import { Connection, DOC_ANIM, DOC_TYPE } from "@/types"
+import { Connection, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
-import { CnnListStore } from "./list"
 import { MessagesState } from "../messages"
-import React from "react"
 import { PARAMS_MESSAGES } from "../messages/utils"
+import { CnnListStore } from "./list"
 
 
 

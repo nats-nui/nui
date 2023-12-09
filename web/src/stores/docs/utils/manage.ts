@@ -6,6 +6,7 @@ import { getID } from "./factory";
 
 /**
  * Permette di aggregare l'array di VIEWs
+ * in una struttura ad albero
  */
 export function aggregate(views: ViewStore[]): ViewStore[] {
 	if (!views) return []
@@ -25,7 +26,8 @@ export function aggregate(views: ViewStore[]): ViewStore[] {
 }
 
 /**
- * Disgrega un array di ViewStore in maniera da ottenere un array di VIEWs
+ * Disgrega un array di ViewStore 
+ * in maniera da ottenere un array di VIEWs
  */
 export function disgregate(docsView: ViewStore[]): ViewStore[] {
 	let views: ViewStore[] = []
@@ -82,4 +84,13 @@ export function numLinkedParent(view: ViewStore): number {
 	let count = 0
 	forEachParent(view, () => count++)
 	return count
+}
+
+/**
+ * restituisce il PARENT in STACK d una VIEW
+ */
+export function getRoot(view: ViewStore): ViewStore {
+	let parent: ViewStore = null
+	forEachParent(view, (p) => parent = p)
+	return parent
 }

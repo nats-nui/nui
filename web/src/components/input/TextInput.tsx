@@ -36,5 +36,5 @@ const cssRoot: React.CSSProperties = {
 	color: layoutSo.state.theme.palette.fg.default,
 	border: 'none',
 	padding: '5px 7px',
-	marginLeft: '-7px'
+	marginLeft: -8,
 }

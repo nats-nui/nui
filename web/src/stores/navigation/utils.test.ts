@@ -1,5 +1,5 @@
 import { setParams } from "./utils"
-//const { setParams } = require('./index');
+
 
 
 describe("setParams", () => {

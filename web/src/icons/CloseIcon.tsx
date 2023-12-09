@@ -1,11 +1,11 @@
 const CloseIcon = (props) => (
 	<svg 
 		xmlns="http://www.w3.org/2000/svg" 
-		width="10" height="10" viewBox="0 0 10 10"
+		width="14" height="14" viewBox="0 0 14 14"
 		fill="none" stroke="currentColor"
 		{...props} 
 	>
-		<path d="M1 1L9 9M1 9L9 1" strokeWidth="2"/>
+		<path d="M3 3L11 11M3 11L11 3" strokeWidth="2"/>
 	</svg>
 )
 

@@ -12,7 +12,7 @@ interface Props {
 	children?: React.ReactNode
 	/** se true(default) chiudo la dialog se clicco su un qualunque altro punto della pagina */
 	closeClickOut?: boolean
-	onClose?: ()=>void
+	onClose?: () => void
 }
 
 /**
@@ -39,17 +39,19 @@ const Dialog: FunctionComponent<Props> = ({
 	useEffect(() => {
 		// se clicco fuori dalla dialog allora la chiude
 		const handleClick = (e: MouseEvent) => {
-			if ( !closeClickOut ) return
+			if (!closeClickOut) return
+			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
-				onClose?.()
+				setTimeout(() => onClose?.(), 300)
 			}
 		}
 		if (open) {
-			if ( !closeClickOut ) return
-			setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
+			if (!closeClickOut) return
+			document.addEventListener('mousedown', handleClick)
+			//setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
 		}
 		return () => {
-			if ( !closeClickOut ) return
+			if (!closeClickOut) return
 			document.removeEventListener('mousedown', handleClick)
 		}
 	}, [open])
