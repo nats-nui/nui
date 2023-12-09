@@ -9,14 +9,14 @@ import { ViewState } from "../../docs/viewBase"
 import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 
 
-// const h: HistoryMessage[] = Array.from({ length: 30 }, (_, i) => ({
-// 	id: createUUID(),
-// 	title: `title-${Math.random()} [${i}]`,
-// 	body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
-// 	//body: `body ${i}`,
-// 	timestamp: Date.now(),
-// 	height: null,
-// }));
+const h: HistoryMessage[] = Array.from({ length: 30 }, (_, i) => ({
+	id: createUUID(),
+	title: `title-${Math.random()} [${i}]`,
+	body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
+	//body: `body ${i}`,
+	timestamp: Date.now(),
+	height: null,
+}));
 
 
 const setup = {

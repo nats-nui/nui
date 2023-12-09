@@ -5,7 +5,8 @@ import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detai
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import SubscriptionsList from "./SubscriptionsList"
+import SubscriptionsList from "./sunscriptions/SubscriptionsList"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -93,9 +94,9 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			onChange={handleChangeHost}
 		/>
 
-		
-
-		<SubscriptionsList
+		<Label>SUBSCRIPTIONS</Label>
+		<SubscriptionsList noDelete
+			style={cssList}
 			subscriptions={subscriptions}
 			onChange={handleSubscriptionsChange}
 		/>
@@ -104,3 +105,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 export default CnnDetailCmp
 
+const cssList = {
+	backgroundColor: layoutSo.state.theme.palette.bg.default,
+	color: layoutSo.state.theme.palette.fg.default,
+}

@@ -1,5 +1,5 @@
-import { DOC_TYPE } from "../../types"
-import { fromID, getID } from "../factory"
+import { DOC_TYPE } from "../stores/docs/types"
+import { fromID, getID } from "../stores/docs/utils/factory"
 
 
 describe("getID", () => {

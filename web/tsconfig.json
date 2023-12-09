@@ -7,7 +7,7 @@
             "DOM",
             "DOM.Iterable"
         ],
-        "module": "ESNext",
+        "module": "esnext",
         "skipLibCheck": true,
         /* Bundler mode */
         "moduleResolution": "bundler",
@@ -33,6 +33,7 @@
                 "./src/*"
             ]
         },
+        "esModuleInterop": true,
     },
     "include": [
         "src",

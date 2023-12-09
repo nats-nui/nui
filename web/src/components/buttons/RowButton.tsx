@@ -57,7 +57,7 @@ const cssRoot:React.CSSProperties = {
 	padding: "5px 8px",
 	color: layoutSo.state.theme.palette.fg.acid[0],
 	cursor: "pointer",
-	marginLeft: -7
+	marginLeft: -8,
 }
 const cssRootSelect:React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.bg.default,

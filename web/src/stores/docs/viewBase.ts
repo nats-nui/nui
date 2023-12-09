@@ -51,6 +51,20 @@ const setup = {
 	},
 
 	actions: {
+		setLinked: (view: ViewStore, store?: ViewStore) => {
+			if ( !view ) {
+				if ( !!store.state.linked ) {
+					store.state.linked.state.position = null
+					store.state.linked.state.parent = null
+				}
+				store.state.linked = null
+			} else {
+				view.state.parent = store
+				view.state.position = POSITION_TYPE.LINKED
+				store.state.linked = view
+			}
+			return store
+		},
 	},
 
 	mutators: {
@@ -92,7 +106,6 @@ const setup = {
 				if (noSet) return
 			}
 
-if ( store.getParam(PARAMS_MESSAGES.CONNECTION_ID) == "cnn112345601") console.log("mutator", docAnim)
 			return { docAnim }
 		},
 	},

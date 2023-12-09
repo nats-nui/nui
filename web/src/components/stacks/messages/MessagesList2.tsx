@@ -1,6 +1,7 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useInsertionEffect, useLayoutEffect, useRef, useState } from "react"
 import MessageRow2 from "./MessageRow2"
 import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { debounce } from "@/utils/time"
 
 
 
@@ -15,19 +16,20 @@ const MessagesList2: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOKs
-	const [upHeight, setUpHeight] = useState(0)
-	const [scrollHeight, setScrollHeight] = useState(2934)
 	const [messagesVisible, setMessagesVisible] = useState<HistoryMessage[]>(messages.slice(0, 20))
 
 
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const noScroll = useRef(false)
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (noScroll.current) return
 		const node = scrollRef.current
 		if (!node) return
-		node.scrollTop = node.scrollHeight - node.clientHeight
+
 		handleScroll()
+		node.scrollTop = node.scrollHeight - node.clientHeight
+		setTimeout( ()=> node.scrollTop = node.scrollHeight - node.clientHeight , 100 )
+		
 	}, [messages])
 
 	// HANDLER
@@ -45,6 +47,10 @@ const MessagesList2: FunctionComponent<Props> = ({
 	// 	if (!scrollRef.current ) return
 	// 	//scrollRef.current.scrollTop = 36
 	// },[scrollRef.current])
+
+	const indexTopRef = useRef(0)
+	const upHeightRef = useRef(0)
+	const scrollHeightRef = useRef(2934)
 
 
 	const handleScroll = () => {
@@ -64,9 +70,9 @@ const MessagesList2: FunctionComponent<Props> = ({
 			if (nextHeight > limitTop) break
 			heightTop = nextHeight
 		}
-		setUpHeight(heightTop)
+		upHeightRef.current = heightTop
 
-
+		indexTopRef.current = indexTop
 		let indexCenter = indexTop
 		let heightItems = heightTop
 		const limitCenter = node.scrollTop + node.clientHeight - marginTop + marginDown
@@ -83,7 +89,7 @@ const MessagesList2: FunctionComponent<Props> = ({
 			const message = messages[indexDown]
 			heightItems += getMessageHeight(message)
 		}
-		setScrollHeight(heightItems)
+		scrollHeightRef.current = heightItems
 	}
 
 	function getMessageHeight(message:HistoryMessage): number {
@@ -102,15 +108,15 @@ const MessagesList2: FunctionComponent<Props> = ({
 			style={{ flex: 1,  overflowY: "auto" }}
 		>
 
-			<div style={{ height: scrollHeight, backgroundColor: "purple", overflowY: "hidden" }}>
+			<div style={{ height: scrollHeightRef.current, backgroundColor: "purple", overflowY: "hidden" }}>
 
-				<div style={{ height: upHeight, backgroundColor: "red" }} />
+				<div style={{ height: upHeightRef.current, backgroundColor: "red" }} />
 
 				{messagesVisible.map((message, index) => (
 					<MessageRow2 
 						key={message.id} 
 						message={message} 
-						index={index}
+						index={index+indexTopRef.current}
 					/>
 				))}
 

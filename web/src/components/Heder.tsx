@@ -7,6 +7,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import IconButton from "./buttons/IconButton"
 import DetachIcon from "@/icons/DetachIcon"
+import { getRoot } from "@/stores/docs/utils/manage"
 
 
 
@@ -40,11 +41,21 @@ const Header: FunctionComponent<Props> = ({
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
 		mouseSo.startDrag({ srcView: view })
 	}
+	const handleLinkDetach = () => {
+		if ( !view.state.linked ) return
+		const root = getRoot(view)
+		if ( !root ) return 
+		const rootIndex = docSo.getIndexByView(root)
+		docSo.move({view:view.state.linked, index: rootIndex+1})
+
+	}
 
 	// RENDER
 	const doc = view
 	if (!doc) return null
-	const isDraggable = true //view.state.draggable
+	const isDraggable = view.state.draggable
+	const haveLinkDetachable = view.state.linked?.state.draggable
+
 
 	return (
 		<div style={{ ...cssRoot, ...style }}
@@ -52,14 +63,17 @@ const Header: FunctionComponent<Props> = ({
 			onDragStart={handleDragStart}
 		>
 			{icon}
+
 			<span style={cssTitle}>{title}</span>
-			<div style={{ display: "flex", flexDirection: "column" }} >
-				<IconButton style={{ margin: "1px 5px" }} onClick={handleClose}>
-					<CloseIcon />
-				</IconButton>
-				<IconButton style={{ margin: "0px 5px" }}>
-					<DetachIcon />
-				</IconButton>
+
+			<div style={cssButtons} >
+				<IconButton
+					onClick={handleClose}
+				><CloseIcon /></IconButton>
+
+				{haveLinkDetachable && <IconButton
+					onClick={handleLinkDetach}
+				><DetachIcon /></IconButton>}
 			</div>
 		</div>
 	)
@@ -80,4 +94,8 @@ const cssTitle: React.CSSProperties = {
 	fontWeight: 800,
 	//color: "#FFF",
 	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+}
+const cssButtons: React.CSSProperties = {
+	display: "flex", 
+	flexDirection: "column",
 }

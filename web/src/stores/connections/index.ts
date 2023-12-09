@@ -27,16 +27,16 @@ const setup = {
 			const cnn = await cnnApi.index()
 			store.setAll(cnn)
 		},
-		async create(cnn: Connection, store?: ConnectionStore): Promise<Connection> {
+		async create(cnn: Connection, store?: ConnectionStore) {
 			const cnnNew = await cnnApi.save(cnn)
 			store.setAll([...store.state.all, cnnNew])
 			return cnnNew
 		},
-		async delete(id: string, store?: ConnectionStore): Promise<void> {
+		async delete(id: string, store?: ConnectionStore) {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
 		},
-		async modify(cnn: Connection, store?: ConnectionStore): Promise<void> {
+		async modify(cnn: Connection, store?: ConnectionStore) {
 			const index = store.getIndexById(cnn.id)
 			if ( index == -1 ) return
 			const cnns = [...store.state.all]
@@ -62,6 +62,9 @@ export type ConnectionState = typeof setup.state
 export type ConnectionGetters = typeof setup.getters
 export type ConnectionActions = typeof setup.actions
 export type ConnectionMutators = typeof setup.mutators
+/**
+ * Gestisce le connessioni disponibili dal BE
+ */
 export interface ConnectionStore extends StoreCore<ConnectionState>, ConnectionGetters, ConnectionActions, ConnectionMutators {
 	state: ConnectionState
 }

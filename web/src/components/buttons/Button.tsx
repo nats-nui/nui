@@ -1,16 +1,17 @@
-import React, { FunctionComponent, useState } from "react"
 import layoutSo from "@/stores/layout"
-import { Color } from "@/types"
+import React, { FunctionComponent, useState } from "react"
 
 
 
 interface Props {
+	select?: boolean
 	label?: string
 	colorVar?: number
-	onClick?: (e:React.MouseEvent) => void
+	onClick?: (e: React.MouseEvent<HTMLDivElement>, select:boolean) => void
 }
 
 const Button: FunctionComponent<Props> = ({
+	select,
 	label,
 	colorVar = 0,
 	onClick,
@@ -24,16 +25,18 @@ const Button: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleEnter = () => setMouseOver(true)
 	const handleLeave = () => setMouseOver(false)
+	const handleClick = (e:React.MouseEvent<HTMLDivElement>) => {
+		onClick?.(e, select)
+	}
 
 	// RENDER
-	const styRoot:React.CSSProperties = {
+	const styRoot: React.CSSProperties = {
 		...cssRoot,
-		backgroundColor: mouseOver ? layoutSo.state.theme.palette.bg.acid[colorVar] : null,
-		color: mouseOver ? layoutSo.state.theme.palette.fg.acid[colorVar] : layoutSo.state.theme.palette.fg.default,
+		...(mouseOver || select ? cssSelect(colorVar) : {}),
 	}
 	return (
 		<div style={styRoot}
-			onClick={onClick}
+			onClick={handleClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
 		>
@@ -44,15 +47,17 @@ const Button: FunctionComponent<Props> = ({
 
 export default Button
 
-const cssRoot:React.CSSProperties = {
+const cssRoot: React.CSSProperties = {
 	transition: "background-color 400ms, color 400ms",
-	color: layoutSo.state.theme.palette.fg.acid[0],
 	cursor: "pointer",
 	borderRadius: 10,
 	padding: '3px 6px',
-
 }
+const cssSelect = ( colorVar:number ) => ({
+	backgroundColor: layoutSo.state.theme.palette.bg.acid[colorVar] ,
+	color: layoutSo.state.theme.palette.fg.acid[colorVar],
+})
 
-const cssLabel:React.CSSProperties = {
+const cssLabel: React.CSSProperties = {
 	...layoutSo.state.theme.texts.button,
 }

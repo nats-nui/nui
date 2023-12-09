@@ -14,6 +14,8 @@ import { PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
 import layoutSo from "@/stores/layout"
+import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
+import Label from "@/components/input/Label"
 
 
 
@@ -38,13 +40,14 @@ const MessagesView: FunctionComponent<Props> = ({
 	}, [cnnSa.all])
 
 	// HANDLER
-	const handleSubscriptions = () => {
-		msgSo.setSubscriptionsOpen(true)
+	const handleClickSubs = (e:React.MouseEvent, select:boolean) => {
+		if ( select) return
+		msgSo.setSubscriptionsOpen(!select)
 	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
 		msgSo.setSubscriptions(newSubs)
 	}
-	const handleCloseSubscriptionsDialog = () => {
+	const handleCloseSubsDialog = () => {
 		msgSo.setSubscriptionsOpen(false)
 		msgSo.sendSubscriptions()
 	}
@@ -79,39 +82,34 @@ const MessagesView: FunctionComponent<Props> = ({
 			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
 
 			<ActionGroup>
-				<Button onClick={handleSubscriptions} label="SUBJECTS" colorVar={1}/>
+				<Button
+					select={msgSa.subscriptionsOpen}
+					label="SUBJECTS"
+					onClick={handleClickSubs}
+					colorVar={1}
+				/>
 			</ActionGroup>
 
-			{/* <div>i messages di {id}</div> */}
-
 			<MessagesList2 messages={msgSa.history} />
-			{/* <MessagesList messages={msgSa.history} /> */}
-
-			{/* <div style={{ display: "flex" }}>
-				<button
-					onClick={handleMessagePublish}
-				>SEND</button>
-				<input
-					value={msgSa.message}
-					onChange={handleMessageChange}
-				/>
-				<button
-					onClick={handleMessageSubOpen}
-				>{labelSubscription}</button>
-			</div> */}
 
 			<Dialog
 				open={msgSa.subscriptionsOpen}
 				store={msgSo}
-				onClose={handleCloseSubscriptionsDialog}
+				onClose={handleCloseSubsDialog}
 			>
-				<ListEditDlg<Subscription> style={cssDialogSubs}
+				
+				<SubscriptionsList noDisable
+					style={cssDialogSubs}
+					subscriptions={msgSa.subscriptions}
+					onChange={handleChangeSubs}
+				/>
+				{/* <ListEditDlg<Subscription> style={cssDialogSubs}
 					items={msgSa.subscriptions}
 					RenderRow={SubRow}
 					RenderDetail={SubDetail}
 					fnNewItem={() => ({ subject: "<new>" })}
 					onChange={handleChangeSubs}
-				/>
+				/> */}
 			</Dialog>
 
 			<Dialog
@@ -143,6 +141,9 @@ const cssContainer: React.CSSProperties = {
 }
 
 const cssDialogSubs: React.CSSProperties = {
+	width: 200,
 	flex: 1,
+	paddingLeft: 15,
 	backgroundColor: layoutSo.state.theme.palette.bg.acid[1],
+	color: layoutSo.state.theme.palette.fg.acid[1],
 }
