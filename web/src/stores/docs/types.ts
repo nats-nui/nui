@@ -20,3 +20,4 @@ export enum DOC_ANIM {
 }
 
 export const ANIM_TIME = 300
+export const ANIM_TIME_CSS = 300

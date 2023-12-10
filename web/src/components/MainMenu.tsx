@@ -1,6 +1,6 @@
 import docSo from "@/stores/docs"
-import { buildStore } from "@/stores/docs/utils/factory"
 import { DOC_TYPE } from "@/stores/docs/types"
+import { buildStore } from "@/stores/docs/utils/factory"
 import React, { FunctionComponent } from "react"
 
 
@@ -18,9 +18,9 @@ const MainMenu: FunctionComponent<Props> = ({
 		const cnnStore = buildStore({
 			type: DOC_TYPE.CONNECTIONS,
 		})
-		docSo.add({ view: cnnStore })
+		docSo.add({ view: cnnStore, anim: true })
 	}
-	
+
 	const handleDebugPingStop = () => {
 		//ss.send({ type: "mock", cmm: "ping:stop", data: null })
 	}

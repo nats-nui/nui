@@ -1,8 +1,6 @@
 .container {
 	display: flex;
 	height: 100%;
-	/* width: 0px;
-	transition: width 1s ease; */
 }
 .container.appear {
 	/* width: 200px; */
@@ -23,8 +21,6 @@
 .doc_sub {
 	border-radius: 0px 10px 10px 0px;
 }
-
-
 
 
 

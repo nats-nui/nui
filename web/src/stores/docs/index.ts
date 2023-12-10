@@ -5,7 +5,9 @@ import { ViewStore } from "./viewBase"
 import { stringToViewsState, viewsToString } from "./utils/urlTransform"
 import { buildStore } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
-import { debounce, debounceExist, delay } from "@/utils/time"
+import { delayAnim } from "@/utils/time"
+
+
 
 /**
  * Gestisce la lista di DOCS presenti
@@ -15,7 +17,6 @@ const setup = {
 	state: {
 		focus: <number>null,
 		all: <ViewStore[]>[],
-		allInShow: <ViewStore[]>[],
 	},
 
 	getters: {
@@ -28,47 +29,49 @@ const setup = {
 	},
 
 	actions: {
-
-		/** inserisco un DOC nella "root" con "index" */
-		add(
-			{ view, index }: { view: ViewStore, index?: number },
+		async add(
+			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
 			store?: DocStore
 		) {
-			// se esiste gia' setto il fuoco e basta
-			// per il momento lo levo ma dovro' cercare le finestre UNICHE
-			// cioe' se un ViewStore è settato come "unico" allora non si possono aprire piu' istanze di quello
-			//const find = getById(store.state.all, getID(view))
-			//if (find) {	/* set focus */ return }
-
-			// imposto la view
 			view.state.parent = null
 			view.state.position = POSITION_TYPE.DETACHED
-			// ---
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
 			store.setAll(newViews)
+
+			if (anim) {
+				await delayAnim()
+				await view.docAnim(DOC_ANIM.SHOWING)
+			}
 		},
 
 		/** inserisco una VIEW come link di un altra VIEW */
-		addLink(
-			{ view, parent, anim }: { view: ViewStore, parent: ViewStore, anim?: boolean },
+		async addLink(
+			{ view, parent, anim = false }: { view: ViewStore, parent: ViewStore, anim?: boolean },
 			store?: DocStore
 		) {
 			if (!parent) return
 
 			// se c'e' gia' una view la rimuovo
 			if (parent.state.linked) {
-				store.remove(parent.state.linked)
+				await store.remove({view: parent.state.linked, anim})
 			}
 			if (!view) return
 
 			// imposto la view
 			parent.setLinked(view)
 			store.setAll([...store.state.all])
+
+			if (anim) {
+				await delayAnim()
+				await view.docAnim(DOC_ANIM.SHOWING)
+			}
 		},
 
 		/** inserisco una VIEW nello STACK di un altra VIEW */
-		remove(view: ViewStore, store?: DocStore) {
+		async remove({ view, anim = false }: { view: ViewStore, anim: boolean }, store?: DocStore) {
+			if (anim) await view.docAnim(DOC_ANIM.EXITING)
+
 			const views = [...store.state.all]
 			let index: number
 
@@ -86,30 +89,24 @@ const setup = {
 
 			store.setAll(views)
 		},
-		async removeWithAnim(view: ViewStore, store?: DocStore) {
-			if (view.state.position == POSITION_TYPE.DETACHED) store.remove(view)
-			view.setDocAnim(DOC_ANIM.EXITING)
-			await delay(ANIM_TIME)
-			store.remove(view)
-		},
 
 		/** sposta una view in un indice preciso dello STACK */
-		move({ view, index }: { view: ViewStore, index: number }, store?: DocStore) {
+		async move({ view, index, anim = false }: { view: ViewStore, index: number, anim: boolean }, store?: DocStore) {
 			if (view == null || index == null) return
 			// se è direttamente in ROOT...
 			if (view.state.parent == null) {
 				const srcIndex = store.state.all.indexOf(view)
 				if (srcIndex == index || srcIndex + 1 == index) return
-				store.remove(view)
+				await store.remove({view, anim})
 				if (srcIndex > index) {
-					store.add({ view, index })
+					await store.add({ view, index, anim })
 				} else {
-					store.add({ view, index: index - 1 })
+					await store.add({ view, index: index - 1, anim })
 				}
 				// altrimenti la cancello e la ricreo in ROOT
 			} else {
-				store.remove(view)
-				store.add({ view, index })
+				await store.remove({view, anim})
+				await store.add({ view, index, anim })
 			}
 		},
 
@@ -126,40 +123,9 @@ const setup = {
 		setAll: (all: ViewStore[], store?: DocStore) => {
 			const views: ViewStore[] = disgregate(all)
 			navSo.setParams(["docs", viewsToString(views)])
-
-			let updateDel = false
-			const deleted = [...store.state.all]
-			for (const view of all) {
-				const index = deleted.indexOf(view)
-				// se prima non c'era allora fai lo SHOW
-				if (index == -1) {
-					//view.setDocAnim(DOC_ANIM.SHOWING)
-					window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
-					// se prima c'era allora NON lo cancellare
-				} else {
-					deleted.splice(index, 1)
-				}
-			}
-			// setto le animazioni a tutti quelli che devono essere eliminati
-			for (const view of deleted) {
-				updateDel = true
-				view.setDocAnim(DOC_ANIM.EXITING)
-			}
-
-			if (!debounceExist("setAllInShow") && !updateDel) {
-				return { all, allInShow: all }
-			}
-
-			debounce("setAllInShow", () => store.setAllInShow(), ANIM_TIME)
 			return { all }
 		},
-		setAllInShow: (_: void, store?: DocStore) => {
-			console.log("***setAllInShow***")
-			return { allInShow: store.state.all }
-		},
 		setFocus: (focus: number) => ({ focus }),
-
-
 	},
 }
 

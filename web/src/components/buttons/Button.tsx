@@ -1,4 +1,5 @@
 import layoutSo from "@/stores/layout"
+import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useState } from "react"
 
 
@@ -48,7 +49,7 @@ const Button: FunctionComponent<Props> = ({
 export default Button
 
 const cssRoot: React.CSSProperties = {
-	transition: "background-color 400ms, color 400ms",
+	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	cursor: "pointer",
 	borderRadius: 10,
 	padding: '3px 6px',

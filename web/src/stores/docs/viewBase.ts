@@ -1,7 +1,7 @@
-import { ANIM_TIME, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
+import { ANIM_TIME, ANIM_TIME_CSS, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
+import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
 import React from "react"
-import { PARAMS_MESSAGES } from "../stacks/messages/utils"
 
 
 
@@ -20,11 +20,13 @@ const setup = {
 		type: DOC_TYPE.EMPTY,
 		params: <{ [name: string]: any[] }>{},
 
+		/** indica se la CARD è draggabile o no */
 		draggable: true,
+		/** l'a corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 		width: 300,
 		styInit: {
-			transition: `transform 300ms, width ${ANIM_TIME}ms`,
+			transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 			transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
 		},
 
@@ -37,7 +39,7 @@ const setup = {
 		getParam(name: string, store?: ViewStore) {
 			return store.state.params?.[name]?.[0]
 		},
-		getStyAni: (_: void, store?: ViewStore):React.CSSProperties => {
+		getStyAni: (_: void, store?: ViewStore): React.CSSProperties => {
 			switch (store.state.docAnim) {
 				case DOC_ANIM.EXIT:
 				case DOC_ANIM.EXITING:
@@ -52,8 +54,8 @@ const setup = {
 
 	actions: {
 		setLinked: (view: ViewStore, store?: ViewStore) => {
-			if ( !view ) {
-				if ( !!store.state.linked ) {
+			if (!view) {
+				if (!!store.state.linked) {
 					store.state.linked.state.position = null
 					store.state.linked.state.parent = null
 				}
@@ -65,17 +67,8 @@ const setup = {
 			}
 			return store
 		},
-	},
-
-	mutators: {
-		setParams(ps: { [name: string]: any }, store?: ViewStore) {
-			const params = { ...store.state.params, ...ps }
-			return { params }
-		},
-		setWidth: (width: number, store?: ViewStore) => ({ width }),
-		setDocAnim: (docAnim: DOC_ANIM, store?: ViewStore) => {
-
-			let delay = 0
+		docAnim: async (docAnim: DOC_ANIM, store?: ViewStore) => {
+			let animTime = 0
 			let noSet = false
 			const currAnim = store.state.docAnim
 			let nextAnim = null
@@ -85,29 +78,37 @@ const setup = {
 			} else if (docAnim == DOC_ANIM.EXITING && currAnim == DOC_ANIM.EXIT) {
 				return
 			} else if (docAnim == DOC_ANIM.SHOWING && currAnim == DOC_ANIM.EXITING) {
-				delay = ANIM_TIME + 100
+				animTime = ANIM_TIME 
 				noSet = true
 			} else if (docAnim == DOC_ANIM.EXITING && currAnim == DOC_ANIM.SHOWING) {
-				delay = ANIM_TIME
+				animTime = ANIM_TIME
 				noSet = true
 			} else if (docAnim == DOC_ANIM.EXITING) {
-				delay = ANIM_TIME
+				animTime = ANIM_TIME
 				nextAnim = DOC_ANIM.EXIT
 			} else if (docAnim == DOC_ANIM.SHOWING) {
-				delay = ANIM_TIME
+				animTime = ANIM_TIME
 				nextAnim = DOC_ANIM.SHOW
 			}
 
-			if (delay > 0) {
+			if (animTime > 0) {
 				if (nextAnim == null) nextAnim = docAnim
-				setTimeout(() => {
-					store.setDocAnim(nextAnim)
-				}, delay)
-				if (noSet) return
+				if (!noSet) store.setDocAnim(docAnim)
+				await delay(ANIM_TIME)
+				store.setDocAnim(nextAnim)
+			} else {
+				store.setDocAnim(docAnim)
 			}
+		}
+	},
 
-			return { docAnim }
+	mutators: {
+		setParams(ps: { [name: string]: any }, store?: ViewStore) {
+			const params = { ...store.state.params, ...ps }
+			return { params }
 		},
+		setWidth: (width: number) => ({ width }),
+		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
 	},
 }
 

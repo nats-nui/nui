@@ -25,7 +25,7 @@ const App: FunctionComponent = () => {
 	// HANDLERS
 
 	// RENDER
-	const views = docSa.allInShow
+	const views = docSa.all
 	return (
 		<div style={cssApp(layoutSa.theme)}>
 
