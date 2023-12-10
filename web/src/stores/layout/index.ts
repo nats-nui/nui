@@ -30,6 +30,10 @@ const ThemeDefault: Theme = {
 		button: { fontSize: 10, fontWeight: 800 },
 		rowButton: { fontSize: 14, fontWeight: 800, fontFamily: "Darker Grotesque" },
 	},
+
+	shadows: [
+		"2px 2px 2px 0px rgba(0, 0, 0, 0.40)"
+	],
 }
 
 const setup = {

@@ -4,7 +4,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
 import styles from './DocViewCmp.module.css'
-
+import layoutSo from "@/stores/layout"
 
 
 interface Props {
@@ -46,6 +46,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		width: viewSa.width,
 		...view.getStyAni(),
 		zIndex: deep,
+		boxShadow: layoutSo.state.theme.shadows[0],
 	}
 
 	return <div style={styContainer} className={styles.container}>
@@ -92,7 +93,7 @@ const cssDialog = (deep: number): React.CSSProperties => ({
 	overflow: "hidden",
 	borderRadius: '0px 10px 10px 0px',
 
-	boxShadow: "2px 2px 2px 0px rgba(0, 0, 0, 0.40)",
+	boxShadow: layoutSo.state.theme.shadows[0],
 })
 
 const cssDesk: React.CSSProperties = {
