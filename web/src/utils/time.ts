@@ -25,5 +25,9 @@ export function debounceExist(name: string): boolean {
  * crea una pausa async
  */
 export function delay(millisec: number): Promise<void> {
-	return new Promise(res => setTimeout(res, millisec));
+	return new Promise(res => setTimeout(res, millisec))
+}
+
+export function delayAnim(): Promise<void> {
+	return new Promise(res => window.requestAnimationFrame(()=>res))
 }

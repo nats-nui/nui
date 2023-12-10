@@ -38,14 +38,13 @@ const setup = {
 			}
 			document.addEventListener('mousemove', fnMouseMove);
 			document.addEventListener('mouseup', fnMouseUp);
-			drag.srcView.setDocAnim(DOC_ANIM.DRAGGING)
+			drag.srcView.docAnim(DOC_ANIM.DRAGGING)
 			store.setDrag(drag)
 		},
 		stopDrag(_: void, store?: MouseStore) {
 			const { srcView, index } = store.state.drag
 			store.setDrag(null)
-			srcView.setDocAnim(DOC_ANIM.SHOW)
-			docSo.move({view: srcView, index})
+			docSo.move({ view: srcView, index, anim: true })
 		}
 	},
 

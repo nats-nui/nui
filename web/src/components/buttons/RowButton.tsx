@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react"
 import layoutSo from "@/stores/layout"
-import { Color } from "@/types"
+import { ANIM_TIME_CSS, Color } from "@/types"
 
 
 
@@ -52,7 +52,7 @@ const RowButton: FunctionComponent<Props> = ({
 export default RowButton
 
 const cssRoot:React.CSSProperties = {
-	transition: "background-color 400ms, color 400ms",
+	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
 	padding: "5px 8px",
 	color: layoutSo.state.theme.palette.fg.acid[0],

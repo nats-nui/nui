@@ -33,7 +33,7 @@ const Header: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleClose = _ => {
-		docSo.removeWithAnim(view)
+		docSo.remove({ view, anim: true })
 	}
 
 	const handleDragStart: React.DragEventHandler = (e) => {
@@ -42,12 +42,11 @@ const Header: FunctionComponent<Props> = ({
 		mouseSo.startDrag({ srcView: view })
 	}
 	const handleLinkDetach = () => {
-		if ( !view.state.linked ) return
+		if (!view.state.linked) return
 		const root = getRoot(view)
-		if ( !root ) return 
+		if (!root) return
 		const rootIndex = docSo.getIndexByView(root)
-		docSo.move({view:view.state.linked, index: rootIndex+1})
-
+		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: true })
 	}
 
 	// RENDER
@@ -63,7 +62,6 @@ const Header: FunctionComponent<Props> = ({
 			onDragStart={handleDragStart}
 		>
 			{icon}
-
 			<span style={cssTitle}>{title}</span>
 
 			<div style={cssButtons} >
@@ -96,6 +94,6 @@ const cssTitle: React.CSSProperties = {
 	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 }
 const cssButtons: React.CSSProperties = {
-	display: "flex", 
+	display: "flex",
 	flexDirection: "column",
 }

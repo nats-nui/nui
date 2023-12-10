@@ -69,7 +69,7 @@ export class Ping {
 	 */
 	onAlert() {
 		//this.layout().setFiSocket(SOCKET_STATE.CONNECT_ERROR_PING)
-		console.log("socket:ping:alert")
+		//console.log("socket:ping:alert")
 		this.server.clear() // chiudo il socket (automaticamente partirà il retry)
 	}
 

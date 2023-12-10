@@ -95,7 +95,7 @@ export class SocketService {
 		if (this.websocket) return
 		this.cnnIdLast = connId
 		const { protocol, host, port, base } = this.options
-console.log( "connect",connId)
+		//console.log( "socket:connecting",connId)
 		this.reconnect.enabled = true
 		try {
 			let url = `${protocol}//${host}:${port}/ws/sub`
@@ -128,7 +128,7 @@ console.log( "connect",connId)
 	 * chiude il socket e mantiene chiuso (usato nel logout)
 	 */
 	disconnect() {
-console.log("disconnect")		
+		//console.log("socket:disconnect")		
 		this.cnnIdLast = null
 		this.reconnect.enabled = false
 		this.reconnect.stop()
@@ -155,7 +155,7 @@ console.log("disconnect")
 	//#region SOCKET EVENT
 
 	onopen(_: Event) {
-		console.log("socket:open")
+		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		//this.ping.start()
@@ -163,7 +163,7 @@ console.log("disconnect")
 	}
 
 	onClose(_: CloseEvent) {
-		console.log("socket:close")
+		//console.log("socket:close")
 		//this.ping.stop()
 		this.clear()
 		this.reconnect.start()

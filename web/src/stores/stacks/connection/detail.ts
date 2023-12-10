@@ -43,6 +43,7 @@ const setup = {
 			docsSo.addLink({
 				view: msgStore,
 				parent: store,
+				anim: true,
 			})
 		},
 		updateConnection(_: void, store?: CnnDetailStore) {

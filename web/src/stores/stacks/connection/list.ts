@@ -52,7 +52,7 @@ const setup = {
 			docsSo.addLink({
 				view: srvStore,
 				parent: store,
-				anim: true
+				anim: true,
 			})
 		},
 		/** creo un nuovo STORE DETTAGLIO CONNECTION
@@ -66,8 +66,8 @@ const setup = {
 					subscriptions: [],
 				},
 			} as CnnDetailState)
-			docsSo.addLink({ view, parent: store })
 			store.setSelectId(null)
+			docsSo.addLink({ view, parent: store, anim: true })
 		},
 	},
 
