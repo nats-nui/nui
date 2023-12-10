@@ -37,16 +37,22 @@ const setup = {
 		/** ho selezionato una connection quindi creo e visualizzo lo STACK del dettaglio */
 		select(cnn: Connection, store?: CnnListStore) {
 			const idSelPrev = store.getSelectId()
-			let idSel = idSelPrev != cnn.id ? cnn.id : null
+			// se è uguale a quello precedente allora deseleziona
+			let idSel = (cnn && idSelPrev != cnn.id) ? cnn.id : null
 			store.setSelectId(idSel)
-			let srvStore = null
+
+			// eventualmente creo la nuova view
+			let srvStore:ViewStore = null
 			if (idSel != null) srvStore = buildStore({
 				type: DOC_TYPE.SERVICES,
 				connection: cnn,
 			} as CnnDetailState)
+
+			// aggiungo la nuova VIEW (o null)
 			docsSo.addLink({
 				view: srvStore,
 				parent: store,
+				anim: true
 			})
 		},
 		/** creo un nuovo STORE DETTAGLIO CONNECTION
@@ -61,6 +67,7 @@ const setup = {
 				},
 			} as CnnDetailState)
 			docsSo.addLink({ view, parent: store })
+			store.setSelectId(null)
 		},
 	},
 

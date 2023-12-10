@@ -5,7 +5,7 @@ import { ViewStore } from "./viewBase"
 import { stringToViewsState, viewsToString } from "./utils/urlTransform"
 import { buildStore } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
-import { debounce, debounceExist } from "@/utils/time"
+import { debounce, debounceExist, delay } from "@/utils/time"
 
 /**
  * Gestisce la lista di DOCS presenti
@@ -23,7 +23,7 @@ const setup = {
 			return getById(store.state.all, id)
 		},
 		getIndexByView(view: ViewStore, store?: DocStore) {
-			return store.state.all.findIndex( v => v == view)
+			return store.state.all.findIndex(v => v == view)
 		},
 	},
 
@@ -51,20 +51,22 @@ const setup = {
 
 		/** inserisco una VIEW come link di un altra VIEW */
 		addLink(
-			{ view, parent }: { view: ViewStore, parent: ViewStore },
+			{ view, parent, anim }: { view: ViewStore, parent: ViewStore, anim?: boolean },
 			store?: DocStore
 		) {
 			if (!parent) return
 
 			// se c'e' gia' una view la rimuovo
-			if (parent.state.linked) store.remove(parent.state.linked)
+			if (parent.state.linked) {
+				store.remove(parent.state.linked)
+			}
 			if (!view) return
 
 			// imposto la view
 			parent.setLinked(view)
 			store.setAll([...store.state.all])
 		},
-		
+
 		/** inserisco una VIEW nello STACK di un altra VIEW */
 		remove(view: ViewStore, store?: DocStore) {
 			const views = [...store.state.all]
@@ -76,7 +78,7 @@ const setup = {
 				if (index != -1) views.splice(index, 1)
 				view.state.parent = null
 				view.state.position = null
-	
+
 				// LINKED
 			} else {
 				view.state.parent.setLinked(null)
@@ -84,10 +86,11 @@ const setup = {
 
 			store.setAll(views)
 		},
-		removeWithAnim(view: ViewStore, store?: DocStore) {
+		async removeWithAnim(view: ViewStore, store?: DocStore) {
 			if (view.state.position == POSITION_TYPE.DETACHED) store.remove(view)
 			view.setDocAnim(DOC_ANIM.EXITING)
-			setTimeout(() => store.remove(view), ANIM_TIME)
+			await delay(ANIM_TIME)
+			store.remove(view)
 		},
 
 		/** sposta una view in un indice preciso dello STACK */
@@ -132,7 +135,7 @@ const setup = {
 				if (index == -1) {
 					//view.setDocAnim(DOC_ANIM.SHOWING)
 					window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
-				// se prima c'era allora NON lo cancellare
+					// se prima c'era allora NON lo cancellare
 				} else {
 					deleted.splice(index, 1)
 				}
