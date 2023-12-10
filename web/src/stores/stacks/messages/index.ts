@@ -70,7 +70,7 @@ const setup = {
 		},
 		/** disconnessione websocket */
 		disconnect(_: void, store?: MessagesStore) {
-			store.ss.sendSubjects([])
+			//store.ss.sendSubjects([])
 			store.ss.disconnect()
 			store.ss = null
 		},

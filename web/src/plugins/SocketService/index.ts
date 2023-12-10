@@ -95,13 +95,15 @@ export class SocketService {
 		if (this.websocket) return
 		this.cnnIdLast = connId
 		const { protocol, host, port, base } = this.options
-
+console.log( "connect",connId)
+		this.reconnect.enabled = true
 		try {
 			let url = `${protocol}//${host}:${port}/ws/sub`
 			if (base) url = `${url}/${base}`
 			if (connId) url = `${url}?id=${connId}`
 			this.websocket = new WebSocket(url);
 		} catch (error) {
+			this.reconnect.start()
 			console.error(error)
 			return
 		}
@@ -123,10 +125,12 @@ export class SocketService {
 	}
 
 	/** 
-	 * diconnette e mantiene chiuso il socket (usato nel logout)
+	 * chiude il socket e mantiene chiuso (usato nel logout)
 	 */
 	disconnect() {
+console.log("disconnect")		
 		this.cnnIdLast = null
+		this.reconnect.enabled = false
 		this.reconnect.stop()
 		this.clear()
 	}
@@ -151,16 +155,15 @@ export class SocketService {
 	//#region SOCKET EVENT
 
 	onopen(_: Event) {
-		//console.log("socket:open")
+		console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		//this.ping.start()
-		//this.layout().setFiSocket(this.ping.inAlert == false ? SOCKET_STATE.CONNECT : SOCKET_STATE.CONNECT_ERROR_PING)
 		this.onOpen?.()
 	}
 
 	onClose(_: CloseEvent) {
-		//console.log("socket:close")
+		console.log("socket:close")
 		//this.ping.stop()
 		this.clear()
 		this.reconnect.start()

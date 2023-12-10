@@ -56,7 +56,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 		{isNew && <ActionGroup style={{ marginLeft: -8}}>
 			<Button colorVar={0}
-				label="SAVE"
+				label="CREATE"
 				onClick={handleClickNew}
 			/>
 		</ActionGroup>}

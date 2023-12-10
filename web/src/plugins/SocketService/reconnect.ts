@@ -20,6 +20,7 @@ export class Reconnect {
 	server: SocketService = null
 	try = 0 //numero di tentativi
 	idTimer = null
+	enabled = true
 
 	constructor(server: SocketService, options: ReconnectOptions = optionsDefault) {
 		this.options = { ...optionsDefault, ...options }
@@ -27,6 +28,7 @@ export class Reconnect {
 	}
 
 	start() {
+		if ( !this.enabled ) return
 		this.stop()
 		this.tryUp()
 		this.idTimer = setTimeout(() => this.server.connect(), this.options.delay)
@@ -35,8 +37,10 @@ export class Reconnect {
 	stop() {
 		if (!this.idTimer) return
 		clearTimeout(this.idTimer)
+		this.idTimer = null
 	}
 
+	/** aumenta il numero di tentativi senza successo */
 	tryUp() {
 		this.try++
 		//console.log(`socket:reconnect:try:${this.try}`)
@@ -55,6 +59,7 @@ export class Reconnect {
 		}
 	}
 
+	/** azzera il numero di tentativi fatti */
 	tryZero() {
 		this.try = 0
 	}

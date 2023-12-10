@@ -16,17 +16,18 @@ serverStart()
 function serverStart(port = 3111) {
 	if (server) return
 	server = new WebSocketServer({ port });
+
 	console.log("server:start:" + port)
 
 	server.on('connection', (cws, req) => {
 		const location = url.parse(req.url, true);
 		const { id: cnnId } = location.query
-		console.log(cnnId);
+		console.log("fe:connection:", cnnId);
 
-		if (getClient(cnnId)) return
+		//if (getClient(cnnId)) return
 		const client = { cnnId, cws }
 		cws.on('message', onMessage(client))
-		clients.push(client)
+		//clients.push(client)
 	})
 
 	server.on("error", (error) => {

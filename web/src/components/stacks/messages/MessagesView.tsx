@@ -37,11 +37,12 @@ const MessagesView: FunctionComponent<Props> = ({
 	useEffect(() => {
 		if (!cnnSa.all || cnnSa.all.length == 0) return
 		msgSo.connect()
+		return () => msgSo.disconnect()
 	}, [cnnSa.all])
 
 	// HANDLER
-	const handleClickSubs = (e:React.MouseEvent, select:boolean) => {
-		if ( select) return
+	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
+		if (select) return
 		msgSo.setSubscriptionsOpen(!select)
 	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
@@ -97,7 +98,7 @@ const MessagesView: FunctionComponent<Props> = ({
 				store={msgSo}
 				onClose={handleCloseSubsDialog}
 			>
-				
+
 				<SubscriptionsList noDisable
 					style={cssDialogSubs}
 					subscriptions={msgSa.subscriptions}

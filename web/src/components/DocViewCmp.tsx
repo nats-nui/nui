@@ -23,7 +23,6 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	// HOOKS
 	useEffect(() => {
 		//view.setDocAnim(DOC_ANIM.SHOW)
-		console.log("loading")
 		window.requestAnimationFrame(() => view.setDocAnim(DOC_ANIM.SHOWING));
 	}, [view])
 
