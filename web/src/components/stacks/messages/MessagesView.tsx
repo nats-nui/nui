@@ -16,6 +16,8 @@ import Button from "@/components/buttons/Button"
 import layoutSo from "@/stores/layout"
 import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
 import Label from "@/components/input/Label"
+import FloatButton from "@/components/buttons/FloatButton"
+import ArrowDownIcon from "@/icons/ArrowDownIcon"
 
 
 
@@ -52,6 +54,8 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setSubscriptionsOpen(false)
 		msgSo.sendSubscriptions()
 	}
+
+	
 
 	const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		msgSo.setMessage(e.target.value)
@@ -93,6 +97,22 @@ const MessagesView: FunctionComponent<Props> = ({
 
 			<MessagesList2 messages={msgSa.history} />
 
+			
+
+			{/* <div style={{ display: "flex" }}>
+					<button
+						onClick={handleMessagePublish}
+					>SEND</button>
+					<input
+						value={msgSa.message}
+						onChange={handleMessageChange}
+					/>
+					<button
+						onClick={handleMessageSubOpen}
+					>{labelSubscription}</button>
+				</div> */}
+
+
 			<Dialog
 				open={msgSa.subscriptionsOpen}
 				store={msgSo}
@@ -104,13 +124,7 @@ const MessagesView: FunctionComponent<Props> = ({
 					subscriptions={msgSa.subscriptions}
 					onChange={handleChangeSubs}
 				/>
-				{/* <ListEditDlg<Subscription> style={cssDialogSubs}
-					items={msgSa.subscriptions}
-					RenderRow={SubRow}
-					RenderDetail={SubDetail}
-					fnNewItem={() => ({ subject: "<new>" })}
-					onChange={handleChangeSubs}
-				/> */}
+
 			</Dialog>
 
 			<Dialog
@@ -134,6 +148,7 @@ const MessagesView: FunctionComponent<Props> = ({
 export default MessagesView
 
 const cssContainer: React.CSSProperties = {
+	position: "relative",
 	flex: 1,
 	display: "flex",
 	flexDirection: "column",

@@ -15,7 +15,7 @@
 
 	color: white;
 	background-color: #3E3E3E;
-	box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.40);
+
 }
 /* IN LINK */
 .doc_sub {
@@ -27,7 +27,6 @@
 .doc_dragging {
 	color: white;
 	background-color: black;
-	box-shadow: none;
 	border: 2px dashed white;
 	opacity: 0.3;
 }
