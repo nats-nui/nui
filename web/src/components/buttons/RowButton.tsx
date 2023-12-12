@@ -55,13 +55,13 @@ const cssRoot:React.CSSProperties = {
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
 	padding: "5px 8px",
-	color: layoutSo.state.theme.palette.fg.acid[0],
+	color: layoutSo.state.theme.palette.var[0].fg,
 	cursor: "pointer",
 	marginLeft: -8,
 }
 const cssRootSelect:React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.bg.default,
-	color: layoutSo.state.theme.palette.fg.default,
+	backgroundColor: layoutSo.state.theme.palette.default.bg,
+	color: layoutSo.state.theme.palette.default.fg,
 }
 const cssLabel:React.CSSProperties = {
 	...layoutSo.state.theme.texts.rowButton,

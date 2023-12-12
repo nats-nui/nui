@@ -31,6 +31,7 @@ const setup = {
 		getSelectId(_: void, store?: CnnListStore): string {
 			return docSetup.getters.getParam(CONNECTIONS_PARAMS.SELECT_ID, store)
 		},
+		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
 	},
 
 	actions: {

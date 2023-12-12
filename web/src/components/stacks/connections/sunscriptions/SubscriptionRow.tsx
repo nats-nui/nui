@@ -50,7 +50,7 @@ const SubscriptionRow: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const delVisible = enter && !!noDelete
+	const delVisible = enter && !noDelete
 
 	return <div
 		style={{ ...cssRow, opacity: sub.disabled ? 0.5 : 1 }}
@@ -58,7 +58,7 @@ const SubscriptionRow: FunctionComponent<Props> = ({
 		onMouseLeave={handleLeave}
 		onFocus={handleFocus}
 	>
-		{noDisable && (
+		{!noDisable && (
 			<IconToggle
 				check={!sub.disabled}
 				onChange={handleChangeEnabled}

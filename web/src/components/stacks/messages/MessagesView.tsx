@@ -1,23 +1,19 @@
 import imgMsg from "@/assets/msg-hdr.svg"
-import Header from "@/components/Heder"
+import Header from "@/components/Header"
+import ActionGroup from "@/components/buttons/ActionGroup"
+import Button from "@/components/buttons/Button"
+import SubRow from "@/components/subscription/Row"
 import cnnSo, { ConnectionState } from "@/stores/connections"
+import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
+import { HistoryMessage, PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
+import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
 import Dialog from "../dialogs/Dialog"
 import ListEditDlg from "../dialogs/ListEditDlg"
 import MessagesList2 from "./MessagesList2"
-import SubRow from "@/components/subscription/Row"
-import SubDetail from "@/components/subscription/Detail"
-import { PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
-import ActionGroup from "@/components/buttons/ActionGroup"
-import Button from "@/components/buttons/Button"
-import layoutSo from "@/stores/layout"
-import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
-import Label from "@/components/input/Label"
-import FloatButton from "@/components/buttons/FloatButton"
-import ArrowDownIcon from "@/icons/ArrowDownIcon"
 
 
 
@@ -54,8 +50,11 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setSubscriptionsOpen(false)
 		msgSo.sendSubscriptions()
 	}
+	const hendleMessageClick = (message: HistoryMessage) => {
+		msgSo.openMessageDetail(message)
+	}
 
-	
+
 
 	const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		msgSo.setMessage(e.target.value)
@@ -76,15 +75,10 @@ const MessagesView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const [id] = msgSa.params?.[PARAMS_MESSAGES.CONNECTION_ID]
-	const cnn = cnnSo.getById(id)
-	const labelSubscription = msgSa.subject ?? "subj"
-
-
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 
-			<Header view={msgSo} title={cnn?.name} icon={<img src={imgMsg} />} />
+			<Header view={msgSo} icon={<img src={imgMsg} />} />
 
 			<ActionGroup>
 				<Button
@@ -95,9 +89,12 @@ const MessagesView: FunctionComponent<Props> = ({
 				/>
 			</ActionGroup>
 
-			<MessagesList2 messages={msgSa.history} />
+			<MessagesList2
+				messages={msgSa.history}
+				onMessageClick={hendleMessageClick}
+			/>
 
-			
+
 
 			{/* <div style={{ display: "flex" }}>
 					<button
@@ -119,7 +116,7 @@ const MessagesView: FunctionComponent<Props> = ({
 				onClose={handleCloseSubsDialog}
 			>
 
-				<SubscriptionsList noDisable
+				<SubscriptionsList
 					style={cssDialogSubs}
 					subscriptions={msgSa.subscriptions}
 					onChange={handleChangeSubs}
@@ -160,6 +157,6 @@ const cssDialogSubs: React.CSSProperties = {
 	width: 200,
 	flex: 1,
 	paddingLeft: 15,
-	backgroundColor: layoutSo.state.theme.palette.bg.acid[1],
-	color: layoutSo.state.theme.palette.fg.acid[1],
+	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
+	color: layoutSo.state.theme.palette.var[1].fg,
 }

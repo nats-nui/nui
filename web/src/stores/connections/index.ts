@@ -20,6 +20,7 @@ const setup = {
 			if (!id) return null
 			return store.state.all?.findIndex(cnn => cnn.id == id)
 		},
+		getTitle: (_: void, store?: ConnectionStore) => "CONNECTIONS",
 	},
 
 	actions: {

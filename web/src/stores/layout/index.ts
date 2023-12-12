@@ -5,16 +5,19 @@ import { Theme } from "./utils"
 
 const ThemeDefault: Theme = {
 	palette: {
-		bg: {
-			default: "#3E3E3E",
-			light: "#525252",
-			actionsGroup: "#000000",
-			acid: ["#BBFB35", "#10F3F3"],
+		var: [
+			{ bg: "#BBFB35", fg: "#393939"},
+			{ bg: "#10F3F3", fg: "#393939"},
+		],
+		default: {
+			bg: "#3E3E3E",
+			bg2: "#525252",
+			fg: "#DEDEDE",
 		},
-		fg: {
-			default: "#DEDEDE",
-			acid: ["#393939", "#393939"],
-		},
+		actionsGroup: {
+			bg: "#000000",
+			fg: "#DEDEDE",
+		}
 	},
 
 	texts: {

@@ -25,10 +25,6 @@ const setup = {
 		/** l'a corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 		width: 300,
-		styInit: {
-			transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
-			transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
-		},
 
 		position: POSITION_TYPE.DETACHED,
 		parent: <ViewStore>null,
@@ -39,17 +35,29 @@ const setup = {
 		getParam(name: string, store?: ViewStore) {
 			return store.state.params?.[name]?.[0]
 		},
-		getStyAni: (_: void, store?: ViewStore): React.CSSProperties => {
+		getStyAni: (_: void, store?: ViewStore) => {
+
+			console.log("getStyAni", store.state.docAnim)
 			switch (store.state.docAnim) {
 				case DOC_ANIM.EXIT:
 				case DOC_ANIM.EXITING:
-					return { width: 0, transform: `translate(${-store.state.width}px, 0px)` }
+					return { 
+						width: 0, 
+						transform: `translate(${-store.state.width}px, 0px)` 
+					}
 				case DOC_ANIM.SHOWING:
 					return null //return { width: 0 }
+				case DOC_ANIM.DRAGGING:
+					return { 
+						border: '2px dashed #10f3f3',
+						backgroundColor: '#1e1e1e',
+					}
 				default:
 					return null
+				
 			}
 		},
+		getTitle: (_: void, store?: ViewStore) => "Boooh!",
 	},
 
 	actions: {

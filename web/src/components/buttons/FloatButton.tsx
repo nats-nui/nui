@@ -42,8 +42,8 @@ const cssContainer: React.CSSProperties = {
 
 	cursor: "pointer",
 	padding: 5,
-	backgroundColor: layoutSo.state.theme.palette.bg.acid[1],
-	color: layoutSo.state.theme.palette.fg.acid[1],
+	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
+	color: layoutSo.state.theme.palette.var[1].fg,
 
 	width: 30, height: 30,
 	borderRadius: '50%',

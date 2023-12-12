@@ -1,5 +1,6 @@
 import cnnSetup from "@/stores/stacks/connection/list";
 import messagesSetup from "@/stores/stacks/messages";
+import messageSetup from "@/stores/stacks/message";
 import servicesSetup from "@/stores/stacks/connection/detail";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
@@ -40,6 +41,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.SERVICES]: servicesSetup,
 		[DOC_TYPE.MESSAGES]: messagesSetup,
+		[DOC_TYPE.MESSAGE]: messageSetup,
 	}[state.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

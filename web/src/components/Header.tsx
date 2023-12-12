@@ -15,7 +15,6 @@ interface Props {
 	view?: ViewStore
 	title?: string
 	icon?: React.ReactNode
-
 	style?: React.CSSProperties
 }
 
@@ -54,7 +53,7 @@ const Header: FunctionComponent<Props> = ({
 	if (!doc) return null
 	const isDraggable = view.state.draggable
 	const haveLinkDetachable = view.state.linked?.state.draggable
-
+	const strTitle = title ?? view.getTitle()
 
 	return (
 		<div style={{ ...cssRoot, ...style }}
@@ -62,7 +61,7 @@ const Header: FunctionComponent<Props> = ({
 			onDragStart={handleDragStart}
 		>
 			{icon}
-			<span style={cssTitle}>{title}</span>
+			<span style={cssTitle}>{strTitle}</span>
 
 			<div style={cssButtons} >
 				<IconButton

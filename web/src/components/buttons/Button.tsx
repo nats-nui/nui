@@ -55,8 +55,8 @@ const cssRoot: React.CSSProperties = {
 	padding: '3px 6px',
 }
 const cssSelect = ( colorVar:number ) => ({
-	backgroundColor: layoutSo.state.theme.palette.bg.acid[colorVar] ,
-	color: layoutSo.state.theme.palette.fg.acid[colorVar],
+	backgroundColor: layoutSo.state.theme.palette.var[colorVar].bg,
+	color: layoutSo.state.theme.palette.var[colorVar].fg,
 })
 
 const cssLabel: React.CSSProperties = {

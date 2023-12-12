@@ -1,20 +1,8 @@
-import { StoreCore, createStore } from "@priolo/jon"
-import { ViewStore } from "../docs/viewBase"
 import docSo from "@/stores/docs"
+import { StoreCore, createStore } from "@priolo/jon"
 import { DOC_ANIM } from "../docs/types"
+import { DragDoc, Position } from "./utils"
 
-
-export interface DragDoc {
-	/** indice del DOC da cui è partito il DRAG */
-	srcView?: ViewStore
-	/** in alternativa indica l'indice della posizione nella "root" */
-	index?: number
-}
-
-export interface Position {
-	x: number
-	y: number
-}
 
 const setup = {
 
@@ -38,11 +26,12 @@ const setup = {
 			}
 			document.addEventListener('mousemove', fnMouseMove);
 			document.addEventListener('mouseup', fnMouseUp);
-			drag.srcView.docAnim(DOC_ANIM.DRAGGING)
 			store.setDrag(drag)
+			drag.srcView.docAnim(DOC_ANIM.DRAGGING)
 		},
 		stopDrag(_: void, store?: MouseStore) {
 			const { srcView, index } = store.state.drag
+			srcView.docAnim(DOC_ANIM.SHOW)
 			store.setDrag(null)
 			docSo.move({ view: srcView, index, anim: true })
 		}

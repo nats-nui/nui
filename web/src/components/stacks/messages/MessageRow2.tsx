@@ -8,11 +8,13 @@ import dayjs from "dayjs"
 interface Props {
 	message?: HistoryMessage
 	index?: number
+	onClick?: (message:HistoryMessage)=>void
 }
 
 const MessageRow2: FunctionComponent<Props> = ({
 	message,
 	index,
+	onClick,
 }) => {
 
 	// STORE
@@ -31,16 +33,19 @@ const MessageRow2: FunctionComponent<Props> = ({
 	}, [message])
 
 	// HANDLER
+	const handleClick = () => onClick?.(message)
 
 	// RENDER
 	const styRoot = {
 		...cssRoot,
-		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.bg.default : layoutSo.state.theme.palette.bg.light,
+		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
 	}
 	const time = dayjs(message.timestamp).format("YYYY-MM-DD HH:MM")
 
 	return (
-		<div ref={ref} style={styRoot}>
+		<div ref={ref} style={styRoot}
+			onClick={handleClick}
+		>
 			<div style={cssTitle}>
 				{message.title}
 			</div>

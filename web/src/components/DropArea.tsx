@@ -1,8 +1,8 @@
 import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
-import { ViewState, ViewStore } from "./stores/docs/viewBase"
-import { DOC_ANIM } from "./types"
+import { ViewState, ViewStore } from "../stores/docs/viewBase"
+import { DOC_ANIM } from "../types"
 import layoutSo from "@/stores/layout"
 
 
@@ -80,5 +80,5 @@ const cssLine: React.CSSProperties = {
 	
 }
 const cssLineDragOver: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.bg.acid[1],
+	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
 }

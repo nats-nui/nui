@@ -1,18 +1,19 @@
-import React, { FunctionComponent, useEffect, useInsertionEffect, useLayoutEffect, useRef, useState } from "react"
-import MessageRow2 from "./MessageRow2"
-import { HistoryMessage } from "@/stores/stacks/messages/utils"
-import { debounce } from "@/utils/time"
 import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { FunctionComponent, useEffect, useRef, useState } from "react"
+import MessageRow2 from "./MessageRow2"
 
 
 
 interface Props {
 	messages: HistoryMessage[]
+	onMessageClick?: (message:HistoryMessage)=>void
 }
 
 const MessagesList2: FunctionComponent<Props> = ({
 	messages,
+	onMessageClick,
 }) => {
 
 	// STORE
@@ -49,6 +50,7 @@ const MessagesList2: FunctionComponent<Props> = ({
 	const handleScroll = () => {
 		updateScroll()
 	}
+	const handleMessageClick = (message:HistoryMessage) => onMessageClick?.(message)
 
 	const updateScroll = () => {
 		const node = scrollRef.current
@@ -110,6 +112,7 @@ const MessagesList2: FunctionComponent<Props> = ({
 						key={message.id}
 						message={message}
 						index={index + indexTopRef.current}
+						onClick={handleMessageClick}
 					/>
 				))}
 

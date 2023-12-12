@@ -1,5 +1,5 @@
 import imgCnn from "@/assets/cnn-hdr.svg"
-import Header from "@/components/Heder"
+import Header from "@/components/Header"
 import Button from "@/components/buttons/Button"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
@@ -54,7 +54,7 @@ const CnnListView: FunctionComponent<Props> = ({
 
 	return <div style={{ ...cssContainer, ...style }}>
 
-		<Header view={cnnListSo} title="CONNECTIONS" icon={<img src={imgCnn} />} />
+		<Header view={cnnListSo} icon={<img src={imgCnn} />} />
 
 		<ActionGroup>
 			<Button

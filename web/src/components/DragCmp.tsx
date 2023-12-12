@@ -1,7 +1,9 @@
-import mouseSo, { MouseState, Position } from "@/stores/mouse"
+import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
-import { useEffect, useState, useMemo, FunctionComponent } from "react"
-import { ANIM_TIME } from "./types"
+import { FunctionComponent, useEffect, useState } from "react"
+import { ANIM_TIME } from "../types"
+import { Position } from "../stores/mouse/utils"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -32,7 +34,7 @@ const DragCmp: FunctionComponent = () => {
 	}
 
 	return <div style={styRoot}>
-		CIAO
+		{mouseSa.drag?.srcView?.getTitle() ?? "???"}
 	</div>
 }
 
@@ -41,9 +43,19 @@ export default DragCmp
 const cssRoot: React.CSSProperties = {
 	pointerEvents: "none",
 	position: 'absolute',
-	backgroundColor: "white",
 	zIndex: 99999,
-	transition: 'opacity 2s',
+	transition: 'opacity 1s',
+
+	fontSize: 14,
+	fontWeight: 700,
+
+	padding: "3px 8px",
+	backgroundColor: layoutSo.state.theme.palette.var[0].bg,
+	color: layoutSo.state.theme.palette.var[0].fg,
+	borderRadius: 10,
+	boxShadow: layoutSo.state.theme.shadows[0],
+
+	transform: "translate(-50%, -30px)",
 }
 
 const cssPosition = (pos: Position): React.CSSProperties => ({

@@ -3,8 +3,8 @@ import { ViewStore } from "@/stores/docs/viewBase"
 import layoutSo, { LayoutState } from "@/stores/layout"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import DragCmp from "./DragCmp"
-import DropArea from "./DropArea"
+import DragCmp from "./components/DragCmp"
+import DropArea from "./components/DropArea"
 import DocViewCmp from "./components/DocViewCmp"
 import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils/factory"
@@ -56,7 +56,7 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 	height: "100%",
 	display: "flex",
 	backgroundColor: "black",
-	color: theme.palette.fg.default,
+	color: theme.palette.default.fg,
 })
 
 const cssContent: React.CSSProperties = {

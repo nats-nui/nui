@@ -42,12 +42,15 @@ const SubscriptionsList: FunctionComponent<Props> = ({
 		onChange?.([...subscriptions])
 		setFocus(index)
 	}
-	const handleFocus = (index: number) => setFocus(index)
+	const handleFocus = (index: number) => {
+		setFocus(index)
+	}
 	const handleDeleteSub = (index: number) => {
 		subscriptions.splice(index, 1)
 		onChange?.([...subscriptions])
 	}
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+		console.log(event.key)
 		if (focus == -1) return
 		let newFocus = focus
 		switch (event.key) {
@@ -103,5 +106,4 @@ const cssList: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	padding: 5,
-	marginLeft: -8,
 }

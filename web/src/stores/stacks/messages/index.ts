@@ -1,12 +1,15 @@
 import cnnApi from "@/api/connection"
 import { PayloadMessage, SocketService } from "@/plugins/SocketService"
 import cnnSo from "@/stores/connections"
-import { createUUID } from "@/stores/docs/utils/factory"
+import docsSo from "@/stores/docs"
+import { buildStore, createUUID } from "@/stores/docs/utils/factory"
 import docSetup, { ViewStore } from "@/stores/docs/viewBase"
-import { DOC_ANIM, Subscription } from "@/types"
+import { DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
 import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
+import { MessageState } from "../message"
+
 
 
 const h: HistoryMessage[] = Array.from({ length: 30 }, (_, i) => ({
@@ -26,7 +29,7 @@ const setup = {
 			[PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null
 		},
 		subscriptions: <Subscription[]>[],
-		history: <HistoryMessage[]>[],
+		history: <HistoryMessage[]>h,//[],
 
 		subject: <string>null,
 		message: <string>null,
@@ -41,17 +44,7 @@ const setup = {
 			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
 		},
-		getStyAni: (_: void, store?: ViewStore):React.CSSProperties => {
-			switch (store.state.docAnim) {
-				case DOC_ANIM.EXIT:
-				case DOC_ANIM.EXITING:
-					return { width: 0 }
-				case DOC_ANIM.SHOWING:
-					return null //{ width: 0 }
-				default:
-					return null
-			}
-		},
+		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 	},
 
 	actions: {
@@ -94,6 +87,20 @@ const setup = {
 		publishMessage: (_: void, store?: MessagesStore) => {
 			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
 			cnnApi.publish(cnnId, store.state.subject, store.state.message)
+		},
+		/** apertura CARD MESSAGE-DETAIL */
+		openMessageDetail(message: HistoryMessage, store?: MessagesStore) {
+			const cnn = store.getConnection()
+			if (!cnn) return
+			const msgStore = buildStore({
+				type: DOC_TYPE.MESSAGE,
+				message
+			} as MessageState)
+			docsSo.addLink({
+				view: msgStore,
+				parent: store,
+				anim: true,
+			})
 		},
 	},
 
