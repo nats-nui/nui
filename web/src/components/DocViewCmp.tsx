@@ -1,5 +1,5 @@
 import { ViewState, ViewStore } from "@/stores/docs/viewBase"
-import { DOC_ANIM } from "@/types"
+import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
@@ -38,15 +38,17 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const styContainer = {
 		zIndex: deep,
 	}
-
-//if ( view.getParam(PARAMS_MESSAGES.CONNECTION_ID) == "cnn112345601") console.log("view",view.state.docAnim, view.getStyAni())
-
 	const styContainerDoc = {
-		...viewSa.styInit,
+		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
+		transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
 		width: viewSa.width,
-		...view.getStyAni(),
 		zIndex: deep,
 		boxShadow: layoutSo.state.theme.shadows[0],
+		...view.getStyAni(),
+	}
+	const styDoc = {
+		transition: `opacity ${ANIM_TIME_CSS}ms`,
+		opacity: view.state.docAnim == DOC_ANIM.DRAGGING ? .3 : null
 	}
 
 	return <div style={styContainer} className={styles.container}>
@@ -54,7 +56,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		<div style={styContainerDoc} className={clsDoc}>
 
 			{/* BODY */}
-			<DocCmp view={view} />
+			<DocCmp view={view} style={styDoc} />
 
 		</div>
 
@@ -68,7 +70,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 			{/* LINKED */}
 			{haveLinked && <div >
-				<DocViewCmp 
+				<DocViewCmp
 					deep={deep - 2}
 					view={view.state.linked}
 				/>

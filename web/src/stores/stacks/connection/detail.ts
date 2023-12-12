@@ -28,6 +28,7 @@ const setup = {
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
 		},
+		getTitle: (_: void, store?: ViewStore) => "DETAIL",
 	},
 
 	actions: {
@@ -46,9 +47,6 @@ const setup = {
 				anim: true,
 			})
 		},
-		updateConnection(_: void, store?: CnnDetailStore) {
-
-		}
 	},
 
 	mutators: {

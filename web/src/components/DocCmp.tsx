@@ -7,6 +7,8 @@ import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
 import CnnListView from "./stacks/connections/CnnListView"
+import { MessageStore } from "@/stores/stacks/message"
+import MessageView from "./stacks/message/MessageView"
 
 
 
@@ -26,6 +28,8 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <CnnDetailView store={view as CnnDetailStore} style={style}/>
 			case DOC_TYPE.MESSAGES:
 				return <MessagesView store={view as MessagesStore} style={style}/>
+			case DOC_TYPE.MESSAGE:
+				return <MessageView store={view as MessageStore} style={style}/>
 			default:
 				return null
 		}

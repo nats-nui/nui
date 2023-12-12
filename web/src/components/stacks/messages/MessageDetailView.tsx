@@ -1,6 +1,4 @@
 import Header from "@/components/Header"
-import ActionGroup from "@/components/buttons/ActionGroup"
-import Button from "@/components/buttons/Button"
 import RowButton from "@/components/buttons/RowButton"
 import DatabaseIcon from "@/icons/DatabaseIcon"
 import MessagesIcon from "@/icons/MessagesIcon"
@@ -9,11 +7,8 @@ import connSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { CnnListStore } from "@/stores/stacks/connection/list"
-import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import CnnDetailCmp from "./CnnDetailCmp"
 
 
 
@@ -35,36 +30,19 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleClickMessages = () => {
-		cnnDetailSo.openMessages()
-	}
-	const handleClickNew = async () => {
-		const cnnNew = await connSo.create(cnnDetailSa.connection);
-		(cnnDetailSa.parent as CnnListStore).select(cnnNew)
-	}
 
 	// RENDER
-	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
-	const isNew = cnnDetailSa.connection?.id == null
-
 	return <div style={{ ...cssContainer, ...style }}>
 
 		<Header view={cnnDetailSo}
 			style={{ color: layoutSo.state.theme.palette.var[0].fg }}
 		/>
 
-		{isNew && <ActionGroup style={{ marginLeft: -8}}>
-			<Button colorVar={0}
-				label="CREATE"
-				onClick={handleClickNew}
-			/>
-		</ActionGroup>}
-
 		<RowButton style={cssItem}
 			icon={<MessagesIcon />}
 			label="MESSAGES"
-			select={isMessageOpen}
-			onClick={handleClickMessages}
+			//select={isMessageOpen}
+			//onClick={handleClickMessages}
 		/>
 		<RowButton style={cssItem}
 			icon={<DatabaseIcon />}
@@ -79,9 +57,6 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		//onClick={handleClickMessages}
 		/>
 
-		<CnnDetailCmp style={{ marginTop: 25 }}
-			cnnDetailSo={cnnDetailSo}
-		/>
 
 	</div>
 }

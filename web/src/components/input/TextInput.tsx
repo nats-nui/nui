@@ -32,9 +32,8 @@ const TextInput: FunctionComponent<Props> = ({
 export default TextInput
 
 const cssRoot: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.bg.default,
-	color: layoutSo.state.theme.palette.fg.default,
+	backgroundColor: layoutSo.state.theme.palette.default.bg,
+	color: layoutSo.state.theme.palette.default.fg,
 	border: 'none',
 	padding: '5px 7px',
-	marginLeft: -8,
 }

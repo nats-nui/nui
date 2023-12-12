@@ -34,6 +34,6 @@ const cssRoot: React.CSSProperties = {
 	display: "flex", gap: 5,
 	justifyContent: 'flex-end',
 	padding: 3,
-	backgroundColor: layoutSo.state.theme.palette.bg.actionsGroup,
-	color: layoutSo.state.theme.palette.fg.default,
+	backgroundColor: layoutSo.state.theme.palette.actionsGroup.bg,
+	color: layoutSo.state.theme.palette.actionsGroup.fg,
 }

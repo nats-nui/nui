@@ -12,6 +12,7 @@ import layoutSo from "@/stores/layout"
 
 interface Props {
 	cnnDetailSo: CnnDetailStore
+	style?: React.CSSProperties
 }
 
 /**
@@ -19,6 +20,7 @@ interface Props {
  */
 const CnnDetailCmp: FunctionComponent<Props> = ({
 	cnnDetailSo,
+	style,
 }) => {
 
 	// STORE
@@ -80,7 +82,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const host = cnnDetailSa.connection.hosts?.[0] ?? ""
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 
-	return (<div style={{ display: "flex", flexDirection: "column" }}>
+	return (<div style={{ ...cssRoot, ...style }}>
 
 		<Label>NAME</Label>
 		<TextInput
@@ -95,7 +97,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		/>
 
 		<Label>SUBSCRIPTIONS</Label>
-		<SubscriptionsList noDelete
+		<SubscriptionsList noDisable
 			style={cssList}
 			subscriptions={subscriptions}
 			onChange={handleSubscriptionsChange}
@@ -105,7 +107,13 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 export default CnnDetailCmp
 
-const cssList = {
-	backgroundColor: layoutSo.state.theme.palette.bg.default,
-	color: layoutSo.state.theme.palette.fg.default,
+const cssRoot:React.CSSProperties = {
+	display: "flex", 
+	flexDirection: "column",
+	paddingRight: 8,
+}
+
+const cssList:React.CSSProperties = {
+	backgroundColor: layoutSo.state.theme.palette.default.bg,
+	color: layoutSo.state.theme.palette.default.fg,
 }

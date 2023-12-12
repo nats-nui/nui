@@ -2,16 +2,11 @@ import { Color } from "@/types"
 
 export interface Theme {
 	palette: {
-		bg: {
-			default: Color
-			light: Color
-			actionsGroup: Color,
-			acid: Color[]
-		}
-		fg: {
-			default: Color
-			acid: Color[]
-		}
+		var: ColorVariant[]
+		default: ColorVariant
+		actionsGroup: ColorVariant
+
+
 	},
 	texts: {
 		title: React.CSSProperties
@@ -23,4 +18,10 @@ export interface Theme {
 		rowButton: React.CSSProperties
 	},
 	shadows: string[]
+}
+
+type ColorVariant = {
+	bg?: Color
+	bg2?: Color
+	fg?: Color
 }
