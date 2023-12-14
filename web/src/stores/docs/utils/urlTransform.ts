@@ -1,5 +1,5 @@
 import { POSITION_TYPE } from "@/types"
-import { PARAMS_DOC, ViewState, ViewStore } from "../viewBase"
+import { VIEW_PARAMS, ViewState, ViewStore } from "../viewBase"
 import { fromID, getID } from "./factory"
 
 
@@ -36,7 +36,7 @@ function setParams(view: ViewState, params: string[]): ViewState {
 		// il value potrebbe avere un array di values
 		const values = valuesBlock?.split("-") ?? []
 		switch (key) {
-			case PARAMS_DOC.POSITION:
+			case VIEW_PARAMS.POSITION:
 				view.position = values[0] as POSITION_TYPE
 				break
 			default:
@@ -70,7 +70,7 @@ export function viewsToString(views: ViewStore[]): string {
 export function viewToString(view: ViewStore): string {
 	let str = getID(view.state)
 	// scrivo la "position"
-	if (view.state.position && view.state.position != POSITION_TYPE.DETACHED) str += `.${PARAMS_DOC.POSITION}_${view.state.position}`
+	if (view.state.position && view.state.position != POSITION_TYPE.DETACHED) str += `.${VIEW_PARAMS.POSITION}_${view.state.position}`
 	// scrivo i "params"
 	str = Object.entries(view?.state.params ?? {}).reduce((acc, [name, values]) => {
 		if (!name || !values) return acc

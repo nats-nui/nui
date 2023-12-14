@@ -9,17 +9,19 @@ import layoutSo from "@/stores/layout"
 
 interface Props {
 	index?: number
+	isLast?: boolean
 	viewSo?: ViewStore
 }
 
 const DropArea: FunctionComponent<Props> = ({
 	index,
+	isLast,
 	viewSo,
 }) => {
 
 	// STORES
 	const mouseSa = useStore(mouseSo) as MouseState
-	const viewSa =  viewSo  ? useStore(viewSo) as ViewState : null
+	const viewSa = viewSo ? useStore(viewSo) as ViewState : null
 
 	// HOOKS
 
@@ -41,12 +43,13 @@ const DropArea: FunctionComponent<Props> = ({
 
 	// RENDER
 	const dragOver = mouseSa.drag?.index == index
-	const styRoot = {
+	const styRoot: React.CSSProperties = {
 		...cssRoot,
 		...(dragOver && cssDragOver),
-		...((viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING) && { width: 0 })
+		...((viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING) && { width: 0 }),
+		...(isLast && { width: "100%" })
 	}
-	const styLine = { ...cssLine, ...(dragOver && cssLineDragOver)}
+	const styLine = { ...cssLine, ...(dragOver && cssLineDragOver) }
 
 	return <div style={styRoot} draggable={false}
 		onMouseOver={handleMouseOver}
@@ -54,7 +57,6 @@ const DropArea: FunctionComponent<Props> = ({
 	>
 		<div style={styLine} />
 	</div>
-
 }
 
 export default DropArea
@@ -77,7 +79,7 @@ const cssLine: React.CSSProperties = {
 	width: 5,
 	borderRadius: 3,
 	marginLeft: 6,
-	
+
 }
 const cssLineDragOver: React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.var[1].bg,

@@ -50,7 +50,6 @@ const SubscriptionsList: FunctionComponent<Props> = ({
 		onChange?.([...subscriptions])
 	}
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		console.log(event.key)
 		if (focus == -1) return
 		let newFocus = focus
 		switch (event.key) {

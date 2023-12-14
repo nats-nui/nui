@@ -145,6 +145,7 @@ export class SocketService {
 	}
 
 	sendSubjects(subjects: string[]) {
+		console.log("sendSubjects", subjects)
 		const msg:SocketMessage = {
 			type: MSG_TYPE.SUB_REQUEST,
 			payload: { subjects },
