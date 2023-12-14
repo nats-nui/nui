@@ -2,6 +2,7 @@ import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import layoutSo from "@/stores/layout"
 import dayjs from "dayjs"
+import JsonCmp from "./JsonCmp"
 
 
 
@@ -26,7 +27,6 @@ const MessageRow2: FunctionComponent<Props> = ({
 		if (!ref.current || message.height || !ref.current.offsetHeight) return
 		message.height = ref.current.offsetHeight
 		setTimeout(() => {
-			//console.log(ref.current.offsetHeight)
 			if (!ref.current) return
 			message.height = ref.current.offsetHeight
 		}, 100)
@@ -49,9 +49,7 @@ const MessageRow2: FunctionComponent<Props> = ({
 			<div style={cssTitle}>
 				{message.title}
 			</div>
-			<div style={cssBody}>
-				{message.body}
-			</div>
+			<JsonCmp json={message.json} />
 			<div style={cssFooter}>
 				{time}
 			</div>

@@ -5,6 +5,7 @@ import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
 import styles from './DocViewCmp.module.css'
 import layoutSo from "@/stores/layout"
+import { getID } from "@/stores/docs/utils/factory"
 
 
 interface Props {
@@ -41,7 +42,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const styContainerDoc = {
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
-		width: viewSa.width,
+		width: view.getWidth(),
 		zIndex: deep,
 		boxShadow: layoutSo.state.theme.shadows[0],
 		...view.getStyAni(),
@@ -51,7 +52,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		opacity: view.state.docAnim == DOC_ANIM.DRAGGING ? .3 : null
 	}
 
-	return <div style={styContainer} className={styles.container}>
+	return <div style={styContainer} className={styles.container} id={getID(view.state)}>
 
 		<div style={styContainerDoc} className={clsDoc}>
 

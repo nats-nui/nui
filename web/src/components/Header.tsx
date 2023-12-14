@@ -1,6 +1,6 @@
 import CloseIcon from "@/icons/CloseIcon"
 import docSo, { DocState } from "@/stores/docs"
-import { ViewStore } from "@/stores/docs/viewBase"
+import { VIEW_SIZE, ViewStore } from "@/stores/docs/viewBase"
 import layoutSo from "@/stores/layout"
 import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
@@ -8,6 +8,7 @@ import React, { FunctionComponent } from "react"
 import IconButton from "./buttons/IconButton"
 import DetachIcon from "@/icons/DetachIcon"
 import { getRoot } from "@/stores/docs/utils/manage"
+import { getID } from "@/stores/docs/utils/factory"
 
 
 
@@ -42,10 +43,19 @@ const Header: FunctionComponent<Props> = ({
 	}
 	const handleLinkDetach = () => {
 		if (!view.state.linked) return
-		const root = getRoot(view)
-		if (!root) return
+		const root = getRoot(view) ?? view
 		const rootIndex = docSo.getIndexByView(root)
 		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: true })
+	}
+	const handleSizeClick = () => {
+		view.setSize( 
+			view.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
+		)
+	}
+	const handleFocus = (e) => {
+		e.stopPropagation()
+		const elm = document.getElementById(getID(view.state))
+		elm?.scrollIntoView({ behavior: "smooth", block: "center" })
 	}
 
 	// RENDER
@@ -60,8 +70,12 @@ const Header: FunctionComponent<Props> = ({
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
-			{icon}
-			<span style={cssTitle}>{strTitle}</span>
+			<div onClick={handleSizeClick}>
+				{icon}
+			</div>
+			<span style={cssTitle}
+				onClick={handleFocus}
+			>{strTitle}</span>
 
 			<div style={cssButtons} >
 				<IconButton

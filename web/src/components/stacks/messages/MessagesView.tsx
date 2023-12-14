@@ -2,18 +2,20 @@ import imgMsg from "@/assets/msg-hdr.svg"
 import Header from "@/components/Header"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
-import SubRow from "@/components/subscription/Row"
 import cnnSo, { ConnectionState } from "@/stores/connections"
+import { VIEW_SIZE } from "@/stores/docs/viewBase"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
-import { HistoryMessage, PARAMS_MESSAGES } from "@/stores/stacks/messages/utils"
+import { HistoryMessage, MSS_TYPES } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
+import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
 import Dialog from "../dialogs/Dialog"
-import ListEditDlg from "../dialogs/ListEditDlg"
 import MessagesList2 from "./MessagesList2"
+import ListEditDlg from "../dialogs/ListEditDlg"
+import StringRow from "@/components/StringRow"
 
 
 
@@ -43,13 +45,27 @@ const MessagesView: FunctionComponent<Props> = ({
 		if (select) return
 		msgSo.setSubscriptionsOpen(!select)
 	}
-	const handleChangeSubs = (newSubs: Subscription[]) => {
-		msgSo.setSubscriptions(newSubs)
-	}
 	const handleCloseSubsDialog = () => {
 		msgSo.setSubscriptionsOpen(false)
-		msgSo.sendSubscriptions()
 	}
+	const handleChangeSubs = (newSubs: Subscription[]) => {
+		msgSo.setSubscriptions(newSubs)
+		debounce("MessagesView:handleChangeSubs", () => {
+			msgSo.sendSubscriptions()
+		}, 2000)
+	}
+
+
+	const handleTypesClick = () => {
+		msgSo.setTypesOpen(true)
+	}
+	const handleTypesClose = () => {
+		msgSo.setTypesOpen(false)
+	}
+	const handleTypesSelect = (index: number) => {
+		console.log(index)
+	}
+
 	const hendleMessageClick = (message: HistoryMessage) => {
 		msgSo.openMessageDetail(message)
 	}
@@ -74,56 +90,62 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setSubjectOpen(false)
 	}
 
+
+
 	// RENDER
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 
 			<Header view={msgSo} icon={<img src={imgMsg} />} />
 
-			<ActionGroup>
-				<Button
-					select={msgSa.subscriptionsOpen}
-					label="SUBJECTS"
-					onClick={handleClickSubs}
-					colorVar={1}
-				/>
-			</ActionGroup>
-
-			<MessagesList2
-				messages={msgSa.history}
-				onMessageClick={hendleMessageClick}
-			/>
-
-
-
-			{/* <div style={{ display: "flex" }}>
-					<button
-						onClick={handleMessagePublish}
-					>SEND</button>
-					<input
-						value={msgSa.message}
-						onChange={handleMessageChange}
+			{msgSa.size != VIEW_SIZE.ICONIZED && (<>
+				<ActionGroup>
+					<Button
+						select={msgSa.typesOpen}
+						label="TYPE"
+						onClick={handleTypesClick}
+						colorVar={1}
 					/>
-					<button
-						onClick={handleMessageSubOpen}
-					>{labelSubscription}</button>
-				</div> */}
-
+					<Button
+						select={msgSa.subscriptionsOpen}
+						label="SUBJECTS"
+						onClick={handleClickSubs}
+						colorVar={1}
+					/>
+				</ActionGroup>
+				<MessagesList2
+					messages={msgSa.history}
+					onMessageClick={hendleMessageClick}
+				/>
+			</>)}
 
 			<Dialog
 				open={msgSa.subscriptionsOpen}
 				store={msgSo}
 				onClose={handleCloseSubsDialog}
 			>
-
 				<SubscriptionsList
 					style={cssDialogSubs}
 					subscriptions={msgSa.subscriptions}
 					onChange={handleChangeSubs}
 				/>
-
 			</Dialog>
 
+			<Dialog
+				open={msgSa.typesOpen}
+				store={msgSo}
+				onClose={handleTypesClose}
+			>
+				<div style={cssDialogSubs}>
+					<ListEditDlg<string>
+						items={Object.values(MSS_TYPES)}
+						RenderRow={StringRow}
+						onChangeSelect={handleTypesSelect}
+					/>
+				</div>
+			</Dialog>
+
+			{/* 
 			<Dialog
 				open={msgSa.subjectOpen}
 				store={msgSo}
@@ -136,7 +158,7 @@ const MessagesView: FunctionComponent<Props> = ({
 						onChangeSelect={handleMessageSubSelect}
 					/>
 				</div>
-			</Dialog>
+			</Dialog> */}
 
 		</div>
 	)

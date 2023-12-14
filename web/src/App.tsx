@@ -35,10 +35,15 @@ const App: FunctionComponent = () => {
 				<DropArea index={0} />
 
 				{views.map((view: ViewStore, index: number) =>
-					<div style={{ display: "flex", zIndex: views.length - index }} key={getID(view.state)}>
+					<div key={getID(view.state)}
+						style={{ display: "flex", zIndex: views.length - index, flex: index == views.length - 1 ? 1: null }} 
+
+					>
 						<DocViewCmp view={view} />
-						<DropArea index={index + 1}
-							viewSo={view} 
+						<DropArea
+							index={index + 1}
+							isLast={index == views.length - 1}
+							viewSo={view}
 						/>
 					</div>
 				)}

@@ -15,7 +15,7 @@ const ThemeDefault: Theme = {
 			fg: "#DEDEDE",
 		},
 		actionsGroup: {
-			bg: "#000000",
+			bg: "#2e2e2e",
 			fg: "#DEDEDE",
 		}
 	},
