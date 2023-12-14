@@ -16,8 +16,10 @@ jobs:
           node-version: '18'
       - name: Install Dependencies
         run: npm install
+        working-directory: ./web
       - name: Build Project
         run: npm run build
+        working-directory: ./web
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v2
         with:
