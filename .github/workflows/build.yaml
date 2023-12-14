@@ -1,0 +1,21 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build
+    runs-on: node:18
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Project
+        run: npm run build
+      - name: Archive Production Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: web-build
+          path: web/dist

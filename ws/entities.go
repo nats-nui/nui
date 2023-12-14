@@ -30,7 +30,7 @@ func NewWsMessage(p Payload) *Response {
 
 type NatsMsg struct {
 	Subject string `json:"subject"`
-	Payload []byte `json:"Payload"`
+	Payload []byte `json:"payload"`
 }
 
 func (s NatsMsg) GetType() string {
