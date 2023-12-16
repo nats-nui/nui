@@ -15,10 +15,10 @@
     "@priolo/jon": "C:/Users/ivano.iorio/Documents/jon"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "@fontsource/darker-grotesque": "^5.0.8",
     "@priolo/jon": "^0.7.2",
     "dayjs": "^1.11.10",
-    "monaco-editor": "^0.45.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ws": "^8.14.2"

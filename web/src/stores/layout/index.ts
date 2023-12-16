@@ -1,13 +1,28 @@
 import { StoreCore, createStore } from "@priolo/jon"
 import { Theme } from "./utils"
 
-
+export enum COLOR_VAR {
+	GREEN,
+	CYAN,
+	MAGENTA,
+	YELLOW,
+	FUCHSIA,
+}
 
 const ThemeDefault: Theme = {
 	palette: {
 		var: [
+			// green
 			{ bg: "#BBFB35", fg: "#393939"},
+			// cyan
 			{ bg: "#10F3F3", fg: "#393939"},
+			// magenta
+			{ bg: "#C220FA", fg: "#393939"},
+			// yellow
+			{ bg: "#ebfb35", fg: "#393939"},
+			// fuchsia
+			{ bg: "#F51DDF", fg: "#393939"},
+
 		],
 		default: {
 			bg: "#3E3E3E",
