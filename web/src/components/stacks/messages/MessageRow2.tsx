@@ -2,7 +2,7 @@ import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import layoutSo from "@/stores/layout"
 import dayjs from "dayjs"
-import JsonCmp from "./JsonCmp"
+import JsonCompactCmp from "../../json/JsonCompactCmp"
 
 
 
@@ -49,7 +49,7 @@ const MessageRow2: FunctionComponent<Props> = ({
 			<div style={cssTitle}>
 				{message.title}
 			</div>
-			<JsonCmp json={message.json} />
+			<JsonCompactCmp json={message.json} />
 			<div style={cssFooter}>
 				{time}
 			</div>

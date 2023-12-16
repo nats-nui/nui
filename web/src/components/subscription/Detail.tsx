@@ -1,6 +1,7 @@
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
-import { RenderDetailBaseProps } from "../lists/List"
+import { RenderDetailBaseProps } from "../lists/Edit2List"
+
 
 
 
