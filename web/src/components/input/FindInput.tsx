@@ -49,5 +49,5 @@ const cssInput: React.CSSProperties = {
 	padding: 0,
 	color: layoutSo.state.theme.palette.default.fg,
 	border: 'none',
-	
+	width: "100%",
 }

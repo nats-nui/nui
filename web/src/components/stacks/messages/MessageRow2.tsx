@@ -9,7 +9,7 @@ import JsonCompactCmp from "../../json/JsonCompactCmp"
 interface Props {
 	message?: HistoryMessage
 	index?: number
-	onClick?: (message:HistoryMessage)=>void
+	onClick?: (message: HistoryMessage) => void
 }
 
 const MessageRow2: FunctionComponent<Props> = ({
@@ -36,11 +36,14 @@ const MessageRow2: FunctionComponent<Props> = ({
 	const handleClick = () => onClick?.(message)
 
 	// RENDER
+	if (!message) return null
 	const styRoot = {
 		...cssRoot,
 		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
 	}
-	const time = dayjs(message.timestamp).format("YYYY-MM-DD HH:MM")
+	const time = !!message.timestamp ? dayjs(message.timestamp).format("YYYY-MM-DD HH:MM") : ""
+	let json = null
+	try { json = JSON.parse(message.body) } catch { }
 
 	return (
 		<div ref={ref} style={styRoot}
@@ -49,7 +52,8 @@ const MessageRow2: FunctionComponent<Props> = ({
 			<div style={cssTitle}>
 				{message.title}
 			</div>
-			<JsonCompactCmp json={message.json} />
+
+			{!!json ? <JsonCompactCmp json={json} /> : <div>{message.body}</div>}
 			<div style={cssFooter}>
 				{time}
 			</div>

@@ -9,6 +9,8 @@ import { FunctionComponent, useMemo } from "react"
 import CnnListView from "./stacks/connections/CnnListView"
 import { MessageStore } from "@/stores/stacks/message"
 import MessageView from "./stacks/message/MessageView"
+import MessageSendView from "./stacks/messageSend/MessageSendView"
+import { MessageSendStore } from "@/stores/stacks/send"
 
 
 
@@ -23,13 +25,15 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 	const content = useMemo(() => {
 		switch (view.state.type) {
 			case DOC_TYPE.CONNECTIONS:
-				return <CnnListView store={view as CnnListStore} style={style}/>
+				return <CnnListView store={view as CnnListStore} style={style} />
 			case DOC_TYPE.SERVICES:
-				return <CnnDetailView store={view as CnnDetailStore} style={style}/>
+				return <CnnDetailView store={view as CnnDetailStore} style={style} />
 			case DOC_TYPE.MESSAGES:
-				return <MessagesView store={view as MessagesStore} style={style}/>
+				return <MessagesView store={view as MessagesStore} style={style} />
 			case DOC_TYPE.MESSAGE:
-				return <MessageView store={view as MessageStore} style={style}/>
+				return <MessageView store={view as MessageStore} style={style} />
+			case DOC_TYPE.MESSAGE_SEND:
+				return <MessageSendView store={view as MessageSendStore} style={style} />
 			default:
 				return null
 		}

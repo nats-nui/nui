@@ -41,6 +41,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 
 	// limite di profondità
 	//if (deep > 1) return "\u2026"
+	if ( !json ) return null
 
 	const ret = []
 	let index = 0

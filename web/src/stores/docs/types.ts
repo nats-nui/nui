@@ -3,8 +3,9 @@ export enum DOC_TYPE {
 	EMPTY = "emp",
 	CONNECTIONS = "cns",
 	SERVICES = "srv",
-	MESSAGES = "mgs",
-	MESSAGE = "msg",
+	MESSAGES = "msgs",
+	MESSAGE = "msgdtl",
+	MESSAGE_SEND = "msgsnd",
 }
 
 export enum POSITION_TYPE {

@@ -1,4 +1,3 @@
-import cnnApi from "@/api/connection"
 import { PayloadMessage, SocketService } from "@/plugins/SocketService"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
@@ -9,6 +8,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
 import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 import { MessageState } from "../message"
+import { MessageSendState } from "../send"
 
 
 
@@ -923,17 +923,10 @@ const setup = {
 		},
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
-		history: <HistoryMessage[]>h,//[],
-
+		history: <HistoryMessage[]>[],
 		textSearch: <string>null,
-
-		subject: <string>null,
-		message: <string>null,
-
 		subscriptionsOpen: false,
-		subjectOpen: false,
 		typesOpen: false,
-
 	},
 
 	getters: {
@@ -983,10 +976,6 @@ const setup = {
 			store.ss.sendSubjects(subjects)
 			store.state.lastSubjects = subjects
 		},
-		publishMessage: (_: void, store?: MessagesStore) => {
-			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID, store)
-			cnnApi.publish(cnnId, store.state.subject, store.state.message)
-		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: HistoryMessage, store?: MessagesStore) {
 			const cnn = store.getConnection()
@@ -1001,20 +990,28 @@ const setup = {
 				anim: true,
 			})
 		},
+		/** apertura CARD MESSAGE-SEND */
+		openMessageSend(_: void, store?: MessagesStore) {
+			const cnn = store.getConnection()
+			if (!cnn) return
+			const msgSendStore = buildStore({
+				type: DOC_TYPE.MESSAGE_SEND,
+				connectionId: cnn.id,
+			} as MessageSendState)
+			docsSo.addLink({
+				view: msgSendStore,
+				parent: store,
+				anim: true,
+			})
+		},
 	},
 
 	mutators: {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setHistory: (history: HistoryMessage[]) => ({ history }),
-
-		setMessage: (message: string) => ({ message }),
-		setSubject: (subject: string) => ({ subject }),
-
-		setSubjectOpen: (subjectOpen: boolean) => ({ subjectOpen }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
 		setTypesOpen: (typesOpen: boolean) => ({ typesOpen }),
-
-		setTextSearch: (textSearch: boolean) => ({ textSearch }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

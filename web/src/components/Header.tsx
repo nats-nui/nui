@@ -45,7 +45,7 @@ const Header: FunctionComponent<Props> = ({
 		if (!view.state.linked) return
 		const root = getRoot(view) ?? view
 		const rootIndex = docSo.getIndexByView(root)
-		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: true })
+		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: false })
 	}
 	const handleSizeClick = () => {
 		view.setSize( 
@@ -59,8 +59,7 @@ const Header: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const doc = view
-	if (!doc) return null
+	if (!view) return null
 	const isDraggable = view.state.draggable
 	const haveLinkDetachable = view.state.linked?.state.draggable
 	const strTitle = title ?? view.getTitle()

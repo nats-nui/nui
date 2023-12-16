@@ -25,13 +25,18 @@ const MessageView: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const text = msgSa.message?.json ?? ""
+	let json = null
+	try { json = JSON.parse(msgSa.message.body) } catch { }
+	
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} icon={<img src={imgMsg} />} />
 
-			<div style={{  overflowY: "auto" }}>
-				<JsonCmp json={text} style={{ margin: "15px 0px 15px 15px"}}/>
+			<div style={{ overflowY: "auto" }}>
+				{!!json
+					? <JsonCmp json={json} style={{ margin: "15px 0px 15px 15px" }} />
+					: <div>{msgSa.message?.body ?? ""}</div>
+				}
 			</div>
 		</div>
 	)

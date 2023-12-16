@@ -65,6 +65,8 @@ const setup = {
 			if (anim) {
 				await delayAnim()
 				await view.docAnim(DOC_ANIM.SHOWING)
+			} else {
+				view.setDocAnim(DOC_ANIM.SHOW)	
 			}
 		},
 

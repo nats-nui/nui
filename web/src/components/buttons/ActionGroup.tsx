@@ -33,7 +33,7 @@ export default ActionGroup
 const cssRoot: React.CSSProperties = {
 	display: "flex", gap: 5,
 	alignItems: "center",
-	//justifyContent: 'flex-end',
+	justifyContent: 'flex-end',
 	padding: 3,
 	backgroundColor: layoutSo.state.theme.palette.actionsGroup.bg,
 	color: layoutSo.state.theme.palette.actionsGroup.fg,
