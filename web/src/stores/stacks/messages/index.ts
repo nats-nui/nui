@@ -925,6 +925,8 @@ const setup = {
 		lastSubjects: <string[]>null,
 		history: <HistoryMessage[]>h,//[],
 
+		textSearch: <string>null,
+
 		subject: <string>null,
 		message: <string>null,
 
@@ -1011,6 +1013,8 @@ const setup = {
 		setSubjectOpen: (subjectOpen: boolean) => ({ subjectOpen }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
 		setTypesOpen: (typesOpen: boolean) => ({ typesOpen }),
+
+		setTextSearch: (textSearch: boolean) => ({ textSearch }),
 	},
 }
 

@@ -6,7 +6,7 @@ interface Props {
 	json?: JSON
 }
 
-const JsonCmp: FunctionComponent<Props> = ({
+const JsonCompactCmp: FunctionComponent<Props> = ({
 	json,
 }) => {
 
@@ -26,7 +26,7 @@ const JsonCmp: FunctionComponent<Props> = ({
 	)
 }
 
-export default JsonCmp
+export default JsonCompactCmp
 
 const cssBody: React.CSSProperties = {
 	fontSize: 14,

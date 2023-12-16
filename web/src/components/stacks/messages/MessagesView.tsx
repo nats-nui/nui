@@ -102,7 +102,9 @@ const MessagesView: FunctionComponent<Props> = ({
 
 			{msgSa.size != VIEW_SIZE.ICONIZED && (<>
 				<ActionGroup>
-					<FindInput style={{ marginLeft: 7 }} />
+					<FindInput 
+						style={{ marginLeft: 7 }} 
+					/>
 					<Button
 						select={msgSa.typesOpen}
 						label="TYPE"
