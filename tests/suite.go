@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
+	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/nuiapp"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
@@ -20,6 +21,7 @@ type NuiTestSuite struct {
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
 	e                   *httpexpect.Expect
+	nc                  *nats.Conn
 }
 
 func (s *NuiTestSuite) SetupSuite() {
@@ -33,6 +35,32 @@ func (s *NuiTestSuite) SetupSuite() {
 
 func (s *NuiTestSuite) SetupTest() {
 	var err error
+	s.e = s.newE()
+	s.startNatsServer(err)
+	s.startNuiServer(err)
+	s.connectNatsClient(err)
+}
+
+func (s *NuiTestSuite) connectNatsClient(err error) {
+	s.nc, err = nats.Connect(s.NatsServer.Addr().String())
+	s.NoError(err)
+}
+
+func (s *NuiTestSuite) startNuiServer(err error) {
+	nuiSvc, err := nuiapp.Setup(":memory:")
+	s.NoError(err)
+
+	s.NuiServer = nuiapp.NewServer(strconv.Itoa(rand.Intn(1000)+4000), nuiSvc)
+	ctx, c := context.WithCancel(context.Background())
+	s.NuiServerCancelFunc = c
+	go func() {
+		err = s.NuiServer.Start(ctx)
+		s.NoError(err)
+	}()
+	s.e.GET("/health").WithMaxRetries(5).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
+}
+
+func (s *NuiTestSuite) startNatsServer(err error) {
 	s.NatsServer, err = server.NewServer(s.natsServerOpts)
 	s.NoError(err)
 
@@ -48,18 +76,6 @@ func (s *NuiTestSuite) SetupTest() {
 		}
 	}()
 	w.Wait()
-	nuiSvc, err := nuiapp.Setup(":memory:")
-	s.NoError(err)
-
-	s.NuiServer = nuiapp.NewServer(strconv.Itoa(rand.Intn(1000)+4000), nuiSvc)
-	ctx, c := context.WithCancel(context.Background())
-	s.NuiServerCancelFunc = c
-	go func() {
-		err = s.NuiServer.Start(ctx)
-		s.NoError(err)
-	}()
-	s.e = s.newE()
-	s.e.GET("/health").WithMaxRetries(10).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
 }
 
 func (s *NuiTestSuite) newE() *httpexpect.Expect {
