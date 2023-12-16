@@ -5,7 +5,7 @@ import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detai
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import SubscriptionsList from "./sunscriptions/SubscriptionsList"
+import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import layoutSo from "@/stores/layout"
 
 

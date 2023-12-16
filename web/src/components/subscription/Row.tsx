@@ -1,6 +1,6 @@
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
-import { RenderRowBaseProps } from "../stacks/dialogs/ListEditDlg"
+import { RenderRowBaseProps } from "../lists/List"
 
 
 

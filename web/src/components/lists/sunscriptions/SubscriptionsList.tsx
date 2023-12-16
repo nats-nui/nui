@@ -104,5 +104,4 @@ export default SubscriptionsList
 const cssList: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	padding: 5,
 }

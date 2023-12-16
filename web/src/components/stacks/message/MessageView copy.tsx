@@ -22,29 +22,34 @@ const MessageView: FunctionComponent<Props> = ({
 	const msgSa = useStore(msgSo)
 
 	// HOOKs
-	const ref = useRef(null)
+	const [html, setHtml] = useState("")
 
 	// ricavo l'html dal testo in base al linguaggio usato
 	useEffect(() => {
-		if (!ref.current) return
-		//monaco.editor.setTheme('vs-dark');
-		monaco.editor.colorizeElement(ref.current, {
-			theme: "vs-dark",
-			mimeType: "javascript",
-		})
-	}, [])
+		monaco.editor.setTheme('vs-dark');
+		async function render() {
+			const res = await monaco.editor.colorize(
+				JSON.stringify(msgSa.message?.json),
+				"json",
+				{
+					
+					tabSize:5
+				}
+			)
+			setHtml(res ?? "")
+		}
+		render()
+	}, [msgSa.message])
 
 	// HANDLER
 
 	// RENDER
-	const text = msgSa.message?.json ?? ""
+	//const text = msgSa.message?.json ?? ""
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} icon={<img src={imgMsg} />} />
 
-			<pre ref={ref} style={{ width: "100vw" }} data-lang="javascript">
-				{JSON.stringify({ name: 'Mario Rossi', age: 30, city: 'Roma' }, null, 2)}
-			</pre>
+			<div style={{ width: "100vw", height: "100vh" }} dangerouslySetInnerHTML={{ __html: html }} />
 		</div>
 	)
 }
