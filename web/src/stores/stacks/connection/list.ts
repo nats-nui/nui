@@ -53,7 +53,7 @@ const setup = {
 			docsSo.addLink({
 				view: srvStore,
 				parent: store,
-				anim: true,
+				anim: !idSelPrev || !idSel,
 			})
 		},
 		/** creo un nuovo STORE DETTAGLIO CONNECTION

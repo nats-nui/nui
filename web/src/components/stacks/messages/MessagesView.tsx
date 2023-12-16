@@ -3,7 +3,7 @@ import Header from "@/components/Header"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
 import FindInput from "@/components/input/FindInput"
-import StringRow from "@/components/lists/StringRow"
+import StringRow from "@/components/lists/rows/StringRow"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { VIEW_SIZE } from "@/stores/docs/viewBase"
 import layoutSo from "@/stores/layout"
@@ -42,6 +42,8 @@ const MessagesView: FunctionComponent<Props> = ({
 	}, [cnnSa.all])
 
 	// HANDLER
+
+	//#region  SUBSCRIPTIONS
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
 		if (select) return
 		msgSo.setSubscriptionsOpen(!select)
@@ -55,8 +57,9 @@ const MessagesView: FunctionComponent<Props> = ({
 			msgSo.sendSubscriptions()
 		}, 2000)
 	}
+	//#endregion
 
-
+	//#region TYPES
 	const handleTypesClick = () => {
 		msgSo.setTypesOpen(true)
 	}
@@ -64,35 +67,20 @@ const MessagesView: FunctionComponent<Props> = ({
 		msgSo.setTypesOpen(false)
 	}
 	const handleTypesSelect = (index: number) => {
-		console.log(index)
 		msgSo.setTypesOpen(false)
 	}
+	//#endregion
 
+
+	const handleClickSend = () => {
+		msgSo.openMessageSend()
+	}
 	const hendleMessageClick = (message: HistoryMessage) => {
 		msgSo.openMessageDetail(message)
 	}
-
-
-
-	const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		msgSo.setMessage(e.target.value)
+	const handleSearchChange = (value:string)=> {
+		msgSo.setTextSearch(value)
 	}
-	const handleMessagePublish = (_: React.MouseEvent) => {
-
-		msgSo.publishMessage()
-	}
-	const handleMessageSubOpen = (_: React.MouseEvent) => {
-		msgSo.setSubjectOpen(true)
-	}
-	const handleMessageSubSelect = (index: number) => {
-		msgSo.setSubject(msgSa.subscriptions[index].subject)
-		msgSo.setSubjectOpen(false)
-	}
-	const handleMessageSubClose = () => {
-		msgSo.setSubjectOpen(false)
-	}
-
-
 
 	// RENDER
 	return (
@@ -103,7 +91,10 @@ const MessagesView: FunctionComponent<Props> = ({
 			{msgSa.size != VIEW_SIZE.ICONIZED && (<>
 				<ActionGroup>
 					<FindInput 
+						value={msgSa.textSearch ?? ""}
+						onChange={handleSearchChange}
 						style={{ marginLeft: 7 }} 
+
 					/>
 					<Button
 						select={msgSa.typesOpen}
@@ -115,6 +106,11 @@ const MessagesView: FunctionComponent<Props> = ({
 						select={msgSa.subscriptionsOpen}
 						label="SUBJECTS"
 						onClick={handleClickSubs}
+						colorVar={1}
+					/>
+					<Button
+						label="SEND"
+						onClick={handleClickSend}
 						colorVar={1}
 					/>
 				</ActionGroup>
@@ -148,21 +144,6 @@ const MessagesView: FunctionComponent<Props> = ({
 					onChangeSelect={handleTypesSelect}
 				/>
 			</Dialog>
-
-			{/* 
-			<Dialog
-				open={msgSa.subjectOpen}
-				store={msgSo}
-				onClose={handleMessageSubClose}
-			>
-				<div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: 'flex-end', backgroundColor: "#a0e312" }}>
-					<ListEditDlg<Subscription>
-						items={msgSa.subscriptions}
-						RenderRow={SubRow}
-						onChangeSelect={handleMessageSubSelect}
-					/>
-				</div>
-			</Dialog> */}
 
 		</div>
 	)

@@ -4,7 +4,6 @@ export interface HistoryMessage {
 	timestamp: number
 	title: string
 	body?: string
-	json?: any
 	height?: number
 }
 
