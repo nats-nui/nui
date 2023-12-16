@@ -1,17 +1,18 @@
+import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
-import layoutSo, { LayoutState } from "@/stores/layout"
-import { useStore } from "@priolo/jon"
 
 
 
 interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
+	style?: React.CSSProperties
 }
 
 const TextInput: FunctionComponent<Props> = ({
 	value,
 	onChange,
+	style,
 }) => {
 	// STORE
 
@@ -22,7 +23,7 @@ const TextInput: FunctionComponent<Props> = ({
 
 	// RENDER
 	return (
-		<input style={cssRoot}
+		<input style={{ ...cssRoot, ...style }}
 			value={value}
 			onChange={handleChange}
 		/>
@@ -34,6 +35,6 @@ export default TextInput
 const cssRoot: React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.default.bg,
 	color: layoutSo.state.theme.palette.default.fg,
-	border: 'none',
+	//border: 'none',
 	padding: '5px 7px',
 }

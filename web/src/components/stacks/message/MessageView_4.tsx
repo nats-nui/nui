@@ -2,7 +2,7 @@ import imgMsg from "@/assets/mg-hdr.svg"
 import Header from "@/components/Header"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import JsonCmp from "../messages/JsonCmp"
 import JsonCmp2 from "../messages/JsonCmp2"
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -18,22 +18,27 @@ const MessageView: FunctionComponent<Props> = ({
 	style,
 }) => {
 
-	// STORES
-	const msgSa = useStore(msgSo)
+	// STORE
+	const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
+	const msgSa = useStore(msgSo) as MessageState
 
 	// HOOKs
-	const ref = useRef(null)
-
-	// ricavo l'html dal testo in base al linguaggio usato
+	const monacoEl = useRef(null)
 	useEffect(() => {
-		if (!ref.current) return
-		//monaco.editor.setTheme('vs-dark');
-		monaco.editor.colorizeElement(ref.current, {
-			theme: "vs-dark",
-			mimeType: "javascript",
-		})
-	}, [])
+		if (monacoEl.current) {
+			setEditor((editor) => {
+				if (editor) return editor;
 
+				return monaco.editor.create(monacoEl.current!, {
+					value: "{'pippo':45}",
+					language: 'json'
+				});
+			});
+		}
+
+		return () => editor?.dispose();
+	}, [monacoEl.current]);
+	
 	// HANDLER
 
 	// RENDER
@@ -42,9 +47,7 @@ const MessageView: FunctionComponent<Props> = ({
 		<div style={{ ...cssContainer, ...style }}>
 			<Header view={msgSo} icon={<img src={imgMsg} />} />
 
-			<pre ref={ref} style={{ width: "100vw" }} data-lang="javascript">
-				{JSON.stringify({ name: 'Mario Rossi', age: 30, city: 'Roma' }, null, 2)}
-			</pre>
+			<div style={{width: "100vw", height: "100vh"}} ref={monacoEl}></div>;
 		</div>
 	)
 }

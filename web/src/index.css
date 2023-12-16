@@ -18,6 +18,12 @@ html {
 
 
 /**** INPUT ****/
+input {
+  font-family: 'Raleway', sans-serif;
+  border: none;
+  min-width: 0;
+  width: 100%;
+}
 input:focus {
   outline: none;
 }

@@ -2,6 +2,8 @@ import imgMsg from "@/assets/msg-hdr.svg"
 import Header from "@/components/Header"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
+import FindInput from "@/components/input/FindInput"
+import StringRow from "@/components/lists/StringRow"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { VIEW_SIZE } from "@/stores/docs/viewBase"
 import layoutSo from "@/stores/layout"
@@ -11,11 +13,10 @@ import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import SubscriptionsList from "../connections/sunscriptions/SubscriptionsList"
-import Dialog from "../dialogs/Dialog"
+import Dialog from "../../dialogs/Dialog"
+import List from "../../lists/List"
+import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import MessagesList2 from "./MessagesList2"
-import ListEditDlg from "../dialogs/ListEditDlg"
-import StringRow from "@/components/StringRow"
 
 
 
@@ -64,6 +65,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	}
 	const handleTypesSelect = (index: number) => {
 		console.log(index)
+		msgSo.setTypesOpen(false)
 	}
 
 	const hendleMessageClick = (message: HistoryMessage) => {
@@ -100,6 +102,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 			{msgSa.size != VIEW_SIZE.ICONIZED && (<>
 				<ActionGroup>
+					<FindInput style={{ marginLeft: 7 }} />
 					<Button
 						select={msgSa.typesOpen}
 						label="TYPE"
@@ -136,13 +139,12 @@ const MessagesView: FunctionComponent<Props> = ({
 				store={msgSo}
 				onClose={handleTypesClose}
 			>
-				<div style={cssDialogSubs}>
-					<ListEditDlg<string>
-						items={Object.values(MSS_TYPES)}
-						RenderRow={StringRow}
-						onChangeSelect={handleTypesSelect}
-					/>
-				</div>
+				<List<string>
+					style={cssDialogTypes}
+					items={Object.values(MSS_TYPES)}
+					RenderRow={StringRow}
+					onChangeSelect={handleTypesSelect}
+				/>
 			</Dialog>
 
 			{/* 
@@ -175,10 +177,17 @@ const cssContainer: React.CSSProperties = {
 	width: "300px",
 }
 
+const cssDialogTypes: React.CSSProperties = {
+	width: 70,
+	flex: 1,
+	padding: '10px 15px',
+	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
+	color: layoutSo.state.theme.palette.var[1].fg,
+}
 const cssDialogSubs: React.CSSProperties = {
 	width: 200,
 	flex: 1,
-	paddingLeft: 15,
+	padding: '10px 15px',
 	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
 	color: layoutSo.state.theme.palette.var[1].fg,
 }

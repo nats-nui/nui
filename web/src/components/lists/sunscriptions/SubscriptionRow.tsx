@@ -95,4 +95,7 @@ const cssInput: React.CSSProperties = {
 	backgroundColor: 'transparent',
 	border: 'none',
 	color: "currentcolor",
+
+	fontSize: 14,
+	fontWeight: 600,
 }
