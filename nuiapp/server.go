@@ -1,4 +1,4 @@
-package main
+package nuiapp
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 
 type App struct {
 	*fiber.App
-	port string
+	Port string
 	nui  *Nui
 	ctx  context.Context
 }
@@ -21,7 +21,7 @@ type App struct {
 func NewServer(port string, nui *Nui) *App {
 	app := &App{
 		App:  fiber.New(),
-		port: port,
+		Port: port,
 		nui:  nui,
 	}
 	app.registerHandlers()
@@ -60,7 +60,7 @@ func (a *App) Start(ctx context.Context) error {
 			_ = a.Shutdown()
 		}
 	}()
-	return a.Listen(":" + a.port)
+	return a.Listen(":" + a.Port)
 }
 
 func (a *App) handleGetConnections(c *fiber.Ctx) error {
@@ -98,10 +98,6 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	conn, err = a.nui.ConnRepo.Save(conn)
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
-	}
-	err = a.nui.ConnPool.Refresh(conn.Id)
-	if err != nil {
-		return c.Status(500).JSON(err)
 	}
 	return c.JSON(conn)
 }
