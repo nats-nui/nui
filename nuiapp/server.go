@@ -2,9 +2,11 @@ package nuiapp
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/google/uuid"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/ws"
@@ -19,6 +21,7 @@ type App struct {
 }
 
 func NewServer(port string, nui *Nui) *App {
+	log.SetLevel(log.LevelTrace)
 	app := &App{
 		App:  fiber.New(),
 		Port: port,
@@ -29,6 +32,9 @@ func NewServer(port string, nui *Nui) *App {
 }
 
 func (a *App) registerHandlers() {
+
+	a.Get("/health", a.handleHealth)
+
 	a.Get("/api/connection", a.handleGetConnections)
 	a.Get("/api/connection/:id", a.handleGetConnection)
 	a.Post("/api/connection", a.handleSaveConnection)
@@ -61,6 +67,10 @@ func (a *App) Start(ctx context.Context) error {
 		}
 	}()
 	return a.Listen(":" + a.Port)
+}
+
+func (a *App) handleHealth(c *fiber.Ctx) error {
+	return c.SendStatus(200)
 }
 
 func (a *App) handleGetConnections(c *fiber.Ctx) error {
@@ -130,7 +140,13 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(422).JSON(err)
 	}
-	err = conn.Publish(pubReq.Subject, []byte(pubReq.Payload))
+
+	payload, err := base64.StdEncoding.DecodeString(pubReq.Payload)
+	if err != nil {
+		return c.Status(422).JSON(err)
+	}
+
+	err = conn.Publish(pubReq.Subject, payload)
 	if err != nil {
 		return c.Status(500).JSON(err)
 	}
@@ -183,20 +199,23 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 		return
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
+	clientId := uuid.NewString()
 	reqCh := make(chan *ws.Request, 1)
 	msgCh := make(chan ws.Payload, 1000)
-	clientId := uuid.NewString()
-	go handleWsMsgs(c, ctx, msgCh, cancel)
-	go handleWsRequest(c, ctx, reqCh, cancel)
+
+	c.SetCloseHandler(func(code int, text string) error {
+		cancel()
+		return nil
+	})
+
 	err = a.nui.Hub.Register(ctx, clientId, conn.Id, reqCh, msgCh)
 	if err != nil {
 		writeError(c, 4500, err)
 		return
 	}
-	c.SetCloseHandler(func(code int, text string) error {
-		cancel()
-		return nil
-	})
+
+	go handleWsMsgs(c, ctx, msgCh, cancel)
+	go handleWsRequest(c, ctx, reqCh, cancel)
 	<-ctx.Done()
 }
 

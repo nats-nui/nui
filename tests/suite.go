@@ -2,10 +2,12 @@ package tests
 
 import (
 	"context"
+	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/pricelessrabbit/nui/nuiapp"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"sync"
 	"time"
@@ -17,10 +19,11 @@ type NuiTestSuite struct {
 	NuiServer           *nuiapp.App
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
+	e                   *httpexpect.Expect
 }
 
-func (suite *NuiTestSuite) SetupSuite() {
-	suite.natsServerOpts = &server.Options{
+func (s *NuiTestSuite) SetupSuite() {
+	s.natsServerOpts = &server.Options{
 		Host:   "localhost",
 		Port:   -1,
 		NoLog:  true,
@@ -28,17 +31,17 @@ func (suite *NuiTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *NuiTestSuite) SetupTest() {
+func (s *NuiTestSuite) SetupTest() {
 	var err error
-	suite.NatsServer, err = server.NewServer(suite.natsServerOpts)
-	suite.NoError(err)
+	s.NatsServer, err = server.NewServer(s.natsServerOpts)
+	s.NoError(err)
 
 	w := sync.WaitGroup{}
 	w.Add(1)
 	go func() {
-		suite.NatsServer.Start()
+		s.NatsServer.Start()
 		for _ = range time.Tick(20) {
-			if suite.NatsServer.Running() {
+			if s.NatsServer.Running() {
 				w.Done()
 				return
 			}
@@ -46,22 +49,38 @@ func (suite *NuiTestSuite) SetupTest() {
 	}()
 	w.Wait()
 	nuiSvc, err := nuiapp.Setup(":memory:")
-	suite.NoError(err)
+	s.NoError(err)
 
-	suite.NuiServer = nuiapp.NewServer(strconv.Itoa(rand.Intn(1000)+4000), nuiSvc)
+	s.NuiServer = nuiapp.NewServer(strconv.Itoa(rand.Intn(1000)+4000), nuiSvc)
 	ctx, c := context.WithCancel(context.Background())
-	suite.NuiServerCancelFunc = c
+	s.NuiServerCancelFunc = c
 	go func() {
-		err = suite.NuiServer.Start(ctx)
-		suite.NoError(err)
+		err = s.NuiServer.Start(ctx)
+		s.NoError(err)
 	}()
-
+	s.e = s.newE()
+	s.e.GET("/health").WithMaxRetries(10).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
 }
 
-func (suite *NuiTestSuite) TearDownTest() {
-	suite.NatsServer.Shutdown()
+func (s *NuiTestSuite) newE() *httpexpect.Expect {
+	e := httpexpect.Default(s.T(), s.nuiHost())
+	e = e.Builder(func(req *httpexpect.Request) {
+		req.WithHeader("Content-Type", "application/json")
+	})
+	return e
 }
 
-func (suite *NuiTestSuite) NuiHost(s string) string {
-	return "http://localhost:" + suite.NuiServer.Port + s
+func (s *NuiTestSuite) TearDownTest() {
+	s.NatsServer.Shutdown()
+	s.NuiServerCancelFunc()
+}
+
+func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {
+	return s.newE().GET(path).WithQueryString(query).WithWebsocketUpgrade().
+		Expect().Status(http.StatusSwitchingProtocols).
+		Websocket()
+}
+
+func (s *NuiTestSuite) nuiHost() string {
+	return "http://localhost:" + s.NuiServer.Port
 }
