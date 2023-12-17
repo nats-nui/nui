@@ -36,11 +36,6 @@ const ThemeDefault: Theme = {
 	},
 
 	texts: {
-		title: {
-			fontFamily: "Darker Grotesque",
-			fontSize: "22px",
-			fontWeight: 800,
-		},
 		row: {
 			title: { fontSize: 14, fontWeight: 700 },
 			subtitle: { opacity: .8, fontSize: 12, fontWeight: 500 },

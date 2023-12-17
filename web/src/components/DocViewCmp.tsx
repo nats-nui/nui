@@ -1,11 +1,12 @@
-import { ViewState, ViewStore } from "@/stores/docs/viewBase"
+import { VIEW_SIZE, ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
-import styles from './DocViewCmp.module.css'
 import layoutSo from "@/stores/layout"
 import { getID } from "@/stores/docs/utils/factory"
+import Header from "./Header"
+
 
 
 interface Props {
@@ -33,15 +34,12 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
 
-	// style
-	const clsDoc = `${styles.doc} ${inRoot ? "" : styles.doc_sub}`//${clsDocAnim}`
-
-	const styContainer = {
-		zIndex: deep,
-	}
-	const styContainerDoc = {
+	// styles
+	const styContainerDoc: React.CSSProperties = {
+		...cssDoc,
+		borderRadius: inRoot ? 10 : "0px 10px 10px 0px",
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
-		transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+
 		width: view.getWidth(),
 		zIndex: deep,
 		boxShadow: layoutSo.state.theme.shadows[0],
@@ -52,13 +50,15 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		opacity: view.state.docAnim == DOC_ANIM.DRAGGING ? .3 : null
 	}
 
-	return <div style={styContainer} className={styles.container} id={getID(view.state)}>
+	return <div style={cssRoot(deep)} id={getID(view.state)}>
 
-		<div style={styContainerDoc} className={clsDoc}>
-
-			{/* BODY */}
-			<DocCmp view={view} style={styDoc} />
-
+		{/* DOC BODY */}
+		<div style={styContainerDoc}>
+			{viewSa.size != VIEW_SIZE.ICONIZED ? (
+				<DocCmp view={view} style={styDoc} />
+			) : (
+				<Header view={view} style={styDoc} />
+			)}
 		</div>
 
 		<div style={cssDesk}>
@@ -84,6 +84,20 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 export default DocViewCmp
 
+const cssRoot = (deep: number): React.CSSProperties => ({
+	zIndex: deep,
+	display: "flex",
+	height: "100%",
+})
+
+const cssDoc: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
+	overflow: "hidden",
+	color: layoutSo.state.theme.palette.default.fg,
+	backgroundColor: layoutSo.state.theme.palette.default.bg,
+	transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+}
 
 const cssDialog = (deep: number): React.CSSProperties => ({
 	position: "absolute",
@@ -105,3 +119,4 @@ const cssDesk: React.CSSProperties = {
 	//height: "100%",
 	position: "relative",
 }
+

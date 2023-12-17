@@ -1,4 +1,5 @@
-import docSetup, { ViewStore, ViewState } from "@/stores/docs/viewBase"
+import srcIcon from "@/assets/msg-hdr.svg"
+import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { HistoryMessage } from "../messages/utils"
 
@@ -12,6 +13,7 @@ const setup = {
 
 	getters: {
 		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.title,
+		getIcon: (_: void, store?: ViewStore) => srcIcon,
 	},
 
 	actions: {

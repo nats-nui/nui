@@ -1,15 +1,25 @@
 import React, { FunctionComponent } from "react"
 
-
+export enum LABEL_TYPES {
+	TEXT = 0,
+	SUB_TITLE,
+	TITLE,
+	TITLE_DIALOG,
+}
 
 interface Props {
-	isTitle?: boolean
+	type?: number
+	onClick?: (e:React.MouseEvent) => void
 	children?: React.ReactNode
+	style?: React.CSSProperties
+
 }
 
 const Label: FunctionComponent<Props> = ({
-	isTitle = false,
+	type = LABEL_TYPES.TEXT,
+	onClick,
 	children,
+	style,
 }) => {
 
 	// STORE
@@ -19,9 +29,15 @@ const Label: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const css = isTitle ? cssTitle : cssNormal
+	const css = {
+		cursor: !!onClick ? "pointer" : null,
+		...cssRoot,
+		...[cssNormal, cssSubTitle, cssTitle, cssTitleDialog][type] ?? cssNormal,
+		...style
+	}
 	return <div
-		style={{...cssRoot, ...css}}
+		onClick={onClick}
+		style={css}
 	>
 		{children}
 	</div>
@@ -34,12 +50,25 @@ const cssNormal: React.CSSProperties = {
 	fontWeight: 600,
 	marginTop: 5,
 }
-const cssTitle: React.CSSProperties = {
-	fontSize: 14,
-	fontWeight: 800,
-	marginBottom: 10,
+const cssSubTitle: React.CSSProperties = {
+	fontSize: 12,
+	fontWeight: 600,
 }
+const cssTitle: React.CSSProperties = {
+	fontSize: 22,
+	lineHeight: "23px",
+	fontWeight: 800,
+	fontFamily: "Darker Grotesque",
+}
+const cssTitleDialog: React.CSSProperties = {
+	fontSize: 22,
+	lineHeight: "23px",
+	fontWeight: 800,
+	fontFamily: "Darker Grotesque",
+}
+
 const cssRoot: React.CSSProperties = {
 	display: "flex",
 	alignItems: "center",
+	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 }

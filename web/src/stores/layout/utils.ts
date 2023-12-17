@@ -9,7 +9,6 @@ export interface Theme {
 
 	},
 	texts: {
-		title: React.CSSProperties
 		row: {
 			title: React.CSSProperties
 			subtitle: React.CSSProperties

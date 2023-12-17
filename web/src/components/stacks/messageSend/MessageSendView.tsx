@@ -45,7 +45,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 	return (
 		<div style={{ ...cssContainer }}>
 
-			<Header view={sendSo} icon={<img src={imgMsg} />} />
+			<Header view={sendSo}/>
 
 			<ActionGroup>
 				<Button
