@@ -20,6 +20,7 @@ type Subscription interface {
 type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
 	ObserveConnectionEvents(ctx context.Context) <-chan connection.ConnStatusChanged
+	Status() nats.Status
 }
 
 type IHub interface {
@@ -173,6 +174,15 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 		return err
 	}
 	events := serverConn.ObserveConnectionEvents(ctx)
+	//starting event
+	cm := &ConnectionStatus{Status: Disconnected}
+	if serverConn.Status() == nats.CONNECTED {
+		cm.Status = Connected
+	}
+	select {
+	case clientMgs <- cm:
+	default:
+	}
 	for {
 		select {
 		case msg, ok := <-events:
