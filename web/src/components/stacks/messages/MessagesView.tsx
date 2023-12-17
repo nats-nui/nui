@@ -86,7 +86,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 
-			<Header view={msgSo} icon={<img src={imgMsg} />} />
+			<Header view={msgSo} />
 
 			{msgSa.size != VIEW_SIZE.ICONIZED && (<>
 				<ActionGroup>

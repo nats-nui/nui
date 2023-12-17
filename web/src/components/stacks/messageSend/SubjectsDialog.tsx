@@ -1,5 +1,5 @@
 import Dialog from "@/components/dialogs/Dialog"
-import Label from "@/components/input/Label"
+import Label, { LABEL_TYPES } from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
 import List from "@/components/lists/List"
 import SubscriptionRow from "@/components/lists/rows/SubscriptionRow"
@@ -50,7 +50,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		onClose={handleSubsClose}
 	>
 		<div style={cssForm}>
-			<Label isTitle>SUBJECT</Label>
+			<Label type={LABEL_TYPES.SUB_TITLE}>SUBJECT</Label>
 			<TextInput style={{marginBottom: 10}}
 				value={sendSa.subject}
 				onChange={handleSubChange}

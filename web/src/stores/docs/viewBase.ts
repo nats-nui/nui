@@ -1,6 +1,7 @@
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
 import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
+import { COLOR_VAR } from "../layout"
 
 
 
@@ -66,9 +67,12 @@ const setup = {
 			}
 			return style
 		},
+
 		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? 300 : 600,
-		getTitle: (_: void, store?: ViewStore) => "Boooh!",
-		getSubTitle: (_: void, store?: ViewStore) => "...",
+		getTitle: (_: void, store?: ViewStore):string => null,
+		getSubTitle: (_: void, store?: ViewStore):string => null,
+		getIcon: (_: void, store?: ViewStore):string => null,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
 	},
 
 	actions: {

@@ -28,6 +28,7 @@ const setup = {
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
 		},
+
 		getTitle: (_: void, store?: ViewStore) => "DETAIL",
 	},
 

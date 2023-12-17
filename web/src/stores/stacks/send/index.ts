@@ -2,6 +2,7 @@ import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import cnnApi from "@/api/connection"
 import cnnSo from "@/stores/connections"
+import srcIcon from "@/assets/mg-hdr.svg"
 
 
 const setup = {
@@ -19,7 +20,11 @@ const setup = {
 			const cnn = cnnSo.getById(cnnId)
 			return `TO ${cnn?.name ?? "..."}`
 		},
-		
+		getSubTitle: (_: void, store?: ViewStore) => {
+			const subject = (store as MessageSendStore).state.subject
+			return subject ? `SUBJECT: ${subject}` : "NO SUBJECT!"
+		},
+		getIcon: (_: void, store?: ViewStore) => srcIcon,
 	},
 
 	actions: {

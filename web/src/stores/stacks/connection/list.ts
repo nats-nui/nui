@@ -1,6 +1,7 @@
+import srcIcon from "@/assets/cnn-hdr.svg"
 import docsSo from "@/stores/docs"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
-import { DOC_ANIM, DOC_TYPE } from "@/types"
+import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
@@ -31,7 +32,9 @@ const setup = {
 		getSelectId(_: void, store?: CnnListStore): string {
 			return docSetup.getters.getParam(CONNECTIONS_PARAMS.SELECT_ID, store)
 		},
+		
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
+		getIcon: (_: void, store?: ViewStore) => srcIcon,
 	},
 
 	actions: {

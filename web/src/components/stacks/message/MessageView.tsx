@@ -1,4 +1,3 @@
-import imgMsg from "@/assets/mg-hdr.svg"
 import Header from "@/components/Header"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { useStore } from "@priolo/jon"
@@ -30,7 +29,7 @@ const MessageView: FunctionComponent<Props> = ({
 	
 	return (
 		<div style={{ ...cssContainer, ...style }}>
-			<Header view={msgSo} icon={<img src={imgMsg} />} />
+			<Header view={msgSo} />
 
 			<div style={{ overflowY: "auto" }}>
 				{!!json

@@ -9,20 +9,17 @@ import IconButton from "./buttons/IconButton"
 import DetachIcon from "@/icons/DetachIcon"
 import { getRoot } from "@/stores/docs/utils/manage"
 import { getID } from "@/stores/docs/utils/factory"
+import Label, { LABEL_TYPES } from "./input/Label"
 
 
 
 interface Props {
 	view?: ViewStore
-	title?: string
-	icon?: React.ReactNode
 	style?: React.CSSProperties
 }
 
 const Header: FunctionComponent<Props> = ({
 	view,
-	title,
-	icon,
 	style,
 }) => {
 
@@ -48,7 +45,7 @@ const Header: FunctionComponent<Props> = ({
 		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: false })
 	}
 	const handleSizeClick = () => {
-		view.setSize( 
+		view.setSize(
 			view.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
 		)
 	}
@@ -62,49 +59,60 @@ const Header: FunctionComponent<Props> = ({
 	if (!view) return null
 	const isDraggable = view.state.draggable
 	const haveLinkDetachable = view.state.linked?.state.draggable
-	const strTitle = title ?? view.getTitle()
+	const title = view.getTitle()
+	const subTitle = view.getSubTitle()
+	const strIcon = view.getIcon()
 
 	return (
-		<div style={{ ...cssRoot, ...style }}
+		<div style={{ 
+			display: "flex",
+			height: view.state.size != VIEW_SIZE.ICONIZED ? 48 : null, 
+			flexDirection: view.state.size != VIEW_SIZE.ICONIZED ? null : "column", 
+			alignItems: "flex-start", 
+			...style 
+		}}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
-			<div onClick={handleSizeClick}>
-				{icon}
-			</div>
-			<span style={cssTitle}
-				onClick={handleFocus}
-			>{strTitle}</span>
 
-			<div style={cssButtons} >
-				<IconButton
-					onClick={handleClose}
-				><CloseIcon /></IconButton>
+			{!!strIcon && (
+				<div onClick={handleSizeClick}>
+					<img src={strIcon} />
+				</div>
+			)}
 
-				{haveLinkDetachable && <IconButton
-					onClick={handleLinkDetach}
-				><DetachIcon /></IconButton>}
+			<div style={{
+				display: "flex", flex: 1,
+				writingMode: view.state.size != VIEW_SIZE.ICONIZED ? null : "vertical-lr",
+				flexDirection: view.state.size != VIEW_SIZE.ICONIZED ?  "column": "column-reverse",
+				alignSelf: view.state.size != VIEW_SIZE.ICONIZED ?  null: "center",
+			}}>
+				<Label type={LABEL_TYPES.TITLE}
+					onClick={handleFocus}
+				>{title}</Label>
+				<Label type={LABEL_TYPES.SUB_TITLE}
+				>{subTitle}</Label>
 			</div>
+
+			{view.state.size != VIEW_SIZE.ICONIZED && (
+				<div style={cssButtons} >
+					<IconButton
+						onClick={handleClose}
+					><CloseIcon /></IconButton>
+
+					{haveLinkDetachable && <IconButton
+						onClick={handleLinkDetach}
+					><DetachIcon /></IconButton>}
+				</div>
+			)}
 		</div>
 	)
 }
 
 export default Header
 
-const cssRoot: React.CSSProperties = {
-	display: "flex",
-	alignItems: "flex-start",
-	height: "48px",
-}
-const cssTitle: React.CSSProperties = {
-	...layoutSo.state.theme.texts.title,
-	flex: 1,
-	fontFamily: "Darker Grotesque",
-	fontSize: "22px",
-	fontWeight: 800,
-	//color: "#FFF",
-	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-}
+
+
 const cssButtons: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
