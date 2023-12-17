@@ -82,7 +82,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const host = cnnDetailSa.connection.hosts?.[0] ?? ""
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 
-	return (<div style={{ ...cssRoot, ...style }}>
+	return <div style={{ ...cssForm, ...style }}>
 
 		<Label>NAME</Label>
 		<TextInput
@@ -102,12 +102,12 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			subscriptions={subscriptions}
 			onChange={handleSubscriptionsChange}
 		/>
-	</div>)
+	</div>
 }
 
 export default CnnDetailCmp
 
-const cssRoot:React.CSSProperties = {
+const cssForm:React.CSSProperties = {
 	display: "flex", 
 	flexDirection: "column",
 	paddingRight: 8,

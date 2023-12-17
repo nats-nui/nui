@@ -68,6 +68,7 @@ const setup = {
 		},
 		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? 300 : 600,
 		getTitle: (_: void, store?: ViewStore) => "Boooh!",
+		getSubTitle: (_: void, store?: ViewStore) => "...",
 	},
 
 	actions: {

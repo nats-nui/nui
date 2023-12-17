@@ -1,7 +1,7 @@
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import cnnApi from "@/api/connection"
-
+import cnnSo from "@/stores/connections"
 
 
 const setup = {
@@ -14,7 +14,12 @@ const setup = {
 	},
 
 	getters: {
-		getTitle: (_: void, store?: ViewStore) => `SEND ${(store.state as MessageSendState).connectionId}`,
+		getTitle: (_: void, store?: ViewStore) => {
+			const cnnId = (store.state as MessageSendState).connectionId
+			const cnn = cnnSo.getById(cnnId)
+			return `TO ${cnn?.name ?? "..."}`
+		},
+		
 	},
 
 	actions: {

@@ -1,14 +1,17 @@
-import { useState, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 
 
 export interface RenderRowBaseProps<T> {
 	item: T
+	isSelect?: boolean
 }
 
 interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
+
+	select?: number
 	onChangeSelect?: (index: number) => void
 	style?: React.CSSProperties
 }
@@ -16,6 +19,8 @@ interface Props<T> {
 function List<T>({
 	items,
 	RenderRow,
+
+	select,
 	onChangeSelect,
 	style = {},
 }: Props<T>) {
@@ -23,26 +28,27 @@ function List<T>({
 	// STORES
 
 	// HOOKS
-	const [select, setSelect] = useState<number>(null)
 
 	// HANDLERS
 	const handleSelect = (index: number) => {
-		setSelect(index)
 		onChangeSelect?.(index)
 	}
 
 	// RENDER
-	const itemSel = items[select]
+	if (!items) return null
 
 	return <div style={{ ...cssContainer, ...style }}>
 
-		{items?.map((item, index) =>
+		{items.map((item, index) =>
 			<div
 				key={index}
-				style={cssRow(select==index)}
+				style={cssRow(select == index)}
 				onClick={() => handleSelect(index)}
 			>
-				<RenderRow item={item} />
+				<RenderRow
+					item={item}
+					isSelect={index == select}
+				/>
 			</div>
 		)}
 
@@ -52,7 +58,7 @@ function List<T>({
 export default List
 
 const cssContainer: React.CSSProperties = {
-	display: "flex", 
+	display: "flex",
 	flexDirection: "column",
 }
 
