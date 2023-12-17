@@ -2,6 +2,7 @@ package connection
 
 import (
 	"errors"
+	"github.com/nats-io/nats.go"
 	"strings"
 	"sync"
 )
@@ -83,5 +84,29 @@ func (p *ConnPool[T]) refresh(id string) error {
 }
 
 func natsBuilder(connection *Connection) (*NatsConn, error) {
-	return NewNatsConn(strings.Join(connection.Hosts, ", "))
+	var options []nats.Option
+	options = appendAuthOption(connection, options)
+	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
+}
+
+func appendAuthOption(connection *Connection, options []nats.Option) []nats.Option {
+	if len(connection.Auth) == 0 {
+		return options
+	}
+	preferredAuth := connection.Auth[0]
+	switch preferredAuth.Mode {
+	case "":
+		return options
+	case AuthModeNone:
+		return options
+	case AuthModeToken:
+		return append(options, nats.Token(preferredAuth.Token))
+	case AuthModeUserPassword:
+		return append(options, nats.UserInfo(preferredAuth.Username, preferredAuth.Password))
+	case AuthModeJwt:
+		return append(options, nats.UserJWTAndSeed(preferredAuth.Jwt, preferredAuth.NKeySeed))
+	case AuthModeCredsFile:
+		return append(options, nats.UserCredentials(preferredAuth.Creds))
+	}
+	return options
 }

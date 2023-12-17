@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
@@ -74,6 +75,29 @@ func (s *NuiTestSuite) TestPubSub() {
 
 	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
+}
+
+func (s *NuiTestSuite) TestRequestResponse() {
+	connId := s.defaultConn()
+
+	// create a subscription with s.nc that wait for requests and say "hi" as response
+	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
+		err := s.nc.Publish(m.Reply, []byte("hi"))
+		s.NoError(err)
+	})
+	defer sub.Unsubscribe()
+	time.Sleep(10 * time.Millisecond)
+
+	//send request and read response via nui rest
+	s.e.POST("/api/connection/" + connId + "/request").
+		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
+		Expect().Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
+
+}
+
+func (s *NuiTestSuite) TestConnectionWithCred() {
+	_, err := nats.Connect("tls://connect.ngs.global", nats.UserCredentials("/home/mat/.nats/ngs_creds.creds"))
+	s.NoError(err)
 }
 
 func TestNuiTestSuite(t *testing.T) {

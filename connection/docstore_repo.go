@@ -65,7 +65,7 @@ func (r *DocStoreConnRepo) Save(c *Connection) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	return c, nil
+	return r.GetById(c.Id)
 }
 
 func (r *DocStoreConnRepo) Remove(id string) error {
