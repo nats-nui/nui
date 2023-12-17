@@ -18,6 +18,9 @@ const AuthModeUserPassword = "auth_user_password"
 const AuthModeJwt = "auth_jwt"
 const AuthModeCredsFile = "auth_creds_file"
 
+const StatusConnected = "connected"
+const StatusDisconnected = "disconnected"
+
 type Auth struct {
 	Mode     string `json:"mode" `
 	Username string `json:"username" `

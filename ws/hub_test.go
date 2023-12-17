@@ -35,6 +35,7 @@ func (m *mockSubscription) Unsubscribe() error {
 type mockConnection struct {
 	Subs            map[string]*mockSubscription
 	StatusChangedCh []chan connection.ConnStatusChanged
+	NatsStatus      nats.Status
 }
 
 func (m *mockConnection) ChanSubscribe(subj string, ch chan *nats.Msg) (*mockSubscription, error) {
@@ -56,6 +57,10 @@ func (m *mockConnection) ObserveConnectionEvents(ctx context.Context) <-chan con
 		}
 	}()
 	return ch
+}
+
+func (m *mockConnection) Status() nats.Status {
+	return m.NatsStatus
 }
 
 type hubSuite struct {
@@ -109,6 +114,7 @@ func TestHub_ListenRequests(t *testing.T) {
 	var received2 *NatsMsg
 
 	go func() {
+		_ = <-msg
 		received1 = (<-msg).(*NatsMsg)
 		received2 = (<-msg).(*NatsMsg)
 	}()
@@ -133,10 +139,12 @@ func TestHub_HandleConnectionEvents(t *testing.T) {
 
 	var received1 *ConnectionStatus
 	var received2 *ConnectionStatus
+	var received3 *ConnectionStatus
 
 	go func() {
 		received1 = (<-msg).(*ConnectionStatus)
 		received2 = (<-msg).(*ConnectionStatus)
+		received3 = (<-msg).(*ConnectionStatus)
 	}()
 
 	require.EventuallyWithT(t, func(c *assert.CollectT) {
@@ -149,10 +157,12 @@ func TestHub_HandleConnectionEvents(t *testing.T) {
 	require.EventuallyWithT(t, func(c *assert.CollectT) {
 		assert.NotNil(c, received1)
 		assert.NotNil(c, received2)
-		if received1 == nil || received2 == nil {
+		assert.NotNil(c, received3)
+		if received1 == nil || received2 == nil || received3 == nil {
 			return
 		}
 		assert.Equal(c, received1.Status, Disconnected)
-		assert.Equal(c, received2.Status, Reconnected)
+		assert.Equal(c, received2.Status, Disconnected)
+		assert.Equal(c, received3.Status, Reconnected)
 	}, 1*time.Second, time.Millisecond*20)
 }
