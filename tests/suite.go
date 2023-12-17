@@ -18,6 +18,7 @@ type NuiTestSuite struct {
 	suite.Suite
 	NatsServer          *server.Server
 	NuiServer           *nuiapp.App
+	nuiServerPort       string
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
 	e                   *httpexpect.Expect
@@ -34,6 +35,7 @@ func (s *NuiTestSuite) SetupSuite() {
 }
 
 func (s *NuiTestSuite) SetupTest() {
+	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 4000)
 	var err error
 	s.e = s.newE()
 	s.startNatsServer(err)
@@ -50,7 +52,7 @@ func (s *NuiTestSuite) startNuiServer(err error) {
 	nuiSvc, err := nuiapp.Setup(":memory:")
 	s.NoError(err)
 
-	s.NuiServer = nuiapp.NewServer(strconv.Itoa(rand.Intn(1000)+4000), nuiSvc)
+	s.NuiServer = nuiapp.NewServer(s.nuiServerPort, nuiSvc)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
 	go func() {
@@ -89,6 +91,7 @@ func (s *NuiTestSuite) newE() *httpexpect.Expect {
 func (s *NuiTestSuite) TearDownTest() {
 	s.NatsServer.Shutdown()
 	s.NuiServerCancelFunc()
+	s.nc.Close()
 }
 
 func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {
@@ -98,5 +101,5 @@ func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {
 }
 
 func (s *NuiTestSuite) nuiHost() string {
-	return "http://localhost:" + s.NuiServer.Port
+	return "http://localhost:" + s.nuiServerPort
 }
