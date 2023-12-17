@@ -35,6 +35,24 @@ input::selection {
   color: #393939;
 }
 
+/**** TEXT AREA ****/
+textarea {
+  font-family: 'Raleway', sans-serif;
+  border: none;
+  min-width: 0;
+  resize: none;
+  /* width: 100%; */
+}
+textarea:focus {
+  outline: none;
+}
+textarea:disabled {
+  opacity: 0.6;
+}
+textarea::selection {
+  background: #BBFB35;
+  color: #393939;
+}
 
 /**** SCROLLBAR ****/
 /* width */

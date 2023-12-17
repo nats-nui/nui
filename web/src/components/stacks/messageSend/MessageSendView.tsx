@@ -2,16 +2,13 @@ import imgMsg from "@/assets/mg-hdr.svg"
 import Header from "@/components/Header"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
-import Dialog from "@/components/dialogs/Dialog"
 import TextArea from "@/components/input/TextArea"
-import List from "@/components/lists/List"
-import SubscriptionRow from "@/components/lists/rows/SubscriptionRow"
 import cnnSo from "@/stores/connections"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { COLOR_VAR } from "@/stores/layout"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/send"
-import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
+import SubjectsDialog from "./SubjectsDialog"
 
 
 
@@ -41,19 +38,12 @@ const MessageSendView: FunctionComponent<Props> = ({
 		if (select) return
 		sendSo.setSubsOpen(!select)
 	}
-	const handleSubChange = (index: number) => {
-		sendSo.setSubject(subs[index].subject)
-		sendSo.setSubsOpen(false)
-	}
-	const handleSubsClose = () => {
-		sendSo.setSubsOpen(false)
-	}
-// {"pippo":34}
+
 	// RENDER
 	const cnn = cnnSo.getById(sendSa.connectionId)
 	const subs = cnn?.subscriptions ?? []
 	return (
-		<div style={{ ...cssContainer, ...style }}>
+		<div style={{ ...cssContainer }}>
 
 			<Header view={sendSo} icon={<img src={imgMsg} />} />
 
@@ -71,23 +61,14 @@ const MessageSendView: FunctionComponent<Props> = ({
 				/>
 			</ActionGroup>
 
-			<TextArea
-				value={sendSa.text}
-				onChange={handleTextChange}
-			/>
-
-			<Dialog
-				open={sendSa.subsOpen}
-				store={sendSo}
-				onClose={handleSubsClose}
-			>
-				<List<Subscription>
-					style={cssDialogSubs}
-					items={subs}
-					RenderRow={SubscriptionRow}
-					onChangeSelect={handleSubChange}
+			<div style={{ ...cssForm, ...style }}>
+				<TextArea style={{ flex: 1 }}
+					value={sendSa.text}
+					onChange={handleTextChange}
 				/>
-			</Dialog>
+			</div>
+
+			<SubjectsDialog store={sendSo} />
 		</div>
 	)
 }
@@ -103,10 +84,9 @@ const cssContainer: React.CSSProperties = {
 	width: "300px",
 }
 
-const cssDialogSubs: React.CSSProperties = {
-	width: 70,
+const cssForm: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
 	flex: 1,
-	padding: '10px 15px',
-	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].fg,
+	marginLeft: 8,
 }

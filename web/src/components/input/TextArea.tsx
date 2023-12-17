@@ -35,6 +35,5 @@ export default TextArea
 const cssRoot: React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.default.bg,
 	color: layoutSo.state.theme.palette.default.fg,
-	//border: 'none',
 	padding: '5px 7px',
 }
