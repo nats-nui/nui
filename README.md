@@ -11,17 +11,39 @@
   "id" <uuid>,
   "name: <string>,
   "hosts": ["host1","host2"],
-  "subscriptions": []<subscribtion>
+  "subscriptions": []<subscribtion>,
+  "auth": []<auth>
 }
 ```
 
-### Subscription
+#### Subscription
 
 ```json
 {
   "subject": <string>
 }
 ```
+
+#### Auth
+
+```json
+{
+  "mode" : <mode>
+  "username" : <string>
+  "password" :  <string>
+  "token" : <string>
+  "jwt" :  <string>
+  "nkey" : <string>
+  "creds" :  <string>
+}
+
+```
+modes:
+- "auth_none" -> no other info to set
+- "auth_token" -> use token field
+- "auth_user_password" -> use username and password fields
+- "auth_jwt" -> use jwt and nkey fields
+- "auth_creds_file" -> use creds field (local path to a file)
 
 #### CRUD on connection
 ```
