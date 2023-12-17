@@ -35,11 +35,6 @@ const MessagesView: FunctionComponent<Props> = ({
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
-	useEffect(() => {
-		if (!cnnSa.all || cnnSa.all.length == 0) return
-		msgSo.connect()
-		return () => msgSo.disconnect()
-	}, [cnnSa.all])
 
 	// HANDLER
 

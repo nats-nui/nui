@@ -30,7 +30,7 @@ const Header: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleClose = _ => {
-		docSo.remove({ view, anim: true })
+		view.onDestroy()
 	}
 
 	const handleDragStart: React.DragEventHandler = (e) => {
@@ -52,7 +52,7 @@ const Header: FunctionComponent<Props> = ({
 	const handleFocus = (e) => {
 		e.stopPropagation()
 		const elm = document.getElementById(getID(view.state))
-		elm?.scrollIntoView({ behavior: "smooth", block: "center" })
+		elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 	}
 
 	// RENDER
@@ -64,34 +64,25 @@ const Header: FunctionComponent<Props> = ({
 	const strIcon = view.getIcon()
 
 	return (
-		<div style={{ 
-			display: "flex",
-			height: view.state.size != VIEW_SIZE.ICONIZED ? 48 : null, 
-			flexDirection: view.state.size != VIEW_SIZE.ICONIZED ? null : "column", 
-			alignItems: "flex-start", 
-			...style 
-		}}
+		<div style={{ ...cssRoot(view.state.size), ...style }}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
-
 			{!!strIcon && (
 				<div onClick={handleSizeClick}>
 					<img src={strIcon} />
 				</div>
 			)}
 
-			<div style={{
-				display: "flex", flex: 1,
-				writingMode: view.state.size != VIEW_SIZE.ICONIZED ? null : "vertical-lr",
-				flexDirection: view.state.size != VIEW_SIZE.ICONIZED ?  "column": "column-reverse",
-				alignSelf: view.state.size != VIEW_SIZE.ICONIZED ?  null: "center",
-			}}>
-				<Label type={LABEL_TYPES.TITLE}
+			<div style={cssTitle(view.state.size)}>
+				<Label
+					type={LABEL_TYPES.TITLE}
 					onClick={handleFocus}
 				>{title}</Label>
-				<Label type={LABEL_TYPES.SUB_TITLE}
-				>{subTitle}</Label>
+
+				{subTitle && (
+					<Label type={LABEL_TYPES.SUB_TITLE}>{subTitle}</Label>
+				)}
 			</div>
 
 			{view.state.size != VIEW_SIZE.ICONIZED && (
@@ -111,7 +102,28 @@ const Header: FunctionComponent<Props> = ({
 
 export default Header
 
+const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
+	display: "flex",
+	height: size != VIEW_SIZE.ICONIZED ? 48 : null,
+	flexDirection: size != VIEW_SIZE.ICONIZED ? null : "column",
+	alignItems: "flex-start",
+})
 
+const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
+	if (size == VIEW_SIZE.ICONIZED) {
+		return {
+			display: "flex", flex: 1,
+			writingMode: "vertical-lr",
+			flexDirection: "column-reverse",
+			alignSelf: "center",
+		}
+	} else {
+		return {
+			display: "flex", flex: 1,
+			flexDirection: "column",
+		}
+	}
+}
 
 const cssButtons: React.CSSProperties = {
 	display: "flex",

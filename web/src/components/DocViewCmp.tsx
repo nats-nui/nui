@@ -39,10 +39,8 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		...cssDoc,
 		borderRadius: inRoot ? 10 : "0px 10px 10px 0px",
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
-
-		width: view.getWidth(),
 		zIndex: deep,
-		boxShadow: layoutSo.state.theme.shadows[0],
+		width: view.getWidth(),
 		...view.getStyAni(),
 	}
 	const styDoc = {
@@ -97,6 +95,7 @@ const cssDoc: React.CSSProperties = {
 	color: layoutSo.state.theme.palette.default.fg,
 	backgroundColor: layoutSo.state.theme.palette.default.bg,
 	transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+	boxShadow: layoutSo.state.theme.shadows[0],
 }
 
 const cssDialog = (deep: number): React.CSSProperties => ({

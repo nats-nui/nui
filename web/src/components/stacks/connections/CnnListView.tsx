@@ -36,7 +36,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelectConnection = (cnn: Connection) => cnnListSo.select(cnn)
 	const handleNewConnection = () => {
-		cnnListSo.create()
+		cnnListSo.onCreate()
 		
 	}
 	const handleDelConnection = () => {

@@ -2,6 +2,7 @@ import { ANIM_TIME, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
 import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
 import { COLOR_VAR } from "../layout"
+import docSo from "@/stores/docs"
 
 
 
@@ -76,6 +77,12 @@ const setup = {
 	},
 
 	actions: {
+		// ABSTRACT
+		onCreate: (_: void, store?: ViewStore) => {},
+		// ABSTRACT
+		onDestroy: (_: void, store?: ViewStore) => {
+			docSo.remove({ view: store, anim: true })
+		},
 		setLinked: (view: ViewStore, store?: ViewStore) => {
 			if (!view) {
 				if (!!store.state.linked) {
