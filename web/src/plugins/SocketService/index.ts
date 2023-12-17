@@ -1,65 +1,13 @@
 import { Reconnect } from "./reconnect.js";
+import { MSG_TYPE, PayloadMessage, SocketMessage, SocketOptions } from "./types.js";
 
 
-
-export interface SocketOptions {
-	protocol?: string
-	host?: string
-	port?: string
-	base?: string
-	onMessage?: (message: PayloadMessage) => void
-}
-
-export enum MSG_TYPE {
-	/** SUBSCRIPTIONS REQUEST - client */
-	SUB_REQUEST = "subscriptions_req",
-	/** NATS MESSAGE - server */
-	NATS_MESSAGE = "nats_msg",
-	/** CONNECTION STATUS - server */
-	CNN_STATUS = "connection_status",
-	/** ERROR MESSAGE - client server */
-	ERROR = "error",
-}
-
-export enum CNN_STATUS {
-	CONNECTED = "connected",
-	RECONNECTING = "reconnecting",
-	DISCONNECTED = "disconnected",
-}
-
-export interface SocketMessage {
-	type: MSG_TYPE
-	payload: Payload
-}
-
-/** SUBSCRIPTIONS REQUEST - client */
-export type PayloadSub = { 
-	subjects: string[] 
-}
-/** NATS MESSAGE - server */
-export type PayloadMessage = {
-	subject: string
-	payload: string
-}
-/** CONNECTION STATUS - server */
-export type PayloadStaus = {
-	status: CNN_STATUS
-}
-/** ERROR MESSAGE - client server */
-export type PayloadError = {
-	error: string
-}
-
-export type Payload = PayloadSub | PayloadMessage | PayloadStaus | PayloadError
 
 const optionsDefault: SocketOptions = {
 	protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
 	host: window.location.hostname,
 	port: import.meta.env.VITE_API_WS_PORT ?? window.location.port,
 	base: "",
-}
-
-export interface ISocket {
 }
 
 /**
@@ -72,35 +20,35 @@ export class SocketService {
 
 	options: SocketOptions;
 	websocket: WebSocket;
-	cnnIdLast: string = null
-	//ping: Ping;
+	// l'ultimo id connection utilizzato per la connessione WS
+	cnnId: string = null
+	// modulo per la riconnessione
 	reconnect: Reconnect;
-	//commands: Commands;
 
-	onOpen: () => void = null;
+	// callback su apertura connessione
+	onOpen: () => void = null
+	// callback su arrivo messaggio
+	onMessage?: (message: PayloadMessage) => void
 
 	constructor(options: SocketOptions = {}) {
 		this.options = { ...optionsDefault, ...options }
 		this.websocket = null
-
-		//this.ping = new Ping(this)
 		this.reconnect = new Reconnect(this)
-		//this.commands = new Commands(this)
 	}
 
 	/** 
 	 * tenta di aprire il socket
 	 */
-	connect(connId: string = this.cnnIdLast) {
+	connect(connId: string = this.cnnId) {
 		if (this.websocket) return
-		this.cnnIdLast = connId
+		this.cnnId = connId
 		const { protocol, host, port, base } = this.options
-		//console.log( "socket:connecting",connId)
 		this.reconnect.enabled = true
 		try {
 			let url = `${protocol}//${host}:${port}/ws/sub`
 			if (base) url = `${url}/${base}`
 			if (connId) url = `${url}?id=${connId}`
+			console.debug("socket:try_connecting:", url)
 			this.websocket = new WebSocket(url);
 		} catch (error) {
 			this.reconnect.start()
@@ -108,28 +56,28 @@ export class SocketService {
 			return
 		}
 
-		this.websocket.onopen = this.onopen.bind(this);
-		this.websocket.onclose = this.onClose.bind(this);
-		this.websocket.onmessage = this.onMessage.bind(this);
-		this.websocket.onerror = this.onError.bind(this);
+		this.websocket.onopen = this.handleOpen.bind(this);
+		this.websocket.onclose = this.handleClose.bind(this);
+		this.websocket.onmessage = this.handleMessage.bind(this);
+		this.websocket.onerror = this.handleError.bind(this);
 	}
 
 	/** 
-	 * chiude il socket
+	 * libera tutte le risorse
 	 */
-	clear(newToken: string = null) {
+	clear(newCnnId: string = null) {
 		if (!this.websocket) return
 		this.websocket.close()
 		this.websocket = null
-		if (newToken) this.cnnIdLast = newToken
+		if (newCnnId) this.cnnId = newCnnId
 	}
 
 	/** 
 	 * chiude il socket e mantiene chiuso (usato nel logout)
 	 */
 	disconnect() {
-		//console.log("socket:disconnect")		
-		this.cnnIdLast = null
+		console.debug("socket:disconnect")		
+		this.cnnId = null
 		this.reconnect.enabled = false
 		this.reconnect.stop()
 		this.clear()
@@ -138,49 +86,47 @@ export class SocketService {
 	/** 
 	 * invia un messaggio al server
 	 */
-	send(json: any) {
-		const data = JSON.stringify(json)
-		console.debug("FE > BE", data)
-		this.websocket.send(data)
+	send(msg: string) {
+		console.debug("socket:FE>BE:", msg)
+		this.websocket.send(msg)
 	}
 
 	sendSubjects(subjects: string[]) {
-		console.log("sendSubjects", subjects)
-		const msg:SocketMessage = {
+		console.debug("socket:sendSubjects:", subjects)
+		const msg: SocketMessage = {
 			type: MSG_TYPE.SUB_REQUEST,
 			payload: { subjects },
 		}
-		this.send(msg)
+		const msgStr = JSON.stringify(msg)
+		this.send(msgStr)
 	}
 
 	//#region SOCKET EVENT
 
-	onopen(_: Event) {
+	handleOpen(_: Event) {
 		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
-		//this.ping.start()
 		this.onOpen?.()
 	}
 
-	onClose(_: CloseEvent) {
+	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
-		//this.ping.stop()
 		this.clear()
 		this.reconnect.start()
 	}
 
 	/** ricevo un messaggio dal BE */
-	onMessage(e: MessageEvent) {
+	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS:
 				break
 			case MSG_TYPE.NATS_MESSAGE:
-				if (!this.options.onMessage) return
+				if (!this.onMessage) return
 				const payload = message.payload as PayloadMessage
-				this.options.onMessage({
+				this.onMessage({
 					subject: payload.subject,
 					payload: atob(payload.payload),
 				})
@@ -190,7 +136,7 @@ export class SocketService {
 		}
 	}
 
-	onError(_: Event) {
+	handleError(_: Event) {
 		//console.log("socket:error:", e)
 	}
 

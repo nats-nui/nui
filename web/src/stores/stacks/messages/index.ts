@@ -1,4 +1,4 @@
-import { PayloadMessage, SocketService } from "@/plugins/SocketService"
+import { SocketService } from "@/plugins/SocketService"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
@@ -10,7 +10,8 @@ import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import srcIcon from "@/assets/msg-hdr.svg"
-
+import { PayloadMessage } from "@/plugins/SocketService/types"
+import { socketPool } from "@/plugins/SocketService/pool"
 
 
 const data = [
@@ -29,9 +30,7 @@ const h: HistoryMessage[] = Array.from({ length: 6 }, (_, i) => ({
 const setup = {
 
 	state: {
-		params: {
-			[PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null
-		},
+		params: { [PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null },
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		history: <HistoryMessage[]>[],
@@ -45,31 +44,23 @@ const setup = {
 			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
 		},
-
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 	},
 
 	actions: {
-		/** mi connetto al websocket */
-		connect(_: void, store?: MessagesStore) {
-			const cnn = store.getConnection()
-			if (!cnn) return
-			store.setSubscriptions([...cnn.subscriptions])
-
-			//[II] mettere tutti i socketservices all'interno di un servizio esterno
-			store.ss = new SocketService({
-				onMessage: message => store.addInHistory(message)
-			})
-			store.ss.onOpen = () => store.sendSubscriptions()
-			store.ss.connect(store.getParam(PARAMS_MESSAGES.CONNECTION_ID))
+		onCreate(_: void, store?: ViewStore) {
+			const msgSo = <MessagesStore>store
+			const cnn = msgSo.getConnection()
+			console.log("CREATE", store.state.uuid, cnn.id)
+			const ss = socketPool.create(store.state.uuid, cnn.id)
+			ss.onOpen = () => msgSo.sendSubscriptions()
+			ss.onMessage = message => msgSo.addInHistory(message)
 		},
-		/** disconnessione websocket */
-		disconnect(_: void, store?: MessagesStore) {
-			console.log("disconnect")
-			//store.ss.sendSubjects([])
-			store.ss.disconnect()
-			store.ss = null
+		onDestroy(_: void, store?: ViewStore) {
+			console.log("DESTROY")
+			socketPool.destroy(store.state.uuid)
+			docSetup.actions.onDestroy(null, store)
 		},
 		/** aggiungo alla history di questo stack */
 		addInHistory(message: PayloadMessage, store?: MessagesStore) {
@@ -86,8 +77,8 @@ const setup = {
 			const subjects = store.state.subscriptions
 				?.filter(s => !!s?.subject && !s.disabled)
 				.map(s => s.subject) ?? []
-			if (store.state.lastSubjects && store.state.lastSubjects.length == subjects.length  && subjects.every(s => store.state.lastSubjects.includes(s))) return
-			store.ss.sendSubjects(subjects)
+			if (store.state.lastSubjects && store.state.lastSubjects.length == subjects.length && subjects.every(s => store.state.lastSubjects.includes(s))) return
+			socketPool.getById(store.state.uuid).sendSubjects(subjects)
 			store.state.lastSubjects = subjects
 		},
 		/** apertura CARD MESSAGE-DETAIL */
@@ -135,7 +126,6 @@ export type MessagesActions = typeof setup.actions
 export type MEssagesMutators = typeof setup.mutators
 export interface MessagesStore extends ViewStore, StoreCore<MessagesState>, MessagesGetters, MessagesActions, MEssagesMutators {
 	state: MessagesState
-	ss: SocketService
 }
 const msgSetup = mixStores(docSetup, setup)
 export default msgSetup
