@@ -95,11 +95,6 @@ func (s *NuiTestSuite) TestRequestResponse() {
 
 }
 
-func (s *NuiTestSuite) TestConnectionWithCred() {
-	_, err := nats.Connect("tls://connect.ngs.global", nats.UserCredentials("/home/mat/.nats/ngs_creds.creds"))
-	s.NoError(err)
-}
-
 func TestNuiTestSuite(t *testing.T) {
 	suite.Run(t, new(NuiTestSuite))
 }
