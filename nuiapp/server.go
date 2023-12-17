@@ -109,6 +109,14 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
+	// refresh the connection in the pool if exists
+	_, err = a.nui.ConnPool.Get(conn.Id)
+	if err == nil {
+		err := a.nui.ConnPool.Refresh(conn.Id)
+		if err != nil {
+			return c.Status(500).JSON(err.Error())
+		}
+	}
 	return c.JSON(conn)
 }
 
@@ -182,7 +190,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 		return c.Status(500).SendString(err.Error())
 	}
 	reply := &struct {
-		Payload []byte `json:"data"`
+		Payload []byte `json:"paylo"`
 	}{Payload: msg.Data}
 	return c.JSON(reply)
 }

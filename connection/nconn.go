@@ -81,8 +81,8 @@ func (n *NatsConn) Close() {
 	n.connectionEventsSubs = nil
 }
 
-func NewNatsConn(hosts string) (*NatsConn, error) {
-	return newWithBuilder(hosts, nil, buildConn, false)
+func NewNatsConn(hosts string, options ...nats.Option) (*NatsConn, error) {
+	return newWithBuilder(hosts, options, buildConn, false)
 }
 
 func newMocked() (*NatsConn, error) {
