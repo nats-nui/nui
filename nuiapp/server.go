@@ -190,7 +190,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 		return c.Status(500).SendString(err.Error())
 	}
 	reply := &struct {
-		Payload []byte `json:"paylo"`
+		Payload []byte `json:"payload"`
 	}{Payload: msg.Data}
 	return c.JSON(reply)
 }
