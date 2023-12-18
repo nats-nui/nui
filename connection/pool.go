@@ -84,7 +84,9 @@ func (p *ConnPool[T]) refresh(id string) error {
 }
 
 func natsBuilder(connection *Connection) (*NatsConn, error) {
-	var options []nats.Option
+	options := []nats.Option{
+		nats.RetryOnFailedConnect(true),
+	}
 	options = appendAuthOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
 }

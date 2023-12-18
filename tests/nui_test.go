@@ -73,7 +73,9 @@ func (s *NuiTestSuite) TestPubSub() {
 		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk="}`)).
 		Expect().Status(http.StatusOK)
 
+	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
 	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
+	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
 }
 
@@ -93,6 +95,27 @@ func (s *NuiTestSuite) TestRequestResponse() {
 		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
 		Expect().Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
 
+}
+
+func (s *NuiTestSuite) TestConnectionEvents() {
+	s.NatsServer.Shutdown()
+	time.Sleep(10 * time.Millisecond)
+	connId := s.defaultConn()
+	ws := s.ws("/ws/sub", "id="+connId)
+	defer ws.Disconnect()
+
+	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
+	s.startNatsServer()
+
+	ws.WithReadTimeout(5000 * time.Millisecond).Expect().Body().Contains("connected")
+
+	ws2 := s.ws("/ws/sub", "id="+connId)
+	defer ws2.Disconnect()
+	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("connected")
+
+	s.NatsServer.Shutdown()
+	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
+	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 }
 
 func TestNuiTestSuite(t *testing.T) {
