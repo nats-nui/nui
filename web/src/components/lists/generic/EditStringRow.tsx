@@ -1,31 +1,16 @@
 import IconButton from "@/components/buttons/IconButton"
-import IconToggle from "@/components/buttons/IconToggle"
-import CheckOffIcon from "@/icons/CheckOffIcon"
-import CheckOnIcon from "@/icons/CheckOnIcon"
 import CloseIcon from "@/icons/CloseIcon"
-import { Subscription } from "@/types"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
+import { RenderRowBaseProps } from "./EditList"
 
 
-interface Props {
-	sub: Subscription
-	focus?: boolean
-	onChange?: (sub: Subscription) => void
-	onFocus?: () => void
-	onDelete?: () => void
 
-	noDelete?: boolean
-	noDisable?: boolean
-}
-
-const SubscriptionRow: FunctionComponent<Props> = ({
-	sub,
+const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
+	item,
 	focus,
 	onChange,
-	onFocus,
 	onDelete,
-	noDelete,
-	noDisable,
+	onFocus,
 }) => {
 
 	// HOOKS
@@ -36,42 +21,42 @@ const SubscriptionRow: FunctionComponent<Props> = ({
 	}, [focus])
 
 	// HANDLER
-	const handleChangeSubject = (e) => {
-		const newSub: Subscription = { ...sub, subject: e.target.value }
-		onChange?.(newSub)
+	const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+		const newItem = e.target.value
+		onChange?.(newItem)
 	}
 	const handleEnter = () => setEnter(true)
 	const handleLeave = () => setEnter(false)
 	const handleFocus = () => onFocus?.()
 	const handleDelete = () => onDelete?.()
-	const handleChangeEnabled = (enabled) => {
-		const newSub: Subscription = { ...sub, disabled: !enabled }
-		onChange?.(newSub)
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+		switch (event.key) {
+			case "Delete":
+			case "Backspace":
+				if ( item?.length>0 ) return
+				event.preventDefault()
+				onDelete?.()
+				break
+		}
 	}
 
 	// RENDER
-	const delVisible = enter && !noDelete
+	const delVisible = enter
 
 	return <div
-		style={{ ...cssRow, opacity: sub.disabled ? 0.5 : 1 }}
+		style={cssRow}
 		onMouseEnter={handleEnter}
 		onMouseLeave={handleLeave}
-		onFocus={handleFocus}
+		
 	>
-		{!noDisable && (
-			<IconToggle
-				check={!sub.disabled}
-				onChange={handleChangeEnabled}
-				trueIcon={<CheckOnIcon />}
-				falseIcon={<CheckOffIcon />}
-			/>
-		)}
 
 		<input style={cssInput}
 			type="text"
 			ref={inputRef}
-			value={sub.subject}
-			onChange={handleChangeSubject}
+			value={item}
+			onChange={handleChange}
+			onKeyDown={handleKeyDown}
+			onFocus={handleFocus}
 		/>
 
 		{delVisible && (
@@ -82,7 +67,7 @@ const SubscriptionRow: FunctionComponent<Props> = ({
 	</div>
 }
 
-export default SubscriptionRow
+export default EditStringRow
 
 const cssRow: React.CSSProperties = {
 	minHeight: 24,

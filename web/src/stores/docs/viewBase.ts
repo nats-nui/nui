@@ -69,20 +69,23 @@ const setup = {
 			return style
 		},
 
+		//#region OVERRIDABLE
 		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? 300 : 600,
 		getTitle: (_: void, store?: ViewStore):string => null,
 		getSubTitle: (_: void, store?: ViewStore):string => null,
 		getIcon: (_: void, store?: ViewStore):string => null,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
+		//#endregion
 	},
 
 	actions: {
-		// ABSTRACT
+		//#region OVERRIDABLE
 		onCreate: (_: void, store?: ViewStore) => {},
-		// ABSTRACT
 		onDestroy: (_: void, store?: ViewStore) => {
 			docSo.remove({ view: store, anim: true })
 		},
+		//#endregion
+
 		setLinked: (view: ViewStore, store?: ViewStore) => {
 			if (!view) {
 				if (!!store.state.linked) {

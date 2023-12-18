@@ -3,7 +3,7 @@ import navSo from "@/stores/navigation"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "./viewBase"
 import { stringToViewsState, viewsToString } from "./utils/urlTransform"
-import { buildStore } from "./utils/factory"
+import { buildStore, getID } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"
 import { delayAnim } from "@/utils/time"
 
@@ -15,7 +15,7 @@ import { delayAnim } from "@/utils/time"
 const setup = {
 
 	state: {
-		focus: <number>null,
+		focus: <ViewStore>null,
 		all: <ViewStore[]>[],
 	},
 
@@ -29,6 +29,11 @@ const setup = {
 	},
 
 	actions: {
+		focus(view:ViewStore, store?: DocStore) {
+			const elm = document.getElementById(getID( view.state))
+			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
+			store.setFocus(view)
+		},
 		async add(
 			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
 			store?: DocStore
@@ -127,7 +132,7 @@ const setup = {
 			navSo.setParams(["docs", viewsToString(views)])
 			return { all }
 		},
-		setFocus: (focus: number) => ({ focus }),
+		setFocus: (focus: ViewStore) => ({ focus }),
 	},
 }
 

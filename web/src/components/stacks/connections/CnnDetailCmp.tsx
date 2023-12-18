@@ -7,6 +7,8 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import layoutSo from "@/stores/layout"
+import EditList from "@/components/lists/generic/EditList"
+import EditStringRow from "@/components/lists/generic/EditStringRow"
 
 
 
@@ -27,12 +29,6 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
 
 	// HOOKs
-	// const refDialog = useMemo(() => {
-	// 	if (!cnnDetailSa.dialogOpen) return null
-	// 	const elm = document.getElementById(`dialog_${cnnDetailSa.uuid}`)
-	// 	return elm
-	// }, [cnnDetailSa.dialogOpen])
-
 
 	// HANDLER
 	const handleChangeName = (name: string) => {
@@ -40,46 +36,22 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		cnnDetailSo.setConnection(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
-	const handleChangeHost = (host: string) => {
-		const cnn = { ...cnnDetailSa.connection, hosts: [host] }
+	const handleHostsChange = (hosts: string[]) => {
+		const cnn = { ...cnnDetailSa.connection, hosts }
 		cnnDetailSo.setConnection(cnn)
-		if (!isNew) cnnSo.updateConnection(cnn)
+		//if (!isNew) cnnSo.updateConnection(cnn)
 	}
-	// const handleClickSubs = () => {
-	// 	cnnDetailSo.setSubOpen(true)
-	// }
-	// const handleCloseDetail = () => {
-	// 	cnnDetailSo.setSubOpen(false)
-	// }
-	// const handleCreate = async () => {
-	// 	const cnn = await cnnSo.create(cnnDetailSa.connection)
-	// 	cnnDetailSo.setConnection(cnn)
-	// }
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
 		const newConnection = { ...cnnDetailSa.connection, subscriptions }
 		cnnDetailSo.setConnection(newConnection)
 		cnnSo.modify(newConnection)
 	}
 
-	// const handleChangeSubs = (newItems: Subscription[]) => {
-	// 	cnnDetailSa.connection.subscriptions = newItems
-	// 	const newConnection = { ...cnnDetailSa.connection }
-	// 	cnnDetailSo.setConnection(newConnection)
-	// 	cnnSo.modify(newConnection)
-	// }
-
 	// RENDER
-	// const subscrsDlg = <SubscriptionsDlg
-	// 	parentSo={parentSo}
-	// 	onClose={() => parentSo.setDialogCmp(null)}
-	// />
-
 	const isNew = cnnDetailSa.connection?.id == null
-
 	if (cnnDetailSa.connection == null) return null
-
 	const name = cnnDetailSa.connection.name ?? ""
-	const host = cnnDetailSa.connection.hosts?.[0] ?? ""
+	const hosts = cnnDetailSa.connection.hosts ?? []
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 
 	return <div style={{ ...cssForm, ...style }}>
@@ -91,9 +63,12 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		/>
 
 		<Label>HOST</Label>
-		<TextInput
-			value={host}
-			onChange={handleChangeHost}
+		<EditList<string>
+			style={cssList}
+			items={hosts}
+			onChangeItems={handleHostsChange}
+			fnNewItem={()=>"<new>"}
+			RenderRow={EditStringRow}
 		/>
 
 		<Label>SUBSCRIPTIONS</Label>
@@ -102,6 +77,13 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			subscriptions={subscriptions}
 			onChange={handleSubscriptionsChange}
 		/>
+
+		<Label>AUTH PATH</Label>
+		{/* <TextInput
+			value={host}
+			onChange={handleChangeHost}
+		/> */}
+
 	</div>
 }
 

@@ -50,9 +50,8 @@ const Header: FunctionComponent<Props> = ({
 		)
 	}
 	const handleFocus = (e) => {
-		e.stopPropagation()
-		const elm = document.getElementById(getID(view.state))
-		elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
+		//e.stopPropagation()
+		docSo.focus(view)
 	}
 
 	// RENDER

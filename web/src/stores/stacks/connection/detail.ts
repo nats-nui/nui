@@ -7,6 +7,7 @@ import { buildStore } from "../../docs/utils/factory"
 import { MessagesState, MessagesStore } from "../messages"
 import { PARAMS_MESSAGES } from "../messages/utils"
 import { CnnListStore } from "./list"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -23,13 +24,18 @@ const setup = {
 	},
 
 	getters: {
+		
+
 		getConnection(_: void, store?: CnnDetailStore) {
 			const cnnId = (<CnnListStore>store.state.parent).getSelectId()
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
 		},
 
+		//#region OVERRIDABLE
 		getTitle: (_: void, store?: ViewStore) => "DETAIL",
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
+		//#endregion
 	},
 
 	actions: {
