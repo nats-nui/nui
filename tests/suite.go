@@ -28,27 +28,27 @@ type NuiTestSuite struct {
 func (s *NuiTestSuite) SetupSuite() {
 	s.natsServerOpts = &server.Options{
 		Host:   "localhost",
-		Port:   -1,
 		NoLog:  true,
 		NoSigs: true,
 	}
 }
 
 func (s *NuiTestSuite) SetupTest() {
-	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 4000)
-	var err error
+	s.natsServerOpts.Port = rand.Intn(1000) + 4000
+	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 3000)
 	s.e = s.newE()
-	s.startNatsServer(err)
-	s.startNuiServer(err)
-	s.connectNatsClient(err)
+	s.startNatsServer()
+	s.startNuiServer()
+	s.connectNatsClient()
 }
 
-func (s *NuiTestSuite) connectNatsClient(err error) {
-	s.nc, err = nats.Connect(s.NatsServer.Addr().String())
+func (s *NuiTestSuite) connectNatsClient() {
+	nc, err := nats.Connect(s.NatsServer.Addr().String())
 	s.NoError(err)
+	s.nc = nc
 }
 
-func (s *NuiTestSuite) startNuiServer(err error) {
+func (s *NuiTestSuite) startNuiServer() {
 	nuiSvc, err := nuiapp.Setup(":memory:")
 	s.NoError(err)
 
@@ -62,10 +62,10 @@ func (s *NuiTestSuite) startNuiServer(err error) {
 	s.e.GET("/health").WithMaxRetries(5).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
 }
 
-func (s *NuiTestSuite) startNatsServer(err error) {
-	s.NatsServer, err = server.NewServer(s.natsServerOpts)
+func (s *NuiTestSuite) startNatsServer() {
+	natsServer, err := server.NewServer(s.natsServerOpts)
 	s.NoError(err)
-
+	s.NatsServer = natsServer
 	w := sync.WaitGroup{}
 	w.Add(1)
 	go func() {

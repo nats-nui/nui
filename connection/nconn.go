@@ -97,9 +97,10 @@ func newWithBuilder(hosts string, options []nats.Option, builder buildFunc, mock
 		return nil, err
 	}
 	nConn := &NatsConn{Conn: natsConn, mockMode: mockMode}
-	natsConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr("disconnected"))
-	natsConn.SetReconnectHandler(nConn.buildStatusHandler("reconnected"))
-	natsConn.SetClosedHandler(nConn.buildStatusHandler("closed"))
+
+	natsConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected))
+	natsConn.SetReconnectHandler(nConn.buildStatusHandler(StatusConnected))
+	natsConn.SetClosedHandler(nConn.buildStatusHandler(StatusDisconnected))
 
 	return nConn, nil
 }
