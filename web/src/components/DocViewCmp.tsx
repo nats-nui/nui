@@ -6,6 +6,7 @@ import DocCmp from "./DocCmp"
 import layoutSo from "@/stores/layout"
 import { getID } from "@/stores/docs/utils/factory"
 import Header from "./Header"
+import docSo from "@/stores/docs"
 
 
 
@@ -21,6 +22,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view) as ViewState
+	const docSa = useStore(docSo)
 
 	// HOOKS
 	useEffect(() => {
@@ -33,6 +35,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
+	const haveFocus = docSa.focus == view
 
 	// styles
 	const styContainerDoc: React.CSSProperties = {
@@ -40,7 +43,8 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		borderRadius: inRoot ? 10 : "0px 10px 10px 0px",
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
-		width: view.getWidth(),
+		width: view.getWidth() + (haveFocus ? 100 : 0),
+		...haveFocus ? { /*boxSizing: "border-box",*/ border: `1px solid ${layoutSo.state.theme.palette.var[0].bg}` } : {},
 		...view.getStyAni(),
 	}
 	const styDoc = {
