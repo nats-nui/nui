@@ -5,7 +5,6 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
-	"github.com/pricelessrabbit/nui/nuiapp"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
 	"net/http"
@@ -17,7 +16,7 @@ import (
 type NuiTestSuite struct {
 	suite.Suite
 	NatsServer          *server.Server
-	NuiServer           *nuiapp.App
+	NuiServer           *nui.App
 	nuiServerPort       string
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
@@ -49,10 +48,10 @@ func (s *NuiTestSuite) connectNatsClient() {
 }
 
 func (s *NuiTestSuite) startNuiServer() {
-	nuiSvc, err := nuiapp.Setup(":memory:")
+	nuiSvc, err := nui.Setup(":memory:")
 	s.NoError(err)
 
-	s.NuiServer = nuiapp.NewServer(s.nuiServerPort, nuiSvc)
+	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
 	go func() {
