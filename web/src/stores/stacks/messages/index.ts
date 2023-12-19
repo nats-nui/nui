@@ -52,13 +52,11 @@ const setup = {
 		onCreate(_: void, store?: ViewStore) {
 			const msgSo = <MessagesStore>store
 			const cnn = msgSo.getConnection()
-			console.log("CREATE", store.state.uuid, cnn.id)
 			const ss = socketPool.create(store.state.uuid, cnn.id)
 			ss.onOpen = () => msgSo.sendSubscriptions()
 			ss.onMessage = message => msgSo.addInHistory(message)
 		},
 		onDestroy(_: void, store?: ViewStore) {
-			console.log("DESTROY")
 			socketPool.destroy(store.state.uuid)
 			docSetup.actions.onDestroy(null, store)
 		},
