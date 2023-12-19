@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/pricelessrabbit/nui/nuiapp"
+	"github.com/pricelessrabbit/nui/nui"
 	"log"
 	"os"
 	"os/signal"
@@ -15,11 +15,11 @@ func main() {
 	dbPath := flag.String("db", ":memory:", "path to db")
 	flag.Parse()
 
-	nui, err := nuiapp.Setup(*dbPath)
+	nuiSvc, err := nui.Setup(*dbPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	server := nuiapp.NewServer(*port, nui)
+	server := nui.NewServer(*port, nuiSvc)
 	ctx, cancel := context.WithCancel(context.Background())
 	err = server.Start(ctx)
 	if err != nil {

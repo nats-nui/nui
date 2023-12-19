@@ -1,4 +1,4 @@
-package nuiapp
+package nui
 
 import (
 	"github.com/pricelessrabbit/nui/connection"
