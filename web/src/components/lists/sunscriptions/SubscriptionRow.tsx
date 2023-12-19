@@ -92,6 +92,4 @@ const cssRow: React.CSSProperties = {
 
 const cssInput: React.CSSProperties = {
 	flex: 1,
-	fontSize: 14,
-	fontWeight: 600,
 }

@@ -87,12 +87,12 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		/>
 
 		<Label>AUTH PATH</Label>
-		{/* <EditList<Auth>
+		<EditList<Auth>
 			style={cssList}
 			items={auths}
 			onChangeItems={handleAuthsChange}
 			RenderRow={EditAuthRow}
-		/> */}
+		/>
 
 	</div>
 }

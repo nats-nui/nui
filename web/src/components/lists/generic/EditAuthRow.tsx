@@ -2,7 +2,9 @@ import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { RenderRowBaseProps } from "./EditList"
-import { Auth } from "@/types"
+import { AUTH_MODE, Auth } from "@/types"
+import Button from "@/components/buttons/Button"
+import Label from "@/components/input/Label"
 
 
 
@@ -21,33 +23,39 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 		if (focus) {
 			inputRef.current?.select()
 		} else {
-			if ( item != null ) return
-			onDelete?.()
+			if (isVoid(item)) onDelete?.()
 		}
 	}, [focus])
 
 	// HANDLER
-	const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-		const newItem = e.target.value
-		onChange?.(newItem)
-	}
 	const handleEnter = () => setEnter(true)
 	const handleLeave = () => setEnter(false)
 	const handleFocus = () => {
 		inputRef.current?.select()
 		onFocus?.()
 	}
-	
 	const handleDelete = () => onDelete?.()
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		switch (event.key) {
-			case "Delete":
-			case "Backspace":
-				if ( item?.length>0 ) return
-				event.preventDefault()
-				onDelete?.()
-				break
+		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
+			event.preventDefault()
+			onDelete?.()
 		}
+	}
+
+
+
+
+
+	const handleFileMode = () => {
+		onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
+		setTimeout(() => inputRef.current?.select(), 100)
+	}
+	const handleNoneMode = () => {
+		onChange({ mode: AUTH_MODE.NONE })
+	}
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value
+		onChange?.({ ...item, creds: value })
 	}
 
 	// RENDER
@@ -57,18 +65,31 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 		style={cssRow}
 		onMouseEnter={handleEnter}
 		onMouseLeave={handleLeave}
-		
 	>
+		{item == null ? (
+			<div style={{ display: "flex", flex: 1 }}>
+				<Button label="NONE" onClick={handleNoneMode} />
+				<Button label="FILE" onClick={handleFileMode} />
+				<Button label="PSW" disabled />
+				<Button label="JWT" disabled />
+			</div>
+		) : item.mode == AUTH_MODE.CREDS_FILE ? (
+			<input style={cssInput}
+				placeholder="path of creds file"
+				type="text"
+				ref={inputRef}
+				value={item.creds}
+				onChange={handleChange}
+				onKeyDown={handleKeyDown}
+				onFocus={handleFocus}
+			/>
+		) : (
+			<Label style={{ flex: 1 }}>NONE</Label>
+		)
 
-		<input style={cssInput}
-			type="text"
-			ref={inputRef}
-			value={item}
-			onChange={handleChange}
-			onKeyDown={handleKeyDown}
-			onFocus={handleFocus}
-			
-		/>
+
+		}
+
 
 		{delVisible && (
 			<IconButton
@@ -80,6 +101,8 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 
 export default EditAuthRow
 
+const isVoid = (item: Auth) => !item || (item.mode == AUTH_MODE.CREDS_FILE && !(item.creds?.length > 0))
+
 const cssRow: React.CSSProperties = {
 	minHeight: 24,
 	display: "flex",
@@ -88,6 +111,4 @@ const cssRow: React.CSSProperties = {
 
 const cssInput: React.CSSProperties = {
 	flex: 1,
-	fontSize: 14,
-	fontWeight: 600,
 }

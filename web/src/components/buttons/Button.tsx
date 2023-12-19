@@ -8,13 +8,15 @@ interface Props {
 	select?: boolean
 	label?: string
 	colorVar?: number
-	onClick?: (e: React.MouseEvent<HTMLDivElement>, select:boolean) => void
+	disabled?: boolean
+	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
 }
 
 const Button: FunctionComponent<Props> = ({
 	select,
 	label,
 	colorVar = 0,
+	disabled,
 	onClick,
 }) => {
 
@@ -26,7 +28,7 @@ const Button: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleEnter = () => setMouseOver(true)
 	const handleLeave = () => setMouseOver(false)
-	const handleClick = (e:React.MouseEvent<HTMLDivElement>) => {
+	const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
 		onClick?.(e, select)
 	}
 
@@ -34,6 +36,7 @@ const Button: FunctionComponent<Props> = ({
 	const styRoot: React.CSSProperties = {
 		...cssRoot,
 		...(mouseOver || select ? cssSelect(colorVar) : {}),
+		...(disabled ? cssDisabled : {}),
 	}
 	return (
 		<div style={styRoot}
@@ -54,7 +57,11 @@ const cssRoot: React.CSSProperties = {
 	borderRadius: 10,
 	padding: '3px 6px',
 }
-const cssSelect = ( colorVar:number ) => ({
+const cssDisabled: React.CSSProperties = {
+	opacity: 0.5,
+	pointerEvents: "none",
+}
+const cssSelect = (colorVar: number): React.CSSProperties => ({
 	backgroundColor: layoutSo.state.theme.palette.var[colorVar].bg,
 	color: layoutSo.state.theme.palette.var[colorVar].fg,
 })
