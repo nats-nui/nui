@@ -91,11 +91,7 @@ const cssRow: React.CSSProperties = {
 }
 
 const cssInput: React.CSSProperties = {
-	minWidth: 50,
-	backgroundColor: 'transparent',
-	border: 'none',
-	color: "currentcolor",
-
+	flex: 1,
 	fontSize: 14,
 	fontWeight: 600,
 }

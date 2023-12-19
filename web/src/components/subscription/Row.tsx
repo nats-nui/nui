@@ -1,6 +1,6 @@
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
-import { RenderRowBaseProps } from "../lists/List"
+import { RenderRowBaseProps } from "../lists/generic/List"
 
 
 

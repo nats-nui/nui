@@ -22,7 +22,8 @@ input {
   font-family: 'Raleway', sans-serif;
   border: none;
   min-width: 0;
-  /* width: 100%; */
+	background-color: transparent;
+  color: currentColor;
 }
 input:focus {
   outline: none;
