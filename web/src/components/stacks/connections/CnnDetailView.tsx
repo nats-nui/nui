@@ -53,31 +53,31 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			style={{ color: layoutSo.state.theme.palette.var[0].fg }}
 		/>
 
-		{isNew && <ActionGroup style={{ marginLeft: -8}}>
-			<Button colorVar={0}
-				label="CREATE"
-				onClick={handleClickNew}
-			/>
-		</ActionGroup>}
+		{isNew && (
+			<ActionGroup style={{ marginLeft: -8 }}>
+				<Button colorVar={0}
+					label="CREATE"
+					onClick={handleClickNew}
+				/>
+			</ActionGroup>
+		)}
 
-		<RowButton style={cssItem}
-			icon={<MessagesIcon />}
-			label="MESSAGES"
-			select={isMessageOpen}
-			onClick={handleClickMessages}
-		/>
-		<RowButton style={cssItem}
-			icon={<DatabaseIcon />}
-			label="DATABASES"
-		//select={isMessageOpen}
-		//onClick={handleClickMessages}
-		/>
-		<RowButton style={cssItem}
-			icon={<SettingsIcon />}
-			label="SETTINGS"
-		//select={isMessageOpen}
-		//onClick={handleClickMessages}
-		/>
+		{!isNew && <>
+			<RowButton style={cssItem}
+				icon={<MessagesIcon />}
+				label="MESSAGES"
+				select={isMessageOpen}
+				onClick={handleClickMessages}
+			/>
+			<RowButton style={cssItem}
+				icon={<DatabaseIcon />}
+				label="DATABASES"
+			/>
+			<RowButton style={cssItem}
+				icon={<SettingsIcon />}
+				label="SETTINGS"
+			/>
+		</>}
 
 		<CnnDetailCmp style={{ marginTop: 25 }}
 			cnnDetailSo={cnnDetailSo}

@@ -17,7 +17,6 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	const [enter, setEnter] = useState(false)
 	const inputRef = useRef(null);
 	useEffect(() => {
-		console.log(focus)
 		if (focus) {
 			inputRef.current?.select()
 		} else {

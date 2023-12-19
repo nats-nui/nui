@@ -65,9 +65,10 @@ const setup = {
 			const view = buildStore({
 				type: DOC_TYPE.SERVICES,
 				connection: {
-					name: "<new>",
-					hosts: ["<new>"],
+					name: "",
+					hosts: [],
 					subscriptions: [],
+					auth: []
 				},
 			} as CnnDetailState)
 			store.setSelectId(null)
