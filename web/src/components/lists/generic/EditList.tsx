@@ -25,7 +25,7 @@ interface Props<T> {
 function EditList<T>({
 	items,
 	RenderRow,
-	fnNewItem,
+	fnNewItem = () => null,
 	onChangeItems,
 	style,
 }: Props<T>) {
@@ -51,7 +51,7 @@ function EditList<T>({
 		const newItems = [...items]
 		newItems.splice(index, 1)
 		onChangeItems?.(newItems)
-		if (index >= items.length) setFocus(items.length - 1)
+		setFocus(index >= items.length ? items.length - 1 : index)
 	}
 	const handleFocus = (index: number) => {
 		setFocus(index)
@@ -77,12 +77,15 @@ function EditList<T>({
 		if (newFocus >= items.length) newFocus = items.length - 1
 		setFocus(newFocus)
 	}
+	const handleBlur = () => {
+		setFocus(-1)
+	}
 
 	// RENDER
 	return <div
 		style={{ ...cssContainer, ...style }}
 		onKeyDown={handleKeyDown}
-		onBlur={() => setFocus(-1)}
+		onBlur={handleBlur}
 	>
 
 		{/* LISTA */}
@@ -109,6 +112,4 @@ export default EditList
 const cssContainer: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	color: "black",
-	width: "146px",
 }

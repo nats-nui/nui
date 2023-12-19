@@ -2,13 +2,14 @@ import Label from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
 import cnnSo from "@/stores/connections"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Subscription } from "@/types"
+import { Auth, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import layoutSo from "@/stores/layout"
 import EditList from "@/components/lists/generic/EditList"
 import EditStringRow from "@/components/lists/generic/EditStringRow"
+import EditAuthRow from "@/components/lists/generic/EditAuthRow"
 
 
 
@@ -39,12 +40,18 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const handleHostsChange = (hosts: string[]) => {
 		const cnn = { ...cnnDetailSa.connection, hosts }
 		cnnDetailSo.setConnection(cnn)
-		//if (!isNew) cnnSo.updateConnection(cnn)
+		if (!isNew) cnnSo.updateConnection(cnn)
+	}
+	const handleAuthsChange = (auth: Auth[]) => {
+		const cnn = { ...cnnDetailSa.connection, auth }
+		cnnDetailSo.setConnection(cnn)
+		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
-		const newConnection = { ...cnnDetailSa.connection, subscriptions }
-		cnnDetailSo.setConnection(newConnection)
-		cnnSo.modify(newConnection)
+		const cnn = { ...cnnDetailSa.connection, subscriptions }
+		cnnDetailSo.setConnection(cnn)
+		if (!isNew) cnnSo.updateConnection(cnn)
+		//cnnSo.modify(cnn)
 	}
 
 	// RENDER
@@ -53,6 +60,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const name = cnnDetailSa.connection.name ?? ""
 	const hosts = cnnDetailSa.connection.hosts ?? []
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
+	const auths = cnnDetailSa.connection.auth ?? []
 
 	return <div style={{ ...cssForm, ...style }}>
 
@@ -67,7 +75,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			style={cssList}
 			items={hosts}
 			onChangeItems={handleHostsChange}
-			fnNewItem={()=>"<new>"}
+			fnNewItem={() => "<new>"}
 			RenderRow={EditStringRow}
 		/>
 
@@ -79,9 +87,11 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 		/>
 
 		<Label>AUTH PATH</Label>
-		{/* <TextInput
-			value={host}
-			onChange={handleChangeHost}
+		{/* <EditList<Auth>
+			style={cssList}
+			items={auths}
+			onChangeItems={handleAuthsChange}
+			RenderRow={EditAuthRow}
 		/> */}
 
 	</div>
@@ -89,13 +99,13 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 export default CnnDetailCmp
 
-const cssForm:React.CSSProperties = {
-	display: "flex", 
+const cssForm: React.CSSProperties = {
+	display: "flex",
 	flexDirection: "column",
 	paddingRight: 8,
 }
 
-const cssList:React.CSSProperties = {
+const cssList: React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.default.bg,
 	color: layoutSo.state.theme.palette.default.fg,
 }

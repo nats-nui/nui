@@ -2,10 +2,11 @@ import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { RenderRowBaseProps } from "./EditList"
+import { Auth } from "@/types"
 
 
 
-const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
+const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	item,
 	focus,
 	onChange,
@@ -20,7 +21,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		if (focus) {
 			inputRef.current?.select()
 		} else {
-			if ( item?.length>0 ) return
+			if ( item != null ) return
 			onDelete?.()
 		}
 	}, [focus])
@@ -77,7 +78,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	</div>
 }
 
-export default EditStringRow
+export default EditAuthRow
 
 const cssRow: React.CSSProperties = {
 	minHeight: 24,
