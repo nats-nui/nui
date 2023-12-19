@@ -9,12 +9,12 @@ export interface Connection {
 
 export interface Auth {
 	mode: AUTH_MODE
-	username: string
-	password: string
-	token: string
-	jwt: string
-	nkey: string
-	creds: string
+	username?: string
+	password?: string
+	token?: string
+	jwt?: string
+	nkey?: string
+	creds?: string
 }
 
 export enum AUTH_MODE {

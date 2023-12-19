@@ -24,6 +24,8 @@ input {
   min-width: 0;
 	background-color: transparent;
   color: currentColor;
+  font-size: 14px;
+	font-weight: 600;
 }
 input:focus {
   outline: none;

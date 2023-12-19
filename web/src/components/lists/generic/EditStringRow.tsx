@@ -17,16 +17,16 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	const [enter, setEnter] = useState(false)
 	const inputRef = useRef(null);
 	useEffect(() => {
+		console.log(focus)
 		if (focus) {
 			inputRef.current?.select()
 		} else {
-			if ( item?.length>0 ) return
-			onDelete?.()
+			if (isVoid(item)) onDelete?.()
 		}
 	}, [focus])
 
 	// HANDLER
-	const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newItem = e.target.value
 		onChange?.(newItem)
 	}
@@ -36,16 +36,12 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		inputRef.current?.select()
 		onFocus?.()
 	}
-	
+
 	const handleDelete = () => onDelete?.()
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		switch (event.key) {
-			case "Delete":
-			case "Backspace":
-				if ( item?.length>0 ) return
-				event.preventDefault()
-				onDelete?.()
-				break
+		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
+			event.preventDefault()
+			onDelete?.()
 		}
 	}
 
@@ -56,9 +52,8 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		style={cssRow}
 		onMouseEnter={handleEnter}
 		onMouseLeave={handleLeave}
-		
-	>
 
+	>
 		<input style={cssInput}
 			type="text"
 			ref={inputRef}
@@ -66,9 +61,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
 			onFocus={handleFocus}
-			
 		/>
-
 		{delVisible && (
 			<IconButton
 				onClick={handleDelete}
@@ -79,6 +72,8 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 
 export default EditStringRow
 
+const isVoid = (item:string) => !item || item.trim().length == 0
+
 const cssRow: React.CSSProperties = {
 	minHeight: 24,
 	display: "flex",
@@ -87,6 +82,4 @@ const cssRow: React.CSSProperties = {
 
 const cssInput: React.CSSProperties = {
 	flex: 1,
-	fontSize: 14,
-	fontWeight: 600,
 }
