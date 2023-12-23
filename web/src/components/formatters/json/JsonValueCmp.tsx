@@ -1,26 +1,26 @@
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { FunctionComponent } from "react"
 import { JsonPropsCmp } from "./JsonCmp"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { getBrackets, maxDeep, maxStringLength } from "./utils"
+import { COLLAPSE_TYPE, getBrackets, inShow, maxStringLength } from "./utils"
 
 
 
 interface Props {
 	value: any,
-	collapsed?: boolean
+	collapsed?: COLLAPSE_TYPE
 	deep?: number
-	recursive?: boolean
 	style?: React.CSSProperties
 }
 
 const JsonValueCmp: FunctionComponent<Props> = ({
 	value,
-	collapsed = false,
+	collapsed,
 	deep = 0,
-	recursive,
 	style = {},
 }) => {
 
+
+	// RENDER
 	const type = typeof value
 
 	if (value == null) {
@@ -31,13 +31,13 @@ const JsonValueCmp: FunctionComponent<Props> = ({
 		const brc = getBrackets(value)
 		return <>
 			<span style={styBrackets}>{brc[0]}</span>
-			{collapsed && "\u2026"}
-			<JsonPropsCmp json={value} deep={deep + 1} style={style} hide={collapsed} recursive={recursive}/>
+			{!inShow(collapsed) && <span style={cssArrayInfo}>{`\u2026${value.length ?? ""}`}</span>}
+			<JsonPropsCmp json={value} deep={deep + 1} style={style} collapsed={collapsed} />
 			<span style={styBrackets}>{brc[1]}</span>
 		</>
 
 	} else if (type === "string") {
-		if (collapsed) value = `${value.substring(0, maxStringLength)}\u2026`
+		if (!inShow(collapsed)) value = `${value.substring(0, maxStringLength)}\u2026`
 		return <span style={{ ...cssString, ...style }}>"{value}"</span>
 
 	} else if (type === "number") {
@@ -57,23 +57,21 @@ export default JsonValueCmp
 const cssNull = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 }
-
 const cssString = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.GREEN].bg,
 }
-
 const cssNumber = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.CYAN].bg,
 }
-
 const cssTrue = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.GREEN].bg,
 }
-
 const cssFalse = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 }
-
+const cssArrayInfo = {
+	opacity: .5
+}
 const cssBrackets = (deep: number): React.CSSProperties => {
 	const colors = layoutSo.state.theme.palette.var
 	return {

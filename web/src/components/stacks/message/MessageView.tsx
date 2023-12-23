@@ -2,7 +2,7 @@ import Header from "@/components/Header"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import JsonCmp from "../../json/JsonCmp"
+import JsonCmp from "../../formatters/json/JsonCmp"
 
 
 

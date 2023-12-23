@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
 import JsonKeyValueCmp from "./JsonKeyValueCmp"
+import { COLLAPSE_TYPE, inShow, isPrimitive } from "./utils"
 
 
 
@@ -31,21 +32,15 @@ const cssBody: React.CSSProperties = {
 
 interface ObjPros {
 	json: any
-
 	deep?: number
-	hide?: boolean
-	recursive?: boolean
-
+	collapsed?: COLLAPSE_TYPE
 	style?: React.CSSProperties
 }
-
-const isPrimitive = (value: any) => ["string", "number", "bigint", "boolean", "symbol", "undefined"].includes(typeof value)
 
 export const JsonPropsCmp: FunctionComponent<ObjPros> = ({
 	json,
 	deep = 0,
-	hide = false,
-	recursive,
+	collapsed,
 	style,
 }) => {
 
@@ -56,7 +51,7 @@ export const JsonPropsCmp: FunctionComponent<ObjPros> = ({
 		|| (isArray && entries.every(([key, value]) => isPrimitive(value)))
 		|| (keysLength == 2 && !!json.key)
 
-	return <div style={{ ...cssList(deep, horiz, hide), ...style }}>
+	return <div style={{ ...cssList(deep, horiz, inShow(collapsed)), ...style }}>
 
 		{entries.map(([key, value], index) => (
 			// KEY : VALUE
@@ -65,7 +60,7 @@ export const JsonPropsCmp: FunctionComponent<ObjPros> = ({
 					propName={key} 
 					value={value} 
 					deep={deep} 
-					recursive={recursive}
+					collapsed={collapsed}
 				/>
 				{index < keysLength - 1 && <span>, </span>}
 			</div>
@@ -76,12 +71,12 @@ export const JsonPropsCmp: FunctionComponent<ObjPros> = ({
 }
 
 
-const cssList = (deep: number, horiz: boolean, hide: boolean): React.CSSProperties => ({
+const cssList = (deep: number, horiz: boolean, inShow: boolean): React.CSSProperties => ({
 	fontSize: [12, 12, 12, 12, 12, 12, 12][deep],
 	fontWeight: [900, 200, 200, 100,][deep],
 	//opacity: deep == 0 ? 1 : 0.95,
 	marginLeft: horiz ? null : deep * 5,
-	display: hide ? "none" : !horiz ? "block" : "inline",
+	display: !inShow ? "none" : !horiz ? "block" : "inline",
 })
 
 const cssRow = (deep: number, horiz: boolean): React.CSSProperties => ({

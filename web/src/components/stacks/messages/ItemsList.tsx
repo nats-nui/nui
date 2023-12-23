@@ -1,18 +1,20 @@
 import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
-import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
-import MessageRow2 from "./MessageRow2"
+import ItemRow from "./rows/ItemRow"
 
 
 
 interface Props {
 	messages: HistoryMessage[]
+	format: MSG_FORMAT
 	onMessageClick?: (message:HistoryMessage)=>void
 }
 
-const MessagesList2: FunctionComponent<Props> = ({
+const ItemsList: FunctionComponent<Props> = ({
 	messages,
+	format,
 	onMessageClick,
 }) => {
 
@@ -108,9 +110,10 @@ const MessagesList2: FunctionComponent<Props> = ({
 				<div style={{ height: upHeightRef.current, backgroundColor: "red" }} />
 
 				{messagesVisible.map((message, index) => (
-					<MessageRow2
+					<ItemRow
 						key={message.id}
 						message={message}
+						format={format}
 						index={index + indexTopRef.current}
 						onClick={handleMessageClick}
 					/>
@@ -130,5 +133,5 @@ const MessagesList2: FunctionComponent<Props> = ({
 	)
 }
 
-export default MessagesList2
+export default ItemsList
 

@@ -1,19 +1,21 @@
-import { HistoryMessage } from "@/stores/stacks/messages/utils"
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import layoutSo from "@/stores/layout"
+import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "@/stores/stacks/messages/utils"
 import dayjs from "dayjs"
-import JsonCompactCmp from "../../json/JsonCompactCmp"
+import { FunctionComponent, useEffect, useRef } from "react"
+import MessageRow from "./MessageRow"
 
 
 
 interface Props {
 	message?: HistoryMessage
+	format?: MSG_FORMAT
 	index?: number
 	onClick?: (message: HistoryMessage) => void
 }
 
-const MessageRow2: FunctionComponent<Props> = ({
+const ItemRow: FunctionComponent<Props> = ({
 	message,
+	format,
 	index,
 	onClick,
 }) => {
@@ -37,23 +39,21 @@ const MessageRow2: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!message) return null
-	const styRoot = {
-		...cssRoot,
-		backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
-	}
 	const time = !!message.timestamp ? dayjs(message.timestamp).format("YYYY-MM-DD HH:MM") : ""
-	let json = null
-	try { json = JSON.parse(message.body) } catch { }
+	const type = message.type ?? MSG_TYPE.MESSAGE
 
 	return (
-		<div ref={ref} style={styRoot}
+		<div ref={ref} style={cssRoot(index)}
 			onClick={handleClick}
 		>
-			<div style={cssTitle}>
-				{message.title}
-			</div>
+			{[
+				// MESSAGE
+				<MessageRow message={message} format={format} />,
+				<div>INFO</div>,
+				<div>WARNING</div>,
+				<div>ERROR</div>,
+			][type]}
 
-			{!!json ? <JsonCompactCmp json={json} /> : <div>{message.body}</div>}
 			<div style={cssFooter}>
 				{time}
 			</div>
@@ -61,20 +61,17 @@ const MessageRow2: FunctionComponent<Props> = ({
 	)
 }
 
-export default MessageRow2
+export default ItemRow
 
-const cssRoot: React.CSSProperties = {
+const cssRoot = (index: number): React.CSSProperties => ({
+	backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
 	display: "flex",
 	flexDirection: "column",
 	padding: 10,
-}
+})
 const cssTitle: React.CSSProperties = {
 	fontSize: 10,
 	opacity: .7,
-}
-const cssBody: React.CSSProperties = {
-	fontSize: 14,
-	overflowWrap: "break-word",
 }
 const cssFooter: React.CSSProperties = {
 	fontSize: 10,
