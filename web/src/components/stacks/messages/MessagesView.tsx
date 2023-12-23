@@ -1,4 +1,3 @@
-import imgMsg from "@/assets/msg-hdr.svg"
 import Header from "@/components/Header"
 import ActionGroup from "@/components/buttons/ActionGroup"
 import Button from "@/components/buttons/Button"
@@ -8,15 +7,15 @@ import cnnSo, { ConnectionState } from "@/stores/connections"
 import { VIEW_SIZE } from "@/stores/docs/viewBase"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
-import { HistoryMessage, MSS_TYPES } from "@/stores/stacks/messages/utils"
+import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect } from "react"
+import React, { FunctionComponent } from "react"
 import Dialog from "../../dialogs/Dialog"
 import List from "../../lists/generic/List"
 import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
-import MessagesList2 from "./MessagesList2"
+import ItemsList from "./ItemsList"
 
 
 
@@ -56,13 +55,14 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	//#region TYPES
 	const handleTypesClick = () => {
-		msgSo.setTypesOpen(true)
+		msgSo.setMsgFormatsOpen(true)
 	}
 	const handleTypesClose = () => {
-		msgSo.setTypesOpen(false)
+		msgSo.setMsgFormatsOpen(false)
 	}
 	const handleTypesSelect = (index: number) => {
-		msgSo.setTypesOpen(false)
+		msgSo.setMsgFormat(formats[index])
+		msgSo.setMsgFormatsOpen(false)
 	}
 	//#endregion
 
@@ -78,6 +78,9 @@ const MessagesView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	const formats = Object.values(MSG_FORMAT)
+	const formatSel = msgSa.msgFormat.toUpperCase()
+
 	return (
 		<div style={{ ...cssContainer, ...style }}>
 
@@ -92,8 +95,8 @@ const MessagesView: FunctionComponent<Props> = ({
 
 					/>
 					<Button
-						select={msgSa.typesOpen}
-						label="TYPE"
+						select={msgSa.msgFormatsOpen}
+						label={formatSel}
 						onClick={handleTypesClick}
 						colorVar={1}
 					/>
@@ -109,8 +112,9 @@ const MessagesView: FunctionComponent<Props> = ({
 						colorVar={1}
 					/>
 				</ActionGroup>
-				<MessagesList2
+				<ItemsList
 					messages={msgSa.history}
+					format={msgSa.msgFormat}
 					onMessageClick={hendleMessageClick}
 				/>
 			</>)}
@@ -128,13 +132,13 @@ const MessagesView: FunctionComponent<Props> = ({
 			</Dialog>
 
 			<Dialog
-				open={msgSa.typesOpen}
+				open={msgSa.msgFormatsOpen}
 				store={msgSo}
 				onClose={handleTypesClose}
 			>
 				<List<string>
 					style={cssDialogTypes}
-					items={Object.values(MSS_TYPES)}
+					items={formats}
 					RenderRow={StringRow}
 					onChangeSelect={handleTypesSelect}
 				/>

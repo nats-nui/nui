@@ -10,9 +10,8 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
-import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 import historyTest from "./test"
-
+import { HistoryMessage, MSG_FORMAT, MSG_TYPE, PARAMS_MESSAGES } from "./utils"
 
 
 
@@ -20,12 +19,18 @@ const setup = {
 
 	state: {
 		params: { [PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null },
+		/** SUBS sui quali rimanere in ascolto */
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
+		/** tutti i messaggi ricevuti */
 		history: <HistoryMessage[]>historyTest,//[],
+		/** testo per la ricerca */
 		textSearch: <string>null,
+		/** DIALOG SUBS aperta */
 		subscriptionsOpen: false,
-		typesOpen: false,
+
+		msgFormat: MSG_FORMAT.JSON,
+		msgFormatsOpen: false,
 	},
 
 	getters: {
@@ -55,6 +60,7 @@ const setup = {
 				id: createUUID(),
 				title: `${message.subject} [${store.state.history.length}]`,
 				body: message.payload as string,
+				type: MSG_TYPE.MESSAGE,
 				timestamp: Date.now(),
 			}
 			store.setHistory([...store.state.history, historyMessage])
@@ -102,8 +108,9 @@ const setup = {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setHistory: (history: HistoryMessage[]) => ({ history }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
-		setTypesOpen: (typesOpen: boolean) => ({ typesOpen }),
+		setMsgFormatsOpen: (msgFormatsOpen: boolean) => ({ msgFormatsOpen }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
+		setMsgFormat : (msgFormat: MSG_FORMAT) => ({ msgFormat }),
 	},
 }
 
