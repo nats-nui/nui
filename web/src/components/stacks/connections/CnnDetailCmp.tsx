@@ -86,7 +86,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			onChange={handleSubscriptionsChange}
 		/>
 
-		<Label>AUTH PATH</Label>
+		<Label>AUTH</Label>
 		<EditList<Auth>
 			style={cssList}
 			items={auths}

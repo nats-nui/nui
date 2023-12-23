@@ -1,4 +1,6 @@
-import { SocketService } from "@/plugins/SocketService"
+import srcIcon from "@/assets/msg-hdr.svg"
+import { socketPool } from "@/plugins/SocketService/pool"
+import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
@@ -6,24 +8,11 @@ import docSetup, { ViewStore } from "@/stores/docs/viewBase"
 import { DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../docs/viewBase"
-import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
-import srcIcon from "@/assets/msg-hdr.svg"
-import { PayloadMessage } from "@/plugins/SocketService/types"
-import { socketPool } from "@/plugins/SocketService/pool"
+import { HistoryMessage, PARAMS_MESSAGES } from "./utils"
+import historyTest from "./test"
 
-
-const data = [
-]
-const h: HistoryMessage[] = Array.from({ length: 6 }, (_, i) => ({
-	id: createUUID(),
-	title: `title-${Math.random()} [${i}]`,
-	//body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,
-	json: data[i],
-	timestamp: Date.now(),
-	height: null,
-}));
 
 
 
@@ -33,7 +22,7 @@ const setup = {
 		params: { [PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null },
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
-		history: <HistoryMessage[]>[],
+		history: <HistoryMessage[]>historyTest,//[],
 		textSearch: <string>null,
 		subscriptionsOpen: false,
 		typesOpen: false,

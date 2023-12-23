@@ -1,17 +1,15 @@
 import { FunctionComponent } from "react"
 import { JsonPropsCmp } from "./JsonCmp"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { getBrackets, maxDeep, maxStringLength } from "./utils"
 
 
-
-const maxDeep = 10
-const maxStringLength = 8
-const getBrackets = (value: any) => Array.isArray(value) ? ["[ ", " ]"] : ["{ ", " }"]
 
 interface Props {
 	value: any,
 	collapsed?: boolean
 	deep?: number
+	recursive?: boolean
 	style?: React.CSSProperties
 }
 
@@ -19,6 +17,7 @@ const JsonValueCmp: FunctionComponent<Props> = ({
 	value,
 	collapsed = false,
 	deep = 0,
+	recursive,
 	style = {},
 }) => {
 
@@ -32,14 +31,13 @@ const JsonValueCmp: FunctionComponent<Props> = ({
 		const brc = getBrackets(value)
 		return <>
 			<span style={styBrackets}>{brc[0]}</span>
-			{collapsed || deep > maxDeep ? "\u2026" : (
-				JsonPropsCmp({ json: value, deep: deep + 1, style })
-			)}
+			{collapsed && "\u2026"}
+			<JsonPropsCmp json={value} deep={deep + 1} style={style} hide={collapsed} recursive={recursive}/>
 			<span style={styBrackets}>{brc[1]}</span>
 		</>
 
 	} else if (type === "string") {
-		if (value.length > maxStringLength) value = `${value.substring(0, maxStringLength)}\u2026`
+		if (collapsed) value = `${value.substring(0, maxStringLength)}\u2026`
 		return <span style={{ ...cssString, ...style }}>"{value}"</span>
 
 	} else if (type === "number") {
@@ -76,13 +74,13 @@ const cssFalse = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 }
 
-const cssBrackets = (deep:number):React.CSSProperties => {
+const cssBrackets = (deep: number): React.CSSProperties => {
 	const colors = layoutSo.state.theme.palette.var
 	return {
 		color: [
-			null, 
-			colors[COLOR_VAR.CYAN].bg, 
-			colors[COLOR_VAR.FUCHSIA].bg, 
+			null,
+			colors[COLOR_VAR.CYAN].bg,
+			colors[COLOR_VAR.FUCHSIA].bg,
 			colors[COLOR_VAR.YELLOW].bg
 		][deep % 4]
 	}
