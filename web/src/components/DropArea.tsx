@@ -47,7 +47,7 @@ const DropArea: FunctionComponent<Props> = ({
 		...cssRoot,
 		...(dragOver && cssDragOver),
 		...((viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING) && { width: 0 }),
-		...(isLast && { width: 300 })
+		...(isLast && { flex: 1 })
 	}
 	const styLine = { ...cssLine, ...(dragOver && cssLineDragOver) }
 
