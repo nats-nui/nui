@@ -30,6 +30,9 @@ const MessageView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
+	const handleCopyClick = () => {
+		navigator.clipboard.writeText(text)
+	}
 
 	// RENDER
 	const text = msgSa.message.body
@@ -42,6 +45,11 @@ const MessageView: FunctionComponent<Props> = ({
 			<Header view={msgSo} />
 
 			<ActionGroup>
+				<Button
+					label="COPY"
+					onClick={handleCopyClick}
+					colorVar={1}
+				/>
 				<Button
 					select={msgSa.formatsOpen}
 					label={formatLabel}

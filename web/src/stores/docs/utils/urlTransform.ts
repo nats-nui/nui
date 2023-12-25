@@ -59,8 +59,9 @@ function setParams(view: ViewState, params: string[]): ViewState {
  * tipicamente usato per l'URL
  */
 export function viewsToString(views: ViewStore[]): string {
-	const viewsStr = views.reduce((acc, doc) => {
-		return `${acc ? `${acc}~` : ""}${viewToString(doc)}`
+	const viewsStr = views.reduce((acc, view) => {
+		if ( !view.state.urlSerializable ) return acc
+		return `${acc ? `${acc}~` : ""}${viewToString(view)}`
 	}, null as string)
 	return viewsStr
 }

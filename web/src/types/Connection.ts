@@ -1,6 +1,6 @@
 
 export interface Connection {
-	id: string
+	id?: string
 	name: string
 	hosts: string[]
 	subscriptions: Subscription[]

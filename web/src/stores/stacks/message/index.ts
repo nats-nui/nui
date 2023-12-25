@@ -11,6 +11,8 @@ const setup = {
 		message: <HistoryMessage>null,
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+		// ViewStore
+		urlSerializable: false,
 	},
 
 	getters: {

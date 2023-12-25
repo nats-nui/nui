@@ -59,7 +59,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 			{viewSa.size != VIEW_SIZE.ICONIZED ? (
 				<DocCmp view={view} style={styDoc} />
 			) : (
-				<Header view={view} style={styDoc} />
+				<Header view={view} />
 			)}
 		</div>
 

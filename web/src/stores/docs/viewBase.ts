@@ -22,18 +22,27 @@ export enum VIEW_SIZE {
 const setup = {
 
 	state: {
+		/** identificativo della VIEW */
 		uuid: <string>null,
+		/** tipo di VIEW */
 		type: DOC_TYPE.EMPTY,
+		/** elementi da memorizzare nell'url */
 		params: <{ [name: string]: any[] }>{},
 
-		/** indica se la CARD è draggabile o no */
+		/** indica se la VIEW è draggabile o no */
 		draggable: true,
+		/** indica se è URL serializable */
+		urlSerializable: true,
+		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
 		/** l'a corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
+		/** dove è appiccicata */
 		position: POSITION_TYPE.DETACHED,
+		/** la sua VIEW PARENT */
 		parent: <ViewStore>null,
+		/** la sua VIEW LINKED */
 		linked: <ViewStore>null,
 	},
 

@@ -16,21 +16,21 @@ const setup = {
 	state: {
 		/** dialog SUBSCRIPTION aperta/chiusa */
 		subOpen: false,
-		/** connection attualmente in editazione */
-		connection: <Connection>null,
+		/** NEW connection attualmente in editazione */
+		inEdit: <Connection>null,
 		/** OVERWRITING */
 		draggable: false,
 		width: 200,
 	},
 
 	getters: {
-		
 
 		getConnection(_: void, store?: CnnDetailStore) {
 			const cnnId = (<CnnListStore>store.state.parent).getSelectId()
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
 		},
+
 
 		//#region OVERRIDABLE
 		getTitle: (_: void, store?: ViewStore) => "DETAIL",
@@ -57,7 +57,7 @@ const setup = {
 	},
 
 	mutators: {
-		setConnection: (connection: Connection) => ({ connection }),
+		setInEdit: (inEdit: Connection) => ({ inEdit }),
 		setSubOpen: (subOpen: boolean) => ({ subOpen }),
 	},
 }

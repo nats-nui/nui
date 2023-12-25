@@ -38,7 +38,7 @@ const ItemsList: FunctionComponent<Props> = ({
 		if (!keepDown) return
 		node.scrollTop = node.scrollHeight - node.clientHeight
 		setTimeout(() => node.scrollTop = node.scrollHeight - node.clientHeight + 200, 100)
-	}, [messages])
+	}, [messages, format])
 
 	// HANDLER
 	const handleStopKeepDown = () => {

@@ -58,7 +58,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: HistoryMessage) => msgSo.openMessageDetail(message)
-	const handleSearchChange = (value:string)=> msgSo.setTextSearch(value)
+	const handleSearchChange = (value: string) => msgSo.setTextSearch(value)
 
 	// RENDER
 	const formatSel = msgSa.format.toUpperCase()
@@ -69,10 +69,10 @@ const MessagesView: FunctionComponent<Props> = ({
 			<Header view={msgSo} />
 
 			<ActionGroup>
-				<FindInput 
+				<FindInput
 					value={msgSa.textSearch ?? ""}
 					onChange={handleSearchChange}
-					style={{ marginLeft: 7 }} 
+					style={{ marginLeft: 7 }}
 
 				/>
 				<Button

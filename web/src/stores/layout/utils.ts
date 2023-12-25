@@ -19,7 +19,7 @@ export interface Theme {
 	shadows: string[]
 }
 
-type ColorVariant = {
+export type ColorVariant = {
 	bg?: Color
 	bg2?: Color
 	fg?: Color

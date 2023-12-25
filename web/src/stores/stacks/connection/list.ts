@@ -45,11 +45,10 @@ const setup = {
 			let idSel = (cnn && idSelPrev != cnn.id) ? cnn.id : null
 			store.setSelectId(idSel)
 
-			// eventualmente creo la nuova view
+			// eventualmente creo la nuova VIEW
 			let srvStore:ViewStore = null
 			if (idSel != null) srvStore = buildStore({
 				type: DOC_TYPE.SERVICES,
-				connection: cnn,
 			} as CnnDetailState)
 
 			// aggiungo la nuova VIEW (o null)
@@ -62,16 +61,10 @@ const setup = {
 		/** creo un nuovo STORE DETTAGLIO CONNECTION
 		 * e lo visualizzo nello STACK della lista CONNECTION */
 		create(_: void, store?: CnnListStore) {
+			store.setSelectId(null)
 			const view = buildStore({
 				type: DOC_TYPE.SERVICES,
-				connection: {
-					name: "",
-					hosts: [],
-					subscriptions: [],
-					auth: []
-				},
 			} as CnnDetailState)
-			store.setSelectId(null)
 			docsSo.addLink({ view, parent: store, anim: true })
 		},
 	},
