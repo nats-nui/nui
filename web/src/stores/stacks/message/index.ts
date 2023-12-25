@@ -1,14 +1,16 @@
 import srcIcon from "@/assets/msg-hdr.svg"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { HistoryMessage } from "../messages/utils"
+import { HistoryMessage, MSG_FORMAT } from "../messages/utils"
 
 
 
 const setup = {
 
 	state: {
-		message: <HistoryMessage>null
+		message: <HistoryMessage>null,
+		format: MSG_FORMAT.JSON,
+		formatsOpen: false,
 	},
 
 	getters: {
@@ -20,6 +22,8 @@ const setup = {
 	},
 
 	mutators: {
+		setFormat: (format: MSG_FORMAT) => ({ format }),
+		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
 }
 

@@ -29,8 +29,8 @@ const setup = {
 		/** DIALOG SUBS aperta */
 		subscriptionsOpen: false,
 
-		msgFormat: MSG_FORMAT.JSON,
-		msgFormatsOpen: false,
+		format: MSG_FORMAT.JSON,
+		formatsOpen: false,
 	},
 
 	getters: {
@@ -80,7 +80,8 @@ const setup = {
 			if (!cnn) return
 			const msgStore = buildStore({
 				type: DOC_TYPE.MESSAGE,
-				message
+				message,
+				format: store.state.format,
 			} as MessageState)
 			docsSo.addLink({
 				view: msgStore,
@@ -108,9 +109,10 @@ const setup = {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setHistory: (history: HistoryMessage[]) => ({ history }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
-		setMsgFormatsOpen: (msgFormatsOpen: boolean) => ({ msgFormatsOpen }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
-		setMsgFormat : (msgFormat: MSG_FORMAT) => ({ msgFormat }),
+
+		setFormat: (format: MSG_FORMAT) => ({ format }),
+		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
 }
 

@@ -120,6 +120,7 @@ const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
 		return {
 			display: "flex", flex: 1,
 			flexDirection: "column",
+			width: 0,
 		}
 	}
 }

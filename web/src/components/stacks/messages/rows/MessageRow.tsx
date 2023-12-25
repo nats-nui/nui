@@ -1,7 +1,9 @@
 import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { FunctionComponent } from "react"
-import JsonCompactCmp from "@/components/formatters/json/JsonCompactCmp"
-import TextCmp from "@/components/formatters/TextCmp"
+import JsonRow from "@/components/formatters/json/JsonRow"
+import TextRow from "@/components/formatters/text/TextRow"
+import HexTable from "@/components/formatters/hex/HexTable"
+import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 
 
 
@@ -31,10 +33,10 @@ const MessageRow: FunctionComponent<Props> = ({
 			</div>
 
 			{{
-				[MSG_FORMAT.JSON]: <JsonCompactCmp text={message.body} />,
-				[MSG_FORMAT.TEXT]: <TextCmp text={message.body} />,
-				[MSG_FORMAT.BASE64]: <TextCmp text={message.body} />,
-				[MSG_FORMAT.HEX]: <TextCmp text={message.body} />,
+				[MSG_FORMAT.JSON]: <JsonRow text={message.body} />,
+				[MSG_FORMAT.TEXT]: <TextRow text={message.body} />,
+				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.body} maxChar={80} />,
+				[MSG_FORMAT.HEX]: <HexTable text={message.body} maxRows={10}/>,
 			}[format]}
 		</>
 	)
