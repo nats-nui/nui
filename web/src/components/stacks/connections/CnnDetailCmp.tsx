@@ -33,34 +33,34 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleChangeName = (name: string) => {
-		const cnn = { ...cnnDetailSa.connection, name }
-		cnnDetailSo.setConnection(cnn)
+		const cnn = { ...cnnDetailSa.inEdit, name }
+		cnnDetailSo.setInEdit(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleHostsChange = (hosts: string[]) => {
-		const cnn = { ...cnnDetailSa.connection, hosts }
-		cnnDetailSo.setConnection(cnn)
+		const cnn = { ...cnnDetailSa.inEdit, hosts }
+		cnnDetailSo.setInEdit(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleAuthsChange = (auth: Auth[]) => {
-		const cnn = { ...cnnDetailSa.connection, auth }
-		cnnDetailSo.setConnection(cnn)
+		const cnn = { ...cnnDetailSa.inEdit, auth }
+		cnnDetailSo.setInEdit(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 	}
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
-		const cnn = { ...cnnDetailSa.connection, subscriptions }
-		cnnDetailSo.setConnection(cnn)
+		const cnn = { ...cnnDetailSa.inEdit, subscriptions }
+		cnnDetailSo.setInEdit(cnn)
 		if (!isNew) cnnSo.updateConnection(cnn)
 		//cnnSo.modify(cnn)
 	}
 
 	// RENDER
-	const isNew = cnnDetailSa.connection?.id == null
-	if (cnnDetailSa.connection == null) return null
-	const name = cnnDetailSa.connection.name ?? ""
-	const hosts = cnnDetailSa.connection.hosts ?? []
-	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
-	const auths = cnnDetailSa.connection.auth ?? []
+	const isNew = cnnDetailSa.inEdit?.id == null
+	if (cnnDetailSa.inEdit == null) return null
+	const name = cnnDetailSa.inEdit.name ?? ""
+	const hosts = cnnDetailSa.inEdit.hosts ?? []
+	const subscriptions = cnnDetailSa.inEdit.subscriptions ?? []
+	const auths = cnnDetailSa.inEdit.auth ?? []
 
 	return <div style={{ ...cssForm, ...style }}>
 

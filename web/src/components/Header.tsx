@@ -1,26 +1,22 @@
 import CloseIcon from "@/icons/CloseIcon"
+import DetachIcon from "@/icons/DetachIcon"
 import docSo, { DocState } from "@/stores/docs"
+import { getRoot } from "@/stores/docs/utils/manage"
 import { VIEW_SIZE, ViewStore } from "@/stores/docs/viewBase"
-import layoutSo from "@/stores/layout"
 import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import IconButton from "./buttons/IconButton"
-import DetachIcon from "@/icons/DetachIcon"
-import { getRoot } from "@/stores/docs/utils/manage"
-import { getID } from "@/stores/docs/utils/factory"
 import Label, { LABEL_TYPES } from "./input/Label"
 
 
 
 interface Props {
 	view?: ViewStore
-	style?: React.CSSProperties
 }
 
 const Header: FunctionComponent<Props> = ({
 	view,
-	style,
 }) => {
 
 	// STORE
@@ -63,7 +59,7 @@ const Header: FunctionComponent<Props> = ({
 	const strIcon = view.getIcon()
 
 	return (
-		<div style={{ ...cssRoot(view.state.size), ...style }}
+		<div style={cssRoot(view.state.size)}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>

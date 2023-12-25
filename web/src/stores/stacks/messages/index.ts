@@ -45,8 +45,8 @@ const setup = {
 	actions: {
 		onCreate(_: void, store?: ViewStore) {
 			const msgSo = <MessagesStore>store
-			const cnn = msgSo.getConnection()
-			const ss = socketPool.create(store.state.uuid, cnn.id)
+			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
+			const ss = socketPool.create(store.state.uuid, cnnId)
 			ss.onOpen = () => msgSo.sendSubscriptions()
 			ss.onMessage = message => msgSo.addInHistory(message)
 		},

@@ -5,14 +5,14 @@ import RowButton from "@/components/buttons/RowButton"
 import DatabaseIcon from "@/icons/DatabaseIcon"
 import MessagesIcon from "@/icons/MessagesIcon"
 import SettingsIcon from "@/icons/SettingsIcon"
-import connSo from "@/stores/connections"
+import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CnnListStore } from "@/stores/stacks/connection/list"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
 
 
@@ -30,28 +30,36 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// STORE
 	useStore(docSo)
 	const cnnDetailSa = useStore(cnnDetailSo)
-	useStore(connSo)
+	const cnnSa = useStore(cnnSo)
 
 	// HOOKs
+	useEffect(() => {
+		let cnn = cnnDetailSo.getConnection()
+		if (cnn == null) cnn = {
+			name: "",
+			hosts: [],
+			subscriptions: [],
+			auth: []
+		}
+		cnnDetailSo.setInEdit(cnn)
+	}, [cnnSa.all])
 
 	// HANDLER
 	const handleClickMessages = () => {
 		cnnDetailSo.openMessages()
 	}
 	const handleClickNew = async () => {
-		const cnnNew = await connSo.create(cnnDetailSa.connection);
+		const cnnNew = await cnnSo.create(cnnDetailSa.inEdit);
 		(cnnDetailSa.parent as CnnListStore).select(cnnNew)
 	}
 
 	// RENDER
 	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
-	const isNew = cnnDetailSa.connection?.id == null
+	const isNew = cnnDetailSa.inEdit?.id == null
 
 	return <div style={{ ...cssContainer, ...style }}>
 
-		<Header view={cnnDetailSo}
-			style={{ color: layoutSo.state.theme.palette.var[0].fg }}
-		/>
+		<Header view={cnnDetailSo} />
 
 		{isNew && (
 			<ActionGroup style={{ marginLeft: -8 }}>
