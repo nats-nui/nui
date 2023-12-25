@@ -17,6 +17,8 @@ const TextCmp: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
+	if ( !text ) return null
+
 	return (
 		<div style={cssBody}>
 			{text}
@@ -27,6 +29,12 @@ const TextCmp: FunctionComponent<Props> = ({
 export default TextCmp
 
 const cssBody: React.CSSProperties = {
+	fontFamily: "monospace",
 	fontSize: 14,
 	overflowWrap: "break-word",
+	//wordBreak: "break-all",
+}
+
+const cssInfo = {
+	opacity: .5,
 }

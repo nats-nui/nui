@@ -1,5 +1,7 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { FunctionComponent } from "react"
+import TextRow from "../text/TextRow"
+import { toJson } from "@/stores/stacks/messages/utils"
 
 const limLength = [8, 3, 2]
 const limitDeept = 2
@@ -9,7 +11,7 @@ interface Props {
 	text?: string
 }
 
-const JsonCompactCmp: FunctionComponent<Props> = ({
+const JsonRow: FunctionComponent<Props> = ({
 	text,
 }) => {
 
@@ -20,17 +22,17 @@ const JsonCompactCmp: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	let json = null
-	try { json = JSON.parse(text) } catch { }
+	const  json = toJson(text)
+	if ( !json ) return <TextRow text={text} />
 
 	return (
 		<div style={cssBody}>
-			{FormatObj({ json, deep: 0 })}
+			<FormatObj json={json} deep={0} />
 		</div>
 	)
 }
 
-export default JsonCompactCmp
+export default JsonRow
 
 const cssBody: React.CSSProperties = {
 	fontSize: 12,
@@ -72,7 +74,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 
 
 			// KEY
-			if (!isArray) ret.push(<span>{key}: </span>)
+			if (!isArray) ret.push(<span>{key}:</span>)
 
 
 			// VALUE
@@ -104,7 +106,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 		<span style={{ wordBreak: "break-all" }}>
 			<span style={cssBrackets(deep)}>{isArray ? "[" : "{"}</span>
 			{ret}
-			<span style={cssBrackets(deep)}>{isArray ? "]" : "}"} </span>
+			<span style={cssBrackets(deep)}>{isArray ? "]" : "}"}</span>
 		</span>
 	)
 }

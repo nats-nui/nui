@@ -68,7 +68,8 @@ const cssTitleDialog: React.CSSProperties = {
 }
 
 const cssRoot: React.CSSProperties = {
-	display: "flex",
-	alignItems: "center",
+	// ATTENZIONE SE METTO QUESTI NON MI FA IL TRUNCATE
+	//display: "flex",
+	//alignItems: "center",
 	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 }

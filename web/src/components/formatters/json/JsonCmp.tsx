@@ -1,21 +1,28 @@
 import { FunctionComponent } from "react"
 import JsonKeyValueCmp from "./JsonKeyValueCmp"
 import { COLLAPSE_TYPE, inShow, isPrimitive } from "./utils"
+import TextCmp from "../text/TextCmp"
+import { toJson } from "@/stores/stacks/messages/utils"
 
 
 
 interface Props {
-	json?: JSON
+	text?: string
 	style?: React.CSSProperties
 }
 
 const JsonCmp: FunctionComponent<Props> = ({
-	json,
+	text,
 	style,
 }) => {
+
+	// RENDER
+	const json = toJson(text)
+	if (!json) return <TextCmp text={text} />
+
 	return (
 		<div style={{ ...cssBody, ...style }}>
-			{JsonPropsCmp({ json, deep: 0 })}
+			<JsonPropsCmp json={json} deep={0} />
 		</div>
 	)
 }
@@ -56,10 +63,10 @@ export const JsonPropsCmp: FunctionComponent<ObjPros> = ({
 		{entries.map(([key, value], index) => (
 			// KEY : VALUE
 			<div key={key} style={cssRow(deep, horiz)}>
-				<JsonKeyValueCmp 
-					propName={key} 
-					value={value} 
-					deep={deep} 
+				<JsonKeyValueCmp
+					propName={key}
+					value={value}
+					deep={deep}
 					collapsed={collapsed}
 				/>
 				{index < keysLength - 1 && <span>, </span>}

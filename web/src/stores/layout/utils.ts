@@ -23,4 +23,5 @@ type ColorVariant = {
 	bg?: Color
 	bg2?: Color
 	fg?: Color
+	fg2?: Color
 }

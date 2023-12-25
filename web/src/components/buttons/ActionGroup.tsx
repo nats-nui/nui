@@ -32,9 +32,11 @@ export default ActionGroup
 
 const cssRoot: React.CSSProperties = {
 	display: "flex", gap: 5,
+	minHeight: 32,
 	alignItems: "center",
 	justifyContent: 'flex-end',
 	padding: 3,
-	backgroundColor: layoutSo.state.theme.palette.actionsGroup.bg,
+	//backgroundColor: layoutSo.state.theme.palette.actionsGroup.bg,
+	backgroundColor:"rgb(0 0 0 / 50%)",
 	color: layoutSo.state.theme.palette.actionsGroup.fg,
 }
