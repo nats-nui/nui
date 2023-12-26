@@ -1,5 +1,5 @@
 import { POSITION_TYPE } from "@/types"
-import { VIEW_PARAMS, ViewState, ViewStore } from "../viewBase"
+import { VIEW_PARAMS, ViewState, ViewStore } from "../../stacks/viewBase"
 import { fromID, getID } from "./factory"
 
 

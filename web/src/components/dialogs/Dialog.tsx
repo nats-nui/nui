@@ -1,4 +1,4 @@
-import { ViewStore } from "@/stores/docs/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"

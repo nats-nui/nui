@@ -8,12 +8,14 @@ import TextInput from "./TextInput"
 interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
+	variant?:number
 	style?: React.CSSProperties
 }
 
 const FindInput: FunctionComponent<Props> = ({
 	value,
 	onChange,
+	variant,
 	style,
 }) => {
 	// STORE
@@ -30,6 +32,7 @@ const FindInput: FunctionComponent<Props> = ({
 			<TextInput style={cssInput}
 				value={value}
 				onChange={handleChange}
+				variant={variant}
 			/>
 			<FindIcon />
 		</div>

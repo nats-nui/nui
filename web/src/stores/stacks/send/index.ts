@@ -1,4 +1,4 @@
-import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
+import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import cnnApi from "@/api/connection"
 import cnnSo from "@/stores/connections"

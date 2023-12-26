@@ -5,7 +5,7 @@ import messageSendSetup from "@/stores/stacks/send";
 import servicesSetup from "@/stores/stacks/connection/detail";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
-import { ViewState, ViewStore } from "../viewBase";
+import { ViewState, ViewStore } from "../../stacks/viewBase";
 
 /** restituisce un identificativo sringa di una VIEW STORE */
 export function getID(viewState: ViewState): string {

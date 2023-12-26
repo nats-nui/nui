@@ -1,7 +1,7 @@
 import layoutSo from "@/stores/layout"
 import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "@/stores/stacks/messages/utils"
 import dayjs from "dayjs"
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent, useEffect, useLayoutEffect, useRef } from "react"
 import MessageRow from "./MessageRow"
 
 
@@ -26,20 +26,23 @@ const ItemRow: FunctionComponent<Props> = ({
 	const ref = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
-		if (!ref.current || message.height || !ref.current.offsetHeight) return
-		message.height = ref.current.offsetHeight
+		if (!ref.current /*|| message.height*/ || !ref.current.offsetHeight ) return
+		//message.height = ref.current.offsetHeight
+		//console.log("pas1", ref.current.offsetHeight)
+
 		setTimeout(() => {
 			if (!ref.current) return
 			message.height = ref.current.offsetHeight
+			//console.log("pas2", ref.current.offsetHeight)
 		}, 100)
-	}, [message])
+	}, [message, format])
 
 	// HANDLER
 	const handleClick = () => onClick?.(message)
 
 	// RENDER
 	if (!message) return null
-	const time = !!message.timestamp ? dayjs(message.timestamp).format("YYYY-MM-DD HH:MM") : ""
+	const time = !!message.timestamp ? dayjs(message.timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 	const type = message.type ?? MSG_TYPE.MESSAGE
 
 	return (

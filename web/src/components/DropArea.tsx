@@ -1,7 +1,7 @@
 import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
-import { ViewState, ViewStore } from "../stores/docs/viewBase"
+import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
 import layoutSo from "@/stores/layout"
 

@@ -34,7 +34,28 @@ input:disabled {
   opacity: 0.6;
 }
 input::selection {
+  background: #DEDEDE;
+  color: #3E3E3E;
+}
+input.var1::selection {
   background: #BBFB35;
+  color: #393939;
+}
+input.var2::selection {
+  background: #10F3F3;
+  color: #393939;
+}
+input.var3::selection {
+  background: #C220FA;
+  color: #393939;
+}
+
+input.var4::selection {
+  background: #ebfb35;
+  color: #393939;
+}
+input.var5::selection {
+  background: #F51DDF;
   color: #393939;
 }
 
@@ -79,10 +100,22 @@ textarea::selection {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #BBFB35;
-  /* background: ${palette.secondary.main};  */
 }
-
-scrollacid2 > ::-webkit-scrollbar-thumb:hover  {
+.var0::-webkit-scrollbar-thumb:hover {
+  background: #3E3E3E;
+}
+.var1::-webkit-scrollbar-thumb:hover {
   background: #10F3F3;
-  /* background: ${palette.secondary.main};  */
+}
+.var2::-webkit-scrollbar-thumb:hover {
+  background: #10F3F3;
+}
+.var3::-webkit-scrollbar-thumb:hover {
+  background: #C220FA;
+}
+.var4::-webkit-scrollbar-thumb:hover {
+  background: #ebfb35;
+}
+.var5::-webkit-scrollbar-thumb:hover {
+  background: #F51DDF;
 }

@@ -1,15 +1,11 @@
 import { WebSocketServer } from "ws"
 import { Thread } from "./thread.js"
 import url from "url"
+import jsonData from "./jsonData.js"
 
 
 
 let server = null
-let clients = []
-
-function getClient(cnnId) {
-	return clients.find(c => c.cnnId == cnnId)
-}
 
 serverStart()
 
@@ -23,11 +19,8 @@ function serverStart(port = 3111) {
 		const location = url.parse(req.url, true);
 		const { id: cnnId } = location.query
 		console.log("fe:connection:", cnnId);
-
-		//if (getClient(cnnId)) return
 		const client = { cnnId, cws }
 		cws.on('message', onMessage(client))
-		//clients.push(client)
 	})
 
 	server.on("error", (error) => {
@@ -54,8 +47,9 @@ function serverStop() {
 const onMessage = client => msgRaw => {
 	const msg = JSON.parse(msgRaw)
 
-	console.log("FE > BE")
+	console.log(client.cnnId, "FE > BE")
 	console.log(msg)
+	console.log("---")
 
 	const type = msg.type
 	switch (type) {
@@ -78,14 +72,25 @@ function send(cws, msg) {
 	cws.send(JSON.stringify(msg))
 }
 
+
+
+let messagesSend = 0
+
 function sendTestMessages(client, subjects) {
-	subjects.forEach(subject => send(client.cws, {
-		type: "nats_msg",
-		payload: {
-			subject,
-			payload: `cnn:${client.cnnId} - ${"a".repeat(Math.round(Math.random() * 200))}`
-		},
-	}))
+	subjects.forEach(subject => {
+		send(client.cws, {
+			type: "nats_msg",
+			payload: {
+				subject,
+				payload: getJsonData(messagesSend)
+			},
+		})
+		messagesSend++
+	})
+}
+
+function getJsonData(index) {
+	return JSON.stringify(jsonData[index % jsonData.length])
 }
 
 //#endregion

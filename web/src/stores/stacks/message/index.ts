@@ -1,8 +1,9 @@
 import srcIcon from "@/assets/message-icon.svg"
-import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
+import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { HistoryMessage, MSG_FORMAT } from "../messages/utils"
 import { COLOR_VAR } from "@/stores/layout"
+import dayjs from "dayjs"
 
 
 
@@ -22,6 +23,10 @@ const setup = {
 	getters: {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.title,
+		getSubTitle: (_: void, store?: ViewStore):string => {
+			const timestamp = (store as MessageStore).state.message?.timestamp
+			return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
+		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		//#endregion

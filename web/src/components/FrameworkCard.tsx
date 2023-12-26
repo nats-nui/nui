@@ -1,4 +1,4 @@
-import { VIEW_SIZE, ViewStore } from "@/stores/docs/viewBase"
+import { VIEW_SIZE, ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
 import Header from "./Header"
 import ActionGroup from "./buttons/ActionGroup"
@@ -24,22 +24,23 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	// RENDER
 	const inRoot = !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.ICONIZED
-	const variant = store.getColorBg()
+	const variantBg = store.getColorBg()
+	const variant = store.getColorVar()
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
-	return <div style={cssRoot(variant, inDrag)}>
+	return <div style={cssRoot(variantBg, inDrag)}>
 
 		<Header store={store} />
 
 		{!isIconized ? (<>
 
 			<ActionGroup 
-				style={{ marginLeft: !inRoot? 7 : null }}
+				style={{ marginLeft: !inRoot? 10 : null }}
 			>
 				{actionsRender}
 			</ActionGroup>
 
-			<div style={cssChildren(inRoot)}>
+			<div style={cssChildren(inRoot)} className={`var${variant}`}>
 				{children}
 			</div>
 
@@ -66,8 +67,9 @@ const cssRoot = (variant: number, inDrag:boolean): React.CSSProperties => ({
 })
 
 const cssChildren = (inRoot: boolean): React.CSSProperties => ({
-	marginLeft: inRoot ? 0 : 15,
+	marginLeft: inRoot ? 0 : 10,
 	flex: 1,
 	overflowY: "auto",
 	padding: 10,
+	display: "flex", flexDirection: "column",
 })

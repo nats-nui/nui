@@ -7,7 +7,7 @@ import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import FormatDialog from "./FormatDialog"
@@ -30,6 +30,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
+	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
 
 	// HANDLER
 	//#region  SUBSCRIPTIONS
@@ -51,18 +52,24 @@ const MessagesView: FunctionComponent<Props> = ({
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: HistoryMessage) => msgSo.openMessageDetail(message)
-	const handleSearchChange = (value: string) => msgSo.setTextSearch(value)
+	const handleSearchChange = (value: string) => {
+		setTextFind(value)
+		debounce(`text-find-${msgSa.uuid}`, ()=>msgSo.setTextSearch(value), 2000)
+		//msgSo.setTextSearch(value)
+	}
 
 	// RENDER
 	const formatSel = msgSa.format.toUpperCase()
 	const variant = msgSo.getColorVar()
+	const history = msgSo.getHistoryFiltered()
 
 	return <FrameworkCard
 		store={msgSo}
 		actionsRender={<>
 			<FindInput
-				value={msgSa.textSearch ?? ""}
+				value={textFind}
 				onChange={handleSearchChange}
+				variant={variant}
 			/>
 			<Button
 				select={msgSa.formatsOpen}
@@ -85,9 +92,10 @@ const MessagesView: FunctionComponent<Props> = ({
 	>
 
 		<ItemsList
-			messages={msgSa.history}
+			messages={history}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}
+			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 
 		<Dialog

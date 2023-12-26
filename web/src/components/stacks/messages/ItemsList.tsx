@@ -1,7 +1,7 @@
 import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
-import { FunctionComponent, useEffect, useRef, useState } from "react"
+import { FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from "react"
 import ItemRow from "./rows/ItemRow"
 
 
@@ -10,12 +10,14 @@ interface Props {
 	messages: HistoryMessage[]
 	format: MSG_FORMAT
 	onMessageClick?: (message:HistoryMessage)=>void
+	style?: React.CSSProperties
 }
 
 const ItemsList: FunctionComponent<Props> = ({
 	messages,
 	format,
 	onMessageClick,
+	style,
 }) => {
 
 	// STORE
@@ -26,7 +28,7 @@ const ItemsList: FunctionComponent<Props> = ({
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const indexTopRef = useRef(0)
 	const upHeightRef = useRef(0)
-	const scrollHeightRef = useRef(2934)
+	const scrollHeightRef = useRef(849)
 	// indica che dee automaticamente scrollare in basso se arriva un nuovo messaggio
 	const [keepDown, setKeepDown] = useState(true)
 
@@ -34,10 +36,15 @@ const ItemsList: FunctionComponent<Props> = ({
 	useEffect(() => {
 		const node = scrollRef.current
 		if (!node) return
-		updateScroll()
-		if (!keepDown) return
-		node.scrollTop = node.scrollHeight - node.clientHeight
-		setTimeout(() => node.scrollTop = node.scrollHeight - node.clientHeight + 200, 100)
+		setTimeout(()=>{
+			updateScroll()
+			if (!keepDown) return
+			node.scrollTop = node.scrollHeight - node.clientHeight
+		}, 200)
+		// updateScroll()
+		// if (!keepDown) return
+		// node.scrollTop = node.scrollHeight - node.clientHeight
+		// setTimeout(() => node.scrollTop = node.scrollHeight - node.clientHeight + 200, 100)
 	}, [messages, format])
 
 	// HANDLER
@@ -92,7 +99,7 @@ const ItemsList: FunctionComponent<Props> = ({
 		scrollHeightRef.current = heightItems
 	}
 	function getMessageHeight(message: HistoryMessage): number {
-		return message.height ?? 50
+		return message.height ?? 100
 	}
 
 	// RENDER
@@ -102,12 +109,13 @@ const ItemsList: FunctionComponent<Props> = ({
 			onMouseDown={handleStopKeepDown}
 			onWheel={handleStopKeepDown}
 			onScroll={handleScroll as any}
-			style={{ flex: 1, overflowY: "auto" }}
+			style={{ ...cssRoot, ...style}}
+			className="var2"
 		>
 
-			<div style={{ height: scrollHeightRef.current, backgroundColor: "purple", overflowY: "hidden" }}>
+			<div style={{ height: scrollHeightRef.current/*, backgroundColor: "purple", overflowY: "hidden"*/ }}>
 
-				<div style={{ height: upHeightRef.current, backgroundColor: "red" }} />
+				<div style={{ height: upHeightRef.current/*, backgroundColor: "red" */}} />
 
 				{messagesVisible.map((message, index) => (
 					<ItemRow
@@ -127,11 +135,14 @@ const ItemsList: FunctionComponent<Props> = ({
 				><ArrowDownIcon /></FloatButton>
 			)}
 
-			{/* <div style={{ height: downHeight, backgroundColor: "blue" }} /> */}
-
 		</div>
 	)
 }
 
 export default ItemsList
+
+const cssRoot:React.CSSProperties = {
+	flex: 1, 
+	overflowY: "auto",
+}
 

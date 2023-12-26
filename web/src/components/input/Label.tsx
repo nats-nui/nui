@@ -54,6 +54,7 @@ const cssNormal: React.CSSProperties = {
 const cssSubTitle: React.CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
+	opacity: .7,
 }
 const cssTitle: React.CSSProperties = {
 	fontSize: 22,

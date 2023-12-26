@@ -1,6 +1,6 @@
 import MessagesView from "@/components/stacks/messages/MessagesView"
 import CnnDetailView from "@/components/stacks/connections/CnnDetailView"
-import { ViewStore } from "@/stores/docs/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { CnnListStore } from "@/stores/stacks/connection/list"
 import { MessagesStore } from "@/stores/stacks/messages"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"

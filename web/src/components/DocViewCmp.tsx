@@ -1,4 +1,4 @@
-import { VIEW_SIZE, ViewState, ViewStore } from "@/stores/docs/viewBase"
+import { VIEW_SIZE, ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
