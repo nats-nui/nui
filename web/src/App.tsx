@@ -1,5 +1,5 @@
 import docSo, { DocState } from "@/stores/docs"
-import { ViewStore } from "@/stores/docs/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import layoutSo, { LayoutState } from "@/stores/layout"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"

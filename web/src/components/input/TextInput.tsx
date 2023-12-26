@@ -6,12 +6,14 @@ import React, { FunctionComponent } from "react"
 interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
+	variant?: number
 	style?: React.CSSProperties
 }
 
 const TextInput: FunctionComponent<Props> = ({
 	value,
 	onChange,
+	variant,
 	style,
 }) => {
 	// STORE
@@ -24,6 +26,7 @@ const TextInput: FunctionComponent<Props> = ({
 	// RENDER
 	return (
 		<input style={{ ...cssRoot, ...style }}
+			className={`var${variant}`}
 			value={value}
 			onChange={handleChange}
 		/>

@@ -4,15 +4,14 @@ import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
-import docSetup, { ViewStore } from "@/stores/docs/viewBase"
+import { COLOR_VAR } from "@/stores/layout"
+import docSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { ViewState } from "../../docs/viewBase"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
-import historyTest from "./test"
+import { ViewState } from "../viewBase"
 import { HistoryMessage, MSG_FORMAT, MSG_TYPE, PARAMS_MESSAGES } from "./utils"
-import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -24,7 +23,7 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
-		history: <HistoryMessage[]>historyTest,//[],
+		history: <HistoryMessage[]>[],//historyTest,//[],
 		/** testo per la ricerca */
 		textSearch: <string>null,
 		/** DIALOG SUBS aperta */
@@ -38,6 +37,14 @@ const setup = {
 		getConnection: (_: void, store?: MessagesStore) => {
 			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
+		},
+		getHistoryFiltered: (_: void, store?: MessagesStore) => {
+			const text = store.state.textSearch?.toLocaleLowerCase()
+			if ( !text || text.trim().length == 0 ) return store.state.history
+			return store.state.history.filter( h => 
+				h.body.toLowerCase().includes(text)
+				|| h.title.toLowerCase().includes(text)
+			)
 		},
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
@@ -62,7 +69,7 @@ const setup = {
 		addInHistory(message: PayloadMessage, store?: MessagesStore) {
 			const historyMessage: HistoryMessage = {
 				id: createUUID(),
-				title: `${message.subject} [${store.state.history.length}]`,
+				title: message.subject,
 				body: message.payload as string,
 				type: MSG_TYPE.MESSAGE,
 				timestamp: Date.now(),

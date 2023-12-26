@@ -1,7 +1,7 @@
 import { ANIM_TIME, DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
 import navSo from "@/stores/navigation"
 import { StoreCore, createStore } from "@priolo/jon"
-import { ViewStore } from "./viewBase"
+import { ViewStore } from "../stacks/viewBase"
 import { stringToViewsState, viewsToString } from "./utils/urlTransform"
 import { buildStore, getID } from "./utils/factory"
 import { aggregate, disgregate, getById } from "./utils/manage"

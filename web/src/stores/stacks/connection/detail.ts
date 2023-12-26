@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
-import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
+import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
