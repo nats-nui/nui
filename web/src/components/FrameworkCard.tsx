@@ -69,4 +69,5 @@ const cssChildren = (inRoot: boolean): React.CSSProperties => ({
 	marginLeft: inRoot ? 0 : 15,
 	flex: 1,
 	overflowY: "auto",
+	padding: 10,
 })

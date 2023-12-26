@@ -24,6 +24,9 @@ const setup = {
 		params: {
 			[CONNECTIONS_PARAMS.SELECT_ID]: <string[]>null
 		},
+		//#region VIEWBASE
+		width: 220,
+		//#endregion
 	},
 
 	getters: {

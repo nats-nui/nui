@@ -39,7 +39,7 @@ const setup = {
 		},
 		async modify(cnn: Connection, store?: ConnectionStore) {
 			const index = store.getIndexById(cnn.id)
-			if ( index == -1 ) return
+			if (index == -1) return
 			const cnns = [...store.state.all]
 			cnns[index] = cnn
 			store.setAll(cnns)

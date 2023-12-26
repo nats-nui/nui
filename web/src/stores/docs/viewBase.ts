@@ -3,6 +3,7 @@ import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
 import { COLOR_VAR } from "../layout"
 import docSo from "@/stores/docs"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -35,6 +36,7 @@ const setup = {
 		urlSerializable: true,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
+		width: 300,
 		/** l'a corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
@@ -66,10 +68,10 @@ const setup = {
 				case DOC_ANIM.SHOWING:
 					break
 				case DOC_ANIM.DRAGGING:
+					const color = layoutSo.state.theme.palette.var[store.getColorVar()]
 					style = {
 						...style,
-						border: '2px dashed #10f3f3',
-						backgroundColor: '#1e1e1e',
+						border: `2px dashed ${color.bg}`,
 					}
 					break
 				default:
@@ -79,7 +81,7 @@ const setup = {
 		},
 
 		//#region OVERRIDABLE
-		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? 300 : 600,
+		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
 		getTitle: (_: void, store?: ViewStore):string => null,
 		getSubTitle: (_: void, store?: ViewStore):string => null,
 		getIcon: (_: void, store?: ViewStore):string => null,
