@@ -24,17 +24,15 @@ const setup = {
 	},
 
 	getters: {
-
 		getConnection(_: void, store?: CnnDetailStore) {
 			const cnnId = (<CnnListStore>store.state.parent).getSelectId()
 			const cnn = cnnSo.getById(cnnId)
 			return cnn
 		},
 
-
-		//#region OVERRIDABLE
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "DETAIL",
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
+		getColorBg: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
 		//#endregion
 	},
 

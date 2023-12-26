@@ -2,7 +2,8 @@ import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import cnnApi from "@/api/connection"
 import cnnSo from "@/stores/connections"
-import srcIcon from "@/assets/mg-hdr.svg"
+import srcIcon from "@/assets/send-icon.svg"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 const setup = {
@@ -15,6 +16,7 @@ const setup = {
 	},
 
 	getters: {
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => {
 			const cnnId = (store.state as MessageSendState).connectionId
 			const cnn = cnnSo.getById(cnnId)
@@ -25,6 +27,8 @@ const setup = {
 			return subject ? `SUBJECT: ${subject}` : "NO SUBJECT!"
 		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
+		//#endregion
 	},
 
 	actions: {

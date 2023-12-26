@@ -23,6 +23,8 @@ const ActionGroup: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
+	if ( !children ) return null
+	
 	return <div style={{ ...cssRoot, ...style }}>
 		{children}
 	</div>
@@ -36,7 +38,6 @@ const cssRoot: React.CSSProperties = {
 	alignItems: "center",
 	justifyContent: 'flex-end',
 	padding: 3,
-	//backgroundColor: layoutSo.state.theme.palette.actionsGroup.bg,
 	backgroundColor:"rgb(0 0 0 / 50%)",
 	color: layoutSo.state.theme.palette.actionsGroup.fg,
 }

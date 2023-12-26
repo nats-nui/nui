@@ -1,9 +1,6 @@
-import imgMsg from "@/assets/mg-hdr.svg"
-import Header from "@/components/Header"
-import ActionGroup from "@/components/buttons/ActionGroup"
+import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import TextArea from "@/components/input/TextArea"
-import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/send"
 import { useStore } from "@priolo/jon"
@@ -14,12 +11,10 @@ import SubjectsDialog from "./SubjectsDialog"
 
 interface Props {
 	store?: MessageSendStore
-	style?: React.CSSProperties,
 }
 
 const MessageSendView: FunctionComponent<Props> = ({
 	store: sendSo,
-	style,
 }) => {
 
 	// STORE
@@ -40,49 +35,38 @@ const MessageSendView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const cnn = cnnSo.getById(sendSa.connectionId)
-	const subs = cnn?.subscriptions ?? []
-	return (
-		<div style={{ ...cssContainer }}>
+	const variant = sendSo.getColorVar()
 
-			<Header view={sendSo} />
-
-			<ActionGroup>
-				<Button
-					select={sendSa.subsOpen}
-					label="SUBJECT"
-					onClick={handleSubsClick}
-					colorVar={COLOR_VAR.YELLOW}
-				/>
-				<Button
-					label="SEND"
-					onClick={handleSend}
-					colorVar={COLOR_VAR.YELLOW}
-				/>
-			</ActionGroup>
-
-			<div style={{ ...cssForm, ...style }}>
-				<TextArea style={{ flex: 1 }}
-					value={sendSa.text}
-					onChange={handleTextChange}
-				/>
-			</div>
-
-			<SubjectsDialog store={sendSo} />
+	return <FrameworkCard
+		store={sendSo}
+		actionsRender={<>
+			<Button
+				select={sendSa.subsOpen}
+				label="SUBJECT"
+				onClick={handleSubsClick}
+				variant={variant}
+			/>
+			<Button
+				label="SEND"
+				onClick={handleSend}
+				variant={variant}
+			/>
+		</>}
+	>
+		<div style={cssForm}>
+			<TextArea style={{ flex: 1 }}
+				value={sendSa.text}
+				onChange={handleTextChange}
+			/>
 		</div>
-	)
+
+		<SubjectsDialog store={sendSo} />
+		
+	</FrameworkCard>
+
 }
 
 export default MessageSendView
-
-const cssContainer: React.CSSProperties = {
-	position: "relative",
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	height: "100%",
-	width: "300px",
-}
 
 const cssForm: React.CSSProperties = {
 	display: "flex",

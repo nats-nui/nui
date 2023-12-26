@@ -3,7 +3,7 @@ import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
-import layoutSo from "@/stores/layout"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { getID } from "@/stores/docs/utils/factory"
 import Header from "./Header"
 import docSo from "@/stores/docs"
@@ -15,6 +15,7 @@ interface Props {
 	deep?: number
 }
 
+/** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
 const DocViewCmp: FunctionComponent<Props> = ({
 	view,
 	deep = 100,
@@ -36,6 +37,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
 	const haveFocus = docSa.focus == view
+	const variant = view.getColorVar()
 
 	// styles
 	const styContainerDoc: React.CSSProperties = {
@@ -43,24 +45,16 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		borderRadius: inRoot ? 10 : "0px 10px 10px 0px",
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
-		width: view.getWidth() + (haveFocus ? 100 : 0),
-		...haveFocus ? { /*boxSizing: "border-box",*/ border: `1px solid ${layoutSo.state.theme.palette.var[0].bg}` } : {},
+		width: view.getWidth(),
+		...haveFocus ? { /*boxSizing: "border-box",*/ border: `1px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
 		...view.getStyAni(),
-	}
-	const styDoc = {
-		transition: `opacity ${ANIM_TIME_CSS}ms`,
-		opacity: view.state.docAnim == DOC_ANIM.DRAGGING ? .3 : null
 	}
 
 	return <div style={cssRoot(deep)} id={getID(view.state)}>
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
-			{viewSa.size != VIEW_SIZE.ICONIZED ? (
-				<DocCmp view={view} style={styDoc} />
-			) : (
-				<Header view={view} />
-			)}
+			<DocCmp view={view} />
 		</div>
 
 		<div style={cssDesk}>
@@ -80,7 +74,6 @@ const DocViewCmp: FunctionComponent<Props> = ({
 			</div>}
 
 		</div>
-
 	</div>
 }
 
@@ -96,9 +89,9 @@ const cssDoc: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	overflow: "hidden",
-	color: layoutSo.state.theme.palette.default.fg,
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+	color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
+	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
+	transitionTimingFunction: layoutSo.state.theme.transitions[0],
 	boxShadow: layoutSo.state.theme.shadows[0],
 }
 

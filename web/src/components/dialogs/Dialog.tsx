@@ -3,12 +3,16 @@ import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import { createPortal } from "react-dom"
+import layoutSo from "@/stores/layout"
+import Label, { LABEL_TYPES } from "../input/Label"
 
 
 
 interface Props {
 	store: ViewStore
 	open: boolean
+	title?: React.ReactNode
+	width?: number | string
 	children?: React.ReactNode
 	/** se true(default) chiudo la dialog se clicco su un qualunque altro punto della pagina */
 	closeClickOut?: boolean
@@ -21,6 +25,8 @@ interface Props {
 const Dialog: FunctionComponent<Props> = ({
 	store,
 	open,
+	title,
+	width,
 	children,
 	closeClickOut = true,
 	onClose,
@@ -60,8 +66,23 @@ const Dialog: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!refDialog) return null
+	const variant = store.getColorVar()
 
-	return createPortal(children, refDialog)
+	return createPortal(
+		<div style={cssRoot(variant, width)}>
+			<Label type={LABEL_TYPES.TITLE_DIALOG}>{title}</Label>
+			{children}
+		</div>,
+		refDialog
+	)
 }
 
 export default Dialog
+
+const cssRoot = (variant: number, width: number | string): React.CSSProperties => ({
+	flex: 1,
+	width: width,
+	padding: "10px 10px 10px 15px",
+	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+	color: layoutSo.state.theme.palette.var[variant].fg,
+})

@@ -1,26 +1,23 @@
-import Header from "@/components/Header"
-import { MessageState, MessageStore } from "@/stores/stacks/message"
-import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
-import JsonCmp from "../../formatters/json/JsonCmp"
-import ActionGroup from "@/components/buttons/ActionGroup"
+import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import FormatDialog from "../messages/FormatDialog"
-import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
-import TextCmp from "@/components/formatters/text/TextCmp"
-import HexTable from "@/components/formatters/hex/HexTable"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
+import HexTable from "@/components/formatters/hex/HexTable"
+import TextCmp from "@/components/formatters/text/TextCmp"
+import { MessageState, MessageStore } from "@/stores/stacks/message"
+import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent } from "react"
+import JsonCmp from "../../formatters/json/JsonCmp"
+import FormatDialog from "../messages/FormatDialog"
 
 
 
 interface Props {
 	store?: MessageStore
-	style?: React.CSSProperties,
 }
 
 const MessageView: FunctionComponent<Props> = ({
 	store: msgSo,
-	style,
 }) => {
 
 	// STORE
@@ -30,55 +27,45 @@ const MessageView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
-	const handleCopyClick = () => {
-		navigator.clipboard.writeText(text)
-	}
+	const handleCopyClick = () => navigator.clipboard.writeText(text)
 
 	// RENDER
 	const text = msgSa.message.body
 	const format = msgSa.format
 	const formatLabel = format.toUpperCase()
 
-	return (
-		<div style={{ ...cssContainer, ...style }}>
-
-			<Header view={msgSo} />
-
-			<ActionGroup>
-				<Button
-					label="COPY"
-					onClick={handleCopyClick}
-					colorVar={1}
-				/>
-				<Button
-					select={msgSa.formatsOpen}
-					label={formatLabel}
-					onClick={handleFormatsClick}
-					colorVar={1}
-				/>
-			</ActionGroup>
-
-			<div style={{ overflowY: "auto" }}>
-				{{
-					[MSG_FORMAT.JSON]: <JsonCmp text={text} style={{ margin: "15px 0px 15px 15px" }} />,
-					[MSG_FORMAT.TEXT]: <TextCmp text={text} />,
-					[MSG_FORMAT.BASE64]: <Base64Cmp text={text} />,
-					[MSG_FORMAT.HEX]: <HexTable text={text} />,
-				}[format]}
-			</div>
-
-			<FormatDialog store={msgSo} />
+	return <FrameworkCard
+		store={msgSo}
+		actionsRender={<>
+			<Button
+				label="COPY"
+				onClick={handleCopyClick}
+				variant={1}
+			/>
+			<Button
+				select={msgSa.formatsOpen}
+				label={formatLabel}
+				onClick={handleFormatsClick}
+				variant={1}
+			/>
+		</>}
+	>
+		<div style={cssScroller}>
+			{{
+				[MSG_FORMAT.JSON]: <JsonCmp text={text} />,
+				[MSG_FORMAT.TEXT]: <TextCmp text={text} />,
+				[MSG_FORMAT.BASE64]: <Base64Cmp text={text} />,
+				[MSG_FORMAT.HEX]: <HexTable text={text} />,
+			}[format]}
 		</div>
-	)
+
+		<FormatDialog store={msgSo} />
+
+	</FrameworkCard>
 }
 
 export default MessageView
 
-const cssContainer: React.CSSProperties = {
-	position: "relative",
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	height: "100%",
-	width: "300px",
+const cssScroller:React.CSSProperties = {
+	padding: 10,
 }

@@ -1,12 +1,9 @@
-import Header from "@/components/Header"
-import ActionGroup from "@/components/buttons/ActionGroup"
+import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import FindInput from "@/components/input/FindInput"
 import cnnSo, { ConnectionState } from "@/stores/connections"
-import { VIEW_SIZE } from "@/stores/docs/viewBase"
-import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
-import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
@@ -35,7 +32,6 @@ const MessagesView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-
 	//#region  SUBSCRIPTIONS
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
 		if (select) return
@@ -53,93 +49,63 @@ const MessagesView: FunctionComponent<Props> = ({
 	//#endregion
 
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
-
-
-
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: HistoryMessage) => msgSo.openMessageDetail(message)
 	const handleSearchChange = (value: string) => msgSo.setTextSearch(value)
 
 	// RENDER
 	const formatSel = msgSa.format.toUpperCase()
+	const variant = msgSo.getColorVar()
 
-	return (
-		<div style={{ ...cssContainer, ...style }}>
-
-			<Header view={msgSo} />
-
-			<ActionGroup>
-				<FindInput
-					value={msgSa.textSearch ?? ""}
-					onChange={handleSearchChange}
-					style={{ marginLeft: 7 }}
-
-				/>
-				<Button
-					select={msgSa.formatsOpen}
-					label={formatSel}
-					onClick={handleFormatsClick}
-					colorVar={1}
-				/>
-				<Button
-					select={msgSa.subscriptionsOpen}
-					label="SUBJECTS"
-					onClick={handleClickSubs}
-					colorVar={1}
-				/>
-				<Button
-					label="SEND"
-					onClick={handleSendClick}
-					colorVar={1}
-				/>
-			</ActionGroup>
-
-			<ItemsList
-				messages={msgSa.history}
-				format={msgSa.format}
-				onMessageClick={hendleMessageClick}
+	return <FrameworkCard
+		store={msgSo}
+		actionsRender={<>
+			<FindInput
+				value={msgSa.textSearch ?? ""}
+				onChange={handleSearchChange}
 			/>
+			<Button
+				select={msgSa.formatsOpen}
+				label={formatSel}
+				variant={variant}
+				onClick={handleFormatsClick}
+			/>
+			<Button
+				select={msgSa.subscriptionsOpen}
+				label="SUBJECTS"
+				onClick={handleClickSubs}
+				variant={variant}
+			/>
+			<Button
+				label="SEND"
+				onClick={handleSendClick}
+				variant={variant}
+			/>
+		</>}
+	>
 
-			<Dialog
-				open={msgSa.subscriptionsOpen}
-				store={msgSo}
-				onClose={handleCloseSubsDialog}
-			>
-				<SubscriptionsList
-					style={cssDialogSubs}
-					subscriptions={msgSa.subscriptions}
-					onChange={handleChangeSubs}
-				/>
-			</Dialog>
+		<ItemsList
+			messages={msgSa.history}
+			format={msgSa.format}
+			onMessageClick={hendleMessageClick}
+		/>
 
-			<FormatDialog store={msgSo} />
+		<Dialog
+			title="SUBJECTS"
+			width={200}
+			open={msgSa.subscriptionsOpen}
+			store={msgSo}
+			onClose={handleCloseSubsDialog}
+		>
+			<SubscriptionsList
+				subscriptions={msgSa.subscriptions}
+				onChange={handleChangeSubs}
+			/>
+		</Dialog>
 
-		</div>
-	)
+		<FormatDialog store={msgSo} />
+
+	</FrameworkCard>
 }
 
 export default MessagesView
-
-const cssContainer: React.CSSProperties = {
-	position: "relative",
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	height: "100%",
-	width: "300px",
-}
-
-const cssDialogTypes: React.CSSProperties = {
-	width: 70,
-	flex: 1,
-	padding: '10px 15px',
-	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
-	color: layoutSo.state.theme.palette.var[1].fg,
-}
-const cssDialogSubs: React.CSSProperties = {
-	width: 200,
-	flex: 1,
-	padding: '10px 15px',
-	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
-	color: layoutSo.state.theme.palette.var[1].fg,
-}

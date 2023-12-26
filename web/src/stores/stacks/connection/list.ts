@@ -1,4 +1,4 @@
-import srcIcon from "@/assets/cnn-hdr.svg"
+import srcIcon from "@/assets/connections-icon.svg"
 import docsSo from "@/stores/docs"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { DOC_TYPE } from "@/types"
@@ -6,6 +6,7 @@ import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
 import { CnnDetailState } from "./detail"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -23,8 +24,6 @@ const setup = {
 		params: {
 			[CONNECTIONS_PARAMS.SELECT_ID]: <string[]>null
 		},
-		/** OVERWRITING */
-		width: 250,
 	},
 
 	getters: {
@@ -33,8 +32,11 @@ const setup = {
 			return docSetup.getters.getParam(CONNECTIONS_PARAMS.SELECT_ID, store)
 		},
 		
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
+		//#endregion
 	},
 
 	actions: {

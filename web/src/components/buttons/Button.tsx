@@ -7,7 +7,7 @@ import React, { FunctionComponent, useState } from "react"
 interface Props {
 	select?: boolean
 	label?: string
-	colorVar?: number
+	variant?: number
 	disabled?: boolean
 	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
 }
@@ -15,7 +15,7 @@ interface Props {
 const Button: FunctionComponent<Props> = ({
 	select,
 	label,
-	colorVar = 0,
+	variant = 0,
 	disabled,
 	onClick,
 }) => {
@@ -35,7 +35,7 @@ const Button: FunctionComponent<Props> = ({
 	// RENDER
 	const styRoot: React.CSSProperties = {
 		...cssRoot,
-		...(mouseOver || select ? cssSelect(colorVar) : {}),
+		...(mouseOver || select ? cssSelect(variant) : {}),
 		...(disabled ? cssDisabled : {}),
 	}
 	return (
@@ -61,9 +61,9 @@ const cssDisabled: React.CSSProperties = {
 	opacity: 0.5,
 	pointerEvents: "none",
 }
-const cssSelect = (colorVar: number): React.CSSProperties => ({
-	backgroundColor: layoutSo.state.theme.palette.var[colorVar].bg,
-	color: layoutSo.state.theme.palette.var[colorVar].fg,
+const cssSelect = (variant: number): React.CSSProperties => ({
+	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+	color: layoutSo.state.theme.palette.var[variant].fg,
 })
 
 const cssLabel: React.CSSProperties = {

@@ -1,5 +1,5 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout";
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useRef, useState } from 'react';
 
 
 
@@ -17,18 +17,28 @@ const Tooltip: FunctionComponent<Props> = ({
 	// HOOKS
 	const [enter, setEnter] = useState(false)
 	const [show, setShow] = useState(false)
+	const timeout = useRef<any>(0)
 
 	// HANDLERS
 	const handleEnter = () => {
-		setShow(false)
 		setEnter(true)
-		setTimeout(() => setShow(true), 400)
+		setShow(false)
+		anim(true, 400)
 	}
 	const handleLeave = () => {
 		setShow(false)
-		setTimeout(() => setEnter(false), 300)
+		anim(false, 300)
+	}
+	const anim = (show:boolean, time:number) => {
+		clearTimeout(timeout.current)
+		timeout.current = setTimeout(() => {
+			if ( show ) setShow(true); else setEnter(false)
+			clearTimeout(timeout.current)
+			timeout.current = 0
+		}, time)
 	}
 
+	// RENDER
 
 	return (
 		<div style={cssRoot}>
@@ -64,7 +74,7 @@ const cssContent = (variant: number, show: boolean): React.CSSProperties => ({
 
 	transitionProperty: 'bottom, opacity',
 	transitionDuration: "300ms",
-	transitionTimingFunction: "ease-out",
+	transitionTimingFunction: layoutSo.state.theme.transitions[0],
 
 	opacity: show ? 1 : 0,
 	bottom: show ? 'calc( 100% + 5px )' : 'calc( 100% + 0px )'

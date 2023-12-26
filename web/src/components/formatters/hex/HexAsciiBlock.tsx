@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import layoutSo from "@/stores/layout"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -23,5 +23,5 @@ const HexAsciiBlock: FunctionComponent<Props> = ({
 export default HexAsciiBlock
 
 const cssRoot: React.CSSProperties = {
-	color: layoutSo.state.theme.palette.var[1].bg,
+	color: layoutSo.state.theme.palette.var[COLOR_VAR.CYAN].bg,
 }
