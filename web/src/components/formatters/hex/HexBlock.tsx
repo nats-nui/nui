@@ -5,15 +5,19 @@ import layoutSo from "@/stores/layout"
 
 interface Props {
 	block: Uint8Array
+	columns?: number
 }
 
 const HexBlock: FunctionComponent<Props> = ({
-	block
+	block,
+	columns = 8,
 }) => {
-	return Array.from(
-		block,
+
+	const render = Array.from(block,
 		(value: number, index: number) => <HexCell key={index} value={value} bgType={index % 2} />
 	)
+	if (render.length < columns) render.push(...Array.from({length:columns - render.length}, _ => <HexCell />))
+	return render
 }
 
 export default HexBlock
@@ -21,7 +25,7 @@ export default HexBlock
 
 
 interface HexCellProps {
-	value: number
+	value?: number
 	bgType?: number
 }
 const HexCell: FunctionComponent<HexCellProps> = ({
@@ -41,5 +45,6 @@ const cssHex2 = {
 	color: layoutSo.state.theme.palette.default.fg2,
 }
 const toHex = (value: number): string => {
+	if ( value == null ) return ".."
 	return value.toString(16).toUpperCase().padStart(2, '0')
 }

@@ -45,7 +45,7 @@ const cssRow = (select: boolean, variant:number): React.CSSProperties => ({
 	cursor: "pointer",
 	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
 	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
-	margin: "3px 0px 3px 6px",
+	margin: "3px -10px 3px 6px",
 	borderRadius: "20px 0px 0px 20px",
 	padding: "4px 15px",
 })

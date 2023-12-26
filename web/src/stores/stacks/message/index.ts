@@ -12,8 +12,11 @@ const setup = {
 		message: <HistoryMessage>null,
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
-		// ViewStore
+		
+		//#region VIEWBASE
 		urlSerializable: false,
+		width: 320,
+		//#endregion
 	},
 
 	getters: {

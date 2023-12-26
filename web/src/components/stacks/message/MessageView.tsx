@@ -33,6 +33,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const text = msgSa.message.body
 	const format = msgSa.format
 	const formatLabel = format.toUpperCase()
+	const variant = msgSo.getColorVar()
 
 	return <FrameworkCard
 		store={msgSo}
@@ -40,24 +41,22 @@ const MessageView: FunctionComponent<Props> = ({
 			<Button
 				label="COPY"
 				onClick={handleCopyClick}
-				variant={1}
+				variant={variant}
 			/>
 			<Button
 				select={msgSa.formatsOpen}
 				label={formatLabel}
 				onClick={handleFormatsClick}
-				variant={1}
+				variant={variant}
 			/>
 		</>}
 	>
-		<div style={cssScroller}>
-			{{
-				[MSG_FORMAT.JSON]: <JsonCmp text={text} />,
-				[MSG_FORMAT.TEXT]: <TextCmp text={text} />,
-				[MSG_FORMAT.BASE64]: <Base64Cmp text={text} />,
-				[MSG_FORMAT.HEX]: <HexTable text={text} />,
-			}[format]}
-		</div>
+		{{
+			[MSG_FORMAT.JSON]: <JsonCmp text={text} />,
+			[MSG_FORMAT.TEXT]: <TextCmp text={text} />,
+			[MSG_FORMAT.BASE64]: <Base64Cmp text={text} />,
+			[MSG_FORMAT.HEX]: <HexTable text={text} />,
+		}[format]}
 
 		<FormatDialog store={msgSo} />
 
@@ -65,7 +64,3 @@ const MessageView: FunctionComponent<Props> = ({
 }
 
 export default MessageView
-
-const cssScroller:React.CSSProperties = {
-	padding: 10,
-}

@@ -24,8 +24,8 @@ const HexRow: FunctionComponent<Props> = ({
 	return (
 		<div style={cssRow}>
 			<div style={cssIndex}>{index}</div>
-			<div style={{ flex: 1 }}><HexBlock block={block} /></div>
-			<div><HexAsciiBlock block={block} /></div>
+			<HexBlock block={block} />
+			<HexAsciiBlock block={block} />
 		</div>
 	)
 }
@@ -35,6 +35,7 @@ export default HexRow
 
 const cssRow: React.CSSProperties = {
 	display: "flex",
+	justifyContent: 'space-between',
 }
 const cssIndex: React.CSSProperties = {
 	minWidth: 30,

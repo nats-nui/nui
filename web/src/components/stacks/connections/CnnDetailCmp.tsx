@@ -15,7 +15,6 @@ import EditAuthRow from "@/components/lists/generic/EditAuthRow"
 
 interface Props {
 	cnnDetailSo: CnnDetailStore
-	style?: React.CSSProperties
 }
 
 /**
@@ -23,7 +22,6 @@ interface Props {
  */
 const CnnDetailCmp: FunctionComponent<Props> = ({
 	cnnDetailSo,
-	style,
 }) => {
 
 	// STORE
@@ -62,7 +60,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const subscriptions = cnnDetailSa.inEdit.subscriptions ?? []
 	const auths = cnnDetailSa.inEdit.auth ?? []
 
-	return <div style={{ ...cssForm, ...style }}>
+	return <div style={cssForm}>
 
 		<Label>NAME</Label>
 		<TextInput
@@ -102,7 +100,6 @@ export default CnnDetailCmp
 const cssForm: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	paddingRight: 8,
 }
 
 const cssList: React.CSSProperties = {

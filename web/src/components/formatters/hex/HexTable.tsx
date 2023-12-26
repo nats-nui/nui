@@ -27,7 +27,7 @@ const HexTable: FunctionComponent<Props> = ({
 	const render = []
 	const maxBlocks = maxRows ? columns * maxRows : Infinity
 	for (let i = 0; i < ascii.length && i < maxBlocks; i += columns) {
-		const block = ascii.slice(i, i + columns) 
+		const block = ascii.slice(i, i + columns)
 		render.push(<HexRow key={i} index={i} block={block} />)
 	}
 	return (
@@ -42,7 +42,5 @@ export default HexTable
 const cssBody: React.CSSProperties = {
 	fontFamily: "monospace",
 	fontSize: 14,
-	overflowWrap: "break-word",
-	wordBreak: "break-all",
 }
 

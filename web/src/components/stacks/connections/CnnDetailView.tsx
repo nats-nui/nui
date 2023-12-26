@@ -57,13 +57,14 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={cnnDetailSo}
 		actionsRender={isNew && (
-			<Button variant={0}
+			<Button
 				label="CREATE"
+				variant={variant}
 				onClick={handleClickNew}
 			/>
 		)}
 	>
-		{!isNew && <>
+		{!isNew && <div style={{ marginBottom: 20 }}>
 			<RowButton
 				icon={<MessagesIcon />}
 				label="MESSAGES"
@@ -81,9 +82,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				variant={variant}
 				label="SETTINGS"
 			/>
-		</>}
+		</div>}
 
-		<CnnDetailCmp style={{ marginTop: 25 }}
+		<CnnDetailCmp
 			cnnDetailSo={cnnDetailSo}
 		/>
 
