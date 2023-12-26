@@ -67,12 +67,8 @@ const cssRoot = (index: number): React.CSSProperties => ({
 	backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
 	display: "flex",
 	flexDirection: "column",
-	padding: 10,
+	padding: "0px 7px 5px 7px",
 })
-const cssTitle: React.CSSProperties = {
-	fontSize: 10,
-	opacity: .7,
-}
 const cssFooter: React.CSSProperties = {
 	fontSize: 10,
 	opacity: .7,

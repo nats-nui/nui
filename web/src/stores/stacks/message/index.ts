@@ -1,7 +1,8 @@
-import srcIcon from "@/assets/msg-hdr.svg"
+import srcIcon from "@/assets/message-icon.svg"
 import docSetup, { ViewState, ViewStore } from "@/stores/docs/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { HistoryMessage, MSG_FORMAT } from "../messages/utils"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -16,8 +17,11 @@ const setup = {
 	},
 
 	getters: {
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.title,
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
+		//#endregion
 	},
 
 	actions: {

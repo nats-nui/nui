@@ -6,7 +6,8 @@ import layoutSo from "@/stores/layout"
 interface Props {
 	cnn: Connection
 	selected?: boolean
-	onClick?: (cnn:Connection)=>void
+	variant?: number
+	onClick?: (cnn: Connection) => void
 }
 
 /**
@@ -15,6 +16,7 @@ interface Props {
 const CnnRow: FunctionComponent<Props> = ({
 	cnn,
 	selected,
+	variant = 0,
 	onClick,
 }) => {
 
@@ -26,9 +28,9 @@ const CnnRow: FunctionComponent<Props> = ({
 	const handleSelectConnection = () => onClick?.(cnn)
 
 	// RENDER
-	if ( !cnn ) return null
+	if (!cnn) return null
 
-	return <div style={cssRow(selected)}
+	return <div style={cssRow(selected, variant)}
 		onClick={handleSelectConnection}
 	>
 		<div style={layoutSo.state.theme.texts.row.title}>{cnn.name}</div>
@@ -38,11 +40,11 @@ const CnnRow: FunctionComponent<Props> = ({
 
 export default CnnRow
 
-const cssRow = (select: boolean): React.CSSProperties => ({
+const cssRow = (select: boolean, variant:number): React.CSSProperties => ({
 	display: "flex", flexDirection: "column",
 	cursor: "pointer",
-	backgroundColor: select ? layoutSo.state.theme.palette.var[0].bg : "unset",
-	color: select ? layoutSo.state.theme.palette.var[0].fg : "unset",
+	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
+	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
 	margin: "3px 0px 3px 6px",
 	borderRadius: "20px 0px 0px 20px",
 	padding: "4px 15px",

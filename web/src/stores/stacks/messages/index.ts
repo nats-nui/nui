@@ -1,4 +1,4 @@
-import srcIcon from "@/assets/msg-hdr.svg"
+import srcIcon from "@/assets/messages-icon.svg"
 import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
@@ -12,6 +12,7 @@ import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import historyTest from "./test"
 import { HistoryMessage, MSG_FORMAT, MSG_TYPE, PARAMS_MESSAGES } from "./utils"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -38,8 +39,11 @@ const setup = {
 			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
 			return cnnSo.getById(id)
 		},
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
+		//#endregion
 	},
 
 	actions: {

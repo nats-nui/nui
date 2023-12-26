@@ -29,6 +29,7 @@ const Label: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
+	if ( !children ) return null
 	const css = {
 		cursor: !!onClick ? "pointer" : null,
 		...cssRoot,
@@ -61,10 +62,11 @@ const cssTitle: React.CSSProperties = {
 	fontFamily: "Darker Grotesque",
 }
 const cssTitleDialog: React.CSSProperties = {
-	fontSize: 22,
+	fontSize: 20,
 	lineHeight: "23px",
 	fontWeight: 800,
 	fontFamily: "Darker Grotesque",
+	marginBottom: 15,
 }
 
 const cssRoot: React.CSSProperties = {

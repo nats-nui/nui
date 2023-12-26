@@ -26,21 +26,17 @@ const DragCmp: FunctionComponent = () => {
 	// HANDLERS
 
 	// RENDER
-	const styRoot: React.CSSProperties = {
-		...cssRoot,
-		...cssPosition(mouseSa.position),
-		...(inShow ? cssInShow : cssInHide),
-		...(hide ? { visibility: "hidden" } : {})
-	}
+	const variant = mouseSa.drag?.srcView?.getColorVar() ?? 0
+	const pos = mouseSa.position
 
-	return <div style={styRoot}>
+	return <div style={cssRoot(variant, pos, inShow, hide)}>
 		{mouseSa.drag?.srcView?.getTitle() ?? "???"}
 	</div>
 }
 
 export default DragCmp
 
-const cssRoot: React.CSSProperties = {
+const cssRoot = (variant:number, pos:Position, inShow:boolean, hide:boolean ):React.CSSProperties => ({
 	pointerEvents: "none",
 	position: 'absolute',
 	zIndex: 99999,
@@ -50,22 +46,17 @@ const cssRoot: React.CSSProperties = {
 	fontWeight: 700,
 
 	padding: "3px 8px",
-	backgroundColor: layoutSo.state.theme.palette.var[0].bg,
-	color: layoutSo.state.theme.palette.var[0].fg,
+	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+	color: layoutSo.state.theme.palette.var[variant].fg,
 	borderRadius: 10,
 	boxShadow: layoutSo.state.theme.shadows[0],
 
 	transform: "translate(-50%, -30px)",
-}
 
-const cssPosition = (pos: Position): React.CSSProperties => ({
 	left: pos?.x,
 	top: pos?.y,
-})
 
-const cssInShow = {
-	opacity: 1,
-}
-const cssInHide = {
-	opacity: 0,
-}
+	opacity: inShow ? 1 : 0,
+
+	visibility: hide ? "hidden" : null
+})

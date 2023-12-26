@@ -1,10 +1,9 @@
 import StringRow from "@/components/lists/generic/StringRow"
-import layoutSo from "@/stores/layout"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import Dialog from "../../dialogs/Dialog"
 import List from "../../lists/generic/List"
 
@@ -38,11 +37,12 @@ const FormatDialog: FunctionComponent<Props> = ({
 	return (
 		<Dialog
 			open={msgSa.formatsOpen}
+			title="FORMATS"
+			width={90}
 			store={msgSo}
 			onClose={handleClose}
 		>
 			<List<string>
-				style={cssDialogTypes}
 				items={formats}
 				RenderRow={StringRow}
 				onChangeSelect={handleSelect}
@@ -52,11 +52,3 @@ const FormatDialog: FunctionComponent<Props> = ({
 }
 
 export default FormatDialog
-
-const cssDialogTypes: React.CSSProperties = {
-	width: 70,
-	flex: 1,
-	padding: '10px 15px',
-	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
-	color: layoutSo.state.theme.palette.var[1].fg,
-}

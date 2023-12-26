@@ -1,4 +1,4 @@
-import Header from "@/components/Header"
+import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -6,7 +6,6 @@ import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import ActionGroup from "../../buttons/ActionGroup"
 import CnnRow from "./CnnRow"
 
 
@@ -21,7 +20,6 @@ interface Props {
  */
 const CnnListView: FunctionComponent<Props> = ({
 	store: cnnListSo,
-	style,
 }) => {
 
 	// STORE
@@ -49,36 +47,33 @@ const CnnListView: FunctionComponent<Props> = ({
 	const selectedId = cnnListSo.getSelectId()
 	const isSelected = (cnn: Connection) => selectedId == cnn.id
 	const bttNewSelect = !!cnnListSa.linked && (cnnListSa.linked as CnnDetailStore).getConnection()?.id == null
+	const variant = cnnListSo.getColorVar()
 
-	return <div style={{ ...cssContainer, ...style }}>
-
-		<Header view={cnnListSo} />
-
-		<ActionGroup>
+	return <FrameworkCard
+		store={cnnListSo}
+		actionsRender={<>
 			<Button
 				label="NEW"
 				select={bttNewSelect}
+				variant={variant}
 				onClick={handleNewConnection}
 			/>
-			<Button onClick={handleDelConnection} label="DELETE" />
-		</ActionGroup>
-
+			<Button 
+				label="DELETE"
+				variant={variant}
+				onClick={handleDelConnection}  
+			/>
+		</>}
+	>
 		{connnections.map(cnn => (
 			<CnnRow key={cnn.id}
 				cnn={cnn}
 				selected={isSelected(cnn)}
+				variant={variant}
 				onClick={handleSelectConnection}
 			/>
 		))}
-
-	</div>
+	</FrameworkCard>
 }
 
 export default CnnListView
-
-const cssContainer: React.CSSProperties = {
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	//width: "250px",
-}

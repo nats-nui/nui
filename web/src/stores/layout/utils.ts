@@ -5,8 +5,6 @@ export interface Theme {
 		var: ColorVariant[]
 		default: ColorVariant
 		actionsGroup: ColorVariant
-
-
 	},
 	texts: {
 		row: {
@@ -16,7 +14,8 @@ export interface Theme {
 		button: React.CSSProperties
 		rowButton: React.CSSProperties
 	},
-	shadows: string[]
+	shadows: string[],
+	transitions?: string[]
 }
 
 export type ColorVariant = {

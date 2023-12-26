@@ -1,6 +1,6 @@
 import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
-import docSo, { DocState } from "@/stores/docs"
+import docSo from "@/stores/docs"
 import { getRoot } from "@/stores/docs/utils/manage"
 import { VIEW_SIZE, ViewStore } from "@/stores/docs/viewBase"
 import mouseSo from "@/stores/mouse"
@@ -12,54 +12,56 @@ import Label, { LABEL_TYPES } from "./input/Label"
 
 
 interface Props {
-	view?: ViewStore
+	store?: ViewStore
 }
 
+/** Tipico HEADER con icona e titolo. Lo trovi nel tipico FrameworkCard */
 const Header: FunctionComponent<Props> = ({
-	view,
+	store,
 }) => {
 
 	// STORE
-	useStore(docSo) as DocState
+	useStore(docSo)
 
 	// HOOK
 
 	// HANDLER
 	const handleClose = _ => {
-		view.onDestroy()
+		store.onDestroy()
 	}
 
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
-		mouseSo.startDrag({ srcView: view })
+		mouseSo.startDrag({ srcView: store })
 	}
 	const handleLinkDetach = () => {
-		if (!view.state.linked) return
-		const root = getRoot(view) ?? view
+		if (!store.state.linked) return
+		const root = getRoot(store) ?? store
 		const rootIndex = docSo.getIndexByView(root)
-		docSo.move({ view: view.state.linked, index: rootIndex + 1, anim: false })
+		docSo.move({ view: store.state.linked, index: rootIndex + 1, anim: false })
 	}
 	const handleSizeClick = () => {
-		view.setSize(
-			view.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
+		store.setSize(
+			store.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
 		)
 	}
 	const handleFocus = (e) => {
 		//e.stopPropagation()
-		docSo.focus(view)
+		docSo.focus(store)
 	}
 
 	// RENDER
-	if (!view) return null
-	const isDraggable = view.state.draggable
-	const haveLinkDetachable = view.state.linked?.state.draggable
-	const title = view.getTitle()
-	const subTitle = view.getSubTitle()
-	const strIcon = view.getIcon()
+	if (!store) return null
+	const isDraggable = store.state.draggable
+	const haveLinkDetachable = store.state.linked?.state.draggable
+	const title = store.getTitle()
+	const subTitle = store.getSubTitle()
+	const strIcon = store.getIcon()
+	const inRoot = !store.state.parent
 
 	return (
-		<div style={cssRoot(view.state.size)}
+		<div style={cssRoot(store.state.size)}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 		>
@@ -69,10 +71,11 @@ const Header: FunctionComponent<Props> = ({
 				</div>
 			)}
 
-			<div style={cssTitle(view.state.size)}>
+			<div style={cssTitle(store.state.size)}>
 				<Label
 					type={LABEL_TYPES.TITLE}
 					onClick={handleFocus}
+					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null}}
 				>{title}</Label>
 
 				{subTitle && (
@@ -80,7 +83,7 @@ const Header: FunctionComponent<Props> = ({
 				)}
 			</div>
 
-			{view.state.size != VIEW_SIZE.ICONIZED && (
+			{store.state.size != VIEW_SIZE.ICONIZED && (
 				<div style={cssButtons} >
 					<IconButton
 						onClick={handleClose}

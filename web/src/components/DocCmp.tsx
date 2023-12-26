@@ -16,28 +16,28 @@ import { MessageSendStore } from "@/stores/stacks/send"
 
 interface DocCmpProps {
 	view: ViewStore,
-	style?: React.CSSProperties,
 }
+
+/** Seleziona il contenuto da visualizzare in base al tipo di VIEW */
 const DocCmp: FunctionComponent<DocCmpProps> = ({
 	view,
-	style,
 }) => {
 	const content = useMemo(() => {
 		switch (view.state.type) {
 			case DOC_TYPE.CONNECTIONS:
-				return <CnnListView store={view as CnnListStore} style={style} />
+				return <CnnListView store={view as CnnListStore} />
 			case DOC_TYPE.SERVICES:
-				return <CnnDetailView store={view as CnnDetailStore} style={style} />
+				return <CnnDetailView store={view as CnnDetailStore} />
 			case DOC_TYPE.MESSAGES:
-				return <MessagesView store={view as MessagesStore} style={style} />
+				return <MessagesView store={view as MessagesStore} />
 			case DOC_TYPE.MESSAGE:
-				return <MessageView store={view as MessageStore} style={style} />
+				return <MessageView store={view as MessageStore} />
 			case DOC_TYPE.MESSAGE_SEND:
-				return <MessageSendView store={view as MessageSendStore} style={style} />
+				return <MessageSendView store={view as MessageSendStore} />
 			default:
 				return null
 		}
-	}, [view, style])
+	}, [view])
 	return content
 }
 

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from "react"
-import layoutSo from "@/stores/layout"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { ANIM_TIME_CSS, Color } from "@/types"
 
 
@@ -8,16 +8,16 @@ interface Props {
 	icon?: React.ReactNode
 	label?: string
 	select?: boolean
-	onClick?: (e:React.MouseEvent) => void
-	style?: React.CSSProperties
+	variant?: number
+	onClick?: (e: React.MouseEvent) => void
 }
 
 const RowButton: FunctionComponent<Props> = ({
 	icon,
 	label,
 	select,
+	variant = 0,
 	onClick,
-	style,
 }) => {
 
 	// STORE
@@ -30,15 +30,8 @@ const RowButton: FunctionComponent<Props> = ({
 	const handleLeave = () => setMouseOver(false)
 
 	// RENDER
-	const styRoot:React.CSSProperties = {
-		...cssRoot,
-		...(select && cssRootSelect),
-		...style,
-		// backgroundColor: mouseOver ? layoutSo.state.theme.palette.bg.acid[colorVar] : null,
-		// color: mouseOver ? layoutSo.state.theme.palette.fg.acid[colorVar] : layoutSo.state.theme.palette.fg.default,
-	}
 	return (
-		<div style={styRoot}
+		<div style={cssRoot(variant, select)}
 			onClick={onClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
@@ -51,19 +44,16 @@ const RowButton: FunctionComponent<Props> = ({
 
 export default RowButton
 
-const cssRoot:React.CSSProperties = {
+const cssRoot = (variant: number, select: boolean): React.CSSProperties => ({
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
 	padding: "5px 8px",
-	color: layoutSo.state.theme.palette.var[0].fg,
+	color: layoutSo.state.theme.palette.var[select ? COLOR_VAR.DEFAULT : variant].fg,
+	backgroundColor: select ? layoutSo.state.theme.palette.default.bg : null,
 	cursor: "pointer",
 	marginLeft: -8,
-}
-const cssRootSelect:React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	color: layoutSo.state.theme.palette.default.fg,
-}
-const cssLabel:React.CSSProperties = {
+})
+const cssLabel: React.CSSProperties = {
 	...layoutSo.state.theme.texts.rowButton,
 	marginLeft: 5,
 }
