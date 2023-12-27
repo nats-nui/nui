@@ -26,6 +26,7 @@ const setup = {
 		},
 		//#region VIEWBASE
 		width: 220,
+		indelible: true,
 		//#endregion
 	},
 

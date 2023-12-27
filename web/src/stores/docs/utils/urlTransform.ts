@@ -60,7 +60,7 @@ function setParams(view: ViewState, params: string[]): ViewState {
  */
 export function viewsToString(views: ViewStore[]): string {
 	const viewsStr = views.reduce((acc, view) => {
-		if ( !view.state.urlSerializable ) return acc
+		if ( !view.state.serializable ) return acc
 		return `${acc ? `${acc}~` : ""}${viewToString(view)}`
 	}, null as string)
 	return viewsStr

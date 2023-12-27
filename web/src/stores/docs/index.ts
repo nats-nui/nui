@@ -17,6 +17,7 @@ const setup = {
 	state: {
 		focus: <ViewStore>null,
 		all: <ViewStore[]>[],
+		anchored: 0,
 	},
 
 	getters: {
@@ -26,11 +27,15 @@ const setup = {
 		getIndexByView(view: ViewStore, store?: DocStore) {
 			return store.state.all.findIndex(v => v == view)
 		},
+		isAnchored(view: ViewStore, store?: DocStore) {
+			const index = store.getIndexByView(view)
+			return index < store.state.anchored
+		},
 	},
 
 	actions: {
-		focus(view:ViewStore, store?: DocStore) {
-			const elm = document.getElementById(getID( view.state))
+		focus(view: ViewStore, store?: DocStore) {
+			const elm = document.getElementById(getID(view.state))
 			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 			store.setFocus(view)
 		},
@@ -42,6 +47,11 @@ const setup = {
 			view.state.position = POSITION_TYPE.DETACHED
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
+			if (index < store.state.anchored) {
+				console.log("add", index, store.state.anchored)
+				store.state.anchored++
+			}
+
 			store.setAll(newViews)
 
 			if (anim) {
@@ -59,7 +69,7 @@ const setup = {
 
 			// se c'e' gia' una view la rimuovo
 			if (parent.state.linked) {
-				await store.remove({view: parent.state.linked, anim})
+				await store.remove({ view: parent.state.linked, anim })
 			}
 			if (!view) return
 
@@ -71,12 +81,12 @@ const setup = {
 				await delayAnim()
 				await view.docAnim(DOC_ANIM.SHOWING)
 			} else {
-				view.setDocAnim(DOC_ANIM.SHOW)	
+				view.setDocAnim(DOC_ANIM.SHOW)
 			}
 		},
 
 		/** inserisco una VIEW nello STACK di un altra VIEW */
-		async remove({ view, anim = false }: { view: ViewStore, anim: boolean }, store?: DocStore) {
+		async remove({ view, anim = false }: { view: ViewStore, anim?: boolean }, store?: DocStore) {
 			if (anim) await view.docAnim(DOC_ANIM.EXITING)
 
 			const views = [...store.state.all]
@@ -85,6 +95,10 @@ const setup = {
 			// placed in ROOT
 			if (!view.state.parent) {
 				index = views.findIndex(v => v == view)
+				if (index < store.state.anchored) {
+					console.log("remove", index, store.state.anchored)
+					store.state.anchored--
+				}
 				if (index != -1) views.splice(index, 1)
 				view.state.parent = null
 				view.state.position = null
@@ -98,13 +112,13 @@ const setup = {
 		},
 
 		/** sposta una view in un indice preciso dello STACK */
-		async move({ view, index, anim = false }: { view: ViewStore, index: number, anim: boolean }, store?: DocStore) {
+		async move({ view, index, anim = false }: { view: ViewStore, index: number, anim?: boolean }, store?: DocStore) {
 			if (view == null || index == null) return
 			// se è direttamente in ROOT...
 			if (view.state.parent == null) {
 				const srcIndex = store.state.all.indexOf(view)
 				if (srcIndex == index || srcIndex + 1 == index) return
-				await store.remove({view, anim})
+				await store.remove({ view, anim })
 				if (srcIndex > index) {
 					await store.add({ view, index, anim })
 				} else {
@@ -112,7 +126,7 @@ const setup = {
 				}
 				// altrimenti la cancello e la ricreo in ROOT
 			} else {
-				await store.remove({view, anim})
+				await store.remove({ view, anim })
 				await store.add({ view, index, anim })
 			}
 		},
@@ -124,6 +138,30 @@ const setup = {
 			const storesAgg = aggregate(stores)
 			store.setAll(storesAgg)
 		},
+
+		async anchor(view: ViewStore, store?: DocStore) {
+			const storeIndex = store.getIndexByView(view)
+			const index = store.state.anchored
+			console.log("anchor", storeIndex, index)
+			await store.move({ view, index })
+			if ( storeIndex >= index ){ 
+				store.setAnchored(store.state.anchored+1)
+			} else {
+				store._update()
+			}
+			
+		},
+		async unanchor(view: ViewStore, store?: DocStore) {
+			const storeIndex = store.getIndexByView(view)
+			const index = store.state.anchored
+			console.log("uanchor", storeIndex, index)
+			await store.move({ view, index })
+			if (storeIndex == index-1) {
+			 	store.setAnchored(store.state.anchored-1)
+			 } else {
+				store._update()
+			}
+		},
 	},
 
 	mutators: {
@@ -133,6 +171,7 @@ const setup = {
 			return { all }
 		},
 		setFocus: (focus: ViewStore) => ({ focus }),
+		setAnchored: (anchored: number) => ({ anchored }),
 	},
 }
 

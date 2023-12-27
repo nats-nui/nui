@@ -1,9 +1,9 @@
+import layoutSo from "@/stores/layout"
 import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
 import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
-import layoutSo from "@/stores/layout"
 
 
 
@@ -43,44 +43,39 @@ const DropArea: FunctionComponent<Props> = ({
 
 	// RENDER
 	const dragOver = mouseSa.drag?.index == index
-	const styRoot: React.CSSProperties = {
-		...cssRoot,
-		...(dragOver && cssDragOver),
-		...((viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING) && { width: 0 }),
-		...(isLast && { flex: 1 })
-	}
-	const styLine = { ...cssLine, ...(dragOver && cssLineDragOver) }
+	const variant = mouseSa.drag?.srcView?.getColorVar() ?? 0
+	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
 
-	return <div style={styRoot} draggable={false}
+	return <div style={cssRoot(dragOver, inExit, isLast)} draggable={false}
 		onMouseOver={handleMouseOver}
 		onMouseLeave={handleMouseLeave}
 	>
-		<div style={styLine} />
+		<div style={cssLine(dragOver, variant)} />
 	</div>
 }
 
 export default DropArea
 
-const cssRoot = {
+const cssRoot = (dragOver: boolean, inExit: boolean, isLast: boolean): React.CSSProperties => ({
 	display: "flex",
-	width: 25,
-	//backgroundColor: "green",
+	width: inExit ? 0 : dragOver ? 40 : 25,
+	...isLast ? {
+		flex: 1,
+		marginLeft: 15,
+		justifyContent: 'flex-start',
+	} : {
+		justifyContent: 'center',
+	},
+	//backgroundColor: "rgb(0 0 0 / 70%)",
 	transition: 'width 200ms ease-in-out',
-	justifyContent: 'center',
-}
+})
 
-const cssDragOver: React.CSSProperties = {
-	width: 40,
-}
 
-const cssLine: React.CSSProperties = {
+const cssLine = (dragOver: boolean, variant: number): React.CSSProperties => ({
 	transition: 'background-color 300ms',
-	backgroundColor: "transparent",
+	backgroundColor: dragOver ? layoutSo.state.theme.palette.var[variant].bg : "transparent",
+	//backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 	width: 5,
 	borderRadius: 3,
 	marginLeft: 6,
-
-}
-const cssLineDragOver: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.var[1].bg,
-}
+})

@@ -5,9 +5,10 @@ import { getRoot } from "@/stores/docs/utils/manage"
 import { VIEW_SIZE, ViewStore } from "@/stores/stacks/viewBase"
 import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useState } from "react"
 import IconButton from "./buttons/IconButton"
 import Label, { LABEL_TYPES } from "./input/Label"
+import AnchorIcon from "@/icons/AnchorIcon"
 
 
 
@@ -24,12 +25,10 @@ const Header: FunctionComponent<Props> = ({
 	useStore(docSo)
 
 	// HOOK
+	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-	const handleClose = _ => {
-		store.onDestroy()
-	}
-
+	const handleClose = () => store.onDestroy()
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
@@ -46,7 +45,10 @@ const Header: FunctionComponent<Props> = ({
 			store.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
 		)
 	}
-	const handleFocus = (e) => {
+	const handleAnchor = () => {
+		if (!isAnchored) docSo.anchor(store); else docSo.unanchor(store)
+	}
+	const handleFocus = () => {
 		//e.stopPropagation()
 		docSo.focus(store)
 	}
@@ -59,11 +61,16 @@ const Header: FunctionComponent<Props> = ({
 	const subTitle = store.getSubTitle()
 	const strIcon = store.getIcon()
 	const inRoot = !store.state.parent
+	const isAnchored = docSo.isAnchored(store)
+	const showBttAnchor = inRoot && (enter || isAnchored)
+	const showBttClose = !store.state.indelible
 
 	return (
 		<div style={cssRoot(store.state.size)}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
+			onMouseEnter={() => setEnter(true)}
+			onMouseLeave={() => setEnter(false)}
 		>
 			{!!strIcon && (
 				<div onClick={handleSizeClick}>
@@ -75,7 +82,7 @@ const Header: FunctionComponent<Props> = ({
 				<Label
 					type={LABEL_TYPES.TITLE}
 					onClick={handleFocus}
-					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null}}
+					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null }}
 				>{title}</Label>
 
 				{subTitle && (
@@ -84,11 +91,19 @@ const Header: FunctionComponent<Props> = ({
 			</div>
 
 			{store.state.size != VIEW_SIZE.ICONIZED && (
-				<div style={cssButtons} >
-					<IconButton
-						onClick={handleClose}
-					><CloseIcon /></IconButton>
-
+				<div style={cssButtons}>
+					<div style={{ display: "flex" }}>
+						{showBttAnchor && (
+							<IconButton
+								onClick={handleAnchor}
+							><AnchorIcon /></IconButton>
+						)}
+						{showBttClose && (
+							<IconButton
+								onClick={handleClose}
+							><CloseIcon /></IconButton>
+						)}
+					</div>
 					{haveLinkDetachable && <IconButton
 						onClick={handleLinkDetach}
 					><DetachIcon /></IconButton>}
@@ -127,4 +142,5 @@ const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
 const cssButtons: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
+	alignItems: 'flex-end',
 }

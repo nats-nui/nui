@@ -80,6 +80,8 @@ const Dialog: FunctionComponent<Props> = ({
 export default Dialog
 
 const cssRoot = (variant: number, width: number | string): React.CSSProperties => ({
+	display: "flex",
+	flexDirection: "column",
 	flex: 1,
 	width: width,
 	padding: "10px 10px 10px 15px",

@@ -1,12 +1,11 @@
-import { VIEW_SIZE, ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import docSo from "@/stores/docs"
+import { getID } from "@/stores/docs/utils/factory"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { getID } from "@/stores/docs/utils/factory"
-import Header from "./Header"
-import docSo from "@/stores/docs"
 
 
 
