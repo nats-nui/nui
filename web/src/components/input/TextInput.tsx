@@ -13,9 +13,10 @@ interface Props {
 const TextInput: FunctionComponent<Props> = ({
 	value,
 	onChange,
-	variant,
+	variant = 0,
 	style,
 }) => {
+	
 	// STORE
 
 	// HOOK

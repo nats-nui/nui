@@ -1,11 +1,10 @@
 import docSo, { DocState } from "@/stores/docs"
-import { ViewStore } from "@/stores/stacks/viewBase"
 import layoutSo, { LayoutState } from "@/stores/layout"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import DocViewCmp from "./components/DocViewCmp"
+import CardCmp from "./CardCmp"
 import DragCmp from "./components/DragCmp"
-import DropArea from "./components/DropArea"
 import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
@@ -23,26 +22,30 @@ const App: FunctionComponent = () => {
 	// HANDLERS
 
 	// RENDER
-	const views = docSa.all
+	const storesAnchored = docSa.all.slice(0, docSa.anchored)
+	const stores = docSa.all.slice(docSa.anchored)
 	return (
 		<div style={cssApp(layoutSa.theme)}>
 
-			<MainMenu />
+			{/* <MainMenu /> */}
 
 			<div style={cssContent}>
 
-				<DropArea index={0} />
-
-				{views.map((view: ViewStore, index: number) =>
-					<div key={getID(view.state)} style={cssCol(views.length, index)}>
-						<DocViewCmp view={view} />
-						<DropArea
-							index={index + 1}
-							isLast={index == views.length - 1}
-							viewSo={view}
+				<div style={{ zIndex: 1, display: "flex", position: "sticky", left: 0, right: 0, backgroundColor: "rgb(0 0 0 / 100%)", margin: "-10px 10px -10px 0px", padding: "10px 0px", borderRight: "2px dashed white", }}>
+					{storesAnchored.map((store: ViewStore) =>
+						<CardCmp key={getID(store.state)}
+							store={store}
 						/>
-					</div>
-				)}
+					)}
+				</div>
+
+				<div style={{ zIndex: 0, display: "flex" }}>
+					{stores.map((store: ViewStore) =>
+						<CardCmp key={getID(store.state)}
+							store={store}
+						/>
+					)}
+				</div>
 			</div>
 
 			<DragCmp />
@@ -60,15 +63,11 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 	color: theme.palette.default.fg,
 })
 
-const cssCol = (length: number, index: number) => ({
-	display: "flex",
-	zIndex: length - index,
-	flex: index == length - 1 ? 1 : null
-})
-
 const cssContent: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
 	overflowX: "auto",
-	padding: "10px 0px 10px 5px"
+	padding: "10px 0px 10px 0px"
 }
+
+

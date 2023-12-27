@@ -33,11 +33,14 @@ const setup = {
 		/** indica se la VIEW è draggabile o no */
 		draggable: true,
 		/** indica se è URL serializable */
-		urlSerializable: true,
+		serializable: true,
+		indelible: false,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
+
+		/** il width "normale" */
 		width: 300,
-		/** l'a corrente stato di animazione */
+		/** il corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
 		/** dove è appiccicata */
@@ -152,7 +155,6 @@ const setup = {
 			const params = { ...store.state.params, ...ps }
 			return { params }
 		},
-		setWidth: (width: number) => ({ width }),
 		setSize: (size: VIEW_SIZE) => ({ size }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
 	},

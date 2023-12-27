@@ -41,22 +41,18 @@ const cssRoot = (variant:number, pos:Position, inShow:boolean, hide:boolean ):Re
 	position: 'absolute',
 	zIndex: 99999,
 	transition: 'opacity 1s',
-
 	fontSize: 14,
 	fontWeight: 700,
-
 	padding: "3px 8px",
+	borderRadius: 10,
+
 	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 	color: layoutSo.state.theme.palette.var[variant].fg,
-	borderRadius: 10,
 	boxShadow: layoutSo.state.theme.shadows[0],
 
 	transform: "translate(-50%, -30px)",
-
 	left: pos?.x,
 	top: pos?.y,
-
 	opacity: inShow ? 1 : 0,
-
 	visibility: hide ? "hidden" : null
 })
