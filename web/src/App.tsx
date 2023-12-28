@@ -8,6 +8,7 @@ import DragCmp from "./components/DragCmp"
 import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
+import DropArea from "./components/DropArea"
 
 
 
@@ -27,19 +28,20 @@ const App: FunctionComponent = () => {
 	return (
 		<div style={cssApp(layoutSa.theme)}>
 
-			{/* <MainMenu /> */}
+			<MainMenu />
 
 			<div style={cssContent}>
 
-				<div style={{ zIndex: 1, display: "flex", position: "sticky", left: 0, right: 0, backgroundColor: "rgb(0 0 0 / 100%)", margin: "-10px 10px -10px 0px", padding: "10px 0px", borderRight: "2px dashed white", }}>
+				<div style={cssFixed}>
 					{storesAnchored.map((store: ViewStore) =>
 						<CardCmp key={getID(store.state)}
 							store={store}
 						/>
 					)}
+					{/* <DropArea index={-1} /> */}
 				</div>
 
-				<div style={{ zIndex: 0, display: "flex" }}>
+				<div style={{ zIndex: 0, display: "flex", flex: 1 }}>
 					{stores.map((store: ViewStore) =>
 						<CardCmp key={getID(store.state)}
 							store={store}
@@ -70,4 +72,14 @@ const cssContent: React.CSSProperties = {
 	padding: "10px 0px 10px 0px"
 }
 
-
+const cssFixed: React.CSSProperties = {
+	zIndex: 1, 
+	display: "flex", 
+	position: "sticky", 
+	left: 0, right: 0, 
+	backgroundColor: "rgb(0 0 0 / 100%)", 
+	//margin: "-10px 10px -10px 0px", 
+	//padding: "10px 0px", 
+	paddingRight: 20,
+	borderRight: "2px dashed white",
+}

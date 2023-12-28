@@ -24,18 +24,18 @@ const CardCmp: FunctionComponent<Props> = ({
 	const index = docSo.getIndexByView(store)
 	const length = docSo.state.all.length
 	const isLast = index == length - 1
+	const isAnchored = index < docSo.state.anchored
 
 	return (
 		<div style={cssCol(length, index)}>
-			{index == 0 && (
-				<DropArea index={0} />
-			)}
-			<DocViewCmp view={store} />
 			<DropArea
-				index={index + 1}
-				isLast={isLast}
+				index={index}
 				viewSo={store}
 			/>
+			<DocViewCmp view={store} />
+			{isLast && !isAnchored && (
+				<DropArea index={length} isLast={isLast}/>
+			)}
 		</div>
 	)
 }

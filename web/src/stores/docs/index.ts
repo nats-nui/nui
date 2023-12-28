@@ -144,23 +144,16 @@ const setup = {
 			const index = store.state.anchored
 			console.log("anchor", storeIndex, index)
 			await store.move({ view, index })
-			if ( storeIndex >= index ){ 
-				store.setAnchored(store.state.anchored+1)
-			} else {
-				store._update()
-			}
-			
+			if (storeIndex >= index) store.state.anchored++
+			store._update()
 		},
 		async unanchor(view: ViewStore, store?: DocStore) {
 			const storeIndex = store.getIndexByView(view)
 			const index = store.state.anchored
 			console.log("uanchor", storeIndex, index)
 			await store.move({ view, index })
-			if (storeIndex == index-1) {
-			 	store.setAnchored(store.state.anchored-1)
-			 } else {
-				store._update()
-			}
+			if (storeIndex == index - 1) store.state.anchored--
+			store._update()
 		},
 	},
 
