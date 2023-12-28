@@ -33,7 +33,12 @@ const setup = {
 			const { srcView, index } = store.state.drag
 			srcView.docAnim(DOC_ANIM.SHOW)
 			store.setDrag(null)
-			docSo.move({ view: srcView, index, anim: true })
+
+			if (index == -1) {
+				docSo.anchor(srcView)
+			} else {
+				docSo.move({ view: srcView, index, anim: true })
+			}
 		}
 	},
 

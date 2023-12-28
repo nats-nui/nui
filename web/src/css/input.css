@@ -1,0 +1,52 @@
+input {
+  font-family: 'Raleway', sans-serif;
+  border: none;
+  min-width: 0;
+  background-color: transparent;
+  color: currentColor;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input:focus {
+  outline: none;
+}
+
+input:disabled {
+  opacity: 0.6;
+}
+
+input::selection {
+  background: #DEDEDE;
+  color: var(--text-bg);
+}
+
+input.var0::selection {
+  background: var(--var-0);
+  color: var(--text-bg);
+}
+
+input.var1::selection {
+  background: var(--var-1);
+  color: var(--text-bg);
+}
+
+input.var2::selection {
+  background: var(--var-2);
+  color: var(--text-bg);
+}
+
+input.var3::selection {
+  background: var(--var-3);
+  color: var(--text-bg);
+}
+
+input.var4::selection {
+  background: var(--var-4);
+  color: var(--text-bg);
+}
+
+input.var5::selection {
+  background: var(--var-5);
+  color: var(--text-bg);
+}

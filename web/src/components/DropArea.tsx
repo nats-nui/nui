@@ -4,6 +4,7 @@ import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
 import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
+import docSo from "@/stores/docs"
 
 
 
@@ -45,7 +46,7 @@ const DropArea: FunctionComponent<Props> = ({
 	const dragOver = mouseSa.drag?.index == index
 	const variant = mouseSa.drag?.srcView?.getColorVar() ?? 0
 	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
-
+	
 	return <div style={cssRoot(dragOver, inExit, isLast)} draggable={false}
 		onMouseOver={handleMouseOver}
 		onMouseLeave={handleMouseLeave}
@@ -66,7 +67,7 @@ const cssRoot = (dragOver: boolean, inExit: boolean, isLast: boolean): React.CSS
 	} : {
 		justifyContent: 'center',
 	},
-	//backgroundColor: "rgb(0 0 0 / 70%)",
+	//backgroundColor: "green",
 	transition: 'width 200ms ease-in-out',
 })
 
