@@ -58,7 +58,8 @@ const ThemeDefault: Theme = {
 	],
 
 	transitions: [
-		"cubic-bezier(0.000, 0.350, 0.225, 1.175)"
+		"cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+		"cubic-bezier(0.38, 0.2, 0.91, 0.42)",
 	]
 }
 

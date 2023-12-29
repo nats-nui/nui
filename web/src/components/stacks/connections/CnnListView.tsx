@@ -7,6 +7,7 @@ import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import CnnRow from "./CnnRow"
+import CnnCompactRow from "./CnnCompactRow"
 
 
 
@@ -58,12 +59,22 @@ const CnnListView: FunctionComponent<Props> = ({
 				variant={variant}
 				onClick={handleNewConnection}
 			/>
-			<Button 
+			<Button
 				label="DELETE"
 				variant={variant}
-				onClick={handleDelConnection}  
+				onClick={handleDelConnection}
 			/>
 		</>}
+		iconizedRender={<div style={cssIconized}>{
+			connnections.map(cnn => (
+				<CnnCompactRow key={cnn.id}
+					cnn={cnn}
+					selected={isSelected(cnn)}
+					variant={variant}
+					onClick={handleSelectConnection}
+				/>
+			))
+		}</div>}
 	>
 		{connnections.map(cnn => (
 			<CnnRow key={cnn.id}
@@ -77,3 +88,10 @@ const CnnListView: FunctionComponent<Props> = ({
 }
 
 export default CnnListView
+
+const cssIconized: React.CSSProperties = {
+	marginTop: 25, 
+	display: "flex", 
+	flexDirection: "column", 
+	gap: 10,
+}

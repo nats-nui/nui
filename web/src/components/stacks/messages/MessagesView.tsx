@@ -7,12 +7,14 @@ import { HistoryMessage } from "@/stores/stacks/messages/utils"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useState } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import FormatDialog from "./FormatDialog"
 import ItemsList from "./ItemsList"
-
+import DropIcon from "@/icons/DropIcon"
+import layoutSo from "@/stores/layout"
+import { VIEW_SIZE } from "@/stores/stacks/viewBase"
 
 
 interface Props {
@@ -31,6 +33,21 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
+	const dropRef = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		if (!dropRef.current || msgSo.state.size != VIEW_SIZE.ICONIZED) return
+		//const idInt = setInterval(() => {
+			const animation = dropRef.current.animate([
+				{ transform: 'translateY(0px)', visibility: "visible" },
+				{ transform: 'translateY(600px)', opacity: 0 }
+			], {
+				duration: 1000,
+				easing: layoutSo.state.theme.transitions[1]
+			});
+			animation.play();
+		//}, 2000)
+		//return () => clearInterval(idInt)
+	}, [msgSo.state.history])
 
 	// HANDLER
 	//#region  SUBSCRIPTIONS
@@ -54,8 +71,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	const hendleMessageClick = (message: HistoryMessage) => msgSo.openMessageDetail(message)
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)
-		debounce(`text-find-${msgSa.uuid}`, ()=>msgSo.setTextSearch(value), 2000)
-		//msgSo.setTextSearch(value)
+		debounce(`text-find-${msgSa.uuid}`, () => msgSo.setTextSearch(value), 2000)
 	}
 
 	// RENDER
@@ -89,6 +105,11 @@ const MessagesView: FunctionComponent<Props> = ({
 				variant={variant}
 			/>
 		</>}
+		iconizedRender={
+			<div ref={dropRef} style={{ marginTop: 15, visibility: "hidden" }}>
+				<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg}/>
+			</div>
+		}
 	>
 
 		<ItemsList
