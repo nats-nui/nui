@@ -11,6 +11,7 @@ interface Props {
 	store: ViewStore
 	style?: React.CSSProperties
 	actionsRender?: React.ReactNode
+	iconizedRender?: React.ReactNode
 	children: React.ReactNode
 }
 
@@ -18,6 +19,7 @@ interface Props {
 const FrameworkCard: FunctionComponent<Props> = ({
 	store,
 	actionsRender,
+	iconizedRender,
 	children,
 }) => {
 
@@ -28,14 +30,14 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	const variant = store.getColorVar()
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
-	return <div style={cssRoot(variantBg, inDrag)}>
+	return <div style={cssRoot(variantBg, inDrag, isIconized)}>
 
 		<Header store={store} />
 
-		{!isIconized ? (<>
+		{isIconized ? iconizedRender : (<>
 
-			<ActionGroup 
-				style={{ marginLeft: !inRoot? 10 : null }}
+			<ActionGroup
+				style={{ marginLeft: !inRoot ? 10 : null }}
 			>
 				{actionsRender}
 			</ActionGroup>
@@ -44,24 +46,23 @@ const FrameworkCard: FunctionComponent<Props> = ({
 				{children}
 			</div>
 
-		</>) : (
-			null
-		)}
+		</>)}
 	</div>
 }
 
 export default FrameworkCard
 
-const cssRoot = (variant: number, inDrag:boolean): React.CSSProperties => ({
+const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean): React.CSSProperties => ({
 	position: "relative",
 	flex: 1,
 	display: "flex",
 	flexDirection: "column",
 	height: "100%",
+	alignItems: isIconized ? "center" : null,
 
 	backgroundColor: layoutSo.state.theme.palette.var[variant]?.bg,
 	color: layoutSo.state.theme.palette.var[variant]?.fg,
-	
+
 	transition: `opacity ${ANIM_TIME_CSS}ms`,
 	opacity: inDrag ? .5 : null,
 })

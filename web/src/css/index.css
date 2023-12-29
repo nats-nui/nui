@@ -17,3 +17,11 @@ html {
   height: 100%;
 }
 
+@keyframes drop {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(100px); opacity: 0; }
+}
+
+.drop {
+  animation: drop 1s ease-in forwards;
+}
