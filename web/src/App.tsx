@@ -9,6 +9,7 @@ import MainMenu from "./components/MainMenu"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
 import DropArea from "./components/DropArea"
+import TooltipCmp from "./components/TooltipCmp"
 
 
 
@@ -51,6 +52,7 @@ const App: FunctionComponent = () => {
 			</div>
 
 			<DragCmp />
+			<TooltipCmp />
 
 		</div>
 	)
@@ -59,6 +61,7 @@ const App: FunctionComponent = () => {
 export default App
 
 const cssApp = (theme: Theme): React.CSSProperties => ({
+	position: "relative",
 	height: "100%",
 	display: "flex",
 	backgroundColor: "black",
@@ -69,7 +72,7 @@ const cssContent: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
 	overflowX: "auto",
-	padding: "10px 0px 10px 0px"
+	padding: "10px 0px 10px 0px",
 }
 
 const cssFixed: React.CSSProperties = {

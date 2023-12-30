@@ -1,5 +1,4 @@
 import IconButton from "@/components/buttons/IconButton"
-import Tooltip from "@/components/buttons/Tooltip"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
@@ -8,6 +7,7 @@ import CopyIcon from "@/icons/CopyIcon"
 import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { FunctionComponent, useState } from "react"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 
 
 
@@ -46,11 +46,11 @@ const MessageRow: FunctionComponent<Props> = ({
 			>
 				<div style={cssTitleText}>{message.title}</div>
 				{bttCopyVisible && (
-					<Tooltip content="COPY" variant={COLOR_VAR.CYAN}>
+					<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
 						<IconButton onClick={handleClipboardClick}>
 							<CopyIcon />
 						</IconButton>
-					</Tooltip>
+					</TooltipWrapCmp>
 				)}
 			</div>
 

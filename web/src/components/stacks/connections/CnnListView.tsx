@@ -8,7 +8,8 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import CnnRow from "./CnnRow"
 import CnnCompactRow from "./CnnCompactRow"
-
+import tooltipSo from "@/stores/tooltip"
+import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 
 
 interface Props {
@@ -53,12 +54,19 @@ const CnnListView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={cnnListSo}
 		actionsRender={<>
-			<Button
-				label="NEW"
-				select={bttNewSelect}
+			<TooltipWrapCmp
+				content={<div style={{ maxWidth: 150 }}>
+					Che vuoi che faccia? ... crea una nuova connessione no?
+				</div>}
 				variant={variant}
-				onClick={handleNewConnection}
-			/>
+			>
+				<Button
+					label="NEW"
+					select={bttNewSelect}
+					variant={variant}
+					onClick={handleNewConnection}
+				/>
+			</TooltipWrapCmp>
 			<Button
 				label="DELETE"
 				variant={variant}
@@ -90,8 +98,8 @@ const CnnListView: FunctionComponent<Props> = ({
 export default CnnListView
 
 const cssIconized: React.CSSProperties = {
-	marginTop: 25, 
-	display: "flex", 
-	flexDirection: "column", 
+	marginTop: 25,
+	display: "flex",
+	flexDirection: "column",
 	gap: 10,
 }
