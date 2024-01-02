@@ -1,11 +1,10 @@
-import { ANIM_TIME, DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
-import navSo from "@/stores/navigation"
+import { DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
+import { delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
-import { stringToViewsState, viewsToString } from "./utils/urlTransform"
 import { buildStore, getID } from "./utils/factory"
-import { aggregate, disgregate, getById } from "./utils/manage"
-import { delayAnim } from "@/utils/time"
+import { getById } from "./utils/manage"
+import { dbLoad, dbSave } from "./utils/db"
 
 
 
@@ -131,36 +130,39 @@ const setup = {
 			}
 		},
 
-		/** sostituisco tutti i DOC con quelli ricavati da una stringa (tipicamente URL) */
-		updateFromString(docsStr: string, store?: DocStore) {
-			const viewsState = stringToViewsState(docsStr)
-			const stores = viewsState.map(viewState => buildStore(viewState)).filter(store => !!store)
-			const storesAgg = aggregate(stores)
-			store.setAll(storesAgg)
-		},
-
+		/** fissa una VIEW al lato sinistro */
 		async anchor(view: ViewStore, store?: DocStore) {
 			const storeIndex = store.getIndexByView(view)
 			const index = store.state.anchored
-			console.log("anchor", storeIndex, index)
 			await store.move({ view, index })
 			if (storeIndex >= index) store.state.anchored++
 			store._update()
 		},
+		/** rende mobile una VIEW fissata */
 		async unanchor(view: ViewStore, store?: DocStore) {
 			const storeIndex = store.getIndexByView(view)
 			const index = store.state.anchored
-			console.log("uanchor", storeIndex, index)
 			await store.move({ view, index })
 			if (storeIndex == index - 1) store.state.anchored--
 			store._update()
 		},
+
+
+
+
+		/** sostituisco tutti i DOC con quelli ricavati da una stringa (tipicamente URL) */
+		// updateFromString(docsStr: string, store?: DocStore) {
+		// 	const viewsState = stringToViewsState(docsStr)
+		// 	const stores = viewsState.map(viewState => buildStore(viewState)).filter(store => !!store)
+		// 	const storesAgg = aggregate(stores)
+		// 	store.setAll(storesAgg)
+		// },
 	},
 
 	mutators: {
 		setAll: (all: ViewStore[], store?: DocStore) => {
-			const views: ViewStore[] = disgregate(all)
-			navSo.setParams(["docs", viewsToString(views)])
+			//const views: ViewStore[] = disgregate(all)
+			// navSo.setParams(["docs", viewsToString(views)])
 			return { all }
 		},
 		setFocus: (focus: ViewStore) => ({ focus }),
@@ -175,12 +177,36 @@ export type DocMutators = typeof setup.mutators
 export interface DocStore extends StoreCore<DocState>, DocGetters, DocActions, DocMutators {
 	state: DocState
 }
-const store = createStore(setup) as DocStore
-export default store
-
-var decodedQueryString = decodeURIComponent(window.location.search.substring(1));
-navSo.setQuery(decodedQueryString)
-const docsStr = navSo.getSearchUrl("docs") as string
-store.updateFromString(docsStr)
+const docsStore = createStore(setup) as DocStore
+export default docsStore
 
 
+
+//var decodedQueryString = decodeURIComponent(window.location.search.substring(1));
+//navSo.setQuery(decodedQueryString)
+//const docsStr = navSo.getSearchUrl("docs") as string
+//store.updateFromString(docsStr)
+
+
+
+// async function load() {
+// 	const states = await dbLoad()
+// 	const stores: ViewStore[] = states.map(state => buildStore(state))
+// 	docsStore.setAll(stores)
+// }
+// load()
+
+window.addEventListener("load", async (event) => {
+	const states = await dbLoad()
+	const stores = states.map(state => {
+		const store = buildStore({ type: state.type })
+		store.setSerialization(state)
+		return store
+	})
+	docsStore.setAll(stores)
+})
+
+window.addEventListener("beforeunload", async (event) => {
+	const states = docsStore.state.all.map(store => store.getSerialization())
+	await dbSave(states)
+})

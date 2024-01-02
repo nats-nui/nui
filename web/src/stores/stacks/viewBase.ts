@@ -4,6 +4,7 @@ import { StoreCore } from "@priolo/jon"
 import { COLOR_VAR } from "../layout"
 import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
+import { buildStore } from "../docs/utils/factory"
 
 
 
@@ -20,7 +21,7 @@ export enum VIEW_SIZE {
 	MAXIMIZED,
 }
 
-const setup = {
+const viewSetup = {
 
 	state: {
 		/** identificativo della VIEW */
@@ -34,6 +35,7 @@ const setup = {
 		draggable: true,
 		/** indica se è URL serializable */
 		serializable: true,
+		/** indica se la VIEW si puo' rimuovere dal DOCK */
 		indelible: false,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
@@ -56,7 +58,7 @@ const setup = {
 			return store.state.params?.[name]?.[0]
 		},
 		getStyAni: (_: void, store?: ViewStore) => {
-			let style:React.CSSProperties = {
+			let style: React.CSSProperties = {
 				width: store.getWidth()
 			}
 			switch (store.state.docAnim) {
@@ -85,19 +87,38 @@ const setup = {
 
 		//#region OVERRIDABLE
 		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
-		getTitle: (_: void, store?: ViewStore):string => null,
-		getSubTitle: (_: void, store?: ViewStore):string => null,
-		getIcon: (_: void, store?: ViewStore):string => null,
+		getTitle: (_: void, store?: ViewStore): string => null,
+		getSubTitle: (_: void, store?: ViewStore): string => null,
+		getIcon: (_: void, store?: ViewStore): string => null,
 		getColorBg: (_: void, store?: ViewStore) => COLOR_VAR.DEFAULT,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.DEFAULT,
+		getSerialization: (_: void, store?: ViewStore) => {
+			return {
+				uuid: store.state.uuid,
+				type: store.state.type,
+				position: store.state.position,
+				linked: store.state.linked?.getSerialization(),
+			}
+		},
 		//#endregion
 	},
 
 	actions: {
 		//#region OVERRIDABLE
-		onCreate: (_: void, store?: ViewStore) => {},
+		onCreate: (_: void, store?: ViewStore) => { },
 		onDestroy: (_: void, store?: ViewStore) => {
 			docSo.remove({ view: store, anim: true })
+		},
+		setSerialization: (state: any, store?: ViewStore) => {
+			store.state.uuid = state.uuid
+			store.state.position = state.position
+			const linkedState = state.linked
+			delete state.linked
+			if ( linkedState ) {
+				const linkedStore = buildStore({ type: linkedState.type })
+				linkedStore.setSerialization(linkedState)
+				store.setLinked(linkedStore)
+			}
 		},
 		//#endregion
 
@@ -160,10 +181,10 @@ const setup = {
 	},
 }
 
-export type ViewState = Partial<typeof setup.state>
-export type ViewGetters = typeof setup.getters
-export type ViewActions = typeof setup.actions
-export type ViewMutators = typeof setup.mutators
+export type ViewState = Partial<typeof viewSetup.state>
+export type ViewGetters = typeof viewSetup.getters
+export type ViewActions = typeof viewSetup.actions
+export type ViewMutators = typeof viewSetup.mutators
 
 /**
  * E' lo STORE "abstract" ereditato da tutti gli altri STORE che vogliono essere visualizzati come VIEW
@@ -172,5 +193,5 @@ export interface ViewStore extends StoreCore<ViewState>, ViewGetters, ViewAction
 	state: ViewState
 }
 
-export default setup
+export default viewSetup
 

@@ -6,10 +6,9 @@ import { FunctionComponent } from "react"
 import CardCmp from "./CardCmp"
 import DragCmp from "./components/DragCmp"
 import MainMenu from "./components/MainMenu"
+import TooltipCmp from "./components/TooltipCmp"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
-import DropArea from "./components/DropArea"
-import TooltipCmp from "./components/TooltipCmp"
 
 
 

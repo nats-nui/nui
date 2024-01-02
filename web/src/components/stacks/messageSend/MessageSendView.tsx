@@ -1,7 +1,6 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import TextArea from "@/components/input/TextArea"
-import { COLOR_VAR } from "@/stores/layout"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/send"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"

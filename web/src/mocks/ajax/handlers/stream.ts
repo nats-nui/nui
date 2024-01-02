@@ -1,0 +1,71 @@
+import { rest } from 'msw'
+import streams from "../../data/streams"
+import { createUUID } from '@/mocks/data/utils'
+
+
+
+const handlers = [
+
+	/**
+	 * Preleva tutti gli STREAMS
+	 */
+	rest.get('/api/stream', async (_req, res, ctx) => {
+		return res(
+			ctx.status(200),
+			ctx.json(streams),
+		)
+	}),
+
+	/**
+	 * crea una CONNECTION
+	 */
+	rest.post('/api/stream', async (req, res, ctx) => {
+		const newStr = await req.json()
+		if (!newStr) return res(ctx.status(500))
+		newStr.id = createUUID()
+		streams.push(newStr)
+
+		return res(
+			ctx.status(201),
+			ctx.json(newStr),
+		)
+	}),
+
+	/**
+	 * modifica una STREAM
+	 */
+	rest.post('/api/stream/:id', async (req, res, ctx) => {
+		const id = req.params.id
+		const newStr = await req.json()
+		if (!id || !newStr) return res(ctx.status(500))
+
+		const index = streams.findIndex(c => c.id == id)
+		if (index == -1) return res(ctx.status(404))
+
+		streams[index] = { ...streams[index], ...newStr }
+
+		return res(
+			ctx.status(200),
+			ctx.json(streams[index]),
+		)
+	}),
+	
+	/**
+	 * cancella una CONNECTION
+	 */
+	rest.delete('/api/stream/:id', async (req, res, ctx) => {
+		const id = req.params.id
+		if (!id) return res(ctx.status(500))
+
+		const index = streams.findIndex(cnn => cnn.id == id)
+		if (index == -1) return res(ctx.status(500))
+		streams.splice(index, 1)
+
+		return res(
+			ctx.status(200),
+		)
+	}),
+
+]
+
+export default handlers

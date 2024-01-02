@@ -8,10 +8,6 @@ export interface HistoryMessage {
 	height?: number
 }
 
-export enum PARAMS_MESSAGES {
-	CONNECTION_ID = "cid",
-}
-
 export enum MSG_FORMAT {
 	JSON = "json",
 	TEXT = "text",

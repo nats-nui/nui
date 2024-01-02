@@ -7,6 +7,7 @@ import { useState, FunctionComponent } from "react"
 export interface RenderRowBaseProps<T> {
 	item: T
 	focus?: boolean
+	readOnly?: boolean
 	onChange?: (newItem: T) => void
 	onDelete?: () => void
 	onFocus?: () => void
@@ -19,12 +20,14 @@ interface Props<T> {
 	/** restituisce nuovo ITEM (su click btt NEW) */
 	fnNewItem?: () => T
 	onChangeItems?: (newItems: T[]) => void
+	readOnly?: boolean
 	style?: React.CSSProperties
 }
 
 function EditList<T>({
 	items,
 	RenderRow,
+	readOnly,	
 	fnNewItem = () => null,
 	onChangeItems,
 	style,
@@ -96,10 +99,11 @@ function EditList<T>({
 				onChange={(newItem) => handleChangeItem(newItem, index)}
 				onDelete={() => handleDeleteItem(index)}
 				onFocus={() => handleFocus(index)}
+				readOnly={readOnly}
 			/>
 		))}
 		{/* BOTTONE NEW */}
-		{fnNewItem && (
+		{!readOnly && fnNewItem && (
 			<IconButton
 				onClick={() => handleNewItem()}
 			><AddIcon /></IconButton>
