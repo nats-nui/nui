@@ -1,24 +1,24 @@
-import srcIcon from "@/assets/messages-icon.svg"
+import srcIcon from "@/assets/MessagesIcon.svg"
 import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
-import docSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
-import { HistoryMessage, MSG_FORMAT, MSG_TYPE, PARAMS_MESSAGES } from "./utils"
+import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
 
 
 
 const setup = {
 
 	state: {
-		params: { [PARAMS_MESSAGES.CONNECTION_ID]: <string[]>null },
+		connectionId: <string>null,
 		/** SUBS sui quali rimanere in ascolto */
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
@@ -35,8 +35,7 @@ const setup = {
 
 	getters: {
 		getConnection: (_: void, store?: MessagesStore) => {
-			const id = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
-			return cnnSo.getById(id)
+			return cnnSo.getById(store.state.connectionId)
 		},
 		getHistoryFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()
@@ -46,25 +45,51 @@ const setup = {
 				|| h.title.toLowerCase().includes(text)
 			)
 		},
+
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
+		getSerialization: (_: void, store?: ViewStore) => {
+			const state = store.state as MessagesState
+			return {
+				...viewSetup.getters.getSerialization(null, store),
+				connectionId: state.connectionId,
+				subscriptions: state.subscriptions,
+				history: state.history,
+				textSearch: state.textSearch,
+				format: state.format,
+			}
+		},
 		//#endregion
+		
 	},
 
 	actions: {
+
+		//#region VIEWBASE
+		setSerialization: (data: any, store?: ViewStore) => {
+			viewSetup.actions.setSerialization(data, store)
+			const state = store.state as MessagesState
+			state.connectionId = data.connectionId
+			state.subscriptions = data.subscriptions
+			state.history = data.history
+			state.textSearch = data.textSearch
+			state.format = data.format
+		},
 		onCreate(_: void, store?: ViewStore) {
 			const msgSo = <MessagesStore>store
-			const cnnId = store.getParam(PARAMS_MESSAGES.CONNECTION_ID)
+			const cnnId = (store as MessagesStore).state.connectionId
 			const ss = socketPool.create(store.state.uuid, cnnId)
 			ss.onOpen = () => msgSo.sendSubscriptions()
 			ss.onMessage = message => msgSo.addInHistory(message)
 		},
 		onDestroy(_: void, store?: ViewStore) {
 			socketPool.destroy(store.state.uuid)
-			docSetup.actions.onDestroy(null, store)
+			viewSetup.actions.onDestroy(null, store)
 		},
+		//#endregion
+
 		/** aggiungo alla history di questo stack */
 		addInHistory(message: PayloadMessage, store?: MessagesStore) {
 			const historyMessage: HistoryMessage = {
@@ -134,7 +159,7 @@ export type MEssagesMutators = typeof setup.mutators
 export interface MessagesStore extends ViewStore, StoreCore<MessagesState>, MessagesGetters, MessagesActions, MEssagesMutators {
 	state: MessagesState
 }
-const msgSetup = mixStores(docSetup, setup)
+const msgSetup = mixStores(viewSetup, setup)
 export default msgSetup
 
 

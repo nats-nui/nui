@@ -1,5 +1,5 @@
 import { StoreCore, createStore } from "@priolo/jon"
-import { Position } from "./utils"
+import { Position } from "../mouse/utils"
 
 
 export interface TooltipContent {

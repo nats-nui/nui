@@ -6,8 +6,8 @@ import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import CnnRow from "./CnnRow"
-import CnnCompactRow from "./CnnCompactRow"
+import CnnRow from "../../rows/CnnRow"
+import CnnCompactRow from "../../rows/CnnCompactRow"
 import tooltipSo from "@/stores/tooltip"
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 
@@ -34,11 +34,9 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelectConnection = (cnn: Connection) => cnnListSo.select(cnn)
-	const handleNewConnection = () => {
-		cnnListSo.create()
-	}
-	const handleDelConnection = () => {
+	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn)
+	const handleNew = () => cnnListSo.create()
+	const handleDel = () => {
 		cnnSo.delete(selectedId)
 		cnnListSo.select(null)
 	}
@@ -46,9 +44,11 @@ const CnnListView: FunctionComponent<Props> = ({
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const selectedId = cnnListSo.getSelectId()
+	const selectedId = cnnListSa.selectId
 	const isSelected = (cnn: Connection) => selectedId == cnn.id
-	const bttNewSelect = !!cnnListSa.linked && (cnnListSa.linked as CnnDetailStore).getConnection()?.id == null
+	const bttNewSelect = !!cnnListSa.linked && (cnnListSa.linked as CnnDetailStore).state.connection?.id == null
+	const getTitle = (cnn:Connection) => cnn.name
+	const getSubtitle = (cnn:Connection) => cnn.hosts?.[0]
 	const variant = cnnListSo.getColorVar()
 
 	return <FrameworkCard
@@ -64,32 +64,34 @@ const CnnListView: FunctionComponent<Props> = ({
 					label="NEW"
 					select={bttNewSelect}
 					variant={variant}
-					onClick={handleNewConnection}
+					onClick={handleNew}
 				/>
 			</TooltipWrapCmp>
 			<Button
 				label="DELETE"
 				variant={variant}
-				onClick={handleDelConnection}
+				onClick={handleDel}
 			/>
 		</>}
 		iconizedRender={<div style={cssIconized}>{
 			connnections.map(cnn => (
 				<CnnCompactRow key={cnn.id}
-					cnn={cnn}
-					selected={isSelected(cnn)}
-					variant={variant}
-					onClick={handleSelectConnection}
+				title={getTitle(cnn)}
+				subtitle={getSubtitle(cnn)}
+				selected={isSelected(cnn)}
+				variant={variant}
+				onClick={()=>handleSelect(cnn)}
 				/>
 			))
 		}</div>}
 	>
 		{connnections.map(cnn => (
 			<CnnRow key={cnn.id}
-				cnn={cnn}
+				title={getTitle(cnn)}
+				subtitle={getSubtitle(cnn)}
 				selected={isSelected(cnn)}
 				variant={variant}
-				onClick={handleSelectConnection}
+				onClick={()=>handleSelect(cnn)}
 			/>
 		))}
 	</FrameworkCard>

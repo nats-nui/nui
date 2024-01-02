@@ -1,5 +1,5 @@
-import srcIcon from "@/assets/message-icon.svg"
-import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import srcIcon from "@/assets/MessageIcon.svg"
+import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { HistoryMessage, MSG_FORMAT } from "../messages/utils"
 import { COLOR_VAR } from "@/stores/layout"
@@ -21,6 +21,7 @@ const setup = {
 	},
 
 	getters: {
+
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.title,
 		getSubTitle: (_: void, store?: ViewStore):string => {
@@ -29,10 +30,29 @@ const setup = {
 		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
+		getSerialization: (_: void, store?: ViewStore) => {
+			const state = store.state as MessageState
+			return {
+				...viewSetup.getters.getSerialization(null, store),
+				message: state.message,
+				format: state.format,
+			}
+		},
 		//#endregion
+		
 	},
 
 	actions: {
+
+		//#region VIEWBASE
+		setSerialization: (data: any, store?: ViewStore) => {
+			viewSetup.actions.setSerialization(data, store)
+			const state = store.state as MessageState
+			state.message = data.message
+			state.format = data.format
+		},
+		//#endregion
+
 	},
 
 	mutators: {
@@ -44,9 +64,9 @@ const setup = {
 export type MessageState = typeof setup.state & ViewState
 export type MessageGetters = typeof setup.getters
 export type MessageActions = typeof setup.actions
-export type MEssageMutators = typeof setup.mutators
-export interface MessageStore extends ViewStore, StoreCore<MessageState>, MessageGetters, MessageActions, MEssageMutators {
+export type MessageMutators = typeof setup.mutators
+export interface MessageStore extends ViewStore, StoreCore<MessageState>, MessageGetters, MessageActions, MessageMutators {
 	state: MessageState
 }
-const msgSetup = mixStores(docSetup, setup)
+const msgSetup = mixStores(viewSetup, setup)
 export default msgSetup

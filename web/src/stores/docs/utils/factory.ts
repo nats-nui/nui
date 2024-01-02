@@ -3,9 +3,13 @@ import messagesSetup from "@/stores/stacks/messages";
 import messageSetup from "@/stores/stacks/message";
 import messageSendSetup from "@/stores/stacks/send";
 import servicesSetup from "@/stores/stacks/connection/detail";
+import streamsSetup from "@/stores/stacks/streams";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
+import streamSetup from "@/stores/stacks/streams/detail";
+
+
 
 /** restituisce un identificativo sringa di una VIEW STORE */
 export function getID(viewState: ViewState): string {
@@ -40,10 +44,12 @@ export function createUUID(): string {
 export function buildStore(state: Partial<ViewState>): ViewStore {
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
-		[DOC_TYPE.SERVICES]: servicesSetup,
+		[DOC_TYPE.CONNECTION]: servicesSetup,
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 		[DOC_TYPE.MESSAGE]: messageSetup,
 		[DOC_TYPE.MESSAGE_SEND]: messageSendSetup,
+		[DOC_TYPE.STREAMS]: streamsSetup,
+		[DOC_TYPE.STREAM]: streamSetup,
 	}[state.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

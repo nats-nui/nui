@@ -67,7 +67,7 @@ const handlers = [
 	}),
 
 	/**
-	 * modifica una CONNECTION
+	 * pubblica un messaggio in una CONNECTION
 	 */
 	rest.post('/api/connection/:id/publish', async (req, res, ctx) => {
 		const id = req.params.id

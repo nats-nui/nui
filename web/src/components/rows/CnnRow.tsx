@@ -1,20 +1,22 @@
-import { Connection } from "@/types"
-import React, { FunctionComponent } from "react"
 import layoutSo from "@/stores/layout"
+import React, { FunctionComponent } from "react"
+
 
 
 interface Props {
-	cnn: Connection
 	selected?: boolean
+	title: string
+	subtitle?: string
 	variant?: number
-	onClick?: (cnn: Connection) => void
+	onClick?: (e:React.MouseEvent<HTMLDivElement>) => void
 }
 
 /**
- * Lo STACK di una collezione di CONNECTIONs
+ * riga generica di lista figa
  */
 const CnnRow: FunctionComponent<Props> = ({
-	cnn,
+	title,
+	subtitle,
 	selected,
 	variant = 0,
 	onClick,
@@ -25,16 +27,15 @@ const CnnRow: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleSelectConnection = () => onClick?.(cnn)
 
 	// RENDER
-	if (!cnn) return null
+	if (!title) return null
 
 	return <div style={cssRow(selected, variant)}
-		onClick={handleSelectConnection}
+		onClick={onClick}
 	>
-		<div style={layoutSo.state.theme.texts.row.title}>{cnn.name}</div>
-		<div style={layoutSo.state.theme.texts.row.subtitle}>sottotitolo</div>
+		<div style={layoutSo.state.theme.texts.row.title}>{title}</div>
+		<div style={layoutSo.state.theme.texts.row.subtitle}>{subtitle}</div>
 	</div>
 }
 
@@ -45,7 +46,7 @@ const cssRow = (select: boolean, variant:number): React.CSSProperties => ({
 	cursor: "pointer",
 	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
 	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
-	margin: "3px -10px 3px 6px",
+	margin: "3px -10px 0px 0px",
 	borderRadius: "20px 0px 0px 20px",
 	padding: "4px 15px",
 })
