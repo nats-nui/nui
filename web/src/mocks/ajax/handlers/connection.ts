@@ -6,7 +6,7 @@ import { createUUID } from '@/mocks/data/utils'
 
 const handlers = [
 
-	/**
+	/** INDEX
 	 * Preleva tutte le CONNECTION
 	 */
 	rest.get('/api/connection', async (_req, res, ctx) => {
@@ -16,7 +16,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** UPDATE
 	 * modifica una CONNECTION
 	 */
 	rest.post('/api/connection/:id', async (req, res, ctx) => {
@@ -35,7 +35,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** CREATE
 	 * crea una CONNECTION
 	 */
 	rest.post('/api/connection', async (req, res, ctx) => {
@@ -50,7 +50,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** DELETE
 	 * cancella una CONNECTION
 	 */
 	rest.delete('/api/connection/:id', async (req, res, ctx) => {
@@ -66,7 +66,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** PUBLISH
 	 * pubblica un messaggio in una CONNECTION
 	 */
 	rest.post('/api/connection/:id/publish', async (req, res, ctx) => {

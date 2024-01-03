@@ -12,7 +12,7 @@ interface Props<T> {
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 
 	select?: number
-	onChangeSelect?: (index: number) => void
+	onSelect?: (index: number) => void
 	style?: React.CSSProperties
 }
 
@@ -21,7 +21,7 @@ function List<T>({
 	RenderRow,
 
 	select,
-	onChangeSelect,
+	onSelect,
 	style = {},
 }: Props<T>) {
 
@@ -31,7 +31,7 @@ function List<T>({
 
 	// HANDLERS
 	const handleSelect = (index: number) => {
-		onChangeSelect?.(index)
+		onSelect?.(index)
 	}
 
 	// RENDER

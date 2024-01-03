@@ -40,10 +40,12 @@ function EditList<T>({
 
 	// HANDLERS
 	const handleChangeItem = (newItem: T, index: number) => {
+		if ( readOnly ) return
 		items[index] = newItem
 		onChangeItems?.([...items])
 	}
 	const handleNewItem = (index?: number) => {
+		if ( readOnly ) return
 		const newItem = fnNewItem()
 		if (index == null) index = items.length
 		items.splice(index, 0, newItem)
@@ -51,6 +53,7 @@ function EditList<T>({
 		setFocus(index)
 	}
 	const handleDeleteItem = (index: number) => {
+		if ( readOnly ) return
 		const newItems = [...items]
 		newItems.splice(index, 1)
 		onChangeItems?.(newItems)

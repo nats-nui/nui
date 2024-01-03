@@ -1,9 +1,9 @@
 import Label from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
-import EditAuthRow from "@/components/lists/generic/EditAuthRow"
-import EditList from "@/components/lists/generic/EditList"
-import EditStringRow from "@/components/lists/generic/EditStringRow"
-import EditSubscriptionRow from "@/components/lists/generic/EditSubscriptionRow"
+import EditAuthRow from "@/components/rows/EditAuthRow"
+import EditList from "@/components/lists/EditList"
+import EditStringRow from "@/components/rows/EditStringRow"
+import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
 import cnnSo from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -86,7 +86,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			items={subscriptions}
 			onChangeItems={handleSubscriptionsChange}
 			fnNewItem={() => ({ subject: "<new>" })}
-			RenderRow={EditSubscriptionRow}
+			RenderRow={(props) => EditSubscriptionRow({...props, noDisable: true})}
 			readOnly={readOnly}
 		/>
 

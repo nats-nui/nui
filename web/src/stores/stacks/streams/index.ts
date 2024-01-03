@@ -38,6 +38,7 @@ const setup = {
 			let streamStore:ViewStore = null
 			if (idSel != null) streamStore = buildStore({
 				type: DOC_TYPE.STREAM,
+				stream
 			} as StreamState)
 
 			// aggiungo la nuova VIEW (o null)

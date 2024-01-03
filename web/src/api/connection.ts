@@ -2,14 +2,14 @@ import ajax from "@/plugins/AjaxService"
 import { Connection } from "@/types/Connection"
 
 
-/**
+/** INDEX
  * Recupera tutte le CONNECTION
  */
 function index(): Promise<Connection[]> {
 	return ajax.get(`connection`)
 }
 
-/**
+/** DELETE
  * Rimuove un CONNECTION 
  */
 function remove(id: string): Promise<void> {
@@ -17,7 +17,7 @@ function remove(id: string): Promise<void> {
 	return ajax.delete(`connection/${id}`)
 }
 
-/**
+/** UPDATE
  * Modifica/crea un CONNECTION
  */
 function save(cnn: Connection): Promise<Connection> {
@@ -25,6 +25,9 @@ function save(cnn: Connection): Promise<Connection> {
 	return ajax.post(`connection${blockId}`, cnn)
 }
 
+/** PUBLISC
+ * permette di pubblicare un messaggio
+ */
 function publish(cnnId:string, subject:string, payload:string) {
 	const data = {
 		subject,

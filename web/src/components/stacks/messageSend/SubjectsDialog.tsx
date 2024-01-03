@@ -1,7 +1,7 @@
 import Dialog from "@/components/dialogs/Dialog"
 import TextInput from "@/components/input/TextInput"
-import List from "@/components/lists/generic/List"
-import SubscriptionRow from "@/components/lists/generic/SubscriptionRow"
+import List from "@/components/lists/List"
+import SubscriptionRow from "@/components/rows/SubscriptionRow"
 import cnnSo from "@/stores/connections"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/send"
 import { Subscription } from "@/types"
@@ -56,7 +56,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 				items={subs}
 				select={select}
 				RenderRow={SubscriptionRow}
-				onChangeSelect={handleSubSelectChange}
+				onSelect={handleSubSelectChange}
 			/>
 		</>
 	</Dialog>
