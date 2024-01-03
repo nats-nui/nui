@@ -2,6 +2,7 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Stream } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
+import { buildNewStream } from "./utils"
 
 
 
@@ -47,6 +48,10 @@ const setup = {
 			state.readOnly = data.readOnly
 		},
 		//#endregion
+
+		createNew: (_: void, store?: StreamStore) => {
+			const stream = buildNewStream()
+		},
 
 	},
 

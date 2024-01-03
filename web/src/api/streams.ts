@@ -3,23 +3,23 @@ import { Stream } from "@/types/Stream"
 
 
 
-/**
+/** INDEX
  * Recupera tutti gli STREAMS
  */
 function index(): Promise<Stream[]> {
 	return ajax.get(`stream`)
 }
 
-/**
- * Rimuove un STREAM 
+/** DELETE
+ * Rimuove uno STREAM
  */
 function remove(id: string): Promise<void> {
 	if (!id) return
 	return ajax.delete(`stream/${id}`)
 }
 
-/**
- * Modifica/crea un CONNECTION
+/** UPDATE
+ * crea/modifica uno STREAM
  */
 function save(cnn: Stream): Promise<Stream> {
 	const blockId = cnn.id ? `/${cnn.id}` : ""

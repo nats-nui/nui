@@ -1,7 +1,7 @@
 import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
-import { RenderRowBaseProps } from "./EditList"
+import { RenderRowBaseProps } from "../lists/EditList"
 
 
 

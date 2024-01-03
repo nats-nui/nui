@@ -1,7 +1,7 @@
 import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
-import { RenderRowBaseProps } from "./EditList"
+import { RenderRowBaseProps } from "../lists/EditList"
 import { AUTH_MODE, Auth } from "@/types"
 import Button from "@/components/buttons/Button"
 import Label from "@/components/input/Label"
@@ -42,10 +42,6 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 		}
 	}
 
-
-
-
-
 	const handleFileMode = () => {
 		onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
 		setTimeout(() => inputRef.current?.select(), 100)
@@ -85,11 +81,7 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 			/>
 		) : (
 			<Label style={{ flex: 1 }}>NONE</Label>
-		)
-
-
-		}
-
+		)}
 
 		{delVisible && (
 			<IconButton

@@ -1,20 +1,21 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import FindInput from "@/components/input/FindInput"
+import EditList from "@/components/lists/EditList"
+import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
+import DropIcon from "@/icons/DropIcon"
 import cnnSo, { ConnectionState } from "@/stores/connections"
+import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { VIEW_SIZE } from "@/stores/stacks/viewBase"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
-import SubscriptionsList from "../../lists/sunscriptions/SubscriptionsList"
 import FormatDialog from "./FormatDialog"
 import ItemsList from "./ItemsList"
-import DropIcon from "@/icons/DropIcon"
-import layoutSo from "@/stores/layout"
-import { VIEW_SIZE } from "@/stores/stacks/viewBase"
 
 
 interface Props {
@@ -37,14 +38,14 @@ const MessagesView: FunctionComponent<Props> = ({
 	useEffect(() => {
 		if (!dropRef.current || msgSo.state.size != VIEW_SIZE.ICONIZED) return
 		//const idInt = setInterval(() => {
-			const animation = dropRef.current.animate([
-				{ transform: 'translateY(0px)', visibility: "visible" },
-				{ transform: 'translateY(600px)', opacity: 0 }
-			], {
-				duration: 1000,
-				easing: layoutSo.state.theme.transitions[1]
-			});
-			animation.play();
+		const animation = dropRef.current.animate([
+			{ transform: 'translateY(0px)', visibility: "visible" },
+			{ transform: 'translateY(600px)', opacity: 0 }
+		], {
+			duration: 1000,
+			easing: layoutSo.state.theme.transitions[1]
+		});
+		animation.play();
 		//}, 2000)
 		//return () => clearInterval(idInt)
 	}, [msgSo.state.history])
@@ -107,7 +108,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		</>}
 		iconizedRender={
 			<div ref={dropRef} style={{ marginTop: 15, visibility: "hidden" }}>
-				<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg}/>
+				<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg} />
 			</div>
 		}
 	>
@@ -126,9 +127,11 @@ const MessagesView: FunctionComponent<Props> = ({
 			store={msgSo}
 			onClose={handleCloseSubsDialog}
 		>
-			<SubscriptionsList
-				subscriptions={msgSa.subscriptions}
-				onChange={handleChangeSubs}
+			<EditList<Subscription>
+				items={msgSa.subscriptions}
+				onChangeItems={handleChangeSubs}
+				fnNewItem={() => ({ subject: "<new>" })}
+				RenderRow={EditSubscriptionRow}
 			/>
 		</Dialog>
 
@@ -138,3 +141,4 @@ const MessagesView: FunctionComponent<Props> = ({
 }
 
 export default MessagesView
+

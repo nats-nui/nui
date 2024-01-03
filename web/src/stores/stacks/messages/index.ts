@@ -12,6 +12,7 @@ import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
 import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
+import historyTest from "./test"
 
 
 
@@ -23,7 +24,7 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
-		history: <HistoryMessage[]>[],//historyTest,//[],
+		history: <HistoryMessage[]>historyTest,//[],
 		/** testo per la ricerca */
 		textSearch: <string>null,
 		/** DIALOG SUBS aperta */

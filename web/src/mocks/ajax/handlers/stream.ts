@@ -6,7 +6,7 @@ import { createUUID } from '@/mocks/data/utils'
 
 const handlers = [
 
-	/**
+	/** INDEX
 	 * Preleva tutti gli STREAMS
 	 */
 	rest.get('/api/stream', async (_req, res, ctx) => {
@@ -16,7 +16,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** CREATE
 	 * crea una CONNECTION
 	 */
 	rest.post('/api/stream', async (req, res, ctx) => {
@@ -31,7 +31,7 @@ const handlers = [
 		)
 	}),
 
-	/**
+	/** UPDATE
 	 * modifica una STREAM
 	 */
 	rest.post('/api/stream/:id', async (req, res, ctx) => {
@@ -50,7 +50,7 @@ const handlers = [
 		)
 	}),
 	
-	/**
+	/** DELETE
 	 * cancella una CONNECTION
 	 */
 	rest.delete('/api/stream/:id', async (req, res, ctx) => {

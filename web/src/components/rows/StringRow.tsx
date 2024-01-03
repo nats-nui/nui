@@ -1,4 +1,4 @@
-import { RenderRowBaseProps } from "@/components/lists/generic/List"
+import { RenderRowBaseProps } from "@/components/lists/List"
 import { FunctionComponent } from "react"
 
 
