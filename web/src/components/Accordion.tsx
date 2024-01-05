@@ -31,6 +31,7 @@ const Accordion: FunctionComponent<Props> = ({
 export default Accordion
 
 const cssRoot = (open: boolean, node:Element): React.CSSProperties => ({
+	display: "flex", flexDirection: "column",
 	overflowY: "hidden",
 	transition: `height ${ANIM_TIME_CSS}ms`,
 	height: !open ? 0 : (!node || !node?.scrollHeight ? "auto" : node?.scrollHeight),

@@ -8,6 +8,8 @@ import { buildStore } from "@/stores/docs/utils/factory"
 import { DOC_TYPE } from "@/types"
 import { StreamState } from "./detail"
 import docSo from "@/stores/docs"
+import cnnSo from "@/stores/connections"
+
 
 
 const setup = {
@@ -20,7 +22,8 @@ const setup = {
 
 	getters: {
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => "STREAMS",
+		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<StreamsStore>store).state.connectionId)?.name,
+		getSubTitle: (_: void, store?: ViewStore) => "STREAMS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		//#endregion

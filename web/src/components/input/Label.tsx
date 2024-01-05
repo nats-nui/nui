@@ -9,7 +9,7 @@ export enum LABEL_TYPES {
 
 interface Props {
 	type?: number
-	onClick?: (e:React.MouseEvent) => void
+	onClick?: (e: React.MouseEvent) => void
 	children?: React.ReactNode
 	style?: React.CSSProperties
 
@@ -29,7 +29,7 @@ const Label: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	if ( !children ) return null
+	if (children == null) return null
 	const css = {
 		cursor: !!onClick ? "pointer" : null,
 		...cssRoot,
@@ -74,5 +74,6 @@ const cssRoot: React.CSSProperties = {
 	// ATTENZIONE SE METTO QUESTI NON MI FA IL TRUNCATE
 	//display: "flex",
 	//alignItems: "center",
-	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+	
+	//overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
 }

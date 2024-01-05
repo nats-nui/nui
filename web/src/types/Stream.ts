@@ -13,18 +13,13 @@ export interface Stream {
 export interface Source {
 	name: string
 	startSequence: number
-	startTime: number
+	startTime: string
 	filterSubject: string
 }
 
 export enum STORAGE {
 	FILE = "file",
 	MEMORY = "memory",
-	MEMORY2 = "memory2",
-	MEMORY3 = "memory3",
-	MEMORY4 = "memory4",
-	MEMORY5 = "memory5",
-	MEMORY6 = "memory6",
 }
 
 export enum POLICY {

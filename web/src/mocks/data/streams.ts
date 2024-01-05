@@ -13,6 +13,8 @@ const streams:Stream[] = [
 		sources: [
 			{ name : "libreria", startSequence: 0, startTime: dayjs("01/01/2024").valueOf(), filterSubject: "booh" },
 			{ name : "api2.0", startSequence: 0, startTime: dayjs("01/01/2024").valueOf(), filterSubject: "booh" },
+			{ name : "mp3-dance", startSequence: 0, startTime: dayjs("01/01/2024").valueOf(), filterSubject: "booh" },
+			{ name : "last but not least", startSequence: 0, startTime: dayjs("01/01/2024").valueOf(), filterSubject: "booh" },
 		],
 		policy: POLICY.INTEREST,
 	},

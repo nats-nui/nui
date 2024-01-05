@@ -13,9 +13,6 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	onFocus,
 }) => {
 
-	// HOOKS
-	const [enter, setEnter] = useState(false)
-	const inputRef = useRef(null);
 	useEffect(() => {
 		if (focus) {
 			inputRef.current?.select()
@@ -24,25 +21,36 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		}
 	}, [focus])
 
-	// HANDLER
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newItem = e.target.value
 		onChange?.(newItem)
 	}
+	
+	// ******************
+
+	// HOOKS
+	const [enter, setEnter] = useState(false)
+	const inputRef = useRef(null);
+
+	// HANDLER
+
 	const handleEnter = () => setEnter(true)
 	const handleLeave = () => setEnter(false)
 	const handleFocus = () => {
 		inputRef.current?.select()
 		onFocus?.()
 	}
-
-	const handleDelete = () => onDelete?.()
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
 			onDelete?.()
 		}
 	}
+
+	// ******************
+
+	const handleDelete = () => onDelete?.()
+
 
 	// RENDER
 	const delVisible = enter
@@ -71,7 +79,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 
 export default EditStringRow
 
-const isVoid = (item:string) => !item || item.trim().length == 0
+const isVoid = (item: string) => !item || item.trim().length == 0
 
 const cssRow: React.CSSProperties = {
 	minHeight: 24,
