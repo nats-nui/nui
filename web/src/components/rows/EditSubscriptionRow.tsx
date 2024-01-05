@@ -24,9 +24,6 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 	noDisable,
 }) => {
 
-	// HOOKS
-	const [enter, setEnter] = useState(false)
-	const inputRef = useRef(null);
 	useEffect(() => {
 		if (focus) {
 			inputRef.current?.select()
@@ -34,12 +31,18 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 			if (isVoid(item)) onDelete?.()
 		}
 	}, [focus])
-
-	// HANDLER
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const subject = e.target.value
 		onChange?.({ ...item, subject })
 	}
+	// **********************
+
+	// HOOKS
+	const [enter, setEnter] = useState(false)
+	const inputRef = useRef(null);
+
+	// HANDLER
+	
 	const handleEnter = () => setEnter(true)
 	const handleLeave = () => setEnter(false)
 	const handleFocus = () => {
@@ -53,6 +56,9 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 			onDelete?.()
 		}
 	}
+
+	// **********************
+
 	const handleChangeEnabled = (enabled: boolean) => {
 		const newSub: Subscription = { ...item, disabled: !enabled }
 		onChange?.(newSub)

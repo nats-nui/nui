@@ -8,7 +8,7 @@ import List from "./lists/List"
 interface Props<T> {
 	value: T
 	items: T[]
-	RenderRow: FunctionComponent<RenderRowBaseProps<T>>
+	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	style: React.CSSProperties
 	onSelect?: (value: T) => void
 }
@@ -36,15 +36,20 @@ function Options<T>({
 	}
 
 	// RENDER
+	const index = items.findIndex(i=>i==value)
+
 	return (
 		<div style={style}>
 			<div
 				onClick={handleOpen}
 			>{value.toString()}</div>
+			
 			<Accordion
 				open={open}
 			>
-				<List
+				<hr />
+				<List<T>
+					select={index}
 					items={items}
 					RenderRow={RenderRow}
 					onSelect={handleSelect}

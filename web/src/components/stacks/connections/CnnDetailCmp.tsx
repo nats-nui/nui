@@ -31,29 +31,19 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleChangeName = (name: string) => {
-		const cnn = { ...cnnDetailSa.connection, name }
-		cnnDetailSo.setConnection(cnn)
-		if (!isNew) cnnSo.updateConnection(cnn)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, name })
 	}
 	const handleHostsChange = (hosts: string[]) => {
-		const cnn = { ...cnnDetailSa.connection, hosts }
-		cnnDetailSo.setConnection(cnn)
-		if (!isNew) cnnSo.updateConnection(cnn)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
 	}
 	const handleAuthsChange = (auth: Auth[]) => {
-		const cnn = { ...cnnDetailSa.connection, auth }
-		cnnDetailSo.setConnection(cnn)
-		if (!isNew) cnnSo.updateConnection(cnn)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, auth })
 	}
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
-		const cnn = { ...cnnDetailSa.connection, subscriptions }
-		cnnDetailSo.setConnection(cnn)
-		if (!isNew) cnnSo.updateConnection(cnn)
-		//cnnSo.modify(cnn)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, subscriptions })
 	}
 
 	// RENDER
-	const isNew = cnnDetailSa.connection?.id == null
 	if (cnnDetailSa.connection == null) return null
 	const name = cnnDetailSa.connection.name ?? ""
 	const hosts = cnnDetailSa.connection.hosts ?? []

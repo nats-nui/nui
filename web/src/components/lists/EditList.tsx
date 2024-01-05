@@ -27,7 +27,7 @@ interface Props<T> {
 function EditList<T>({
 	items,
 	RenderRow,
-	readOnly,	
+	readOnly,
 	fnNewItem = () => null,
 	onChangeItems,
 	style,
@@ -40,12 +40,12 @@ function EditList<T>({
 
 	// HANDLERS
 	const handleChangeItem = (newItem: T, index: number) => {
-		if ( readOnly ) return
+		if (readOnly) return
 		items[index] = newItem
 		onChangeItems?.([...items])
 	}
 	const handleNewItem = (index?: number) => {
-		if ( readOnly ) return
+		if (readOnly) return
 		const newItem = fnNewItem()
 		if (index == null) index = items.length
 		items.splice(index, 0, newItem)
@@ -53,7 +53,7 @@ function EditList<T>({
 		setFocus(index)
 	}
 	const handleDeleteItem = (index: number) => {
-		if ( readOnly ) return
+		if (readOnly) return
 		const newItems = [...items]
 		newItems.splice(index, 1)
 		onChangeItems?.(newItems)
@@ -83,8 +83,11 @@ function EditList<T>({
 		if (newFocus >= items.length) newFocus = items.length - 1
 		setFocus(newFocus)
 	}
-	const handleBlur = () => {
-		setFocus(-1)
+	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+		//setFocus(-1)
+		const isChild = e.currentTarget.contains(e.relatedTarget)
+		console.log(isChild)
+		if (!isChild) setFocus(-1)
 	}
 
 	// RENDER

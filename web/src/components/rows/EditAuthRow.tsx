@@ -16,9 +16,6 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	onFocus,
 }) => {
 
-	// HOOKS
-	const [enter, setEnter] = useState(false)
-	const inputRef = useRef(null);
 	useEffect(() => {
 		if (focus) {
 			inputRef.current?.select()
@@ -26,6 +23,12 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 			if (isVoid(item)) onDelete?.()
 		}
 	}, [focus])
+
+	// ******************
+	
+	// HOOKS
+	const [enter, setEnter] = useState(false)
+	const inputRef = useRef(null);
 
 	// HANDLER
 	const handleEnter = () => setEnter(true)
@@ -41,6 +44,8 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 			onDelete?.()
 		}
 	}
+
+	// ******************
 
 	const handleFileMode = () => {
 		onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })

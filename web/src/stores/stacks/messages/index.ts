@@ -49,6 +49,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
+		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		getSerialization: (_: void, store?: ViewStore) => {

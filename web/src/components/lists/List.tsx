@@ -10,7 +10,7 @@ export interface RenderRowBaseProps<T> {
 interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
-
+	/** indice selezionato */
 	select?: number
 	onSelect?: (index: number) => void
 	style?: React.CSSProperties
@@ -63,5 +63,5 @@ const cssContainer: React.CSSProperties = {
 }
 
 const cssRow = (select: boolean): React.CSSProperties => ({
-	backgroundColor: select ? "#0000001c" : null
+	backgroundColor: select ? "#FFFFFF" : null
 })

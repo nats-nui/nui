@@ -3,9 +3,12 @@ import Options from "@/components/Options"
 import Button from "@/components/buttons/Button"
 import Label from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
+import EditList from "@/components/lists/EditList"
+import EditSourceRow from "@/components/rows/EditSourceRow"
+import EditStringRow from "@/components/rows/EditStringRow"
 import layoutSo from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { STORAGE } from "@/types/Stream"
+import { STORAGE, Source } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -43,7 +46,10 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const handleSaveClick = () => streamSo.setReadOnly(true)
 
 	const handleNameChange = (name: string) => streamSo.setStream({ ...streamSa.stream, name })
+	const handleDescriptionChange = (description: string) => streamSo.setStream({ ...streamSa.stream, description })
 	const handleStorageSelect = (storage: STORAGE) => streamSo.setStream({ ...streamSa.stream, storage })
+	const handleSubjectsChange = (subjects: string[]) => streamSo.setStream({ ...streamSa.stream, subjects })
+	const handleSourcesChange = (sources: Source[]) => streamSo.setStream({ ...streamSa.stream, sources })
 
 	// RENDER
 	const isNew = streamSa.stream?.id == null
@@ -85,6 +91,13 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 		/>
 
+		<Label>DESCRIPTION</Label>
+		<TextInput
+			value={streamSa.stream.description}
+			onChange={handleDescriptionChange}
+			readOnly={readOnly}
+		/>
+
 		<Label>STORAGE</Label>
 		<Options<STORAGE>
 			style={cssList}
@@ -94,37 +107,21 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			onSelect={handleStorageSelect}
 		/>
 
-		<Label>STORAGE2</Label>
-		<Options<STORAGE>
+		<Label>SUBJECTS</Label>
+		<EditList<string>
 			style={cssList}
-			value={streamSa.stream.storage}
-			items={Object.values(STORAGE)}
-			RenderRow={({ item }) => item}
-			onSelect={handleStorageSelect}
+			items={streamSa.stream.subjects}
+			onChangeItems={handleSubjectsChange}
+			fnNewItem={() => "<new>"}
+			RenderRow={EditStringRow}
 		/>
 
-<Label>NAME</Label>
-		<TextInput
-			value={streamSa.stream.name}
-			onChange={handleNameChange}
-		/>
-
-<Label>NAME</Label>
-		<TextInput
-			value={streamSa.stream.name}
-			onChange={handleNameChange}
-		/>
-
-<Label>NAME</Label>
-		<TextInput
-			value={streamSa.stream.name}
-			onChange={handleNameChange}
-		/>
-
-<Label>NAME</Label>
-		<TextInput
-			value={streamSa.stream.name}
-			onChange={handleNameChange}
+		<Label>SOURCES</Label>
+		<EditList<Source>
+			style={cssList}
+			items={streamSa.stream.sources}
+			onChangeItems={handleSourcesChange}
+			RenderRow={EditSourceRow}
 		/>
 
 	</FrameworkCard>
