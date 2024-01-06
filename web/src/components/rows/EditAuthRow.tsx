@@ -1,40 +1,32 @@
-import IconButton from "@/components/buttons/IconButton"
-import CloseIcon from "@/icons/CloseIcon"
-import { FunctionComponent, useEffect, useRef, useState } from "react"
-import { RenderRowBaseProps } from "../lists/EditList"
-import { AUTH_MODE, Auth } from "@/types"
 import Button from "@/components/buttons/Button"
+import IconButton from "@/components/buttons/IconButton"
 import Label from "@/components/input/Label"
+import CloseIcon from "@/icons/CloseIcon"
+import { AUTH_MODE, Auth } from "@/types"
+import { FunctionComponent } from "react"
+import Box from "../Box"
+import TextInput from "../input/TextInput"
+import { RenderRowBaseProps } from "../lists/EditList"
 
 
 
 const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	item,
 	focus,
+	readOnly,
+	variant,
 	onChange,
 	onDelete,
 	onFocus,
 }) => {
 
-	useEffect(() => {
-		if (focus) {
-			inputRef.current?.select()
-		} else {
-			if (isVoid(item)) onDelete?.()
-		}
-	}, [focus])
-
 	// ******************
-	
+
 	// HOOKS
-	const [enter, setEnter] = useState(false)
-	const inputRef = useRef(null);
 
 	// HANDLER
-	const handleEnter = () => setEnter(true)
-	const handleLeave = () => setEnter(false)
 	const handleFocus = () => {
-		inputRef.current?.select()
+		//inputRef.current?.select()
 		onFocus?.()
 	}
 	const handleDelete = () => onDelete?.()
@@ -49,23 +41,19 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 
 	const handleFileMode = () => {
 		onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
-		setTimeout(() => inputRef.current?.select(), 100)
 	}
 	const handleNoneMode = () => {
 		onChange({ mode: AUTH_MODE.NONE })
 	}
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value
-		onChange?.({ ...item, creds: value })
+	const handleChange = (newValue: string) => {
+		onChange?.({ ...item, creds: newValue })
 	}
 
 	// RENDER
-	const delVisible = enter
-
-	return <div
+	return <Box
 		style={cssRow}
-		onMouseEnter={handleEnter}
-		onMouseLeave={handleLeave}
+		preRender={readOnly ? "\u2022 " : null}
+		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		{item == null ? (
 			<div style={{ display: "flex", flex: 1 }}>
@@ -74,26 +62,26 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 				<Button label="PSW" disabled />
 				<Button label="JWT" disabled />
 			</div>
+
 		) : item.mode == AUTH_MODE.CREDS_FILE ? (
-			<input style={cssInput}
+			<TextInput
+				style={{ flex: 1 }}
 				placeholder="path of creds file"
-				type="text"
-				ref={inputRef}
+				focus={focus}
+				readOnly={readOnly}
 				value={item.creds}
+				variant={variant}
 				onChange={handleChange}
 				onKeyDown={handleKeyDown}
 				onFocus={handleFocus}
 			/>
+
 		) : (
-			<Label style={{ flex: 1 }}>NONE</Label>
+			<Label>NONE</Label>
 		)}
 
-		{delVisible && (
-			<IconButton
-				onClick={handleDelete}
-			><CloseIcon /></IconButton>
-		)}
-	</div>
+	</Box>
+
 }
 
 export default EditAuthRow
@@ -104,8 +92,4 @@ const cssRow: React.CSSProperties = {
 	minHeight: 24,
 	display: "flex",
 	alignItems: "center",
-}
-
-const cssInput: React.CSSProperties = {
-	flex: 1,
 }

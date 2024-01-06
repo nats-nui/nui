@@ -1,38 +1,37 @@
 import IconButton from "@/components/buttons/IconButton"
-import CloseIcon from "@/icons/CloseIcon"
-import { FunctionComponent, useEffect, useRef, useState } from "react"
-import { RenderRowBaseProps } from "../lists/EditList"
-import { AUTH_MODE, Auth } from "@/types"
-import Button from "@/components/buttons/Button"
 import Label from "@/components/input/Label"
+import CloseIcon from "@/icons/CloseIcon"
+import layoutSo from "@/stores/layout"
 import { Source } from "@/types/Stream"
-import TextInput from "../input/TextInput"
+import { FunctionComponent, useEffect, useState } from "react"
 import Accordion from "../Accordion"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import NumberInput from "../input/NumberInput"
 import DateTimeInput from "../input/DateTimeInput"
+import NumberInput from "../input/NumberInput"
+import TextInput from "../input/TextInput"
+import { RenderRowBaseProps } from "../lists/EditList"
 
 
 
 const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 	item,
 	focus,
+	variant,
 	readOnly,
 	onChange,
 	onDelete,
 	onFocus,
 }) => {
 
-	useEffect(() => {
-		// SET FOCUS
-	}, [focus])
+	// useEffect(() => {
+	// 	// SET FOCUS
+	// }, [focus])
 
 	useEffect(() => {
 		if (!!item) return
 		onChange({
 			name: "",
 			startSequence: 0,
-			startTime: "",
+			startTime: null,
 			filterSubject: ""
 		})
 	}, [item])
@@ -48,7 +47,7 @@ const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 	// HANDLER
 
 	// ******************
-	const handleDelete = (e:React.MouseEvent<Element, MouseEvent>) => {
+	const handleDelete = (e: React.MouseEvent<Element, MouseEvent>) => {
 		e.preventDefault()
 		e.stopPropagation()
 		onDelete?.()
@@ -57,24 +56,33 @@ const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 
 	const handleNameChange = (name: string) => onChange?.({ ...item, name })
 	const handleSequenceChange = (startSequence: string) => onChange?.({ ...item, startSequence: parseInt(startSequence) })
-	const handleStartTimeChange = (startTime: string) => onChange?.({ ...item, startTime: startTime })
+	const handleStartTimeChange = (startTime: any) => onChange?.({ ...item, startTime: startTime })
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...item, filterSubject })
+	const handleLabelClick = () => {
+		// if (readOnly && focus) {
+		// }
+		onFocus?.()
+	}
 
 	// RENDER
 	if (!item) return null
-	const delVisible = enter
+	const delVisible = enter && !readOnly
 
 	return <div
-		style={cssRow}
+		style={cssRow(focus, variant)}
 		onMouseEnter={handleEnter}
 		onMouseLeave={handleLeave}
+		onClick={handleLabelClick}
 	>
-		<div style={{ display: "flex" }}>
+		<div style={{ display: "flex", cursor: readOnly ? "pointer" : null }}>
 			<TextInput
+				style={{ flex: 1 }}
 				focus={focus}
 				value={item.name}
 				onChange={handleNameChange}
-				onFocus={onFocus}
+				//onFocus={onFocus}
+				variant={variant}
+				readOnly={readOnly}
 			/>
 			{delVisible && (
 				<IconButton
@@ -84,20 +92,25 @@ const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 		</div>
 		<Accordion open={focus}>
 			<Label>START SEQUENCE:</Label>
-			{/* CREATE NUMBERINPUT */}
 			<NumberInput
 				value={item.startSequence}
 				onChange={handleSequenceChange}
+				variant={variant}
+				readOnly={readOnly}
 			/>
 			<Label>START TIME:</Label>
 			<DateTimeInput
 				value={item.startTime}
 				onChange={handleStartTimeChange}
+				variant={variant}
+				readOnly={readOnly}
 			/>
 			<Label>FILTER SUBJECT:</Label>
 			<TextInput
 				value={item.filterSubject}
 				onChange={handleFilterSubjectChange}
+				variant={variant}
+				readOnly={readOnly}
 			/>
 		</Accordion>
 
@@ -106,14 +119,14 @@ const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 
 export default EditSourceRow
 
-const isVoid = (item: Auth) => !item || (item.mode == AUTH_MODE.CREDS_FILE && !(item.creds?.length > 0))
-
-const cssRow: React.CSSProperties = {
+const cssRow = (focus: boolean, variant: number): React.CSSProperties => ({
 	display: "flex",
 	padding: 3,
 	margin: 3,
 	flexDirection: "column",
-	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].fg,
 	borderRadius: 3,
-}
+	...focus && {
+		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+		color: layoutSo.state.theme.palette.var[variant].fg,
+	}
+})

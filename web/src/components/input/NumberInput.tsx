@@ -1,6 +1,6 @@
 import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
-import Label, { LABEL_TYPES } from "./Label"
+import Label, { LABELS } from "./Label"
 
 
 
@@ -10,9 +10,9 @@ interface Props {
 	variant?: number
 	style?: React.CSSProperties
 
-	min?:number,
-	max?:number,
-	decimals?:number,
+	min?: number,
+	max?: number,
+	decimals?: number,
 
 	onChange?: (newValue: string) => void
 	onFocus?: () => void
@@ -29,7 +29,7 @@ const NumberInput: FunctionComponent<Props> = ({
 	decimals,
 
 	onChange,
-	onFocus,	
+	onFocus,
 }) => {
 
 	// STORE
@@ -43,17 +43,17 @@ const NumberInput: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	return (!readOnly ? (
+	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
+
+	return (
 		<input style={{ ...cssRoot, ...style }}
-			type="number"
+
 			className={`var${variant}`}
 			value={value}
 			onChange={handleChange}
 			onFocus={onFocus}
 		/>
-	) : (
-		<Label type={LABEL_TYPES.TEXT}>{value}</Label>
-	))
+	)
 }
 
 export default NumberInput
@@ -62,6 +62,7 @@ const cssRoot: React.CSSProperties = {
 	backgroundColor: layoutSo.state.theme.palette.default.bg,
 	color: layoutSo.state.theme.palette.default.fg,
 	padding: '5px 7px',
+	flex: 1,
 }
 
 function format(value: string, decimals?: number, min?: number, max?: number): any {
@@ -70,7 +71,7 @@ function format(value: string, decimals?: number, min?: number, max?: number): a
 		value = value.replace(/,/g, ".");
 		const index = value.indexOf(".")
 		if (index != -1 && (value.length - index - 1) > decimals) {
-		 	value = value.slice(0, index + decimals + 1)
+			value = value.slice(0, index + decimals + 1)
 		}
 	}
 	let valueNum = parseFloat(value)

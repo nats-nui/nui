@@ -7,13 +7,17 @@ export interface Stream {
 	sources: Source[]
 
 	policy?: POLICY
+	discardPolicy?: DISCARD_POLICY
+	AllowRollUps?: boolean
+	AllowDeletion?: boolean
+	AllowPurging?: boolean
 	// e altro...
 }
 
 export interface Source {
 	name: string
 	startSequence: number
-	startTime: string
+	startTime: number
 	filterSubject: string
 }
 
@@ -26,4 +30,9 @@ export enum POLICY {
 	LIMIT="limit",
 	INTEREST="interest",
 	WORKQUEQUE="workqueque",
+}
+
+export enum DISCARD_POLICY {
+	OLD="old",
+	NEW="new",
 }

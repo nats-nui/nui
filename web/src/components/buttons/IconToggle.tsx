@@ -1,33 +1,40 @@
+import CheckOffIcon from "@/icons/CheckOffIcon"
+import CheckOnIcon from "@/icons/CheckOnIcon"
 import React, { FunctionComponent } from "react"
 
 
 
 interface Props {
 	check: boolean
-	onChange?: (check: boolean) => void
 	trueIcon?: React.ReactNode
 	falseIcon?: React.ReactNode
 	style?: React.CSSProperties
+	readOnly?: boolean
+	onChange?: (check: boolean) => void
 }
 
 const IconToggle: FunctionComponent<Props> = ({
 	check,
-	onChange,
-	trueIcon,
-	falseIcon,
+	trueIcon = <CheckOnIcon />,
+	falseIcon = <CheckOffIcon />,
 	style,
+	readOnly,
+	onChange,
 }) => {
 	// STORE
 
 	// HOOK
 
 	// HANDLER
-	const handleClick = () => onChange?.(!check)
+	const handleClick = () => {
+		if (readOnly) return
+		onChange?.(!check)
+	}
 
 	// RENDER
 
 	return (
-		<div style={{ ...cssContainer, ...style }}
+		<div style={{ ...cssRoot(readOnly), ...style }}
 			onClick={handleClick}
 		>
 			{check ? trueIcon : falseIcon}
@@ -37,8 +44,8 @@ const IconToggle: FunctionComponent<Props> = ({
 
 export default IconToggle
 
-const cssContainer: React.CSSProperties = {
+const cssRoot = (readOnly: boolean): React.CSSProperties => ({
 	display: "flex",
-	cursor: "pointer",
+	...readOnly ? null : { cursor: "pointer" },
 	padding: 5,
-}
+})

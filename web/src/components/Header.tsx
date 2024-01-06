@@ -7,7 +7,7 @@ import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
 import IconButton from "./buttons/IconButton"
-import Label, { LABEL_TYPES } from "./input/Label"
+import Label, { LABELS } from "./input/Label"
 import AnchorIcon from "@/icons/AnchorIcon"
 
 
@@ -80,13 +80,13 @@ const Header: FunctionComponent<Props> = ({
 
 			<div style={cssTitle(store.state.size)}>
 				<Label
-					type={LABEL_TYPES.TITLE}
+					type={LABELS.TITLE}
 					onClick={handleFocus}
 					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null }}
 				>{title}</Label>
 
 				{subTitle && (
-					<Label type={LABEL_TYPES.SUB_TITLE}>{subTitle}</Label>
+					<Label type={LABELS.SUB_TITLE}>{subTitle}</Label>
 				)}
 			</div>
 

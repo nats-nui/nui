@@ -1,61 +1,75 @@
-import layoutSo from "@/stores/layout"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import React, { FunctionComponent, useEffect, useRef } from "react"
-import Label, { LABEL_TYPES } from "./Label"
+import Label, { LABELS } from "./Label"
 
 
 
 interface Props {
 	value?: string
+	placeholder?: string
 	readOnly?: boolean
 	variant?: number
 	style?: React.CSSProperties
 	focus?: boolean
-
 	onChange?: (newValue: string) => void
 	onFocus?: () => void
+	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
 const TextInput: FunctionComponent<Props> = ({
 	value,
+	placeholder,
 	readOnly,
-	variant = 0,
+	variant,
 	style,
 	focus,
-
 	onChange,
-	onFocus,	
+	onFocus,
+	onKeyDown,
 }) => {
 
 	// STORE
 
 	// HOOK
 	const inputRef = useRef<HTMLInputElement>(null)
-	useEffect(()=>{
-		if ( !focus ) return 
+	useEffect(() => {
+		if (!focus) return
 		inputRef.current?.select()
-	},[focus])
+	}, [focus])
 
 	// HANDLER
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)
+	const handleFocus = (e) => {
+		e.target.select()
+		onFocus?.()
+	}
 
 	// RENDER
-	return (!readOnly ? (
+
+	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
+
+	return (
 		<input ref={inputRef}
-			style={{ ...cssRoot, ...style }}
+			style={{ ...cssRoot(), ...style }}
+			placeholder={placeholder}
 			className={`var${variant}`}
 			value={value}
 			onChange={handleChange}
-			onFocus={onFocus}
+			onFocus={handleFocus}
+			onKeyDown={onKeyDown}
 		/>
-	) : (
-		<Label type={LABEL_TYPES.TEXT}>{value}</Label>
-	))
+	)
 }
 
 export default TextInput
 
-const cssRoot: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	color: layoutSo.state.theme.palette.default.fg,
+const cssRoot = (): React.CSSProperties => ({
+	//... !noBg && {
+	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.bg,
+	color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.fg,
+	borderRadius: 3,
+	//},
 	padding: '5px 7px',
-}
+	fontSize: 12,
+	fontWeight: 600,
+})

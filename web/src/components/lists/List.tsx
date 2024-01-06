@@ -1,15 +1,19 @@
 import { FunctionComponent } from "react"
+import layoutSo from "@/stores/layout"
 
 
 
 export interface RenderRowBaseProps<T> {
 	item: T
 	isSelect?: boolean
+	variant?:number
 }
 
 interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
+	variant?:number
+	readOnly?:boolean
 	/** indice selezionato */
 	select?: number
 	onSelect?: (index: number) => void
@@ -19,7 +23,8 @@ interface Props<T> {
 function List<T>({
 	items,
 	RenderRow,
-
+	variant = 0,
+	readOnly,
 	select,
 	onSelect,
 	style = {},
@@ -42,12 +47,13 @@ function List<T>({
 		{items.map((item, index) =>
 			<div
 				key={index}
-				style={cssRow(select == index)}
+				style={cssRow(select == index, variant)}
 				onClick={() => handleSelect(index)}
 			>
 				<RenderRow
 					item={item}
 					isSelect={index == select}
+					variant={variant}
 				/>
 			</div>
 		)}
@@ -62,6 +68,12 @@ const cssContainer: React.CSSProperties = {
 	flexDirection: "column",
 }
 
-const cssRow = (select: boolean): React.CSSProperties => ({
-	backgroundColor: select ? "#FFFFFF" : null
+const cssRow = (select: boolean, variant:number): React.CSSProperties => ({
+	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : null,
+	color: select ? layoutSo.state.theme.palette.var[variant].fg : null,
+	cursor: !select ? "pointer" : null,
+	fontSize: 12,
+	fontWeight: 600,
+	padding: "3px 5px",
+	margin: "3px 3px",
 })
