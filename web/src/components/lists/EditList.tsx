@@ -1,6 +1,7 @@
 import IconButton from "@/components/buttons/IconButton"
 import AddIcon from "@/icons/AddIcon"
 import { useState, FunctionComponent } from "react"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -8,6 +9,8 @@ export interface RenderRowBaseProps<T> {
 	item: T
 	focus?: boolean
 	readOnly?: boolean
+	variant?: number
+
 	onChange?: (newItem: T) => void
 	onDelete?: () => void
 	onFocus?: () => void
@@ -17,20 +20,25 @@ interface Props<T> {
 	items: T[]
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
+	variant?: number
+	readOnly?: boolean
+	style?: React.CSSProperties
+
 	/** restituisce nuovo ITEM (su click btt NEW) */
 	fnNewItem?: () => T
 	onChangeItems?: (newItems: T[]) => void
-	readOnly?: boolean
-	style?: React.CSSProperties
 }
 
 function EditList<T>({
 	items,
 	RenderRow,
-	readOnly,
+	variant = 0,
+	readOnly = false,
+	style,
+
 	fnNewItem = () => null,
 	onChangeItems,
-	style,
+
 }: Props<T>) {
 
 	// STORES
@@ -84,42 +92,51 @@ function EditList<T>({
 		setFocus(newFocus)
 	}
 	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-		//setFocus(-1)
 		const isChild = e.currentTarget.contains(e.relatedTarget)
-		console.log(isChild)
 		if (!isChild) setFocus(-1)
 	}
 
 	// RENDER
-	return <div
-		style={{ ...cssContainer, ...style }}
-		onKeyDown={handleKeyDown}
-		onBlur={handleBlur}
-	>
+	return (
+		<div
+			style={{ ...cssRoot(variant, readOnly), ...style }}
+			onKeyDown={handleKeyDown}
+			onBlur={handleBlur}
+		>
+			{/* LISTA */}
+			{items?.map((item, index) => (
+				<RenderRow key={index}
+					item={item}
+					focus={focus == index}
+					readOnly={readOnly}
+					variant={variant}
 
-		{/* LISTA */}
-		{items?.map((item, index) => (
-			<RenderRow key={index}
-				item={item}
-				focus={focus == index}
-				onChange={(newItem) => handleChangeItem(newItem, index)}
-				onDelete={() => handleDeleteItem(index)}
-				onFocus={() => handleFocus(index)}
-				readOnly={readOnly}
-			/>
-		))}
-		{/* BOTTONE NEW */}
-		{!readOnly && fnNewItem && (
-			<IconButton
-				onClick={() => handleNewItem()}
-			><AddIcon /></IconButton>
-		)}
-	</div>
+					onChange={(newItem) => handleChangeItem(newItem, index)}
+					onDelete={() => handleDeleteItem(index)}
+					onFocus={() => handleFocus(index)}
+				/>
+			))}
+			{/* BOTTONE NEW */}
+			{!readOnly && fnNewItem && (
+				<IconButton
+					onClick={() => handleNewItem()}
+				><AddIcon /></IconButton>
+			)}
+		</div>
+	)
 }
 
 export default EditList
 
-const cssContainer: React.CSSProperties = {
+const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
 	display: "flex",
 	flexDirection: "column",
-}
+	...readOnly ? {
+		//backgroundColor: null, //layoutSo.state.theme.palette.var[variant].bg,
+		//color: layoutSo.state.theme.palette.var[variant].bg,
+	} : {
+		backgroundColor: layoutSo.state.theme.palette.var[variant].fg,
+		color: layoutSo.state.theme.palette.var[variant].bg,
+	},
+	borderRadius: 5,
+})

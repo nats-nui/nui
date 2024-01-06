@@ -1,11 +1,9 @@
 import Label from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
-import EditAuthRow from "@/components/rows/EditAuthRow"
 import EditList from "@/components/lists/EditList"
+import EditAuthRow from "@/components/rows/EditAuthRow"
 import EditStringRow from "@/components/rows/EditStringRow"
-import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
-import cnnSo from "@/stores/connections"
-import layoutSo from "@/stores/layout"
+import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -50,6 +48,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 	const auths = cnnDetailSa.connection.auth ?? []
 	const readOnly = cnnDetailSa.readOnly
+	const variant = cnnDetailSo.getColorBg()
 
 	return <div style={cssForm}>
 
@@ -58,35 +57,36 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			value={name}
 			onChange={handleChangeName}
 			readOnly={readOnly}
+			variant={variant}
 		/>
 
 		<Label>HOST</Label>
 		<EditList<string>
-			style={cssList(readOnly)}
 			items={hosts}
 			onChangeItems={handleHostsChange}
 			fnNewItem={() => "<new>"}
 			RenderRow={EditStringRow}
 			readOnly={readOnly}
+			variant={variant}
 		/>
 
 		<Label>SUBSCRIPTIONS</Label>
 		<EditList<Subscription>
-			style={cssList(readOnly)}
 			items={subscriptions}
 			onChangeItems={handleSubscriptionsChange}
 			fnNewItem={() => ({ subject: "<new>" })}
-			RenderRow={(props) => EditSubscriptionRow({...props, noDisable: true})}
+			RenderRow={EditSubscriptionNoDisableRow}
 			readOnly={readOnly}
+			variant={variant}
 		/>
 
 		<Label>AUTH</Label>
 		<EditList<Auth>
-			style={cssList(readOnly)}
 			items={auths}
 			onChangeItems={handleAuthsChange}
 			RenderRow={EditAuthRow}
 			readOnly={readOnly}
+			variant={variant}
 		/>
 
 	</div>
@@ -98,8 +98,3 @@ const cssForm: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 }
-
-const cssList = (readOnly: boolean): React.CSSProperties => ({
-	backgroundColor: readOnly ? null : layoutSo.state.theme.palette.default.bg,
-	color: readOnly ? null : layoutSo.state.theme.palette.default.fg,
-})

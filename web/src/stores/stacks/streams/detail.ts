@@ -3,6 +3,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Stream } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildNewStream } from "./utils"
+import srcIcon from "@/assets/StreamsIcon.svg"
 
 
 
@@ -16,7 +17,7 @@ const setup = {
 
 		//#region VIEWBASE
 		draggable: false,
-		width: 200,
+		width: 230,
 		//#endregion
 
 	},
@@ -24,7 +25,9 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => "STREAM",
+		getTitle: (_: void, store?: ViewStore) => (<StreamStore>store).state.stream?.name ?? "--",
+		getSubTitle: (_: void, store?: ViewStore) => "STREAM DETAIL",
+		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorBg: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as StreamState

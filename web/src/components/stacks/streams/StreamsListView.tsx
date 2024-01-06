@@ -1,4 +1,5 @@
 import FrameworkCard from "@/components/FrameworkCard"
+import Button from "@/components/buttons/Button"
 import CnnRow from "@/components/rows/CnnRow"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { Stream } from "@/types/Stream"
@@ -26,11 +27,11 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (stream: Stream) => strSo.select(stream)
 	const handleNew = () => {
-//		cnnListSo.create()
+		//		cnnListSo.create()
 	}
 	const handleDel = () => {
-//		cnnSo.delete(selectedId)
-//		cnnListSo.select(null)
+		//		cnnSo.delete(selectedId)
+		//		cnnListSo.select(null)
 	}
 
 	// RENDER
@@ -39,20 +40,34 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const selectedId = strSa.selectId
 	const variant = strSo.getColorVar()
 	const isSelected = (stream: Stream) => selectedId == stream.id
-	const getTitle = (stream:Stream) => stream.name
-	const getSubtitle = (stream:Stream) => stream.description
-	
+	const getTitle = (stream: Stream) => stream.name
+	const getSubtitle = (stream: Stream) => stream.description
+
 	return <FrameworkCard
 		store={strSo}
+		actionsRender={<>
+
+			<Button
+				label="NEW"
+				//select={bttNewSelect}
+				variant={variant}
+				onClick={handleNew}
+			/>
+			<Button
+				label="DELETE"
+				variant={variant}
+				onClick={handleDel}
+			/>
+		</>}
 	>
 		{streams.map(stream => (
 			<CnnRow key={stream.id}
-			title={getTitle(stream)}
-			subtitle={getSubtitle(stream)}
-			selected={isSelected(stream)}
-			variant={variant}
-			onClick={()=>handleSelect(stream)}
-		/>
+				title={getTitle(stream)}
+				subtitle={getSubtitle(stream)}
+				selected={isSelected(stream)}
+				variant={variant}
+				onClick={() => handleSelect(stream)}
+			/>
 		))}
 	</FrameworkCard>
 }

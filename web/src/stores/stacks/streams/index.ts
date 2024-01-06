@@ -1,4 +1,4 @@
-import srcIcon from "@/assets/StreamIcon.svg"
+import srcIcon from "@/assets/StreamsIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Stream } from "@/types/Stream"
@@ -18,6 +18,10 @@ const setup = {
 		connectionId: <string>null,
 		selectId: <string>null,
 		all: <Stream[]>[],
+
+		//#region VIEWBASE
+		width: 200,
+		//#endregion
 	},
 
 	getters: {

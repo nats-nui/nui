@@ -4,7 +4,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import { createPortal } from "react-dom"
 import layoutSo from "@/stores/layout"
-import Label, { LABEL_TYPES } from "../input/Label"
+import Label, { LABELS } from "../input/Label"
 
 
 
@@ -70,7 +70,7 @@ const Dialog: FunctionComponent<Props> = ({
 
 	return createPortal(
 		<div style={cssRoot(variant, width)}>
-			<Label type={LABEL_TYPES.TITLE_DIALOG}>{title}</Label>
+			<Label type={LABELS.TITLE_DIALOG}>{title}</Label>
 			{children}
 		</div>,
 		refDialog

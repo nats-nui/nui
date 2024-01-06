@@ -47,7 +47,6 @@ const setup = {
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
 			if (index < store.state.anchored) {
-				console.log("add", index, store.state.anchored)
 				store.state.anchored++
 			}
 
@@ -95,7 +94,6 @@ const setup = {
 			if (!view.state.parent) {
 				index = views.findIndex(v => v == view)
 				if (index < store.state.anchored) {
-					console.log("remove", index, store.state.anchored)
 					store.state.anchored--
 				}
 				if (index != -1) views.splice(index, 1)

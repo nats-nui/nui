@@ -1,45 +1,31 @@
 import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
-import { FunctionComponent, useEffect, useRef, useState } from "react"
+import { FunctionComponent, useState } from "react"
+import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
+import Box from "../Box"
 
 
 
 const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	item,
 	focus,
+	variant = 0,
+	readOnly = false,
 	onChange,
 	onDelete,
 	onFocus,
 }) => {
 
-	useEffect(() => {
-		if (focus) {
-			inputRef.current?.select()
-		} else {
-			if (isVoid(item)) onDelete?.()
-		}
-	}, [focus])
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newItem = e.target.value
+	const handleChange = (newItem: string) => {
 		onChange?.(newItem)
 	}
-	
+
 	// ******************
 
 	// HOOKS
-	const [enter, setEnter] = useState(false)
-	const inputRef = useRef(null);
 
 	// HANDLER
-
-	const handleEnter = () => setEnter(true)
-	const handleLeave = () => setEnter(false)
-	const handleFocus = () => {
-		inputRef.current?.select()
-		onFocus?.()
-	}
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
@@ -53,28 +39,22 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 
 
 	// RENDER
-	const delVisible = enter
-
-	return <div
+	return <Box
 		style={cssRow}
-		onMouseEnter={handleEnter}
-		onMouseLeave={handleLeave}
-
+		preRender={readOnly ? "\u2022 " : null}
+		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
-		<input style={cssInput}
-			type="text"
-			ref={inputRef}
+		<TextInput
+			style={{ flex: 1 }}
 			value={item}
+			variant={variant}
+			readOnly={readOnly}
+			focus={focus}
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
-			onFocus={handleFocus}
+			onFocus={onFocus}
 		/>
-		{delVisible && (
-			<IconButton
-				onClick={handleDelete}
-			><CloseIcon /></IconButton>
-		)}
-	</div>
+	</Box>
 }
 
 export default EditStringRow
@@ -85,8 +65,4 @@ const cssRow: React.CSSProperties = {
 	minHeight: 24,
 	display: "flex",
 	alignItems: "center",
-}
-
-const cssInput: React.CSSProperties = {
-	flex: 1,
 }
