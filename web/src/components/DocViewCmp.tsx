@@ -99,13 +99,13 @@ const cssDialog = (deep: number): React.CSSProperties => ({
 	zIndex: deep,
 	height: "100%",
 
-	display: "flex",
-	flexDirection: "column",
+	//display: "flex",
+	//flexDirection: "column",
 
-	overflow: "hidden",
-	borderRadius: '0px 10px 10px 0px',
+	//overflow: "hidden",
+	//borderRadius: '0px 10px 10px 0px',
 
-	boxShadow: layoutSo.state.theme.shadows[0],
+	//boxShadow: layoutSo.state.theme.shadows[0],
 })
 
 const cssDesk: React.CSSProperties = {

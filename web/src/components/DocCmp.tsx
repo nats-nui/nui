@@ -15,6 +15,7 @@ import StreamsListView from "./stacks/streams/StreamsListView"
 import { StreamsStore } from "@/stores/stacks/streams"
 import StreamDetailView from "./stacks/streams/StreamDetailView"
 import { StreamStore } from "@/stores/stacks/streams/detail"
+import StreamDetail2View from "./stacks/streams/StreamDetail2View"
 
 
 
@@ -42,6 +43,8 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <StreamsListView store={view as StreamsStore} />
 			case DOC_TYPE.STREAM:
 				return <StreamDetailView store={view as StreamStore} />
+			case DOC_TYPE.STREAM2:
+				return <StreamDetail2View store={view as StreamStore} />
 			default:
 				return null
 		}

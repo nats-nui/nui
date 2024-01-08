@@ -4,25 +4,27 @@ import Label, { LABELS } from "./Label"
 
 
 
-interface Props {
-	value?: string
+export interface TextInputProps {
+	value?: string | number
 	placeholder?: string
 	readOnly?: boolean
 	variant?: number
 	style?: React.CSSProperties
 	focus?: boolean
-	onChange?: (newValue: string) => void
+
+	onChange?: (newValue: string | number) => void
 	onFocus?: () => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
-const TextInput: FunctionComponent<Props> = ({
+const TextInput: FunctionComponent<TextInputProps> = ({
 	value,
 	placeholder,
 	readOnly,
 	variant,
 	style,
 	focus,
+	
 	onChange,
 	onFocus,
 	onKeyDown,

@@ -41,7 +41,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	// RENDER
 	return <Box
 		style={cssRow}
-		preRender={readOnly ? "\u2022 " : null}
+		//preRender={readOnly ? "\u2022 " : null}
 		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		<TextInput
@@ -62,7 +62,7 @@ export default EditStringRow
 const isVoid = (item: string) => !item || item.trim().length == 0
 
 const cssRow: React.CSSProperties = {
-	minHeight: 24,
+	//minHeight: 24,
 	display: "flex",
 	alignItems: "center",
 }

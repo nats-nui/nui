@@ -56,10 +56,11 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
 	const isNew = cnnDetailSa.connection?.id == null
 	const readOnly = cnnDetailSa.readOnly
-	const variant = cnnDetailSo.getColorBg()
+	const variant = cnnDetailSo.getColorVar()
 
 	return <FrameworkCard
 		store={cnnDetailSo}
+		variantBg={variant}
 		actionsRender={isNew ? (
 			<Button
 				label="CREATE"

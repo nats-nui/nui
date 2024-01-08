@@ -52,13 +52,14 @@ const cssNormal: React.CSSProperties = {
 	fontSize: 12,
 	fontWeight: 800,
 	marginTop: 5,
+	whiteSpace: "nowrap",
 }
 /** label di un input readonly */
 const cssReadOnly: React.CSSProperties = {
 	//color: layoutSo.state.theme.palette.default.bg,
 	fontSize: 12,
 	fontWeight: 600,
-	padding: '5px 1px',
+	padding: 3,
 }
 const cssSubTitle: React.CSSProperties = {
 	fontSize: 12,
@@ -70,6 +71,7 @@ const cssTitle: React.CSSProperties = {
 	lineHeight: "23px",
 	fontWeight: 800,
 	fontFamily: "Darker Grotesque",
+	whiteSpace: "nowrap",
 }
 const cssTitleDialog: React.CSSProperties = {
 	fontSize: 20,
