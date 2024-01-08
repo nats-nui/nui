@@ -48,7 +48,7 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 	const auths = cnnDetailSa.connection.auth ?? []
 	const readOnly = cnnDetailSa.readOnly
-	const variant = cnnDetailSo.getColorBg()
+	const variant = cnnDetailSo.getColorVar()
 
 	return <div style={cssForm}>
 

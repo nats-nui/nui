@@ -1,35 +1,19 @@
-import layoutSo from "@/stores/layout"
-import React, { FunctionComponent } from "react"
-import Label, { LABELS } from "./Label"
+import { FunctionComponent } from "react"
+import TextInput, { TextInputProps } from "./TextInput"
 
 
 
-interface Props {
-	value?: any
-	readOnly?: boolean
-	variant?: number
-	style?: React.CSSProperties
-
+interface Props extends TextInputProps {
 	min?: number,
 	max?: number,
 	decimals?: number,
-
-	onChange?: (newValue: string) => void
-	onFocus?: () => void
 }
 
 const NumberInput: FunctionComponent<Props> = ({
-	value,
-	readOnly,
-	variant = 0,
-	style,
-
 	min,
 	max,
 	decimals,
-
-	onChange,
-	onFocus,
+	...props
 }) => {
 
 	// STORE
@@ -37,35 +21,21 @@ const NumberInput: FunctionComponent<Props> = ({
 	// HOOK
 
 	// HANDLER
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let value = format(e.target.value, decimals, min, max)
-		onChange?.(value)
+	const handleChange = (newValue:string) => {
+		const value = format(newValue, decimals, min, max)
+		props.onChange?.(value)
 	}
 
 	// RENDER
-	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
-
-	return (
-		<input style={{ ...cssRoot, ...style }}
-
-			className={`var${variant}`}
-			value={value}
-			onChange={handleChange}
-			onFocus={onFocus}
-		/>
-	)
+	return <TextInput {...props} 
+		onChange={handleChange}
+	/>
 }
 
 export default NumberInput
 
-const cssRoot: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	color: layoutSo.state.theme.palette.default.fg,
-	padding: '5px 7px',
-	flex: 1,
-}
-
 function format(value: string, decimals?: number, min?: number, max?: number): any {
+	value = value.replace(/[^0-9.,+-]/g, "")
 	if (decimals != null && (value.includes(".") || value.includes(","))) {
 		value = parseFloat(value).toString()//.toFixed(decimals)
 		value = value.replace(/,/g, ".");

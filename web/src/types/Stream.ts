@@ -11,6 +11,9 @@ export interface Stream {
 	AllowRollUps?: boolean
 	AllowDeletion?: boolean
 	AllowPurging?: boolean
+
+	maxAge?: number
+	maxBytes?:number
 	// e altro...
 }
 
@@ -35,4 +38,12 @@ export enum POLICY {
 export enum DISCARD_POLICY {
 	OLD="old",
 	NEW="new",
+}
+
+export enum UM_BIT {
+	BYTE = "byte",
+	KBIT= "KiB",
+	MBIT= "MiB",
+	GBIT= "GiB",
+	TBIT= "TiB",
 }

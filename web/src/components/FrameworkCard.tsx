@@ -10,6 +10,7 @@ import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 interface Props {
 	store: ViewStore
 	style?: React.CSSProperties
+	variantBg?: number
 	actionsRender?: React.ReactNode
 	iconizedRender?: React.ReactNode
 	children: React.ReactNode
@@ -18,6 +19,8 @@ interface Props {
 /** struttura standard di una CARD */
 const FrameworkCard: FunctionComponent<Props> = ({
 	store,
+	style,
+	variantBg = 0,
 	actionsRender,
 	iconizedRender,
 	children,
@@ -26,11 +29,10 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	// RENDER
 	const inRoot = !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.ICONIZED
-	const variantBg = store.getColorBg()
 	const variant = store.getColorVar()
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
-	return <div style={cssRoot(variantBg, inDrag, isIconized)}>
+	return <div style={{...cssRoot(variantBg, inDrag, isIconized), ...style}}>
 
 		<Header store={store} />
 

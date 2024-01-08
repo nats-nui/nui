@@ -90,7 +90,6 @@ const viewSetup = {
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
 		getIcon: (_: void, store?: ViewStore): string => null,
-		getColorBg: (_: void, store?: ViewStore) => COLOR_VAR.DEFAULT,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.DEFAULT,
 		getSerialization: (_: void, store?: ViewStore) => {
 			return {
