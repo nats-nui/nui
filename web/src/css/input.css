@@ -22,8 +22,8 @@ input::selection {
 }
 
 input.var0::selection {
-  background: var(--var-0);
-  color: var(--text-bg);
+  background: var(--text-bg);
+  color: var(--var-0);
 }
 
 input.var1::selection {

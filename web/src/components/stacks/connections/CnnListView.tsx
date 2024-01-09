@@ -46,7 +46,6 @@ const CnnListView: FunctionComponent<Props> = ({
 	if (!connnections) return null
 	const selectedId = cnnListSa.selectId
 	const isSelected = (cnn: Connection) => selectedId == cnn.id
-	const bttNewSelect = !!cnnListSa.linked && (cnnListSa.linked as CnnDetailStore).state.connection?.id == null
 	const getTitle = (cnn:Connection) => cnn.name
 	const getSubtitle = (cnn:Connection) => cnn.hosts?.[0]
 	const variant = cnnListSo.getColorVar()
@@ -62,7 +61,6 @@ const CnnListView: FunctionComponent<Props> = ({
 			>
 				<Button
 					label="NEW"
-					select={bttNewSelect}
 					variant={variant}
 					onClick={handleNew}
 				/>

@@ -1,21 +1,20 @@
-import MessagesView from "@/components/stacks/messages/MessagesView"
 import CnnDetailView from "@/components/stacks/connections/CnnDetailView"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { CnnListStore } from "@/stores/stacks/connection/list"
-import { MessagesStore } from "@/stores/stacks/messages"
+import MessagesView from "@/components/stacks/messages/MessagesView"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { CnnListStore } from "@/stores/stacks/connection/list"
+import { MessageStore } from "@/stores/stacks/message"
+import { MessagesStore } from "@/stores/stacks/messages"
+import { MessageSendStore } from "@/stores/stacks/send"
+import { StreamsStore } from "@/stores/stacks/streams"
+import { StreamStore } from "@/stores/stacks/streams/detail"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
 import CnnListView from "./stacks/connections/CnnListView"
-import { MessageStore } from "@/stores/stacks/message"
 import MessageView from "./stacks/message/MessageView"
 import MessageSendView from "./stacks/messageSend/MessageSendView"
-import { MessageSendStore } from "@/stores/stacks/send"
-import StreamsListView from "./stacks/streams/StreamsListView"
-import { StreamsStore } from "@/stores/stacks/streams"
 import StreamDetailView from "./stacks/streams/StreamDetailView"
-import { StreamStore } from "@/stores/stacks/streams/detail"
-import StreamDetail2View from "./stacks/streams/StreamDetail2View"
+import StreamsListView from "./stacks/streams/StreamsListView"
 
 
 
@@ -43,8 +42,6 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <StreamsListView store={view as StreamsStore} />
 			case DOC_TYPE.STREAM:
 				return <StreamDetailView store={view as StreamStore} />
-			case DOC_TYPE.STREAM2:
-				return <StreamDetail2View store={view as StreamStore} />
 			default:
 				return null
 		}

@@ -51,7 +51,7 @@ export default Label
 const cssNormal: React.CSSProperties = {
 	fontSize: 12,
 	fontWeight: 800,
-	marginTop: 5,
+	margin: "10px 0px 0px 0px",
 	whiteSpace: "nowrap",
 }
 /** label di un input readonly */
@@ -59,7 +59,7 @@ const cssReadOnly: React.CSSProperties = {
 	//color: layoutSo.state.theme.palette.default.bg,
 	fontSize: 12,
 	fontWeight: 600,
-	padding: 3,
+	padding: "4px 3px",
 }
 const cssSubTitle: React.CSSProperties = {
 	fontSize: 12,

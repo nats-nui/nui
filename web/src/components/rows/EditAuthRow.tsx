@@ -52,11 +52,10 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	// RENDER
 	return <Box
 		style={cssRow}
-		preRender={readOnly ? "\u2022 " : null}
 		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		{item == null ? (
-			<div style={{ display: "flex", flex: 1 }}>
+			<div style={{ display: "flex", flex: 1, alignItems: "center", minHeight: 24 }}>
 				<Button label="NONE" onClick={handleNoneMode} />
 				<Button label="FILE" onClick={handleFileMode} />
 				<Button label="PSW" disabled />
@@ -89,7 +88,6 @@ export default EditAuthRow
 const isVoid = (item: Auth) => !item || (item.mode == AUTH_MODE.CREDS_FILE && !(item.creds?.length > 0))
 
 const cssRow: React.CSSProperties = {
-	minHeight: 24,
 	display: "flex",
 	alignItems: "center",
 }

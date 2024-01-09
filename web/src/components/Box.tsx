@@ -28,13 +28,15 @@ const Box: FunctionComponent<Props> = ({
 	// RENDER
 	return (
 		<div
-			style={{ display: "flex", alignItems: "center", ...style }}
+			style={{ display: "flex", alignItems: "center", position: "relative", ...style }}
 			onMouseEnter={enterRender ? handleEnter : null}
 			onMouseLeave={enterRender ? handleLeave : null}
 		>
 			{preRender}
 			{children}
-			{enter && enterRender}
+			{enter && <div style={{ position: "absolute", top: 0, right: 0 }}>
+				{enterRender}
+			</div>}
 		</div>
 	)
 }

@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import { FunctionComponent } from "react"
 import ListRow from "./ListRow"
 
@@ -50,9 +49,10 @@ function List<T>({
 		{items.map((item, index) =>
 			<ListRow
 				key={index}
-				style={cssRow(select == index, variant)}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
+				select={select==index}
+				variant={variant}
 			>
 				<RenderRow
 					item={item}
@@ -71,13 +71,4 @@ export default List
 const cssContainer: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	//padding: 3,
 }
-
-const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
-	backgroundColor: select 
-		? layoutSo.state.theme.palette.var[variant].bg 
-		: null,
-	color: select ? layoutSo.state.theme.palette.var[variant].fg : null,
-	cursor: !select ? "pointer" : null,
-})

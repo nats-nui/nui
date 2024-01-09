@@ -7,6 +7,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStore } from "../../docs/utils/factory"
 import { MessagesState, MessagesStore } from "../messages"
 import { StreamsState, StreamsStore } from "../streams"
+import cnnSo from "@/stores/connections"
 
 
 
@@ -57,6 +58,12 @@ const setup = {
 			state.readOnly = data.readOnly
 		},
 		//#endregion
+
+		/** restore della connection a quella memorizzata nella connection */
+		restore(_: void, store?: CnnDetailStore) {
+			const cnn = cnnSo.getById(store.state.connection.id)
+			store.setConnection(cnn)
+		},
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {

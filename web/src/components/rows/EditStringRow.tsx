@@ -41,13 +41,12 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	// RENDER
 	return <Box
 		style={cssRow}
-		//preRender={readOnly ? "\u2022 " : null}
 		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		<TextInput
 			style={{ flex: 1 }}
 			value={item}
-			variant={variant}
+			//variant={variant}
 			readOnly={readOnly}
 			focus={focus}
 			onChange={handleChange}

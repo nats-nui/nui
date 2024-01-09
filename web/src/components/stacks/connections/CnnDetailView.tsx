@@ -29,27 +29,24 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const cnnSa = useStore(cnnSo)
 
 	// HOOKs
-	useEffect(() => {
-		let cnn = cnnDetailSa.connection
-		if (cnn == null) cnn = {
-			name: "",
-			hosts: [],
-			subscriptions: [],
-			auth: []
-		}
-		cnnDetailSo.setConnection(cnn)
-	}, [cnnSa.all])
 
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleCreateClick = async () => {
-		const cnnNew = await cnnSo.create(cnnDetailSa.connection);
+		cnnDetailSo.setReadOnly(true)
+		const cnnNew = await cnnSo.save(cnnDetailSa.connection);
 		(cnnDetailSa.parent as CnnListStore).select(cnnNew)
 	}
 	const handleEditClick = async () => cnnDetailSo.setReadOnly(false)
-	const handleCancelClick = () => cnnDetailSo.setReadOnly(true)
-	const handleSaveClick = () => cnnDetailSo.setReadOnly(true)
+	const handleCancelClick = () => {
+		cnnDetailSo.setReadOnly(true)
+		cnnDetailSo.restore()
+	}
+	const handleSaveClick = async () => {
+		cnnDetailSo.setReadOnly(true)
+		await cnnSo.save(cnnDetailSa.connection)
+	}
 
 	// RENDER
 	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
