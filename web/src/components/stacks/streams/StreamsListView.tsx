@@ -25,8 +25,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (stream: Stream) => strSo.select(stream)
-	const handleSelect2 = (stream: Stream) => strSo.select2(stream)
+	const handleSelect2 = (stream: Stream) => strSo.select(stream)
 	const handleNew = () => {
 		//		cnnListSo.create()
 	}
@@ -67,9 +66,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 				subtitle={getSubtitle(stream)}
 				selected={isSelected(stream)}
 				variant={variant}
-				onClick={(e) => {
-					if (e.shiftKey) handleSelect2(stream); else handleSelect(stream)
-				}}
+				onClick={() => handleSelect2(stream)}
 			/>
 		))}
 	</FrameworkCard>

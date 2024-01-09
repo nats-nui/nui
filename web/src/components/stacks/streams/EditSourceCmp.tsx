@@ -29,6 +29,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	if (!source) return null
 
 	return <>
+		<Label>NAME</Label>
 		<TextInput
 			style={{ flex: 1 }}
 			value={source.name}
@@ -37,21 +38,21 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			//variant={variant}
 			readOnly={readOnly}
 		/>
-		<Label>START SEQUENCE:</Label>
+		<Label>START SEQUENCE</Label>
 		<NumberInput
 			value={source.startSequence}
 			onChange={handleSequenceChange}
 			// variant={variant}
 			readOnly={readOnly}
 		/>
-		<Label>START TIME:</Label>
+		<Label>START TIME</Label>
 		<DateTimeInput
 			value={source.startTime}
 			onChange={handleStartTimeChange}
 			// variant={variant}
 			readOnly={readOnly}
 		/>
-		<Label>FILTER SUBJECT:</Label>
+		<Label>FILTER SUBJECT</Label>
 		<TextInput
 			value={source.filterSubject}
 			onChange={handleFilterSubjectChange}

@@ -34,7 +34,7 @@ const setup = {
 	},
 
 	actions: {
-		/**  */
+		
 		select(stream: Stream, store?: StreamsStore) {
 			const idSelPrev = store.state.selectId
 			// se è uguale a quello precedente allora deseleziona
@@ -45,26 +45,6 @@ const setup = {
 			let streamStore:ViewStore = null
 			if (idSel != null) streamStore = buildStore({
 				type: DOC_TYPE.STREAM,
-				stream
-			} as StreamState)
-
-			// aggiungo la nuova VIEW (o null)
-			docSo.addLink({
-				view: streamStore,
-				parent: store,
-				anim: !idSelPrev || !idSel,
-			})
-		},
-		select2(stream: Stream, store?: StreamsStore) {
-			const idSelPrev = store.state.selectId
-			// se è uguale a quello precedente allora deseleziona
-			let idSel = (stream && idSelPrev != stream.id) ? stream.id : null
-			store.setSelectId(idSel)
-
-			// eventualmente creo la nuova VIEW
-			let streamStore:ViewStore = null
-			if (idSel != null) streamStore = buildStore({
-				type: DOC_TYPE.STREAM2,
 				stream
 			} as StreamState)
 

@@ -1,23 +1,22 @@
 import Accordion from "@/components/Accordion"
 import Box from "@/components/Box"
 import FrameworkCard from "@/components/FrameworkCard"
+import Options from "@/components/Options"
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import Dialog from "@/components/dialogs/Dialog"
-import Label from "@/components/input/Label"
+import Label, { LABELS } from "@/components/input/Label"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import List from "@/components/lists/List"
+import EditSourceRow from "@/components/rows/__EditSourceRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DISCARD_POLICY, POLICY, STORAGE, Source, UM_BIT } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import EditSourceCmp from "./EditSourceCmp"
-import ListDialog from "./ListDialog"
-import ElementDialog from "./ElementDialogProps"
 
 
 
@@ -25,14 +24,26 @@ interface Props {
 	store?: StreamStore
 }
 
-const StreamDetail2View: FunctionComponent<Props> = ({
+const StreamDetailView: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
 	// STORE
+	//useStore(docSo)
 	const streamSa = useStore(streamSo)
+	//const cnnSa = useStore(cnnSo)
 
 	// HOOKs
+	//useEffect(() => {
+	// let cnn = streamSo.getConnection()
+	// if (cnn == null) cnn = {
+	// 	name: "",
+	// 	hosts: [],
+	// 	subscriptions: [],
+	// 	auth: []
+	// }
+	// streamSo.setConnection(cnn)
+	//}, [cnnSa.all])
 
 	// HANDLER
 	const handleCreateClick = async () => streamSo.createNew()
@@ -43,34 +54,26 @@ const StreamDetail2View: FunctionComponent<Props> = ({
 	const handleNameChange = (name: string) => streamSo.setStream({ ...streamSa.stream, name })
 	const handleDescriptionChange = (description: string) => streamSo.setStream({ ...streamSa.stream, description })
 	const handleSubjectsChange = (subjects: string[]) => streamSo.setStream({ ...streamSa.stream, subjects })
-
+	const handleSourcesChange = (sources: Source[]) => streamSo.setStream({ ...streamSa.stream, sources })
+	const handlePolicySelect = (policy: POLICY) => streamSo.setStream({ ...streamSa.stream, policy })
+	const handleDiscardPolicySelect = (discardPolicy: DISCARD_POLICY) => streamSo.setStream({ ...streamSa.stream, discardPolicy })
 	const handleAllowRollUpsChange = (AllowRollUps: boolean) => streamSo.setStream({ ...streamSa.stream, AllowRollUps })
 	const handleAllowDeletionChange = (AllowDeletion: boolean) => streamSo.setStream({ ...streamSa.stream, AllowDeletion })
 	const handleAllowPurgingChange = (AllowPurging: boolean) => streamSo.setStream({ ...streamSa.stream, AllowPurging })
 
+	const [topS, setTopS] = useState<number>(null)
+	const handleStorageOpen = (e) => setTopS(topS == null ? e.target.getBoundingClientRect().y : null)
 	const handleStorageSelect = (storage: STORAGE) => streamSo.setStream({ ...streamSa.stream, storage })
+
+
+
+
 
 	const [umIndex, setUmIndex] = useState<number>(0)
 	const handleMaxBytesChange = (maxBytes: number) => streamSo.setStream({ ...streamSa.stream, maxBytes })
 
-
-
-	const [elementSource, setElementSource] = useState<HTMLElement>(null)
-	const [souceIndex, setSourceIndex] = useState<number>(null)
-	const handleSourceDialog = (index: number, e) => {
-		setSourceIndex(index)
-		setElementSource(!!elementSource ? null : e.target)
-	}
-	const handleSourceChange = (source: Source) => {
-		streamSa.stream.sources[souceIndex] = source
-		streamSo.setStream({ ...streamSa.stream })
-	}
-
-
-
-	const handlePolicySelect = (policy: POLICY) => streamSo.setStream({ ...streamSa.stream, policy })
-	const handleDiscardPolicySelect = (discardPolicy: DISCARD_POLICY) => streamSo.setStream({ ...streamSa.stream, discardPolicy })
-
+	const [top, setTop] = useState<number>(null)
+	const handleTestDialog = (e) => setTop(top == null ? e.target.getBoundingClientRect().y : null)
 
 	// RENDER
 	const isNew = streamSa.stream?.id == null
@@ -122,14 +125,14 @@ const StreamDetail2View: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 		/>
 
-		<ListDialog
-			title="STORAGE"
-			store={streamSo}
-			select={Object.values(STORAGE).indexOf(streamSa.stream.storage)}
+		<Label>STORAGE</Label>
+		<Options<STORAGE>
+			value={streamSa.stream.storage}
 			items={Object.values(STORAGE)}
 			RenderRow={({ item }) => item}
+			variant={variant}
 			readOnly={readOnly}
-			onSelect={(index) => { handleStorageSelect(Object.values(STORAGE)[index]) }}
+			onSelect={handleStorageSelect}
 		/>
 
 		<Label>SUBJECTS</Label>
@@ -143,48 +146,34 @@ const StreamDetail2View: FunctionComponent<Props> = ({
 		/>
 
 		<Label>SOURCES</Label>
-		<List<Source>
+		<EditList<Source>
+			style={cssList(readOnly, variant)}
 			items={streamSa.stream.sources}
-			onSelect={handleSourceDialog}
-			//readOnly={readOnly}
-			RenderRow={({ item }) => item.name}
+			onChangeItems={handleSourcesChange}
+			variant={variant}
+			readOnly={readOnly}
+			RenderRow={EditSourceRow}
 		/>
-		<ElementDialog
-			//title="SOURCES"
-			element={elementSource}
-			store={streamSo}
-			width={150}
-			onClose={() => setElementSource(null)}
-		>
-			<EditSourceCmp
-				source={streamSa.stream.sources[souceIndex]}
-				onChange={handleSourceChange}
-				readOnly={readOnly}
-			/>
-		</ElementDialog>
 
-
-
-		<ListDialog
-			title="POLICY"
-			store={streamSo}
-			select={Object.values(POLICY).indexOf(streamSa.stream.policy)}
+		<Label>POLICY</Label>
+		<Options<POLICY>
+			value={streamSa.stream.policy}
 			items={Object.values(POLICY)}
 			RenderRow={({ item }) => item}
+			variant={variant}
 			readOnly={readOnly}
-			onSelect={(index) => { handlePolicySelect(Object.values(POLICY)[index]) }}
+			onSelect={handlePolicySelect}
 		/>
 
-		<ListDialog
-			title="DISCARD POLICY"
-			store={streamSo}
-			select={Object.values(DISCARD_POLICY).indexOf(streamSa.stream.discardPolicy)}
+		<Label>DISCARD POLICY</Label>
+		<Options<DISCARD_POLICY>
+			value={streamSa.stream.discardPolicy}
 			items={Object.values(DISCARD_POLICY)}
 			RenderRow={({ item }) => item}
+			variant={variant}
 			readOnly={readOnly}
-			onSelect={(index) => { handleDiscardPolicySelect(Object.values(DISCARD_POLICY)[index]) }}
+			onSelect={handleDiscardPolicySelect}
 		/>
-
 
 		<Box style={{ marginTop: 8 }}>
 			<IconToggle
@@ -230,22 +219,33 @@ const StreamDetail2View: FunctionComponent<Props> = ({
 					variant={variant}
 					readOnly={readOnly}
 				/>
-				<ListDialog
-					store={streamSo}
-					select={umIndex}
-					items={Object.values(UM_BIT)}
-					RenderRow={({ item }) => item}
-					readOnly={readOnly}
-					onSelect={(index) => setUmIndex(index)}
-				/>
+				<Label type={LABELS.READ}
+					style={{ width: 45, textAlign: "right" }}
+					onClick={handleTestDialog}
+				>{Object.values(UM_BIT)[umIndex]?.toUpperCase()} &gt;</Label>
 			</Box>
+			<Dialog
+				title="UM BIT"
+				open={top != null}
+				top={top}
+				store={streamSo}
+				onClose={() => setTop(null)}
+			>
+				<List<String>
+					select={umIndex}
+					items={Object.values(UM_BIT).map(um => um.toUpperCase())}
+					RenderRow={({ item }) => item}
+					//variant={variant}
+					onSelect={(index) => { setUmIndex(index); setTop(null) }}
+				/>
+			</Dialog>
 		</Accordion>
 
 
 	</FrameworkCard>
 }
 
-export default StreamDetail2View
+export default StreamDetailView
 
 const cssList = (readOnly: boolean, variant: number): React.CSSProperties => ({
 	backgroundColor: readOnly ? "rgb(0 0 0 / 50%)" : layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,

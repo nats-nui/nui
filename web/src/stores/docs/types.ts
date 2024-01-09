@@ -7,8 +7,7 @@ export enum DOC_TYPE {
 	MESSAGE = "msgdtl",
 	MESSAGE_SEND = "msgsnd",
 	STREAMS = "strs",
-	STREAM = "str",
-	STREAM2 = "str2",
+	STREAM = "str2",
 }
 
 export enum POSITION_TYPE {

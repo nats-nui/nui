@@ -61,9 +61,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 	// RENDER
 	const value = item.subject
 
-	if (readOnly) return <Box preRender={"\u2022 "}>
-		<Label type={LABELS.READ}>{value}</Label>
-	</Box>
+	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
 
 	return <Box
 		style={cssRow}
@@ -92,7 +90,6 @@ export default EditSubscriptionRow
 const isVoid = (item: Subscription) => !item?.subject || item.subject?.trim().length == 0
 
 const cssRow: React.CSSProperties = {
-	minHeight: 24,
 	display: "flex",
 	alignItems: "center",
 }

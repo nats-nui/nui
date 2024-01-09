@@ -135,8 +135,8 @@ const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
 		//backgroundColor: null, //layoutSo.state.theme.palette.var[variant].bg,
 		//color: layoutSo.state.theme.palette.var[variant].bg,
 	} : {
-		backgroundColor: layoutSo.state.theme.palette.var[variant].fg,
-		color: layoutSo.state.theme.palette.var[variant].bg,
+		//backgroundColor: layoutSo.state.theme.palette.var[variant].fg,
+		//color: layoutSo.state.theme.palette.var[variant].bg,
 	},
 	borderRadius: 5,
 })

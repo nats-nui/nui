@@ -1,17 +1,20 @@
-import { useState } from "react"
-
+import layoutSo from "@/stores/layout"
 
 
 interface Props<T> {
 	children?: React.ReactNode
 	style?: React.CSSProperties
 	readOnly?: boolean
+	select?: boolean
+	variant?: number
 	onClick?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 function ListRow<T>({
 	children,
 	style,
+	select,
+	variant,
 	readOnly,
 	onClick
 }: Props<T>) {
@@ -24,7 +27,7 @@ function ListRow<T>({
 
 	// RENDER
 	return <div
-		style={{ ...cssRoot(readOnly), ...style }}
+		style={{ ...cssRoot(readOnly, select, variant), ...style }}
 		className={!readOnly ? "cliccable" : null}
 		onClick={!readOnly ? onClick : null}
 	>
@@ -34,11 +37,15 @@ function ListRow<T>({
 
 export default ListRow
 
-const cssRoot = (readOnly: boolean): React.CSSProperties => ({
+const cssRoot = (readOnly: boolean, select:boolean, variant:number): React.CSSProperties => ({
 	display: "flex",
-	padding: 3,
-	fontSize: 12,
-	fontWeight: 600,
 	borderRadius: 3,
 	cursor: !readOnly ? "pointer" : null,
+	backgroundColor: select 
+		? layoutSo.state.theme.palette.var[variant].bg 
+		: null,
+	color: select ? layoutSo.state.theme.palette.var[variant].fg : null,
+	fontSize: 12,
+	fontWeight: 600,
+	padding: "4px 3px",
 })

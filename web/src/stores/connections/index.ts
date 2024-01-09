@@ -28,34 +28,26 @@ const setup = {
 			const cnn = await cnnApi.index()
 			store.setAll(cnn)
 		},
-		async create(cnn: Connection, store?: ConnectionStore) {
-			const cnnNew = await cnnApi.save(cnn)
-			store.setAll([...store.state.all, cnnNew])
-			return cnnNew
-		},
 		async delete(id: string, store?: ConnectionStore) {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
 		},
-		async modify(cnn: Connection, store?: ConnectionStore) {
-			const index = store.getIndexById(cnn.id)
-			if (index == -1) return
+		async save(cnn: Connection, store?: ConnectionStore) {
+			const cnnSaved = await cnnApi.save(cnn)
 			const cnns = [...store.state.all]
-			cnns[index] = cnn
+			const index = !cnn.id ? -1 : store.getIndexById(cnn.id)
+			if (index == -1) {
+				cnns.push(cnnSaved)
+			} else {
+				cnns[index] = cnnSaved
+			}
 			store.setAll(cnns)
+			return cnnSaved
 		},
 	},
 
 	mutators: {
 		setAll: (all: Connection[]) => ({ all }),
-		updateConnection: (cnn: Connection, store?: ConnectionStore) => {
-			const all = [...store.state.all]
-			const index = all.findIndex(c => c.id == cnn.id)
-			if (index == -1) return
-			all[index] = cnn
-			debounce("updateconnection", () => cnnApi.save(cnn), 1000)
-			return { all }
-		},
 	},
 }
 

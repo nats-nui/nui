@@ -1,52 +1,30 @@
-import layoutSo from "@/stores/layout"
-import React, { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
-import Label, { LABELS } from "./Label"
 import dayjs from "dayjs"
+import { FunctionComponent, useMemo, useState } from "react"
+import TextInput, { TextInputProps } from "./TextInput"
 
 
 
-interface Props {
-	value?: any
-	readOnly?: boolean
-	variant?: number
-	style?: React.CSSProperties
-	focus?: boolean
-
-	onChange?: (value: any) => void
-	onFocus?: () => void
+interface Props extends TextInputProps {
 }
 
 const DateTimeInput: FunctionComponent<Props> = ({
-	value,
-	readOnly,
-	variant = 0,
-	style,
-	focus,
-
-	onChange,
-	onFocus,
+	...props
 }) => {
 
 	// STORE
 
 	// HOOK
 	const [valueTmp, setValueTmp] = useState(() => {
-		const v = dayjs(value)
+		const v = dayjs(props.value)
 		if (v.isValid()) return v.format("YYYYMMDDhhmmss")
 		return ""
 	})
-	const inputRef = useRef<HTMLInputElement>(null)
-	useEffect(() => {
-		if (!focus) return
-		inputRef.current?.select()
-	}, [focus])
 
 	// HANDLER
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let value = e.target.value;
-		setValueTmp(value.replace(/\D/g, ''))
-		const data = dayjs(value).valueOf()
-		onChange?.(data)
+	const handleChange = (newValue: string) => {
+		setValueTmp(newValue.replace(/\D/g, ''))
+		const data = dayjs(newValue).valueOf()
+		props.onChange?.(data)
 	}
 
 	// RENDER
@@ -63,26 +41,13 @@ const DateTimeInput: FunctionComponent<Props> = ({
 		return valueShow
 	}, [valueTmp])
 
-	if (readOnly) return <Label type={LABELS.READ}>{valueShow}</Label>
-
 	return (
-		<input ref={inputRef}
-			type="text"
-			placeholder="YYYY-MM-DD hh:mm:ss"
-			style={{ ...cssRoot, ...style }}
-			className={`var${variant}`}
+		<TextInput {...props}
 			value={valueShow}
+			placeholder="YYYY-MM-DD hh:mm:ss"
 			onChange={handleChange}
-			onFocus={onFocus}
 		/>
 	)
 }
 
 export default DateTimeInput
-
-const cssRoot: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	color: layoutSo.state.theme.palette.default.fg,
-	padding: '5px 7px',
-	flex: 1,
-}

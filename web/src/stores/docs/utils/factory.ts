@@ -50,7 +50,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.MESSAGE_SEND]: messageSendSetup,
 		[DOC_TYPE.STREAMS]: streamsSetup,
 		[DOC_TYPE.STREAM]: streamSetup,
-		[DOC_TYPE.STREAM2]: streamSetup,
 	}[state.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

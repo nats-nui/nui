@@ -52,9 +52,9 @@ const TextInput: FunctionComponent<TextInputProps> = ({
 
 	return (
 		<input ref={inputRef}
-			style={{ ...cssRoot(), ...style }}
+			style={{ ...cssRoot(variant), ...style }}
 			placeholder={placeholder}
-			className={`var${variant}`}
+			className={`var${0}`}
 			value={value}
 			onChange={handleChange}
 			onFocus={handleFocus}
@@ -65,13 +65,16 @@ const TextInput: FunctionComponent<TextInputProps> = ({
 
 export default TextInput
 
-const cssRoot = (): React.CSSProperties => ({
+const cssRoot = (variant:number): React.CSSProperties => ({
 	//... !noBg && {
-	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.bg,
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.fg,
-	borderRadius: 3,
+	//backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.bg,
+	//color: layoutSo.state.theme.palette.var[variant]?.fg,
+
+	borderBottom: "1px solid rgb(0 0 0 / 15%)",
+	//border: "1px solid rgb(0 0 0 / 30%)",
+	//borderRadius: 3,
 	//},
-	padding: '5px 7px',
+	padding: "4px 3px",
 	fontSize: 12,
 	fontWeight: 600,
 })

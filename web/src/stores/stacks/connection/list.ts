@@ -18,7 +18,7 @@ const setup = {
 
 	state: {
 		selectId: <string>null,
-		
+
 		//#region VIEWBASE
 		width: 220,
 		//#endregion
@@ -78,6 +78,13 @@ const setup = {
 			store.setSelectId(null)
 			const view = buildStore({
 				type: DOC_TYPE.CONNECTION,
+				readOnly: false,
+				connection: {
+					name: "",
+					hosts: [],
+					subscriptions: [],
+					auth: []
+				}
 			} as CnnDetailState)
 			docsSo.addLink({ view, parent: store, anim: true })
 		},
