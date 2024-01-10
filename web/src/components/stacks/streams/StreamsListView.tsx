@@ -13,38 +13,36 @@ interface Props {
 }
 
 const StreamsListView: FunctionComponent<Props> = ({
-	store: strSo,
+	store: streamsSo,
 }) => {
 
 	// STORE
-	const strSa = useStore(strSo)
+	const streamsSa = useStore(streamsSo)
 
 	// HOOKs
 	useEffect(() => {
-		strSo.fetch()
+		streamsSo.fetch()
 	}, [])
 
 	// HANDLER
-	const handleSelect2 = (stream: Stream) => strSo.select(stream)
-	const handleNew = () => {
-		//		cnnListSo.create()
-	}
+	const handleSelect = (stream: Stream) => streamsSo.select(stream)
+	const handleNew = () => streamsSo.create()
 	const handleDel = () => {
-		//		cnnSo.delete(selectedId)
-		//		cnnListSo.select(null)
+		streamsSo.delete(selectedId)
+		streamsSo.select(null)
 	}
 
 	// RENDER
-	const streams = strSa.all
+	const streams = streamsSa.all
 	if (!streams) return null
-	const selectedId = strSa.selectId
-	const variant = strSo.getColorVar()
+	const selectedId = streamsSa.selectId
+	const variant = streamsSo.getColorVar()
 	const isSelected = (stream: Stream) => selectedId == stream.id
 	const getTitle = (stream: Stream) => stream.name
 	const getSubtitle = (stream: Stream) => stream.description
 
 	return <FrameworkCard
-		store={strSo}
+		store={streamsSo}
 		actionsRender={<>
 
 			<Button
@@ -66,7 +64,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 				subtitle={getSubtitle(stream)}
 				selected={isSelected(stream)}
 				variant={variant}
-				onClick={() => handleSelect2(stream)}
+				onClick={() => handleSelect(stream)}
 			/>
 		))}
 	</FrameworkCard>

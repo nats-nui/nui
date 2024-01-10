@@ -1,15 +1,14 @@
-import layoutSo from "@/stores/layout"
 import { FunctionComponent } from "react"
 
 
 
 interface Props {
-	variant?: number
+	label?: string
 	style?: React.CSSProperties
 }
 
 const Divider: FunctionComponent<Props> = ({
-	variant = 0,
+	label,
 	style,
 }) => {
 	// STORE
@@ -19,13 +18,22 @@ const Divider: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	return (
-		<div style={{...cssLine(variant), ...style}} />
-	)
+	return <>
+		{!!label && <div style={cssLabel}>{label}</div>}
+		<div style={{ ...cssLine, ...style }} />
+	</>
 }
 
 export default Divider
 
-const cssLine = (variant: number): React.CSSProperties => ({
-	borderTop: `1px solid ${layoutSo.state.theme.palette.var[variant].bg}`
-})
+const cssLabel: React.CSSProperties = {
+	fontSize: 10,
+	textAlign: 'right',
+	marginTop: 10,
+	opacity: .8,
+}
+
+const cssLine: React.CSSProperties = {
+	borderTop: `1px solid rgb(0 0 0 / .2)`,
+	borderTopStyle: 'dashed'
+}

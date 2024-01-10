@@ -37,7 +37,7 @@ const ListDialog: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const [elemPolicy, setElemPolicy] = useState<HTMLElement>(null)
-	const handlePolicyOpen = (e) => setElemPolicy(!!elemPolicy ? null : e.target)
+	const handleDialogOpen = (e) => setElemPolicy(!!elemPolicy ? null : e.target)
 	const handleSelect = (index:number ) => {
 		setElemPolicy(null)
 		onSelect(index)
@@ -50,7 +50,7 @@ const ListDialog: FunctionComponent<Props> = ({
 		<Label>{props.title}</Label>
 
 		<ListRow
-			onClick={handlePolicyOpen}
+			onClick={handleDialogOpen}
 			readOnly={readOnly}
 		>{value}</ListRow>
 

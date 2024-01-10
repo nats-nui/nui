@@ -1,7 +1,7 @@
 import srcIcon from "@/assets/StreamsIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { Stream } from "@/types/Stream"
+import { POLICY, STORAGE, Stream } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import strApi from "@/api/streams"
 import { buildStore } from "@/stores/docs/utils/factory"
@@ -31,6 +31,15 @@ const setup = {
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		//#endregion
+
+		getById(id: string, store?: StreamsStore) {
+			if (!id) return null
+			return store.state.all?.find(s => s.id == id)
+		},
+		getIndexById(id: string, store?: StreamsStore) {
+			if (!id) return null
+			return store.state.all?.findIndex(s => s.id == id)
+		},
 	},
 
 	actions: {
@@ -55,10 +64,42 @@ const setup = {
 				anim: !idSelPrev || !idSel,
 			})
 		},
+		/** creo un nuovo STORE DETTAGLIO STREAM
+		 * e lo visualizzo */
+		create(_: void, store?: StreamsStore) {
+			store.setSelectId(null)
+			const view = buildStore({
+				type: DOC_TYPE.STREAM,
+				readOnly: false,
+				stream: {
+					name: "", description: "", storage: STORAGE.FILE,
+					subjects: [], sources: [], policy: POLICY.INTEREST
+				}
+			} as Partial<StreamState>)
+			docSo.addLink({ view, parent: store, anim: true })
+		},
+
 		async fetch(_: void, store?: StreamsStore) {
 			const streams = await strApi.index()
 			store.setAll(streams)
 		},
+		async delete(id: string, store?: StreamsStore) {
+			await strApi.remove(id)
+			store.setAll(store.state.all.filter(s => s.id != id))
+		},
+		async save(stream: Stream, store?: StreamsStore) {
+			const streamSaved = await strApi.save(stream)
+			const streams = [...store.state.all]
+			const index = !stream.id ? -1 : store.getIndexById(stream.id)
+			if (index == -1) {
+				streams.push(streamSaved)
+			} else {
+				streams[index] = streamSaved
+			}
+			store.setAll(streams)
+			return streamSaved
+		},
+
 
 	},
 

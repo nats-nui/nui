@@ -1,3 +1,4 @@
+import Divider from "@/components/Divider"
 import Label from "@/components/input/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
@@ -69,6 +70,8 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 			variant={variant}
 		/>
+
+		<Divider style={{marginBottom: 5}} label="ADVANCED"/>
 
 		<Label>SUBSCRIPTIONS</Label>
 		<EditList<Subscription>

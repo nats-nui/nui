@@ -4,6 +4,7 @@ import { Stream } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildNewStream } from "./utils"
 import srcIcon from "@/assets/StreamsIcon.svg"
+import { StreamsStore } from "."
 
 
 
@@ -51,6 +52,12 @@ const setup = {
 			state.readOnly = data.readOnly
 		},
 		//#endregion
+
+		restore: (_: void, store?: StreamStore) => {
+			const parent = store.state.parent as StreamsStore
+			const stream = parent.getById(store.state.stream.id)
+			store.setStream(stream)
+		},
 
 		createNew: (_: void, store?: StreamStore) => {
 			const stream = buildNewStream()
