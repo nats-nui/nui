@@ -25,10 +25,6 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	// HOOKS
 
 	// HANDLER
-	const handleFocus = () => {
-		//inputRef.current?.select()
-		onFocus?.()
-	}
 	const handleDelete = () => onDelete?.()
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
@@ -72,7 +68,7 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 				variant={variant}
 				onChange={handleChange}
 				onKeyDown={handleKeyDown}
-				onFocus={handleFocus}
+				onFocus={onFocus}
 			/>
 
 		) : (

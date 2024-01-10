@@ -33,11 +33,11 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
-	const handleCreateClick = async () => {
-		cnnDetailSo.setReadOnly(true)
-		const cnnNew = await cnnSo.save(cnnDetailSa.connection);
-		(cnnDetailSa.parent as CnnListStore).select(cnnNew)
-	}
+	// const handleCreateClick = async () => {
+	// 	cnnDetailSo.setReadOnly(true)
+	// 	const cnnNew = await cnnSo.save(cnnDetailSa.connection);
+	// 	(cnnDetailSa.parent as CnnListStore).select(cnnNew)
+	// }
 	const handleEditClick = async () => cnnDetailSo.setReadOnly(false)
 	const handleCancelClick = () => {
 		cnnDetailSo.setReadOnly(true)
@@ -62,7 +62,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			<Button
 				label="CREATE"
 				variant={variant}
-				onClick={handleCreateClick}
+				onClick={handleSaveClick}
 			/>
 		) : readOnly ? (
 			<Button

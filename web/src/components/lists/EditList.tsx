@@ -13,7 +13,7 @@ export interface RenderRowBaseProps<T> {
 
 	onChange?: (newItem: T) => void
 	onDelete?: () => void
-	onFocus?: () => void
+	onFocus?: (e: React.SyntheticEvent) => void
 }
 
 interface Props<T> {
@@ -27,6 +27,7 @@ interface Props<T> {
 	/** restituisce nuovo ITEM (su click btt NEW) */
 	fnNewItem?: () => T
 	onChangeItems?: (newItems: T[]) => void
+	onFocus?: (index: number, e: React.BaseSyntheticEvent) => void
 }
 
 function EditList<T>({
@@ -38,6 +39,7 @@ function EditList<T>({
 
 	fnNewItem = () => null,
 	onChangeItems,
+	onFocus,
 
 }: Props<T>) {
 
@@ -67,8 +69,9 @@ function EditList<T>({
 		onChangeItems?.(newItems)
 		setFocus(index >= items.length ? items.length - 1 : index)
 	}
-	const handleFocus = (index: number) => {
+	const handleFocus = (index: number, e:React.BaseSyntheticEvent) => {
 		setFocus(index)
+		onFocus?.(index, e)
 	}
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if (focus == -1) return
@@ -113,7 +116,7 @@ function EditList<T>({
 
 					onChange={(newItem) => handleChangeItem(newItem, index)}
 					onDelete={() => handleDeleteItem(index)}
-					onFocus={() => handleFocus(index)}
+					onFocus={(e) => handleFocus(index, e)}
 				/>
 			))}
 			{/* BOTTONE NEW */}

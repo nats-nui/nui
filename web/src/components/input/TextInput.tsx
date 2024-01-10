@@ -1,5 +1,5 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, InputHTMLAttributes, useEffect, useRef } from "react"
 import Label, { LABELS } from "./Label"
 
 
@@ -13,7 +13,7 @@ export interface TextInputProps {
 	focus?: boolean
 
 	onChange?: (newValue: string | number) => void
-	onFocus?: () => void
+	onFocus?: (e:React.FocusEvent<HTMLInputElement>) => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
@@ -41,9 +41,9 @@ const TextInput: FunctionComponent<TextInputProps> = ({
 
 	// HANDLER
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)
-	const handleFocus = (e) => {
+	const handleFocus = (e:React.FocusEvent<HTMLInputElement>) => {
 		e.target.select()
-		onFocus?.()
+		onFocus?.(e)
 	}
 
 	// RENDER
@@ -74,7 +74,7 @@ const cssRoot = (variant:number): React.CSSProperties => ({
 	//border: "1px solid rgb(0 0 0 / 30%)",
 	//borderRadius: 3,
 	//},
-	padding: "4px 3px",
+	padding: "4px 3px 3px 3px",
 	fontSize: 12,
 	fontWeight: 600,
 })

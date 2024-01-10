@@ -1,15 +1,13 @@
 import FrameworkCard from "@/components/FrameworkCard"
+import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 import Button from "@/components/buttons/Button"
 import cnnSo, { ConnectionState } from "@/stores/connections"
-import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import CnnRow from "../../rows/CnnRow"
 import CnnCompactRow from "../../rows/CnnCompactRow"
-import tooltipSo from "@/stores/tooltip"
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import CnnRow from "../../rows/CnnRow"
 
 
 interface Props {

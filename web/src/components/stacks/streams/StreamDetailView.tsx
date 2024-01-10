@@ -18,6 +18,9 @@ import { FunctionComponent, useState } from "react"
 import EditSourceCmp from "./EditSourceCmp"
 import ListDialog from "./ListDialog"
 import ElementDialog from "./ElementDialogProps"
+import Divider from "@/components/Divider"
+import { StreamsStore } from "@/stores/stacks/streams"
+import ListRow from "@/components/lists/ListRow"
 
 
 
@@ -35,10 +38,22 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleCreateClick = async () => streamSo.createNew()
+	const handleCreateClick = async () => {
+		streamSo.setReadOnly(true)
+		const parent = streamSa.parent as StreamsStore
+		const streamNew = await parent.save(streamSa.stream);
+		parent.select(streamNew)
+	}
 	const handleEditClick = async () => streamSo.setReadOnly(false)
-	const handleCancelClick = () => streamSo.setReadOnly(true)
-	const handleSaveClick = () => streamSo.setReadOnly(true)
+	const handleCancelClick = () => {
+		streamSo.setReadOnly(true)
+		streamSo.restore()
+	}
+	const handleSaveClick = async () => {
+		streamSo.setReadOnly(true)
+		const parent = streamSa.parent as StreamsStore
+		await parent.save(streamSa.stream)
+	}
 
 	const handleNameChange = (name: string) => streamSo.setStream({ ...streamSa.stream, name })
 	const handleDescriptionChange = (description: string) => streamSo.setStream({ ...streamSa.stream, description })
@@ -57,7 +72,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	const [elementSource, setElementSource] = useState<HTMLElement>(null)
 	const [souceIndex, setSourceIndex] = useState<number>(null)
-	const handleSourceDialog = (index: number, e) => {
+	const handleSourceDialog = (index: number, e:React.BaseSyntheticEvent) => {
 		setSourceIndex(index)
 		setElementSource(!!elementSource ? null : e.target)
 	}
@@ -85,7 +100,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			<Button
 				label="CREATE"
 				variant={variant}
-				onClick={handleCreateClick}
+				onClick={handleSaveClick}
 			/>
 		) : readOnly ? (
 			<Button
@@ -122,6 +137,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 		/>
 
+		<Divider style={{marginBottom: 5}} label="ADVANCED"/>
+
+
 		<ListDialog
 			title="STORAGE"
 			store={streamSo}
@@ -131,6 +149,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 			onSelect={(index) => { handleStorageSelect(Object.values(STORAGE)[index]) }}
 		/>
+
+
+
 
 		<Label>SUBJECTS</Label>
 		<EditList<string>
@@ -143,11 +164,11 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		/>
 
 		<Label>SOURCES</Label>
-		<List<Source>
+		<EditList<Source>
 			items={streamSa.stream.sources}
-			onSelect={handleSourceDialog}
+			onFocus={handleSourceDialog}
 			readOnly={readOnly}
-			RenderRow={({ item }) => item.name}
+			RenderRow={({ item }) => <ListRow>{item.name}</ListRow>}
 		/>
 		<ElementDialog
 			//title="SOURCES"
@@ -164,6 +185,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		</ElementDialog>
 
 
+		<Divider style={{marginBottom: 5}} label="OPTIONS"/>
 
 		<ListDialog
 			title="POLICY"

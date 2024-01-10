@@ -16,6 +16,21 @@ const handlers = [
 		)
 	}),
 
+	/** CREATE
+	 * crea una CONNECTION
+	 */
+	rest.post('/api/connection', async (req, res, ctx) => {
+		const newCnn = await req.json()
+		if (!newCnn) return res(ctx.status(500))
+		newCnn.id = createUUID()
+		connections.push(newCnn)
+
+		return res(
+			ctx.status(201),
+			ctx.json(newCnn),
+		)
+	}),
+
 	/** UPDATE
 	 * modifica una CONNECTION
 	 */
@@ -32,21 +47,6 @@ const handlers = [
 		return res(
 			ctx.status(200),
 			ctx.json(connections[index]),
-		)
-	}),
-
-	/** CREATE
-	 * crea una CONNECTION
-	 */
-	rest.post('/api/connection', async (req, res, ctx) => {
-		const newCnn = await req.json()
-		if (!newCnn) return res(ctx.status(500))
-		newCnn.id = createUUID()
-		connections.push(newCnn)
-
-		return res(
-			ctx.status(201),
-			ctx.json(newCnn),
 		)
 	}),
 

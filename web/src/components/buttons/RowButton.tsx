@@ -52,6 +52,7 @@ const cssRoot = (variant: number, select: boolean): React.CSSProperties => ({
 	backgroundColor: select ? layoutSo.state.theme.palette.default.bg : null,
 	cursor: "pointer",
 	borderRadius: 5,
+	marginRight: -15,
 })
 const cssLabel: React.CSSProperties = {
 	...layoutSo.state.theme.texts.rowButton,

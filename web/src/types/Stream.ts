@@ -1,10 +1,10 @@
 export interface Stream {
 	id?: string
-	name: string
+	name?: string
 	description?: string
-	storage: STORAGE
-	subjects: string[]
-	sources: Source[]
+	storage?: STORAGE
+	subjects?: string[]
+	sources?: Source[]
 
 	policy?: POLICY
 	discardPolicy?: DISCARD_POLICY
