@@ -5,16 +5,14 @@ interface Props<T> {
 	children?: React.ReactNode
 	style?: React.CSSProperties
 	readOnly?: boolean
-	select?: boolean
-	//variant?: number
+	isSelect?: boolean
 	onClick?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
 function ListRow<T>({
 	children,
 	style,
-	select,
-	//variant,
+	isSelect,
 	readOnly = false,
 	onClick
 }: Props<T>) {
@@ -27,7 +25,7 @@ function ListRow<T>({
 
 	// RENDER
 	return <div
-		style={{ ...cssRoot(readOnly, select/*, variant*/), ...style }}
+		style={{ ...cssRoot(readOnly, isSelect), ...style }}
 		className={!readOnly ? "cliccable" : null}
 		onClick={!readOnly ? onClick : null}
 	>
@@ -37,14 +35,18 @@ function ListRow<T>({
 
 export default ListRow
 
-const cssRoot = (readOnly: boolean, select:boolean/*, variant:number*/): React.CSSProperties => ({
+const cssRoot = (readOnly: boolean, select:boolean): React.CSSProperties => ({
 	display: "flex",
 	borderRadius: 3,
 	cursor: !readOnly ? "pointer" : null,
-	backgroundColor: select 
-		? layoutSo.state.theme.palette.var[0].bg 
-		: null,
-	color: select ? layoutSo.state.theme.palette.var[0].fg : null,
+	...select ? {
+		//backgroundColor:	layoutSo.state.theme.palette.var[0].bg,
+		border: "1px solid black"
+		//color: select ? layoutSo.state.theme.palette.var[0].fg : null,
+	} :{
+		//backgroundColor:	null,
+	},
+	
 	fontSize: 12,
 	fontWeight: 600,
 	padding: "4px 3px",

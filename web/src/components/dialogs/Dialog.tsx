@@ -23,7 +23,7 @@ export interface DialogProps {
 	/** se true(default) chiudo la dialog se clicco su un qualunque altro punto della pagina */
 	closeClickOut?: boolean
 	/** chiamato quando clicco su qualunque altro punto che non sia la DIALOG */
-	onClose?: () => void
+	onClose?: (e) => void
 }
 
 /**
@@ -59,7 +59,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
 				//setTimeout(() => onClose?.(), 300)
-				onClose?.()
+				onClose?.(e)
 			}
 		}
 		if (open) {
@@ -78,7 +78,6 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		if (!ref || open == false) return
 		const rect = ref.getBoundingClientRect()
 		const docHeight = document.documentElement.scrollHeight
-		console.log("ccc", window.screenY)
 		let y = top - (rect.height / 2)
 		if (y < 0) y = 0
 		if (y > docHeight) y = docHeight - rect.height - 20

@@ -12,38 +12,25 @@ import { RenderRowBaseProps } from "../lists/EditList"
 
 const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 	item,
-	focus,
+	isSelect,
 	readOnly,
-	variant,
 	onChange,
-	onDelete,
-	onFocus,
+	onSelect,
 }) => {
-
-	// ******************
 
 	// HOOKS
 
 	// HANDLER
-	const handleDelete = () => onDelete?.()
+	const handleDelete = () => onChange?.(null)
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
-			onDelete?.()
+			onChange?.(null)
 		}
 	}
-
-	// ******************
-
-	const handleFileMode = () => {
-		onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
-	}
-	const handleNoneMode = () => {
-		onChange({ mode: AUTH_MODE.NONE })
-	}
-	const handleChange = (newValue: string) => {
-		onChange?.({ ...item, creds: newValue })
-	}
+	const handleFileMode = () => onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
+	const handleNoneMode = () => onChange({ mode: AUTH_MODE.NONE })
+	const handleChange = (newValue: string) => onChange?.({ ...item, creds: newValue })
 
 	// RENDER
 	return <Box
@@ -62,13 +49,12 @@ const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
 			<TextInput
 				style={{ flex: 1 }}
 				placeholder="path of creds file"
-				focus={focus}
+				focus={isSelect}
 				readOnly={readOnly}
 				value={item.creds}
-				variant={variant}
 				onChange={handleChange}
 				onKeyDown={handleKeyDown}
-				onFocus={onFocus}
+				onFocus={onSelect}
 			/>
 
 		) : (

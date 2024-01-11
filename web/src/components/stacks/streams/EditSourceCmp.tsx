@@ -1,6 +1,6 @@
 import Label from "@/components/input/Label"
 import { Source } from "@/types/Stream"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import DateTimeInput from "../../input/DateTimeInput"
 import NumberInput from "../../input/NumberInput"
 import TextInput from "../../input/TextInput"
@@ -18,6 +18,13 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 }) => {
 
 	// HOOKS
+	// const [inputRef, setInputRef] = useState<HTMLDivElement>(null)
+	//const refTest = useRef(null)
+	// console.log( refTest.current)
+	// useEffect(() => {
+	// 	if (!refTest.current) return
+	// 	setTimeout(() => refTest.current?.focus(), 100)
+	// }, [refTest.current])
 
 	// HANDLER
 	const handleNameChange = (name: string) => onChange?.({ ...source, name })
@@ -25,12 +32,16 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
 
+	const refCllb = useCallback(( node ) => setTimeout(()=>node?.focus(),100),[])
+	
 	// RENDER
 	if (!source) return null
 
 	return <>
 		<Label>NAME</Label>
 		<TextInput
+			ref={refCllb}
+			//ref={(node)=>node?.focus()}
 			style={{ flex: 1 }}
 			value={source.name}
 			onChange={handleNameChange}

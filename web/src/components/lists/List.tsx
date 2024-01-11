@@ -6,15 +6,11 @@ import ListRow from "./ListRow"
 export interface RenderRowBaseProps<T> {
 	item: T
 	isSelect?: boolean
-	isMouseOver?: boolean
-	readOnly?: boolean
-	variant?: number
 }
 
 interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
-	variant?: number
 	readOnly?: boolean
 	/** indice selezionato */
 	select?: number
@@ -24,8 +20,7 @@ interface Props<T> {
 
 function List<T>({
 	items,
-	RenderRow,
-	variant = 0,
+	RenderRow = ({item}) => item.toString(),
 	readOnly,
 	select,
 	onSelect,
@@ -51,14 +46,11 @@ function List<T>({
 				key={index}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
-				select={select==index}
-				variant={variant}
+				isSelect={select==index}
 			>
 				<RenderRow
 					item={item}
-					readOnly={readOnly}
 					isSelect={index == select}
-					variant={variant}
 				/>
 			</ListRow>
 		)}
