@@ -1,16 +1,12 @@
 import IconButton from "@/components/buttons/IconButton"
 import IconToggle from "@/components/buttons/IconToggle"
 import Label, { LABELS } from "@/components/input/Label"
-import CheckOffIcon from "@/icons/CheckOffIcon"
-import CheckOnIcon from "@/icons/CheckOnIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import { Subscription } from "@/types"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
+import Box from "../Box"
 import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
-import Box from "../Box"
-
-
 
 
 
@@ -18,41 +14,26 @@ interface Props extends RenderRowBaseProps<Subscription> {
 	noDisable?: boolean
 }
 
-
-
 const EditSubscriptionRow: FunctionComponent<Props> = ({
 	item,
-	focus,
+	isSelect,
 	readOnly = false,
-	variant = 0,
 	noDisable,
-
 	onChange,
-	onDelete,
-	onFocus,
-
+	onSelect,
 }) => {
 
-	const handleChange = (subject: string) => {
-		onChange?.({ ...item, subject })
-	}
-	// **********************
-
 	// HOOKS
-	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-
-	const handleDelete = () => onDelete?.()
+	const handleDelete = () => onChange?.(null)
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
-			onDelete?.()
+			onChange?.(null)
 		}
 	}
-
-	// **********************
-
+	const handleChange = (subject: string) => onChange?.({ ...item, subject })
 	const handleChangeEnabled = (enabled: boolean) => {
 		const newSub: Subscription = { ...item, disabled: !enabled }
 		onChange?.(newSub)
@@ -60,7 +41,6 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	const value = item.subject
-
 	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
 
 	return <Box
@@ -76,11 +56,10 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 		<TextInput
 			style={cssInput(item.disabled)}
 			value={value}
-			variant={variant}
-			focus={focus}
+			focus={isSelect}
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
-			onFocus={onFocus}
+			onFocus={onSelect}
 		/>
 	</Box>
 }

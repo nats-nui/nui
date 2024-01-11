@@ -61,13 +61,12 @@ function Options<T>({
 			<Accordion
 				open={open}
 			>
-				<Divider variant={variant} />
+				<Divider />
 
 				<List<T>
 					select={index}
 					items={items}
 					RenderRow={RenderRow}
-					variant={variant}
 					readOnly={readOnly}
 					onSelect={handleSelect}
 				/>

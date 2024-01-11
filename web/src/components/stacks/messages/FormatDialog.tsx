@@ -1,4 +1,3 @@
-import StringRow from "@/components/rows/StringRow"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
@@ -44,7 +43,6 @@ const FormatDialog: FunctionComponent<Props> = ({
 		>
 			<List<string>
 				items={formats}
-				RenderRow={StringRow}
 				onSelect={handleSelect}
 			/>
 		</Dialog>

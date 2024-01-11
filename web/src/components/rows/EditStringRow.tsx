@@ -9,19 +9,11 @@ import Box from "../Box"
 
 const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	item,
-	focus,
-	variant = 0,
+	isSelect,
 	readOnly = false,
 	onChange,
-	onDelete,
-	onFocus,
+	onSelect,
 }) => {
-
-	const handleChange = (newItem: string) => {
-		onChange?.(newItem)
-	}
-
-	// ******************
 
 	// HOOKS
 
@@ -29,14 +21,11 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
-			onDelete?.()
+			onChange?.(null)
 		}
 	}
-
-	// ******************
-
-	const handleDelete = () => onDelete?.()
-
+	const handleChange = (newItem: string) => onChange?.(newItem)
+	const handleDelete = () => onChange?.(null)
 
 	// RENDER
 	return <Box
@@ -46,12 +35,11 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		<TextInput
 			style={{ flex: 1 }}
 			value={item}
-			//variant={variant}
 			readOnly={readOnly}
-			focus={focus}
+			focus={isSelect}
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
-			onFocus={onFocus}
+			onFocus={onSelect}
 		/>
 	</Box>
 }

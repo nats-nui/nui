@@ -1,26 +1,24 @@
 import Accordion from "@/components/Accordion"
 import Box from "@/components/Box"
+import Divider from "@/components/Divider"
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
-import Dialog from "@/components/dialogs/Dialog"
 import Label from "@/components/input/Label"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
-import List from "@/components/lists/List"
+import EditItemRow from "@/components/rows/EditItemRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DISCARD_POLICY, POLICY, STORAGE, Source, UM_BIT } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import EditSourceCmp from "./EditSourceCmp"
+import ElementDialog from "../../dialogs/ElementDialog"
 import ListDialog from "./ListDialog"
-import ElementDialog from "./ElementDialogProps"
-import Divider from "@/components/Divider"
-import { StreamsStore } from "@/stores/stacks/streams"
-import ListRow from "@/components/lists/ListRow"
 
 
 
@@ -72,9 +70,14 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	const [elementSource, setElementSource] = useState<HTMLElement>(null)
 	const [souceIndex, setSourceIndex] = useState<number>(null)
-	const handleSourceDialog = (index: number, e:React.BaseSyntheticEvent) => {
+	const listRef = useRef(null)
+	const handleSourceDialog = (index: number, e: React.BaseSyntheticEvent) => {
 		setSourceIndex(index)
-		setElementSource(!!elementSource ? null : e.target)
+		setElementSource(e.target)
+	}
+	const handleSourcesChange = (sources: Source[]) => {
+		streamSa.stream.sources = sources
+		streamSo.setStream({ ...streamSa.stream })
 	}
 	const handleSourceChange = (source: Source) => {
 		streamSa.stream.sources[souceIndex] = source
@@ -137,7 +140,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 		/>
 
-		<Divider style={{marginBottom: 5}} label="ADVANCED"/>
+		<Divider style={{ marginBottom: 5 }} label="ADVANCED" />
 
 
 		<ListDialog
@@ -149,9 +152,6 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			readOnly={readOnly}
 			onSelect={(index) => { handleStorageSelect(Object.values(STORAGE)[index]) }}
 		/>
-
-
-
 
 		<Label>SUBJECTS</Label>
 		<EditList<string>
@@ -166,16 +166,22 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		<Label>SOURCES</Label>
 		<EditList<Source>
 			items={streamSa.stream.sources}
-			onFocus={handleSourceDialog}
+			onChangeItems={handleSourcesChange}
+			onSelect={handleSourceDialog}
 			readOnly={readOnly}
-			RenderRow={({ item }) => <ListRow>{item.name}</ListRow>}
+			fnNewItem={() => ({ name: "", startSequence: 0, startTime: Date.now(), filterSubject: "" })}
+			RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
+			ref={listRef}
 		/>
 		<ElementDialog
 			//title="SOURCES"
 			element={elementSource}
 			store={streamSo}
 			width={150}
-			onClose={() => setElementSource(null)}
+			onClose={(e) => {
+				if ( listRef && listRef.current.contains(e.target)) return
+				setElementSource(null)
+			}}
 		>
 			<EditSourceCmp
 				source={streamSa.stream.sources[souceIndex]}
@@ -185,7 +191,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		</ElementDialog>
 
 
-		<Divider style={{marginBottom: 5}} label="OPTIONS"/>
+		<Divider style={{ marginBottom: 5 }} label="OPTIONS" />
 
 		<ListDialog
 			title="POLICY"

@@ -1,11 +1,10 @@
 import { DialogProps } from "@/components/dialogs/Dialog"
-import Label, { LABELS } from "@/components/input/Label"
+import Label from "@/components/input/Label"
 import { RenderRowBaseProps } from "@/components/lists/EditList"
 import List from "@/components/lists/List"
-import { FunctionComponent, useState } from "react"
-import ElementDialog from "./ElementDialogProps"
-import StringRow from "@/components/rows/StringRow"
 import ListRow from "@/components/lists/ListRow"
+import { FunctionComponent, useState } from "react"
+import ElementDialog from "../../dialogs/ElementDialog"
 
 
 
@@ -22,7 +21,7 @@ interface Props extends DialogProps  {
 
 const ListDialog: FunctionComponent<Props> = ({
 	items,
-	RenderRow = StringRow,
+	RenderRow,
 	select,
 	style,
 	readOnly,
@@ -36,10 +35,10 @@ const ListDialog: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const [elemPolicy, setElemPolicy] = useState<HTMLElement>(null)
-	const handleDialogOpen = (e) => setElemPolicy(!!elemPolicy ? null : e.target)
+	const [element, setElement] = useState<HTMLElement>(null)
+	const handleDialogOpen = (e) => setElement(!!element ? null : e.target)
 	const handleSelect = (index:number ) => {
-		setElemPolicy(null)
+		setElement(null)
 		onSelect(index)
 	}
 
@@ -57,14 +56,13 @@ const ListDialog: FunctionComponent<Props> = ({
 		<ElementDialog 
 			{...props}
 			title={null}
-			element={elemPolicy}	
-			onClose={() => setElemPolicy(null)}
+			element={element}	
+			onClose={() => setElement(null)}
 		>
 			<List<string>
 				select={select}
 				items={items}
 				RenderRow={RenderRow}
-				//variant={variant}
 				onSelect={handleSelect}
 				readOnly={readOnly}
 			/>

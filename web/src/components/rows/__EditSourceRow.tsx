@@ -14,12 +14,12 @@ import { RenderRowBaseProps } from "../lists/EditList"
 
 const EditSourceRow: FunctionComponent<RenderRowBaseProps<Source>> = ({
 	item,
-	focus,
+	isSelect: focus,
 	variant,
 	readOnly,
 	onChange,
 	onDelete,
-	onFocus,
+	onSelect: onFocus,
 }) => {
 
 	// useEffect(() => {

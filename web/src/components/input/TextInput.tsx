@@ -1,5 +1,5 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import React, { FunctionComponent, InputHTMLAttributes, useEffect, useRef } from "react"
+import React, { ForwardRefRenderFunction, FunctionComponent, InputHTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import Label, { LABELS } from "./Label"
 
 
@@ -13,22 +13,25 @@ export interface TextInputProps {
 	focus?: boolean
 
 	onChange?: (newValue: string | number) => void
-	onFocus?: (e:React.FocusEvent<HTMLInputElement>) => void
+	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
-const TextInput: FunctionComponent<TextInputProps> = ({
-	value,
-	placeholder,
-	readOnly,
-	variant,
-	style,
-	focus,
-	
-	onChange,
-	onFocus,
-	onKeyDown,
-}) => {
+const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
+	{
+		value,
+		placeholder,
+		readOnly,
+		variant,
+		style,
+		focus,
+
+		onChange,
+		onFocus,
+		onKeyDown,
+	},
+	ref: any
+) => {
 
 	// STORE
 
@@ -38,10 +41,11 @@ const TextInput: FunctionComponent<TextInputProps> = ({
 		if (!focus) return
 		inputRef.current?.select()
 	}, [focus])
+	useImperativeHandle(ref, () => inputRef.current, [inputRef.current])
 
 	// HANDLER
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)
-	const handleFocus = (e:React.FocusEvent<HTMLInputElement>) => {
+	const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
 		e.target.select()
 		onFocus?.(e)
 	}
@@ -63,9 +67,9 @@ const TextInput: FunctionComponent<TextInputProps> = ({
 	)
 }
 
-export default TextInput
+export default forwardRef(TextInput)
 
-const cssRoot = (variant:number): React.CSSProperties => ({
+const cssRoot = (variant: number): React.CSSProperties => ({
 	//... !noBg && {
 	//backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.bg,
 	//color: layoutSo.state.theme.palette.var[variant]?.fg,
