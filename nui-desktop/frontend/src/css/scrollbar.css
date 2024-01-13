@@ -1,0 +1,49 @@
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background: #282828;
+  /* background: ${palette.components.scrollbarBg};  */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #4e4e4e;
+  /* background: ${palette.grey.dark};  */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--var-0);
+}
+
+.var0::-webkit-scrollbar-thumb:hover {
+  background: var(--var-0);
+}
+
+.var1::-webkit-scrollbar-thumb:hover {
+  background: var(--var-1);
+}
+
+.var2::-webkit-scrollbar-thumb:hover {
+  background: var(--var-2);
+}
+
+.var3::-webkit-scrollbar-thumb:hover {
+  background: var(--var-3);
+}
+
+.var4::-webkit-scrollbar-thumb:hover {
+  background: var(--var-4);
+}
+
+.var5::-webkit-scrollbar-thumb:hover {
+  background: var(--var-5);
+}

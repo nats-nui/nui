@@ -1,0 +1,43 @@
+{
+  "name": "nats-client",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "start:socket:mock": "node ./src/mocks/socket/index.js",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "test": "vitest watch"
+  },
+  "//dependencies": {
+    "@priolo/jon": "C:/Users/ivano.iorio/Documents/jon"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@fontsource/darker-grotesque": "^5.0.8",
+    "@priolo/jon": "^0.7.2",
+    "dayjs": "^1.11.10",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "msw": "^1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.3"
+  },
+  "msw": {
+    "workerDirectory": "public"
+  }
+}

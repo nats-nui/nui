@@ -1,0 +1,21 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="34" height="16" fill="#EBFB35"/>
+<rect y="18" width="16" height="9" fill="#EBFB35"/>
+<rect y="27" width="16" height="7" fill="#EBFB35"/>
+<rect x="18" y="18" width="16" height="16" fill="#EBFB35"/>
+<rect x="36" y="18" width="7" height="7" fill="#EBFB35"/>
+<rect x="36" y="27" width="3" height="3" fill="#EBFB35"/>
+<rect x="36" y="31" width="3" height="3" fill="#EBFB35"/>
+<rect x="40" y="27" width="3" height="3" fill="#EBFB35"/>
+<rect x="40" y="31" width="3" height="3" fill="#EBFB35"/>
+<rect x="18" y="36" width="7" height="7" fill="#EBFB35"/>
+<rect x="9" y="36" width="7" height="7" fill="#EBFB35"/>
+<path d="M27 36H30V39H27V36Z" fill="#EBFB35"/>
+<path d="M31 36H34V39H31V36Z" fill="#EBFB35"/>
+<rect x="27" y="40" width="3" height="3" fill="#EBFB35"/>
+<rect x="18" y="45" width="3" height="3" fill="#EBFB35"/>
+<rect x="22" y="45" width="3" height="3" fill="#EBFB35"/>
+<rect x="36" width="7" height="16" fill="#EBFB35"/>
+<circle cx="27.5" cy="21.5" r="11.5" fill="black"/>
+<rect x="23" y="14" width="9" height="10" rx="2" fill="#EBFB35"/>
+</svg>

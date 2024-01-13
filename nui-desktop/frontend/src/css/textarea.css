@@ -1,0 +1,50 @@
+textarea {
+  font-family: 'Raleway', sans-serif;
+  border: none;
+  min-width: 0;
+  resize: none;
+  /* width: 100%; */
+}
+
+textarea:focus {
+  outline: none;
+}
+
+textarea:disabled {
+  opacity: 0.6;
+}
+
+textarea::selection {
+  background: #DEDEDE;
+  color: var(--text-bg);
+}
+
+textarea.var0::selection {
+  background: var(--var-0);
+  color: var(--text-bg);
+}
+
+textarea.var1::selection {
+  background: var(--var-1);
+  color: var(--text-bg);
+}
+
+textarea.var2::selection {
+  background: var(--var-2);
+  color: var(--text-bg);
+}
+
+textarea.var3::selection {
+  background: var(--var-3);
+  color: var(--text-bg);
+}
+
+textarea.var4::selection {
+  background: var(--var-4);
+  color: var(--text-bg);
+}
+
+textarea.var5::selection {
+  background: var(--var-5);
+  color: var(--text-bg);
+}
