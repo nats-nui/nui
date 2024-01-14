@@ -65,6 +65,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 
 	} else {
 		for (let key in json) {
+
 			if (index >= limit) {
 				ret.push(<span>{"\u2026"}</span>)
 				break
@@ -93,7 +94,10 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 
 			} else if (type === "boolean") {
 				value = value ? "\u2714" : "\u2716"
-				ret.push(json[key] ? <span style={cssTrue}>&#x2714;, </span> : <span style={cssFalse}>&#x2716;</span>)
+				ret.push(json[key] 
+					? <span style={cssTrue}>&#x2714;, </span> 
+					: <span style={cssFalse}>&#x2716;</span>
+				)
 			}
 
 			if (index < lastIndex) ret.push(<span>, </span>)

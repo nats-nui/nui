@@ -1,9 +1,10 @@
-import { VIEW_SIZE, ViewStore } from "@/stores/stacks/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
 import Header from "./Header"
 import ActionGroup from "./buttons/ActionGroup"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 
@@ -28,7 +29,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inRoot = !store.state.parent
-	const isIconized = store.state.size == VIEW_SIZE.ICONIZED
+	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const variant = store.getColorVar()
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
