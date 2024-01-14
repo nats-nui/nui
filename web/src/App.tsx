@@ -2,13 +2,14 @@ import docSo, { DocState } from "@/stores/docs"
 import layoutSo, { LayoutState } from "@/stores/layout"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import CardCmp from "./CardCmp"
 import DragCmp from "./components/DragCmp"
 import MainMenu from "./components/MainMenu"
 import TooltipCmp from "./components/TooltipCmp"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
+import srcBg from "@/assets/bg1.jpg"
 
 
 
@@ -19,12 +20,14 @@ const App: FunctionComponent = () => {
 	const docSa: DocState = useStore(docSo)
 
 	// HOOKS
+	const [storesAnchored, stores] = useMemo(()=>[
+		docSo.getAnchored(),
+		docSo.getVisible(),
+	],[docSa.all, docSa.anchored])
 
 	// HANDLERS
 
 	// RENDER
-	const storesAnchored = docSa.all.slice(0, docSa.anchored)
-	const stores = docSa.all.slice(docSa.anchored)
 	return (
 		<div style={cssApp(layoutSa.theme)}>
 
@@ -65,6 +68,8 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 	display: "flex",
 	backgroundColor: "black",
 	color: theme.palette.default.fg,
+	backgroundImage: `url("${srcBg}")`,
+	backgroundRepeat: "repeat-x",
 })
 
 const cssContent: React.CSSProperties = {

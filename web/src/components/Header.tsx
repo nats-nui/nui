@@ -2,13 +2,15 @@ import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
 import docSo from "@/stores/docs"
 import { getRoot } from "@/stores/docs/utils/manage"
-import { VIEW_SIZE, ViewStore } from "@/stores/stacks/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
 import IconButton from "./buttons/IconButton"
 import Label, { LABELS } from "./input/Label"
 import AnchorIcon from "@/icons/AnchorIcon"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
+import IconizedIcon from "@/icons/IconizeIcon"
 
 
 
@@ -42,7 +44,7 @@ const Header: FunctionComponent<Props> = ({
 	}
 	const handleSizeClick = () => {
 		store.setSize(
-			store.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.ICONIZED : VIEW_SIZE.NORMAL
+			store.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.COMPACT : VIEW_SIZE.NORMAL
 		)
 	}
 	const handleAnchor = () => {
@@ -51,6 +53,9 @@ const Header: FunctionComponent<Props> = ({
 	const handleFocus = () => {
 		//e.stopPropagation()
 		docSo.focus(store)
+	}
+	const handleToggleIconize = () => {
+		if (!isIconized) docSo.iconize(store); else docSo.uniconize(store)
 	}
 
 	// RENDER
@@ -62,8 +67,11 @@ const Header: FunctionComponent<Props> = ({
 	const strIcon = store.getIcon()
 	const inRoot = !store.state.parent
 	const isAnchored = docSo.isAnchored(store)
+	const isCompact = store.state.size == VIEW_SIZE.COMPACT
+	const isIconized = store.state.size == VIEW_SIZE.ICONIZED
 	const showBttAnchor = inRoot && (enter || isAnchored)
-	const showBttClose = !store.state.indelible
+	const showBttClose = !store.state.unclosable
+	const showBttIconize = inRoot && enter && store.state.iconizzable
 
 	return (
 		<div style={cssRoot(store.state.size)}
@@ -82,7 +90,7 @@ const Header: FunctionComponent<Props> = ({
 				<Label
 					type={LABELS.TITLE}
 					onClick={handleFocus}
-					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null }}
+					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
 				>{title}</Label>
 
 				{subTitle && (
@@ -90,9 +98,14 @@ const Header: FunctionComponent<Props> = ({
 				)}
 			</div>
 
-			{store.state.size != VIEW_SIZE.ICONIZED && (
+			{!isCompact && (
 				<div style={cssButtons}>
 					<div style={{ display: "flex" }}>
+						{showBttIconize && (
+							<IconButton
+								onClick={handleToggleIconize}
+							><IconizedIcon /></IconButton>
+						)}
 						{showBttAnchor && (
 							<IconButton
 								onClick={handleAnchor}
@@ -117,13 +130,13 @@ export default Header
 
 const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
 	display: "flex",
-	height: size != VIEW_SIZE.ICONIZED ? 48 : null,
-	flexDirection: size != VIEW_SIZE.ICONIZED ? null : "column",
+	height: size != VIEW_SIZE.COMPACT ? 48 : null,
+	flexDirection: size != VIEW_SIZE.COMPACT ? null : "column",
 	alignItems: "flex-start",
 })
 
 const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
-	if (size == VIEW_SIZE.ICONIZED) {
+	if (size == VIEW_SIZE.COMPACT) {
 		return {
 			display: "flex", flex: 1,
 			writingMode: "vertical-lr",
