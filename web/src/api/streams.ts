@@ -6,8 +6,8 @@ import { Stream } from "@/types/Stream"
 /** INDEX
  * Recupera tutti gli STREAMS
  */
-function index(): Promise<Stream[]> {
-	return ajax.get(`stream`)
+function index(connectionId: string): Promise<Stream[]> {
+	return ajax.get(`connection/${connectionId}/stream`)
 }
 
 /** DELETE

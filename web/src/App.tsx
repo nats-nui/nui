@@ -9,7 +9,6 @@ import MainMenu from "./components/MainMenu"
 import TooltipCmp from "./components/TooltipCmp"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
-import srcBg from "@/assets/bg1.jpg"
 
 
 
@@ -20,10 +19,10 @@ const App: FunctionComponent = () => {
 	const docSa: DocState = useStore(docSo)
 
 	// HOOKS
-	const [storesAnchored, stores] = useMemo(()=>[
+	const [storesAnchored, stores] = useMemo(() => [
 		docSo.getAnchored(),
 		docSo.getVisible(),
-	],[docSa.all, docSa.anchored])
+	], [docSa.all, docSa.anchored])
 
 	// HANDLERS
 
@@ -44,7 +43,7 @@ const App: FunctionComponent = () => {
 					{/* <DropArea index={-1} /> */}
 				</div>
 
-				<div style={{ zIndex: 0, display: "flex", flex: 1 }}>
+				<div style={cssVisible}>
 					{stores.map((store: ViewStore) =>
 						<CardCmp key={getID(store.state)}
 							store={store}
@@ -66,27 +65,32 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 	position: "relative",
 	height: "100%",
 	display: "flex",
-	backgroundColor: "black",
+
 	color: theme.palette.default.fg,
-	backgroundImage: `url("${srcBg}")`,
-	backgroundRepeat: "repeat-x",
+	backgroundColor: "#333333",
+
+	// backgroundImage: `url("${srcBg}")`,
+	// backgroundSize: "100% 100%",
+	//backgroundRepeat: "repeat-x",
 })
 
 const cssContent: React.CSSProperties = {
 	flex: 1,
 	display: "flex",
 	overflowX: "auto",
-	padding: "10px 0px 10px 0px",
 }
 
 const cssFixed: React.CSSProperties = {
-	zIndex: 1, 
-	display: "flex", 
-	position: "sticky", 
-	left: 0, right: 0, 
-	backgroundColor: "rgb(0 0 0 / 100%)", 
-	//margin: "-10px 10px -10px 0px", 
-	//padding: "10px 0px", 
-	paddingRight: 20,
-	borderRight: "2px dashed white",
+	zIndex: 1,
+	display: "flex",
+	position: "sticky",
+	left: 0, right: 0,
+	backgroundColor: "#636363",
+	padding: "10px 25px 10px 0px",
+	//borderRight: "2px dashed white",
+}
+
+const cssVisible: React.CSSProperties = {
+	zIndex: 0, display: "flex", flex: 1,
+	padding: "10px 0px 10px 0px",
 }

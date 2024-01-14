@@ -7,9 +7,10 @@ import { createUUID } from '@/mocks/data/utils'
 const handlers = [
 
 	/** INDEX
-	 * Preleva tutti gli STREAMS
+	 * Preleva tutti gli STREAMS di una determinata CONNECTION
 	 */
-	rest.get('/api/stream', async (_req, res, ctx) => {
+	rest.get('/api/connection/:connId/stream', async (req, res, ctx) => {
+		const { cnnId } = req.params
 		return res(
 			ctx.status(200),
 			ctx.json(streams),
@@ -49,7 +50,7 @@ const handlers = [
 			ctx.json(streams[index]),
 		)
 	}),
-	
+
 	/** DELETE
 	 * cancella una CONNECTION
 	 */
