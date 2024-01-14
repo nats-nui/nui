@@ -71,6 +71,7 @@ const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
 	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "rgb(0 0 0 / 20%)",
 	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
 	borderRadius: "50%",
+	border: "2px solid black",
 	width: 30, height: 30,
 })
 

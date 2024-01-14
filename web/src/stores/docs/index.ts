@@ -17,6 +17,7 @@ const setup = {
 	state: {
 		focus: <ViewStore>null,
 		all: <ViewStore[]>[],
+		menu: <ViewStore[]>[],
 		anchored: 0,
 	},
 
@@ -33,18 +34,18 @@ const setup = {
 		},
 		getVisible(_: void, store?: DocStore) {
 			return store.state.all
-				.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
+				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
 				.slice(store.state.anchored)
 		},
 		getAnchored(_: void, store?: DocStore) {
 			return store.state.all
-				.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
+				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
 				.slice(0, store.state.anchored)
 		},
-		getIconized(_: void, store?: DocStore) {
-			return store.state.all
-				.filter(s => s.state.size == VIEW_SIZE.ICONIZED)
-		},
+		// getIconized(_: void, store?: DocStore) {
+		// 	return store.state.all
+		// 		.filter(s => s.state.size == VIEW_SIZE.ICONIZED)
+		// },
 	},
 
 	actions: {
@@ -165,14 +166,20 @@ const setup = {
 		/** fissa una VIEW al lato sinistro */
 		async iconize(view: ViewStore, store?: DocStore) {
 			if (!view) return
-			view.state.size = VIEW_SIZE.ICONIZED
-			store.setAll([...store.state.all])
+			//view.state.size = VIEW_SIZE.ICONIZED
+			//await store.remove({ view, anim: true })
+			store.setMenu([...store.state.menu, view])
 		},
 		/** rende mobile una VIEW fissata */
 		async uniconize(view: ViewStore, store?: DocStore) {
 			if (!view) return
-			view.state.size = VIEW_SIZE.NORMAL
-			store.setAll([...store.state.all])
+			//view.state.size = VIEW_SIZE.NORMAL
+			//store.add({ view, anim: true })
+			const menu = [...store.state.menu]
+			const index = menu.findIndex( s => s == view)
+			if ( index == -1 ) return
+			menu.splice( index, 1 )
+			store.setMenu(menu)
 		},
 
 
@@ -188,11 +195,8 @@ const setup = {
 	},
 
 	mutators: {
-		setAll: (all: ViewStore[], store?: DocStore) => {
-			//const views: ViewStore[] = disgregate(all)
-			// navSo.setParams(["docs", viewsToString(views)])
-			return { all }
-		},
+		setAll: (all: ViewStore[], store?: DocStore) => ({ all }),
+		setMenu: (menu: ViewStore[], store?: DocStore) => ({ menu }),
 		setFocus: (focus: ViewStore) => ({ focus }),
 		setAnchored: (anchored: number) => ({ anchored }),
 	},

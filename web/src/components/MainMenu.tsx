@@ -6,6 +6,7 @@ import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useMemo } from "react"
 import IconRow from "./rows/IconRow"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 interface Props {
@@ -20,7 +21,7 @@ const MainMenu: FunctionComponent<Props> = ({
 	const docSa = useStore(docSo)
 
 	// HOOKS
-	const stores = useMemo(() => docSo.getIconized(), [docSa.all])
+	
 
 	// HANDLERS
 	const handleNodes = () => {
@@ -42,22 +43,29 @@ const MainMenu: FunctionComponent<Props> = ({
 		})
 		docSo.setAll(stores)
 	}
-	const handleOpenStoreClick = (store: ViewStore) => {
-		docSo.uniconize(store)
+	const handleOpenStoreClick = (view: ViewStore) => {
+		docSo.add({ view, anim: true })
 	}
 	const handleCloseStoreClick = (store: ViewStore) => {
-		docSo.remove({ view: store })
+		docSo.uniconize(store)
 	}
 
 	// RENDER
+	const stores =  docSa.menu
+
 	return <div style={{ ...cssContainer, ...style }}>
-		<IconRow onClick={handleNodes} title="CONNECTIONS" />
+		<IconRow onClick={handleNodes} 
+			title="CONNECTIONS" 
+			variant={COLOR_VAR.GREEN} 
+			selected
+		/>
 		{/* <button onClick={handleLoad}>LOAD</button>
 		<button onClick={handleSave}>SAVE</button> */}
 		{stores.map((store) => (
-			<IconRow key={getID(store.state)}
+			<IconRow key={getID(store.state)} selected
 				title={store.getTitle()}
 				subtitle={store.getSubTitle()}
+				variant={store.getColorVar()} 
 				onClick={() => handleOpenStoreClick(store)}
 				onClose={() => handleCloseStoreClick(store)}
 			/>
@@ -69,6 +77,6 @@ export default MainMenu
 
 const cssContainer: React.CSSProperties = {
 	display: "flex", flexDirection: "column", alignItems: "center", gap: "10px",
-	backgroundColor: "red",
+	backgroundColor: "#494949",
 	padding: "10px",
 }
