@@ -69,11 +69,17 @@ func (s *NuiTestSuite) TestStreamRest() {
 		Status(http.StatusOK).
 		JSON().Object().Value("name").String().IsEqual("stream1")
 
-	a := e.GET("/api/connection/" + connId + "/stream/stream1").
+	r1 := e.GET("/api/connection/" + connId + "/stream").
+		Expect().
+		Status(http.StatusOK).JSON().Array()
+	r1.Length().IsEqual(1)
+	r1.Value(0).Object().Value("config").Object().Value("name").IsEqual("stream1")
+
+	r2 := e.GET("/api/connection/" + connId + "/stream/stream1").
 		Expect().
 		Status(http.StatusOK).JSON().Object()
-	a.Value("name").String().IsEqual("stream1")
-	a.Value("subjects").Array().ContainsAll("sub1", "sub2")
+	r2.Value("name").String().IsEqual("stream1")
+	r2.Value("subjects").Array().ContainsAll("sub1", "sub2")
 
 }
 

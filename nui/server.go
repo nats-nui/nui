@@ -42,6 +42,7 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
+	a.Get("/api/connection/:connection_id/stream", a.handleGetStreams)
 	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleGetStream)
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
 
@@ -134,6 +135,33 @@ func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
 	}
 	a.nui.ConnPool.Purge()
 	return ctx.SendStatus(200)
+}
+
+func (a *App) handleGetStreams(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	listener := js.ListStreams(c.Context())
+	var infos []*jetstream.StreamInfo
+	for {
+		select {
+		case info, ok := <-listener.Info():
+			if !ok {
+				return c.JSON(infos)
+			}
+			infos = append(infos, info)
+		case err, ok := <-listener.Err():
+			if !ok || ok && errors.Is(err, jetstream.ErrEndOfData) {
+				return c.JSON(infos)
+			}
+			return c.Status(500).JSON(err.Error())
+		}
+	}
 }
 
 func (a *App) handleGetStream(c *fiber.Ctx) error {
