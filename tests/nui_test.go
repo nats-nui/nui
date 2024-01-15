@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (s *NuiTestSuite) TestConnectionsCrud() {
+func (s *NuiTestSuite) TestConnectionsRest() {
 	e := s.e
 
 	e.GET("/api/connection").
@@ -59,7 +59,49 @@ func (s *NuiTestSuite) TestConnectionsCrud() {
 	a.Value(0).Object().Value("subscriptions").Array().Value(0).Object().Value("subject").String().IsEqual("sub1_updated")
 }
 
-func (s *NuiTestSuite) TestPubSub() {
+func (s *NuiTestSuite) TestStreamRest() {
+	e := s.e
+	connId := s.defaultConn()
+
+	e.POST("/api/connection/" + connId + "/stream").
+		WithBytes([]byte(`{"name": "stream1", "subjects": ["sub1", "sub2"]}`)).
+		Expect().
+		Status(http.StatusOK).
+		JSON().Object().Value("name").String().IsEqual("stream1")
+
+	r1 := e.GET("/api/connection/" + connId + "/stream").
+		Expect().
+		Status(http.StatusOK).JSON().Array()
+	r1.Length().IsEqual(1)
+	r1.Value(0).Object().Value("config").Object().Value("name").IsEqual("stream1")
+
+	r2 := e.GET("/api/connection/" + connId + "/stream/stream1").
+		Expect().
+		Status(http.StatusOK).JSON().Object()
+	r2.Value("name").String().IsEqual("stream1")
+	r2.Value("subjects").Array().ContainsAll("sub1", "sub2")
+
+}
+
+func (s *NuiTestSuite) TestRequestResponseRest() {
+	connId := s.defaultConn()
+
+	// create a subscription with s.nc that wait for requests and say "hi" as response
+	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
+		err := s.nc.Publish(m.Reply, []byte("hi"))
+		s.NoError(err)
+	})
+	defer sub.Unsubscribe()
+	time.Sleep(10 * time.Millisecond)
+
+	//send request and read response via nui rest
+	s.e.POST("/api/connection/" + connId + "/request").
+		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
+		Expect().Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
+
+}
+
+func (s *NuiTestSuite) TestPubSubWs() {
 	connId := s.defaultConn()
 	ws := s.ws("/ws/sub", "id="+connId)
 	ws2 := s.ws("/ws/sub", "id="+connId)
@@ -79,25 +121,7 @@ func (s *NuiTestSuite) TestPubSub() {
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
 }
 
-func (s *NuiTestSuite) TestRequestResponse() {
-	connId := s.defaultConn()
-
-	// create a subscription with s.nc that wait for requests and say "hi" as response
-	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
-		err := s.nc.Publish(m.Reply, []byte("hi"))
-		s.NoError(err)
-	})
-	defer sub.Unsubscribe()
-	time.Sleep(10 * time.Millisecond)
-
-	//send request and read response via nui rest
-	s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
-		Expect().Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
-
-}
-
-func (s *NuiTestSuite) TestConnectionEvents() {
+func (s *NuiTestSuite) TestConnectionEventsWs() {
 	s.NatsServer.Shutdown()
 	time.Sleep(10 * time.Millisecond)
 	connId := s.defaultConn()
