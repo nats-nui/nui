@@ -3,7 +3,8 @@
   "name": "nui-deskop",
   "outputfilename": "nui-desktop",
   "frontend:install": "npm install",
-  "frontend:build": "npm run build",
+  "frontend:dir": "../web",
+  "frontend:build": "npm run build-desktop",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {

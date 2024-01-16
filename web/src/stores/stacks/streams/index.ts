@@ -80,7 +80,7 @@ const setup = {
 		},
 
 		async fetch(_: void, store?: StreamsStore) {
-			const streams = await strApi.index()
+			const streams = await strApi.index("a")
 			store.setAll(streams)
 		},
 		async delete(id: string, store?: StreamsStore) {

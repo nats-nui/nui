@@ -5,8 +5,10 @@ import path from 'path'
 
 
 // https://vitejs.dev/config/
-export default defineConfig (({ command, target }) => {
+export default defineConfig (( ) => {
+    const target = process.env.TARGET
     const isDesktop = target == "desktop"
+    console.log(isDesktop)
     return {
         plugins: [react()],
         build: {
