@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/ws"
 	"time"
@@ -46,6 +47,10 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection", a.handleSaveConnection)
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
+
+	a.Get("/api/connection/:connection_id/stream", a.handleGetStreams)
+	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleGetStream)
+	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
@@ -97,7 +102,7 @@ func (a *App) handleGetConnection(c *fiber.Ctx) error {
 	}
 	conn, err := a.nui.ConnRepo.GetById(c.Params("id"))
 	if err != nil {
-		return c.Status(404).JSON(err)
+		return c.Status(404).JSON(err.Error())
 	}
 	return c.JSON(conn)
 }
@@ -106,7 +111,7 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	conn := &connection.Connection{}
 	err := c.BodyParser(conn)
 	if err != nil {
-		return c.Status(422).JSON(err)
+		return c.Status(422).JSON(err.Error())
 	}
 	if c.Params("id") != "" {
 		conn.Id = c.Params("id")
@@ -132,10 +137,86 @@ func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
 	}
 	err := a.nui.ConnRepo.Remove(ctx.Params("id"))
 	if err != nil {
-		return ctx.Status(500).JSON(err)
+		return ctx.Status(500).JSON(err.Error())
 	}
 	a.nui.ConnPool.Purge()
 	return ctx.SendStatus(200)
+}
+
+func (a *App) handleGetStreams(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	listener := js.ListStreams(c.Context())
+	var infos []*jetstream.StreamInfo
+	for {
+		select {
+		case info, ok := <-listener.Info():
+			if !ok {
+				return c.JSON(infos)
+			}
+			infos = append(infos, info)
+		case err, ok := <-listener.Err():
+			if !ok || ok && errors.Is(err, jetstream.ErrEndOfData) {
+				return c.JSON(infos)
+			}
+			return c.Status(500).JSON(err.Error())
+		}
+	}
+}
+
+func (a *App) handleGetStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info.Config)
+}
+
+func (a *App) handleCreateStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	cfg := jetstream.StreamConfig{}
+	err = c.BodyParser(&cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	stream, err := js.CreateStream(c.Context(), cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info.Config)
 }
 
 func (a *App) handlePublish(c *fiber.Ctx) error {
@@ -144,7 +225,7 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 	}
 	conn, err := a.nui.ConnPool.Get(c.Params("id"))
 	if err != nil {
-		return c.Status(404).JSON(err)
+		return c.Status(404).JSON(err.Error())
 	}
 	pubReq := &struct {
 		Subject string `json:"subject"`
@@ -152,17 +233,17 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 	}{}
 	err = c.BodyParser(pubReq)
 	if err != nil {
-		return c.Status(422).JSON(err)
+		return c.Status(422).JSON(err.Error())
 	}
 
 	payload, err := base64.StdEncoding.DecodeString(pubReq.Payload)
 	if err != nil {
-		return c.Status(422).JSON(err)
+		return c.Status(422).JSON(err.Error())
 	}
 
 	err = conn.Publish(pubReq.Subject, payload)
 	if err != nil {
-		return c.Status(500).JSON(err)
+		return c.Status(500).JSON(err.Error())
 	}
 	return c.SendStatus(200)
 }
@@ -173,7 +254,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	}
 	conn, err := a.nui.ConnPool.Get(c.Params("id"))
 	if err != nil {
-		return c.Status(404).JSON(err)
+		return c.Status(404).JSON(err.Error())
 	}
 	req := &struct {
 		Subject   string `json:"subject"`
@@ -182,14 +263,14 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	}{}
 	err = c.BodyParser(req)
 	if err != nil {
-		return c.Status(422).JSON(err)
+		return c.Status(422).JSON(err.Error())
 	}
 	timeout := 200 * time.Millisecond
 	if req.TimeoutMs > 0 {
 		timeout = time.Duration(req.TimeoutMs) * time.Millisecond
 	}
 	if err != nil {
-		return c.Status(422).JSON(err)
+		return c.Status(422).JSON(err.Error())
 	}
 	msg, err := conn.Request(req.Subject, req.Payload, timeout)
 	if err != nil {

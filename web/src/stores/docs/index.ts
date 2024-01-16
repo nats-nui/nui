@@ -5,6 +5,7 @@ import { ViewStore } from "../stacks/viewBase"
 import { buildStore, getID } from "./utils/factory"
 import { getById } from "./utils/manage"
 import { dbLoad, dbSave } from "./utils/db"
+import { VIEW_SIZE } from "../stacks/utils"
 
 
 
@@ -16,6 +17,7 @@ const setup = {
 	state: {
 		focus: <ViewStore>null,
 		all: <ViewStore[]>[],
+		menu: <ViewStore[]>[],
 		anchored: 0,
 	},
 
@@ -30,6 +32,20 @@ const setup = {
 			const index = store.getIndexByView(view)
 			return index < store.state.anchored
 		},
+		getVisible(_: void, store?: DocStore) {
+			return store.state.all
+				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
+				.slice(store.state.anchored)
+		},
+		getAnchored(_: void, store?: DocStore) {
+			return store.state.all
+				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
+				.slice(0, store.state.anchored)
+		},
+		// getIconized(_: void, store?: DocStore) {
+		// 	return store.state.all
+		// 		.filter(s => s.state.size == VIEW_SIZE.ICONIZED)
+		// },
 	},
 
 	actions: {
@@ -130,6 +146,7 @@ const setup = {
 
 		/** fissa una VIEW al lato sinistro */
 		async anchor(view: ViewStore, store?: DocStore) {
+			if (!view) return
 			const storeIndex = store.getIndexByView(view)
 			const index = store.state.anchored
 			await store.move({ view, index })
@@ -138,11 +155,31 @@ const setup = {
 		},
 		/** rende mobile una VIEW fissata */
 		async unanchor(view: ViewStore, store?: DocStore) {
+			if (!view) return
 			const storeIndex = store.getIndexByView(view)
 			const index = store.state.anchored
 			await store.move({ view, index })
 			if (storeIndex == index - 1) store.state.anchored--
 			store._update()
+		},
+
+		/** fissa una VIEW al lato sinistro */
+		async iconize(view: ViewStore, store?: DocStore) {
+			if (!view) return
+			//view.state.size = VIEW_SIZE.ICONIZED
+			//await store.remove({ view, anim: true })
+			store.setMenu([...store.state.menu, view])
+		},
+		/** rende mobile una VIEW fissata */
+		async uniconize(view: ViewStore, store?: DocStore) {
+			if (!view) return
+			//view.state.size = VIEW_SIZE.NORMAL
+			//store.add({ view, anim: true })
+			const menu = [...store.state.menu]
+			const index = menu.findIndex( s => s == view)
+			if ( index == -1 ) return
+			menu.splice( index, 1 )
+			store.setMenu(menu)
 		},
 
 
@@ -158,11 +195,8 @@ const setup = {
 	},
 
 	mutators: {
-		setAll: (all: ViewStore[], store?: DocStore) => {
-			//const views: ViewStore[] = disgregate(all)
-			// navSo.setParams(["docs", viewsToString(views)])
-			return { all }
-		},
+		setAll: (all: ViewStore[], store?: DocStore) => ({ all }),
+		setMenu: (menu: ViewStore[], store?: DocStore) => ({ menu }),
 		setFocus: (focus: ViewStore) => ({ focus }),
 		setAnchored: (anchored: number) => ({ anchored }),
 	},

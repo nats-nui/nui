@@ -227,8 +227,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				check={streamSa.stream.AllowDeletion}
 				onChange={handleAllowDeletionChange}
 				readOnly={readOnly}
-			>
-			</IconToggle>
+			/>
 			<Label style={{ marginTop: 0 }}>ALLOW DELETION</Label>
 		</Box>
 		<Box>
@@ -236,8 +235,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				check={streamSa.stream.AllowPurging}
 				onChange={handleAllowPurgingChange}
 				readOnly={readOnly}
-			>
-			</IconToggle>
+			/>
 			<Label style={{ marginTop: 0 }}>ALLOW PURGING</Label>
 		</Box>
 

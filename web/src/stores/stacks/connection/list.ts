@@ -21,6 +21,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 220,
+		iconizzable: false,
 		//#endregion
 	},
 

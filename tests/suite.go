@@ -5,6 +5,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
+	"github.com/pricelessrabbit/nui/nui"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
 	"net/http"
@@ -26,9 +27,10 @@ type NuiTestSuite struct {
 
 func (s *NuiTestSuite) SetupSuite() {
 	s.natsServerOpts = &server.Options{
-		Host:   "localhost",
-		NoLog:  true,
-		NoSigs: true,
+		Host:      "localhost",
+		JetStream: true,
+		NoLog:     true,
+		NoSigs:    true,
 	}
 }
 

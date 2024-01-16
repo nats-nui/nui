@@ -8,7 +8,6 @@ import cnnSo, { ConnectionState } from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { HistoryMessage } from "@/stores/stacks/messages/utils"
-import { VIEW_SIZE } from "@/stores/stacks/viewBase"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
@@ -16,6 +15,7 @@ import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import FormatDialog from "./FormatDialog"
 import ItemsList from "./ItemsList"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 interface Props {
@@ -36,7 +36,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
 	const dropRef = useRef<HTMLDivElement>(null)
 	useEffect(() => {
-		if (!dropRef.current || msgSo.state.size != VIEW_SIZE.ICONIZED) return
+		if (!dropRef.current || msgSo.state.size != VIEW_SIZE.COMPACT) return
 		//const idInt = setInterval(() => {
 		const animation = dropRef.current.animate([
 			{ transform: 'translateY(0px)', visibility: "visible" },

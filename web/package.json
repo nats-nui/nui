@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && cross-env TARGET=web vite build",
-    "build-desktop": "tsc && cross-env TARGET=desktop vite build",
+    "build": "tsc && vite build",
+    "typescript": "tsc",
     "start:socket:mock": "node ./src/mocks/socket/index.js",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -16,8 +16,8 @@
     "@priolo/jon": "C:/Users/ivano.iorio/Documents/jon"
   },
   "dependencies": {
-    "@fontsource/darker-grotesque": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
+    "@fontsource/darker-grotesque": "^5.0.8",
     "@priolo/jon": "^0.7.2",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
@@ -30,7 +30,6 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "cross-env": "^7.0.3",
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",

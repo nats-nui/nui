@@ -6,7 +6,7 @@ import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
 import { Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import CnnCompactRow from "../../rows/CnnCompactRow"
+import IconRow from "../../rows/IconRow"
 import CnnRow from "../../rows/CnnRow"
 
 
@@ -71,7 +71,7 @@ const CnnListView: FunctionComponent<Props> = ({
 		</>}
 		iconizedRender={<div style={cssIconized}>{
 			connnections.map(cnn => (
-				<CnnCompactRow key={cnn.id}
+				<IconRow key={cnn.id}
 				title={getTitle(cnn)}
 				subtitle={getSubtitle(cnn)}
 				selected={isSelected(cnn)}

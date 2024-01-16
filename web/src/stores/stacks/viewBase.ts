@@ -5,21 +5,9 @@ import { COLOR_VAR } from "../layout"
 import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { buildStore } from "../docs/utils/factory"
+import { VIEW_SIZE } from "./utils"
 
 
-
-export enum VIEW_PARAMS {
-	POSITION = "pos",
-}
-export enum VIEW_VARIANTS {
-	DEFAULT = "",
-	LINK = "_link",
-}
-export enum VIEW_SIZE {
-	NORMAL,
-	ICONIZED,
-	MAXIMIZED,
-}
 
 const viewSetup = {
 
@@ -28,15 +16,13 @@ const viewSetup = {
 		uuid: <string>null,
 		/** tipo di VIEW */
 		type: DOC_TYPE.EMPTY,
-		/** elementi da memorizzare nell'url */
-		params: <{ [name: string]: any[] }>{},
 
 		/** indica se la VIEW è draggabile o no */
 		draggable: true,
-		/** indica se è URL serializable */
-		serializable: true,
 		/** indica se la VIEW si puo' rimuovere dal DOCK */
-		indelible: false,
+		unclosable: false,
+		/** indica se è possibile iconizzare questa CARD  */
+		iconizzable: true,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
 
@@ -45,7 +31,8 @@ const viewSetup = {
 		/** il corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
-		/** dove è appiccicata */
+		/** dove è appiccicata 
+		 * DA ELIMINARE */
 		position: POSITION_TYPE.DETACHED,
 		/** la sua VIEW PARENT */
 		parent: <ViewStore>null,
@@ -54,9 +41,6 @@ const viewSetup = {
 	},
 
 	getters: {
-		getParam(name: string, store?: ViewStore) {
-			return store.state.params?.[name]?.[0]
-		},
 		getStyAni: (_: void, store?: ViewStore) => {
 			let style: React.CSSProperties = {
 				width: store.getWidth()
@@ -86,7 +70,8 @@ const viewSetup = {
 		},
 
 		//#region OVERRIDABLE
-		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.ICONIZED ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
+		/** restituisce il width effettivo */
+		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.COMPACT ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
 		getIcon: (_: void, store?: ViewStore): string => null,
@@ -95,7 +80,8 @@ const viewSetup = {
 			return {
 				uuid: store.state.uuid,
 				type: store.state.type,
-				position: store.state.position,
+				//position: store.state.position,
+				size: store.state.size,
 				linked: store.state.linked?.getSerialization(),
 			}
 		},
@@ -110,7 +96,8 @@ const viewSetup = {
 		},
 		setSerialization: (state: any, store?: ViewStore) => {
 			store.state.uuid = state.uuid
-			store.state.position = state.position
+			//store.state.position = state.position
+			store.state.size = state.size
 			const linkedState = state.linked
 			delete state.linked
 			if ( linkedState ) {
@@ -171,10 +158,6 @@ const viewSetup = {
 	},
 
 	mutators: {
-		setParams(ps: { [name: string]: any }, store?: ViewStore) {
-			const params = { ...store.state.params, ...ps }
-			return { params }
-		},
 		setSize: (size: VIEW_SIZE) => ({ size }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
 	},
