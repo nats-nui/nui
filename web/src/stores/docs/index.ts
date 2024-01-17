@@ -42,10 +42,9 @@ const setup = {
 				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
 				.slice(0, store.state.anchored)
 		},
-		// getIconized(_: void, store?: DocStore) {
-		// 	return store.state.all
-		// 		.filter(s => s.state.size == VIEW_SIZE.ICONIZED)
-		// },
+		isIconized(uuid: string, store?: DocStore) {
+			return store.state.menu.some(view => view.state.uuid == uuid)
+		},
 	},
 
 	actions: {

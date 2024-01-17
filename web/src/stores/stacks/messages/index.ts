@@ -11,8 +11,8 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
-import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
 import historyTest from "./test"
+import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
 
 
 
@@ -81,10 +81,16 @@ const setup = {
 		},
 		onCreate(_: void, store?: ViewStore) {
 			const msgSo = <MessagesStore>store
-			const cnnId = (store as MessagesStore).state.connectionId
+			const cnnId = msgSo.state.connectionId
 			const ss = socketPool.create(store.state.uuid, cnnId)
 			ss.onOpen = () => msgSo.sendSubscriptions()
 			ss.onMessage = message => msgSo.addInHistory(message)
+			ss.onStatus = status => {
+
+			}
+			ss.onError = error => {
+				
+			}
 		},
 		onDestroy(_: void, store?: ViewStore) {
 			socketPool.destroy(store.state.uuid)
@@ -152,6 +158,15 @@ const setup = {
 		setFormat: (format: MSG_FORMAT) => ({ format }),
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
+
+	onListenerChange: (store:MessagesStore) => {
+		console.log("CREATE", store._listeners.size)
+		// if ( store._listeners.size == 1 ) {
+		// 	store.onCreate()
+		// } else if (store._listeners.size == 0 ) {
+		// 	store.onDestroy()
+		// }
+	}
 }
 
 export type MessagesState = typeof setup.state & ViewState

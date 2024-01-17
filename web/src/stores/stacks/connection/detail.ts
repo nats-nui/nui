@@ -59,7 +59,7 @@ const setup = {
 		},
 		//#endregion
 
-		/** restore della connection a quella memorizzata nella connection */
+		/** ripristino la CONNECTION visualizzata da quellacontenuta elle CONNECTIONS */
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
 			store.setConnection(cnn)
@@ -80,6 +80,7 @@ const setup = {
 				anim: true,
 			})
 		},
+
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
 			const cnn = store.state.connection

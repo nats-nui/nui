@@ -19,7 +19,10 @@ const setup = {
 			if (!id) return null
 			return store.state.all?.findIndex(cnn => cnn.id == id)
 		},
+		
+		//#region VIEWBASE
 		getTitle: (_: void, store?: ConnectionStore) => "CONNECTIONS",
+		//#endregion
 	},
 
 	actions: {

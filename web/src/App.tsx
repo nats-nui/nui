@@ -9,7 +9,7 @@ import MainMenu from "./components/MainMenu"
 import TooltipCmp from "./components/TooltipCmp"
 import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
-
+import srcBg from "@/assets/bg4.jpg"
 
 
 const App: FunctionComponent = () => {
@@ -67,9 +67,11 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 	display: "flex",
 
 	color: theme.palette.default.fg,
-	backgroundColor: "#333333",
+	//backgroundColor: "#333333",
 
-	// backgroundImage: `url("${srcBg}")`,
+	backgroundImage: `url("${srcBg}")`,
+	backgroundColor: "rgba(0, 0, 0, 0.8)",
+  	backgroundBlendMode: "darken",
 	// backgroundSize: "100% 100%",
 	//backgroundRepeat: "repeat-x",
 })

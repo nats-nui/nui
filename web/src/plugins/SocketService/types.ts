@@ -41,7 +41,7 @@ export type PayloadMessage = {
 	payload: string
 }
 /** CONNECTION STATUS - server */
-export type PayloadStaus = {
+export type PayloadStatus = {
 	status: CNN_STATUS
 }
 /** ERROR MESSAGE - client server */
@@ -49,4 +49,4 @@ export type PayloadError = {
 	error: string
 }
 
-export type Payload = PayloadSub | PayloadMessage | PayloadStaus | PayloadError
+export type Payload = PayloadSub | PayloadMessage | PayloadStatus | PayloadError
