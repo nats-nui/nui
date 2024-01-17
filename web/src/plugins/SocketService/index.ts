@@ -1,5 +1,5 @@
 import { Reconnect } from "./reconnect.js";
-import { MSG_TYPE, PayloadMessage, SocketMessage, SocketOptions } from "./types.js";
+import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
 
 
 
@@ -29,6 +29,8 @@ export class SocketService {
 	onOpen: () => void = null
 	// callback su arrivo messaggio
 	onMessage?: (message: PayloadMessage) => void
+	onStatus?: (status: PayloadStatus) => void
+	onError?: (error: PayloadError) => void
 
 	constructor(options: SocketOptions = {}) {
 		this.options = { ...optionsDefault, ...options }
@@ -120,18 +122,21 @@ export class SocketService {
 	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
+		let payload:Payload = null
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS:
+				this.onStatus?.(message.payload as PayloadStatus)
 				break
 			case MSG_TYPE.NATS_MESSAGE:
 				if (!this.onMessage) return
-				const payload = message.payload as PayloadMessage
+				payload = message.payload as PayloadMessage
 				this.onMessage({
 					subject: payload.subject,
 					payload: atob(payload.payload),
 				})
 				break
 			case MSG_TYPE.ERROR:
+				this.onError?.(message.payload as PayloadError)
 				break
 		}
 	}

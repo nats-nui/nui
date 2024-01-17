@@ -6,6 +6,7 @@ import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
+import ModalCmp from "./ModalCmp"
 
 
 
@@ -54,6 +55,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
 			<DocCmp view={view} />
+			<ModalCmp view={view} />
 		</div>
 
 		<div style={cssDesk}>
@@ -85,6 +87,7 @@ const cssRoot = (deep: number): React.CSSProperties => ({
 })
 
 const cssDoc: React.CSSProperties = {
+	position: "relative",
 	display: "flex",
 	flexDirection: "column",
 	overflow: "hidden",
@@ -115,3 +118,13 @@ const cssDesk: React.CSSProperties = {
 	position: "relative",
 }
 
+const cssSnackbar: React.CSSProperties = {
+	position: "absolute",
+	bottom: 0, left: 0, right: 0,
+
+	margin: 5,
+	padding: 5,
+	borderRadius: 10,
+	backgroundColor: "black",
+
+}
