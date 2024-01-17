@@ -6,7 +6,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig (( ) => {
-    const target = process.env.TARGET
+    const target = process.env.VITE_TARGET
     const isDesktop = target == "desktop"
     console.log(isDesktop)
     return {
