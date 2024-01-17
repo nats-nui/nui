@@ -3,7 +3,7 @@ import { delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { buildStore, getID } from "./utils/factory"
-import { getById } from "./utils/manage"
+import { forEachDocsView, getById } from "./utils/manage"
 import { dbLoad, dbSave } from "./utils/db"
 import { VIEW_SIZE } from "../stacks/utils"
 
@@ -57,6 +57,11 @@ const setup = {
 			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
 			store?: DocStore
 		) {
+			if ( forEachDocsView(store.state.all, (v)=> v.state.uuid==view.state.uuid ) ) {
+				console.log("c'e' gia'!!!")
+				store.setFocus(view)
+				return
+			}
 			view.state.parent = null
 			view.state.position = POSITION_TYPE.DETACHED
 			const newViews = [...store.state.all]
