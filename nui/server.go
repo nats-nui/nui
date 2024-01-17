@@ -31,7 +31,7 @@ func NewServer(port string, nui *Nui) *App {
 	}
 	// Or extend your config for customization
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://wails.localhost, wails://localhost",
+		AllowOrigins: "http://wails.localhost, wails://wails, wails://localhost",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 	app.registerHandlers()
