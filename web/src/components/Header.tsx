@@ -24,7 +24,7 @@ const Header: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	useStore(docSo)
+	const docSa = useStore(docSo)
 
 	// HOOK
 	const [enter, setEnter] = useState(false)
@@ -68,7 +68,7 @@ const Header: FunctionComponent<Props> = ({
 	const inRoot = !store.state.parent
 	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
-	const isIconized = store.state.size == VIEW_SIZE.ICONIZED
+	const isIconized = docSo.isIconized(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showBttClose = !store.state.unclosable
 	const showBttIconize = inRoot && enter && store.state.iconizzable
