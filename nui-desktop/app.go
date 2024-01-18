@@ -3,24 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/nui"
 	"log"
 )
-
-type StreamApi struct {
-	StreamInfo   *nats.StreamInfo   `json:"streamInfo"`
-	StreamConfig *nats.StreamConfig `json:"streamConfig"`
-}
-
-type Api struct {
-	StreamApi *StreamApi `json:"streamApi"`
-}
-
-func (a *Api) BindApi() Api {
-	return Api{}
-}
 
 // App struct
 type App struct {
@@ -49,19 +34,4 @@ func (a *App) startup(ctx context.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-type Person struct {
-	Name    string   `json:"name"`
-	Age     uint8    `json:"age"`
-	Address *Address `json:"address"`
-}
-
-type Address struct {
-	Street   string `json:"street"`
-	Postcode string `json:"postcode"`
-}
-
-func (a *App) Greet(p Person) string {
-	return fmt.Sprintf("Hello %s (Age: %d)!", p.Name, p.Age)
 }
