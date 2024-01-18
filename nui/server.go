@@ -48,8 +48,8 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
-	a.Get("/api/connection/:connection_id/stream", a.handleGetStreams)
-	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleGetStream)
+	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
+	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
@@ -143,7 +143,7 @@ func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(200)
 }
 
-func (a *App) handleGetStreams(c *fiber.Ctx) error {
+func (a *App) handleIndexStreams(c *fiber.Ctx) error {
 	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
 	if err != nil {
 		return c.Status(404).JSON(err.Error())
@@ -153,24 +153,27 @@ func (a *App) handleGetStreams(c *fiber.Ctx) error {
 		return c.Status(422).JSON(err.Error())
 	}
 	listener := js.ListStreams(c.Context())
-	var infos []*jetstream.StreamInfo
+	infos := make([]*jetstream.StreamInfo, 0)
 	for {
 		select {
 		case info, ok := <-listener.Info():
 			if !ok {
-				return c.JSON(infos)
+				return c.Status(500).JSON("error reading streams info")
 			}
 			infos = append(infos, info)
 		case err, ok := <-listener.Err():
-			if !ok || ok && errors.Is(err, jetstream.ErrEndOfData) {
-				return c.JSON(infos)
+			if !ok {
+				return c.Status(500).JSON("error reading streams info")
 			}
-			return c.Status(500).JSON(err.Error())
+			if !errors.Is(err, jetstream.ErrEndOfData) {
+				return c.Status(500).JSON(err.Error())
+			}
+			return c.JSON(infos)
 		}
 	}
 }
 
-func (a *App) handleGetStream(c *fiber.Ctx) error {
+func (a *App) handleShowStream(c *fiber.Ctx) error {
 	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
 	if err != nil {
 		return c.Status(404).JSON(err.Error())

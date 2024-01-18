@@ -27,10 +27,12 @@ type NuiTestSuite struct {
 
 func (s *NuiTestSuite) SetupSuite() {
 	s.natsServerOpts = &server.Options{
-		Host:      "localhost",
-		JetStream: true,
-		NoLog:     true,
-		NoSigs:    true,
+		Host:               "localhost",
+		JetStream:          true,
+		NoLog:              false,
+		NoSigs:             false,
+		JetStreamMaxMemory: 1024 * 1024,
+		JetStreamMaxStore:  -1,
 	}
 }
 
