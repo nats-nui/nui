@@ -4,6 +4,7 @@ export interface Connection {
 	hosts: string[]
 	subscriptions: Subscription[]
 	auth: Auth[]
+	status?: CNN_STATUS
 }
 
 export interface Auth {
@@ -14,6 +15,11 @@ export interface Auth {
 	jwt?: string
 	nkey?: string
 	creds?: string
+}
+
+export interface Subscription {
+	subject: string
+	disabled?: boolean
 }
 
 export enum AUTH_MODE {
@@ -29,7 +35,11 @@ export enum AUTH_MODE {
 	CREDS_FILE = "auth_creds_file",
 }
 
-export interface Subscription {
-	subject: string
-	disabled?: boolean
+
+export enum CNN_STATUS {
+	UNDEFINED = "undefined",
+	CONNECTED = "connected",
+	RECONNECTING = "reconnecting",
+	DISCONNECTED = "disconnected",
 }
+

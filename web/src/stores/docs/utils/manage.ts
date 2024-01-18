@@ -1,39 +1,6 @@
-import { POSITION_TYPE } from "@/types";
 import { ViewStore } from "../../stacks/viewBase";
-import { getID } from "./factory";
 
 
-
-/**
- * Permette di aggregare l'array di VIEWs
- * in una struttura ad albero
- */
-export function aggregate(views: ViewStore[]): ViewStore[] {
-	if (!views) return []
-	let lastParent: ViewStore
-	return views.reduce((acc: ViewStore[], view) => {
-		if (view.state.position == POSITION_TYPE.DETACHED) {
-			lastParent = view
-			return acc.concat(lastParent)
-		}
-		if (view.state.position == POSITION_TYPE.LINKED) {
-			view.state.parent = lastParent
-			lastParent.state.linked = view
-			lastParent = view
-		}
-		return acc
-	}, [])
-}
-
-/**
- * Disgrega un array di ViewStore 
- * in maniera da ottenere un array di VIEWs
- */
-export function disgregate(docsView: ViewStore[]): ViewStore[] {
-	let views: ViewStore[] = []
-	forEachDocsView(docsView, (docView) => views.push(docView))
-	return views
-}
 
 /**
  * Cicla tutte le VIEWs di un array compresi i children
@@ -59,7 +26,7 @@ function forEachDocView(view: ViewStore, callback: (view: ViewStore) => any): bo
 export function getById(views: ViewStore[], id: string): ViewStore {
 	let finded: ViewStore = null
 	forEachDocsView(views, (view) => {
-		if (getID(view.state) === id) {
+		if (view.state.uuid === id) {
 			finded = view
 			return true
 		}

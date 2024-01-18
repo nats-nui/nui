@@ -39,7 +39,7 @@ export class SocketService {
 	onOpen: () => void = null
 	// callback su arrivo messaggio
 	onMessage?: (message: PayloadMessage) => void
-	onStatus?: (status: PayloadStatus) => void
+	onStatus?: (payload: PayloadStatus) => void
 	onError?: (error: PayloadError) => void
 
 	constructor(options: SocketOptions = {}) {

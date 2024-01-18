@@ -5,13 +5,18 @@ let timeoutIDs = {};
 /**
  * attende un determinato tempo prima di eseguire una funzione
  * se la funzione è richiamata resetta il tempo e riaspetta
+ * usata per resettare un valore che rimane in loading per troppo tempo
  */
-export function debounce(name: string, callback: () => void, delay: number): void {
+export function debounce(name: string, callback?: () => void, delay?: number): void {
 	if (delay == 0) {
-		callback.apply(this, null);
+		callback?.apply(this, null);
 	} else {
 		let toId = timeoutIDs[name];
-		if (toId != null) clearTimeout(toId);
+		if (toId != null) clearTimeout(toId)
+		if ( !callback ) {
+			delete timeoutIDs[name]
+			return
+		}
 		timeoutIDs[name] = setTimeout(() => {
 			delete timeoutIDs[name];
 			callback.apply(this, null);

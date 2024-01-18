@@ -19,8 +19,15 @@ function serverStart(port = 3111) {
 		const location = url.parse(req.url, true);
 		const { id: cnnId } = location.query
 		console.log("fe:connection:", cnnId);
-		const client = { cnnId, cws }
+		const client = { 
+			cnnId, 
+			cws,
+		}
 		cws.on('message', onMessage(client))
+		cws.on('close', () => {
+			Thread.Find({cnnId})?.stop()
+			console.log(`server:close:${client.cnnId}`);
+		});
 	})
 
 	server.on("error", (error) => {
@@ -54,12 +61,13 @@ const onMessage = client => msgRaw => {
 	const type = msg.type
 	switch (type) {
 		case "subscriptions_req":
-			client.thread?.stop()
+			Thread.Find({cnnId: client.cnnId})?.stop()
 			const subjects = msg.payload.subjects
 			if (Array.isArray(subjects) && subjects.length > 0) {
-				client.thread = new Thread(() => {
-					sendTestMessages(client, subjects)
-				}).start()
+				new Thread(
+					() => sendTestMessages(client, subjects),
+					{ cnnId: client.cnnId }
+				).start()
 			}
 			break
 		case "error":
@@ -68,48 +76,52 @@ const onMessage = client => msgRaw => {
 }
 
 function send(cws, msg) {
-	msg.payload.payload = Buffer.from(msg.payload.payload, "utf8").toString("base64")
+	console.log("BE > FE", msg.type)
 	cws.send(JSON.stringify(msg))
 }
 
-
-
 let messagesSend = 0
+const numMsg = 5000
 
 function sendTestMessages(client, subjects) {
-	subjects.forEach(subject => {
 
+	const subject = subjects[messagesSend % subjects.length]
+
+	if (messagesSend < numMsg) {
+		const json = getJsonData(messagesSend)
+		const payload = Buffer.from(json, "utf8").toString("base64")
 		send(client.cws, {
 			type: "nats_msg",
 			payload: {
 				subject,
-				payload: getJsonData(messagesSend)
+				payload,
 			},
 		})
+	} else if (messagesSend == numMsg) {
+		send(client.cws, {
+			type: "connection_status",
+			payload: {
+				status: "diconnected"
+			},
+		})
+	} else if (messagesSend == numMsg + 2) {
+		send(client.cws, {
+			type: "connection_status",
+			payload: {
+				status: "reconnecting"
+			},
+		})
+	} else if (messagesSend == numMsg + 5) {
+		send(client.cws, {
+			type: "connection_status",
+			payload: {
+				status: "connected"
+			},
+		})
+		messagesSend = 0
+	}
 
-
-
-		// const caseStatus = messagesSend % 10
-		// if ( caseStatus <= 1 ) {
-		// 	send(client.cws, {
-		// 		type: "connection_status",
-		// 		payload: {
-		// 			subject,
-		// 			status: caseStatus == 0 ? "diconnected" : caseStatus == 0
-		// 		},
-		// 	})	
-		// } else if ( messagesSend % 10 == 1 ) {
-		// 	send(client.cws, {
-		// 		type: "connection_status",
-		// 		payload: {
-		// 			subject,
-		// 			status: "reconnecting"
-		// 		},
-		// 	})	
-		// }
-
-		messagesSend++
-	})
+	messagesSend++
 }
 
 function getJsonData(index) {

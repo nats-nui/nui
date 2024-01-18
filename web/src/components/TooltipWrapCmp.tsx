@@ -28,7 +28,6 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
 		const elem = e.target as HTMLElement
 		const { x, y, width, height } = elem.getBoundingClientRect()
-		console.log( x + (width / 2))
 		tooltipSo.open({
 			content,
 			position: { x: x + (width / 2), y },

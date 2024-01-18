@@ -59,7 +59,7 @@ const setup = {
 		},
 		//#endregion
 
-		/** ripristino la CONNECTION visualizzata da quellacontenuta elle CONNECTIONS */
+		/** ripristino la CONNECTION visualizzata da quella contenuta nelle CONNECTIONS */
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
 			store.setConnection(cnn)

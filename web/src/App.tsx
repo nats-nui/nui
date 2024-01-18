@@ -1,3 +1,4 @@
+import srcBg from "@/assets/bg4.jpg"
 import docSo, { DocState } from "@/stores/docs"
 import layoutSo, { LayoutState } from "@/stores/layout"
 import { ViewStore } from "@/stores/stacks/viewBase"
@@ -5,11 +6,9 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
 import CardCmp from "./CardCmp"
 import DragCmp from "./components/DragCmp"
-import MainMenu from "./components/MainMenu"
+import MainMenu from "./components/mainMenu/MainMenu"
 import TooltipCmp from "./components/TooltipCmp"
-import { getID } from "./stores/docs/utils/factory"
 import { Theme } from "./stores/layout/utils"
-import srcBg from "@/assets/bg4.jpg"
 
 
 const App: FunctionComponent = () => {
@@ -36,7 +35,7 @@ const App: FunctionComponent = () => {
 
 				<div style={cssFixed}>
 					{storesAnchored.map((store: ViewStore) =>
-						<CardCmp key={getID(store.state)}
+						<CardCmp key={store.state.uuid}
 							store={store}
 						/>
 					)}
@@ -45,7 +44,7 @@ const App: FunctionComponent = () => {
 
 				<div style={cssVisible}>
 					{stores.map((store: ViewStore) =>
-						<CardCmp key={getID(store.state)}
+						<CardCmp key={store.state.uuid}
 							store={store}
 						/>
 					)}
