@@ -55,7 +55,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
 			<DocCmp view={view} />
-			<ModalCmp view={view} />
+			{/* <ModalCmp view={view} /> */}
 		</div>
 
 		<div style={cssDesk}>

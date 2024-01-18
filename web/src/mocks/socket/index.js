@@ -78,6 +78,7 @@ let messagesSend = 0
 
 function sendTestMessages(client, subjects) {
 	subjects.forEach(subject => {
+
 		send(client.cws, {
 			type: "nats_msg",
 			payload: {
@@ -85,6 +86,28 @@ function sendTestMessages(client, subjects) {
 				payload: getJsonData(messagesSend)
 			},
 		})
+
+
+
+		// const caseStatus = messagesSend % 10
+		// if ( caseStatus <= 1 ) {
+		// 	send(client.cws, {
+		// 		type: "connection_status",
+		// 		payload: {
+		// 			subject,
+		// 			status: caseStatus == 0 ? "diconnected" : caseStatus == 0
+		// 		},
+		// 	})	
+		// } else if ( messagesSend % 10 == 1 ) {
+		// 	send(client.cws, {
+		// 		type: "connection_status",
+		// 		payload: {
+		// 			subject,
+		// 			status: "reconnecting"
+		// 		},
+		// 	})	
+		// }
+
 		messagesSend++
 	})
 }

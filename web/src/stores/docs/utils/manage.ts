@@ -37,6 +37,7 @@ export function disgregate(docsView: ViewStore[]): ViewStore[] {
 
 /**
  * Cicla tutte le VIEWs di un array compresi i children
+ * se il callback restituisce true allora termina
  */
 export function forEachDocsView(views: ViewStore[], callback: (view: ViewStore) => any): boolean {
 	if (!views) return
