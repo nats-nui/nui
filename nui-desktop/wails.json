@@ -1,0 +1,15 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "nui-deskop",
+  "outputfilename": "nui-desktop",
+  "frontend:install": "npm install --prefix ../web",
+  "frontend:dir": "../web",
+  "wailsjsdir": "../web/src/api",
+  "frontend:build": "npm run build-desktop",
+  "frontend:dev:watcher": "npm run dev-desktop",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "pricelessrabbit",
+    "email": "pricelessrabbit@gmail.com"
+  }
+}
