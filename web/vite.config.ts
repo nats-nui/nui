@@ -5,14 +5,20 @@ import path from 'path'
 
 
 // https://vitejs.dev/config/
-export default defineConfig({
-    plugins: [react()],
-    build: {
-        sourcemap: true,
-    },
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, './src')
+export default defineConfig (( ) => {
+    const target = process.env.VITE_TARGET
+    const isDesktop = target == "desktop"
+    console.log(isDesktop)
+    return {
+        plugins: [react()],
+        build: {
+            outDir: isDesktop ? '../nui-desktop/frontend/dist' : 'dist',
+            sourcemap: true,
+        },
+        resolve: {
+            alias: {
+                '@': path.resolve(__dirname, './src')
+            }
         }
     }
 })

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "dev-desktop": "cross-env VITE_TARGET=desktop vite",
+    "build": "tsc && cross-env VITE_TARGET=web vite build",
+    "build-desktop": "tsc && cross-env VITE_TARGET=desktop vite build",
     "typescript": "tsc",
     "start:socket:mock": "node ./src/mocks/socket/index.js",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -16,9 +18,11 @@
     "@priolo/jon": "C:/Users/ivano.iorio/Documents/jon"
   },
   "dependencies": {
-    "@monaco-editor/react": "^4.6.0",
     "@fontsource/darker-grotesque": "^5.0.8",
     "@priolo/jon": "^0.7.4",
+    "@monaco-editor/react": "^4.6.0",
+    "@priolo/jon": "^0.7.2",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

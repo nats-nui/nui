@@ -1,14 +1,24 @@
 import { Reconnect } from "./reconnect.js";
 import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
 
-
-
-const optionsDefault: SocketOptions = {
-	protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
-	host: window.location.hostname,
-	port: import.meta.env.VITE_API_WS_PORT ?? window.location.port,
-	base: "",
+const wsUrlBuilder = () => {
+	if(import.meta.env.VITE_TARGET =="desktop"){
+		return {
+			protocol: "ws:",
+			host: "localhost",
+			port: 3111,
+			base: "",
+		}
+	}
+	return {
+		protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
+		host: window.location.hostname,
+		port: import.meta.env.VITE_API_WS_PORT ?? window.location.port,
+		base: "",
+	}
 }
+
+const optionsDefault: SocketOptions = wsUrlBuilder()
 
 /**
  * Crea una connessione WS

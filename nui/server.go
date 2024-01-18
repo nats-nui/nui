@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/connection"
@@ -28,6 +29,11 @@ func NewServer(port string, nui *Nui) *App {
 		Port: port,
 		nui:  nui,
 	}
+	// Or extend your config for customization
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://wails.localhost, wails://wails, wails://localhost",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 	app.registerHandlers()
 	return app
 }

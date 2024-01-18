@@ -16,13 +16,18 @@ interface CallOptions {
 	noDialogError?: boolean,
 }
 
+const httpUrlBuilder = () => {
+	if(import.meta.env.VITE_TARGET == "desktop") return "http://localhost:3111/api/"
+	return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
+}
+
 const optionsParamDefault:CallOptions = {
 	isLogin: false,
 	noBusy: false,
 	noDialogError: false,
 }
 const optionsDefault:Options = {
-	baseUrl: import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL,
+	baseUrl: httpUrlBuilder(),
 }
 
 
@@ -38,6 +43,7 @@ export class AjaxService {
 		return await this.send(url, METHOD.POST, data, options)
 	}
 	async get(url:string, data?:any, options?:CallOptions) {
+		//console.log(`target: ${import.meta.env.VITE_TARGET}`)
 		return await this.send(url, METHOD.GET, data, options)
 	}
 	async patch(url:string, data?:any, options?:CallOptions) {
