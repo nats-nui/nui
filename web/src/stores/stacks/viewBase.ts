@@ -1,10 +1,10 @@
-import { ANIM_TIME, DOC_ANIM, DOC_TYPE, POSITION_TYPE } from "@/types"
-import { delay } from "@/utils/time"
-import { StoreCore } from "@priolo/jon"
-import { COLOR_VAR } from "../layout"
 import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
+import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
+import { delay } from "@/utils/time"
+import { StoreCore } from "@priolo/jon"
 import { buildStore } from "../docs/utils/factory"
+import { COLOR_VAR } from "../layout"
 import { VIEW_SIZE } from "./utils"
 
 
@@ -31,9 +31,6 @@ const viewSetup = {
 		/** il corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
-		/** dove è appiccicata 
-		 * DA ELIMINARE */
-		position: POSITION_TYPE.DETACHED,
 		/** la sua VIEW PARENT */
 		parent: <ViewStore>null,
 		/** la sua VIEW LINKED */
@@ -111,13 +108,11 @@ const viewSetup = {
 		setLinked: (view: ViewStore, store?: ViewStore) => {
 			if (!view) {
 				if (!!store.state.linked) {
-					store.state.linked.state.position = null
 					store.state.linked.state.parent = null
 				}
 				store.state.linked = null
 			} else {
 				view.state.parent = store
-				view.state.position = POSITION_TYPE.LINKED
 				store.state.linked = view
 			}
 			return store

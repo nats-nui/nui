@@ -1,11 +1,10 @@
-import { DOC_ANIM, POSITION_TYPE } from "@/stores/docs/types"
+import { DOC_ANIM } from "@/stores/docs/types"
 import { delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
-import { buildStore, getID } from "./utils/factory"
-import { forEachDocsView, getById } from "./utils/manage"
 import { dbLoad, dbSave } from "./utils/db"
-import { VIEW_SIZE } from "../stacks/utils"
+import { buildStore } from "./utils/factory"
+import { forEachDocsView, getById } from "./utils/manage"
 
 
 
@@ -49,7 +48,7 @@ const setup = {
 
 	actions: {
 		focus(view: ViewStore, store?: DocStore) {
-			const elm = document.getElementById(getID(view.state))
+			const elm = document.getElementById(view.state.uuid)
 			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 			store.setFocus(view)
 		},
@@ -57,13 +56,12 @@ const setup = {
 			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
 			store?: DocStore
 		) {
+			// se c'e' gia' setto solo il focus
 			if ( forEachDocsView(store.state.all, (v)=> v.state.uuid==view.state.uuid ) ) {
-				console.log("c'e' gia'!!!")
 				store.setFocus(view)
 				return
 			}
 			view.state.parent = null
-			view.state.position = POSITION_TYPE.DETACHED
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
 			if (index < store.state.anchored) {
@@ -118,8 +116,7 @@ const setup = {
 				}
 				if (index != -1) views.splice(index, 1)
 				view.state.parent = null
-				view.state.position = null
-
+				
 				// LINKED
 			} else {
 				view.state.parent.setLinked(null)

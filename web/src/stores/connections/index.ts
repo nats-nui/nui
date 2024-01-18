@@ -19,7 +19,7 @@ const setup = {
 			if (!id) return null
 			return store.state.all?.findIndex(cnn => cnn.id == id)
 		},
-		
+
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ConnectionStore) => "CONNECTIONS",
 		//#endregion
@@ -36,15 +36,18 @@ const setup = {
 		},
 		async save(cnn: Connection, store?: ConnectionStore) {
 			const cnnSaved = await cnnApi.save(cnn)
+			store.update(cnnSaved)
+			return cnnSaved
+		},
+		update(cnn: Partial<Connection>, store?: ConnectionStore) {
 			const cnns = [...store.state.all]
 			const index = !cnn.id ? -1 : store.getIndexById(cnn.id)
 			if (index == -1) {
-				cnns.push(cnnSaved)
+				cnns.push(cnn as Connection)
 			} else {
-				cnns[index] = cnnSaved
+				cnns[index] = { ...cnns[index], ...cnn }
 			}
 			store.setAll(cnns)
-			return cnnSaved
 		},
 	},
 

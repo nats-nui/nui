@@ -6,17 +6,19 @@ import React, { FunctionComponent } from "react"
 interface Props {
 	selected?: boolean
 	title: string
+	icon?: React.ReactNode
 	subtitle?: string
 	variant?: number
-	onClick?: (e:React.MouseEvent<HTMLDivElement>) => void
+	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 /**
  * riga generica di lista figa
  */
-const CnnRow: FunctionComponent<Props> = ({
+const ElementRow: FunctionComponent<Props> = ({
 	title,
 	subtitle,
+	icon,
 	selected,
 	variant = 0,
 	onClick,
@@ -34,19 +36,28 @@ const CnnRow: FunctionComponent<Props> = ({
 	return <div style={cssRow(selected, variant)}
 		onClick={onClick}
 	>
-		<div style={layoutSo.state.theme.texts.row.title}>{title}</div>
-		<div style={layoutSo.state.theme.texts.row.subtitle}>{subtitle}</div>
+		{icon}
+		<div style={cssLabels}>
+			<div style={layoutSo.state.theme.texts.row.title}>{title}</div>
+			<div style={layoutSo.state.theme.texts.row.subtitle}>{subtitle}</div>
+		</div>
 	</div>
 }
 
-export default CnnRow
+export default ElementRow
 
-const cssRow = (select: boolean, variant:number): React.CSSProperties => ({
-	display: "flex", flexDirection: "column",
+const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
+	display: "flex", alignItems: "center",
 	cursor: "pointer",
 	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
 	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
-	margin: "3px -10px 0px 0px",
+	margin: "3px -10px 0px -5px",
 	borderRadius: "20px 0px 0px 20px",
-	padding: "4px 15px",
+	padding: '4px 0px 4px 12px',
 })
+
+const cssLabels: React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
+	marginLeft: '8px',
+}

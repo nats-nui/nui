@@ -1,12 +1,12 @@
 import srcIcon from "@/assets/MessagesIcon.svg"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage } from "@/plugins/SocketService/types"
+import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { DOC_TYPE, Subscription } from "@/types"
+import { CNN_STATUS, Connection, DOC_TYPE, Subscription } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
@@ -40,8 +40,8 @@ const setup = {
 		},
 		getHistoryFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()
-			if ( !text || text.trim().length == 0 ) return store.state.history
-			return store.state.history.filter( h => 
+			if (!text || text.trim().length == 0) return store.state.history
+			return store.state.history.filter(h =>
 				h.body.toLowerCase().includes(text)
 				|| h.title.toLowerCase().includes(text)
 			)
@@ -64,7 +64,7 @@ const setup = {
 			}
 		},
 		//#endregion
-		
+
 	},
 
 	actions: {
@@ -79,24 +79,30 @@ const setup = {
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},
-		onCreate(_: void, store?: ViewStore) {
-			const msgSo = <MessagesStore>store
-			const cnnId = msgSo.state.connectionId
-			const ss = socketPool.create(store.state.uuid, cnnId)
-			ss.onOpen = () => msgSo.sendSubscriptions()
-			ss.onMessage = message => msgSo.addInHistory(message)
-			ss.onStatus = status => {
+		// onCreate(_: void, store?: ViewStore) {
+		// },
+		// onDestroy(_: void, store?: ViewStore) {
+		// },
+		//#endregion
 
+
+		connect(_: void, store?: MessagesStore) {
+			const ss = socketPool.create(store.state.uuid, store.state.connectionId)
+			ss.onOpen = () => {
+				store.sendSubscriptions()
+				cnnSo.update({ id: store.state.connectionId, status: CNN_STATUS.CONNECTED })
+			}
+			ss.onMessage = message => store.addInHistory(message)
+			ss.onStatus = (payload: PayloadStatus) => {
+				cnnSo.update({ id: store.state.connectionId, status: payload.status })
 			}
 			ss.onError = error => {
-				
+
 			}
 		},
-		onDestroy(_: void, store?: ViewStore) {
+		disconnect(_: void, store?: MessagesStore) {
 			socketPool.destroy(store.state.uuid)
-			viewSetup.actions.onDestroy(null, store)
 		},
-		//#endregion
 
 		/** aggiungo alla history di questo stack */
 		addInHistory(message: PayloadMessage, store?: MessagesStore) {
@@ -159,13 +165,13 @@ const setup = {
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
 
-	onListenerChange: (store:MessagesStore) => {
+	onListenerChange: (store: MessagesStore) => {
 		console.log("CREATE", store._listeners.size)
-		// if ( store._listeners.size == 1 ) {
-		// 	store.onCreate()
-		// } else if (store._listeners.size == 0 ) {
-		// 	store.onDestroy()
-		// }
+		if ( store._listeners.size == 1 ) {
+			store.connect()
+		} else if (store._listeners.size == 0 ) {
+			store.disconnect()
+		}
 	}
 }
 

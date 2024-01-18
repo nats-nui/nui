@@ -1,12 +1,13 @@
 import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/stores/docs/types"
 import { dbLoad, dbSave } from "@/stores/docs/utils/db"
-import { buildStore, getID } from "@/stores/docs/utils/factory"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useMemo } from "react"
-import IconRow from "./rows/IconRow"
+import { buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
+import { useStore } from "@priolo/jon"
+import React, { FunctionComponent } from "react"
+import IconRow from "../rows/IconRow"
+import StoreIcon from "./StoreIcon"
+
 
 
 interface Props {
@@ -22,7 +23,6 @@ const MainMenu: FunctionComponent<Props> = ({
 
 	// HOOKS
 	
-
 	// HANDLERS
 	const handleNodes = () => {
 		const cnnStore = buildStore({
@@ -43,12 +43,6 @@ const MainMenu: FunctionComponent<Props> = ({
 		})
 		docSo.setAll(stores)
 	}
-	const handleOpenStoreClick = (view: ViewStore) => {
-		docSo.add({ view, anim: true })
-	}
-	const handleCloseStoreClick = (store: ViewStore) => {
-		docSo.uniconize(store)
-	}
 
 	// RENDER
 	const stores =  docSa.menu
@@ -62,13 +56,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		{/* <button onClick={handleLoad}>LOAD</button>
 		<button onClick={handleSave}>SAVE</button> */}
 		{stores.map((store) => (
-			<IconRow key={getID(store.state)} selected
-				title={store.getTitle()}
-				subtitle={store.getSubTitle()}
-				variant={store.getColorVar()} 
-				onClick={() => handleOpenStoreClick(store)}
-				onClose={() => handleCloseStoreClick(store)}
-			/>
+			<StoreIcon key={store.state.uuid} store={store} />
 		))}
 	</div>
 }

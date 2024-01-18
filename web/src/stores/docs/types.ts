@@ -10,11 +10,6 @@ export enum DOC_TYPE {
 	STREAM = "str2",
 }
 
-export enum POSITION_TYPE {
-	LINKED = "lnk",
-	DETACHED = "dtc"
-}
-
 export enum DOC_ANIM {
 	SHOW="show",
 	EXIT="exit",

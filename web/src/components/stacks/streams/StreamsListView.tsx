@@ -1,6 +1,6 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import CnnRow from "@/components/rows/CnnRow"
+import ElementRow from "@/components/rows/ElementRow"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { Stream } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
@@ -59,7 +59,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 		</>}
 	>
 		{streams.map(stream => (
-			<CnnRow key={stream.id}
+			<ElementRow key={stream.id}
 				title={getTitle(stream)}
 				subtitle={getSubtitle(stream)}
 				selected={isSelected(stream)}

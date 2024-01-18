@@ -73,8 +73,8 @@ const setup = {
 				anim: !idSelPrev || !idSel,
 			})
 		},
-		/** creo un nuovo STORE DETTAGLIO CONNECTION
-		 * e lo visualizzo nello STACK della lista CONNECTION */
+
+		/** creo una nuova CONNECTION e apro la CARD del DETAIL */
 		create(_: void, store?: CnnListStore) {
 			store.setSelectId(null)
 			const view = buildStore({
