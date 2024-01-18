@@ -1,7 +1,7 @@
 import { Reconnect } from "./reconnect.js";
 import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
 
-const urlBuilder = () => {
+const wsUrlBuilder = () => {
 	if(import.meta.env.VITE_TARGET =="desktop"){
 		return {
 			protocol: "ws:",
@@ -18,7 +18,7 @@ const urlBuilder = () => {
 	}
 }
 
-const optionsDefault: SocketOptions = { ...urlBuilder() }
+const optionsDefault: SocketOptions = wsUrlBuilder()
 
 /**
  * Crea una connessione WS

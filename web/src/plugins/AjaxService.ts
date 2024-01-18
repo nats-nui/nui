@@ -16,7 +16,7 @@ interface CallOptions {
 	noDialogError?: boolean,
 }
 
-const urlBuilder = () => {
+const httpUrlBuilder = () => {
 	if(import.meta.env.VITE_TARGET == "desktop") return "http://localhost:3111/api/"
 	return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
 }
@@ -27,7 +27,7 @@ const optionsParamDefault:CallOptions = {
 	noDialogError: false,
 }
 const optionsDefault:Options = {
-	baseUrl: urlBuilder(),
+	baseUrl: httpUrlBuilder(),
 }
 
 
