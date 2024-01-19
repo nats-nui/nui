@@ -25,6 +25,8 @@ const MainMenu: FunctionComponent<Props> = ({
 	
 	// HANDLERS
 	const handleNodes = () => {
+		// se c'e' gia' una singletone-card allora setto solo il fuoco
+		if ( docSo.state.all.some(v => v.state.type == DOC_TYPE.CONNECTIONS)) return
 		const cnnStore = buildStore({
 			type: DOC_TYPE.CONNECTIONS,
 		})

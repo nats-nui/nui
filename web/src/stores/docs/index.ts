@@ -1,10 +1,11 @@
-import { DOC_ANIM } from "@/stores/docs/types"
+import { DOC_ANIM, DOC_TYPE } from "@/stores/docs/types"
 import { delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
 import { forEachDocsView, getById } from "./utils/manage"
+import { VIEW_PARAMS } from "../stacks/utils"
 
 
 
@@ -57,7 +58,7 @@ const setup = {
 			store?: DocStore
 		) {
 			// se c'e' gia' setto solo il focus
-			if ( forEachDocsView(store.state.all, (v)=> v.state.uuid==view.state.uuid ) ) {
+			if (  forEachDocsView(store.state.all, (v)=> v.state.uuid==view.state.uuid ) ) {
 				store.setFocus(view)
 				return
 			}
