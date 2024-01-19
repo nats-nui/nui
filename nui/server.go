@@ -48,8 +48,8 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
-	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
 	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
+	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
@@ -194,7 +194,7 @@ func (a *App) handleShowStream(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
-	return c.JSON(info.Config)
+	return c.JSON(info)
 }
 
 func (a *App) handleCreateStream(c *fiber.Ctx) error {

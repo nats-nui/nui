@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -82,7 +84,8 @@ func (s *NuiTestSuite) TestStreamRest() {
 		Status(http.StatusOK).JSON().Object()
 	r2.Value("name").String().IsEqual("stream1")
 	r2.Value("subjects").Array().ContainsAll("sub1", "sub2")
-
+	ss, _ := json.Marshal(r2.Raw())
+	fmt.Print(ss)
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
