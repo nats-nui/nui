@@ -115,9 +115,9 @@ DELETE /api/connection/:id
 ```
 GET /api/cconnection/:conn_id/stream -> stream info[]
 GET /api/cconnection/:conn_id/stream/:id -> stream info
-POST /api/connection/:conn_id/stream -> stream info
-POST /api/connection/:conn_id/stream/:id 
-DELETE /api/connection/:id
+POST /api/connection/:conn_id/stream (stream config) -> stream info
+POST /api/connection/:conn_id/stream/:id (stream config) -> stream info
+DELETE /api/connection/:conn_id/stream/:id
 ```
 
 ### TO publish a message
