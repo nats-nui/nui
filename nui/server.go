@@ -273,6 +273,74 @@ func (a *App) handleDeleteStream(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
+func (a *App) handlePurgeStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	var options []jetstream.StreamPurgeOpt
+	reqOptions := &map[string]any{}
+
+	err = c.BodyParser(&reqOptions)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+
+	if reqOptions != nil {
+		for key, value := range *reqOptions {
+			switch key {
+			case "seq":
+				options = append(options, jetstream.WithPurgeSequence(value.(uint64)))
+			case "keep":
+				options = append(options, jetstream.WithPurgeKeep(value.(uint64)))
+			case "subject":
+				options = append(options, jetstream.WithPurgeSubject(value.(string)))
+			}
+		}
+	}
+	err = stream.Purge(c.Context(), options...)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.SendStatus(200)
+}
+
+func (a *App) handleSealStream(c *fiber.Ctx) error {
+	//conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	//if err != nil {
+	//	return c.Status(404).JSON(err.Error())
+	//}
+	//js, err := jetstream.New(conn.Conn)
+	//if err != nil {
+	//	return c.Status(422).JSON(err.Error())
+	//}
+	//streamName := c.Params("stream_name")
+	//if streamName == "" {
+	//	return c.Status(422).JSON("stream_name is required")
+	//}
+	//stream, err := js.Stream(c.Context(), streamName)
+	//if err != nil {
+	//	return c.Status(422).JSON(err.Error())
+	//}
+	//
+	//if err != nil {
+	//	return c.Status(500).JSON(err.Error())
+	//}
+	return c.SendStatus(200)
+}
+
 func (a *App) handlePublish(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
