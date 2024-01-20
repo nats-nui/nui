@@ -5,6 +5,7 @@ import messagesSetup from "@/stores/stacks/messages";
 import messageSendSetup from "@/stores/stacks/send";
 import streamsSetup from "@/stores/stacks/streams";
 import streamSetup from "@/stores/stacks/streams/detail";
+import logsSetup from "@/stores/stacks/mainLogs";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
@@ -35,6 +36,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.MESSAGE_SEND]: messageSendSetup,
 		[DOC_TYPE.STREAMS]: streamsSetup,
 		[DOC_TYPE.STREAM]: streamSetup,
+		[DOC_TYPE.LOGS]: logsSetup,
 	}[state.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

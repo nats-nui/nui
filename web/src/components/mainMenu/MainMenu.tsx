@@ -24,13 +24,17 @@ const MainMenu: FunctionComponent<Props> = ({
 	// HOOKS
 	
 	// HANDLERS
-	const handleNodes = () => {
+	const handleConnectionsClick = () => {
 		// se c'e' gia' una singletone-card allora setto solo il fuoco
 		if ( docSo.state.all.some(v => v.state.type == DOC_TYPE.CONNECTIONS)) return
-		const cnnStore = buildStore({
-			type: DOC_TYPE.CONNECTIONS,
-		})
-		docSo.add({ view: cnnStore, anim: true })
+		const view = buildStore({ type: DOC_TYPE.CONNECTIONS })
+		docSo.add({ view, anim: true })
+	}
+	const handleLogsClick = () => {
+		// se c'e' gia' una singletone-card allora setto solo il fuoco
+		if ( docSo.state.all.some(v => v.state.type == DOC_TYPE.LOGS)) return
+		const view = buildStore({ type: DOC_TYPE.LOGS })
+		docSo.add({ view, anim: true })
 	}
 	const handleSave = async () => {
 		const states = docSo.state.all.map(store => store.getSerialization())
@@ -49,8 +53,8 @@ const MainMenu: FunctionComponent<Props> = ({
 	// RENDER
 	const stores =  docSa.menu
 
-	return <div style={{ ...cssContainer, ...style }}>
-		<IconRow onClick={handleNodes} 
+	return <div style={{  ...cssContainer, ...style }}>
+		<IconRow onClick={handleConnectionsClick} 
 			title="CONNECTIONS" 
 			variant={COLOR_VAR.GREEN} 
 			selected
@@ -60,6 +64,12 @@ const MainMenu: FunctionComponent<Props> = ({
 		{stores.map((store) => (
 			<StoreIcon key={store.state.uuid} store={store} />
 		))}
+		<div style={{ flex: 1}} />
+		<IconRow onClick={handleLogsClick} 
+			title="LOGS" 
+			variant={COLOR_VAR.GREEN} 
+			selected
+		/>
 	</div>
 }
 
