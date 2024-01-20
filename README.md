@@ -111,9 +111,9 @@ modes:
 ### stream purge req
 ```
 {
-  "seq": 0, //integer, omit if not set
-  "filter": "foo.bar", // string (subject), omit if not set
-  "keep": 1 // integere, omit if not set
+  "seq": 0, //integer, omit if not set!
+  "filter": "foo.bar", // string (subject), omit if not set!
+  "keep": 1 // integere, omit if not set!
 }
 ```
 
