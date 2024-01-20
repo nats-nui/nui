@@ -77,17 +77,20 @@ modes:
     "cluster": "", // string, omitted if empty
     "tags": [] // array of strings, omitted if empty
   },
-  "mirror": { // object, omitted if null, not editable
+  "mirror": { // object, omitted if null, not editable, "name" is taken from stream names
     "name": "", // string, omitted if empty
     "opt_start_seq": 0, // integer, omitted if zero
     "filter_subject": "" // string, omitted if empty
   },
-  "sources": [ // array of objects, omitted if empty
+  "sources": [ // array of objects, omitted if empty, "name" is taken from stream names
     {
       "name": "", // string, omitted if empty
       "opt_start_seq": 0, // integer, omitted if zero
       "filter_subject": "", // string, omitted if empty
-      "external": null, // object, omitted if null
+      "external": { // object, omitted if null
+          "api": "" // string
+          "deliver": "" // string
+      }
       "domain": "" // string, omitted if empty
     }
   ],
