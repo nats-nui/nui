@@ -128,7 +128,6 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		<TextInput
 			value={streamSa.stream.name}
 			onChange={handleNameChange}
-			variant={variant}
 			readOnly={readOnly}
 		/>
 
@@ -136,7 +135,6 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		<TextInput
 			value={streamSa.stream.description}
 			onChange={handleDescriptionChange}
-			variant={variant}
 			readOnly={readOnly}
 		/>
 
@@ -253,7 +251,6 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					style={{ flex: 1 }}
 					value={streamSa.stream.maxBytes}
 					onChange={handleMaxBytesChange}
-					variant={variant}
 					readOnly={readOnly}
 				/>
 				<ListDialog

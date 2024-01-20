@@ -54,7 +54,6 @@ const MessageSendView: FunctionComponent<Props> = ({
 	>
 		<div style={cssForm}>
 			<TextArea style={{ flex: 1 }}
-				variant={variant}
 				value={sendSa.text}
 				onChange={handleTextChange}
 			/>
