@@ -47,6 +47,9 @@ modes:
 
 ### Stream
 ```json
+
+// stream info
+
 {
     "config": <streamconfig>,
     "state": <stream-state>
