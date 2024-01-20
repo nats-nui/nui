@@ -135,7 +135,6 @@ POST /api/connection/:conn_id/stream/:name (stream config) -> stream info
 DELETE /api/connection/:conn_id/stream/:name
 
 POST /api/connection/:conn_id/stream/:name/purge
-POST /api/connection/:conn_id/stream/:name/seal
 
 
 ```
