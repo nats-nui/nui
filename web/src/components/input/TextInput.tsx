@@ -1,5 +1,4 @@
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import React, { ForwardRefRenderFunction, FunctionComponent, InputHTMLAttributes, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
+import React, { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import Label, { LABELS } from "./Label"
 
 
@@ -8,7 +7,6 @@ export interface TextInputProps {
 	value?: string | number
 	placeholder?: string
 	readOnly?: boolean
-	variant?: number
 	style?: React.CSSProperties
 	focus?: boolean
 
@@ -22,7 +20,6 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		value,
 		placeholder,
 		readOnly,
-		variant,
 		style,
 		focus,
 
@@ -56,9 +53,9 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 
 	return (
 		<input ref={inputRef}
-			style={{ ...cssRoot(variant), ...style }}
+			style={{ ...cssRoot, ...style }}
 			placeholder={placeholder}
-			className={`var${0}`}
+			
 			value={value}
 			onChange={handleChange}
 			onFocus={handleFocus}
@@ -69,16 +66,9 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 
 export default forwardRef(TextInput)
 
-const cssRoot = (variant: number): React.CSSProperties => ({
-	//... !noBg && {
-	//backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT]?.bg,
-	//color: layoutSo.state.theme.palette.var[variant]?.fg,
-
+const cssRoot: React.CSSProperties = {
 	borderBottom: "1px solid rgb(0 0 0 / 15%)",
-	//border: "1px solid rgb(0 0 0 / 30%)",
-	//borderRadius: 3,
-	//},
 	padding: "4px 3px 3px 3px",
 	fontSize: 12,
 	fontWeight: 600,
-})
+}

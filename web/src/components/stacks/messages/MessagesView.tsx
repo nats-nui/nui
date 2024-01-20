@@ -86,7 +86,6 @@ const MessagesView: FunctionComponent<Props> = ({
 			<FindInput
 				value={textFind}
 				onChange={handleSearchChange}
-				variant={variant}
 			/>
 			<Button
 				select={msgSa.formatsOpen}

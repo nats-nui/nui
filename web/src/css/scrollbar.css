@@ -24,26 +24,26 @@
   background: var(--var-0);
 }
 
-.var0::-webkit-scrollbar-thumb:hover {
+.var0 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-0);
 }
 
-.var1::-webkit-scrollbar-thumb:hover {
+.var1 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-1);
 }
 
-.var2::-webkit-scrollbar-thumb:hover {
+.var2 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-2);
 }
 
-.var3::-webkit-scrollbar-thumb:hover {
+.var3 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-3);
 }
 
-.var4::-webkit-scrollbar-thumb:hover {
+.var4 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-4);
 }
 
-.var5::-webkit-scrollbar-thumb:hover {
+.var5 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-5);
 }
