@@ -19,32 +19,32 @@ textarea::selection {
   color: var(--text-bg);
 }
 
-textarea.var0::selection {
+.var0 textarea::selection {
   background: var(--var-0);
   color: var(--text-bg);
 }
 
-textarea.var1::selection {
+.var1 textarea::selection {
   background: var(--var-1);
   color: var(--text-bg);
 }
 
-textarea.var2::selection {
+.var2 textarea::selection {
   background: var(--var-2);
   color: var(--text-bg);
 }
 
-textarea.var3::selection {
+.var3 textarea::selection {
   background: var(--var-3);
   color: var(--text-bg);
 }
 
-textarea.var4::selection {
+.var4 textarea::selection {
   background: var(--var-4);
   color: var(--text-bg);
 }
 
-textarea.var5::selection {
+.var5 textarea::selection {
   background: var(--var-5);
   color: var(--text-bg);
 }

@@ -44,11 +44,15 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
 		width: view.getWidth(),
-		...haveFocus ? { /*boxSizing: "border-box",*/ border: `1px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
+		...haveFocus ? { /*boxSizing: "border-box",*/ border: `2px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
 		...view.getStyAni(),
 	}
 
-	return <div style={cssRoot(deep)} id={view.state.uuid}>
+	return <div
+		id={view.state.uuid}
+		style={cssRoot(deep)} 
+		className={`var${view.getColorVar()}`}
+	>
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>

@@ -7,10 +7,9 @@ import SettingsIcon from "@/icons/SettingsIcon"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { CnnListStore } from "@/stores/stacks/connection/list"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import CnnDetailCmp from "./CnnDetailCmp"
 
 

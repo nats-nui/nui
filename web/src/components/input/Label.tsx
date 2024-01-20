@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from "react"
 
+
+
 export enum LABELS {
 	TEXT = 0,
 	READ,
@@ -13,7 +15,6 @@ interface Props {
 	onClick?: (e: React.MouseEvent) => void
 	children?: React.ReactNode
 	style?: React.CSSProperties
-
 }
 
 const Label: FunctionComponent<Props> = ({

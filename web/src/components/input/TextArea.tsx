@@ -7,14 +7,12 @@ interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
 	style?: React.CSSProperties
-	variant?: number
 }
 
 const TextArea: FunctionComponent<Props> = ({
 	value,
 	onChange,
 	style,
-	variant = 0,
 }) => {
 	// STORE
 
@@ -26,7 +24,6 @@ const TextArea: FunctionComponent<Props> = ({
 	// RENDER
 	return (
 		<textarea style={{ ...cssRoot, ...style }}
-			className={`var${variant}`}
 			value={value}
 			onChange={handleChange}
 		/>

@@ -72,7 +72,7 @@ const setup = {
 			const msgStore = buildStore({
 				type: DOC_TYPE.MESSAGES,
 				connectionId: cnn.id,
-				subscriptions: [...cnn.subscriptions]
+				subscriptions: [...(cnn?.subscriptions ?? [])]
 			} as MessagesState) as MessagesStore
 			docsSo.addLink({
 				view: msgStore,
