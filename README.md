@@ -94,7 +94,7 @@ modes:
       "domain": "" // string, omitted if empty
     }
   ],
-  "sealed": false, // boolean, omitted if false, read only
+  "sealed": false, // boolean, omitted if false
   "deny_delete": false, // boolean, omitted if false, not editable
   "deny_purge": false, // boolean, omitted if false, not editable
   "allow_rollup_hdrs": false, // boolean, omitted if false
