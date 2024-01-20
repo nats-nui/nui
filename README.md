@@ -88,7 +88,7 @@ modes:
       "domain": "" // string, omitted if empty
     }
   ],
-  "sealed": false, // boolean, omitted if false
+  "sealed": false, // boolean, omitted if false, read only
   "deny_delete": false, // boolean, omitted if false, not editable
   "deny_purge": false, // boolean, omitted if false, not editable
   "allow_rollup_hdrs": false, // boolean, omitted if false
@@ -102,6 +102,15 @@ modes:
 }
 ```
 
+### stream purge req
+```
+{
+  "seq": 0, //integer, omit if not set
+  "filter": "foo.bar", // string (subject), omit if not set
+  "keep": 1 // integere, omit if not set
+}
+```
+
 #### CRUD on connection
 ```
 GET /api/cconnection
@@ -111,13 +120,18 @@ DELETE /api/connection/:id
 ```
 
 
-#### CRUD on streams
+#### REST on streams
 ```
 GET /api/cconnection/:conn_id/stream -> stream info[]
 GET /api/cconnection/:conn_id/stream/:name -> stream info
 POST /api/connection/:conn_id/stream (stream config) -> stream info
 POST /api/connection/:conn_id/stream/:name (stream config) -> stream info
 DELETE /api/connection/:conn_id/stream/:name
+
+POST /api/connection/:conn_id/stream/:name/purge
+POST /api/connection/:conn_id/stream/:name/seal
+
+
 ```
 
 ### TO publish a message
