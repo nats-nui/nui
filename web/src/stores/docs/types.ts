@@ -8,6 +8,7 @@ export enum DOC_TYPE {
 	MESSAGE_SEND = "msgsnd",
 	STREAMS = "strs",
 	STREAM = "str2",
+	LOGS = "logs",
 }
 
 export enum DOC_ANIM {

@@ -178,8 +178,8 @@ const setup = {
 export type MessagesState = typeof setup.state & ViewState
 export type MessagesGetters = typeof setup.getters
 export type MessagesActions = typeof setup.actions
-export type MEssagesMutators = typeof setup.mutators
-export interface MessagesStore extends ViewStore, StoreCore<MessagesState>, MessagesGetters, MessagesActions, MEssagesMutators {
+export type MessagesMutators = typeof setup.mutators
+export interface MessagesStore extends ViewStore, StoreCore<MessagesState>, MessagesGetters, MessagesActions, MessagesMutators {
 	state: MessagesState
 }
 const msgSetup = mixStores(viewSetup, setup)

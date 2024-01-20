@@ -15,6 +15,8 @@ import MessageView from "./stacks/message/MessageView"
 import MessageSendView from "./stacks/messageSend/MessageSendView"
 import StreamDetailView from "./stacks/streams/StreamDetailView"
 import StreamsListView from "./stacks/streams/StreamsListView"
+import LogsView from "./stacks/mainLogs/LogsView"
+import { LogsStore } from "@/stores/stacks/mainLogs"
 
 
 
@@ -42,6 +44,8 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <StreamsListView store={view as StreamsStore} />
 			case DOC_TYPE.STREAM:
 				return <StreamDetailView store={view as StreamStore} />
+			case DOC_TYPE.LOGS:
+					return <LogsView store={view as LogsStore} />
 			default:
 				return null
 		}
