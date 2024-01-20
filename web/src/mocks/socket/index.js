@@ -81,7 +81,7 @@ function send(cws, msg) {
 }
 
 let messagesSend = 0
-const numMsg = 5000
+const numMsg = 50000000
 
 function sendTestMessages(client, subjects) {
 

@@ -7,6 +7,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -98,12 +99,13 @@ const cssIconized: React.CSSProperties = {
 
 const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 	width: 14, height: 14,
+	border: "2px solid black",
 	borderRadius: "50%",
 	backgroundColor: {
 		[CNN_STATUS.UNDEFINED]: "grey",
-		[CNN_STATUS.CONNECTED]: "green",
-		[CNN_STATUS.RECONNECTING]: "yellow",
-		[CNN_STATUS.DISCONNECTED]: "red",
+		[CNN_STATUS.CONNECTED]: "#51FD15",
+		[CNN_STATUS.RECONNECTING]: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
+		[CNN_STATUS.DISCONNECTED]: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 	}[status]
 	//border: "2px solid black",
 })
