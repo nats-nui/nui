@@ -46,7 +46,7 @@ modes:
 - "auth_creds_file" -> use creds field (local path to a file)
 
 ### Stream
-```
+```json
 {
     "config": <streamconfig>,
     "state": <stream-state>
