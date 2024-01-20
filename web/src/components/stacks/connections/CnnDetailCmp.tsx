@@ -58,7 +58,6 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 			value={name}
 			onChange={handleChangeName}
 			readOnly={readOnly}
-			variant={variant}
 		/>
 
 		<Label>HOST</Label>
