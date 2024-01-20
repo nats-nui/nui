@@ -51,6 +51,8 @@ func (a *App) registerHandlers() {
 	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
 	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
+	a.Post("/api/connection/:connection_id/stream/:stream_name", a.handleUpdateStream)
+	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.handleDeleteStream)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
@@ -220,6 +222,55 @@ func (a *App) handleCreateStream(c *fiber.Ctx) error {
 		return c.Status(500).JSON(err.Error())
 	}
 	return c.JSON(info.Config)
+}
+
+func (a *App) handleUpdateStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	cfg := jetstream.StreamConfig{}
+	err = c.BodyParser(&cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	stream, err := js.UpdateStream(c.Context(), cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info.Config)
+}
+
+func (a *App) handleDeleteStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	_, err = js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	err = js.DeleteStream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.SendStatus(200)
 }
 
 func (a *App) handlePublish(c *fiber.Ctx) error {
