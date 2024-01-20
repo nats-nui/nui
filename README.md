@@ -114,10 +114,10 @@ DELETE /api/connection/:id
 #### CRUD on streams
 ```
 GET /api/cconnection/:conn_id/stream -> stream info[]
-GET /api/cconnection/:conn_id/stream/:id -> stream info
+GET /api/cconnection/:conn_id/stream/:name -> stream info
 POST /api/connection/:conn_id/stream (stream config) -> stream info
-POST /api/connection/:conn_id/stream/:id (stream config) -> stream info
-DELETE /api/connection/:conn_id/stream/:id
+POST /api/connection/:conn_id/stream/:name (stream config) -> stream info
+DELETE /api/connection/:conn_id/stream/:name
 ```
 
 ### TO publish a message
