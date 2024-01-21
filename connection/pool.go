@@ -5,6 +5,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"strings"
 	"sync"
+	"time"
 )
 
 type Conn interface {
@@ -86,6 +87,9 @@ func (p *ConnPool[T]) refresh(id string) error {
 func natsBuilder(connection *Connection) (*NatsConn, error) {
 	options := []nats.Option{
 		nats.RetryOnFailedConnect(true),
+		nats.MaxReconnects(-1),
+		nats.PingInterval(1 * time.Second),
+		nats.MaxPingsOutstanding(2),
 	}
 	options = appendAuthOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
