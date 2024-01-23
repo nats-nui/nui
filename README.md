@@ -117,6 +117,39 @@ modes:
 }
 ```
 
+### consumer info
+
+```json
+{
+  "stream_name": "myStream",
+  "name": "myConsumer",
+  "created": "2022-03-01T12:00:00Z",
+  "config": {
+    "name": "myConsumer",
+    "durable_name": "myDurable",
+    "deliver_policy": "all",
+    "ack_policy": "all",
+    "ack_wait": 60000000000,
+    "max_deliver": 10,
+    "replay_policy": "instant",
+    "num_replicas": 1
+  },
+  "delivered": {
+    "consumer_seq": 1,
+    "stream_seq": 1
+  },
+  "ack_floor": {
+    "consumer_seq": 1,
+    "stream_seq": 1
+  },
+  "num_ack_pending": 0,
+  "num_redelivered": 0,
+  "num_waiting": 0,
+  "num_pending": 0,
+  "push_bound": true
+}
+```
+
 #### CRUD on connection
 ```
 GET /api/cconnection
@@ -128,14 +161,16 @@ DELETE /api/connection/:id
 
 #### REST on streams
 ```
-GET /api/cconnection/:conn_id/stream -> stream info[]
-GET /api/cconnection/:conn_id/stream/:name -> stream info
-POST /api/connection/:conn_id/stream (stream config) -> stream info
-POST /api/connection/:conn_id/stream/:name (stream config) -> stream info
+GET /api/cconnection/:conn_id/stream -> stream-info[]
+GET /api/cconnection/:conn_id/stream/:name -> stream-info
+POST /api/connection/:conn_id/stream (stream config) -> stream-info
+POST /api/connection/:conn_id/stream/:name (stream config) -> stream-info
+
 DELETE /api/connection/:conn_id/stream/:name
 
 POST /api/connection/:conn_id/stream/:name/purge
 
+GET /api/cconnection/:conn_id/stream/:name/consumers -> consumer-info[]
 
 ```
 
