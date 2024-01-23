@@ -341,6 +341,67 @@ func (a *App) handleSealStream(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
+func (a *App) handleIndexStreamConsumer(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	listener := stream.ListConsumers(c.Context())
+	infos := make([]*jetstream.ConsumerInfo, 0)
+	for {
+		select {
+		case info, ok := <-listener.Info():
+			if !ok {
+				return c.Status(500).JSON("error reading streams info")
+			}
+			infos = append(infos, info)
+		case err, ok := <-listener.Err():
+			if !ok {
+				return c.Status(500).JSON("error reading streams info")
+			}
+			if !errors.Is(err, jetstream.ErrEndOfData) {
+				return c.Status(500).JSON(err.Error())
+			}
+			return c.JSON(infos)
+		}
+	}
+}
+
+//func (a *App) handleViewStreamMessages(c *fiber.Ctx) error {
+//	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+//	if err != nil {
+//		return c.Status(404).JSON(err.Error())
+//	}
+//	js, err := jetstream.New(conn.Conn)
+//	if err != nil {
+//		return c.Status(422).JSON(err.Error())
+//	}
+//	streamName := c.Params("stream_name")
+//	if streamName == "" {
+//		return c.Status(422).JSON("stream_name is required")
+//	}
+//	stream, err := js.Stream(c.Context(), streamName)
+//	if err != nil {
+//		return c.Status(422).JSON(err.Error())
+//	}
+//
+//	stream.OrderedConsumer()
+//
+//	return c.SendStatus(200)
+//}
+
 func (a *App) handlePublish(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
