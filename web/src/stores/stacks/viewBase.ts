@@ -21,8 +21,8 @@ const viewSetup = {
 		draggable: true,
 		/** indica se la VIEW si puo' rimuovere dal DOCK */
 		unclosable: false,
-		/** indica se è possibile iconizzare questa CARD  */
-		iconizzable: true,
+		/** indica se è possibile pinnare questa CARD  */
+		pinnable: true,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
 

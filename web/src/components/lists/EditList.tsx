@@ -120,7 +120,7 @@ function EditList<T>({
 
 			{/* BOTTONE NEW */}
 			{!readOnly && fnNewItem && (
-				<IconButton
+				<IconButton style={{ backgroundColor: '#00000010', }}
 					onClick={(e) => handleNewItem(null, e)}
 				><AddIcon /></IconButton>
 			)}
@@ -135,3 +135,8 @@ const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
 	flexDirection: "column",
 	borderRadius: 5,
 })
+
+const cssButton:React.CSSProperties = {
+	backgroundColor: '#00000010',
+	borderRadius: 3,
+}

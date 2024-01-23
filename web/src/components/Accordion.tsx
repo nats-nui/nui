@@ -5,12 +5,14 @@ import React, { FunctionComponent, useRef } from "react"
 
 interface Props {
 	open?: boolean
+	height?: number
 	children?: React.ReactNode
 }
 
 const Accordion: FunctionComponent<Props> = ({
 	open,
-	children
+	height,
+	children,
 }) => {
 
 	// STORE
@@ -21,8 +23,9 @@ const Accordion: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
+	const currentHeight = !open ? 0 : height != null ? height : (!ref.current || !ref.current?.scrollHeight ? "auto" : ref.current?.scrollHeight)
 	return (
-		<div ref={ref} style={cssRoot(open, ref.current)}>
+		<div ref={ref} style={cssRoot(currentHeight, height == null)}>
 			{children}
 		</div>
 	)
@@ -30,11 +33,12 @@ const Accordion: FunctionComponent<Props> = ({
 
 export default Accordion
 
-const cssRoot = (open: boolean, node:Element): React.CSSProperties => ({
+const cssRoot = (height: number, noScroll: boolean): React.CSSProperties => ({
 	display: "flex", flexDirection: "column",
-	overflowY: "hidden",
-	transition: `height ${ANIM_TIME_CSS}ms`,
-	height: !open ? 0 : (!node || !node?.scrollHeight ? "auto" : node?.scrollHeight),
-	
-	
+	//overflowY: "hidden",
+	overflowY: noScroll ? "hidden" : "auto",
+	transition: `min-height ${ANIM_TIME_CSS}ms, height ${ANIM_TIME_CSS}ms`,
+	minHeight: height,
+	height: height,
+
 })

@@ -47,5 +47,5 @@ export default IconToggle
 const cssRoot = (readOnly: boolean): React.CSSProperties => ({
 	display: "flex",
 	...readOnly ? null : { cursor: "pointer" },
-	padding: 5,
+	//padding: 5,
 })

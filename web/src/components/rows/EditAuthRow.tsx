@@ -1,10 +1,10 @@
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
-import Label from "@/components/input/Label"
+import Label from "@/components/format/Label"
 import CloseIcon from "@/icons/CloseIcon"
 import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent } from "react"
-import Box from "../Box"
+import Box from "../format/Box"
 import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
 

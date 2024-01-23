@@ -1,7 +1,7 @@
 import srcIcon from "@/assets/StreamsIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { POLICY, STORAGE, Stream } from "@/types/Stream"
+import { RETENTION, STORAGE, StreamConfig, StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import strApi from "@/api/streams"
 import { buildStore } from "@/stores/docs/utils/factory"
@@ -9,15 +9,17 @@ import { DOC_TYPE } from "@/types"
 import { StreamState } from "./detail"
 import docSo from "@/stores/docs"
 import cnnSo from "@/stores/connections"
+import { buildNew } from "./utils"
 
 
-
+/** STREAMS COLLECTION */
 const setup = {
 
 	state: {
 		connectionId: <string>null,
-		selectId: <string>null,
-		all: <Stream[]>[],
+		/** nome dello STREAM selezionato */
+		select: <string>null,
+		all: <StreamInfo[]>[],
 
 		//#region VIEWBASE
 		width: 200,
@@ -32,80 +34,80 @@ const setup = {
 		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		//#endregion
 
-		getById(id: string, store?: StreamsStore) {
-			if (!id) return null
-			return store.state.all?.find(s => s.id == id)
+		getByName(name: string, store?: StreamsStore) {
+			if (!name) return null
+			return store.state.all?.find(s => s.config.name == name)
 		},
-		getIndexById(id: string, store?: StreamsStore) {
-			if (!id) return null
-			return store.state.all?.findIndex(s => s.id == id)
+		getIndexByName(name: string, store?: StreamsStore) {
+			if (!name) return null
+			return store.state.all?.findIndex(s => s.config.name == name)
 		},
 	},
 
 	actions: {
-		
-		select(stream: Stream, store?: StreamsStore) {
-			const idSelPrev = store.state.selectId
+
+		/** visualizzo dettaglio di uno STREAM */
+		select(name: string, store?: StreamsStore) {
+			const nameOld = store.state.select
 			// se è uguale a quello precedente allora deseleziona
-			let idSel = (stream && idSelPrev != stream.id) ? stream.id : null
-			store.setSelectId(idSel)
+			let nameNew = (name && nameOld != name) ? name : null
+			store.setSelect(nameNew)
 
 			// eventualmente creo la nuova VIEW
 			let streamStore:ViewStore = null
-			if (idSel != null) streamStore = buildStore({
+			if (nameNew != null) streamStore = buildStore({
 				type: DOC_TYPE.STREAM,
-				stream
+				connectionId: store.state.connectionId,
+				stream: store.getByName(nameNew),
+				readOnly: false,
 			} as StreamState)
 
 			// aggiungo la nuova VIEW (o null)
 			docSo.addLink({
 				view: streamStore,
 				parent: store,
-				anim: !idSelPrev || !idSel,
+				anim: !nameOld || !nameNew,
 			})
 		},
-		/** creo un nuovo STORE DETTAGLIO STREAM
-		 * e lo visualizzo */
+
+		/** visualizza nuovo STORE DETTAGLIO STREAM */
 		create(_: void, store?: StreamsStore) {
-			store.setSelectId(null)
+			store.setSelect(null)
 			const view = buildStore({
 				type: DOC_TYPE.STREAM,
+				connectionId: store.state.connectionId,
+				stream: buildNew(),
 				readOnly: false,
-				stream: {
-					name: "", description: "", storage: STORAGE.FILE,
-					subjects: [], sources: [], policy: POLICY.INTEREST
-				}
 			} as Partial<StreamState>)
 			docSo.addLink({ view, parent: store, anim: true })
 		},
+
 
 		async fetch(_: void, store?: StreamsStore) {
 			const streams = await strApi.index(store.state.connectionId)
 			store.setAll(streams)
 		},
-		async delete(id: string, store?: StreamsStore) {
-			await strApi.remove(id)
-			store.setAll(store.state.all.filter(s => s.id != id))
+		async delete(name: string, store?: StreamsStore) {
+			await strApi.remove(store.state.connectionId, name)
+			store.setAll(store.state.all.filter(s => s.config.name != name))
 		},
-		async save(stream: Stream, store?: StreamsStore) {
-			const streamSaved = await strApi.save(stream)
-			const streams = [...store.state.all]
-			const index = !stream.id ? -1 : store.getIndexById(stream.id)
+		update(stream: StreamInfo, store?: StreamsStore) {
+			const all = [...store.state.all]
+			const index = !stream.state ? -1 : store.getIndexByName(stream.config.name)
 			if (index == -1) {
-				streams.push(streamSaved)
+				all.push(stream)
 			} else {
-				streams[index] = streamSaved
+				all[index] = { ...all[index], ...stream }
 			}
-			store.setAll(streams)
-			return streamSaved
+			store.setAll(all)
 		},
-
+		
 
 	},
 
 	mutators: {
-		setAll: (all: Stream[]) => ({ all }),
-		setSelectId: (selectId: string) => ({ selectId }),
+		setAll: (all: StreamInfo[]) => ({ all }),
+		setSelect: (select: string) => ({ select }),
 	},
 }
 

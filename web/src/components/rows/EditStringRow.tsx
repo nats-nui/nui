@@ -3,7 +3,7 @@ import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent, useState } from "react"
 import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
-import Box from "../Box"
+import Box from "../format/Box"
 
 
 

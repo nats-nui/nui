@@ -7,7 +7,7 @@ import mouseSo from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
 import IconButton from "./buttons/IconButton"
-import Label, { LABELS } from "./input/Label"
+import Label, { LABELS } from "./format/Label"
 import AnchorIcon from "@/icons/AnchorIcon"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import IconizedIcon from "@/icons/IconizeIcon"
@@ -71,7 +71,7 @@ const Header: FunctionComponent<Props> = ({
 	const isIconized = docSo.isIconized(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showBttClose = !store.state.unclosable
-	const showBttIconize = inRoot && enter && store.state.iconizzable
+	const showBttIconize = inRoot && enter && store.state.pinnable
 
 	return (
 		<div style={cssRoot(store.state.size)}

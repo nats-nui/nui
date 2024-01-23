@@ -56,6 +56,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
+		{`var${view.getColorVar()}`}
 			<DocCmp view={view} />
 			{/* <ModalCmp view={view} /> */}
 		</div>

@@ -35,19 +35,17 @@ function ListRow<T>({
 
 export default ListRow
 
-const cssRoot = (readOnly: boolean, select:boolean): React.CSSProperties => ({
+const cssRoot = (readOnly: boolean, select: boolean): React.CSSProperties => ({
 	display: "flex",
 	borderRadius: 3,
 	cursor: !readOnly ? "pointer" : null,
 	...select ? {
-		//backgroundColor:	layoutSo.state.theme.palette.var[0].bg,
-		border: "1px solid black"
-		//color: select ? layoutSo.state.theme.palette.var[0].fg : null,
-	} :{
-		//backgroundColor:	null,
+		//border: "1px solid rgb(0 0 0 / 15%)",
+		backgroundColor: '#00000010',
+	} : {
 	},
-	
 	fontSize: 12,
 	fontWeight: 600,
 	padding: "4px 3px",
+	minHeight: 14,
 })

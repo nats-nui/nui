@@ -5,6 +5,7 @@ import React, { FunctionComponent } from "react"
 export enum LABELS {
 	TEXT = 0,
 	READ,
+	SUBTEXT,
 	SUB_TITLE,
 	TITLE,
 	TITLE_DIALOG,
@@ -35,7 +36,7 @@ const Label: FunctionComponent<Props> = ({
 	const css = {
 		cursor: !!onClick ? "pointer" : null,
 		...cssRoot,
-		...[cssNormal, cssReadOnly, cssSubTitle, cssTitle, cssTitleDialog][type] ?? cssNormal,
+		...[cssText, cssReadOnly, cssSubText, cssSubTitle, cssTitle, cssTitleDialog][type] ?? cssText,
 		...style
 	}
 	return <div
@@ -49,18 +50,26 @@ const Label: FunctionComponent<Props> = ({
 export default Label
 
 /** label titolo per una proprietà */
-const cssNormal: React.CSSProperties = {
+const cssText: React.CSSProperties = {
 	fontSize: 12,
 	fontWeight: 800,
-	margin: "10px 0px 0px 0px",
+	//margin: "10px 0px 0px 0px",
 	whiteSpace: "nowrap",
+	flex: 1,
 }
+
 /** label di un input readonly */
 const cssReadOnly: React.CSSProperties = {
 	//color: layoutSo.state.theme.palette.default.bg,
 	fontSize: 12,
 	fontWeight: 600,
 	padding: "4px 3px",
+}
+const cssSubText: React.CSSProperties = {
+	fontSize: 11,
+	fontWeight: 600,
+	opacity: .7,
+	whiteSpace: "nowrap",
 }
 const cssSubTitle: React.CSSProperties = {
 	fontSize: 12,

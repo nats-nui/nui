@@ -1,5 +1,5 @@
-import Divider from "@/components/Divider"
-import Label from "@/components/input/Label"
+import Divider from "@/components/format/Divider"
+import Label from "@/components/format/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import EditAuthRow from "@/components/rows/EditAuthRow"

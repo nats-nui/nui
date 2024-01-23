@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import { FunctionComponent, useState } from "react"
 
 
@@ -28,7 +27,7 @@ const Box: FunctionComponent<Props> = ({
 	// RENDER
 	return (
 		<div
-			style={{ display: "flex", alignItems: "center", position: "relative", ...style }}
+			style={{ ...cssRoot, ...style }}
 			onMouseEnter={enterRender ? handleEnter : null}
 			onMouseLeave={enterRender ? handleLeave : null}
 		>
@@ -43,3 +42,10 @@ const Box: FunctionComponent<Props> = ({
 
 export default Box
 
+const cssRoot:React.CSSProperties = {
+	display: "flex", 
+	flex: 1,
+	alignItems: "center", 
+	position: "relative",
+	gap: 5,
+}

@@ -2,7 +2,7 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import ElementRow from "@/components/rows/ElementRow"
 import { StreamsStore } from "@/stores/stacks/streams"
-import { Stream } from "@/types/Stream"
+import { StreamConfig, StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 
@@ -25,21 +25,21 @@ const StreamsListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (stream: Stream) => streamsSo.select(stream)
+	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream.config.name)
 	const handleNew = () => streamsSo.create()
 	const handleDel = () => {
-		streamsSo.delete(selectedId)
+		streamsSo.delete(selected)
 		streamsSo.select(null)
 	}
 
 	// RENDER
 	const streams = streamsSa.all
 	if (!streams) return null
-	const selectedId = streamsSa.selectId
+	const selected = streamsSa.select
 	const variant = streamsSo.getColorVar()
-	const isSelected = (stream: Stream) => selectedId == stream.id
-	const getTitle = (stream: Stream) => stream.name
-	const getSubtitle = (stream: Stream) => stream.description
+	const isSelected = (stream: StreamInfo) => selected == stream.config.name
+	const getTitle = (stream: StreamInfo) => stream.config.name
+	const getSubtitle = (stream: StreamInfo) => stream.config.description
 
 	return <FrameworkCard
 		store={streamsSo}
@@ -59,7 +59,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 		</>}
 	>
 		{streams.map(stream => (
-			<ElementRow key={stream.id}
+			<ElementRow key={stream.config.name}
 				title={getTitle(stream)}
 				subtitle={getSubtitle(stream)}
 				selected={isSelected(stream)}

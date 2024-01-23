@@ -4,7 +4,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import layoutSo from "@/stores/layout"
-import Label, { LABELS } from "../input/Label"
+import Label, { LABELS } from "../format/Label"
 
 
 
@@ -108,6 +108,7 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	display: "flex",
 	flexDirection: "column",
 	flex: 1,
+	gap: 5,
 	width,
 	marginTop: top,
 	padding: "10px 10px 10px 15px",

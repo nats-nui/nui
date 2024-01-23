@@ -1,6 +1,5 @@
 import { rest } from 'msw'
 import streams from "../../data/streams"
-import { createUUID } from '@/mocks/data/utils'
 
 
 
@@ -17,33 +16,31 @@ const handlers = [
 		)
 	}),
 
-	/** CREATE
-	 * crea una CONNECTION
-	 */
-	rest.post('/api/stream', async (req, res, ctx) => {
-		const newStr = await req.json()
-		if (!newStr) return res(ctx.status(500))
-		newStr.id = createUUID()
-		streams.push(newStr)
-
+	/** CREATE */
+	rest.post('/api/connection/:cnnId/stream', async (req, res, ctx) => {
+		const streamConfig = await req.json()
+		if (!streamConfig) return res(ctx.status(500))
+		const streamInfo = {
+			config: streamConfig,
+			state: {}
+		}
+		streams.push(streamInfo)
 		return res(
 			ctx.status(201),
-			ctx.json(newStr),
+			ctx.json(streamInfo),
 		)
 	}),
 
-	/** UPDATE
-	 * modifica una STREAM
-	 */
-	rest.post('/api/stream/:id', async (req, res, ctx) => {
-		const id = req.params.id
-		const newStr = await req.json()
-		if (!id || !newStr) return res(ctx.status(500))
+	/** UPDATE */
+	rest.post('/api/connection/:cnnId/stream/:name', async (req, res, ctx) => {
+		const name = req.params.name
+		const streamConfig = await req.json()
+		if (!name || !streamConfig) return res(ctx.status(500))
 
-		const index = streams.findIndex(c => c.id == id)
+		const index = streams.findIndex(si => si.config.name == name)
 		if (index == -1) return res(ctx.status(404))
 
-		streams[index] = { ...streams[index], ...newStr }
+		streams[index] = { ...streams[index], config: streamConfig }
 
 		return res(
 			ctx.status(200),
@@ -51,14 +48,12 @@ const handlers = [
 		)
 	}),
 
-	/** DELETE
-	 * cancella una CONNECTION
-	 */
-	rest.delete('/api/stream/:id', async (req, res, ctx) => {
-		const id = req.params.id
-		if (!id) return res(ctx.status(500))
+	/** DELETE */
+	rest.delete('/api/connection/:cnnId/stream/:name', async (req, res, ctx) => {
+		const name = req.params.name
+		if (!name) return res(ctx.status(500))
 
-		const index = streams.findIndex(cnn => cnn.id == id)
+		const index = streams.findIndex(si => si.config.name == name)
 		if (index == -1) return res(ctx.status(500))
 		streams.splice(index, 1)
 

@@ -1,12 +1,12 @@
 import ajax from "@/plugins/AjaxService"
-import { Stream } from "@/types/Stream"
+import { StreamConfig } from "@/types/Stream"
 
 
 
 /** INDEX
  * Recupera tutti gli STREAMS
  */
-function index(connectionId: string): Promise<Stream[]> {
+function index(connectionId: string): Promise<StreamConfig[]> {
 	return ajax.get(`connection/${connectionId}/stream`)
 }
 
@@ -21,8 +21,8 @@ function remove(id: string): Promise<void> {
 /** UPDATE
  * crea/modifica uno STREAM
  */
-function save(cnn: Stream): Promise<Stream> {
-	const blockId = cnn.id ? `/${cnn.id}` : ""
+function save(cnn: StreamConfig): Promise<StreamConfig> {
+	const blockId = cnn.name ? `/${cnn.name}` : ""
 	return ajax.post(`stream${blockId}`, cnn)
 }
 
