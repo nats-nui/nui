@@ -11,7 +11,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
-import historyTest from "./test"
+import historyTest from "./_test"
 import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
 
 

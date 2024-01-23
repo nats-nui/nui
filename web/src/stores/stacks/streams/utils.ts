@@ -1,14 +1,61 @@
-import { POLICY, STORAGE, Stream } from "@/types/Stream";
+import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo } from "@/types/Stream";
 
 
-
-export function buildNewStream(): Stream {
-	return {
-		name: "<new>",
+const DefaultStream: StreamInfo = {
+	config: {
+		name: "",
 		description: "",
-		storage: STORAGE.FILE,
 		subjects: [],
-		sources: [],
-		policy: POLICY.INTEREST,
+		retention: RETENTION.LIMIT,
+		maxConsumers: 0,
+		maxMsgs: 0,
+		maxBytes: 0,
+		discard: DISCARD.OLD,
+		maxAge: 0,
+		maxMsgsPerSubject: 0,
+		maxMsgSize: 0,
+		storage: STORAGE.FILE,
+		numReplicas: 0,
+		noAck: false,
+		templateOwner: "",
+		duplicateWindow: 0,
+		placement: null,
+		mirror: null,
+		sources: <Source[]>[],
+		sealed: false,
+		denyDelete: false,
+		denyPurge: false,
+		allowRollupHdrs: false,
+		republish: null,
+		allowDirect: false,
+		mirrorDirect: false,
+	},
+	state: null,
+}
+
+export function buildNew(): StreamInfo {
+	return {
+		config: { ...DefaultStream.config },
+		state: { ...DefaultStream.state },
+	}
+}
+
+export function buildNewSource(): Source {
+	return {
+		name: "",
+		domain: "",
+		external: {
+			api: "",
+			deliver: ""
+		},
+		filterSubject: "",
+		optStartSeq: 0,
+	}
+}
+
+export function normalizeForFE(stream: StreamConfig): StreamConfig {
+	return {
+		...DefaultStream,
+		...stream
 	}
 }

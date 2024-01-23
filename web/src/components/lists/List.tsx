@@ -12,16 +12,18 @@ interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	readOnly?: boolean
+	height?: number
 	/** indice selezionato */
 	select?: number
-	onSelect?: (index: number, e:React.MouseEvent<HTMLElement>) => void
+	onSelect?: (index: number, e: React.MouseEvent<HTMLElement>) => void
 	style?: React.CSSProperties
 }
 
 function List<T>({
 	items,
-	RenderRow = ({item}) => item.toString(),
+	RenderRow = ({ item }) => item.toString(),
 	readOnly,
+	height,
 	select,
 	onSelect,
 	style = {},
@@ -32,21 +34,21 @@ function List<T>({
 	// HOOKS
 
 	// HANDLERS
-	const handleSelect = (index: number, e:React.MouseEvent<HTMLElement>) => {
+	const handleSelect = (index: number, e: React.MouseEvent<HTMLElement>) => {
 		onSelect?.(index, e)
 	}
 
 	// RENDER
 	if (!items) return null
 
-	return <div style={{ ...cssContainer, ...style }}>
+	return <div style={{ ...cssContainer(height), ...style }}>
 
 		{items.map((item, index) =>
 			<ListRow
 				key={index}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
-				isSelect={select==index}
+				isSelect={select == index}
 			>
 				<RenderRow
 					item={item}
@@ -60,7 +62,11 @@ function List<T>({
 
 export default List
 
-const cssContainer: React.CSSProperties = {
+const cssContainer = (height: number): React.CSSProperties => ({
 	display: "flex",
 	flexDirection: "column",
-}
+	...height && {
+		height: height,
+		overflowY: "auto",
+	},
+})

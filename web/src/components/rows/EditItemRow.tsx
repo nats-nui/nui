@@ -1,7 +1,7 @@
 import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
 import { FunctionComponent } from "react"
-import Box from "../Box"
+import Box from "../format/Box"
 import { RenderRowBaseProps } from "../lists/EditList"
 import ListRow from "../lists/ListRow"
 

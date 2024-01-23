@@ -1,10 +1,10 @@
 import IconButton from "@/components/buttons/IconButton"
 import IconToggle from "@/components/buttons/IconToggle"
-import Label, { LABELS } from "@/components/input/Label"
+import Label, { LABELS } from "@/components/format/Label"
 import CloseIcon from "@/icons/CloseIcon"
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
-import Box from "../Box"
+import Box from "../format/Box"
 import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
 

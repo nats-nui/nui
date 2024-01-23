@@ -1,9 +1,9 @@
+import ArrowDown2Icon from "@/icons/ArrowDown2Icon"
 import { FunctionComponent, useState } from "react"
 import Accordion from "./Accordion"
+import Component from "./format/Component"
 import { RenderRowBaseProps } from "./lists/EditList"
 import List from "./lists/List"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import Divider from "./Divider"
 
 
 
@@ -12,7 +12,7 @@ interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	readOnly?: boolean
-	variant?: number
+	height?: number
 	style?: React.CSSProperties
 	onSelect?: (value: T) => void
 }
@@ -22,7 +22,7 @@ function Options<T>({
 	items,
 	RenderRow,
 	readOnly = false,
-	variant = 0,
+	height,
 	style,
 	onSelect,
 }: Props<T>) {
@@ -42,7 +42,7 @@ function Options<T>({
 	}
 
 	// RENDER
-	const index = items.findIndex(i => i == value)
+	const index = items?.findIndex(i => i == value) ?? -1
 	const label = value?.toString() ?? "--"
 
 	if (readOnly) return (
@@ -52,16 +52,19 @@ function Options<T>({
 	)
 
 	return (
-		<div style={{ ...cssRoot(readOnly, variant), ...style }}>
+		<div style={{ ...cssRoot(), ...style }}>
 
-			<div style={cssLabel}
+			<Component
+				readOnly={readOnly}
 				onClick={handleOpen}
-			>{label}</div>
+				enterRender={<ArrowDown2Icon style={{ opacity: .5 }} />}
+			>{label}</Component>
 
 			<Accordion
+				height={height}
 				open={open}
 			>
-				<Divider />
+
 
 				<List<T>
 					select={index}
@@ -78,24 +81,13 @@ function Options<T>({
 
 export default Options
 
-const cssRoot = (readOnly: boolean, variant: number): React.CSSProperties => ({
+const cssRoot = (): React.CSSProperties => ({
 	display: "flex",
 	flexDirection: "column",
-	...!readOnly ? {
-		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
-		borderRadius: 3,
-	} : {},
 })
 
 const cssLabelReadOnly: React.CSSProperties = {
-	padding: '5px 0px',
 	fontSize: 12,
 	fontWeight: 600,
 }
 
-const cssLabel: React.CSSProperties = {
-	padding: '5px 7px',
-	fontSize: 12,
-	fontWeight: 600,
-}

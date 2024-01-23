@@ -27,7 +27,7 @@ const Divider: FunctionComponent<Props> = ({
 export default Divider
 
 const cssLabel: React.CSSProperties = {
-	fontSize: 10,
+	fontSize: 8,
 	textAlign: 'right',
 	marginTop: 10,
 	opacity: .8,

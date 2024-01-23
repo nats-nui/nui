@@ -1,5 +1,5 @@
 import React, { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
-import Label, { LABELS } from "./Label"
+import Label, { LABELS } from "../format/Label"
 
 
 
@@ -67,8 +67,11 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 export default forwardRef(TextInput)
 
 const cssRoot: React.CSSProperties = {
-	borderBottom: "1px solid rgb(0 0 0 / 15%)",
+	//borderBottom: "1px solid rgb(0 0 0 / 15%)",
 	padding: "4px 3px 3px 3px",
 	fontSize: 12,
 	fontWeight: 600,
+
+	borderRadius: 3,
+	backgroundColor: '#00000010'
 }

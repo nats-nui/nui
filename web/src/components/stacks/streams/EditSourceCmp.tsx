@@ -1,9 +1,11 @@
-import Label from "@/components/input/Label"
+import Label from "@/components/format/Label"
 import { Source } from "@/types/Stream"
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
 import DateTimeInput from "../../input/DateTimeInput"
 import NumberInput from "../../input/NumberInput"
 import TextInput from "../../input/TextInput"
+import Options from "@/components/Options"
+import BoxV from "@/components/format/BoxV"
 
 interface Props {
 	source: Source
@@ -28,19 +30,30 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleNameChange = (name: string) => onChange?.({ ...source, name })
-	const handleSequenceChange = (startSequence: string) => onChange?.({ ...source, startSequence: parseInt(startSequence) })
-	const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
+	const handleSequenceChange = (startSequence: string) => onChange?.({ ...source, optStartSeq: parseInt(startSequence) })
+	//const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
 
-	const refCllb = useCallback(( node ) => setTimeout(()=>node?.focus(),100),[])
-	
+	//const refCllb = useCallback(( node ) => setTimeout(()=>node?.focus(),100),[])
+
 	// RENDER
 	if (!source) return null
 
 	return <>
-		<Label>NAME</Label>
-		<TextInput
-			ref={refCllb}
+		<BoxV>
+			<Label>NAME</Label>
+			<Options<string>
+				value={source.name}
+				items={["pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino"]}
+				RenderRow={({ item }) => item}
+				readOnly={readOnly}
+				height={100}
+				onSelect={handleNameChange}
+			/>
+		</BoxV>
+		{/* <TextInput
+			//ref={refCllb}
+			focus
 			//ref={(node)=>node?.focus()}
 			style={{ flex: 1 }}
 			value={source.name}
@@ -48,28 +61,32 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			//onFocus={onFocus}
 			//variant={variant}
 			readOnly={readOnly}
-		/>
-		<Label>START SEQUENCE</Label>
-		<NumberInput
-			value={source.startSequence}
-			onChange={handleSequenceChange}
-			// variant={variant}
-			readOnly={readOnly}
-		/>
-		<Label>START TIME</Label>
+		/> */}
+		<BoxV>
+			<Label>START SEQUENCE</Label>
+			<NumberInput
+				value={source.optStartSeq}
+				onChange={handleSequenceChange}
+				// variant={variant}
+				readOnly={readOnly}
+			/>
+		</BoxV>
+		{/* <Label>START TIME</Label>
 		<DateTimeInput
 			value={source.startTime}
 			onChange={handleStartTimeChange}
 			// variant={variant}
 			readOnly={readOnly}
-		/>
-		<Label>FILTER SUBJECT</Label>
-		<TextInput
-			value={source.filterSubject}
-			onChange={handleFilterSubjectChange}
-			// variant={variant}
-			readOnly={readOnly}
-		/>
+		/> */}
+		<BoxV>
+			<Label>FILTER SUBJECT</Label>
+			<TextInput
+				value={source.filterSubject}
+				onChange={handleFilterSubjectChange}
+				// variant={variant}
+				readOnly={readOnly}
+			/>
+		</BoxV>
 	</>
 }
 
