@@ -26,7 +26,7 @@ const StoreIcon: FunctionComponent<Props> = ({
 		docSo.add({ view, anim: true })
 	}
 	const handleCloseStoreClick = (store: ViewStore) => {
-		docSo.uniconize(store)
+		docSo.unpinned(store)
 	}
 
 	// RENDER

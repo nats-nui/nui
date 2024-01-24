@@ -1,0 +1,7 @@
+
+## STREAM-STATE
+
+```typescript
+StreamState {
+}
+```

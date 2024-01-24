@@ -9,6 +9,14 @@ function index(): Promise<Connection[]> {
 	return ajax.get(`connection`)
 }
 
+/** UPDATE
+ * Modifica/crea un CONNECTION
+ */
+function save(cnn: Connection): Promise<Connection> {
+	const blockId = cnn.id ? `/${cnn.id}` : ""
+	return ajax.post(`connection${blockId}`, cnn)
+}
+
 /** DELETE
  * Rimuove un CONNECTION 
  */
@@ -17,13 +25,6 @@ function remove(id: string): Promise<void> {
 	return ajax.delete(`connection/${id}`)
 }
 
-/** UPDATE
- * Modifica/crea un CONNECTION
- */
-function save(cnn: Connection): Promise<Connection> {
-	const blockId = cnn.id ? `/${cnn.id}` : ""
-	return ajax.post(`connection${blockId}`, cnn)
-}
 
 /** PUBLISC
  * permette di pubblicare un messaggio

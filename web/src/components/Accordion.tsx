@@ -40,5 +40,4 @@ const cssRoot = (height: number, noScroll: boolean): React.CSSProperties => ({
 	transition: `min-height ${ANIM_TIME_CSS}ms, height ${ANIM_TIME_CSS}ms`,
 	minHeight: height,
 	height: height,
-
 })

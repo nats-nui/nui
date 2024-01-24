@@ -6,6 +6,7 @@ import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
 import { forEachDocsView, getById } from "./utils/manage"
 import { VIEW_PARAMS } from "../stacks/utils"
+import { compare } from "@/utils/object"
 
 
 
@@ -42,9 +43,17 @@ const setup = {
 				//.filter(s => s.state.size != VIEW_SIZE.ICONIZED)
 				.slice(0, store.state.anchored)
 		},
-		isIconized(uuid: string, store?: DocStore) {
+		isPinned(uuid: string, store?: DocStore) {
 			return store.state.menu.some(view => view.state.uuid == uuid)
 		},
+		find(state: any, store?: DocStore) {
+			return forEachDocsView( 
+				store.state.all,
+				(view) => {
+					return compare(state, view.state) ? view : null
+				}
+			)
+		}
 	},
 
 	actions: {
@@ -58,7 +67,7 @@ const setup = {
 			store?: DocStore
 		) {
 			// se c'e' gia' setto solo il focus
-			if (  forEachDocsView(store.state.all, (v)=> v.state.uuid==view.state.uuid ) ) {
+			if (forEachDocsView(store.state.all, (v) => v.state.uuid == view.state.uuid)) {
 				store.setFocus(view)
 				return
 			}
@@ -117,7 +126,7 @@ const setup = {
 				}
 				if (index != -1) views.splice(index, 1)
 				view.state.parent = null
-				
+
 				// LINKED
 			} else {
 				view.state.parent.setLinked(null)
@@ -166,21 +175,21 @@ const setup = {
 		},
 
 		/** fissa una VIEW al lato sinistro */
-		async iconize(view: ViewStore, store?: DocStore) {
+		async pinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			//view.state.size = VIEW_SIZE.ICONIZED
 			//await store.remove({ view, anim: true })
 			store.setMenu([...store.state.menu, view])
 		},
 		/** rende mobile una VIEW fissata */
-		async uniconize(view: ViewStore, store?: DocStore) {
+		async unpinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			//view.state.size = VIEW_SIZE.NORMAL
 			//store.add({ view, anim: true })
 			const menu = [...store.state.menu]
-			const index = menu.findIndex( s => s == view)
-			if ( index == -1 ) return
-			menu.splice( index, 1 )
+			const index = menu.findIndex(s => s == view)
+			if (index == -1) return
+			menu.splice(index, 1)
 			store.setMenu(menu)
 		},
 

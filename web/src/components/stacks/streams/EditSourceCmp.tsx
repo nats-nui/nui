@@ -10,12 +10,14 @@ import BoxV from "@/components/format/BoxV"
 interface Props {
 	source: Source
 	readOnly?: boolean
+	allStream?: string[]
 	onChange: (source: Source) => void
 }
 
 const EditSourceCmp: FunctionComponent<Props> = ({
 	source,
 	readOnly,
+	allStream,
 	onChange,
 }) => {
 
@@ -44,10 +46,10 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			<Label>NAME</Label>
 			<Options<string>
 				value={source.name}
-				items={["pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino", "pippo", "pluto", "paperino"]}
+				items={allStream}
 				RenderRow={({ item }) => item}
 				readOnly={readOnly}
-				height={100}
+				//height={100}
 				onSelect={handleNameChange}
 			/>
 		</BoxV>

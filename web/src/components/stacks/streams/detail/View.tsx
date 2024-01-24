@@ -15,7 +15,7 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { buildNewSource } from "@/stores/stacks/streams/utils"
 import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useRef, useState } from "react"
+import { FunctionComponent, useEffect, useRef, useState } from "react"
 import ElementDialog from "../../../dialogs/ElementDialog"
 import EditSourceCmp from "../EditSourceCmp"
 import ListDialog from "../ListDialog"
@@ -37,6 +37,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const streamSa = useStore(streamSo)
 
 	// HOOKs
+	useEffect(() => {
+		streamSo.updateAllStreams()
+	}, [])
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => streamSo.setStreamConfig({ ...streamSa.stream.config, ...prop })
@@ -89,10 +92,12 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if (streamSa.stream?.config == null ) return null
+	if (streamSa.stream?.config == null) return null
 	const config: StreamConfig = streamSa.stream.config
 	const readOnly = streamSa.readOnly
+	const isNew = streamSo.isNew()
 	const variant = streamSo.getColorVar()
+	const allStreams = streamSa.allStreams
 
 	return <FrameworkCard
 		variantBg={variant}
@@ -106,7 +111,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				<TextInput
 					value={config.name}
 					onChange={name => handlePropChange({ name })}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 				/>
 			</BoxV>
 
@@ -300,7 +305,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 							<ListDialog
 								store={streamSo}
 								select={0}
-								items={["pippo", "pluto", "paperino"]}
+								items={allStreams}
 								RenderRow={({ item }) => item}
 								readOnly={readOnly}
 							// onSelect={index => {
@@ -360,6 +365,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					<EditSourceCmp
 						source={config.sources[souceIndex]}
 						onChange={handleSourceChange}
+						allStream={allStreams}
 						readOnly={readOnly}
 					/>
 				</ElementDialog>

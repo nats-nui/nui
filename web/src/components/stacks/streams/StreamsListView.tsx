@@ -2,7 +2,7 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import ElementRow from "@/components/rows/ElementRow"
 import { StreamsStore } from "@/stores/stacks/streams"
-import { StreamConfig, StreamInfo } from "@/types/Stream"
+import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 

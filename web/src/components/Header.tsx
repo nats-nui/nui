@@ -55,7 +55,7 @@ const Header: FunctionComponent<Props> = ({
 		docSo.focus(store)
 	}
 	const handleToggleIconize = () => {
-		if (!isIconized) docSo.iconize(store); else docSo.uniconize(store)
+		if (!isIconized) docSo.pinned(store); else docSo.unpinned(store)
 	}
 
 	// RENDER
@@ -68,7 +68,7 @@ const Header: FunctionComponent<Props> = ({
 	const inRoot = !store.state.parent
 	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
-	const isIconized = docSo.isIconized(store.state.uuid)
+	const isIconized = docSo.isPinned(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showBttClose = !store.state.unclosable
 	const showBttIconize = inRoot && enter && store.state.pinnable
