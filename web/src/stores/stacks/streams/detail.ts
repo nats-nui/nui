@@ -5,6 +5,8 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import { StreamsStore } from "."
 import strApi from "@/api/streams"
+import docSo from "@/stores/docs"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -15,7 +17,8 @@ const setup = {
 		/** la CONNECTION che contiene sto STREAM */
 		connectionId: <string>null,
 
-		streams:<string[]>["pippo","pluto","paperino"],
+		/** sono gli stream presenti nella stessa connection di questo */
+		allStreams:<string[]>null,
 
 		/** STREAM caricata nella CARD */
 		stream: <StreamInfo>null,
@@ -46,9 +49,17 @@ const setup = {
 		},
 		//#endregion
 
-		// [II] da modificare in maniera da rintracciare sempre gli STREAMS di quata connectionId
+		/** restituische, se èresenta, la lista degli streams che contiene questo stream */
 		getStreamsStore: (_: void, store?: StreamStore) => {
-			return store.state.parent as StreamsStore
+			if (store.state.parent) return store.state.parent as StreamsStore
+			return docSo.find({
+				type: DOC_TYPE.STREAMS,
+				connectionId: store.state.connectionId,
+			}) as StreamsStore
+		},
+		/** restituisce se lo stream è nuovo (true) oppure no (false) */
+		isNew: (_: void, store?: StreamStore) => {
+			return store.state.stream.state == null
 		},
 
 	},
@@ -66,21 +77,36 @@ const setup = {
 		//#endregion
 		
 		restore: (_: void, store?: StreamStore) => {
-			const parent = store.state.parent as StreamsStore
-			const stream = parent.getByName(store.state.stream.config.name)
+			const stream = store.getStreamsStore()?.getByName(store.state.stream.config.name)
 			store.setStream(stream)
 		},
 
-		async create(_:void, store?: StreamStore) {
-			const streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
+		/** crea un nuovo stream-info tramite stream-config */
+		async save(_:void, store?: StreamStore) {
+			let streamSaved = null
+			if ( store.isNew() ) {
+				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
+			} else {
+				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config)
+			}
 			store.setStream(streamSaved)
-			const streamsSo = store.getStreamsStore()
-			streamsSo.update(streamSaved)
+			store.getStreamsStore()?.update(streamSaved)
 		},
+
+		updateAllStreams: async (_: void, store?: StreamStore) => {
+			if ( store.state.allStreams ) return
+			const parent = store.getStreamsStore()
+			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId)
+			const allStreams = streams?.map(si=>si.config.name) ?? []
+			store.setAllStreams(allStreams)
+		},
+
+
 	},
 
 	mutators: {
 		setStream: (stream: StreamInfo) => ({ stream }),
+		setAllStreams: (allStreams: string[]) => ({ allStreams }),
 		setStreamConfig: (config: StreamConfig, store?: StreamStore) => ({ stream: { ...store.state.stream, config } }),
 		setReadOnly: (readOnly: boolean) => ({ readOnly }),
 	},

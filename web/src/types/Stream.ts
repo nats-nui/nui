@@ -15,8 +15,8 @@ export interface StreamConfig {
 	maxBytes: number			// integer, omitted if zero
 	discard: DISCARD 			// string: "old" or "new"
 	maxAge?: number				// integer, omitted if zero
-	maxMsgsPerSubject: 0, 		// integer, omitted if zero
-  	maxMsgSize: 0, 				// integer, omitted if zero
+	maxMsgsPerSubject: number, 		// integer, omitted if zero
+  	maxMsgSize: number, 				// integer, omitted if zero
 	storage?: STORAGE			// string: "file" or "memory", not editable
 	numReplicas: number, 		// integer, omitted if zero
 	noAck: boolean, 			// boolean, omitted if false
@@ -25,13 +25,13 @@ export interface StreamConfig {
 	placement: Placement		// object, omitted if null
 	mirror: Mirror 				// object, omitted if null, not editable, "name" is taken from stream names
 	sources: Source[]			// array of objects, omitted if empty, "name" is taken from stream names
-	sealed: false, 				// boolean, omitted if false, read only
-	denyDelete: false, 			// boolean, omitted if false, not editable
-	denyPurge: false, 			// boolean, omitted if false, not editable
-	allowRollupHdrs: false 		// boolean, omitted if false
+	sealed: boolean, 				// boolean, omitted if false, read only
+	denyDelete: boolean, 			// boolean, omitted if false, not editable
+	denyPurge: boolean, 			// boolean, omitted if false, not editable
+	allowRollupHdrs: boolean 		// boolean, omitted if false
 	republish: Republish 		// object, omitted if null
-	allowDirect: false 			// boolean, omitted if false
-	mirrorDirect: false 		// boolean, omitted if false
+	allowDirect: boolean 			// boolean, omitted if false
+	mirrorDirect: boolean 		// boolean, omitted if false
 }
 
 export interface StreamState {

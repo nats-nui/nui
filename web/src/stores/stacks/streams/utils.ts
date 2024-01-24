@@ -36,7 +36,7 @@ const DefaultStream: StreamInfo = {
 export function buildNew(): StreamInfo {
 	return {
 		config: { ...DefaultStream.config },
-		state: { ...DefaultStream.state },
+		state: null,
 	}
 }
 

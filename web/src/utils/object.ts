@@ -3,6 +3,7 @@
 type CaseObject = {
 	[key: string]: any;
 };
+// [CHAT.GPT]
 export function snakeToCamel(obj: CaseObject): CaseObject {
 	if (Array.isArray(obj)) {
 		return obj.map(snakeToCamel);
@@ -19,7 +20,7 @@ export function snakeToCamel(obj: CaseObject): CaseObject {
 		return obj;
 	}
 }
-
+// [CHAT.GPT]
 export function camelToSnake(obj: CaseObject): CaseObject {
 	if (Array.isArray(obj)) {
 		return obj.map(camelToSnake);
@@ -35,4 +36,14 @@ export function camelToSnake(obj: CaseObject): CaseObject {
 	} else {
 		return obj;
 	}
+}
+
+// Confronto due oggetti solo al primo livello
+export function compare(objFind: any, obj: any): boolean {
+	for (let key of Object.keys(objFind)) {
+		if (objFind[key] !== obj[key]) {
+			return false
+		}
+	}
+	return true;
 }

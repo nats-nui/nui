@@ -27,42 +27,45 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	}
 	const handleSaveClick = async () => {
 		streamSo.setReadOnly(true)
-		streamSo.create()
+		streamSo.save()
 	}
 
 	// RENDER
 	if (streamSa.stream == null) return null
-	const isNew = streamSa.stream?.name == null
+	const isNew = streamSo.isNew()
 	const readOnly = streamSa.readOnly
 	const variant = streamSo.getColorVar()
 
-	if (isNew) return (
-		<Button
-			label="CREATE"
-			variant={variant}
-			onClick={handleSaveClick}
-		/>
-	)
-
-	if (readOnly) return (
-		<Button
-			label="EDIT"
-			variant={variant}
-			onClick={handleEditClick}
-		/>
-	)
-
-	return (<>
-		<Button
-				label="SAVE"
+	if (isNew) {
+		return (
+			<Button
+				label="CREATE"
 				variant={variant}
 				onClick={handleSaveClick}
 			/>
+		)
+
+	} else if (readOnly) {
+		return (
 			<Button
-				label="CANCEL"
+				label="EDIT"
 				variant={variant}
-				onClick={handleCancelClick}
+				onClick={handleEditClick}
 			/>
+		)
+	}
+
+	return (<>
+		<Button
+			label="SAVE"
+			variant={variant}
+			onClick={handleSaveClick}
+		/>
+		<Button
+			label="CANCEL"
+			variant={variant}
+			onClick={handleCancelClick}
+		/>
 	</>)
 }
 

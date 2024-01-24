@@ -1,13 +1,10 @@
 import { DialogProps } from "@/components/dialogs/Dialog"
-import Label from "@/components/format/Label"
+import Component from "@/components/format/Component"
 import { RenderRowBaseProps } from "@/components/lists/EditList"
 import List from "@/components/lists/List"
-import ListRow from "@/components/lists/ListRow"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { FunctionComponent, useState } from "react"
 import ElementDialog from "../../dialogs/ElementDialog"
-import Box from "@/components/format/Box"
-import Component from "@/components/format/Component"
-import ArrowRightIcon from "@/icons/ArrowRightIcon"
 
 
 
@@ -46,6 +43,7 @@ const ListDialog: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	if ( !items ) return null
 	const value = RenderRow({item: items[select]})
 
 	return <>

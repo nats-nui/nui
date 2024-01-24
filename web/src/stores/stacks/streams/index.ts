@@ -59,7 +59,7 @@ const setup = {
 				type: DOC_TYPE.STREAM,
 				connectionId: store.state.connectionId,
 				stream: store.getByName(nameNew),
-				readOnly: false,
+				readOnly: true,
 			} as StreamState)
 
 			// aggiungo la nuova VIEW (o null)
