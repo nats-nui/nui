@@ -54,6 +54,8 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:connection_id/stream/:stream_name", a.handleUpdateStream)
 	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.handleDeleteStream)
 
+	a.Get("/api/connection/:connection_id/stream/:stream_name/consumers", a.handleIndexStreamConsumers)
+
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
 
@@ -341,7 +343,7 @@ func (a *App) handleSealStream(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func (a *App) handleIndexStreamConsumer(c *fiber.Ctx) error {
+func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
 	if err != nil {
 		return c.Status(404).JSON(err.Error())

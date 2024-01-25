@@ -5,6 +5,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/nui"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
@@ -16,6 +17,7 @@ import (
 
 type NuiTestSuite struct {
 	suite.Suite
+	ctx                 context.Context
 	NatsServer          *server.Server
 	NuiServer           *nui.App
 	nuiServerPort       string
@@ -23,6 +25,7 @@ type NuiTestSuite struct {
 	natsServerOpts      *server.Options
 	e                   *httpexpect.Expect
 	nc                  *nats.Conn
+	js                  jetstream.JetStream
 }
 
 func (s *NuiTestSuite) SetupSuite() {
@@ -37,6 +40,7 @@ func (s *NuiTestSuite) SetupSuite() {
 }
 
 func (s *NuiTestSuite) SetupTest() {
+	s.ctx = context.Background()
 	s.natsServerOpts.Port = rand.Intn(1000) + 4000
 	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 3000)
 	s.e = s.newE()
@@ -49,6 +53,9 @@ func (s *NuiTestSuite) connectNatsClient() {
 	nc, err := nats.Connect(s.NatsServer.Addr().String())
 	s.NoError(err)
 	s.nc = nc
+	js, err := jetstream.New(nc)
+	s.NoError(err)
+	s.js = js
 }
 
 func (s *NuiTestSuite) startNuiServer() {
