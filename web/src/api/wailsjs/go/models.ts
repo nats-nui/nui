@@ -3,6 +3,7 @@ export namespace mapping {
 	export class StreamApi {
 	    streamInfo?: nats.StreamInfo;
 	    streamConfig?: nats.StreamConfig;
+	    consumer?: nats.ConsumerInfo;
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamApi(source);
@@ -12,6 +13,7 @@ export namespace mapping {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.streamInfo = this.convertValues(source["streamInfo"], nats.StreamInfo);
 	        this.streamConfig = this.convertValues(source["streamConfig"], nats.StreamConfig);
+	        this.consumer = this.convertValues(source["consumer"], nats.ConsumerInfo);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -137,6 +139,177 @@ export namespace nats {
 		    return a;
 		}
 	}
+	export class ConsumerConfig {
+	    durable_name?: string;
+	    name?: string;
+	    description?: string;
+	    deliver_policy: number;
+	    opt_start_seq?: number;
+	    // Go type: time
+	    opt_start_time?: any;
+	    ack_policy: number;
+	    ack_wait?: number;
+	    max_deliver?: number;
+	    backoff?: number[];
+	    filter_subject?: string;
+	    replay_policy: number;
+	    rate_limit_bps?: number;
+	    sample_freq?: string;
+	    max_waiting?: number;
+	    max_ack_pending?: number;
+	    flow_control?: boolean;
+	    idle_heartbeat?: number;
+	    headers_only?: boolean;
+	    max_batch?: number;
+	    max_expires?: number;
+	    max_bytes?: number;
+	    deliver_subject?: string;
+	    deliver_group?: string;
+	    inactive_threshold?: number;
+	    num_replicas: number;
+	    mem_storage?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ConsumerConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.durable_name = source["durable_name"];
+	        this.name = source["name"];
+	        this.description = source["description"];
+	        this.deliver_policy = source["deliver_policy"];
+	        this.opt_start_seq = source["opt_start_seq"];
+	        this.opt_start_time = this.convertValues(source["opt_start_time"], null);
+	        this.ack_policy = source["ack_policy"];
+	        this.ack_wait = source["ack_wait"];
+	        this.max_deliver = source["max_deliver"];
+	        this.backoff = source["backoff"];
+	        this.filter_subject = source["filter_subject"];
+	        this.replay_policy = source["replay_policy"];
+	        this.rate_limit_bps = source["rate_limit_bps"];
+	        this.sample_freq = source["sample_freq"];
+	        this.max_waiting = source["max_waiting"];
+	        this.max_ack_pending = source["max_ack_pending"];
+	        this.flow_control = source["flow_control"];
+	        this.idle_heartbeat = source["idle_heartbeat"];
+	        this.headers_only = source["headers_only"];
+	        this.max_batch = source["max_batch"];
+	        this.max_expires = source["max_expires"];
+	        this.max_bytes = source["max_bytes"];
+	        this.deliver_subject = source["deliver_subject"];
+	        this.deliver_group = source["deliver_group"];
+	        this.inactive_threshold = source["inactive_threshold"];
+	        this.num_replicas = source["num_replicas"];
+	        this.mem_storage = source["mem_storage"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class SequenceInfo {
+	    consumer_seq: number;
+	    stream_seq: number;
+	    // Go type: time
+	    last_active?: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new SequenceInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.consumer_seq = source["consumer_seq"];
+	        this.stream_seq = source["stream_seq"];
+	        this.last_active = this.convertValues(source["last_active"], null);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ConsumerInfo {
+	    stream_name: string;
+	    name: string;
+	    // Go type: time
+	    created: any;
+	    config: ConsumerConfig;
+	    delivered: SequenceInfo;
+	    ack_floor: SequenceInfo;
+	    num_ack_pending: number;
+	    num_redelivered: number;
+	    num_waiting: number;
+	    num_pending: number;
+	    cluster?: ClusterInfo;
+	    push_bound?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ConsumerInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.stream_name = source["stream_name"];
+	        this.name = source["name"];
+	        this.created = this.convertValues(source["created"], null);
+	        this.config = this.convertValues(source["config"], ConsumerConfig);
+	        this.delivered = this.convertValues(source["delivered"], SequenceInfo);
+	        this.ack_floor = this.convertValues(source["ack_floor"], SequenceInfo);
+	        this.num_ack_pending = source["num_ack_pending"];
+	        this.num_redelivered = source["num_redelivered"];
+	        this.num_waiting = source["num_waiting"];
+	        this.num_pending = source["num_pending"];
+	        this.cluster = this.convertValues(source["cluster"], ClusterInfo);
+	        this.push_bound = source["push_bound"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ExternalStream {
 	    api: string;
 	    deliver?: string;
@@ -181,6 +354,7 @@ export namespace nats {
 	        this.headers_only = source["headers_only"];
 	    }
 	}
+	
 	export class StreamSource {
 	    name: string;
 	    opt_start_seq?: number;

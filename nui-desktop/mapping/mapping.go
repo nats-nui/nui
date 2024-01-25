@@ -1,10 +1,13 @@
 package mapping
 
-import "github.com/nats-io/nats.go"
+import (
+	"github.com/nats-io/nats.go"
+)
 
 type StreamApi struct {
 	StreamInfo   *nats.StreamInfo   `json:"streamInfo"`
 	StreamConfig *nats.StreamConfig `json:"streamConfig"`
+	Consumer     *nats.ConsumerInfo `json:"consumer"`
 }
 
 type Api struct {
