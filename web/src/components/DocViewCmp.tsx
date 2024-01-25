@@ -50,13 +50,20 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 	return <div
 		id={view.state.uuid}
-		style={cssRoot(deep)} 
-		className={`var${view.getColorVar()}`}
+		style={cssRoot(deep)}
+		className={`var${variant}`}
 	>
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
-		{`var${view.getColorVar()}`}
+
+
+
+			{`var${variant}`}
+
+
+
+
 			<DocCmp view={view} />
 			{/* <ModalCmp view={view} /> */}
 		</div>

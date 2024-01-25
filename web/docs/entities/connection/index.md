@@ -3,8 +3,8 @@
 
 
 ### URL
-```typescript
-/api/connection
+```
+GET /api/connection
 ```
 
 
@@ -13,9 +13,8 @@ null
 
 
 ### RESPONSE
-
+```typescript
+connection[]
 ```
-{ ...Connection }
-```
-[CONNECTION](./def.md)
+[CONNECTION](./def/connection.md)
 

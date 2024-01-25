@@ -30,7 +30,6 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	// RENDER
 	const inRoot = !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
-	const variant = store.getColorVar()
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
 	return <div style={{...cssRoot(variantBg, inDrag, isIconized), ...style}}>
@@ -45,7 +44,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 				{actionsRender}
 			</ActionGroup>
 
-			<div style={cssChildren(inRoot)} className={`var${variant}`}>
+			<div style={cssChildren(inRoot)}>
 				{children}
 			</div>
 

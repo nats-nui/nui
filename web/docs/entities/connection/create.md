@@ -1,21 +1,23 @@
 
-## PUBLISH
+## CREATE
 
 
 ### URL
-```typescript
-/api/connection/:connection_id/publish
+```
+POST /api/connection
 ```
 
 
 ### BODY
 ```typescript
-{ 
-	subjct: string
-	payload: string_base64
-}
+connection
 ```
+[CONNECTION](./def/connection.md)
 
 
 ### RESPONSE
-null
+
+```typescript
+connection
+```
+[CONNECTION](./def/connection.md)

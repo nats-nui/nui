@@ -1,12 +1,17 @@
 
 input {
-  font-family: 'Raleway', sans-serif;
   border: none;
   min-width: 0;
-  background-color: transparent;
   color: currentColor;
-  
+  background-color: rgb(0 0 0 / 6%);
+  /* borderBottom: "1px solid rgb(0 0 0 / 15%)", */
+
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
   font-weight: 600;
+
+  padding: 4px 3px 3px 3px;
+	border-radius: 3px;
 }
 
 input:focus {
@@ -18,10 +23,10 @@ input:disabled {
 }
 
 input::selection {
-  background: #DEDEDE;
-  color: var(--text-bg);
+  background: var(--text-bg);
+  color: #DEDEDE;
 }
-
+/*
 .var0 input::selection {
   background: var(--text-bg);
   color: var(--var-0);
@@ -32,22 +37,23 @@ input::selection {
   color: var(--text-bg);
 }
 
-.var2 input.var2::selection {
+.var2 input::selection {
   background: var(--var-2);
   color: var(--text-bg);
 }
 
-.var3 input.var3::selection {
+.var3 input::selection {
   background: var(--var-3);
   color: var(--text-bg);
 }
 
-.var4 input.var4::selection {
+.var4 input::selection {
   background: var(--var-4);
   color: var(--text-bg);
 }
 
-.var5 input.var5::selection {
+.var5 input::selection {
   background: var(--var-5);
   color: var(--text-bg);
 }
+*/

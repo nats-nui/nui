@@ -4,7 +4,7 @@ import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
-import { forEachDocsView, getById } from "./utils/manage"
+import { forEachViews, getById } from "./utils/manage"
 import { VIEW_PARAMS } from "../stacks/utils"
 import { compare } from "@/utils/object"
 
@@ -47,7 +47,7 @@ const setup = {
 			return store.state.menu.some(view => view.state.uuid == uuid)
 		},
 		find(state: any, store?: DocStore) {
-			return forEachDocsView( 
+			return forEachViews( 
 				store.state.all,
 				(view) => {
 					return compare(state, view.state) ? view : null
@@ -67,7 +67,7 @@ const setup = {
 			store?: DocStore
 		) {
 			// se c'e' gia' setto solo il focus
-			if (forEachDocsView(store.state.all, (v) => v.state.uuid == view.state.uuid)) {
+			if (forEachViews(store.state.all, (v) => v.state.uuid == view.state.uuid)) {
 				store.setFocus(view)
 				return
 			}

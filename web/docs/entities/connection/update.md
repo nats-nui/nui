@@ -3,8 +3,8 @@
 
 
 ### URL
-```typescript
-/api/connection/:connection_id
+```
+POST /api/connection/:connection_id
 ```
 - `connection-id`
 connessione da aggiornare con il BODY
@@ -12,14 +12,13 @@ connessione da aggiornare con il BODY
 
 ### BODY
 ```typescript
-{ ...Connection }
+connection
 ```
-[CONNECTION](./def.md)
+[CONNECTION](./def/connection.md)
 
 
 ### RESPONSE
-
+```typescript
+connection
 ```
-{ ...CONNECTION }
-```
-[CONNECTION](./def.md)
+[CONNECTION](./def/connection.md)

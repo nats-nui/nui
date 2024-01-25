@@ -4,8 +4,8 @@ Restituisce la COLLECTION di STREAMS presenti iin una specifica CONNECTION
 
 
 ### URL
-```typescript
-/api/connection/:connection_id/stream
+```
+GET /api/connection/:connection_id/stream
 ```
 - `connection_id`  
 identificativo CONNECTION che contiene gli STREAM restituiti
@@ -16,7 +16,6 @@ identificativo CONNECTION che contiene gli STREAM restituiti
 
 
 ### RESPONSE
-
 ```
 stream_info[]
 ```

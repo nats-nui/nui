@@ -7,20 +7,20 @@ import { ViewStore } from "../../stacks/viewBase";
  * se il callback restituisce un valore allora termina e restituisce il valore 
  * se il callback restituisce null continua
  */
-export function forEachDocsView<T>(views: ViewStore[], callback: (view: ViewStore) => T): T {
+export function forEachViews<T>(views: ViewStore[], callback: (view: ViewStore) => T): T {
 	if (!views) return null
 	for (const view of views) {
-		const ret = forEachDocView(view, callback)
+		const ret = forEachView(view, callback)
 		if ( ret != null) return ret
 	}
 	return null
 }
-function forEachDocView<T>(view: ViewStore, callback: (view: ViewStore) => T): T {
+function forEachView<T>(view: ViewStore, callback: (view: ViewStore) => T): T {
 	if (!view) return null
 	const ret = callback(view)
 	if ( ret != null ) return ret
 	if (view.state.linked) {
-		return forEachDocView(view.state.linked, callback)
+		return forEachView(view.state.linked, callback)
 	}
 	return null
 }
@@ -29,7 +29,7 @@ function forEachDocView<T>(view: ViewStore, callback: (view: ViewStore) => T): T
  * restituisce una VIEW tramite l'id cercando nei "child" in un array di VIEW 
  */
 export function getById(views: ViewStore[], id: string): ViewStore {
-	return forEachDocsView(views, (view) => {
+	return forEachViews(views, (view) => {
 		if (view.state.uuid === id) {
 			return view
 		}

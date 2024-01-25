@@ -38,7 +38,6 @@ const ItemsList: FunctionComponent<Props> = ({
 	return (<>
 		<Virtuoso
 			ref={virtuoso}
-			className="var2"
 			style={{ height: "100%" }}
 			atBottomStateChange={(bottom) => {
 				setShowButton(!bottom)
