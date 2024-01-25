@@ -1,21 +1,23 @@
 
-## INDEX
+## PUBLISH
 
 
 ### URL
-```typescript
-/api/connection
 ```
+POST /api/connection/:connection_id/publish
+```
+- `connection_id`
+la connection su cui si vuole pubblicare
 
 
 ### BODY
-null
+```typescript
+{
+    "subject": string,	// un solo SUBJECT
+    "payload": string,  // base64 encoded
+}
+```
 
 
 ### RESPONSE
-
-```
-{ ...Connection }
-```
-[CONNECTION](./def.md)
-
+`null`

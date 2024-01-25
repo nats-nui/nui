@@ -14,11 +14,11 @@ textarea:disabled {
   opacity: 0.6;
 }
 
-textarea::selection {
-  background: #DEDEDE;
-  color: var(--text-bg);
+input::selection {
+  background: var(--text-bg);
+  color: #DEDEDE;
 }
-
+/*
 .var0 textarea::selection {
   background: var(--var-0);
   color: var(--text-bg);
@@ -48,3 +48,4 @@ textarea::selection {
   background: var(--var-5);
   color: var(--text-bg);
 }
+*/

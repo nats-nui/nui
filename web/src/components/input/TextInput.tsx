@@ -9,7 +9,6 @@ export interface TextInputProps {
 	readOnly?: boolean
 	style?: React.CSSProperties
 	focus?: boolean
-
 	onChange?: (newValue: string | number) => void
 	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
@@ -22,7 +21,6 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		readOnly,
 		style,
 		focus,
-
 		onChange,
 		onFocus,
 		onKeyDown,
@@ -55,7 +53,6 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		<input ref={inputRef}
 			style={{ ...cssRoot, ...style }}
 			placeholder={placeholder}
-			
 			value={value}
 			onChange={handleChange}
 			onFocus={handleFocus}
@@ -67,11 +64,4 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 export default forwardRef(TextInput)
 
 const cssRoot: React.CSSProperties = {
-	//borderBottom: "1px solid rgb(0 0 0 / 15%)",
-	padding: "4px 3px 3px 3px",
-	fontSize: 12,
-	fontWeight: 600,
-
-	borderRadius: 3,
-	backgroundColor: '#00000010'
 }

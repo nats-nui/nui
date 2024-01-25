@@ -1,6 +1,4 @@
 
-
-
 ## STREAM-CONFIG
 
 Sono i dati di creazione dello STREAM
@@ -26,8 +24,8 @@ StreamConfig {
 	template_owner: string, 	// omitted if empty
 	duplicate_window: number, 	// omitted if zero
 	placement: Placement		// omitted if null
-	mirror: Mirror 				// omitted if null, not editable, "name" is taken from stream names
-	sources: Source[]			// omitted if empty, "name" is taken from stream names
+	mirror: Mirror 				// omitted if null, not editable
+	sources: Source[]			// omitted if empty
 	sealed: boolean				// omitted if false, read only
 	deny_delete: boolean, 		// omitted if false, not editable
 	deny_purge: boolean, 		// omitted if false, not editable
@@ -52,6 +50,7 @@ Republish {
 
 ```typescript
 Mirror {
+	/** is taken from stream names */
 	name: string				// omitted if empty
 	optStartSeq: number			// omitted if zero
 	filterSubject: string		// omitted if empty
@@ -71,6 +70,7 @@ Placement {
 
 ```typescript
 Source {
+	/** is taken from stream names */
 	name: string				// omitted if empty
 	optStartSeq: number			// omitted if zero
 	filterSubject: string		// omitted if empty

@@ -110,7 +110,6 @@ const ItemsList: FunctionComponent<Props> = ({
 			onWheel={handleStopKeepDown}
 			onScroll={handleScroll as any}
 			style={{ ...cssRoot, ...style}}
-			className="var2"
 		>
 
 			<div style={{ height: scrollHeightRef.current/*, backgroundColor: "purple", overflowY: "hidden"*/ }}>
