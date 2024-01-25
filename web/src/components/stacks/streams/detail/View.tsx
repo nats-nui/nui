@@ -143,7 +143,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
 					items={Object.values(RETENTION)}
 					RenderRow={({ item }) => item}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 					onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
 				/>
 			</BoxV>
@@ -154,7 +154,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					style={{ flex: 1 }}
 					value={config.maxConsumers}
 					onChange={maxConsumers => handlePropChange({ maxConsumers })}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 				/>
 			</BoxV>
 
@@ -230,7 +230,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					select={Object.values(STORAGE).indexOf(config.storage ?? STORAGE.FILE)}
 					items={Object.values(STORAGE)}
 					RenderRow={({ item }) => item}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 					onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 				/>
 			</BoxV>
@@ -294,7 +294,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					<IconToggle
 						check={!!config.mirror}
 						onChange={handleMirrorCheck}
-						readOnly={readOnly}
+						readOnly={readOnly || !isNew}
 					/>
 					<Label type={LABELS.TEXT}>MIRROR</Label>
 				</Box>
@@ -307,7 +307,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 								select={0}
 								items={allStreams}
 								RenderRow={({ item }) => item}
-								readOnly={readOnly}
+								readOnly={readOnly || !isNew}
 							// onSelect={index => {
 							// 	console.log(index)
 							// 	handlePropChange({ discard: Object.values(DISCARD)[index] })
@@ -327,7 +327,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 								style={{ flex: 1 }}
 								value={config.mirror?.optStartSeq}
 								onChange={optStartSeq => handleMirrorPropChange({ optStartSeq })}
-								readOnly={readOnly}
+								readOnly={readOnly || !isNew}
 							/>
 						</BoxV>
 						<BoxV>
@@ -335,7 +335,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 							<TextInput
 								value={config.mirror?.filterSubject}
 								onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
-								readOnly={readOnly}
+								readOnly={readOnly || !isNew}
 							/>
 						</BoxV>
 					</Quote>
@@ -384,7 +384,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				<IconToggle
 					check={config.denyDelete}
 					onChange={denyDelete => handlePropChange({ denyDelete })}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 				/>
 				<Label>DENY DELETE</Label>
 			</Box>
@@ -393,7 +393,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				<IconToggle
 					check={config.denyPurge}
 					onChange={denyPurge => handlePropChange({ denyPurge })}
-					readOnly={readOnly}
+					readOnly={readOnly || !isNew}
 				/>
 				<Label>DENY PURGE</Label>
 			</Box>
