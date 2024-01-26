@@ -1,4 +1,6 @@
+import BoxV from "@/components/format/BoxV"
 import Divider from "@/components/format/Divider"
+import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
@@ -19,7 +21,7 @@ interface Props {
 /**
  * dettaglio di una CONNECTION
  */
-const CnnDetailCmp: FunctionComponent<Props> = ({
+const ConnectionDetailForm: FunctionComponent<Props> = ({
 	cnnDetailSo,
 }) => {
 
@@ -51,52 +53,55 @@ const CnnDetailCmp: FunctionComponent<Props> = ({
 	const readOnly = cnnDetailSa.readOnly
 	const variant = cnnDetailSo.getColorVar()
 
-	return <div style={cssForm}>
+	return <Form>
 
-		<Label>NAME</Label>
-		<TextInput
-			value={name}
-			onChange={handleChangeName}
-			readOnly={readOnly}
-		/>
+		<BoxV>
+			<Label>NAME</Label>
+			<TextInput
+				value={name}
+				onChange={handleChangeName}
+				readOnly={readOnly}
+			/>
+		</BoxV>
 
-		<Label>HOST</Label>
-		<EditList<string>
-			items={hosts}
-			onChangeItems={handleHostsChange}
-			fnNewItem={() => "<new>"}
-			RenderRow={EditStringRow}
-			readOnly={readOnly}
-			variant={variant}
-		/>
+		<BoxV>
+			<Label>HOST</Label>
+			<EditList<string>
+				items={hosts}
+				onChangeItems={handleHostsChange}
+				fnNewItem={() => "<new>"}
+				RenderRow={EditStringRow}
+				readOnly={readOnly}
+				variant={variant}
+			/>
+		</BoxV>
 
-		<Divider style={{marginBottom: 5}} label="ADVANCED"/>
+		<Divider style={{ marginBottom: 5 }} label="ADVANCED" />
 
-		<Label>SUBSCRIPTIONS</Label>
-		<EditList<Subscription>
-			items={subscriptions}
-			onChangeItems={handleSubscriptionsChange}
-			fnNewItem={() => ({ subject: "<new>" })}
-			RenderRow={EditSubscriptionNoDisableRow}
-			readOnly={readOnly}
-			variant={variant}
-		/>
+		<BoxV>
+			<Label>SUBSCRIPTIONS</Label>
+			<EditList<Subscription>
+				items={subscriptions}
+				onChangeItems={handleSubscriptionsChange}
+				fnNewItem={() => ({ subject: "<new>" })}
+				RenderRow={EditSubscriptionNoDisableRow}
+				readOnly={readOnly}
+				variant={variant}
+			/>
+		</BoxV>
 
-		<Label>AUTH</Label>
-		<EditList<Auth>
-			items={auths}
-			onChangeItems={handleAuthsChange}
-			RenderRow={EditAuthRow}
-			readOnly={readOnly}
-			variant={variant}
-		/>
+		<BoxV>
+			<Label>AUTH</Label>
+			<EditList<Auth>
+				items={auths}
+				onChangeItems={handleAuthsChange}
+				RenderRow={EditAuthRow}
+				readOnly={readOnly}
+				variant={variant}
+			/>
+		</BoxV>
 
-	</div>
+	</Form>
 }
 
-export default CnnDetailCmp
-
-const cssForm: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "column",
-}
+export default ConnectionDetailForm

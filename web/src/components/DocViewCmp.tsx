@@ -56,14 +56,6 @@ const DocViewCmp: FunctionComponent<Props> = ({
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
-
-
-
-			{`var${variant}`}
-
-
-
-
 			<DocCmp view={view} />
 			{/* <ModalCmp view={view} /> */}
 		</div>

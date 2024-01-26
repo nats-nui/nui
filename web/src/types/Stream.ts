@@ -35,6 +35,28 @@ export interface StreamConfig {
 }
 
 export interface StreamState {
+	// numero messaggi arrivati
+    messages: number;
+    // quantità in byte occupata ai messaggi
+    bytes: number;
+    // ???
+    firstSeq: number;
+    // Go type: time
+    firstTs: any;
+    // ???
+    lastSeq: number;
+    // Go type: time
+    lastTs: any;
+    // numro di CONSUMER
+    consumerCount: number;
+    // ???
+    deleted: number[];
+    // ???
+    numDeleted: number;
+    // ???
+    numSubjects: number;
+    // numero di messaggi per ogni SUBJECT
+    subjects: {[key: string]: number};
 }
 
 

@@ -31,5 +31,5 @@ const cssRoot:React.CSSProperties = {
 	display: "flex", 
 	flexDirection: "column",
 	position: "relative",
-	gap: 5,
+	//gap: 5,
 }

@@ -10,7 +10,8 @@ import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import CnnDetailCmp from "./CnnDetailCmp"
+import ConnectionDetailForm from "./DetailForm"
+import ActionsCmp from "./ActionsCmp"
 
 
 
@@ -57,30 +58,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={cnnDetailSo}
 		variantBg={variant}
-		actionsRender={isNew ? (
-			<Button
-				label="CREATE"
-				variant={variant}
-				onClick={handleSaveClick}
-			/>
-		) : readOnly ? (
-			<Button
-				label="EDIT"
-				variant={variant}
-				onClick={handleEditClick}
-			/>
-		) : (<>
-			<Button
-				label="SAVE"
-				variant={variant}
-				onClick={handleSaveClick}
-			/>
-			<Button
-				label="CANCEL"
-				variant={variant}
-				onClick={handleCancelClick}
-			/>
-		</>)}
+		actionsRender={<ActionsCmp store={cnnDetailSo}/>}
 
 	>
 		{!isNew && <div style={{ marginBottom: 20 }}>
@@ -105,7 +83,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			/>
 		</div>}
 
-		<CnnDetailCmp
+		<ConnectionDetailForm
 			cnnDetailSo={cnnDetailSo}
 		/>
 
