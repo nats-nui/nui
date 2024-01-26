@@ -127,7 +127,6 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
-
 	// create a subscription with s.nc that wait for requests and say "hi" as response
 	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
 		err := s.nc.Publish(m.Reply, []byte("hi"))
