@@ -224,21 +224,6 @@ const docsStore = createStore(setup) as DocStore
 export default docsStore
 
 
-
-//var decodedQueryString = decodeURIComponent(window.location.search.substring(1));
-//navSo.setQuery(decodedQueryString)
-//const docsStr = navSo.getSearchUrl("docs") as string
-//store.updateFromString(docsStr)
-
-
-
-// async function load() {
-// 	const states = await dbLoad()
-// 	const stores: ViewStore[] = states.map(state => buildStore(state))
-// 	docsStore.setAll(stores)
-// }
-// load()
-
 window.addEventListener("load", async (event) => {
 	const states = await dbLoad()
 	const stores = states.map(state => {

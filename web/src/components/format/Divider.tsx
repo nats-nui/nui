@@ -18,18 +18,18 @@ const Divider: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	return <>
+	return <div style={{ display: "flex", flexDirection: "column"}}>
 		{!!label && <div style={cssLabel}>{label}</div>}
 		<div style={{ ...cssLine, ...style }} />
-	</>
+	</div>
 }
 
 export default Divider
 
 const cssLabel: React.CSSProperties = {
-	fontSize: 8,
+	fontSize: 9,
 	textAlign: 'right',
-	marginTop: 10,
+	//marginTop: 10,
 	opacity: .8,
 }
 

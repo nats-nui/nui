@@ -1,11 +1,10 @@
-import Label from "@/components/format/Label"
-import { Source } from "@/types/Stream"
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react"
-import DateTimeInput from "../../input/DateTimeInput"
-import NumberInput from "../../input/NumberInput"
-import TextInput from "../../input/TextInput"
 import Options from "@/components/Options"
 import BoxV from "@/components/format/BoxV"
+import Label from "@/components/format/Label"
+import { Source } from "@/types/Stream"
+import { FunctionComponent } from "react"
+import NumberInput from "../../input/NumberInput"
+import TextInput from "../../input/TextInput"
 
 interface Props {
 	source: Source

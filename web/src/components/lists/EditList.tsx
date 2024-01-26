@@ -99,6 +99,7 @@ function EditList<T>({
 	}
 
 	// RENDER
+	if ( !items ) return null
 	return (
 		<div  
 			//tabIndex={0}
