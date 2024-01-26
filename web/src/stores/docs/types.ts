@@ -1,13 +1,15 @@
 
 export enum DOC_TYPE {
-	EMPTY = "emp",
-	CONNECTIONS = "cns",
-	CONNECTION = "srv",
-	MESSAGES = "msgs",
-	MESSAGE = "msgdtl",
-	MESSAGE_SEND = "msgsnd",
-	STREAMS = "strs",
-	STREAM = "str2",
+	EMPTY = "empty",
+	CONNECTIONS = "connectons",
+	CONNECTION = "connecton",
+	MESSAGES = "messages",
+	MESSAGE = "message",
+	MESSAGE_SEND = "message_send",
+	STREAMS = "streams",
+	STREAM = "stream",
+	CONSUMERS = "consumers",
+	CONSUMER = "consumer",
 	LOGS = "logs",
 }
 

@@ -2,6 +2,9 @@ import CnnDetailView from "@/components/stacks/connections/CnnDetailView"
 import MessagesView from "@/components/stacks/messages/MessagesView"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CnnListStore } from "@/stores/stacks/connection/list"
+import { ConsumersStore } from "@/stores/stacks/consumer"
+import { ConsumerStore } from "@/stores/stacks/consumer/detail"
+import { LogsStore } from "@/stores/stacks/mainLogs"
 import { MessageStore } from "@/stores/stacks/message"
 import { MessagesStore } from "@/stores/stacks/messages"
 import { MessageSendStore } from "@/stores/stacks/send"
@@ -11,12 +14,13 @@ import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
 import CnnListView from "./stacks/connections/CnnListView"
+import ConsumersListView from "./stacks/consumers/ConsumersListView"
+import ConsumerDetailView from "./stacks/consumers/detail/View"
+import LogsView from "./stacks/mainLogs/LogsView"
 import MessageView from "./stacks/message/MessageView"
 import MessageSendView from "./stacks/messageSend/MessageSendView"
-import StreamDetailView from "./stacks/streams/detail/View"
 import StreamsListView from "./stacks/streams/StreamsListView"
-import LogsView from "./stacks/mainLogs/LogsView"
-import { LogsStore } from "@/stores/stacks/mainLogs"
+import StreamDetailView from "./stacks/streams/detail/View"
 
 
 
@@ -44,6 +48,11 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <StreamsListView store={view as StreamsStore} />
 			case DOC_TYPE.STREAM:
 				return <StreamDetailView store={view as StreamStore} />
+			case DOC_TYPE.CONSUMERS:
+				return <ConsumersListView store={view as ConsumersStore} />
+			case DOC_TYPE.CONSUMER:
+				return <ConsumerDetailView store={view as ConsumerStore} />
+	
 			case DOC_TYPE.LOGS:
 					return <LogsView store={view as LogsStore} />
 			default:

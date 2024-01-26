@@ -14,7 +14,7 @@ const setup = {
 		connectionId: <string>null,
 		/** il nome dello STREAM che contiene questo CONSUMER */
 		streamName: <string>null,
-		/** il consumer apppunto */
+		/** il consumer appunto */
 		consumer: <ConsumerInfo>null,
 
 		//#region VIEWBASE
@@ -23,12 +23,11 @@ const setup = {
 	},
 
 	getters: {
-
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<ConsumerStore>store).state.consumer?.config.name ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "STREAM DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => "CONSUMER DETAIL",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
+		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.FUCHSIA,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ConsumerState
 			return {
@@ -39,7 +38,6 @@ const setup = {
 	},
 
 	actions: {
-
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)

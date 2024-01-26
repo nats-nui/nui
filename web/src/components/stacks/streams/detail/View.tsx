@@ -27,6 +27,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
+	const handleConsumersClick = () => streamSo.openConsumers()
 
 	// RENDER
 	const isNew = streamSo.isNew()
@@ -45,7 +46,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					label="CONSUMER"
 					variant={variant}
 				//select={isMessageOpen}
-				//onClick={handleMessagesClick}
+					onClick={handleConsumersClick}
 				/>
 			</div>
 			<MainForm store={streamSo} />
