@@ -7,6 +7,8 @@ import { StreamsStore } from "."
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/types"
+import { buildStore } from "@/stores/docs/utils/factory"
+import { ConsumersState, ConsumersStore } from "../consumer"
 
 
 
@@ -76,12 +78,13 @@ const setup = {
 		},
 		//#endregion
 		
+		/** va aprendersi i valori originali e ripristina lo STREAM */
 		restore: (_: void, store?: StreamStore) => {
 			const stream = store.getStreamsStore()?.getByName(store.state.stream.config.name)
 			store.setStream(stream)
 		},
 
-		/** crea un nuovo stream-info tramite stream-config */
+		/** crea un nuovo STREAM-INFO tramite STREAM-CONFIG */
 		async save(_:void, store?: StreamStore) {
 			let streamSaved = null
 			if ( store.isNew() ) {
@@ -93,6 +96,7 @@ const setup = {
 			store.getStreamsStore()?.update(streamSaved)
 		},
 
+		/** mi assicuro la lista STREAMS della CONNECTION */
 		updateAllStreams: async (_: void, store?: StreamStore) => {
 			if ( store.state.allStreams ) return
 			const parent = store.getStreamsStore()
@@ -101,7 +105,20 @@ const setup = {
 			store.setAllStreams(allStreams)
 		},
 
-
+		/** apertura della CARD CONSUMERS */
+		openConsumers(_: void, store?: StreamStore) {
+			if (!store.state.stream?.config?.name) return
+			const msgStore = buildStore({
+				type: DOC_TYPE.CONSUMERS,
+				connectionId: store.state.connectionId,
+				streamName: store.state.stream.config.name,
+			} as ConsumersState) as ConsumersStore
+			docSo.addLink({
+				view: msgStore,
+				parent: store,
+				anim: true,
+			})
+		},
 	},
 
 	mutators: {
