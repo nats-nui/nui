@@ -17,7 +17,17 @@ func setupDocRepoSuite(t *testing.T) *docRepoSuite {
 	s.c1 = &Connection{
 		Name:          "c1",
 		Hosts:         []string{"localhost:4222"},
-		Subscriptions: []Subscription{},
+		Subscriptions: make([]Subscription, 0),
+		Auth:          make([]Auth, 0),
+		CurrentAuth: Auth{
+			Mode:     "token",
+			Username: "user",
+			Password: "pass",
+			Token:    "token",
+			Jwt:      "jwt",
+			NKeySeed: "seed",
+			Creds:    "creds",
+		},
 	}
 	s.c2 = &Connection{
 		Name:          "c2",
@@ -54,4 +64,18 @@ func TestDocConnRepo_All(t *testing.T) {
 	require.Equal(t, 2, len(conns))
 	require.Equal(t, *s.c1, *conns[c1.Id])
 	require.Equal(t, *s.c2, *conns[c2.Id])
+}
+
+func TestDocStoreConnRepo_SaveInnerStructs(t *testing.T) {
+	s := setupDocRepoSuite(t)
+	c1, _ := s.repo.Save(s.c1)
+	retrieved, err := s.repo.GetById(c1.Id)
+	require.Nil(t, err)
+	require.Equal(t, s.c1.CurrentAuth.Mode, retrieved.CurrentAuth.Mode)
+	require.Equal(t, s.c1.CurrentAuth.Username, retrieved.CurrentAuth.Username)
+	require.Equal(t, s.c1.CurrentAuth.Password, retrieved.CurrentAuth.Password)
+	require.Equal(t, s.c1.CurrentAuth.Token, retrieved.CurrentAuth.Token)
+	require.Equal(t, s.c1.CurrentAuth.Jwt, retrieved.CurrentAuth.Jwt)
+	require.Equal(t, s.c1.CurrentAuth.NKeySeed, retrieved.CurrentAuth.NKeySeed)
+	require.Equal(t, s.c1.CurrentAuth.Creds, retrieved.CurrentAuth.Creds)
 }

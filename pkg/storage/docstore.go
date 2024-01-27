@@ -1,7 +1,10 @@
 package docstore
 
 import (
-	c "github.com/ostafen/clover"
+	"github.com/dgraph-io/badger/v4"
+	c "github.com/ostafen/clover/v2"
+	"github.com/ostafen/clover/v2/document"
+	badgerstore "github.com/ostafen/clover/v2/store/badger"
 )
 
 const CONN_COLLECTION = "connections"
@@ -11,24 +14,29 @@ type DB struct {
 }
 
 func NewDocStore(path string) (*DB, error) {
-	var opts []c.Option
+
+	opts := badger.DefaultOptions(path)
 	if path == "" || path == ":memory:" {
-		path = ""
-		opts = append(opts, c.InMemoryMode(true))
+		opts = badger.DefaultOptions("").WithInMemory(true)
 	}
-	store, err := c.Open(path, opts...)
+	store, err := badgerstore.OpenWithOptions(opts)
 	if err != nil {
 		return nil, err
 	}
-	err = createCollection(store, CONN_COLLECTION)
+	// opens a badger in memory database
+	db, _ := c.OpenWithStore(store)
 	if err != nil {
 		return nil, err
 	}
-	return &DB{DB: store}, nil
+	err = createCollection(db, CONN_COLLECTION)
+	if err != nil {
+		return nil, err
+	}
+	return &DB{DB: db}, nil
 }
 
-func (d *DB) DocFromType(obj any) *c.Document {
-	return c.NewDocumentOf(obj)
+func (d *DB) DocFromType(obj any) *document.Document {
+	return document.NewDocumentOf(obj)
 }
 
 func createCollection(db *c.DB, name string) error {

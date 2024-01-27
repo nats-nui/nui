@@ -6,6 +6,7 @@ type Connection struct {
 	Hosts         []string       `json:"hosts" `
 	Subscriptions []Subscription `json:"subscriptions" `
 	Auth          []Auth         `json:"auth" `
+	CurrentAuth   Auth           `json:"current_auth" `
 }
 
 type Subscription struct {
@@ -22,12 +23,12 @@ const StatusConnected = "connected"
 const StatusDisconnected = "disconnected"
 
 type Auth struct {
-	Mode     string `json:"mode" `
-	Username string `json:"username" `
-	Password string `json:"password" `
-	Token    string `json:"token" `
-	Jwt      string `json:"jwt" `
-	NKeySeed string `json:"n_key_seed"`
+	Mode     string `json:"mode"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Token    string `json:"token"`
+	Jwt      string `json:"jwt"`
+	NKeySeed string `json:"n_key_seed" clover:"n_key_seed"`
 	Creds    string `json:"creds"`
 }
 
