@@ -1,7 +1,7 @@
 import srcIcon from "@/assets/StreamsIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { ConsumerInfo } from "@/types/Consumer"
+import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 
 
@@ -15,7 +15,7 @@ const setup = {
 		/** il nome dello STREAM che contiene questo CONSUMER */
 		streamName: <string>null,
 		/** il consumer appunto */
-		consumer: <ConsumerInfo>null,
+		consumer: <StreamConsumer>null,
 
 		//#region VIEWBASE
 		width: 230,
@@ -46,7 +46,7 @@ const setup = {
 	},
 
 	mutators: {
-		setConsumer: (consumer: ConsumerInfo) => ({ consumer }),
+		setConsumer: (consumer: StreamConsumer) => ({ consumer }),
 	},
 }
 

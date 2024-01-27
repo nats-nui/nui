@@ -1,10 +1,10 @@
 import ajax from "@/plugins/AjaxService"
-import { ConsumerInfo } from "@/types/Consumer"
+import { StreamConsumer } from "@/types/Consumer"
 
 
 
 /** INDEX */
-function index(connectionId: string, streamName:string): Promise<ConsumerInfo[]> {
+function index(connectionId: string, streamName:string): Promise<StreamConsumer[]> {
 	return ajax.get(`connection/${connectionId}/stream/${streamName}/consumer`)
 }
 

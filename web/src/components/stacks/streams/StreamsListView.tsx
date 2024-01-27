@@ -36,7 +36,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const streams = streamsSa.all
 	if (!streams) return null
 	const selected = streamsSa.select
-	const variant = streamsSo.getColorVar()
+	const variant = streamsSa.colorVar
 	const isSelected = (stream: StreamInfo) => selected == stream.config.name
 	const getTitle = (stream: StreamInfo) => stream.config.name
 	const getSubtitle = (stream: StreamInfo) => stream.config.description

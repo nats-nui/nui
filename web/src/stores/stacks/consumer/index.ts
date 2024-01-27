@@ -2,7 +2,7 @@ import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { ConsumerInfo } from "@/types/Consumer"
+import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import conApi from "@/api/consumers"
 import { buildStore } from "@/stores/docs/utils/factory"
@@ -23,7 +23,7 @@ const setup = {
 
 		/** nome del CONSUMER selezionato */
 		select: <string>null,
-		all: <ConsumerInfo[]>[],
+		all: <StreamConsumer[]>[],
 
 		//#region VIEWBASE
 		width: 200,
@@ -75,7 +75,7 @@ const setup = {
 	},
 
 	mutators: {
-		setAll: (all: ConsumerInfo[]) => ({ all }),
+		setAll: (all: StreamConsumer[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
 	},
 }

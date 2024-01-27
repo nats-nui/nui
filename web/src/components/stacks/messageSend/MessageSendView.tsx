@@ -34,7 +34,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const variant = sendSo.getColorVar()
+	const variant = sendSa.colorVar
 
 	return <FrameworkCard
 		store={sendSo}

@@ -30,9 +30,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const handleConsumersClick = () => streamSo.openConsumers()
 
 	// RENDER
-	const isNew = streamSo.isNew()
 	const readOnly = streamSa.readOnly
-	const variant = streamSo.getColorVar()
+	const variant = streamSa.colorVar
+	const isConsumerSelect = !!streamSa.linked
 
 	return <FrameworkCard
 		variantBg={variant}
@@ -45,7 +45,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					icon={<MessagesIcon />}
 					label="CONSUMER"
 					variant={variant}
-				//select={isMessageOpen}
+					select={isConsumerSelect}
 					onClick={handleConsumersClick}
 				/>
 			</div>

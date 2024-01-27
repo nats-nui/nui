@@ -18,7 +18,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import ElementDialog from "../../../dialogs/ElementDialog"
 import EditSourceCmp from "../EditSourceCmp"
-import ListDialog from "../ListDialog"
+import ListDialog from "../../../dialogs/ListDialog"
 
 
 
@@ -90,7 +90,7 @@ const ConfigForm: FunctionComponent<Props> = ({
 	const config: StreamConfig = streamSa.stream.config
 	const readOnly = streamSa.readOnly
 	const isNew = streamSo.isNew()
-	const variant = streamSo.getColorVar()
+	const variant = streamSa.colorVar
 	const allStreams = streamSa.allStreams
 
 	return <Form>

@@ -21,7 +21,7 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const variant = consumerSo.getColorVar()
+	const variant = consumerSa.colorVar
 
 	return <FrameworkCard
 		variantBg={variant}

@@ -16,5 +16,5 @@ GET /api/connection/:connection_id/stream/:stream_name/consumer
 ```
 consumer_info[]
 ```
-[CONSUMER-INFO](./def/consumer-info.md)
+[CONSUMER-INFO](./def/stream-consumer.md)
 

@@ -36,7 +36,7 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	// RENDER
 	const isNew = cnnDetailSa.connection?.id == null
 	const readOnly = cnnDetailSa.readOnly
-	const variant = cnnDetailSo.getColorVar()
+	const variant = cnnDetailSa.colorVar
 
 	return isNew ? (
 		<Button

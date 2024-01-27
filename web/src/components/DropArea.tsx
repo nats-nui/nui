@@ -44,7 +44,7 @@ const DropArea: FunctionComponent<Props> = ({
 
 	// RENDER
 	const dragOver = mouseSa.drag?.index == index
-	const variant = mouseSa.drag?.srcView?.getColorVar() ?? 0
+	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
 	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
 	
 	return <div style={cssRoot(dragOver, inExit, isLast)} draggable={false}

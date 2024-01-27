@@ -53,7 +53,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
 	const isNew = cnnDetailSa.connection?.id == null
 	const readOnly = cnnDetailSa.readOnly
-	const variant = cnnDetailSo.getColorVar()
+	const variant = cnnDetailSa.colorVar
 
 	return <FrameworkCard
 		store={cnnDetailSo}

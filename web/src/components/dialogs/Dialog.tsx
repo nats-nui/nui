@@ -88,7 +88,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 	// RENDER
 	if (!refDialog) return null
-	const variant = store.getColorVar()
+	const variant = state.colorVar
 
 	return createPortal(
 		<div

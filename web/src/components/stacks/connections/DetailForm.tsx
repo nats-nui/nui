@@ -26,7 +26,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const cnnDetailSa = useStore(cnnDetailSo) as CnnDetailState
+	const cnnDetailSa = useStore(cnnDetailSo)
 
 	// HOOKs
 
@@ -51,7 +51,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 	const auths = cnnDetailSa.connection.auth ?? []
 	const readOnly = cnnDetailSa.readOnly
-	const variant = cnnDetailSo.getColorVar()
+	const variant = cnnDetailSa.colorVar
 
 	return <Form>
 
