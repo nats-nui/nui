@@ -26,7 +26,7 @@ const DragCmp: FunctionComponent = () => {
 	// HANDLERS
 
 	// RENDER
-	const variant = mouseSa.drag?.srcView?.getColorVar() ?? 0
+	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
 	const pos = mouseSa.position
 
 	return <div style={cssRoot(variant, pos, inShow, hide)}>

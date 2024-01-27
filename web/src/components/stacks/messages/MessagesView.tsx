@@ -77,7 +77,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const formatSel = msgSa.format.toUpperCase()
-	const variant = msgSo.getColorVar()
+	const variant = msgSa.colorVar
 	const history = msgSo.getHistoryFiltered()
 
 	return <FrameworkCard

@@ -34,7 +34,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	if (streamSa.stream == null) return null
 	const isNew = streamSo.isNew()
 	const readOnly = streamSa.readOnly
-	const variant = streamSo.getColorVar()
+	const variant = streamSa.colorVar
 
 	if (isNew) {
 		return (

@@ -24,8 +24,8 @@ const CnnListView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const cnnListSa = useStore(cnnListSo) as CnnListState
-	const cnnSa = useStore(cnnSo) as ConnectionState
+	const cnnListSa = useStore(cnnListSo) 
+	const cnnSa = useStore(cnnSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -47,7 +47,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	const isSelected = (cnn: Connection) => selectedId == cnn.id
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
-	const variant = cnnListSo.getColorVar()
+	const variant = cnnListSa.colorVar
 
 	return <FrameworkCard
 		store={cnnListSo}

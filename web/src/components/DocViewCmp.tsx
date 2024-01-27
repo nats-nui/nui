@@ -35,7 +35,7 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
 	const haveFocus = docSa.focus == view
-	const variant = view.getColorVar()
+	const variant = viewSa.colorVar
 
 	// styles
 	const styContainerDoc: React.CSSProperties = {

@@ -28,6 +28,8 @@ const viewSetup = {
 
 		/** il width "normale" */
 		width: 300,
+		/** colore caratteristico della  VIEW */
+		colorVar: COLOR_VAR.DEFAULT,
 		/** il corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
 
@@ -54,7 +56,7 @@ const viewSetup = {
 				case DOC_ANIM.SHOWING:
 					break
 				case DOC_ANIM.DRAGGING:
-					const color = layoutSo.state.theme.palette.var[store.getColorVar()]
+					const color = layoutSo.state.theme.palette.var[store.state.colorVar]
 					style = {
 						...style,
 						border: `2px dashed ${color.bg}`,
@@ -72,7 +74,6 @@ const viewSetup = {
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
 		getIcon: (_: void, store?: ViewStore): string => null,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.DEFAULT,
 		getSerialization: (_: void, store?: ViewStore) => {
 			return {
 				uuid: store.state.uuid,

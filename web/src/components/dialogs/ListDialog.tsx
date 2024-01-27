@@ -4,10 +4,10 @@ import { RenderRowBaseProps } from "@/components/lists/EditList"
 import List from "@/components/lists/List"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { FunctionComponent, useState } from "react"
-import ElementDialog from "../../dialogs/ElementDialog"
+import ElementDialog from "./ElementDialog"
 
 
-
+/** un COMPONENT che se premuto apre una DIALOG con una LIST */
 interface Props extends DialogProps  {
 	items: string[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<string>>

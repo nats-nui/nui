@@ -34,7 +34,7 @@ const StoreIcon: FunctionComponent<Props> = ({
 		<IconRow selected
 			title={store.getTitle()}
 			subtitle={store.getSubTitle()}
-			variant={store.getColorVar()}
+			variant={state.colorVar}
 			onClick={() => handleOpenStoreClick(store)}
 			onClose={() => handleCloseStoreClick(store)}
 		/>

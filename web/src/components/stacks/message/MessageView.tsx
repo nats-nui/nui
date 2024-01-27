@@ -33,7 +33,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const text = msgSa.message.body
 	const format = msgSa.format
 	const formatLabel = format.toUpperCase()
-	const variant = msgSo.getColorVar()
+	const variant = msgSa.colorVar
 
 	return <FrameworkCard
 		store={msgSo}
