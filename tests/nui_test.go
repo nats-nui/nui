@@ -121,10 +121,16 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 		DeliverPolicy: jetstream.DeliverAllPolicy,
 	})
 	s.NoError(err)
+
+	// check list of consumers
 	r := e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(1)
 	r.Value(0).Object().Value("name").String().IsEqual("consumer1")
+
+	//check consumer by name
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/consumer1").
+		Expect().Status(http.StatusOK).JSON().Object().Value("name").IsEqual("consumer1")
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
