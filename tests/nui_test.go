@@ -83,10 +83,12 @@ func (s *NuiTestSuite) TestStreamRest() {
 	r1.Value(0).Object().Value("config").Object().Value("name").IsEqual("stream1")
 
 	// update stream
-	e.POST("/api/connection/" + connId + "/stream/stream1").
+	e.POST("/api/connection/"+connId+"/stream/stream1").
 		WithBytes([]byte(`{"name": "stream1", "storage": "memory", "subjects": ["sub1", "sub2", "sub3"]}`)).
 		Expect().
-		Status(http.StatusOK)
+		Status(http.StatusOK).
+		JSON().Object().Value("config").Object().Value("subjects").
+		Array().ContainsAll("sub1", "sub2", "sub3")
 
 	// get stream by name
 	r2 := e.GET("/api/connection/" + connId + "/stream/stream1").

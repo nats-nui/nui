@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev-desktop": "cross-env VITE_TARGET=desktop vite",
-    "build": "tsc && cross-env VITE_TARGET=web vite build",
+    "build": "cross-env VITE_TARGET=web vite build",
     "build-desktop": "tsc && cross-env VITE_TARGET=desktop vite build",
     "typescript": "tsc",
     "start:socket:mock": "node ./src/mocks/socket/index.js",
