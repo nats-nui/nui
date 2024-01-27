@@ -55,6 +55,7 @@ func (a *App) registerHandlers() {
 	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.handleDeleteStream)
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleIndexStreamConsumers)
+	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleShowStreamConsumer)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
@@ -377,6 +378,34 @@ func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 			infos = append(infos, info)
 		}
 	}
+}
+
+func (a *App) handleShowStreamConsumer(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	consumer, err := stream.Consumer(c.Context(), c.Params("consumer_name"))
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := consumer.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info)
 }
 
 //func (a *App) handleViewStreamMessages(c *fiber.Ctx) error {

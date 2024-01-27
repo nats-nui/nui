@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.21.4
 
 require (
+	github.com/dgraph-io/badger/v4 v4.2.0
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/gofiber/contrib/websocket v1.0.0
 	github.com/gofiber/fiber/v2 v2.51.0
@@ -22,11 +23,8 @@ require (
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
-	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dgraph-io/badger/v3 v3.2103.5 // indirect
-	github.com/dgraph-io/badger/v4 v4.2.0 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fasthttp/websocket v1.5.3 // indirect
@@ -70,7 +68,6 @@ require (
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
 	github.com/sanity-io/litter v1.5.5 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.6 // indirect
