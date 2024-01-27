@@ -10,6 +10,7 @@ interface Props {
 	select?: boolean
 	variant?: number
 	onClick?: (e: React.MouseEvent) => void
+	style?: React.CSSProperties
 }
 
 const RowButton: FunctionComponent<Props> = ({
@@ -18,6 +19,7 @@ const RowButton: FunctionComponent<Props> = ({
 	select,
 	variant = 0,
 	onClick,
+	style,
 }) => {
 
 	// STORE
@@ -31,7 +33,7 @@ const RowButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	return (
-		<div style={cssRoot(variant, select)}
+		<div style={{ ...cssRoot(variant, select), ...style }}
 			onClick={onClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}

@@ -10,8 +10,8 @@ import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import ConnectionDetailForm from "./DetailForm"
-import ActionsCmp from "./ActionsCmp"
+import ConnectionDetailForm from "./Form"
+import ActionsCmp from "./Actions"
 
 
 

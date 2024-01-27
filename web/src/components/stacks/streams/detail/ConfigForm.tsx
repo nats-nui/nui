@@ -17,7 +17,7 @@ import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Strea
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import ElementDialog from "../../../dialogs/ElementDialog"
-import EditSourceCmp from "../EditSourceCmp"
+import EditSourceCmp from "./EditSourceCmp"
 import ListDialog from "../../../dialogs/ListDialog"
 
 

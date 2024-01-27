@@ -13,6 +13,10 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subsOpen: false,
+
+		//#region VIEWBASE
+		colorVar: COLOR_VAR.CYAN,
+		//#endregion
 	},
 
 	getters: {
@@ -28,7 +32,6 @@ const setup = {
 			return subject ? `SUBJECT: ${subject}` : "NO SUBJECT!"
 		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageSendState
 			return {

@@ -2,7 +2,7 @@ import FrameworkCard from "@/components/FrameworkCard"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import ActionsCmp from "./ActionsCmp"
+import ActionsCmp from "./Actions"
 import ConfigForm from "./ConfigForm"
 import MainForm from "./MainForm"
 import RowButton from "@/components/buttons/RowButton"
@@ -40,15 +40,22 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={streamSo} />}
 	>
 		{readOnly ? (<>
-			<div style={{ marginBottom: 20 }}>
+
 				<RowButton
 					icon={<MessagesIcon />}
-					label="CONSUMER"
+					label="CONSUMERS"
 					variant={variant}
 					select={isConsumerSelect}
 					onClick={handleConsumersClick}
 				/>
-			</div>
+				<RowButton style={{ marginBottom: 15}}
+					icon={<MessagesIcon />}
+					label="MESSAGES"
+					variant={variant}
+					select={isConsumerSelect}
+					onClick={handleConsumersClick}
+				/>
+
 			<MainForm store={streamSo} />
 		</>) : (
 			<ConfigForm store={streamSo} />

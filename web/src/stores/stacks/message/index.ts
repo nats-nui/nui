@@ -17,6 +17,7 @@ const setup = {
 		//#region VIEWBASE
 		urlSerializable: false,
 		width: 320,
+		colorVar: COLOR_VAR.CYAN,
 		//#endregion
 	},
 
@@ -29,7 +30,6 @@ const setup = {
 			return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageState
 			return {

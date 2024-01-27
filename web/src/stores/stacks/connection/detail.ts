@@ -20,10 +20,10 @@ const setup = {
 		connection: <Connection>null,
 		/** indica se la connection caricata nella CARD è editabile */
 		readOnly: true,
-
+		
 		//#region VIEWBASE
-		//draggable: false,
 		width: 200,
+		colorVar: COLOR_VAR.GREEN,
 		//#endregion
 	},
 
@@ -33,9 +33,6 @@ const setup = {
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).state.connection?.name ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "DETAIL",
-		//getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
-		//getColorBg: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.GREEN,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnDetailState
 			return {

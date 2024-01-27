@@ -10,7 +10,11 @@ import { Log } from "./utils"
 const setup = {
 
 	state: {
-		history: <Log[]>[]
+		history: <Log[]>[],
+
+		//#region VIEWBASE
+		colorVar: COLOR_VAR.CYAN,
+		//#endregion
 	},
 
 	getters: {
@@ -18,7 +22,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => "LOGS",
 		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as LogsState
 			return {
