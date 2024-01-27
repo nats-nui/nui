@@ -26,7 +26,7 @@ interface Props {
 	store?: StreamStore
 }
 
-const ConfigForm: FunctionComponent<Props> = ({
+const EditForm: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
@@ -455,7 +455,7 @@ const ConfigForm: FunctionComponent<Props> = ({
 	</Form>
 }
 
-export default ConfigForm
+export default EditForm
 
 const cssList = (readOnly: boolean, variant: number): React.CSSProperties => ({
 	backgroundColor: readOnly ? "rgb(0 0 0 / 50%)" : layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,

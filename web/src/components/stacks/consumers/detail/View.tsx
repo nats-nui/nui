@@ -2,6 +2,7 @@ import FrameworkCard from "@/components/FrameworkCard"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import ShowForm from "./ShowForm"
 
 
 
@@ -27,7 +28,7 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 		variantBg={variant}
 		store={consumerSo}
 	>
-		CIAO
+		<ShowForm store={consumerSo} />
 	</FrameworkCard>
 }
 

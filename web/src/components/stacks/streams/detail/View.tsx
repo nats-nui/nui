@@ -3,8 +3,8 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
-import ConfigForm from "./ConfigForm"
-import MainForm from "./MainForm"
+import EditForm from "./EditForm"
+import ShowForm from "./ShowForm"
 import RowButton from "@/components/buttons/RowButton"
 import MessagesIcon from "@/icons/MessagesIcon"
 
@@ -56,9 +56,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					onClick={handleConsumersClick}
 				/>
 
-			<MainForm store={streamSo} />
+			<ShowForm store={streamSo} />
 		</>) : (
-			<ConfigForm store={streamSo} />
+			<EditForm store={streamSo} />
 		)}
 	</FrameworkCard>
 }

@@ -1,9 +1,7 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
-import TextInput from "@/components/input/TextInput"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -13,7 +11,7 @@ interface Props {
 	store?: StreamStore
 }
 
-const MainForm: FunctionComponent<Props> = ({
+const ShowForm: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
@@ -54,4 +52,4 @@ const MainForm: FunctionComponent<Props> = ({
 	</Form>
 }
 
-export default MainForm
+export default ShowForm
