@@ -248,7 +248,7 @@ func (a *App) handleUpdateStream(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
-	return c.JSON(info.Config)
+	return c.JSON(info)
 }
 
 func (a *App) handleDeleteStream(c *fiber.Ctx) error {
