@@ -161,18 +161,17 @@ func (a *App) handleIndexStreams(c *fiber.Ctx) error {
 	for {
 		select {
 		case info, ok := <-listener.Info():
+			err := listener.Err()
+			if err != nil {
+				if !errors.Is(err, jetstream.ErrEndOfData) {
+					return c.Status(500).JSON(err.Error())
+				}
+				return c.JSON(infos)
+			}
 			if !ok {
 				return c.Status(500).JSON("error reading streams info")
 			}
 			infos = append(infos, info)
-		case err, ok := <-listener.Err():
-			if !ok {
-				return c.Status(500).JSON("error reading streams info")
-			}
-			if !errors.Is(err, jetstream.ErrEndOfData) {
-				return c.Status(500).JSON(err.Error())
-			}
-			return c.JSON(infos)
 		}
 	}
 }
@@ -365,18 +364,17 @@ func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 	for {
 		select {
 		case info, ok := <-listener.Info():
+			err := listener.Err()
+			if err != nil {
+				if !errors.Is(err, jetstream.ErrEndOfData) {
+					return c.Status(500).JSON(err.Error())
+				}
+				return c.JSON(infos)
+			}
 			if !ok {
 				return c.Status(500).JSON("error reading streams info")
 			}
 			infos = append(infos, info)
-		case err, ok := <-listener.Err():
-			if !ok {
-				return c.Status(500).JSON("error reading streams info")
-			}
-			if !errors.Is(err, jetstream.ErrEndOfData) {
-				return c.Status(500).JSON(err.Error())
-			}
-			return c.JSON(infos)
 		}
 	}
 }

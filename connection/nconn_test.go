@@ -41,8 +41,8 @@ func TestNatsConn_ObserveConnectionEvents(t *testing.T) {
 	nconn.ReconnectHandler()(nconn.Conn)
 
 	require.EventuallyWithT(t, func(c *assert.CollectT) {
-		assert.Equal(t, []string{"disconnected", "reconnected", "reconnected", "closed"}, events1)
-		assert.Equal(t, []string{"disconnected", "reconnected"}, events2)
+		assert.Equal(t, []string{"disconnected", "connected", "connected", "disconnected"}, events1)
+		assert.Equal(t, []string{"disconnected", "connected"}, events2)
 	}, 1*time.Second, time.Millisecond*20)
 
 }

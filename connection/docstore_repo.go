@@ -2,7 +2,8 @@ package connection
 
 import (
 	"errors"
-	c "github.com/ostafen/clover"
+	"github.com/ostafen/clover/v2/document"
+	"github.com/ostafen/clover/v2/query"
 	docstore "github.com/pricelessrabbit/nui/pkg/storage"
 )
 
@@ -17,7 +18,7 @@ func NewDocStoreConnRepo(db *docstore.DB) *DocStoreConnRepo {
 }
 
 func (r *DocStoreConnRepo) All() (map[string]*Connection, error) {
-	docs, err := r.db.Query(docstore.CONN_COLLECTION).FindAll()
+	docs, err := r.db.FindAll(query.NewQuery(docstore.CONN_COLLECTION))
 	if err != nil {
 		return nil, err
 	}
@@ -33,19 +34,17 @@ func (r *DocStoreConnRepo) All() (map[string]*Connection, error) {
 }
 
 func (r *DocStoreConnRepo) GetById(id string) (*Connection, error) {
-	doc, err := r.db.Query(docstore.CONN_COLLECTION).FindById(id)
+	doc, err := r.db.FindById(docstore.CONN_COLLECTION, id)
 	if err != nil {
 		return nil, err
 	}
 	if doc == nil {
 		return nil, errors.New("record not found")
 	}
-	conn := &Connection{}
-	err = doc.Unmarshal(conn)
+	conn, err := unmarshalDoc(doc)
 	if err != nil {
 		return nil, err
 	}
-	conn.Id = doc.ObjectId()
 	return conn, nil
 }
 
@@ -61,7 +60,7 @@ func (r *DocStoreConnRepo) Save(c *Connection) (*Connection, error) {
 	}
 	doc := r.db.DocFromType(c)
 	doc.Set("_id", c.Id)
-	err := r.db.Query(docstore.CONN_COLLECTION).ReplaceById(c.Id, doc)
+	err := r.db.ReplaceById(docstore.CONN_COLLECTION, c.Id, doc)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +68,10 @@ func (r *DocStoreConnRepo) Save(c *Connection) (*Connection, error) {
 }
 
 func (r *DocStoreConnRepo) Remove(id string) error {
-	return r.db.Query(docstore.CONN_COLLECTION).DeleteById(id)
+	return r.db.DeleteById(docstore.CONN_COLLECTION, id)
 }
 
-func unmarshalDoc(doc *c.Document) (*Connection, error) {
+func unmarshalDoc(doc *document.Document) (*Connection, error) {
 	conn := &Connection{}
 	err := doc.Unmarshal(conn)
 	if err != nil {
