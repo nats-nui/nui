@@ -5,19 +5,17 @@ Restituisce una COLLECTION di STREAMS-MESSAGES
 
 ### URL
 ```
-GET /api/connection/:connection_id/stream/:stream_name/messages
+GET /api/connection/:connection_id/stream/:stream_name/messages?seq_start=<>&interval=<>&
 ```
 - `connection_id`  
 identificativo CONNECTION che contiene lo STREAM
 - `stream_name`  
 nome dello STREAM che contiene gli STREAM-MESSAGEs
 
-DA CAPIRE DOVE METTERE QUESTI
-potrebbero andare nella quesry tring penso sia il posto giusto ma non so per quell'array di subjects se ti va bene
-
-start seq number  ( intero nullable)
-interval (intero che serve a paginare in pratica)
-subjects (array di stringhe, filtro per subject
+### QUERY
+- `seq_start`: message sequence number to start from
+- `interval`: numebr of messages to retrieve (to allow pagination)
+- `subjects`: filter messages by subject (only stream subject are allowed)
 
 ### BODY
 

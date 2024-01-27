@@ -4,10 +4,8 @@ Messaggio contenuto nello STREAM
 
 ```typescript
 StreamMessage {
-
-	/** stringa base64 */
-	body: string 
-	
-	timestamp: string
+    subject: string,
+    payload: string, // base64 encoded
+    seq_num:  number
 }
 ```
