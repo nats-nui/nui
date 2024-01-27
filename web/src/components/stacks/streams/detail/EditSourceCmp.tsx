@@ -3,8 +3,8 @@ import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
 import { Source } from "@/types/Stream"
 import { FunctionComponent } from "react"
-import NumberInput from "../../input/NumberInput"
-import TextInput from "../../input/TextInput"
+import NumberInput from "../../../input/NumberInput"
+import TextInput from "../../../input/TextInput"
 
 interface Props {
 	source: Source

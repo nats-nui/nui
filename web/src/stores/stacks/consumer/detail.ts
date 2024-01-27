@@ -19,6 +19,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 230,
+		colorVar: COLOR_VAR.FUCHSIA,
 		//#endregion
 	},
 
@@ -27,7 +28,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => (<ConsumerStore>store).state.consumer?.config.name ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "CONSUMER DETAIL",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.FUCHSIA,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ConsumerState
 			return {

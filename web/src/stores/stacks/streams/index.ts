@@ -24,6 +24,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 200,
+		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},
 
@@ -32,7 +33,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<StreamsStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "STREAMS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		//#endregion
 
 		getByName(name: string, store?: StreamsStore) {

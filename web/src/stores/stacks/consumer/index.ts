@@ -27,6 +27,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 200,
+		colorVar: COLOR_VAR.FUCHSIA,
 		//#endregion
 	},
 
@@ -35,7 +36,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<ConsumersStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "CONSUMERS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.FUCHSIA,
 		//#endregion
 
 		getByName(name: string, store?: ConsumersStore) {

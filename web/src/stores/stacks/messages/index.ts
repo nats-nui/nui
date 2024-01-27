@@ -32,6 +32,10 @@ const setup = {
 
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+
+		//#region VIEWBASE
+		colorVar: COLOR_VAR.CYAN,
+		//#endregion
 	},
 
 	getters: {
@@ -51,7 +55,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.CYAN,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessagesState
 			return {

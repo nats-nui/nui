@@ -28,7 +28,7 @@ const setup = {
 		readOnly: true,
 
 		//#region VIEWBASE
-		//draggable: false,
+		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
 		//#endregion
 
@@ -40,7 +40,6 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => (<StreamStore>store).state.stream?.config.name ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "STREAM DETAIL",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
-		getColorVar: (_: void, store?: ViewStore) => COLOR_VAR.YELLOW,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as StreamState
 			return {
