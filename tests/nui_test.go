@@ -112,7 +112,7 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	e := s.e
 	connId := s.defaultConn()
 	stream := s.filledStream("stream1")
-	e.GET("/api/connection/" + connId + "/stream/stream1/consumers").
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
 	// create new consumer
@@ -121,7 +121,7 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 		DeliverPolicy: jetstream.DeliverAllPolicy,
 	})
 	s.NoError(err)
-	r := e.GET("/api/connection/" + connId + "/stream/stream1/consumers").
+	r := e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(1)
 	r.Value(0).Object().Value("name").String().IsEqual("consumer1")
