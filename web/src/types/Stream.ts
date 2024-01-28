@@ -39,24 +39,24 @@ export interface StreamState {
     messages: number;
     // quantità in byte occupata ai messaggi
     bytes: number;
-    // ???
+    // la prima seqNumber disponibile
     firstSeq: number;
     // Go type: time
     firstTs: any;
-    // ???
+    // l'ultima seqNumber disponibile
     lastSeq: number;
     // Go type: time
     lastTs: any;
     // numro di CONSUMER
     consumerCount: number;
     // ???
-    deleted: number[];
+    deleted?: number[];
     // ???
-    numDeleted: number;
+    numDeleted?: number;
     // ???
-    numSubjects: number;
+    numSubjects?: number;
     // numero di messaggi per ogni SUBJECT
-    subjects: {[key: string]: number};
+    subjects?: {[key: string]: number};
 }
 
 

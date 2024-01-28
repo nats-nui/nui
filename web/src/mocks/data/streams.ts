@@ -1,70 +1,7 @@
-import { StreamInfo } from "@/types/Stream";
 
 
 
 const streams: any[] = [
-	{
-		"config": {
-			"name": "Stream 1",
-			"description": "Description 1",
-			"subjects": [],
-			"retention": "limit",
-			"max_consumers": 0,
-			"max_msgs": 0,
-			"max_bytes": 0,
-			"discard": "old",
-			"max_age": 0,
-			"max_msgs_per_subject": 0,
-			"max_msg_size": 0,
-			"storage": "file",
-			"num_replicas": 0,
-			"no_ack": false,
-			"template_owner": "",
-			"duplicate_window": 0,
-			"placement": null,
-			"mirror": null,
-			"sources": [],
-			"sealed": false,
-			"deny_delete": false,
-			"deny_purge": false,
-			"allow_rollup_hdrs": false,
-			"republish": null,
-			"allow_direct": false,
-			"mirror_direct": false
-		},
-		"state": {}
-	},
-	{
-		"config": {
-			"name": "Stream 2",
-			"description": "Description 2",
-			"subjects": [],
-			"retention": "limit",
-			"max_consumers": 0,
-			"max_msgs": 0,
-			"max_bytes": 0,
-			"discard": "old",
-			"max_age": 0,
-			"max_msgs_per_subject": 0,
-			"max_msg_size": 0,
-			"storage": "file",
-			"num_replicas": 0,
-			"no_ack": false,
-			"template_owner": "",
-			"duplicate_window": 0,
-			"placement": null,
-			"mirror": null,
-			"sources": [],
-			"sealed": false,
-			"deny_delete": false,
-			"deny_purge": false,
-			"allow_rollup_hdrs": false,
-			"republish": null,
-			"allow_direct": false,
-			"mirror_direct": false
-		},
-		"state": {}
-	},
 	{
 		"config": {
 			"name": "KV_bucket1",
@@ -94,9 +31,9 @@ const streams: any[] = [
 		"state": {
 			"messages": 0,
 			"bytes": 0,
-			"first_seq": 1,
+			"first_seq": 0,
 			"first_ts": "0001-01-01T00:00:00Z",
-			"last_seq": 0,
+			"last_seq": 49,
 			"last_ts": "0001-01-01T00:00:00Z",
 			"consumer_count": 0,
 			"deleted": null,
@@ -138,9 +75,9 @@ const streams: any[] = [
 		"state": {
 			"messages": 0,
 			"bytes": 0,
-			"first_seq": 1,
+			"first_seq": 0,
 			"first_ts": "1970-01-01T00:00:00Z",
-			"last_seq": 0,
+			"last_seq": 49,
 			"last_ts": "0001-01-01T00:00:00Z",
 			"consumer_count": 0,
 			"deleted": null,
@@ -178,9 +115,9 @@ const streams: any[] = [
 		"state": {
 			"messages": 0,
 			"bytes": 0,
-			"first_seq": 1,
+			"first_seq": 0,
 			"first_ts": "1970-01-01T00:00:00Z",
-			"last_seq": 0,
+			"last_seq": 49,
 			"last_ts": "0001-01-01T00:00:00Z",
 			"consumer_count": 0,
 			"deleted": null,

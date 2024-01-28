@@ -1,25 +1,9 @@
 
-export interface HistoryMessage {
-	id: string
-	timestamp: number
-	title?: string
-	body?: string
-	type?: MSG_TYPE
-	height?: number
-}
-
 export enum MSG_FORMAT {
 	JSON = "json",
 	TEXT = "text",
 	HEX = "hex",
 	BASE64 = "base64",
-}
-
-export enum MSG_TYPE {
-	MESSAGE,
-	INFO,
-	WARNING,
-	ERROR,
 }
 
 export function toJson(text: string): JSON {

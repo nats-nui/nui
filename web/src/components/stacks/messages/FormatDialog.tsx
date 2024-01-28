@@ -1,5 +1,3 @@
-import { MessageState, MessageStore } from "@/stores/stacks/message"
-import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -8,8 +6,16 @@ import List from "../../lists/List"
 
 
 
+interface StoreMessageFormat{
+	state: {
+		formatsOpen:boolean
+	},
+	setFormat(format:MSG_FORMAT): void,
+	setFormatsOpen(open:boolean): void,
+}
+
 interface Props {
-	store?: MessagesStore | MessageStore
+	store?: StoreMessageFormat
 }
 
 const FormatDialog: FunctionComponent<Props> = ({
@@ -17,7 +23,7 @@ const FormatDialog: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const msgSa = useStore(msgSo as any) as MessagesState | MessageState
+	const msgSa = useStore(msgSo as any) as typeof msgSo.state
 
 	// HOOKs
 
@@ -38,7 +44,7 @@ const FormatDialog: FunctionComponent<Props> = ({
 			open={msgSa.formatsOpen}
 			title="FORMATS"
 			width={90}
-			store={msgSo}
+			store={msgSo as any}
 			onClose={handleClose}
 		>
 			<List<string>

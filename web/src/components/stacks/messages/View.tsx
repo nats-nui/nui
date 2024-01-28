@@ -7,7 +7,7 @@ import DropIcon from "@/icons/DropIcon"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
-import { HistoryMessage } from "@/stores/stacks/messages/utils"
+import { Message } from "@/types/Message"
 import { Subscription } from "@/types"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
@@ -48,7 +48,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		animation.play();
 		//}, 2000)
 		//return () => clearInterval(idInt)
-	}, [msgSo.state.history])
+	}, [msgSo.state.messages])
 
 	// HANDLER
 	//#region  SUBSCRIPTIONS
@@ -69,7 +69,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
 	const handleSendClick = () => msgSo.openMessageSend()
-	const hendleMessageClick = (message: HistoryMessage) => msgSo.openMessageDetail(message)
+	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)
 		debounce(`text-find-${msgSa.uuid}`, () => msgSo.setTextSearch(value), 2000)

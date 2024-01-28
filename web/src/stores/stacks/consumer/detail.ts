@@ -43,6 +43,12 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 		},
 		//#endregion
+
+		/** carico tutti i dati del CONSUMER se ce ne fosse bisogno */
+		fetch: async (_: void, store?: ConsumerStore) => {
+			// verifico che ci siano i dati del dettaglio
+			// TO DO
+		},
 	},
 
 	mutators: {

@@ -9,6 +9,7 @@ import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/types"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { ConsumersState, ConsumersStore } from "../consumer"
+import { StreamMessagesState, StreamMessagesStore } from "./messages"
 
 
 
@@ -20,7 +21,7 @@ const setup = {
 		connectionId: <string>null,
 
 		/** sono gli stream presenti nella stessa connection di questo */
-		allStreams:<string[]>null,
+		allStreams: <string[]>null,
 
 		/** STREAM caricata nella CARD */
 		stream: <StreamInfo>null,
@@ -44,6 +45,7 @@ const setup = {
 			const state = store.state as StreamState
 			return {
 				...viewSetup.getters.getSerialization(null, store),
+				connectionId: state.connectionId,
 				stream: state.stream,
 				readOnly: state.readOnly,
 			}
@@ -76,7 +78,7 @@ const setup = {
 			state.readOnly = data.readOnly
 		},
 		//#endregion
-		
+
 		/** va aprendersi i valori originali e ripristina lo STREAM */
 		restore: (_: void, store?: StreamStore) => {
 			const stream = store.getStreamsStore()?.getByName(store.state.stream.config.name)
@@ -84,9 +86,9 @@ const setup = {
 		},
 
 		/** crea un nuovo STREAM-INFO tramite STREAM-CONFIG */
-		async save(_:void, store?: StreamStore) {
+		async save(_: void, store?: StreamStore) {
 			let streamSaved = null
-			if ( store.isNew() ) {
+			if (store.isNew()) {
 				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
 			} else {
 				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config)
@@ -95,25 +97,47 @@ const setup = {
 			store.getStreamsStore()?.update(streamSaved)
 		},
 
-		/** mi assicuro la lista STREAMS della CONNECTION */
-		updateAllStreams: async (_: void, store?: StreamStore) => {
-			if ( store.state.allStreams ) return
-			const parent = store.getStreamsStore()
-			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId)
-			const allStreams = streams?.map(si=>si.config.name) ?? []
-			store.setAllStreams(allStreams)
+		/** carico tutti i dati dello STREAM se ce ne fosse bisogno */
+		fetch: async (_: void, store?: StreamStore) => {
+			// se non ci sono i NAMES degli STREAMS fratelli allora li cerco
+			if (!store.state.allStreams) {
+				const parent = store.getStreamsStore()
+				const streams = parent?.state.all ?? await strApi.index(store.state.connectionId)
+				const allStreams = streams?.map(si => si.config.name) ?? []
+				store.setAllStreams(allStreams)
+			}
+			// verifico che ci siano i dati del dettaglio dello STREAM
+			// TO DO
 		},
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
 			if (!store.state.stream?.config?.name) return
-			const msgStore = buildStore({
+			const consumerStore = buildStore({
 				type: DOC_TYPE.CONSUMERS,
 				connectionId: store.state.connectionId,
 				streamName: store.state.stream.config.name,
 			} as ConsumersState) as ConsumersStore
 			docSo.addLink({
-				view: msgStore,
+				view: consumerStore,
+				parent: store,
+				anim: true,
+			})
+		},
+		/** apertura della CARD MESSAGES */
+		openMessages(_: void, store?: StreamStore) {
+			if (!store.state.stream?.config?.name || !store.state.connectionId) {
+				console.error("no param")
+				return
+			}
+			const streamMessagesStore = buildStore({
+				type: DOC_TYPE.STREAM_MESSAGES,
+				connectionId: store.state.connectionId,
+				stream: store.state.stream,
+				subjects: [...(store.state.stream?.config?.subjects ?? [])]
+			} as StreamMessagesState) as StreamMessagesStore
+			docSo.addLink({
+				view: streamMessagesStore,
 				parent: store,
 				anim: true,
 			})

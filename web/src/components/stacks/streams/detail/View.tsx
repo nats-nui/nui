@@ -7,6 +7,7 @@ import EditForm from "./EditForm"
 import ShowForm from "./ShowForm"
 import RowButton from "@/components/buttons/RowButton"
 import MessagesIcon from "@/icons/MessagesIcon"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -23,16 +24,18 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		streamSo.updateAllStreams()
+		streamSo.fetch()
 	}, [])
 
 	// HANDLER
 	const handleConsumersClick = () => streamSo.openConsumers()
+	const handleMessagesClick = () => streamSo.openMessages()
 
 	// RENDER
 	const readOnly = streamSa.readOnly
 	const variant = streamSa.colorVar
-	const isConsumerSelect = !!streamSa.linked
+	const isConsumersSelect = streamSa.linked?.state.type == DOC_TYPE.CONSUMERS
+	const isMessagesSelect = streamSa.linked?.state.type == DOC_TYPE.STREAM_MESSAGES
 
 	return <FrameworkCard
 		variantBg={variant}
@@ -45,15 +48,15 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					icon={<MessagesIcon />}
 					label="CONSUMERS"
 					variant={variant}
-					select={isConsumerSelect}
+					select={isConsumersSelect}
 					onClick={handleConsumersClick}
 				/>
 				<RowButton style={{ marginBottom: 15}}
 					icon={<MessagesIcon />}
 					label="MESSAGES"
 					variant={variant}
-					select={isConsumerSelect}
-					onClick={handleConsumersClick}
+					select={isMessagesSelect}
+					onClick={handleMessagesClick}
 				/>
 
 			<ShowForm store={streamSo} />

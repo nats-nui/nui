@@ -1,16 +1,17 @@
 import layoutSo from "@/stores/layout"
-import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "@/stores/stacks/messages/utils"
+import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { Message } from "@/types/Message"
 import dayjs from "dayjs"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import MessageRow from "./MessageRow"
 
 
 
 interface Props {
-	message?: HistoryMessage
+	message?: Message
 	format?: MSG_FORMAT
 	index?: number
-	onClick?: (message: HistoryMessage) => void
+	onClick?: (message: Message) => void
 }
 
 const ItemRow: FunctionComponent<Props> = ({
@@ -29,20 +30,16 @@ const ItemRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!message) return null
-	const time = !!message.timestamp ? dayjs(message.timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
-	const type = message.type ?? MSG_TYPE.MESSAGE
+	const time = useMemo(
+		() => !!message.receivedAt ? dayjs(message.receivedAt).format("YYYY-MM-DD HH:mm:ss") : "",
+		[message.receivedAt]
+	)
 
 	return (
 		<div style={cssRoot(index)}
 			onClick={handleClick}
 		>
-			{[
-				// MESSAGE
-				<MessageRow message={message} format={format} />,
-				<div>INFO</div>,
-				<div>WARNING</div>,
-				<div>ERROR</div>,
-			][type]}
+			<MessageRow message={message} format={format} />
 
 			<div style={cssFooter}>
 				{time}

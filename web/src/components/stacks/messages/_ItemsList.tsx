@@ -1,15 +1,16 @@
 import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
-import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { Message } from "@/types/Message"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import ItemRow from "./rows/ItemRow"
 
 
 
 interface Props {
-	messages: HistoryMessage[]
+	messages: Message[]
 	format: MSG_FORMAT
-	onMessageClick?: (message:HistoryMessage)=>void
+	onMessageClick?: (message:Message)=>void
 	style?: React.CSSProperties
 }
 
@@ -23,7 +24,7 @@ const ItemsList: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOKs
-	const [messagesVisible, setMessagesVisible] = useState<HistoryMessage[]>(messages.slice(0, 20))
+	const [messagesVisible, setMessagesVisible] = useState<Message[]>(messages.slice(0, 20))
 	// riferimento al contenitore scrollabile
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const indexTopRef = useRef(0)
@@ -59,7 +60,7 @@ const ItemsList: FunctionComponent<Props> = ({
 	const handleScroll = () => {
 		updateScroll()
 	}
-	const handleMessageClick = (message:HistoryMessage) => onMessageClick?.(message)
+	const handleMessageClick = (message:Message) => onMessageClick?.(message)
 
 	const updateScroll = () => {
 		const node = scrollRef.current
@@ -98,7 +99,7 @@ const ItemsList: FunctionComponent<Props> = ({
 		}
 		scrollHeightRef.current = heightItems
 	}
-	function getMessageHeight(message: HistoryMessage): number {
+	function getMessageHeight(message: Message): number {
 		return message.height ?? 100
 	}
 
@@ -118,7 +119,7 @@ const ItemsList: FunctionComponent<Props> = ({
 
 				{messagesVisible.map((message, index) => (
 					<ItemRow
-						key={message.id}
+						key={message.seqNum}
 						message={message}
 						format={format}
 						index={index + indexTopRef.current}

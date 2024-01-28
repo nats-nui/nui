@@ -30,7 +30,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const handleCopyClick = () => navigator.clipboard.writeText(text)
 
 	// RENDER
-	const text = msgSa.message.body
+	const text = msgSa.message.payload
 	const format = msgSa.format
 	const formatLabel = format.toUpperCase()
 	const variant = msgSa.colorVar
