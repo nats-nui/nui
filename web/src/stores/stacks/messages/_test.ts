@@ -1,5 +1,5 @@
 import { createUUID } from "@/stores/docs/utils/factory";
-import { HistoryMessage } from "./utils";
+import { Message } from "@/types/Message";
 
 const data = [
 	{
@@ -1890,7 +1890,7 @@ const data = [
 ]
 
 
-const historyTest: HistoryMessage[] = Array.from({ length: 6 }, (_, i) => ({
+const historyTest: Message[] = Array.from({ length: 6 }, (_, i) => ({
 	id: createUUID(),
 	title: `title-${Math.random()} [${i}]`,
 	//body: `body ${i} - ${"a".repeat(Math.round(Math.random() * 200))}`,

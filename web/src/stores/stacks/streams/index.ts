@@ -9,7 +9,7 @@ import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { StreamState } from "./detail"
-import { buildNew } from "./utils"
+import { buildNewStreamInfo } from "./utils"
 
 
 
@@ -77,7 +77,7 @@ const setup = {
 			const view = buildStore({
 				type: DOC_TYPE.STREAM,
 				connectionId: store.state.connectionId,
-				stream: buildNew(),
+				stream: buildNewStreamInfo(),
 				readOnly: false,
 			} as Partial<StreamState>)
 			docSo.addLink({ view, parent: store, anim: true })

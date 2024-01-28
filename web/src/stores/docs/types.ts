@@ -8,6 +8,7 @@ export enum DOC_TYPE {
 	MESSAGE_SEND = "message_send",
 	STREAMS = "streams",
 	STREAM = "stream",
+	STREAM_MESSAGES = "stream_messages",
 	CONSUMERS = "consumers",
 	CONSUMER = "consumer",
 	LOGS = "logs",

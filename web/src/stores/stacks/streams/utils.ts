@@ -1,8 +1,16 @@
-import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo } from "@/types/Stream";
+import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo, StreamState } from "@/types/Stream";
 
 
-const DefaultStream: StreamInfo = {
-	config: {
+
+export function buildNewStreamInfo(): StreamInfo {
+	return {
+		config: buildNewStreamConfig(),
+		state: buildNewStreamState(),
+	}
+}
+
+export function buildNewStreamConfig(): StreamConfig {
+	return {
 		name: "",
 		description: "",
 		subjects: [],
@@ -29,14 +37,18 @@ const DefaultStream: StreamInfo = {
 		republish: null,
 		allowDirect: false,
 		mirrorDirect: false,
-	},
-	state: null,
+	}
 }
 
-export function buildNew(): StreamInfo {
+export function buildNewStreamState(): StreamState {
 	return {
-		config: { ...DefaultStream.config },
-		state: null,
+		messages: 0,
+		bytes: 0,
+		firstSeq: 1,
+		lastSeq: 1,
+		lastTs: Date.now(),
+		firstTs: Date.now(),
+		consumerCount: 0,
 	}
 }
 
@@ -55,7 +67,7 @@ export function buildNewSource(): Source {
 
 export function normalizeForFE(stream: StreamConfig): StreamConfig {
 	return {
-		...DefaultStream,
+		...buildNewStreamInfo(),
 		...stream
 	}
 }

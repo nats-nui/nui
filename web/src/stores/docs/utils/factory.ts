@@ -11,6 +11,7 @@ import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
 import consumerSetup from "@/stores/stacks/consumer/detail";
 import consumersSetup from "@/stores/stacks/consumer";
+import streamMessagesSetup from "@/stores/stacks/streams/messages";
 
 
 
@@ -38,6 +39,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.MESSAGE_SEND]: messageSendSetup,
 		[DOC_TYPE.STREAMS]: streamsSetup,
 		[DOC_TYPE.STREAM]: streamSetup,
+		[DOC_TYPE.STREAM_MESSAGES]: streamMessagesSetup,
 		[DOC_TYPE.CONSUMERS]: consumersSetup,
 		[DOC_TYPE.CONSUMER]: consumerSetup,
 		[DOC_TYPE.LOGS]: logsSetup,

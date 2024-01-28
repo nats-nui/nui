@@ -27,11 +27,11 @@
 }
 
 
-/*
-.var0 ::-webkit-scrollbar-thumb:hover {
-  background: var(--var-0);
-}
 
+.var0 ::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+/*
 .var1 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-1);
 }

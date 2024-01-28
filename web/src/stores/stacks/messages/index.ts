@@ -6,13 +6,13 @@ import docsSo from "@/stores/docs"
 import { buildStore, createUUID } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { CNN_STATUS, Connection, DOC_TYPE, Subscription } from "@/types"
+import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
+import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { MessageState } from "../message"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
-import historyTest from "./_test"
-import { HistoryMessage, MSG_FORMAT, MSG_TYPE } from "./utils"
+import { MSG_FORMAT } from "./utils"
 
 
 
@@ -24,7 +24,7 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
-		history: [],//<HistoryMessage[]>historyTest,//[],
+		messages: <Message[]>[],//historyTest,//[],
 		/** testo per la ricerca */
 		textSearch: <string>null,
 		/** DIALOG SUBS aperta */
@@ -44,10 +44,9 @@ const setup = {
 		},
 		getHistoryFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()
-			if (!text || text.trim().length == 0) return store.state.history
-			return store.state.history.filter(h =>
-				h.body.toLowerCase().includes(text)
-				|| h.title.toLowerCase().includes(text)
+			if (!text || text.trim().length == 0) return store.state.messages
+			return store.state.messages.filter(h =>
+				h.payload.toLowerCase().includes(text) || h.subject.toLowerCase().includes(text)
 			)
 		},
 
@@ -61,7 +60,7 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				subscriptions: state.subscriptions,
-				history: state.history,
+				history: state.messages,
 				textSearch: state.textSearch,
 				format: state.format,
 			}
@@ -78,14 +77,10 @@ const setup = {
 			const state = store.state as MessagesState
 			state.connectionId = data.connectionId
 			state.subscriptions = data.subscriptions
-			state.history = data.history
+			state.messages = data.history
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},
-		// onCreate(_: void, store?: ViewStore) {
-		// },
-		// onDestroy(_: void, store?: ViewStore) {
-		// },
 		//#endregion
 
 
@@ -109,14 +104,13 @@ const setup = {
 
 		/** aggiungo alla history di questo stack */
 		addInHistory(message: PayloadMessage, store?: MessagesStore) {
-			const historyMessage: HistoryMessage = {
-				id: createUUID(),
-				title: message.subject,
-				body: message.payload as string,
-				type: MSG_TYPE.MESSAGE,
-				timestamp: Date.now(),
+			const historyMessage: Message = {
+				//seqNum: createUUID(),
+				subject: message.subject,
+				payload: message.payload as string,
+				receivedAt: Date.now(),
 			}
-			store.setHistory([...store.state.history, historyMessage])
+			store.setMessages([...store.state.messages, historyMessage])
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
@@ -128,7 +122,7 @@ const setup = {
 			store.state.lastSubjects = subjects
 		},
 		/** apertura CARD MESSAGE-DETAIL */
-		openMessageDetail(message: HistoryMessage, store?: MessagesStore) {
+		openMessageDetail(message: Message, store?: MessagesStore) {
 			const cnn = store.getConnection()
 			if (!cnn) return
 			const msgStore = buildStore({
@@ -160,10 +154,9 @@ const setup = {
 
 	mutators: {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
-		setHistory: (history: HistoryMessage[]) => ({ history }),
+		setMessages: (messages: Message[]) => ({ messages }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
-
 		setFormat: (format: MSG_FORMAT) => ({ format }),
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},

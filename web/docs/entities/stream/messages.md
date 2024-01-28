@@ -5,7 +5,7 @@ Restituisce una COLLECTION di STREAMS-MESSAGES
 
 ### URL
 ```
-GET /api/connection/:connection_id/stream/:stream_name/messages?seq_start=<>&interval=<>&
+GET /api/connection/:connection_id/stream/:stream_name/messages?seq_start=<>&interval=<>&subjects=<>
 ```
 - `connection_id`  
 identificativo CONNECTION che contiene lo STREAM

@@ -1,7 +1,7 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import ShowForm from "./ShowForm"
 
 
@@ -18,7 +18,10 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	const consumerSa = useStore(consumerSo)
 
 	// HOOKs
-
+	useEffect(() => {
+		consumerSo.fetch()
+	}, [])
+	
 	// HANDLER
 
 	// RENDER

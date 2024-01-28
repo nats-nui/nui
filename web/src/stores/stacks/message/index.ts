@@ -1,7 +1,8 @@
 import srcIcon from "@/assets/MessageIcon.svg"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { HistoryMessage, MSG_FORMAT } from "../messages/utils"
+import { MSG_FORMAT } from "../messages/utils"
+import { Message } from "@/types/Message"
 import { COLOR_VAR } from "@/stores/layout"
 import dayjs from "dayjs"
 
@@ -10,7 +11,7 @@ import dayjs from "dayjs"
 const setup = {
 
 	state: {
-		message: <HistoryMessage>null,
+		message: <Message>null,
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
 		
@@ -24,9 +25,9 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.title,
+		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.subject,
 		getSubTitle: (_: void, store?: ViewStore):string => {
-			const timestamp = (store as MessageStore).state.message?.timestamp
+			const timestamp = (store as MessageStore).state.message?.receivedAt
 			return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		},
 		getIcon: (_: void, store?: ViewStore) => srcIcon,

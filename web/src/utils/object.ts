@@ -1,14 +1,11 @@
 
+
 // [CHAT.GPT]
-type CaseObject = {
-	[key: string]: any;
-};
-// [CHAT.GPT]
-export function snakeToCamel(obj: CaseObject): CaseObject {
+export function snakeToCamel(obj: any): any {
 	if (Array.isArray(obj)) {
 		return obj.map(snakeToCamel);
 	} else if (obj !== null && typeof obj === 'object') {
-		const newObj: CaseObject = {};
+		const newObj: any = {};
 		for (let key in obj) {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				const camelKey = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
@@ -21,11 +18,11 @@ export function snakeToCamel(obj: CaseObject): CaseObject {
 	}
 }
 // [CHAT.GPT]
-export function camelToSnake(obj: CaseObject): CaseObject {
+export function camelToSnake(obj: any): any {
 	if (Array.isArray(obj)) {
 		return obj.map(camelToSnake);
 	} else if (obj !== null && typeof obj === 'object') {
-		const newObj: CaseObject = {};
+		const newObj: any = {};
 		for (let key in obj) {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				const snakeKey = key.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);

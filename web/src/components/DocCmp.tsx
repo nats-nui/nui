@@ -21,6 +21,8 @@ import MessageView from "./stacks/message/View"
 import MessageSendView from "./stacks/messageSend/View"
 import StreamsListView from "./stacks/streams/ListView"
 import StreamDetailView from "./stacks/streams/detail/View"
+import StreamMessagesView from "./stacks/streams/messages/View"
+import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 
 
 
@@ -34,6 +36,7 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 }) => {
 	const content = useMemo(() => {
 		switch (view.state.type) {
+			
 			case DOC_TYPE.CONNECTIONS:
 				return <CnnListView store={view as CnnListStore} />
 			case DOC_TYPE.CONNECTION:
@@ -44,10 +47,14 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <MessageView store={view as MessageStore} />
 			case DOC_TYPE.MESSAGE_SEND:
 				return <MessageSendView store={view as MessageSendStore} />
+
 			case DOC_TYPE.STREAMS:
 				return <StreamsListView store={view as StreamsStore} />
 			case DOC_TYPE.STREAM:
 				return <StreamDetailView store={view as StreamStore} />
+			case DOC_TYPE.STREAM_MESSAGES:
+				return <StreamMessagesView store={view as StreamMessagesStore} />
+	
 			case DOC_TYPE.CONSUMERS:
 				return <ConsumersListView store={view as ConsumersStore} />
 			case DOC_TYPE.CONSUMER:

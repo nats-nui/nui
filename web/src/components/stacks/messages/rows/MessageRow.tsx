@@ -4,7 +4,8 @@ import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CopyIcon from "@/icons/CopyIcon"
-import { HistoryMessage, MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { Message } from "@/types/Message"
 import { FunctionComponent, useState } from "react"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
@@ -12,7 +13,7 @@ import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 
 
 interface Props {
-	message?: HistoryMessage
+	message?: Message
 	format?: MSG_FORMAT
 }
 
@@ -30,7 +31,7 @@ const MessageRow: FunctionComponent<Props> = ({
 	const handleClipboardClick = (e: React.MouseEvent<Element, MouseEvent>) => {
 		e.preventDefault()
 		e.stopPropagation()
-		navigator.clipboard.writeText(message.body)
+		navigator.clipboard.writeText(message.payload)
 	}
 	const handleTitleEnter = () => setBttCopyVisible(true)
 	const handleTitleLeave = () => setBttCopyVisible(false)
@@ -44,7 +45,7 @@ const MessageRow: FunctionComponent<Props> = ({
 				onMouseEnter={handleTitleEnter}
 				onMouseLeave={handleTitleLeave}
 			>
-				<div style={cssTitleText}>{message.title}</div>
+				<div style={cssTitleText}>{message.subject}</div>
 				{bttCopyVisible && (
 					<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
 						<IconButton onClick={handleClipboardClick}>
@@ -55,10 +56,10 @@ const MessageRow: FunctionComponent<Props> = ({
 			</div>
 
 			{{
-				[MSG_FORMAT.JSON]: <JsonRow text={message.body} />,
-				[MSG_FORMAT.TEXT]: <TextRow text={message.body} />,
-				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.body} maxChar={80} />,
-				[MSG_FORMAT.HEX]: <HexTable text={message.body} maxRows={10} />,
+				[MSG_FORMAT.JSON]: <JsonRow text={message.payload} />,
+				[MSG_FORMAT.TEXT]: <TextRow text={message.payload} />,
+				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.payload} maxChar={80} />,
+				[MSG_FORMAT.HEX]: <HexTable text={message.payload} maxRows={10} />,
 			}[format]}
 		</>
 	)
