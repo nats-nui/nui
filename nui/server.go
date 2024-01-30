@@ -12,6 +12,8 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/ws"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -56,6 +58,8 @@ func (a *App) registerHandlers() {
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleIndexStreamConsumers)
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleShowStreamConsumer)
+
+	a.Get("/api/connection/:connection_id/stream/:stream_name/messages", a.handleIndexStreamMessages)
 
 	a.Post("/api/connection/:id/publish", a.handlePublish)
 	a.Post("/api/connection/:id/request", a.handleRequest)
@@ -341,6 +345,66 @@ func (a *App) handleSealStream(c *fiber.Ctx) error {
 	//	return c.Status(500).JSON(err.Error())
 	//}
 	return c.SendStatus(200)
+}
+
+func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+
+	config := jetstream.OrderedConsumerConfig{DeliverPolicy: jetstream.DeliverByStartSequencePolicy}
+
+	//get query param array fo field "filter"
+	subjects := strings.Split(c.Query("subjects"), ",")
+	if len(subjects) > 0 && subjects[0] != "" {
+		config.FilterSubjects = subjects
+	}
+	seq, err := strconv.Atoi(c.Query("seq_start"))
+	if err == nil {
+		config.OptStartSeq = uint64(seq)
+	}
+
+	batch, err := strconv.Atoi(c.Query("interval"))
+	if err != nil {
+		batch = 25
+	}
+	consumer, err := stream.OrderedConsumer(c.Context(), config)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	msgBatch, err := consumer.FetchNoWait(batch)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	msgs := make([]ws.NatsMsg, 0, batch)
+	for msg := range msgBatch.Messages() {
+		if msgBatch.Error() != nil {
+			return c.Status(500).JSON(msgBatch.Error().Error())
+		}
+		metadata, err := msg.Metadata()
+		if err != nil {
+			return c.Status(500).JSON(err.Error())
+		}
+		msgs = append(msgs, ws.NatsMsg{
+			Subject: msg.Subject(),
+			SeqNum:  metadata.Sequence.Stream,
+			Payload: msg.Data(),
+		})
+	}
+	return c.JSON(msgs)
 }
 
 func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {

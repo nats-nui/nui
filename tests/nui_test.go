@@ -131,6 +131,33 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	//check consumer by name
 	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/consumer1").
 		Expect().Status(http.StatusOK).JSON().Object().Value("name").IsEqual("consumer1")
+
+}
+
+func (s *NuiTestSuite) TestStreamMessages() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledStream("stream1")
+
+	// get stream messages
+	r := e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(15)
+
+	// filter by interval
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		WithQueryString("interval=5").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(5)
+
+	// filter by sequence number
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		WithQueryString("seq_num=6").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+
+	// filter by subject
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").WithQueryString("subjects=sub1").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
