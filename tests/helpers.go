@@ -24,7 +24,7 @@ func (s *NuiTestSuite) defaultConn() string {
 
 func (s *NuiTestSuite) filledStream(name string) jetstream.Stream {
 	stream, err := s.emptyStream(name)
-	for i := 0; i < 10; i++ {
+	for i := 1; i <= 10; i++ {
 		_, err = s.js.Publish(s.ctx, "sub1", []byte("msg"+strconv.Itoa(i)))
 		s.NoError(err)
 		if i%2 == 0 {
