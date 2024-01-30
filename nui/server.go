@@ -12,6 +12,7 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/ws"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -365,23 +366,37 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 		return c.Status(422).JSON(err.Error())
 	}
 
-	config := jetstream.OrderedConsumerConfig{DeliverPolicy: jetstream.DeliverByStartSequencePolicy}
+	config := jetstream.ConsumerConfig{
+		DeliverPolicy: jetstream.DeliverByStartSequencePolicy,
+		MemoryStorage: true,
+		Name:          "nui-" + uuid.NewString(),
+	}
 
 	//get query param array fo field "filter"
 	subjects := strings.Split(c.Query("subjects"), ",")
 	if len(subjects) > 0 && subjects[0] != "" {
-		config.FilterSubjects = subjects
-	}
-	seq, err := strconv.Atoi(c.Query("seq_start"))
-	if err == nil {
-		config.OptStartSeq = uint64(seq)
+		if len(subjects) == 1 {
+			config.FilterSubject = subjects[0]
+		} else {
+			config.FilterSubjects = subjects
+		}
 	}
 
 	batch, err := strconv.Atoi(c.Query("interval"))
 	if err != nil {
 		batch = 25
 	}
-	consumer, err := stream.OrderedConsumer(c.Context(), config)
+
+	seq, err := strconv.Atoi(c.Query("seq_start"))
+	if err != nil {
+		info, err := stream.Info(c.Context())
+		if err != nil {
+			return c.Status(500).JSON(err.Error())
+		}
+		seq = int(math.Min(1, float64(info.State.LastSeq-uint64(batch))))
+	}
+	config.OptStartSeq = uint64(seq)
+	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
@@ -404,6 +419,7 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 			Payload: msg.Data(),
 		})
 	}
+	_ = stream.DeleteConsumer(c.Context(), config.Name)
 	return c.JSON(msgs)
 }
 

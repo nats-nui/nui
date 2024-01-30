@@ -151,12 +151,18 @@ func (s *NuiTestSuite) TestStreamMessages() {
 
 	// filter by sequence number
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
-		WithQueryString("seq_num=6").
+		WithQueryString("seq_start=6").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
 
 	// filter by subject
-	e.GET("/api/connection/" + connId + "/stream/stream1/messages").WithQueryString("subjects=sub1").
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		WithQueryString("subjects=sub1").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+
+	time.Sleep(1 * time.Second)
+	//ensure no consumers are pending
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
 }
 
