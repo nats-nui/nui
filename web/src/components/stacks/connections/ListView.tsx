@@ -2,12 +2,16 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
-import { CNN_STATUS, Connection } from "@/types"
+import { CNN_STATUS, Connection, DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { buildStore } from "@/stores/docs/utils/factory"
+import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
+import docSo from "@/stores/docs"
+import { StreamsState, StreamsStore } from "@/stores/stacks/streams"
 
 
 
@@ -24,7 +28,7 @@ const CnnListView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const cnnListSa = useStore(cnnListSo) 
+	const cnnListSa = useStore(cnnListSo)
 	const cnnSa = useStore(cnnSo)
 
 	// HOOKs
@@ -38,6 +42,33 @@ const CnnListView: FunctionComponent<Props> = ({
 	const handleDel = () => {
 		cnnSo.delete(selectedId)
 		cnnListSo.select(null)
+	}
+	const handleMessages = (e: React.MouseEvent, cnn: Connection) => {
+		e.stopPropagation()
+		console.log("handleMessages")
+		const msgStore = buildStore({
+			type: DOC_TYPE.MESSAGES,
+			connectionId: cnn.id,
+			subscriptions: [...(cnn?.subscriptions ?? [])]
+		} as MessagesState) as MessagesStore
+		docSo.addLink({
+			view: msgStore,
+			parent: cnnListSo,
+			anim: true,
+		})
+	}
+	const handleStreams = (e: React.MouseEvent, cnn: Connection) => {
+		e.stopPropagation()
+		console.log("handleStreams")
+		const msgStore = buildStore({
+			type: DOC_TYPE.STREAMS,
+			connectionId: cnn.id,
+		} as StreamsState) as StreamsStore
+		docSo.addLink({
+			view: msgStore,
+			parent: cnnListSo,
+			anim: true,
+		})
 	}
 
 	// RENDER
@@ -83,6 +114,11 @@ const CnnListView: FunctionComponent<Props> = ({
 				selected={isSelected(cnn)}
 				variant={variant}
 				onClick={() => handleSelect(cnn)}
+				testRender={<>
+					<Button label="Str" onClick={(e) => handleStreams(e, cnn)} />
+					<Button label="Msg" onClick={(e) => handleMessages(e, cnn)} />
+					<Button label="Stt" />
+				</>}
 			/>
 		))}
 	</FrameworkCard>

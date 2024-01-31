@@ -8,7 +8,9 @@ import List from "../../lists/List"
 
 interface StoreMessageFormat{
 	state: {
+		format: MSG_FORMAT,
 		formatsOpen:boolean
+
 	},
 	setFormat(format:MSG_FORMAT): void,
 	setFormatsOpen(open:boolean): void,
@@ -19,36 +21,38 @@ interface Props {
 }
 
 const FormatDialog: FunctionComponent<Props> = ({
-	store: msgSo,
+	store: formatSo,
 }) => {
 
 	// STORE
-	const msgSa = useStore(msgSo as any) as typeof msgSo.state
+	const formatSa = useStore(formatSo as any) as typeof formatSo.state
 
 	// HOOKs
 
 	// HANDLER
 	const handleClose = () => {
-		msgSo.setFormatsOpen(false)
+		formatSo.setFormatsOpen(false)
 	}
 	const handleSelect = (index: number) => {
-		msgSo.setFormat(formats[index])
-		msgSo.setFormatsOpen(false)
+		formatSo.setFormat(formats[index])
+		formatSo.setFormatsOpen(false)
 	}
 
 	// RENDER
 	const formats = Object.values(MSG_FORMAT)
+	const indexSelect = formats.indexOf(formatSa.format)
 
 	return (
 		<Dialog
-			open={msgSa.formatsOpen}
+			open={formatSa.formatsOpen}
 			title="FORMATS"
 			width={90}
-			store={msgSo as any}
+			store={formatSo as any}
 			onClose={handleClose}
 		>
 			<List<string>
 				items={formats}
+				select={indexSelect}
 				onSelect={handleSelect}
 			/>
 		</Dialog>

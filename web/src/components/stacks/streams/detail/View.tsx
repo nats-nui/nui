@@ -8,7 +8,7 @@ import ShowForm from "./ShowForm"
 import RowButton from "@/components/buttons/RowButton"
 import MessagesIcon from "@/icons/MessagesIcon"
 import { DOC_TYPE } from "@/types"
-
+import docSo from "@/stores/docs"
 
 
 interface Props {
@@ -21,6 +21,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const streamSa = useStore(streamSo)
+	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
