@@ -10,6 +10,7 @@ interface Props {
 	subtitle?: string
 	variant?: number
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
+	testRender?: React.ReactNode
 }
 
 /**
@@ -22,6 +23,7 @@ const ElementRow: FunctionComponent<Props> = ({
 	selected,
 	variant = 0,
 	onClick,
+	testRender,
 }) => {
 
 	// STORE
@@ -39,7 +41,10 @@ const ElementRow: FunctionComponent<Props> = ({
 		{icon}
 		<div style={cssLabels}>
 			<div style={layoutSo.state.theme.texts.row.title}>{title}</div>
-			<div style={layoutSo.state.theme.texts.row.subtitle}>{subtitle}</div>
+			<div style={{...layoutSo.state.theme.texts.row.subtitle, display: "flex"}}>
+				<div>{subtitle}</div>
+				{testRender}
+			</div>
 		</div>
 	</div>
 }

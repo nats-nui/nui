@@ -6,25 +6,31 @@ export enum MSG_FORMAT {
 	BASE64 = "base64",
 }
 
-export function toJson(text: string): JSON {
+export function toJson(text: string): { json: JSON, success: boolean } {
 	let json = null
-	try { json = JSON.parse(text) } catch { }
-	return json
+	let success = false
+	try {
+		json = JSON.parse(text)
+		success = true
+	} catch {
+		success = false
+	}
+	return { json, success }
 }
 
 export function toHex(text: string): string[] {
-	let hex:string[] = []
+	let hex: string[] = []
 	for (let i = 0; i < text.length; i++) {
 		const charCode = text.charCodeAt(i)?.toString(16)?.toUpperCase()
-		hex.push ( charCode.length === 1 ? '0' + charCode : charCode )
+		hex.push(charCode.length === 1 ? '0' + charCode : charCode)
 	}
 	return hex
 }
 
 export function toBin(text: string): number[] {
-	let bin:number[] = []
+	let bin: number[] = []
 	for (let i = 0; i < text.length; i++) {
-		bin.push( text.charCodeAt(i))
+		bin.push(text.charCodeAt(i))
 	}
 	return bin
 }

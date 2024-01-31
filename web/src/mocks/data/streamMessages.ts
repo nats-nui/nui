@@ -6,7 +6,7 @@ const streamMessages: any[] = Array.from({length:100}, (_,i)=>{
 		seq_num: i,
 		headers: [],
 		subject: "subject",
-		payload: `payload:${i}`,
+		payload: btoa(`payload:${i}`),
 		size: 10,
 		received_ad: Date.now(),
 	}

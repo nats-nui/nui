@@ -26,12 +26,16 @@ function update(connectionId: string, stream: StreamConfig): Promise<StreamInfo>
 	return ajax.post(`connection/${connectionId}/stream/${stream.name}`, stream)
 }
 /** MESSAGES */
-function messages(connectionId: string, streamName: string, seqStart?: number, interval?: number, subjects?: string[]): Promise<Message[]> {
+async function messages(connectionId: string, streamName: string, seqStart?: number, interval?: number, subjects?: string[]): Promise<Message[]> {
 	if (!connectionId || !streamName) return
 	let query = seqStart!=null ? `seq_start=${seqStart.toString()}&` : ""
 	query += interval!=null ? `interval=${interval.toString()}&` : ""
 	query += (!!subjects && subjects.length > 0) ? `subjects=${subjects.map(s => `subjects=${s}&`)}` : ""
-	return ajax.get(`connection/${connectionId}/stream/${streamName}/messages?${query}`)
+	const messages:Message[] = await ajax.get(`connection/${connectionId}/stream/${streamName}/messages?${query}`)
+	return messages.map( m => {
+		m.payload = atob(m.payload)
+		return m
+	})
 }
 
 

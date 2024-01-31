@@ -77,7 +77,7 @@ const setup = {
 			const state = store.state as MessagesState
 			state.connectionId = data.connectionId
 			state.subscriptions = data.subscriptions
-			state.messages = data.history
+			state.messages = data.messages
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},
@@ -90,27 +90,26 @@ const setup = {
 				store.sendSubscriptions()
 				cnnSo.update({ id: store.state.connectionId, status: CNN_STATUS.CONNECTED })
 			}
-			ss.onMessage = message => store.addInHistory(message)
+			ss.onMessage = message => store.addMessage(message)
 			ss.onStatus = (payload: PayloadStatus) => {
 				cnnSo.update({ id: store.state.connectionId, status: payload.status })
 			}
 			ss.onError = error => {
-
 			}
 		},
 		disconnect(_: void, store?: MessagesStore) {
 			socketPool.destroy(store.state.uuid)
 		},
 
-		/** aggiungo alla history di questo stack */
-		addInHistory(message: PayloadMessage, store?: MessagesStore) {
-			const historyMessage: Message = {
+		/** aggiungo un messaggio di questa CARD */
+		addMessage(msg: PayloadMessage, store?: MessagesStore) {
+			const message: Message = {
 				//seqNum: createUUID(),
-				subject: message.subject,
-				payload: message.payload as string,
+				subject: msg.subject,
+				payload: msg.payload as string,
 				receivedAt: Date.now(),
 			}
-			store.setMessages([...store.state.messages, historyMessage])
+			store.setMessages([...store.state.messages, message])
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {

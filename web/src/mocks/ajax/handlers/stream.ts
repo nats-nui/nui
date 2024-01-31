@@ -1,10 +1,10 @@
+import streamMessages_S from '@/mocks/data/streamMessages'
+import { buildNewStreamState } from '@/stores/stacks/streams/utils'
+import { Message } from '@/types/Message'
+import { StreamInfo } from '@/types/Stream'
+import { camelToSnake, snakeToCamel } from '@/utils/object'
 import { rest } from 'msw'
 import streams_S from "../../data/streams"
-import streamMessages_S from '@/mocks/data/streamMessages'
-import { Message } from '@/types/Message'
-import { camelToSnake, snakeToCamel } from '@/utils/object'
-import { StreamInfo, StreamState } from '@/types/Stream'
-import { buildNewStreamState } from '@/stores/stacks/streams/utils'
 
 
 
@@ -25,11 +25,11 @@ const handlers = [
 	rest.post('/api/connection/:cnnId/stream', async (req, res, ctx) => {
 		const streamConfig_S = await req.json()
 		if (!streamConfig_S) return res(ctx.status(500))
-		const streamInfo_C:StreamInfo = {
-			config: snakeToCamel( streamConfig_S),
+		const streamInfo_C: StreamInfo = {
+			config: snakeToCamel(streamConfig_S),
 			state: buildNewStreamState()
 		}
-		const streamInfo_S:any = camelToSnake(streamInfo_C)
+		const streamInfo_S: any = camelToSnake(streamInfo_C)
 		streams_S.push(streamInfo_S)
 		return res(
 			ctx.status(201),
@@ -76,10 +76,10 @@ const handlers = [
 		const interval = Number.parseInt(params.get("interval"))
 		const subjects = params.getAll("subjects")
 
-		const streamMessages_C:Message[] = snakeToCamel(streamMessages_S)
+		const streamMessages_C: Message[] = snakeToCamel(streamMessages_S)
 		const msgs_C = streamMessages_C.filter((msg: Message) => {
 			if (Number.isNaN(seqStart) || msg.seqNum < seqStart) return false
-			if ( subjects && subjects.length>0 && !subjects.includes(msg.subject)) return false
+			if (subjects && subjects.length > 0 && !subjects.includes(msg.subject)) return false
 			return true
 		}).slice(0, interval ?? Number.POSITIVE_INFINITY)
 

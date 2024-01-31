@@ -17,8 +17,8 @@ const JsonCmp: FunctionComponent<Props> = ({
 }) => {
 
 	// RENDER
-	const json = toJson(text)
-	if (!json) return <TextCmp text={text} />
+	const { json, success } = toJson(text)
+	if (!success) return <TextCmp text={text} />
 
 	return (
 		<div style={{ ...cssBody, ...style }}>

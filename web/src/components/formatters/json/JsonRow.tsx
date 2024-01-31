@@ -1,5 +1,5 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import TextRow from "../text/TextRow"
 import { toJson } from "@/stores/stacks/messages/utils"
 
@@ -22,8 +22,8 @@ const JsonRow: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const  json = toJson(text)
-	if ( !json ) return <TextRow text={text} />
+	const  {json, success} = useMemo(()=> toJson(text), [text])
+	if ( !success ) return <TextRow text={text} error/>
 
 	return (
 		<div style={cssBody}>
