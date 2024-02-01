@@ -13,7 +13,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nats-io/nats-server/v2 v2.9.19
 	github.com/nats-io/nats.go v1.32.0
-	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20231224150948-8d42e7f32830
+	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
 	github.com/stretchr/testify v1.8.4
 	github.com/wailsapp/wails/v2 v2.7.1
 )
