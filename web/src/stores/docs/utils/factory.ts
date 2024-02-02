@@ -1,6 +1,6 @@
 import servicesSetup from "@/stores/stacks/connection/detail";
 import cnnSetup from "@/stores/stacks/connection/list";
-import messageSetup from "@/stores/stacks/message";
+import messageSetup, { MessageState } from "@/stores/stacks/message";
 import messagesSetup from "@/stores/stacks/messages";
 import messageSendSetup from "@/stores/stacks/send";
 import streamsSetup from "@/stores/stacks/streams";
@@ -14,6 +14,8 @@ import consumersSetup, { ConsumersState, ConsumersStore } from "@/stores/stacks/
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
 import { StreamMessagesState, StreamMessagesStore } from "@/stores/stacks/streams/messages";
 import { StreamInfo } from "@/types/Stream";
+import { Message } from "@/types/Message";
+import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
 
 
 
@@ -73,4 +75,14 @@ export function buildStreamMessages(connectionId: string, stream: Partial<Stream
 		stream,
 	} as StreamMessagesState) as StreamMessagesStore
 	return streamMessagesStore
+}
+
+export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
+	if (!message ) { console.error("no param"); return null }
+	const msgStore = buildStore({
+		type: DOC_TYPE.MESSAGE,
+		message,
+		format,
+	} as MessageState)
+	return msgStore
 }

@@ -17,6 +17,7 @@ import Box from "@/components/format/Box"
 import IconToggle from "@/components/buttons/IconToggle"
 import DateTimeInput from "@/components/input/DateTimeInput"
 import FilterDialog from "./FilterDialog"
+import { Message } from "@/types/Message"
 
 
 
@@ -54,6 +55,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			return await strMsgSo.fetchPrev()
 		}
 	}
+	const hendleMessageClick = (message: Message) => strMsgSo.openMessageDetail(message)
 
 	// RENDER
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
@@ -85,7 +87,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			messages={messages}
 			format={strMsgSa.format}
 			onLoading={handleLoad}
-			//onMessageClick={hendleMessageClick}
+			onMessageClick={hendleMessageClick}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 
