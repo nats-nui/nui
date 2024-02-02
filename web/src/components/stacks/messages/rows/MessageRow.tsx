@@ -6,9 +6,10 @@ import TextRow from "@/components/formatters/text/TextRow"
 import CopyIcon from "@/icons/CopyIcon"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Message } from "@/types/Message"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useMemo, useState } from "react"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import dayjs from "dayjs"
 
 
 
@@ -38,6 +39,10 @@ const MessageRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!message) return null
+	const time = useMemo(
+		() => message.receivedAt ? dayjs(message.receivedAt).format("YYYY-MM-DD HH:mm:ss") : null,
+		[message.receivedAt]
+	)
 
 	return (
 		<>
@@ -45,7 +50,10 @@ const MessageRow: FunctionComponent<Props> = ({
 				onMouseEnter={handleTitleEnter}
 				onMouseLeave={handleTitleLeave}
 			>
-				<div style={cssTitleText}>{message.subject}</div>
+				<div style={{ display: "flex", flex: 1 }}>
+					{message.seqNum && <div style={{ width: 20 }}>{message.seqNum}</div>}
+					<div style={cssTitleText}>{message.subject}</div>
+				</div>
 				{bttCopyVisible && (
 					<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
 						<IconButton onClick={handleClipboardClick}>
@@ -61,6 +69,8 @@ const MessageRow: FunctionComponent<Props> = ({
 				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.payload} maxChar={80} />,
 				[MSG_FORMAT.HEX]: <HexTable text={message.payload} maxRows={10} />,
 			}[format]}
+
+			{time && <div style={{ display: "flex" }}>{time}</div>}
 		</>
 	)
 }
