@@ -7,6 +7,8 @@ import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { MSG_FORMAT } from "../messages/utils"
 import { ViewState } from "../viewBase"
+import docsSo from "@/stores/docs"
+import { buildMessageDetail } from "@/stores/docs/utils/factory"
 
 
 export interface StreamMessagesFilter {
@@ -183,6 +185,14 @@ const setup = {
 			store.setFilter(filter)
 			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter)
 			store.setMessages(msgs)
+		},
+		/** apertura CARD MESSAGE-DETAIL */
+		openMessageDetail(message: Message, store?: StreamMessagesStore) {
+			docsSo.addLink({ 
+				view: buildMessageDetail(message, store.state.format), 
+				parent: store, 
+				anim: true, 
+			})
 		},
 	},
 

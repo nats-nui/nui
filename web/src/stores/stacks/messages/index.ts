@@ -3,7 +3,7 @@ import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
-import { buildStore, createUUID } from "@/stores/docs/utils/factory"
+import { buildMessageDetail, buildStore, createUUID } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
@@ -122,17 +122,10 @@ const setup = {
 		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
-			const cnn = store.getConnection()
-			if (!cnn) return
-			const msgStore = buildStore({
-				type: DOC_TYPE.MESSAGE,
-				message,
-				format: store.state.format,
-			} as MessageState)
-			docsSo.addLink({
-				view: msgStore,
-				parent: store,
-				anim: true,
+			docsSo.addLink({ 
+				view: buildMessageDetail(message, store.state.format), 
+				parent: store, 
+				anim: true, 
 			})
 		},
 		/** apertura CARD MESSAGE-SEND */
