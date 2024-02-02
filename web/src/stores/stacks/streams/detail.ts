@@ -7,9 +7,10 @@ import { StreamsStore } from "."
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/types"
-import { buildStore } from "@/stores/docs/utils/factory"
+import { buildConsumers, buildStore } from "@/stores/docs/utils/factory"
 import { ConsumersState, ConsumersStore } from "../consumer"
 import { StreamMessagesState, StreamMessagesStore } from "./messages"
+import { buildStreamMessages } from "@/stores/docs/utils/factory"
 
 
 
@@ -112,35 +113,13 @@ const setup = {
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
-			if (!store.state.stream?.config?.name) return
-			const consumerStore = buildStore({
-				type: DOC_TYPE.CONSUMERS,
-				connectionId: store.state.connectionId,
-				streamName: store.state.stream.config.name,
-			} as ConsumersState) as ConsumersStore
-			docSo.addLink({
-				view: consumerStore,
-				parent: store,
-				anim: true,
-			})
+			const consumerStore = buildConsumers(store.state.connectionId, store.state.stream)
+			docSo.addLink({ view: consumerStore, parent: store, anim: true })
 		},
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
-			if (!store.state.stream?.config?.name || !store.state.connectionId) {
-				console.error("no param")
-				return
-			}
-			const streamMessagesStore = buildStore({
-				type: DOC_TYPE.STREAM_MESSAGES,
-				connectionId: store.state.connectionId,
-				stream: store.state.stream,
-				subjects: [...(store.state.stream?.config?.subjects ?? [])]
-			} as StreamMessagesState) as StreamMessagesStore
-			docSo.addLink({
-				view: streamMessagesStore,
-				parent: store,
-				anim: true,
-			})
+			const streamMessagesStore = buildStreamMessages(store.state.connectionId, store.state.stream)
+			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
 		},
 	},
 

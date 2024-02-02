@@ -10,8 +10,10 @@ import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
 import consumerSetup from "@/stores/stacks/consumer/detail";
-import consumersSetup from "@/stores/stacks/consumer";
+import consumersSetup, { ConsumersState, ConsumersStore } from "@/stores/stacks/consumer";
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
+import { StreamMessagesState, StreamMessagesStore } from "@/stores/stacks/streams/messages";
+import { StreamInfo } from "@/types/Stream";
 
 
 
@@ -48,7 +50,27 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	const store: ViewStore = <ViewStore>createStore(setup)
 	store.state = { ...store.state, ...state }
 	// se non c'e' l'uuid lo creo IO!
-	if ( store.state.uuid == null ) store.state.uuid = createUUID()
+	if (store.state.uuid == null) store.state.uuid = createUUID()
 	store.onCreate()
 	return store
+}
+
+
+export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>) {
+	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
+	const consumerStore = buildStore({
+		type: DOC_TYPE.CONSUMERS,
+		connectionId: connectionId,
+		streamName: stream.config.name,
+	} as ConsumersState) as ConsumersStore
+}
+
+export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
+	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
+	const streamMessagesStore = buildStore({
+		type: DOC_TYPE.STREAM_MESSAGES,
+		connectionId,
+		stream,
+	} as StreamMessagesState) as StreamMessagesStore
+	return streamMessagesStore
 }

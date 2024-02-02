@@ -39,7 +39,21 @@ const streams: any[] = [
 			"deleted": null,
 			"num_deleted": 0,
 			"num_subjects": 0,
-			"subjects": null
+			"subjects": {
+				"subject": 2,
+				"pippo": 5,
+				"paperino": 6,
+				"pluto": 7,
+				"paperone": 8,
+				"pappo": 5,
+				"pandolfo": 6,
+				"platinato": 7,
+				"perpetua": 8,
+				"topolino": 5,
+				"topilona": 6,
+				"topazio": 7,
+				"torpedone": 8,
+			}
 		},
 		"cluster": {
 			"name": "ngsprod-aws-useast2",
