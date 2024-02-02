@@ -11,6 +11,12 @@ import FormatDialog from "../../messages/FormatDialog"
 import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
 import NumberInput from "@/components/input/NumberInput"
+import List from "@/components/lists/List"
+import { Subscription } from "@/types"
+import Box from "@/components/format/Box"
+import IconToggle from "@/components/buttons/IconToggle"
+import DateTimeInput from "@/components/input/DateTimeInput"
+import FilterDialog from "./FilterDialog"
 
 
 
@@ -34,19 +40,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	//#region  SUBSCRIPTIONS
-	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
-		if (select) return
-		strMsgSo.setFiltersOpen(!select)
-	}
-	const handleCloseSubsDialog = () => {
-		strMsgSo.setFiltersOpen(false)
-	}
-	// const handleChangeSubs = (newSubject: string[]) => {
-	// 	strMsgSo.setSubscriptions(newSubs)
-	// }
-	//#endregion
-
+	const handleFilterClick = () => strMsgSo.setFiltersOpen(true)
 	const handleFormatsClick = () => strMsgSo.setFormatsOpen(true)
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)
@@ -82,12 +76,11 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			<Button
 				select={strMsgSa.filtersOpen}
 				label="FILTERS"
-				onClick={handleClickSubs}
+				onClick={handleFilterClick}
 				variant={variant}
 			/>
 		</>}
 	>
-
 		<ItemsList
 			messages={messages}
 			format={strMsgSa.format}
@@ -96,36 +89,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 
-		<Dialog
-			width={200}
-			open={strMsgSa.filtersOpen}
-			store={strMsgSo}
-			onClose={handleCloseSubsDialog}
-		>
-			<BoxV>
-				<Label>SEQUENCE START</Label>
-				<NumberInput
-					style={{ flex: 1 }}
-					value={strMsgSa.startSeq}
-					onChange={(value: number) => strMsgSo.setStartSeq(value)}
-				/>
-			</BoxV>
-			<BoxV>
-				<Label>INTERVAL</Label>
-				<NumberInput
-					style={{ flex: 1 }}
-					value={strMsgSa.interval}
-					onChange={(value: number) => strMsgSo.setInterval(value)}
-				/>
-			</BoxV>
-
-			{/* <EditList<string>
-				items={strMsgSa.subjects}
-				onChangeItems={handleChangeSubs}
-				fnNewItem={() => ({ subject: "<new>" })}
-				RenderRow={EditSubscriptionRow}
-			/> */}
-		</Dialog>
+		<FilterDialog store={strMsgSo} />
 
 		<FormatDialog store={strMsgSo} />
 

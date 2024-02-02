@@ -1,14 +1,10 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import ElementRow from "@/components/rows/ElementRow"
-import { buildStore } from "@/stores/docs/utils/factory"
 import { StreamsStore } from "@/stores/stacks/streams"
-import { StreamMessagesState, StreamMessagesStore } from "@/stores/stacks/streams/messages"
-import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import docSo from "@/stores/docs"
 
 
 
@@ -37,31 +33,12 @@ const StreamsListView: FunctionComponent<Props> = ({
 	}
 	const handleMessages = (e: React.MouseEvent, stream: StreamInfo) => {
 		e.stopPropagation()
-		const streamMessagesStore = buildStore({
-			type: DOC_TYPE.STREAM_MESSAGES,
-			connectionId: streamsSo.state.connectionId,
-			stream: stream,
-			subjects: [...(stream?.config?.subjects ?? [])]
-		} as StreamMessagesState) as StreamMessagesStore
-		docSo.addLink({
-			view: streamMessagesStore,
-			parent: streamsSo,
-			anim: true,
-		})
+		streamsSo.openMessages(stream.config?.name)
 	}
 	const handleConsumer = (e: React.MouseEvent, stream: StreamInfo) => {
 		e.stopPropagation()
-		// const msgStore = buildStore({
-		// 	type: DOC_TYPE.STREAMS,
-		// 	connectionId: cnn.id,
-		// } as StreamsState) as StreamsStore
-		// docSo.addLink({
-		// 	view: msgStore,
-		// 	parent: cnnListSo,
-		// 	anim: true,
-		// })
+		streamsSo.openConsumers(stream.config?.name)
 	}
-
 
 	// RENDER
 	const streams = streamsSa.all
@@ -75,7 +52,6 @@ const StreamsListView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={streamsSo}
 		actionsRender={<>
-
 			<Button
 				label="NEW"
 				//select={bttNewSelect}

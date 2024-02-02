@@ -1,17 +1,13 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import cnnSo, { ConnectionState } from "@/stores/connections"
-import { CnnListState, CnnListStore } from "@/stores/stacks/connection/list"
-import { CNN_STATUS, Connection, DOC_TYPE } from "@/types"
+import cnnSo from "@/stores/connections"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { CnnListStore } from "@/stores/stacks/connection/list"
+import { CNN_STATUS, Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { buildStore } from "@/stores/docs/utils/factory"
-import { MessagesState, MessagesStore } from "@/stores/stacks/messages"
-import docSo from "@/stores/docs"
-import { StreamsState, StreamsStore } from "@/stores/stacks/streams"
 
 
 
@@ -45,30 +41,11 @@ const CnnListView: FunctionComponent<Props> = ({
 	}
 	const handleMessages = (e: React.MouseEvent, cnn: Connection) => {
 		e.stopPropagation()
-		console.log("handleMessages")
-		const msgStore = buildStore({
-			type: DOC_TYPE.MESSAGES,
-			connectionId: cnn.id,
-			subscriptions: [...(cnn?.subscriptions ?? [])]
-		} as MessagesState) as MessagesStore
-		docSo.addLink({
-			view: msgStore,
-			parent: cnnListSo,
-			anim: true,
-		})
+		cnnListSo.openMessages(cnn.id)
 	}
 	const handleStreams = (e: React.MouseEvent, cnn: Connection) => {
 		e.stopPropagation()
-		console.log("handleStreams")
-		const msgStore = buildStore({
-			type: DOC_TYPE.STREAMS,
-			connectionId: cnn.id,
-		} as StreamsState) as StreamsStore
-		docSo.addLink({
-			view: msgStore,
-			parent: cnnListSo,
-			anim: true,
-		})
+		cnnListSo.openStreams(cnn.id)
 	}
 
 	// RENDER

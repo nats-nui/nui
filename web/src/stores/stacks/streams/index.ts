@@ -2,9 +2,9 @@ import strApi from "@/api/streams"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildStore } from "@/stores/docs/utils/factory"
+import { buildConsumers, buildStore, buildStreamMessages } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
-import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -29,10 +29,19 @@ const setup = {
 	},
 
 	getters: {
+
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<StreamsStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "STREAMS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getSerialization: (_: void, store?: ViewStore) => {
+			const state = store.state as StreamsState
+			return {
+				...viewSetup.getters.getSerialization(null, store),
+				connectionId: state.connectionId,
+				select: state.select,
+			}
+		},
 		//#endregion
 
 		getByName(name: string, store?: StreamsStore) {
@@ -47,6 +56,15 @@ const setup = {
 
 	actions: {
 
+		//#region VIEWBASE
+		setSerialization: (data: any, store?: ViewStore) => {
+			viewSetup.actions.setSerialization(data, store)
+			const state = store.state as StreamsState
+			state.connectionId = data.connectionId
+			state.select = data.select
+		},
+		//#endregion
+
 		/** visualizzo dettaglio di uno STREAM */
 		select(name: string, store?: StreamsStore) {
 			const nameOld = store.state.select
@@ -55,7 +73,7 @@ const setup = {
 			store.setSelect(nameNew)
 
 			// eventualmente creo la nuova VIEW
-			let streamStore:ViewStore = null
+			let streamStore: ViewStore = null
 			if (nameNew != null) streamStore = buildStore({
 				type: DOC_TYPE.STREAM,
 				connectionId: store.state.connectionId,
@@ -83,6 +101,20 @@ const setup = {
 			docSo.addLink({ view, parent: store, anim: true })
 		},
 
+		/** apertura della CARD CONSUMERS */
+		openConsumers(streamName: string, store?: StreamsStore) {
+			const stream = store.getByName(streamName)
+			const consumerStore = buildConsumers(store.state.connectionId, stream)
+			docSo.addLink({ view: consumerStore, parent: store, anim: true })
+		},
+		/** apertura della CARD MESSAGES */
+		openMessages(streamName: string, store?: StreamsStore) {
+			const stream = store.getByName(streamName)
+			const streamMessagesStore = buildStreamMessages(store.state.connectionId, stream)
+			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
+		},
+
+
 
 		async fetch(_: void, store?: StreamsStore) {
 			const streams = await strApi.index(store.state.connectionId)
@@ -102,7 +134,7 @@ const setup = {
 			}
 			store.setAll(all)
 		},
-		
+
 
 	},
 

@@ -20,7 +20,7 @@ const setup = {
 		connection: <Connection>null,
 		/** indica se la connection caricata nella CARD è editabile */
 		readOnly: true,
-		
+
 		//#region VIEWBASE
 		width: 200,
 		colorVar: COLOR_VAR.GREEN,
@@ -46,7 +46,7 @@ const setup = {
 	},
 
 	actions: {
-		
+
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
@@ -71,11 +71,7 @@ const setup = {
 				connectionId: cnn.id,
 				subscriptions: [...(cnn?.subscriptions ?? [])]
 			} as MessagesState) as MessagesStore
-			docsSo.addLink({
-				view: msgStore,
-				parent: store,
-				anim: true,
-			})
+			docsSo.addLink({ view: msgStore, parent: store, anim: true })
 		},
 
 		/** apertura della CARD STREAMS */
@@ -86,11 +82,7 @@ const setup = {
 				type: DOC_TYPE.STREAMS,
 				connectionId: cnn.id,
 			} as StreamsState) as StreamsStore
-			docsSo.addLink({
-				view: msgStore,
-				parent: store,
-				anim: true,
-			})
+			docsSo.addLink({ view: msgStore, parent: store, anim: true })
 		},
 	},
 
