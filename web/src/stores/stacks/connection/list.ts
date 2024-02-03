@@ -6,7 +6,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildStore } from "../../docs/utils/factory"
+import { buildConnectionMessages, buildStore, buildStreams } from "../../docs/utils/factory"
 import { MessagesState, MessagesStore } from "../messages"
 import { CnnDetailState } from "./detail"
 
@@ -92,25 +92,19 @@ const setup = {
 		},
 
 		openStreams(connectionId: string, store?: CnnListStore) {
-			const cnn = cnnSo.getById(connectionId)
-			if (!cnn) return console.error("list:no_connection")
-			const msgStore = buildStore({
-				type: DOC_TYPE.STREAMS,
-				connectionId: cnn.id,
-				subscriptions: [...(cnn?.subscriptions ?? [])]
-			} as MessagesState) as MessagesStore
-			docsSo.addLink({ view: msgStore, parent: store, anim: true })
+			docsSo.addLink({ 
+				view: buildStreams(connectionId), 
+				parent: store, 
+				anim: true 
+			})
 		},
 
 		openMessages(connectionId: string, store?: CnnListStore) {
-			const cnn = cnnSo.getById(connectionId)
-			if (!cnn) return console.error("list:no_connection")
-			const msgStore = buildStore({
-				type: DOC_TYPE.MESSAGES,
-				connectionId: cnn.id,
-				subscriptions: [...(cnn?.subscriptions ?? [])]
-			} as MessagesState) as MessagesStore
-			docsSo.addLink({ view: msgStore, parent: store, anim: true })
+			docsSo.addLink({ 
+				view: buildConnectionMessages(connectionId), 
+				parent: store, 
+				anim: true 
+			})
 		},
 	},
 
