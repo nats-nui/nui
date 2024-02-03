@@ -44,3 +44,25 @@ func (s *NuiTestSuite) emptyStream(name string) (jetstream.Stream, error) {
 	s.NoError(err)
 	return stream, err
 }
+
+func (s *NuiTestSuite) filledKvs(name string) jetstream.KeyValue {
+	kv := s.emptyKvs(name)
+	for i := 1; i <= 10; i++ {
+		_, err := kv.Put(s.ctx, "key"+strconv.Itoa(i), []byte("value"+strconv.Itoa(i)))
+		s.NoError(err)
+	}
+	return kv
+}
+
+func (s *NuiTestSuite) emptyKvs(name string) jetstream.KeyValue {
+	config := jetstream.KeyValueConfig{
+		Bucket:      name,
+		Description: "",
+		History:     5,
+		Storage:     jetstream.MemoryStorage,
+	}
+
+	kv, err := s.js.CreateKeyValue(s.ctx, config)
+	s.NoError(err)
+	return kv
+}
