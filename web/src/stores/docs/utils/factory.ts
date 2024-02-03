@@ -1,7 +1,7 @@
 import servicesSetup from "@/stores/stacks/connection/detail";
 import cnnSetup from "@/stores/stacks/connection/list";
 import messageSetup, { MessageState } from "@/stores/stacks/message";
-import messagesSetup from "@/stores/stacks/messages";
+import messagesSetup, { MessagesState, MessagesStore } from "@/stores/stacks/messages";
 import messageSendSetup from "@/stores/stacks/send";
 import streamsSetup from "@/stores/stacks/streams";
 import streamSetup from "@/stores/stacks/streams/detail";
@@ -16,6 +16,7 @@ import { StreamMessagesState, StreamMessagesStore } from "@/stores/stacks/stream
 import { StreamInfo } from "@/types/Stream";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
+import cnnSo from "@/stores/connections"
 
 
 
@@ -57,6 +58,34 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	return store
 }
 
+//#region  CONNECTION
+
+export function buildConnectionMessages(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId)
+	if (!cnn) { console.error("no param"); return null }
+	const cnnMessageStore = buildStore({
+		type: DOC_TYPE.MESSAGES,
+		connectionId: cnn.id,
+		subscriptions: [...(cnn?.subscriptions ?? [])]
+	} as MessagesState) as MessagesStore
+	return cnnMessageStore
+}
+
+export function buildStreams(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId)
+	if (!cnn) { console.error("no param"); return null }
+	const streamsStore = buildStore({
+		type: DOC_TYPE.STREAMS,
+		connectionId: cnn.id,
+		subscriptions: [...(cnn?.subscriptions ?? [])]
+	} as MessagesState) as MessagesStore
+	return streamsStore
+}
+
+//#endregion
+
+
+//#region STREAM
 
 export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>) {
 	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
@@ -65,6 +94,7 @@ export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>
 		connectionId: connectionId,
 		streamName: stream.config.name,
 	} as ConsumersState) as ConsumersStore
+	return consumerStore
 }
 
 export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
@@ -76,6 +106,8 @@ export function buildStreamMessages(connectionId: string, stream: Partial<Stream
 	} as StreamMessagesState) as StreamMessagesStore
 	return streamMessagesStore
 }
+
+//#endregion
 
 export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
 	if (!message ) { console.error("no param"); return null }

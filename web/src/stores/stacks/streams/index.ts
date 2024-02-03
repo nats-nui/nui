@@ -103,15 +103,19 @@ const setup = {
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
-			const stream = store.getByName(streamName)
-			const consumerStore = buildConsumers(store.state.connectionId, stream)
-			docSo.addLink({ view: consumerStore, parent: store, anim: true })
+			docSo.addLink({ 
+				view: buildConsumers(store.state.connectionId, store.getByName(streamName)), 
+				parent: store, 
+				anim: true 
+			})
 		},
 		/** apertura della CARD MESSAGES */
 		openMessages(streamName: string, store?: StreamsStore) {
-			const stream = store.getByName(streamName)
-			const streamMessagesStore = buildStreamMessages(store.state.connectionId, stream)
-			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
+			docSo.addLink({ 
+				view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)), 
+				parent: store, 
+				anim: true 
+			})
 		},
 
 
