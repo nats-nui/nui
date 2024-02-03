@@ -75,7 +75,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<NumberInput
 					style={{ flex: 1 }}
 					value={filter.startSeq}
-					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
+					onChange={startSeq => handleFilterPropChange({ startSeq: +startSeq })}
 				/>
 			</BoxV>
 			<BoxV>
@@ -89,7 +89,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<DateTimeInput
 					style={{ flex: 1 }}
 					value={filter.startTime}
-					onChange={(startTime: number) => handleFilterPropChange({ startTime })}
+					onChange={(startTime: string) => handleFilterPropChange({ startTime: +startTime })}
 				/>
 			</BoxV>
 			<BoxV>
@@ -97,7 +97,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<NumberInput
 					style={{ flex: 1 }}
 					value={filter.interval}
-					onChange={(interval: number) => handleFilterPropChange({ interval })}
+					onChange={(interval: string) => handleFilterPropChange({ interval: +interval })}
 				/>
 			</BoxV>
 

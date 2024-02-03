@@ -34,7 +34,7 @@ const NumberInput: FunctionComponent<Props> = ({
 
 export default NumberInput
 
-function format(value: string, decimals?: number, min?: number, max?: number): any {
+function format(value: string, decimals?: number, min?: number, max?: number): string {
 	value = value.replace(/[^0-9.,+-]/g, "")
 	if (decimals != null && (value.includes(".") || value.includes(","))) {
 		value = parseFloat(value).toString()//.toFixed(decimals)

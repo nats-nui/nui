@@ -9,7 +9,7 @@ export interface TextInputProps {
 	readOnly?: boolean
 	style?: React.CSSProperties
 	focus?: boolean
-	onChange?: (newValue: string | number) => void
+	onChange?: (newValue: string) => void
 	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }

@@ -9,7 +9,7 @@ import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { StreamState } from "./detail"
-import { buildNewStreamInfo } from "./utils"
+import { buildNewStreamInfo } from "./utils/factory"
 
 
 

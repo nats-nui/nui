@@ -1,5 +1,5 @@
 import streamMessages_S from '@/mocks/data/streamMessages'
-import { buildNewStreamState } from '@/stores/stacks/streams/utils'
+import { buildNewStreamState } from '@/stores/stacks/streams/utils/factory'
 import { Message } from '@/types/Message'
 import { StreamInfo } from '@/types/Stream'
 import { camelToSnake, snakeToCamel } from '@/utils/object'
