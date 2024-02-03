@@ -1,0 +1,281 @@
+package nui
+
+import (
+	"errors"
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"github.com/nats-io/nats.go/jetstream"
+	"github.com/pricelessrabbit/nui/ws"
+	"math"
+	"strconv"
+	"strings"
+)
+
+func (a *App) handleIndexStreams(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	listener := js.ListStreams(c.Context())
+	infos := make([]*jetstream.StreamInfo, 0)
+	for {
+		select {
+		case info, ok := <-listener.Info():
+			err := listener.Err()
+			if err != nil {
+				if !errors.Is(err, jetstream.ErrEndOfData) {
+					return c.Status(500).JSON(err.Error())
+				}
+				return c.JSON(infos)
+			}
+			if !ok {
+				return c.JSON(infos)
+			}
+			infos = append(infos, info)
+		}
+	}
+}
+
+func (a *App) handleShowStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info)
+}
+
+func (a *App) handleCreateStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	cfg := jetstream.StreamConfig{}
+	err = c.BodyParser(&cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	stream, err := js.CreateStream(c.Context(), cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info.Config)
+}
+
+func (a *App) handleUpdateStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	cfg := jetstream.StreamConfig{}
+	err = c.BodyParser(&cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	stream, err := js.UpdateStream(c.Context(), cfg)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(info)
+}
+
+func (a *App) handleDeleteStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	_, err = js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	err = js.DeleteStream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.SendStatus(200)
+}
+
+func (a *App) handlePurgeStream(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	var options []jetstream.StreamPurgeOpt
+	reqOptions := &map[string]any{}
+
+	err = c.BodyParser(&reqOptions)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+
+	if reqOptions != nil {
+		for key, value := range *reqOptions {
+			switch key {
+			case "seq":
+				options = append(options, jetstream.WithPurgeSequence(value.(uint64)))
+			case "keep":
+				options = append(options, jetstream.WithPurgeKeep(value.(uint64)))
+			case "subject":
+				options = append(options, jetstream.WithPurgeSubject(value.(string)))
+			}
+		}
+	}
+	err = stream.Purge(c.Context(), options...)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.SendStatus(200)
+}
+
+func (a *App) handleSealStream(c *fiber.Ctx) error {
+	//conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	//if err != nil {
+	//	return c.Status(404).JSON(err.Error())
+	//}
+	//js, err := jetstream.New(conn.Conn)
+	//if err != nil {
+	//	return c.Status(422).JSON(err.Error())
+	//}
+	//streamName := c.Params("stream_name")
+	//if streamName == "" {
+	//	return c.Status(422).JSON("stream_name is required")
+	//}
+	//stream, err := js.Stream(c.Context(), streamName)
+	//if err != nil {
+	//	return c.Status(422).JSON(err.Error())
+	//}
+	//
+	//if err != nil {
+	//	return c.Status(500).JSON(err.Error())
+	//}
+	return c.SendStatus(200)
+}
+
+func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
+	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
+	if err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return c.Status(422).JSON(err.Error())
+	}
+
+	config := jetstream.ConsumerConfig{
+		DeliverPolicy: jetstream.DeliverByStartSequencePolicy,
+		MemoryStorage: true,
+		Name:          "nui-" + uuid.NewString(),
+	}
+
+	subjects := strings.Split(c.Query("subjects"), ",")
+	if len(subjects) > 0 && subjects[0] != "" {
+		if len(subjects) == 1 {
+			config.FilterSubject = subjects[0]
+		} else {
+			config.FilterSubjects = subjects
+		}
+	}
+
+	batch, err := strconv.Atoi(c.Query("interval"))
+	if err != nil {
+		batch = 25
+	}
+
+	seq, err := strconv.Atoi(c.Query("seq_start"))
+	if err != nil {
+		info, err := stream.Info(c.Context())
+		if err != nil {
+			return c.Status(500).JSON(err.Error())
+		}
+		seq = int(math.Min(1, float64(info.State.LastSeq-uint64(batch))))
+	}
+	config.OptStartSeq = uint64(seq)
+	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	msgBatch, err := consumer.FetchNoWait(batch)
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	msgs := make([]ws.NatsMsg, 0, batch)
+	for msg := range msgBatch.Messages() {
+		if msgBatch.Error() != nil {
+			return c.Status(500).JSON(msgBatch.Error().Error())
+		}
+		metadata, err := msg.Metadata()
+		if err != nil {
+			return c.Status(500).JSON(err.Error())
+		}
+		msgs = append(msgs, ws.NatsMsg{
+			Subject: msg.Subject(),
+			SeqNum:  metadata.Sequence.Stream,
+			Payload: msg.Data(),
+		})
+	}
+	_ = stream.DeleteConsumer(c.Context(), config.Name)
+	return c.JSON(msgs)
+}
