@@ -47,6 +47,9 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
+	a.Post("/api/connection/:id/publish", a.handlePublish)
+	a.Post("/api/connection/:id/request", a.handleRequest)
+
 	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
 	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
@@ -58,8 +61,8 @@ func (a *App) registerHandlers() {
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/messages", a.handleIndexStreamMessages)
 
-	a.Post("/api/connection/:id/publish", a.handlePublish)
-	a.Post("/api/connection/:id/request", a.handleRequest)
+	a.Get("/api/connection/:connection_id/kv", a.handleIndexBuckets)
+	a.Get("/api/connection/:connection_id/kv/:bucket", a.handleShowBucket)
 
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {

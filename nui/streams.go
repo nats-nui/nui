@@ -12,13 +12,9 @@ import (
 )
 
 func (a *App) handleIndexStreams(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	listener := js.ListStreams(c.Context())
 	infos := make([]*jetstream.StreamInfo, 0)
@@ -40,18 +36,26 @@ func (a *App) handleIndexStreams(c *fiber.Ctx) error {
 	}
 }
 
-func (a *App) handleShowStream(c *fiber.Ctx) error {
+func (a *App) jsOrFail(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
 	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
 	if err != nil {
-		return c.Status(404).JSON(err.Error())
+		return nil, false, c.Status(404).JSON(err.Error())
 	}
+	js, err := jetstream.New(conn.Conn)
+	if err != nil {
+		return nil, false, c.Status(422).JSON(err.Error())
+	}
+	return js, true, nil
+}
+
+func (a *App) handleShowStream(c *fiber.Ctx) error {
 	streamName := c.Params("stream_name")
 	if streamName == "" {
 		return c.Status(422).JSON("stream_name is required")
 	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(500).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	stream, err := js.Stream(c.Context(), streamName)
 	if err != nil {
@@ -65,13 +69,9 @@ func (a *App) handleShowStream(c *fiber.Ctx) error {
 }
 
 func (a *App) handleCreateStream(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	cfg := jetstream.StreamConfig{}
 	err = c.BodyParser(&cfg)
@@ -90,13 +90,9 @@ func (a *App) handleCreateStream(c *fiber.Ctx) error {
 }
 
 func (a *App) handleUpdateStream(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	cfg := jetstream.StreamConfig{}
 	err = c.BodyParser(&cfg)
@@ -115,13 +111,9 @@ func (a *App) handleUpdateStream(c *fiber.Ctx) error {
 }
 
 func (a *App) handleDeleteStream(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	streamName := c.Params("stream_name")
 	if streamName == "" {
@@ -139,13 +131,9 @@ func (a *App) handleDeleteStream(c *fiber.Ctx) error {
 }
 
 func (a *App) handlePurgeStream(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	streamName := c.Params("stream_name")
 	if streamName == "" {
@@ -207,13 +195,9 @@ func (a *App) handleSealStream(c *fiber.Ctx) error {
 }
 
 func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	streamName := c.Params("stream_name")
 	if streamName == "" {
