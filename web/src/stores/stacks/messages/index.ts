@@ -3,13 +3,12 @@ import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
-import { buildMessageDetail, buildStore, createUUID } from "@/stores/docs/utils/factory"
+import { buildMessageDetail, buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
 import { Message } from "@/types/Message"
-import { StoreCore, mixStores } from "@priolo/jon"
-import { MessageState } from "../message"
+import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { MessageSendState } from "../send"
 import { ViewState } from "../viewBase"
 import { MSG_FORMAT } from "./utils"
@@ -85,6 +84,7 @@ const setup = {
 
 
 		connect(_: void, store?: MessagesStore) {
+console.log("CONNECT")
 			const ss = socketPool.create(store.state.uuid, store.state.connectionId)
 			ss.onOpen = () => {
 				store.sendSubscriptions()
@@ -98,6 +98,7 @@ const setup = {
 			}
 		},
 		disconnect(_: void, store?: MessagesStore) {
+console.log("DISCONNECT")			
 			socketPool.destroy(store.state.uuid)
 		},
 
@@ -153,9 +154,9 @@ const setup = {
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
 
-	onListenerChange: (store: MessagesStore) => {
-		console.log("CREATE", store._listeners.size)
-		if ( store._listeners.size == 1 ) {
+	onListenerChange: (store: MessagesStore, type:LISTENER_CHANGE ) => {
+		console.log("CREATE", store._listeners.size, type)
+		if ( store._listeners.size == 1 && type== LISTENER_CHANGE.ADD) {
 			store.connect()
 		} else if (store._listeners.size == 0 ) {
 			store.disconnect()
