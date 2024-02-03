@@ -29,8 +29,6 @@ const setup = {
 	state: {
 
 		//#region REACTIVE
-		connectionId: <string>null,
-		stream: <Partial<StreamInfo>>null,
 		/** messaggi da visualizzare */
 		messages: <Message[]>null,
 		/** testo per la ricerca */
@@ -38,7 +36,7 @@ const setup = {
 		/** filtro da applicare */
 		filter: <StreamMessagesFilter>{
 			subjects: [],
-			interval: 10,
+			interval: 200,
 			startSeq: null,
 			startTime: null,
 		},
@@ -49,6 +47,8 @@ const setup = {
 		//#endregion
 
 		//#region NOT REACTIVE
+		connectionId: <string>null,
+		stream: <Partial<StreamInfo>>null,
 		rangeTop: <number>null,
 		//#endregion
 
@@ -105,41 +105,55 @@ const setup = {
 			// si tratta della prima visualizzazione
 			if (!store.state.messages) {
 				store.state.rangeTop = null
-				await store.fetchPrev()
+				await store.fetchPrevRec()
 			}
+		},
+		fetchPrevRec: async (_: void, store?: StreamMessagesStore) => {
+			let msgsTot = 0
+			let desired = store.state.filter.interval
+			for (let i = 0; i < 200; i++) {
+				const msgsLoad = await store.fetchPrev()
+				if ( msgsLoad == null ) break
+				msgsTot += msgsLoad
+				if (msgsTot >= desired) break
+				store.state.filter.interval = Math.round(store.state.filter.interval * 1.5)
+			}
+			store.state.filter.interval = desired
+			return msgsTot
 		},
 		fetchPrev: async (seq?: number, store?: StreamMessagesStore) => {
 			let interval = store.state.filter.interval
-			if (interval <= 0) return
+			if (interval <= 0) return null
 			const { firstSeq, lastSeq } = store.state.stream.state
 
 			//***** */
 			if (seq == null) {
-				if ( store.state.messages?.length > 0 ) {
+				if (store.state.messages?.length > 0) {
 					seq = store.state.rangeTop ?? store.state.messages[0].seqNum
-					if (seq == firstSeq) return
+					if (seq == firstSeq) return null
 				} else {
-					seq = lastSeq
+					seq = store.state.rangeTop ?? lastSeq
 				}
-			}		 
+			}
 			let startSeq = seq - interval
 			if (startSeq < firstSeq) {
 				startSeq = firstSeq
 				interval = seq - firstSeq + 1
 			}
-			if (interval <= 0) return
+			if (interval <= 0) return null
 			//***** */
 
 			const name = store.state.stream.config.name
 			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval })
-			
-			if (!msgs || msgs.length == 0) return
+
+
+
 			const ret = msgs.length
 			let all = store.state.messages ?? []
 
 			//***** */			
 			store.state.rangeTop = startSeq
-			const msgsSeq = msgs[msgs.length - 1].seqNum
+			const msgsSeq = msgs[msgs.length - 1]?.seqNum
 			const indexOverlap = all.findIndex(msg => msg.seqNum == msgsSeq)
 			if (indexOverlap != -1) all = all.slice(indexOverlap + 1)
 			store.setMessages(msgs.concat(all))
@@ -154,7 +168,7 @@ const setup = {
 
 			//***** */
 			if (seq == null) {
-				if ( store.state.messages?.length > 0 ) {
+				if (store.state.messages?.length > 0) {
 					seq = store.state.messages[store.state.messages.length - 1].seqNum + 1
 				} else {
 					seq = firstSeq
@@ -188,7 +202,7 @@ const setup = {
 				store.setFilter(filter)
 				return
 			}
-			if (!filter.interval) filter.interval = 100
+			if (!filter.interval) filter.interval = 200
 			if (filter.startSeq == null && !filter.byTime) {
 				filter.startSeq = store.state.stream.state.lastSeq - filter.interval
 			}

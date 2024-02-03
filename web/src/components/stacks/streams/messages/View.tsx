@@ -2,22 +2,13 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import FindInput from "@/components/input/FindInput"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
+import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useState } from "react"
-import ItemsList from "../../messages/ItemsList"
-import Dialog from "@/components/dialogs/Dialog"
 import FormatDialog from "../../messages/FormatDialog"
-import BoxV from "@/components/format/BoxV"
-import Label from "@/components/format/Label"
-import NumberInput from "@/components/input/NumberInput"
-import List from "@/components/lists/List"
-import { Subscription } from "@/types"
-import Box from "@/components/format/Box"
-import IconToggle from "@/components/buttons/IconToggle"
-import DateTimeInput from "@/components/input/DateTimeInput"
+import ItemsList from "../../messages/ItemsList"
 import FilterDialog from "./FilterDialog"
-import { Message } from "@/types/Message"
 
 
 
@@ -48,11 +39,10 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 		debounce(`text-find-${strMsgSa.uuid}`, () => strMsgSo.setTextSearch(value), 2000)
 	}
 	const handleLoad = async (bottom: boolean) => {
-		console.log("handleLoad", bottom)
 		if (bottom) {
 			return await strMsgSo.fetchNext()
 		} else {
-			return await strMsgSo.fetchPrev()
+			return await strMsgSo.fetchPrevRec()
 		}
 	}
 	const hendleMessageClick = (message: Message) => strMsgSo.openMessageDetail(message)
