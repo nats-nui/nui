@@ -166,6 +166,24 @@ func (s *NuiTestSuite) TestStreamMessages() {
 
 }
 
+func (s *NuiTestSuite) TestKvRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledKvs("bucket1")
+	s.filledKvs("bucket2")
+
+	// get existing buckets
+	r := e.GET("/api/connection/" + connId + "/kv").Expect()
+	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(2)
+	r.JSON().Array().Value(0).Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Array().Value(0).Object().Value("values").Number().IsEqual(10)
+	r.JSON().Array().Value(0).Object().Value("history").Number().IsEqual(5)
+
+	// get existing bucket
+	r = e.GET("/api/connection/" + connId + "/kv/bucket1").Expect()
+	r.Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket1")
+}
+
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
 	// create a subscription with s.nc that wait for requests and say "hi" as response
