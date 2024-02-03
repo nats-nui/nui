@@ -42,6 +42,7 @@ const ItemsList: FunctionComponent<Props> = ({
 		//onLoading?.(false)
 	}
 	const handleLoadEnd = () => onLoading?.(true)
+	const handleLoadStart = () => onLoading?.(false)
 	const handleBottomChange = (bottom: boolean) => setShowButton(!bottom)
 	const handleTopChange = async (top: boolean) => {
 		if (top) {
@@ -53,7 +54,7 @@ const ItemsList: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if (!messages) return <div>loading...</div>
+	if (!messages) return <div>no messages</div>
 	return (<>
 		<Virtuoso
 			ref={virtuoso}
@@ -84,7 +85,8 @@ const ItemsList: FunctionComponent<Props> = ({
 				/>
 			)}
 			components={{
-				Footer: !!onLoading ? () => <Button label="Load most recent" onClick={handleLoadEnd} /> : null
+				Header: !!onLoading ? () => <Button label="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> : null,
+				Footer: !!onLoading ? () => <Button label="LOAD MOST RECENT" onClick={handleLoadEnd} /> : null,
 			}}
 		/>
 		{showButton && (

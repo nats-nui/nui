@@ -64,10 +64,3 @@ export function buildNewSource(): Source {
 		optStartSeq: 0,
 	}
 }
-
-export function normalizeForFE(stream: StreamConfig): StreamConfig {
-	return {
-		...buildNewStreamInfo(),
-		...stream
-	}
-}

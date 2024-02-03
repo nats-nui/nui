@@ -11,6 +11,7 @@ import docsSo from "@/stores/docs"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 
 
+
 export interface StreamMessagesFilter {
 	/** SUBJECTS selezionati da filtrare */
 	subjects?: string[]
@@ -26,6 +27,8 @@ export interface StreamMessagesFilter {
 const setup = {
 
 	state: {
+
+		//#region REACTIVE
 		connectionId: <string>null,
 		stream: <Partial<StreamInfo>>null,
 		/** messaggi da visualizzare */
@@ -41,9 +44,13 @@ const setup = {
 		},
 		/** DIALOG FILTER aperta */
 		filtersOpen: false,
-
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+		//#endregion
+
+		//#region NOT REACTIVE
+		rangeTop: <number>null,
+		//#endregion
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
@@ -97,37 +104,41 @@ const setup = {
 			}
 			// si tratta della prima visualizzazione
 			if (!store.state.messages) {
-				await store.fetchPrev(store.state.stream.state.lastSeq)
+				store.state.rangeTop = null
+				await store.fetchPrev()
 			}
 		},
 		fetchPrev: async (seq?: number, store?: StreamMessagesStore) => {
 			let interval = store.state.filter.interval
 			if (interval <= 0) return
-			const name = store.state.stream.config.name
 			const { firstSeq, lastSeq } = store.state.stream.state
 
-
 			//***** */
-			if (seq == null && store.state.messages?.length > 0) seq = store.state.messages[0].seqNum
-			if (seq == null) seq = firstSeq
+			if (seq == null) {
+				if ( store.state.messages?.length > 0 ) {
+					seq = store.state.rangeTop ?? store.state.messages[0].seqNum
+					if (seq == firstSeq) return
+				} else {
+					seq = lastSeq
+				}
+			}		 
 			let startSeq = seq - interval
 			if (startSeq < firstSeq) {
-				interval = seq - firstSeq
 				startSeq = firstSeq
+				interval = seq - firstSeq + 1
 			}
 			if (interval <= 0) return
 			//***** */
 
-
+			const name = store.state.stream.config.name
 			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval })
-
-
-
+			
 			if (!msgs || msgs.length == 0) return
 			const ret = msgs.length
 			let all = store.state.messages ?? []
 
 			//***** */			
+			store.state.rangeTop = startSeq
 			const msgsSeq = msgs[msgs.length - 1].seqNum
 			const indexOverlap = all.findIndex(msg => msg.seqNum == msgsSeq)
 			if (indexOverlap != -1) all = all.slice(indexOverlap + 1)
@@ -139,21 +150,21 @@ const setup = {
 		fetchNext: async (seq?: number, store?: StreamMessagesStore) => {
 			let interval = store.state.filter.interval
 			if (interval <= 0) return
-			const name = store.state.stream.config.name
 			const { firstSeq, lastSeq } = store.state.stream.state
 
-
 			//***** */
-			if (seq == null && store.state.messages?.length > 0) seq = store.state.messages[store.state.messages.length - 1].seqNum
-			if (seq == null) seq = lastSeq
-			let startSeq = seq + 1
+			if (seq == null) {
+				if ( store.state.messages?.length > 0 ) {
+					seq = store.state.messages[store.state.messages.length - 1].seqNum + 1
+				} else {
+					seq = firstSeq
+				}
+			}
+			const startSeq = seq
 			//***** */
 
-
+			const name = store.state.stream.config.name
 			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval })
-
-
-
 			if (!msgs || msgs.length == 0) return 0
 			const ret = msgs.length
 			let all = store.state.messages ?? []
@@ -177,21 +188,22 @@ const setup = {
 				store.setFilter(filter)
 				return
 			}
-			if ( !filter.interval ) filter.interval = 100
-			if ( filter.startSeq == null && !filter.byTime) {
-				filter.startSeq = store.state.stream.state.lastSeq -filter.interval
+			if (!filter.interval) filter.interval = 100
+			if (filter.startSeq == null && !filter.byTime) {
+				filter.startSeq = store.state.stream.state.lastSeq - filter.interval
 			}
 
 			store.setFilter(filter)
 			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter)
+			store.state.rangeTop = filter.startSeq ?? msgs[0].seqNum
 			store.setMessages(msgs)
 		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: StreamMessagesStore) {
-			docsSo.addLink({ 
-				view: buildMessageDetail(message, store.state.format), 
-				parent: store, 
-				anim: true, 
+			docsSo.addLink({
+				view: buildMessageDetail(message, store.state.format),
+				parent: store,
+				anim: true,
 			})
 		},
 	},
