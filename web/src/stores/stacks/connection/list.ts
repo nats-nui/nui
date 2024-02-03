@@ -7,7 +7,6 @@ import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConnectionMessages, buildStore, buildStreams } from "../../docs/utils/factory"
-import { MessagesState, MessagesStore } from "../messages"
 import { CnnDetailState } from "./detail"
 
 

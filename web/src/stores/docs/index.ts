@@ -5,7 +5,7 @@ import { ViewStore } from "../stacks/viewBase"
 import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
 import { forEachViews, getById } from "./utils/manage"
-import { VIEW_PARAMS } from "../stacks/utils"
+import { VIEW_PARAMS, VIEW_SIZE } from "../stacks/utils"
 import { compare } from "@/utils/object"
 
 
@@ -95,6 +95,7 @@ const setup = {
 
 			// se c'e' gia' una view la rimuovo
 			if (parent.state.linked) {
+				view.state.size = parent.state.linked.state.size
 				await store.remove({ view: parent.state.linked, anim })
 			}
 			if (!view) return

@@ -9,6 +9,8 @@ import RowButton from "@/components/buttons/RowButton"
 import MessagesIcon from "@/icons/MessagesIcon"
 import { DOC_TYPE } from "@/types"
 import docSo from "@/stores/docs"
+import BoxV from "@/components/format/BoxV"
+import IconRow from "@/components/rows/IconRow"
 
 
 interface Props {
@@ -42,6 +44,23 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		variantBg={variant}
 		store={streamSo}
 		actionsRender={<ActionsCmp store={streamSo} />}
+		iconizedRender={
+			<BoxV style={{ gap: 5, marginTop: 5 }}>
+				<IconRow
+					title="CONSUMERS"
+					selected={isConsumersSelect}
+					variant={variant}
+					onClick={handleConsumersClick}
+				/>
+				<IconRow
+					title="MESSAGES"
+					selected={isMessagesSelect}
+					variant={variant}
+					onClick={handleMessagesClick}
+				/>
+			</BoxV>
+		}
+
 	>
 		{readOnly ? (<>
 
@@ -49,14 +68,14 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					icon={<MessagesIcon />}
 					label="CONSUMERS"
 					variant={variant}
-					select={isConsumersSelect}
+					selected={isConsumersSelect}
 					onClick={handleConsumersClick}
 				/>
 				<RowButton style={{ marginBottom: 15}}
 					icon={<MessagesIcon />}
 					label="MESSAGES"
 					variant={variant}
-					select={isMessagesSelect}
+					selected={isMessagesSelect}
 					onClick={handleMessagesClick}
 				/>
 

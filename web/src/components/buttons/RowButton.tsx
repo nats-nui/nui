@@ -1,13 +1,13 @@
-import React, { FunctionComponent, useState } from "react"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { ANIM_TIME_CSS, Color } from "@/types"
+import { ANIM_TIME_CSS } from "@/types"
+import React, { FunctionComponent, useState } from "react"
 
 
 
 interface Props {
 	icon?: React.ReactNode
 	label?: string
-	select?: boolean
+	selected?: boolean
 	variant?: number
 	onClick?: (e: React.MouseEvent) => void
 	style?: React.CSSProperties
@@ -16,7 +16,7 @@ interface Props {
 const RowButton: FunctionComponent<Props> = ({
 	icon,
 	label,
-	select,
+	selected,
 	variant = 0,
 	onClick,
 	style,
@@ -33,7 +33,7 @@ const RowButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	return (
-		<div style={{ ...cssRoot(variant, select), ...style }}
+		<div style={{ ...cssRoot(variant, selected), ...style }}
 			onClick={onClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}

@@ -1,5 +1,4 @@
 import FrameworkCard from "@/components/FrameworkCard"
-import Button from "@/components/buttons/Button"
 import RowButton from "@/components/buttons/RowButton"
 import DatabaseIcon from "@/icons/DatabaseIcon"
 import MessagesIcon from "@/icons/MessagesIcon"
@@ -10,8 +9,10 @@ import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import ConnectionDetailForm from "./Form"
 import ActionsCmp from "./Actions"
+import ConnectionDetailForm from "./Form"
+import BoxV from "@/components/format/BoxV"
+import IconRow from "@/components/rows/IconRow"
 
 
 
@@ -33,20 +34,6 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
-	// const handleCreateClick = async () => {
-	// 	cnnDetailSo.setReadOnly(true)
-	// 	const cnnNew = await cnnSo.save(cnnDetailSa.connection);
-	// 	(cnnDetailSa.parent as CnnListStore).select(cnnNew)
-	// }
-	const handleEditClick = async () => cnnDetailSo.setReadOnly(false)
-	const handleCancelClick = () => {
-		cnnDetailSo.setReadOnly(true)
-		cnnDetailSo.restore()
-	}
-	const handleSaveClick = async () => {
-		cnnDetailSo.setReadOnly(true)
-		await cnnSo.save(cnnDetailSa.connection)
-	}
 
 	// RENDER
 	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
@@ -58,7 +45,27 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={cnnDetailSo}
 		variantBg={variant}
-		actionsRender={<ActionsCmp store={cnnDetailSo}/>}
+		actionsRender={<ActionsCmp store={cnnDetailSo} />}
+		iconizedRender={
+			<BoxV style={{ gap: 5, marginTop: 5 }}>
+				<IconRow
+					title="MESSAGES"
+					selected={isMessageOpen}
+					variant={variant}
+					onClick={handleMessagesClick}
+				/>
+				<IconRow
+					title="STREAMS"
+					selected={isStreamsOpen}
+					variant={variant}
+					onClick={handleStreamsClick}
+				/>
+				<IconRow
+					title="SETTINGS"
+					variant={variant}
+				/>
+			</BoxV>
+		}
 
 	>
 		{!isNew && <div style={{ marginBottom: 20 }}>
@@ -66,14 +73,14 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				icon={<MessagesIcon />}
 				label="MESSAGES"
 				variant={variant}
-				select={isMessageOpen}
+				selected={isMessageOpen}
 				onClick={handleMessagesClick}
 			/>
 			<RowButton
 				icon={<DatabaseIcon />}
 				label="STREAMS"
 				variant={variant}
-				select={isStreamsOpen}
+				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton

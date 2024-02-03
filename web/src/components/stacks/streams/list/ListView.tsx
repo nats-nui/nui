@@ -1,10 +1,13 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
+import BoxV from "@/components/format/BoxV"
 import ElementRow from "@/components/rows/ElementRow"
+import IconRow from "@/components/rows/IconRow"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
+import { CSSProperties, FunctionComponent, useEffect } from "react"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -64,21 +67,101 @@ const StreamsListView: FunctionComponent<Props> = ({
 				onClick={handleDel}
 			/>
 		</>}
+		iconizedRender={<BoxV>{
+			streams.map(stream => (
+				<IconRow key={stream.config.name}
+					title={getTitle(stream)}
+					subtitle={getSubtitle(stream)}
+					selected={isSelected(stream)}
+					variant={variant}
+					onClick={() => handleSelect(stream)}
+				/>
+			))
+		}</BoxV>}
 	>
-		{streams.map(stream => (
-			<ElementRow key={stream.config.name}
-				title={getTitle(stream)}
-				subtitle={getSubtitle(stream)}
-				selected={isSelected(stream)}
-				variant={variant}
-				onClick={() => handleSelect(stream)}
-				testRender={<>
-					<Button label="Messages" onClick={(e) => handleMessages(e, stream)} />
-					<Button label="Consumer" onClick={(e) => handleConsumer(e, stream)} />
-				</>}
-			/>
-		))}
+		<div style={cssHead}>
+			<div style={{ ...cssHeadCell, flex: 3 }}>
+				NAME
+			</div>
+			<div style={cssHeadCell}>
+				SIZE
+			</div>
+			<div style={cssHeadCell}>
+				FIRST
+			</div>
+			<div style={cssHeadCell}>
+				LAST
+			</div>
+			<div style={cssHeadCell}>
+				BYTEs
+			</div>
+
+		</div>
+		<BoxV>
+			{streams.map((stream, index) => (
+				// <ElementRow key={stream.config.name}
+				// 	title={getTitle(stream)}
+				// 	subtitle={getSubtitle(stream)}
+				// 	selected={isSelected(stream)}
+				// 	variant={variant}
+				// 	onClick={() => handleSelect(stream)}
+				// 	testRender={<>
+				// 		<Button label="Messages" onClick={(e) => handleMessages(e, stream)} />
+				// 		<Button label="Consumer" onClick={(e) => handleConsumer(e, stream)} />
+				// 	</>}
+				// />
+
+				<div style={cssRow(index, isSelected(stream), variant)}
+					onClick={() => handleSelect(stream)}
+				>
+					<div style={{ ...cssRowCell, flex: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+						{stream.config.name}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.messages}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.firstSeq}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.lastSeq}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.bytes}
+					</div>
+				</div>
+			))}
+		</BoxV>
 	</FrameworkCard>
 }
 
 export default StreamsListView
+
+const cssHead: CSSProperties = {
+	fontSize: 13,
+	fontWeight: 600,
+	display: "flex",
+	marginBottom: 5
+}
+const cssHeadCell: CSSProperties = {
+	display: "flex",
+	flex: 1,
+}
+const cssRow = (index: number, select: boolean, variant: number): CSSProperties => ({
+	cursor: "pointer",
+	display: "flex",
+	...select ? {
+		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+		color: layoutSo.state.theme.palette.var[variant].fg
+	} : {
+		backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
+	},
+	padding: '4px 6px',
+
+})
+const cssRowCell: CSSProperties = {
+	fontSize: 12,
+	fontWeight: 600,
+	display: "flex",
+	flex: 1,
+}
