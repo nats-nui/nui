@@ -7,13 +7,9 @@ import (
 )
 
 func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	streamName := c.Params("stream_name")
 	if streamName == "" {
@@ -44,13 +40,9 @@ func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 }
 
 func (a *App) handleShowStreamConsumer(c *fiber.Ctx) error {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
 	}
 	streamName := c.Params("stream_name")
 	if streamName == "" {
