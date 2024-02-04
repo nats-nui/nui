@@ -36,18 +36,6 @@ func (a *App) handleIndexStreams(c *fiber.Ctx) error {
 	}
 }
 
-func (a *App) jsOrFail(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
-	conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
-	if err != nil {
-		return nil, false, c.Status(404).JSON(err.Error())
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return nil, false, c.Status(422).JSON(err.Error())
-	}
-	return js, true, nil
-}
-
 func (a *App) handleShowStream(c *fiber.Ctx) error {
 	streamName := c.Params("stream_name")
 	if streamName == "" {
