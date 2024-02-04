@@ -26,7 +26,7 @@ function remove(id: string): Promise<void> {
 }
 
 
-/** PUBLISC
+/** PUBLISH
  * permette di pubblicare un messaggio
  */
 function publish(cnnId:string, subject:string, payload:string) {
