@@ -1,12 +1,13 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import BoxV from "@/components/format/BoxV"
+import ElementRow from "@/components/rows/ElementRow"
 import IconRow from "@/components/rows/IconRow"
-import layoutSo from "@/stores/layout"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { CSSProperties, FunctionComponent, useEffect } from "react"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -51,7 +52,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const getTitle = (stream: StreamInfo) => stream.config.name
 	const getSubtitle = (stream: StreamInfo) => stream.config.description
 
-	return <FrameworkCard styleBody={{ paddingTop: 0 }}
+	return <FrameworkCard
 		store={streamsSo}
 		actionsRender={<>
 			<Button
@@ -79,106 +80,100 @@ const StreamsListView: FunctionComponent<Props> = ({
 		}</BoxV>}
 	>
 
-		<div style={{ marginLeft: -9, marginRight: -9 }}>
-			<table style={cssTable}>
-				<thead >
-					<tr style={cssHead}>
-						<th style={{ ...cssHeadCell, width: "100%" }}>
-							NAME
-						</th>
-						<th style={cssHeadCell}>
-							SIZE
-						</th>
-						<th style={cssHeadCell}>
-							FIRST
-						</th>
-						<th style={cssHeadCell}>
-							LAST
-						</th>
-						<th style={cssHeadCell}>
-							BYTEs
-						</th>
 
-					</tr>
-				</thead>
-				<tbody>
-					{streams.map((stream, index) => (
-						<tr style={cssRow(index, isSelected(stream), variant)}
-							onClick={() => handleSelect(stream)}
-						>
-							<td style={{ ...cssRowCellString, width: "100%" }}>
-								{stream.config.name}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.messages}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.firstSeq}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.lastSeq}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.bytes}
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+
+
+
+
+
+
+
+
+
+
+
+		<div style={cssHead}>
+			<div style={{ ...cssHeadCell, flex: 3 }}>
+				NAME
+			</div>
+			<div style={cssHeadCell}>
+				SIZE
+			</div>
+			<div style={cssHeadCell}>
+				FIRST
+			</div>
+			<div style={cssHeadCell}>
+				LAST
+			</div>
+			<div style={cssHeadCell}>
+				BYTEs
+			</div>
+
 		</div>
-
+		<BoxV>
+			{streams.map((stream, index) => (
+				// <ElementRow key={stream.config.name}
+				// 	title={getTitle(stream)}
+				// 	subtitle={getSubtitle(stream)}
+				// 	selected={isSelected(stream)}
+				// 	variant={variant}
+				// 	onClick={() => handleSelect(stream)}
+				// 	testRender={<>
+				// 		<Button label="Messages" onClick={(e) => handleMessages(e, stream)} />
+				// 		<Button label="Consumer" onClick={(e) => handleConsumer(e, stream)} />
+				// 	</>}
+				// />
+				<div style={cssRow(index, isSelected(stream), variant)}
+					onClick={() => handleSelect(stream)}
+				>
+					<div style={{ ...cssRowCell, flex: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+						{stream.config.name}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.messages}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.firstSeq}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.lastSeq}
+					</div>
+					<div style={cssRowCell}>
+						{stream.state.bytes}
+					</div>
+				</div>
+			))}
+		</BoxV>
 	</FrameworkCard>
 }
 
 export default StreamsListView
 
-
-
-const cssTable: CSSProperties = {
-	width: "100%",
-	borderCollapse: "collapse",
-	borderSpacing: 0,
-}
 const cssHead: CSSProperties = {
 	fontSize: 13,
 	fontWeight: 600,
-	height: 28,
-	position: 'sticky', 
-	top: '0', 
-	backgroundColor: '#3e3e3e',
+	display: "flex",
+	marginBottom: 5
 }
 const cssHeadCell: CSSProperties = {
-	padding: "5px"
+	display: "flex",
+	flex: 1,
 }
 const cssRow = (index: number, select: boolean, variant: number): CSSProperties => ({
 	cursor: "pointer",
+	display: "flex",
 	...select ? {
 		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
 		backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
 	},
-	height: 20,
+	padding: '4px 6px',
 
 })
 const cssRowCell: CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
-
-	borderRight: '1px solid rgb(255 255 255 / 15%)',
-	padding: "7px 3px",
-}
-const cssRowCellNumber: CSSProperties = {
-	...cssRowCell,
-	fontFamily: "monospace",
-	fontSize: 11,
-	fontWeight: 400,
-	textAlign: "right",
-}
-const cssRowCellString: CSSProperties = {
-	...cssRowCell,
-	overflow: "hidden",
-	whiteSpace: "nowrap",
-	textOverflow: "ellipsis",
-	maxWidth: 0,
+	display: "flex",
+	flex: 1,
 }

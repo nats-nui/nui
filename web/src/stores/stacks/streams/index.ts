@@ -23,7 +23,7 @@ const setup = {
 		all: <StreamInfo[]>[],
 
 		//#region VIEWBASE
-		width: 300,
+		width: 366,
 		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},

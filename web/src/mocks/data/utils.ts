@@ -19,6 +19,20 @@ export function getNow(): string {
 }
 
 /** restituisce un numero random compreso tra "min" e "max" */
-export function randomInt(max?:number, min?:number): number {
+export function randomInt(max: number = 100, min: number = 0): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function randomName(length?: number): string {
+	if (length == null) length = randomInt(12, 3)
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+	let result = '';
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+	return result;
+}
+
+export function randomDate() {
+	return new Date(Math.floor(Math.random() * 1000000000000))
 }
