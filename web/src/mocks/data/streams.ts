@@ -37,7 +37,7 @@ const streams: any[] = [
             "deleted": null,
             "num_deleted": 40673,
             "num_subjects": 1,
-            "subjects": null
+            "subjects": { "pippo": 3, "pluto": 4, "paperino": 5 },
         }
     },
     {
@@ -386,4 +386,4 @@ const streams: any[] = [
 ]
 
 const rndStreams = randomStreams(40)
-export default [...streams,  ...rndStreams]
+export default [...streams, ...rndStreams]

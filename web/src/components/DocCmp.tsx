@@ -23,6 +23,10 @@ import StreamsListView from "./stacks/streams/list/ListView"
 import StreamDetailView from "./stacks/streams/detail/View"
 import StreamMessagesView from "./stacks/streams/messages/View"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
+import BucketsListView from "./stacks/buckets/list/ListView"
+import BucketDetailView from "./stacks/buckets/detail/View"
+import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { BucketsStore } from "@/stores/stacks/buckets"
 
 
 
@@ -36,7 +40,7 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 }) => {
 	const content = useMemo(() => {
 		switch (view.state.type) {
-			
+
 			case DOC_TYPE.CONNECTIONS:
 				return <CnnListView store={view as CnnListStore} />
 			case DOC_TYPE.CONNECTION:
@@ -54,14 +58,19 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <StreamDetailView store={view as StreamStore} />
 			case DOC_TYPE.STREAM_MESSAGES:
 				return <StreamMessagesView store={view as StreamMessagesStore} />
-	
+
 			case DOC_TYPE.CONSUMERS:
 				return <ConsumersListView store={view as ConsumersStore} />
 			case DOC_TYPE.CONSUMER:
 				return <ConsumerDetailView store={view as ConsumerStore} />
-	
+
+			case DOC_TYPE.BUCKETS:
+				return <BucketsListView store={view as BucketsStore} />
+			case DOC_TYPE.BUCKET:
+				return <BucketDetailView store={view as BucketStore} />
+
 			case DOC_TYPE.LOGS:
-					return <LogsView store={view as LogsStore} />
+				return <LogsView store={view as LogsStore} />
 			default:
 				return null
 		}

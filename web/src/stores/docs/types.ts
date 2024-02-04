@@ -3,14 +3,21 @@ export enum DOC_TYPE {
 	EMPTY = "empty",
 	CONNECTIONS = "connectons",
 	CONNECTION = "connecton",
+	
 	MESSAGES = "messages",
 	MESSAGE = "message",
 	MESSAGE_SEND = "message_send",
+
 	STREAMS = "streams",
 	STREAM = "stream",
 	STREAM_MESSAGES = "stream_messages",
+
 	CONSUMERS = "consumers",
 	CONSUMER = "consumer",
+	
+	BUCKETS = "buckets",
+	BUCKET = "bucket",
+
 	LOGS = "logs",
 }
 
