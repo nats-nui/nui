@@ -36,3 +36,11 @@ export function randomName(length?: number): string {
 export function randomDate() {
 	return new Date(Math.floor(Math.random() * 1000000000000))
 }
+
+export function randomBool(perc: number = .5) {
+	return Math.random() < perc;
+}
+
+export function randomItem(array: any[]) {
+	return array[Math.floor(Math.random() * array.length)];
+}

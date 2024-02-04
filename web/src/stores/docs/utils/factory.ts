@@ -17,6 +17,9 @@ import { StreamInfo } from "@/types/Stream";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
 import cnnSo from "@/stores/connections"
+import bucketsSetup, { BucketsState, BucketsStore } from "@/stores/stacks/buckets";
+import bucketSetup, { BucketStatus, BucketStore } from "@/stores/stacks/buckets/detail";
+import { BucketState } from "@/types/Bucket";
 
 
 
@@ -39,14 +42,21 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
+
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 		[DOC_TYPE.MESSAGE]: messageSetup,
 		[DOC_TYPE.MESSAGE_SEND]: messageSendSetup,
+
 		[DOC_TYPE.STREAMS]: streamsSetup,
 		[DOC_TYPE.STREAM]: streamSetup,
 		[DOC_TYPE.STREAM_MESSAGES]: streamMessagesSetup,
+
+		[DOC_TYPE.BUCKETS]: bucketsSetup,
+		[DOC_TYPE.BUCKET]: bucketSetup,
+
 		[DOC_TYPE.CONSUMERS]: consumersSetup,
 		[DOC_TYPE.CONSUMER]: consumerSetup,
+
 		[DOC_TYPE.LOGS]: logsSetup,
 	}[state.type]
 	if (!setup) return
@@ -57,6 +67,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	store.onCreate()
 	return store
 }
+
+
 
 //#region  CONNECTION
 
@@ -71,6 +83,12 @@ export function buildConnectionMessages(connectionId: string) {
 	return cnnMessageStore
 }
 
+//#endregion
+
+
+
+//#region STREAM
+
 export function buildStreams(connectionId: string) {
 	const cnn = cnnSo.getById(connectionId)
 	if (!cnn) { console.error("no param"); return null }
@@ -80,21 +98,6 @@ export function buildStreams(connectionId: string) {
 		subscriptions: [...(cnn?.subscriptions ?? [])]
 	} as MessagesState) as MessagesStore
 	return streamsStore
-}
-
-//#endregion
-
-
-//#region STREAM
-
-export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>) {
-	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
-	const consumerStore = buildStore({
-		type: DOC_TYPE.CONSUMERS,
-		connectionId: connectionId,
-		streamName: stream.config.name,
-	} as ConsumersState) as ConsumersStore
-	return consumerStore
 }
 
 export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
@@ -109,6 +112,52 @@ export function buildStreamMessages(connectionId: string, stream: Partial<Stream
 
 //#endregion
 
+
+
+//#region BUCKET
+
+export function buildBuckets(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId)
+	if (!cnn) { console.error("no param"); return null }
+	const bucketsStore = buildStore({
+		type: DOC_TYPE.BUCKETS,
+		connectionId: cnn.id,
+	} as BucketsState) as BucketsStore
+	return bucketsStore
+}
+
+export function buildBucket(connectionId: string, bucket: Partial<BucketState>) {
+	if (!bucket || !connectionId) { console.error("no param"); return null }
+	const bucketStore = buildStore({
+		type: DOC_TYPE.BUCKET,
+		connectionId,
+		bucket,
+	} as BucketStatus) as BucketStore
+	return bucketStore
+}
+
+//#endregion
+
+
+
+//#region CONSUMER
+
+export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>) {
+	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
+	const consumerStore = buildStore({
+		type: DOC_TYPE.CONSUMERS,
+		connectionId: connectionId,
+		streamName: stream.config.name,
+	} as ConsumersState) as ConsumersStore
+	return consumerStore
+}
+
+//#endregion
+
+
+
+//#region MESSAGES
+
 export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
 	if (!message ) { console.error("no param"); return null }
 	const msgStore = buildStore({
@@ -118,3 +167,5 @@ export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
 	} as MessageState)
 	return msgStore
 }
+
+//#endregion

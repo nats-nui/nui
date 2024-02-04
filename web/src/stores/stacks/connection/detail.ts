@@ -1,13 +1,11 @@
 import srcIcon from "@/assets/ConnectionIcon.svg"
+import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { Connection, DOC_TYPE } from "@/types"
+import { Connection } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildStore } from "../../docs/utils/factory"
-import { MessagesState, MessagesStore } from "../messages"
-import { StreamsState, StreamsStore } from "../streams"
-import cnnSo from "@/stores/connections"
+import { buildBuckets, buildConnectionMessages, buildStreams } from "../../docs/utils/factory"
 
 
 
@@ -64,25 +62,15 @@ const setup = {
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {
-			const cnn = store.state.connection
-			if (!cnn) return
-			const msgStore = buildStore({
-				type: DOC_TYPE.MESSAGES,
-				connectionId: cnn.id,
-				subscriptions: [...(cnn?.subscriptions ?? [])]
-			} as MessagesState) as MessagesStore
-			docsSo.addLink({ view: msgStore, parent: store, anim: true })
+			docsSo.addLink({ view: buildConnectionMessages(store.state.connection?.id), parent: store, anim: true })
 		},
-
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
-			const cnn = store.state.connection
-			if (!cnn) return
-			const msgStore = buildStore({
-				type: DOC_TYPE.STREAMS,
-				connectionId: cnn.id,
-			} as StreamsState) as StreamsStore
-			docsSo.addLink({ view: msgStore, parent: store, anim: true })
+			docsSo.addLink({  view: buildStreams(store.state.connection?.id),  parent: store,  anim: true  })
+		},
+		/** apertura della CARD BUCKETS */
+		openBuckets(_: void, store?: CnnDetailStore) {
+			docsSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
 		},
 	},
 

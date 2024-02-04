@@ -34,10 +34,12 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
+	const handleBucketsClick = () => cnnDetailSo.openBuckets()
 
 	// RENDER
 	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
 	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
+	const isBucketsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.BUCKETS
 	const isNew = cnnDetailSa.connection?.id == null
 	const readOnly = cnnDetailSa.readOnly
 	const variant = cnnDetailSa.colorVar
@@ -61,8 +63,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					onClick={handleStreamsClick}
 				/>
 				<IconRow
-					title="SETTINGS"
+					title="BUCKETS"
 					variant={variant}
+					onClick={handleBucketsClick}
 				/>
 			</BoxV>
 		}
@@ -86,7 +89,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			<RowButton
 				icon={<SettingsIcon />}
 				variant={variant}
-				label="SETTINGS"
+				label="BUCKETS"
+				selected={isBucketsOpen}
+				onClick={handleBucketsClick}
 			/>
 		</div>}
 
