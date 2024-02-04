@@ -63,6 +63,8 @@ func (a *App) registerHandlers() {
 
 	a.Get("/api/connection/:connection_id/kv", a.handleIndexBuckets)
 	a.Get("/api/connection/:connection_id/kv/:bucket", a.handleShowBucket)
+	a.Post("/api/connection/:connection_id/kv", a.handleCreateBucket)
+	a.Delete("/api/connection/:connection_id/kv/:bucket", a.handleDeleteBucket)
 
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {

@@ -182,6 +182,22 @@ func (s *NuiTestSuite) TestKvRest() {
 	// get existing bucket
 	r = e.GET("/api/connection/" + connId + "/kv/bucket1").Expect()
 	r.Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket1")
+
+	// create a new bucket
+	e.POST("/api/connection/" + connId + "/kv").
+		WithBytes([]byte(`{"bucket": "bucket3", "storage": "memory"}`)).
+		Expect().Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket3")
+
+	// get new bucket
+	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().
+		JSON().Object().Value("bucket").String().IsEqual("bucket3")
+
+	//delete new bucket
+	e.DELETE("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusOK)
+
+	// get deleted bucket gives 404
+	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusNotFound)
+
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {

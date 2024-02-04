@@ -1,7 +1,6 @@
 package nui
 
 import (
-	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
 	"time"
@@ -49,19 +48,28 @@ func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
 }
 
 func (a *App) handleShowBucket(c *fiber.Ctx) error {
+	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
+	if !ok {
+		return err
+	}
+	status, err := kv.Status(c.Context())
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.JSON(NewKeyValueStatusData(status))
+}
+
+func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
 	}
-	bucket := c.Params("bucket")
-	if bucket == "" {
-		return c.Status(422).JSON("bucket is required")
+	bucketConfig := jetstream.KeyValueConfig{}
+	if err := c.BodyParser(&bucketConfig); err != nil {
+		return c.Status(422).JSON(err.Error())
 	}
-	kv, err := js.KeyValue(c.Context(), bucket)
+	kv, err := js.CreateKeyValue(c.Context(), bucketConfig)
 	if err != nil {
-		if errors.Is(err, jetstream.ErrBucketNotFound) {
-			return c.Status(404).JSON(err.Error())
-		}
 		return c.Status(500).JSON(err.Error())
 	}
 	status, err := kv.Status(c.Context())
@@ -69,4 +77,20 @@ func (a *App) handleShowBucket(c *fiber.Ctx) error {
 		return c.Status(500).JSON(err.Error())
 	}
 	return c.JSON(NewKeyValueStatusData(status))
+}
+
+func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
+	}
+	_, ok, err = a.bucketOrFail(c, c.Params("bucket"))
+	if !ok {
+		return err
+	}
+	err = js.DeleteKeyValue(c.Context(), c.Params("bucket"))
+	if err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+	return c.SendStatus(200)
 }
