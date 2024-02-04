@@ -49,7 +49,7 @@ func (a *App) handleShowStream(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(422).JSON(err.Error())
 	}
-	info, err := stream.Info(c.Context())
+	info, err := stream.Info(c.Context(), jetstream.WithSubjectFilter(">"))
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}

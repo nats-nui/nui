@@ -106,6 +106,13 @@ func (s *NuiTestSuite) TestStreamRest() {
 	e.GET("/api/connection/" + connId + "/stream").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
+	s.filledStream("filled_stream")
+	// check that subject messages are added in state of the stream
+	e.GET("/api/connection/" + connId + "/stream/filled_stream").
+		Expect().
+		Status(http.StatusOK).JSON().Object().Value("state").
+		Object().Value("subjects").Object().Keys().Length().IsEqual(2)
+
 }
 
 func (s *NuiTestSuite) TestStreamConsumerRest() {
