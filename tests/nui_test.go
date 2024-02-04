@@ -134,7 +134,7 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 
 }
 
-func (s *NuiTestSuite) TestStreamMessages() {
+func (s *NuiTestSuite) TestStreamMessagesRest() {
 	e := s.e
 	connId := s.defaultConn()
 	s.filledStream("stream1")
@@ -197,6 +197,30 @@ func (s *NuiTestSuite) TestKvRest() {
 
 	// get deleted bucket gives 404
 	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusNotFound)
+
+	// list bucket keys
+	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key").Expect()
+	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+	r.JSON().Array().Value(0).Object().Value("key").IsEqual("key1")
+	r.JSON().Array().Value(0).Object().Value("payload").IsNull()
+	r.JSON().Array().Value(0).Object().Value("last_update").NotNull()
+	r.JSON().Array().Value(0).Object().Value("operation").String().IsEqual("KeyValuePutOp")
+	r.JSON().Array().Value(0).Object().Value("revision").Number().IsEqual(1)
+	r.JSON().Array().Value(0).Object().Value("is_deleted").Boolean().IsFalse()
+
+	//get key
+	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("payload").String().IsEqual("dmFsdWUx")
+	r.JSON().Object().Value("history").Array().Length().IsEqual(1)
+
+	// put key
+	r = e.POST("/api/connection/" + connId + "/kv/bucket1/key/key1").
+		WithBytes([]byte(`{"payload": "dmFsdWUy"}`)).Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("payload").String().IsEqual("dmFsdWUy")
+	r.JSON().Object().Value("history").IsNull()
+
+	//delete key
+	e.DELETE("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusNoContent)
 
 }
 

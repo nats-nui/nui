@@ -66,6 +66,11 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:connection_id/kv", a.handleCreateBucket)
 	a.Delete("/api/connection/:connection_id/kv/:bucket", a.handleDeleteBucket)
 
+	a.Get("/api/connection/:connection_id/kv/:bucket/key", a.handleIndexKeys)
+	a.Get("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleShowKey)
+	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key", a.handlePutKey)
+	a.Delete("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleDeleteKey)
+
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)
