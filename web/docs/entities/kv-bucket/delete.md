@@ -1,5 +1,5 @@
 
-## GET
+## DELETE
 delete a bucket by name
 
 
