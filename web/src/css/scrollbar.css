@@ -31,7 +31,7 @@
 .var0 ::-webkit-scrollbar-thumb:hover {
   background: white;
 }
-/*
+
 .var1 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-1);
 }
@@ -51,4 +51,3 @@
 .var5 ::-webkit-scrollbar-thumb:hover {
   background: var(--var-5);
 }
-*/

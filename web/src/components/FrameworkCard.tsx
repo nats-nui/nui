@@ -11,6 +11,7 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 interface Props {
 	store: ViewStore
 	style?: React.CSSProperties
+	styleBody?: React.CSSProperties
 	variantBg?: number
 	actionsRender?: React.ReactNode
 	iconizedRender?: React.ReactNode
@@ -21,6 +22,7 @@ interface Props {
 const FrameworkCard: FunctionComponent<Props> = ({
 	store,
 	style,
+	styleBody,
 	variantBg = 0,
 	actionsRender,
 	iconizedRender,
@@ -44,7 +46,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 				{actionsRender}
 			</ActionGroup>
 
-			<div style={cssChildren(inRoot)}>
+			<div style={{...cssChildren(inRoot), ...styleBody}}>
 				{children}
 			</div>
 
