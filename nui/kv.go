@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type KeyValueStatusData struct {
+type BucketState struct {
 	Bucket       string        `json:"bucket"`
 	Values       uint64        `json:"values"`
 	History      int64         `json:"history"`
@@ -17,8 +17,8 @@ type KeyValueStatusData struct {
 	Compressed   bool          `json:"compressed"`
 }
 
-func NewKeyValueStatusData(kvs jetstream.KeyValueStatus) KeyValueStatusData {
-	return KeyValueStatusData{
+func NewBucketState(kvs jetstream.KeyValueStatus) BucketState {
+	return BucketState{
 		Bucket:       kvs.Bucket(),
 		Values:       kvs.Values(),
 		History:      kvs.History(),
@@ -65,12 +65,12 @@ func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	var statuses []KeyValueStatusData
+	var statuses []BucketState
 	for status := range kvLister.Status() {
 		if kvLister.Error() != nil {
 			return c.Status(500).JSON(err.Error())
 		}
-		statuses = append(statuses, NewKeyValueStatusData(status))
+		statuses = append(statuses, NewBucketState(status))
 	}
 	return c.JSON(statuses)
 }
@@ -84,7 +84,7 @@ func (a *App) handleShowBucket(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
-	return c.JSON(NewKeyValueStatusData(status))
+	return c.JSON(NewBucketState(status))
 }
 
 func (a *App) handleCreateBucket(c *fiber.Ctx) error {
@@ -104,7 +104,7 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
-	return c.JSON(NewKeyValueStatusData(status))
+	return c.JSON(NewBucketState(status))
 }
 
 func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
