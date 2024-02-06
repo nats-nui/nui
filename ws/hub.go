@@ -7,6 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
+	"sync"
 )
 
 type Pool[S Subscription, T Conn[S]] interface {
@@ -28,8 +29,9 @@ type IHub interface {
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
-	pool Pool[S, T]
-	reg  map[string]*ClientConn[S]
+	pool            Pool[S, T]
+	reg             map[string]*ClientConn[S]
+	connectionMutex sync.Mutex
 }
 
 func NewHub[S Subscription, T Conn[S]](pool Pool[S, T]) *Hub[S, T] {
@@ -113,6 +115,12 @@ func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq 
 }
 
 func (h *Hub[S, T]) purgeConnection(clientId string) {
+	h.connectionMutex.Lock()
+	defer h.connectionMutex.Unlock()
+	h.purgeConnectionLocked(clientId)
+}
+
+func (h *Hub[S, T]) purgeConnectionLocked(clientId string) {
 	currentConn, ok := h.reg[clientId]
 	if ok {
 		h.purgeClientSubscriptions(currentConn)
@@ -121,6 +129,12 @@ func (h *Hub[S, T]) purgeConnection(clientId string) {
 }
 
 func (h *Hub[S, T]) purgeSubscriptions(clientId string) {
+	h.connectionMutex.Lock()
+	defer h.connectionMutex.Unlock()
+	h.purgeSubscriptionsLocked(clientId)
+}
+
+func (h *Hub[S, T]) purgeSubscriptionsLocked(clientId string) {
 	currentConn, ok := h.reg[clientId]
 	if ok {
 		h.purgeClientSubscriptions(currentConn)
