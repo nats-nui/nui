@@ -6,8 +6,9 @@ import { ViewState, ViewStore, default as docSetup, default as viewSetup } from 
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import docsSo from "@/stores/docs"
-import { buildBucket } from "@/stores/docs/utils/factory"
+import { buildBucket, buildKVEntry } from "@/stores/docs/utils/factory"
 import { KVEntryStore } from "./detail"
+import { KVEntry } from "@/types/KVEntry"
 
 
 
@@ -16,9 +17,10 @@ const setup = {
 
 	state: {
 		connectionId: <string>null,
+		bucket: <BucketState>null,
 		/** nome del BUCKET selezionato */
 		select: <string>null,
-		all: <BucketState[]>[],
+		all: <KVEntry[]>[],
 
 		//#region VIEWBASE
 		width: 366,
@@ -30,7 +32,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<KVEntriesStore>store).state.connectionId)?.name,
-		getSubTitle: (_: void, store?: ViewStore) => "BUCKETS",
+		getSubTitle: (_: void, store?: ViewStore) => "KVENTRIES",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as KVEntriesState
@@ -42,13 +44,13 @@ const setup = {
 		},
 		//#endregion
 
-		getByName(name: string, store?: KVEntriesStore) {
-			if (!name) return null
-			return store.state.all?.find(s => s.bucket == name)
+		getByName(key: string, store?: KVEntriesStore) {
+			if (!key) return null
+			return store.state.all?.find(s => s.key == key)
 		},
 		getIndexByName(name: string, store?: KVEntriesStore) {
 			if (!name) return null
-			return store.state.all?.findIndex(s => s.bucket == name)
+			return store.state.all?.findIndex(s => s.key == name)
 		},
 	},
 
@@ -69,17 +71,22 @@ const setup = {
 			store.setAll(buckets)
 		},
 
-		/** visualizzo dettaglio di un BUCKET */
-		select(name: string, store?: KVEntriesStore) {
-			const nameOld = store.state.select
-			let nameNew = null
+		/** visualizzo dettaglio di un KVENTRY */
+		select(key: string, store?: KVEntriesStore) {
+			const keyOld = store.state.select
+			let keyNew = null
 			let view: KVEntryStore = null
-			if (name && nameOld != name) {
-				nameNew = name
-				view = buildBucket(store.state.connectionId, store.getByName(nameNew))
+			if (key && keyOld != key) {
+				keyNew = key
+				const kventry = store.getByName(keyNew)
+				const bucket = store.state.bucket
+				view = buildKVEntry(store.state.connectionId, bucket, kventry)
 			}
-			store.setSelect(nameNew)
-			docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew, })
+			store.setSelect(keyNew)
+			docsSo.addLink({ view, parent: store, anim: !keyOld || !keyNew, })
+		},
+
+		create(_: void, store?: KVEntriesStore) {
 		},
 
 	},

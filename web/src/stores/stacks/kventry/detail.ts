@@ -1,10 +1,11 @@
-import bucketApi from "@/api/buckets"
+import kventryApi from "@/api/kventries"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildNewBucketConfig } from "./utils/factory"
+import { KVEntry } from "@/types/KVEntry"
 
 
 
@@ -14,25 +15,23 @@ const setup = {
 	state: {
 		/** la CONNECTION che contiene sto STREAM */
 		connectionId: <string>null,
-
-		/** BUCKET caricata nella CARD */
 		bucket: <BucketState>null,
-		bucketConfig: <BucketConfig>null,
-		/** BUCKET è editabile? */
+		kventry: <KVEntry>null,
+
+		/** è editabile? */
 		readOnly: true,
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
 		//#endregion
-
 	},
 
 	getters: {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<KVEntryStore>store).state.bucket?.bucket ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "BUCKET DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => "KVENTRY DETAIL",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as KVEntryStatus
@@ -40,6 +39,7 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				bucket: state.bucket,
+				kventry: state.kventry,
 				readOnly: state.readOnly,
 			}
 		},
@@ -55,14 +55,15 @@ const setup = {
 			const state = store.state as KVEntryStatus
 			state.connectionId = data.connectionId
 			state.bucket = data.bucket
+			state.kventry = data.kventry
 			state.readOnly = data.readOnly
 		},
 		//#endregion
 
-		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
+		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
-			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig)
-			store.setBucket(bucketSaved)
+			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload )
+			store.setKVEntry(kventry)
 		},
 
 		/** carico tutti i dati dello STREAM se ce ne fosse bisogno */
@@ -73,12 +74,13 @@ const setup = {
 
 		restore: async (_: void, store?: KVEntryStore) => {
 			store.setBucketConfig(buildNewBucketConfig())
-		}	
+		},
 	},
 
 	mutators: {
 		setBucket: (bucket: BucketState) => ({ bucket }),
 		setBucketConfig: (bucketConfig: BucketConfig) => ({ bucketConfig }),
+		setKVEntry: (kventry: KVEntry) => ({ kventry }),
 		setReadOnly: (readOnly: boolean) => ({ readOnly }),
 	},
 }

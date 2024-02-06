@@ -1,47 +1,41 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import docSo from "@/stores/docs"
-import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
-import EditForm from "./EditForm"
 import ShowForm from "./ShowForm"
 
 
 interface Props {
-	store?: BucketStore
+	store?: KVEntryStore
 }
 
-const KvEntryDetailView: FunctionComponent<Props> = ({
-	store: bucketSo,
+const KVEntryDetailView: FunctionComponent<Props> = ({
+	store: kventrySo,
 }) => {
 
 	// STORE
-	const streamSa = useStore(bucketSo)
+	const kventrySa = useStore(kventrySo)
 	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
-		bucketSo.fetch()
+		kventrySo.fetch()
 	}, [])
 
 	// HANDLER
 
 	// RENDER
-	const readOnly = streamSa.readOnly
-	const variant = streamSa.colorVar
+	const variant = kventrySa.colorVar
 
 	return <FrameworkCard
 		variantBg={variant}
-		store={bucketSo}
-		actionsRender={<ActionsCmp store={bucketSo} />}
+		store={kventrySo}
+		actionsRender={<ActionsCmp store={kventrySo} />}
 	>
-		{readOnly ? (<>
-			<ShowForm store={bucketSo} />
-		</>) : (
-			<EditForm store={bucketSo} />
-		)}
+		<ShowForm store={kventrySo} />
 	</FrameworkCard>
 }
 
-export default KvEntryDetailView
+export default KVEntryDetailView

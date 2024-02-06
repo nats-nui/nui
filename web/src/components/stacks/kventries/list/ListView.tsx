@@ -4,43 +4,45 @@ import BoxV from "@/components/format/BoxV"
 import IconRow from "@/components/rows/IconRow"
 import layoutSo from "@/stores/layout"
 import { BucketsStore } from "@/stores/stacks/buckets"
+import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { BucketState } from "@/types/Bucket"
+import { KVEntry } from "@/types/KVEntry"
 import { useStore } from "@priolo/jon"
 import { CSSProperties, FunctionComponent, useEffect } from "react"
 
 
 
 interface Props {
-	store?: BucketsStore
+	store?: KVEntriesStore
 }
 
 const KVEntryListView: FunctionComponent<Props> = ({
-	store: bucketsSo,
+	store: kventriesSo,
 }) => {
 
 	// STORE
-	const bucketsSa = useStore(bucketsSo)
+	const kventriesSa = useStore(kventriesSo)
 
 	// HOOKs
 	useEffect(() => {
-		bucketsSo.fetch()
+		kventriesSo.fetch()
 	}, [])
 
 	// HANDLER
-	const handleSelect = (bucket: BucketState) => bucketsSo.select(bucket.bucket)
-	const handleNew = () => bucketsSo.create()
+	const handleSelect = (kventry: KVEntry) => kventriesSo.select(kventry.key)
+	const handleNew = () => kventriesSo.create()
 
 	// RENDER
-	const buckets = bucketsSa.all
-	if (!buckets) return null
-	const selected = bucketsSa.select
-	const variant = bucketsSa.colorVar
-	const isSelected = (bucket: BucketState) => selected == bucket.bucket
-	const getTitle = (bucket: BucketState) => bucket.bucket
-	const getSubtitle = (bucket: BucketState) => bucket.bucket
+	const kventries = kventriesSa.all
+	if (!kventries) return null
+	const selected = kventriesSa.select
+	const variant = kventriesSa.colorVar
+	const isSelected = (kventry: KVEntry) => selected == kventry.key
+	const getTitle = (kventry: KVEntry) => kventry.key
+	const getSubtitle = (kventry: KVEntry) => kventry.payload
 
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
-		store={bucketsSo}
+		store={kventriesSo}
 		actionsRender={<>
 			<Button
 				label="NEW"
@@ -50,13 +52,13 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 		iconizedRender={<BoxV>{
-			buckets.map(bucket => (
-				<IconRow key={bucket.bucket}
-					title={getTitle(bucket)}
-					subtitle={getSubtitle(bucket)}
-					selected={isSelected(bucket)}
+			kventries.map(kventry => (
+				<IconRow key={kventry.key}
+					title={getTitle(kventry)}
+					subtitle={getSubtitle(kventry)}
+					selected={isSelected(kventry)}
 					variant={variant}
-					onClick={() => handleSelect(bucket)}
+					onClick={() => handleSelect(kventry)}
 				/>
 			))
 		}</BoxV>}
@@ -69,17 +71,15 @@ const KVEntryListView: FunctionComponent<Props> = ({
 						<th style={{ ...cssHeadCell, width: "100%" }}>
 							NAME
 						</th>
-						
-
 					</tr>
 				</thead>
 				<tbody>
-					{buckets.map((bucket, index) => (
-						<tr style={cssRow(index, isSelected(bucket), variant)}
-							onClick={() => handleSelect(bucket)}
+					{kventries.map((kventry, index) => (
+						<tr style={cssRow(index, isSelected(kventry), variant)}
+							onClick={() => handleSelect(kventry)}
 						>
 							<td style={{ ...cssRowCellString, width: "100%" }}>
-								{bucket.bucket}
+								{kventry.key}
 							</td>
 							{/* <td style={cssRowCellNumber}>
 								{bucket.state.bytes}
