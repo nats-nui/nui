@@ -1,19 +1,19 @@
 import ajax from "@/plugins/AjaxService"
-import { KevValueEntry } from "@/types/KeyValueEntry"
+import { KVEntry } from "@/types/KVEntry"
 
 
 /** INDEX */
-function index(connectionId: string, bucketName: string): Promise<KevValueEntry[]> {
+function index(connectionId: string, bucketName: string): Promise<KVEntry[]> {
 	return ajax.get(`connection/${connectionId}/bucket/${bucketName}/kv`)
 }
 
 /** GET */
-function get(connectionId: string, bucketName: string, key: string): Promise<KevValueEntry> {
+function get(connectionId: string, bucketName: string, key: string): Promise<KVEntry> {
 	return ajax.get(`connection/${connectionId}/bucket/${bucketName}/kv/${key}`)
 }
 
 /** PUT */
-function put(connectionId: string, bucketName: string, key: string, payload: string): Promise<KevValueEntry> {
+function put(connectionId: string, bucketName: string, key: string, payload: string): Promise<KVEntry> {
 	const data = {
 		payload : btoa(payload)
 	}

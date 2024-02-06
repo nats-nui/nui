@@ -7,7 +7,7 @@ import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import docsSo from "@/stores/docs"
 import { buildBucket } from "@/stores/docs/utils/factory"
-import { BucketStore } from "./detail"
+import { KVEntryStore } from "./detail"
 
 
 
@@ -29,11 +29,11 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<BucketsStore>store).state.connectionId)?.name,
+		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<KVEntriesStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "BUCKETS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
-			const state = store.state as BucketsState
+			const state = store.state as KVEntriesState
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
@@ -42,11 +42,11 @@ const setup = {
 		},
 		//#endregion
 
-		getByName(name: string, store?: BucketsStore) {
+		getByName(name: string, store?: KVEntriesStore) {
 			if (!name) return null
 			return store.state.all?.find(s => s.bucket == name)
 		},
-		getIndexByName(name: string, store?: BucketsStore) {
+		getIndexByName(name: string, store?: KVEntriesStore) {
 			if (!name) return null
 			return store.state.all?.findIndex(s => s.bucket == name)
 		},
@@ -57,23 +57,23 @@ const setup = {
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
-			const state = store.state as BucketsState
+			const state = store.state as KVEntriesState
 			state.connectionId = data.connectionId
 			state.select = data.select
 		},
 		//#endregion
 
 		/** load tutti i BUCKETS di una CONNECTION */
-		async fetch(_: void, store?: BucketsStore) {
+		async fetch(_: void, store?: KVEntriesStore) {
 			const buckets = await bucketApi.index(store.state.connectionId)
 			store.setAll(buckets)
 		},
 
 		/** visualizzo dettaglio di un BUCKET */
-		select(name: string, store?: BucketsStore) {
+		select(name: string, store?: KVEntriesStore) {
 			const nameOld = store.state.select
 			let nameNew = null
-			let view: BucketStore = null
+			let view: KVEntryStore = null
 			if (name && nameOld != name) {
 				nameNew = name
 				view = buildBucket(store.state.connectionId, store.getByName(nameNew))
@@ -90,12 +90,12 @@ const setup = {
 	},
 }
 
-export type BucketsState = typeof setup.state & ViewState
-export type BucketsGetters = typeof setup.getters
-export type BucketsActions = typeof setup.actions
-export type BucketsMutators = typeof setup.mutators
-export interface BucketsStore extends ViewStore, StoreCore<BucketsState>, BucketsGetters, BucketsActions, BucketsMutators {
-	state: BucketsState
+export type KVEntriesState = typeof setup.state & ViewState
+export type KVEntriesGetters = typeof setup.getters
+export type KVEntriesActions = typeof setup.actions
+export type KVEntriesMutators = typeof setup.mutators
+export interface KVEntriesStore extends ViewStore, StoreCore<KVEntriesState>, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
+	state: KVEntriesState
 }
-const bucketsSetup = mixStores(docSetup, setup)
-export default bucketsSetup
+const kventriesSetup = mixStores(docSetup, setup)
+export default kventriesSetup
