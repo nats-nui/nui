@@ -27,6 +27,10 @@ import BucketsListView from "./stacks/buckets/list/ListView"
 import BucketDetailView from "./stacks/buckets/detail/View"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketsStore } from "@/stores/stacks/buckets"
+import KVEntryListView from "./stacks/kventries/list/ListView"
+import { KVEntriesStore } from "@/stores/stacks/kventry"
+import KvEntryDetailView from "./stacks/kventries/detail/View"
+import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 
 
 
@@ -68,6 +72,10 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <BucketsListView store={view as BucketsStore} />
 			case DOC_TYPE.BUCKET:
 				return <BucketDetailView store={view as BucketStore} />
+			case DOC_TYPE.KVENTRIES:
+				return <KVEntryListView store={view as KVEntriesStore} />
+			case DOC_TYPE.KVENTRY:
+				return <KvEntryDetailView store={view as KVEntryStore} />
 
 			case DOC_TYPE.LOGS:
 				return <LogsView store={view as LogsStore} />

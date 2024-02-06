@@ -2,6 +2,9 @@ import { rest } from 'msw'
 import { snakeToCamel, camelToSnake } from '@/utils/object'
 import keyValueEntries_S from "../../data/keyValueEntries"
 import {keyValueEntryDetail} from "../../data/keyValueEntries";
+
+
+
 const keyValueHandlers = [
 
     // INDEX
@@ -13,7 +16,7 @@ const keyValueHandlers = [
     }),
 
     // GET
-    rest.get('/api/:connId/kv/:bucketName/:key', (req, res, ctx) => {
+    rest.get('/api/:connId/kv/:bucketName/key/:key', (req, res, ctx) => {
         return res(
             ctx.status(200),
             ctx.json(keyValueEntryDetail),
@@ -21,7 +24,7 @@ const keyValueHandlers = [
     }),
 
     // PUT
-    rest.put('/api/:connId/kv/:bucketName/:key', async (req, res, ctx) => {
+    rest.put('/api/:connId/kv/:bucketName/key/:key', async (req, res, ctx) => {
         const { key } = req.params
         const newEntry_S = await req.json()
         const newEntry_C = snakeToCamel(newEntry_S)
@@ -38,7 +41,7 @@ const keyValueHandlers = [
     }),
 
     // DELETE
-    rest.delete('/api/:connId/kv/:bucketName/:key', (req, res, ctx) => {
+    rest.delete('/api/:connId/kv/:bucketName/key/:key', (req, res, ctx) => {
         const { key } = req.params
         const index = keyValueEntries_S.findIndex(e => e.key === key)
         if (index === -1) return res(ctx.status(404))

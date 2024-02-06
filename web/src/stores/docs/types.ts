@@ -17,6 +17,8 @@ export enum DOC_TYPE {
 	
 	BUCKETS = "buckets",
 	BUCKET = "bucket",
+	KVENTRIES = "kventries",
+	KVENTRY = "kventry",
 
 	LOGS = "logs",
 }
