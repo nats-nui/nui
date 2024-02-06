@@ -1,40 +1,32 @@
 import Button from "@/components/buttons/Button"
-import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { StreamsStore } from "@/stores/stacks/streams"
-import { StreamStore } from "@/stores/stacks/streams/detail"
+import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
 
 
 interface Props {
-	store?: BucketStore
+	store?: KVEntryStore
 }
 
 const ActionsCmp: FunctionComponent<Props> = ({
-	store: bucketSo,
+	store: kventrySo,
 }) => {
 
 	// STORE
-	const bucketSa = useStore(bucketSo)
+	const kventrySa = useStore(kventrySo)
 
 	// HOOKs
 
 	// HANDLER
-	const handleEditClick = async () => bucketSo.setReadOnly(false)
-	const handleCancelClick = () => {
-		bucketSo.setReadOnly(true)
-		bucketSo.restore()
-	}
 	const handleSaveClick = async () => {
-		bucketSo.setReadOnly(true)
-		bucketSo.save()
+		kventrySo.setReadOnly(true)
+		kventrySo.save()
 	}
 
 	// RENDER
-	if (bucketSa.bucketConfig == null) return null
-	const readOnly = bucketSa.readOnly
-	const variant = bucketSa.colorVar
+	if (kventrySa.bucketConfig == null) return null
+	const variant = kventrySa.colorVar
 
 	return (
 		<Button

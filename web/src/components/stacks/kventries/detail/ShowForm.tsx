@@ -1,22 +1,22 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
-import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
 
 
 interface Props {
-	store?: BucketStore
+	store?: KVEntryStore
 }
 
 const ShowForm: FunctionComponent<Props> = ({
-	store: bucketSo,
+	store: kventrySo,
 }) => {
 
 	// STORE
-	const bucketSa = useStore(bucketSo)
+	const kventrySa = useStore(kventrySo)
 
 	// HOOKs
 
@@ -24,26 +24,18 @@ const ShowForm: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const bucket = bucketSa.bucket
-	if (!bucket) return null
+	const kventry = kventrySa.kventry
+	if (!kventry) return null
 	
 	return <Form>
 
 		<BoxV>
-			<Label>NAME</Label>
-			<Label>{bucket.bucket}</Label>
+			<Label>KEY</Label>
+			<Label>{kventry.key}</Label>
 		</BoxV>
 		<BoxV>
-			<Label>VALUES</Label>
-			<Label>{bucket.values}</Label>
-		</BoxV>
-		<BoxV>
-			<Label>HISTORY</Label>
-			<Label>{bucket.history}</Label>
-		</BoxV>
-		<BoxV>
-			<Label>TTL</Label>
-			<Label>{bucket.ttl}</Label>
+			<Label>PAYLOAD</Label>
+			<Label>{kventry.payload}</Label>
 		</BoxV>
 
 		<div>ETC ETC </div>

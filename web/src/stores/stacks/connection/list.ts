@@ -6,7 +6,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildConnectionMessages, buildStore, buildStreams } from "../../docs/utils/factory"
+import { buildConnection, buildConnectionMessages, buildStore, buildStreams } from "../../docs/utils/factory"
 import { CnnDetailState } from "./detail"
 
 
@@ -77,32 +77,22 @@ const setup = {
 		/** creo una nuova CONNECTION e apro la CARD del DETAIL */
 		create(_: void, store?: CnnListStore) {
 			store.setSelectId(null)
-			const view = buildStore({
-				type: DOC_TYPE.CONNECTION,
-				readOnly: false,
-				connection: {
-					name: "",
-					hosts: [],
-					subscriptions: [],
-					auth: []
-				}
-			} as CnnDetailState)
-			docsSo.addLink({ view, parent: store, anim: true })
+			docsSo.addLink({ view: buildConnection(), parent: store, anim: true })
 		},
 
 		openStreams(connectionId: string, store?: CnnListStore) {
-			docsSo.addLink({ 
-				view: buildStreams(connectionId), 
-				parent: store, 
-				anim: true 
+			docsSo.addLink({
+				view: buildStreams(connectionId),
+				parent: store,
+				anim: true
 			})
 		},
 
 		openMessages(connectionId: string, store?: CnnListStore) {
-			docsSo.addLink({ 
-				view: buildConnectionMessages(connectionId), 
-				parent: store, 
-				anim: true 
+			docsSo.addLink({
+				view: buildConnectionMessages(connectionId),
+				parent: store,
+				anim: true
 			})
 		},
 	},

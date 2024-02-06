@@ -1,6 +1,6 @@
 export interface KVEntry {
     key: string;
-    payload: Uint8Array;
+    payload: string;
     lastUpdate: string;
     operation: OPERATION;
     revision: number;

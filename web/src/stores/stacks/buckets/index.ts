@@ -6,8 +6,9 @@ import { ViewState, ViewStore, default as docSetup, default as viewSetup } from 
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import docsSo from "@/stores/docs"
-import { buildBucket } from "@/stores/docs/utils/factory"
+import { buildBucket, buildKVEntry } from "@/stores/docs/utils/factory"
 import { BucketStore } from "./detail"
+import { buildNewBucketConfig } from "./utils/factory"
 
 
 
@@ -81,6 +82,16 @@ const setup = {
 			store.setSelect(nameNew)
 			docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew, })
 		},
+
+		/** visualizzo nuovo BUCKET */
+		create(_: void, store?: BucketsStore) {
+			const view = buildBucket(store.state.connectionId, null, buildNewBucketConfig())
+			docsSo.addLink({ 
+				view, 
+				parent: store, 
+				anim: true 
+			})
+		}
 
 	},
 

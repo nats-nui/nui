@@ -5,7 +5,8 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildNewBucketConfig } from "./utils/factory"
-
+import { buildKVEntries, buildKVEntry } from "@/stores/docs/utils/factory"
+import docSo from "@/stores/docs"
 
 
 /** STREAM DETAIL */
@@ -69,6 +70,12 @@ const setup = {
 		fetch: async (_: void, store?: BucketStore) => {
 			// verifico che ci siano i dati del dettaglio dello STREAM
 			// TO DO
+		},
+
+		/** apertura della CARD KVENTRY */
+		openKVEntries(_: void, store?: BucketStore) {
+			const view = buildKVEntries(store.state.connectionId, store.state.bucket)
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 
 		restore: async (_: void, store?: BucketStore) => {
