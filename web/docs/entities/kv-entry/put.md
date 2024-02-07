@@ -5,7 +5,7 @@ add or update a key value pair in a bucket by name
 
 ### URL
 ```
-GET /api/connection/:connection_id/kv/:bucket/key/:key
+POST /api/connection/:connection_id/kv/:bucket/key/:key
 ```
 - `connection_id`  
 uuid of the connection to get the KV buckets for
