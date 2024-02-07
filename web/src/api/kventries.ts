@@ -4,8 +4,6 @@ import { KVEntry } from "@/types/KVEntry"
 
 /** INDEX */
 function index(connectionId: string, bucketName: string): Promise<KVEntry[]> {
-	return ajax.get(`connection/${connectionId}/bucket/${bucketName}/kv`)
-function index(connectionId: string, bucketName: string): Promise<KVEntry[]> {
 	return ajax.get(`connection/${connectionId}/kv/${bucketName}/kv`)
 }
 
@@ -31,6 +29,6 @@ const api = {
 	index,
 	get,
 	put,
-	remove,
+	remove
 }
 export default api
