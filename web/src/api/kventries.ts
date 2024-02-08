@@ -4,7 +4,7 @@ import { KVEntry } from "@/types/KVEntry"
 
 /** INDEX */
 function index(connectionId: string, bucketName: string): Promise<KVEntry[]> {
-	return ajax.get(`connection/${connectionId}/kv/${bucketName}/kv`)
+	return ajax.get(`connection/${connectionId}/kv/${bucketName}/key`)
 }
 
 /** GET */

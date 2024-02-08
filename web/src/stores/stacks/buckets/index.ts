@@ -1,13 +1,12 @@
 import bucketApi from "@/api/buckets"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
+import docsSo from "@/stores/docs"
+import { buildBucket, buildBucketNew } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
-import docsSo from "@/stores/docs"
-import { buildBucket, buildKVEntry } from "@/stores/docs/utils/factory"
-import { BucketStore } from "./detail"
 import { buildNewBucketConfig } from "./utils/factory"
 
 
@@ -16,9 +15,11 @@ import { buildNewBucketConfig } from "./utils/factory"
 const setup = {
 
 	state: {
+		/** connessione di riferimento */
 		connectionId: <string>null,
-		/** nome del BUCKET selezionato */
+		/** elemento selezionato */
 		select: <string>null,
+		/** all elements */
 		all: <BucketState[]>[],
 
 		//#region VIEWBASE
@@ -64,34 +65,35 @@ const setup = {
 		},
 		//#endregion
 
-		/** load tutti i BUCKETS di una CONNECTION */
+		/** carico tutti gli elementi */
 		async fetch(_: void, store?: BucketsStore) {
 			const buckets = await bucketApi.index(store.state.connectionId)
 			store.setAll(buckets)
+			
 		},
 
-		/** visualizzo dettaglio di un BUCKET */
+		/** apro la CARD del dettaglio */
 		select(name: string, store?: BucketsStore) {
 			const nameOld = store.state.select
-			let nameNew = null
-			let view: BucketStore = null
-			if (name && nameOld != name) {
-				nameNew = name
-				view = buildBucket(store.state.connectionId, store.getByName(nameNew))
-			}
-			store.setSelect(nameNew)
-			docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew, })
+    		const nameNew = (name && nameOld !== name) ? name : null
+    		const view = nameNew ? buildBucket(store.state.connectionId, store.getByName(nameNew)) : null
+    		store.setSelect(nameNew)
+    		docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 
-		/** visualizzo nuovo BUCKET */
+		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: BucketsStore) {
-			const view = buildBucket(store.state.connectionId, null, buildNewBucketConfig())
-			docsSo.addLink({ 
-				view, 
-				parent: store, 
-				anim: true 
-			})
-		}
+			const view = buildBucketNew(store.state.connectionId, buildNewBucketConfig())
+			docsSo.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+
+		async delete(_: void, store?: BucketsStore) {
+			const name = store.state.select
+			if (!name) return
+			await bucketApi.remove(store.state.connectionId, name)
+			store.setAll(store.state.all.filter(b => b.bucket != name))
+		},
 
 	},
 

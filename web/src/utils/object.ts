@@ -44,3 +44,15 @@ export function compare(objFind: any, obj: any): boolean {
 	}
 	return true;
 }
+
+export function deepEqual(obj1: any, obj2: any): boolean {
+	const typeObj1 = typeof obj1
+	const typeObj2 = typeof obj2
+	if (typeObj1 == "object" && typeObj1 == typeObj2) {
+		for (let key in obj1) {
+			if (!deepEqual(obj1[key], obj2[key])) return false
+		}
+		return true
+	}
+	return obj1 == obj2
+}

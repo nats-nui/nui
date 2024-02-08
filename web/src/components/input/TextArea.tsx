@@ -1,17 +1,20 @@
 import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
+import Label, { LABELS } from "../format/Label"
 
 
 
 interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
+	readOnly?: boolean
 	style?: React.CSSProperties
 }
 
 const TextArea: FunctionComponent<Props> = ({
 	value,
 	onChange,
+	readOnly,
 	style,
 }) => {
 	// STORE
@@ -22,6 +25,8 @@ const TextArea: FunctionComponent<Props> = ({
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => onChange?.(e.target.value)
 
 	// RENDER
+	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
+
 	return (
 		<textarea style={{ ...cssRoot, ...style }}
 			value={value}

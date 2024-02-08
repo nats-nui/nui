@@ -19,22 +19,34 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleSaveClick = async () => {
-		kventrySo.setReadOnly(true)
-		kventrySo.save()
-	}
+	const handleEdit = () => kventrySo.setReadOnly(false)
+	const handleSave = () => kventrySo.save()
+	const handleCancel = () => kventrySo.restore()
 
 	// RENDER
-	if (kventrySa.bucketConfig == null) return null
 	const variant = kventrySa.colorVar
+	const label = kventrySa.isNew ? "CREATE" : "SAVE"
 
-	return (
+	if (kventrySa.readOnly) return <Button
+		label="EDIT"
+		variant={variant}
+		onClick={handleEdit}
+	/>
+
+	return (<>
 		<Button
-			label="CREATE"
+			label={label}
 			variant={variant}
-			onClick={handleSaveClick}
+			onClick={handleSave}
 		/>
-	)
+		{!kventrySa.isNew && (
+			<Button
+				label="CANCEL"
+				variant={variant}
+				onClick={handleCancel}
+			/>
+		)}
+	</>)
 }
 
 export default ActionsCmp

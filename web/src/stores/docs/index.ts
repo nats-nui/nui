@@ -1,12 +1,12 @@
 import { DOC_ANIM, DOC_TYPE } from "@/stores/docs/types"
-import { delayAnim } from "@/utils/time"
+import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
 import { forEachViews, getById } from "./utils/manage"
 import { VIEW_PARAMS, VIEW_SIZE } from "../stacks/utils"
-import { compare } from "@/utils/object"
+import { compare, deepEqual } from "@/utils/object"
 
 
 
@@ -49,9 +49,7 @@ const setup = {
 		find(state: any, store?: DocStore) {
 			return forEachViews( 
 				store.state.all,
-				(view) => {
-					return compare(state, view.state) ? view : null
-				}
+				(view) => deepEqual(state, view.state) ? view : null
 			)
 		}
 	},
@@ -93,9 +91,9 @@ const setup = {
 		) {
 			if (!parent) return
 
-			// se c'e' gia' una view la rimuovo
+			// se c'e' gia' una view la rimuovo (stesso "size" della precedente)
 			if (parent.state.linked) {
-				view.state.size = parent.state.linked.state.size
+				if (!!view) view.state.size = parent.state.linked.state.size
 				await store.remove({ view: parent.state.linked, anim })
 			}
 			if (!view) return
@@ -105,7 +103,8 @@ const setup = {
 			store.setAll([...store.state.all])
 
 			if (anim) {
-				await delayAnim()
+				//await delayAnim()
+				await delay(100)
 				await view.docAnim(DOC_ANIM.SHOWING)
 			} else {
 				view.setDocAnim(DOC_ANIM.SHOW)

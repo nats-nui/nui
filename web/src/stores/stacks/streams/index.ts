@@ -2,7 +2,7 @@ import strApi from "@/api/streams"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildConsumers, buildStore, buildStreamMessages } from "@/stores/docs/utils/factory"
+import { buildConsumers, buildStore, buildStream, buildStreamMessages } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
@@ -65,28 +65,33 @@ const setup = {
 		},
 		//#endregion
 
+
+		async fetch(_: void, store?: StreamsStore) {
+			const streams = await strApi.index(store.state.connectionId)
+			store.setAll(streams)
+		},
+		async delete(name: string, store?: StreamsStore) {
+			await strApi.remove(store.state.connectionId, name)
+			store.setAll(store.state.all.filter(s => s.config.name != name))
+		},
+		update(stream: StreamInfo, store?: StreamsStore) {
+			const all = [...store.state.all]
+			const index = !stream.state ? -1 : store.getIndexByName(stream.config.name)
+			if (index == -1) {
+				all.push(stream)
+			} else {
+				all[index] = { ...all[index], ...stream }
+			}
+			store.setAll(all)
+		},
+
 		/** visualizzo dettaglio di uno STREAM */
 		select(name: string, store?: StreamsStore) {
 			const nameOld = store.state.select
-			// se è uguale a quello precedente allora deseleziona
-			let nameNew = (name && nameOld != name) ? name : null
-			store.setSelect(nameNew)
-
-			// eventualmente creo la nuova VIEW
-			let streamStore: ViewStore = null
-			if (nameNew != null) streamStore = buildStore({
-				type: DOC_TYPE.STREAM,
-				connectionId: store.state.connectionId,
-				stream: store.getByName(nameNew),
-				readOnly: true,
-			} as StreamState)
-
-			// aggiungo la nuova VIEW (o null)
-			docSo.addLink({
-				view: streamStore,
-				parent: store,
-				anim: !nameOld || !nameNew,
-			})
+    		const nameNew = (name && nameOld !== name) ? name : null
+    		const view = nameNew ? buildStream(store.state.connectionId, store.getByName(nameNew)) : null
+    		store.setSelect(nameNew)
+    		docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 
 		/** visualizza nuovo STORE DETTAGLIO STREAM */
@@ -100,6 +105,9 @@ const setup = {
 			} as Partial<StreamState>)
 			docSo.addLink({ view, parent: store, anim: true })
 		},
+
+
+
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
@@ -120,24 +128,6 @@ const setup = {
 
 
 
-		async fetch(_: void, store?: StreamsStore) {
-			const streams = await strApi.index(store.state.connectionId)
-			store.setAll(streams)
-		},
-		async delete(name: string, store?: StreamsStore) {
-			await strApi.remove(store.state.connectionId, name)
-			store.setAll(store.state.all.filter(s => s.config.name != name))
-		},
-		update(stream: StreamInfo, store?: StreamsStore) {
-			const all = [...store.state.all]
-			const index = !stream.state ? -1 : store.getIndexByName(stream.config.name)
-			if (index == -1) {
-				all.push(stream)
-			} else {
-				all[index] = { ...all[index], ...stream }
-			}
-			store.setAll(all)
-		},
 
 
 	},

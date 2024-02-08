@@ -1,7 +1,5 @@
 import Button from "@/components/buttons/Button"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { StreamsStore } from "@/stores/stacks/streams"
-import { StreamStore } from "@/stores/stacks/streams/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -21,28 +19,19 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEditClick = async () => bucketSo.setReadOnly(false)
-	const handleCancelClick = () => {
-		bucketSo.setReadOnly(true)
-		bucketSo.restore()
-	}
-	const handleSaveClick = async () => {
-		bucketSo.setReadOnly(true)
-		bucketSo.save()
-	}
+	const handleSave = () => bucketSo.save()
 
 	// RENDER
-	if (bucketSa.bucketConfig == null) return null
-	const readOnly = bucketSa.readOnly
+	if (!bucketSo.getIsNew()) return null
 	const variant = bucketSa.colorVar
 
-	return (
+	return (<>
 		<Button
 			label="CREATE"
 			variant={variant}
-			onClick={handleSaveClick}
+			onClick={handleSave}
 		/>
-	)
+	</>)
 }
 
 export default ActionsCmp

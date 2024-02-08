@@ -1,9 +1,10 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
+import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { BucketsStore } from "@/stores/stacks/buckets"
+import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { useStore } from "@priolo/jon"
 import { CSSProperties, FunctionComponent, useEffect } from "react"
@@ -20,6 +21,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const bucketsSa = useStore(bucketsSo)
+	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -29,6 +31,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (bucket: BucketState) => bucketsSo.select(bucket.bucket)
 	const handleNew = () => bucketsSo.create()
+	const handleDelete = () => bucketsSo.delete()
 
 	// RENDER
 	const buckets = bucketsSa.all
@@ -36,30 +39,23 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const selected = bucketsSa.select
 	const variant = bucketsSa.colorVar
 	const isSelected = (bucket: BucketState) => selected == bucket.bucket
-	const getTitle = (bucket: BucketState) => bucket.bucket
-	const getSubtitle = (bucket: BucketState) => bucket.bucket
+	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
 
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={bucketsSo}
 		actionsRender={<>
+			{!!selected && <Button
+				label="DELETE"
+				variant={variant}
+				onClick={handleDelete}
+			/>}
 			<Button
 				label="NEW"
-				//select={bttNewSelect}
+				select={isNewSelect}
 				variant={variant}
 				onClick={handleNew}
 			/>
 		</>}
-		iconizedRender={<BoxV>{
-			buckets.map(bucket => (
-				<IconRow key={bucket.bucket}
-					title={getTitle(bucket)}
-					subtitle={getSubtitle(bucket)}
-					selected={isSelected(bucket)}
-					variant={variant}
-					onClick={() => handleSelect(bucket)}
-				/>
-			))
-		}</BoxV>}
 	>
 
 		<div style={{ marginLeft: -9, marginRight: -9 }}>
@@ -69,13 +65,12 @@ const BucketsListView: FunctionComponent<Props> = ({
 						<th style={{ ...cssHeadCell, width: "100%" }}>
 							NAME
 						</th>
-						
-
 					</tr>
 				</thead>
 				<tbody>
 					{buckets.map((bucket, index) => (
-						<tr style={cssRow(index, isSelected(bucket), variant)}
+						<tr key={bucket.bucket}
+							style={cssRow(index, isSelected(bucket), variant)}
 							onClick={() => handleSelect(bucket)}
 						>
 							<td style={{ ...cssRowCellString, width: "100%" }}>

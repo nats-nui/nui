@@ -8,8 +8,13 @@ function index(connectionId: string): Promise<BucketState[]> {
 	return ajax.get(`connection/${connectionId}/kv`)
 }
 
-/** DELETE */
+/** GET */
 function get(connectionId: string, bucketName: string): Promise<BucketState> {
+	return ajax.get(`connection/${connectionId}/kv/${bucketName}`)
+}
+
+/** DELETE */
+function remove(connectionId: string, bucketName: string): Promise<BucketState> {
 	if (!connectionId || !bucketName) return
 	return ajax.delete(`connection/${connectionId}/kv/${bucketName}`)
 }
@@ -25,6 +30,7 @@ function create(connectionId: string, bucket: BucketConfig): Promise<BucketState
 const api = {
 	index,
 	get,
+	remove,
 	create,
 }
 export default api

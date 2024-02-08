@@ -3,7 +3,6 @@ import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketConfig } from "@/types/Bucket"
 import { STORAGE } from "@/types/Stream"
@@ -17,7 +16,7 @@ interface Props {
 	store?: BucketStore
 }
 
-const EditForm: FunctionComponent<Props> = ({
+const CreateForm: FunctionComponent<Props> = ({
 	store: bucketSo,
 }) => {
 
@@ -39,7 +38,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<Label>NAME</Label>
 			<TextInput
 				value={bucket.bucket}
-				onChange={name => handlePropChange({ bucket })}
+				onChange={bucket => handlePropChange({ bucket })}
 			/>
 		</BoxV>
 
@@ -91,4 +90,4 @@ const EditForm: FunctionComponent<Props> = ({
 	</Form>
 }
 
-export default EditForm
+export default CreateForm

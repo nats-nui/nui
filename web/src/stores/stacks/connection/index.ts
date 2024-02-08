@@ -3,11 +3,8 @@ import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { DOC_TYPE } from "@/types"
-import { Connection } from "@/types/Connection"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildConnection, buildConnectionMessages, buildStore, buildStreams } from "../../docs/utils/factory"
-import { CnnDetailState } from "./detail"
+import { buildConnection, buildConnectionMessages, buildConnectionNew, buildStreams } from "../../docs/utils/factory"
 
 
 
@@ -52,33 +49,23 @@ const setup = {
 		},
 		//#endregion
 
-		/** ho selezionato una connection quindi creo e visualizzo lo STACK del dettaglio */
-		select(cnn: Connection, store?: CnnListStore) {
-			const idSelPrev = store.state.selectId
-			// se è uguale a quello precedente allora deseleziona
-			let idSel = (cnn && idSelPrev != cnn.id) ? cnn.id : null
-			store.setSelectId(idSel)
-
-			// eventualmente creo la nuova VIEW
-			let srvStore: ViewStore = null
-			if (idSel != null) srvStore = buildStore({
-				type: DOC_TYPE.CONNECTION,
-				connection: cnnSo.getById(idSel)
-			} as CnnDetailState)
-
-			// aggiungo la nuova VIEW (o null)
-			docsSo.addLink({
-				view: srvStore,
-				parent: store,
-				anim: !idSelPrev || !idSel,
-			})
+		/** apro la CARD del dettaglio */
+		select(cnnId: string, store?: CnnListStore) {
+			const connection = cnnSo.getById(cnnId)
+			const oldId = store.state.selectId
+    		const newId = (cnnId && oldId !== cnnId) ? cnnId : null
+    		const view = newId ? buildConnection(connection) : null
+    		store.setSelect(newId)
+    		docsSo.addLink({ view, parent: store, anim: !oldId || !newId })
 		},
 
-		/** creo una nuova CONNECTION e apro la CARD del DETAIL */
+		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: CnnListStore) {
-			store.setSelectId(null)
-			docsSo.addLink({ view: buildConnection(), parent: store, anim: true })
+			const view = buildConnectionNew()
+			docsSo.addLink({ view, parent: store, anim: true })
 		},
+
+
 
 		openStreams(connectionId: string, store?: CnnListStore) {
 			docsSo.addLink({
@@ -98,7 +85,7 @@ const setup = {
 	},
 
 	mutators: {
-		setSelectId: (selectId: string, store?: CnnListStore) => ({ selectId }),
+		setSelect: (selectId: string, store?: CnnListStore) => ({ selectId }),
 	},
 }
 
