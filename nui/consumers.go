@@ -17,7 +17,7 @@ func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 	}
 	stream, err := js.Stream(c.Context(), streamName)
 	if err != nil {
-		return c.Status(422).JSON(err.Error())
+		return a.logAndFiberError(c, err, 422)
 	}
 	listener := stream.ListConsumers(c.Context())
 	infos := make([]*jetstream.ConsumerInfo, 0)
@@ -27,7 +27,7 @@ func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
 			err := listener.Err()
 			if err != nil {
 				if !errors.Is(err, jetstream.ErrEndOfData) {
-					return c.Status(500).JSON(err.Error())
+					return a.logAndFiberError(c, err, 500)
 				}
 				return c.JSON(infos)
 			}
@@ -50,15 +50,15 @@ func (a *App) handleShowStreamConsumer(c *fiber.Ctx) error {
 	}
 	stream, err := js.Stream(c.Context(), streamName)
 	if err != nil {
-		return c.Status(422).JSON(err.Error())
+		return a.logAndFiberError(c, err, 422)
 	}
 	consumer, err := stream.Consumer(c.Context(), c.Params("consumer_name"))
 	if err != nil {
-		return c.Status(422).JSON(err.Error())
+		return a.logAndFiberError(c, err, 422)
 	}
 	info, err := consumer.Info(c.Context())
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(info)
 }

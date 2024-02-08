@@ -2,33 +2,35 @@ package nui
 
 import (
 	"context"
-	"encoding/base64"
 	"errors"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
-	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/ws"
-	"time"
+	slogfiber "github.com/samber/slog-fiber"
+	"log/slog"
 )
 
 type App struct {
 	*fiber.App
+	l    *slog.Logger
 	Port string
 	nui  *Nui
 	ctx  context.Context
 }
 
-func NewServer(port string, nui *Nui) *App {
-	log.SetLevel(log.LevelTrace)
+func NewServer(port string, nui *Nui, l *slog.Logger) *App {
+
 	app := &App{
 		App:  fiber.New(),
 		Port: port,
 		nui:  nui,
+		l:    l,
 	}
-	// Or extend your config for customization
+
+	app.Use(slogfiber.New(l))
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://wails.localhost, wails://wails, wails://localhost",
 		AllowHeaders: "Origin, Content-Type, Accept",
@@ -41,7 +43,7 @@ func (a *App) registerHandlers() {
 
 	a.Get("/health", a.handleHealth)
 
-	a.Get("/api/connection", a.handleGetConnections)
+	a.Get("/api/connection", a.handleIndexConnections)
 	a.Get("/api/connection/:id", a.handleGetConnection)
 	a.Post("/api/connection", a.handleSaveConnection)
 	a.Post("/api/connection/:id", a.handleSaveConnection)
@@ -98,81 +100,6 @@ func (a *App) Start(ctx context.Context) error {
 
 func (a *App) handleHealth(c *fiber.Ctx) error {
 	return c.SendStatus(200)
-}
-
-func (a *App) handleGetConnections(c *fiber.Ctx) error {
-	connections, err := a.nui.ConnRepo.All()
-	if err != nil {
-		return err
-	}
-	connArray := make([]*connection.Connection, 0)
-	for _, conn := range connections {
-		connArray = append(connArray, conn)
-	}
-	return c.JSON(connArray)
-}
-
-func (a *App) handlePublish(c *fiber.Ctx) error {
-	if c.Params("id") == "" {
-		return c.Status(422).JSON("id is required")
-	}
-	conn, err := a.nui.ConnPool.Get(c.Params("id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	pubReq := &struct {
-		Subject string `json:"subject"`
-		Payload string `json:"payload"`
-	}{}
-	err = c.BodyParser(pubReq)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
-	}
-
-	payload, err := base64.StdEncoding.DecodeString(pubReq.Payload)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
-	}
-
-	err = conn.Publish(pubReq.Subject, payload)
-	if err != nil {
-		return c.Status(500).JSON(err.Error())
-	}
-	return c.SendStatus(200)
-}
-
-func (a *App) handleRequest(c *fiber.Ctx) error {
-	if c.Params("id") == "" {
-		return c.Status(422).JSON("id is required")
-	}
-	conn, err := a.nui.ConnPool.Get(c.Params("id"))
-	if err != nil {
-		return c.Status(404).JSON(err.Error())
-	}
-	req := &struct {
-		Subject   string `json:"subject"`
-		Payload   []byte `json:"payload"`
-		TimeoutMs int    `json:"timeout_ms"`
-	}{}
-	err = c.BodyParser(req)
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
-	}
-	timeout := 200 * time.Millisecond
-	if req.TimeoutMs > 0 {
-		timeout = time.Duration(req.TimeoutMs) * time.Millisecond
-	}
-	if err != nil {
-		return c.Status(422).JSON(err.Error())
-	}
-	msg, err := conn.Request(req.Subject, req.Payload, timeout)
-	if err != nil {
-		return c.Status(500).SendString(err.Error())
-	}
-	reply := &struct {
-		Payload []byte `json:"payload"`
-	}{Payload: msg.Data}
-	return c.JSON(reply)
 }
 
 func (a *App) handleWsSub(c *websocket.Conn) {

@@ -7,6 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
+	"log/slog"
 	"sync"
 )
 
@@ -32,20 +33,23 @@ type Hub[S Subscription, T Conn[S]] struct {
 	pool            Pool[S, T]
 	reg             map[string]*ClientConn[S]
 	connectionMutex sync.Mutex
+	l               *slog.Logger
 }
 
-func NewHub[S Subscription, T Conn[S]](pool Pool[S, T]) *Hub[S, T] {
+func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l *slog.Logger) *Hub[S, T] {
 	return &Hub[S, T]{
 		pool: pool,
 		reg:  make(map[string]*ClientConn[S]),
+		l:    l,
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn]) *Hub[*nats.Subscription, *connection.NatsConn] {
-	return NewHub[*nats.Subscription, *connection.NatsConn](pool)
+func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn], l *slog.Logger) *Hub[*nats.Subscription, *connection.NatsConn] {
+	return NewHub[*nats.Subscription, *connection.NatsConn](pool, l)
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
+	h.l.Debug("registering new client connection", "client-id", clientId)
 	h.purgeConnection(clientId)
 	err := h.registerConnection(clientId, connectionId, req, messages)
 	if err != nil {
@@ -115,6 +119,7 @@ func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq 
 }
 
 func (h *Hub[S, T]) purgeConnection(clientId string) {
+	h.l.Debug("purging client connection", "client-id", clientId)
 	h.connectionMutex.Lock()
 	defer h.connectionMutex.Unlock()
 	h.purgeConnectionLocked(clientId)

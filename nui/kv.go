@@ -68,7 +68,7 @@ func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
 	var statuses []BucketState
 	for status := range kvLister.Status() {
 		if kvLister.Error() != nil {
-			return c.Status(500).JSON(err.Error())
+			return a.logAndFiberError(c, err, 500)
 		}
 		statuses = append(statuses, NewBucketState(status))
 	}
@@ -82,7 +82,7 @@ func (a *App) handleShowBucket(c *fiber.Ctx) error {
 	}
 	status, err := kv.Status(c.Context())
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(NewBucketState(status))
 }
@@ -94,15 +94,15 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	}
 	bucketConfig := jetstream.KeyValueConfig{}
 	if err := c.BodyParser(&bucketConfig); err != nil {
-		return c.Status(422).JSON(err.Error())
+		return a.logAndFiberError(c, err, 422)
 	}
 	kv, err := js.CreateKeyValue(c.Context(), bucketConfig)
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	status, err := kv.Status(c.Context())
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(NewBucketState(status))
 }
@@ -118,7 +118,7 @@ func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 	}
 	err = js.DeleteKeyValue(c.Context(), c.Params("bucket"))
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.SendStatus(200)
 }
@@ -153,7 +153,7 @@ watch:
 	}
 	_ = watcher.Stop()
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(keysData)
 }
@@ -166,13 +166,13 @@ func (a *App) handleShowKey(c *fiber.Ctx) error {
 	keyEntry, err := kv.Get(c.Context(), c.Params("key"))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
-			return c.Status(404).JSON(err.Error())
+			return a.logAndFiberError(c, err, 404)
 		}
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	history, err := kv.History(c.Context(), keyEntry.Key(), jetstream.IgnoreDeletes())
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	var historyData []KevValueEntry
 	for _, entry := range history {
@@ -201,15 +201,15 @@ func (a *App) handlePutKey(c *fiber.Ctx) error {
 	req := &PutRequest{}
 	err = c.BodyParser(req)
 	if err != nil {
-		return c.Status(422).JSON(err.Error())
+		return a.logAndFiberError(c, err, 422)
 	}
 	rev, err := kv.Put(c.Context(), key, req.Payload)
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	kvEntry, err := kv.GetRevision(c.Context(), key, rev)
 	if err != nil {
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 
 	kvResp := NewKeyValueEntry(kvEntry)
@@ -224,9 +224,9 @@ func (a *App) handleDeleteKey(c *fiber.Ctx) error {
 	err = kv.Delete(c.Context(), c.Params("key"))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
-			return c.Status(404).JSON(err.Error())
+			return a.logAndFiberError(c, err, 404)
 		}
-		return c.Status(500).JSON(err.Error())
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.SendStatus(204)
 }
