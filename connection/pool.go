@@ -88,8 +88,8 @@ func natsBuilder(connection *Connection) (*NatsConn, error) {
 	options := []nats.Option{
 		nats.RetryOnFailedConnect(true),
 		nats.MaxReconnects(-1),
-		nats.PingInterval(1 * time.Second),
-		nats.MaxPingsOutstanding(2),
+		nats.PingInterval(2 * time.Second),
+		nats.MaxPingsOutstanding(3),
 	}
 	options = appendAuthOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
