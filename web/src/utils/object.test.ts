@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { camelToSnake, snakeToCamel } from "./object";
+import { camelToSnake, deepEqual, snakeToCamel } from "./object";
 
 
 
@@ -85,4 +85,50 @@ describe('camelToSnake', () => {
 	it('should return null for null input', () => {
 		expect(camelToSnake(null)).toBeNull();
 	});
+})
+
+describe('deepEqual', () => {
+	it('test1', () => {
+		const obj1 = {
+			key1: 'val1',
+			key2: {
+				key2_1: 2.1,
+			},
+		};
+		const obj2 = {
+			key1: 'val1',
+			key2: {
+				key2_1: 2.1,
+				key2_2: 'val2_2',
+			},
+			key3: "val3"
+		};
+		expect(deepEqual(obj1,obj2)).toBeTruthy()
+	});
+	it('test2', () => {
+		const obj1 = {
+			key1: 'val2',
+			key2: { key2_1: 'val2_1', },
+		};
+		const obj2 = {
+			key1: 'val1',
+			key2: { key2_1: 'val2_1', key2_2: 'val2_2', },
+			key3: "val3"
+		};
+		expect(deepEqual(obj1,obj2)).toBeFalsy()
+	});
+	it('test2', () => {
+		const obj1 = {
+			key1: 'val2',
+			key2: { key2_1: 'val2_1', },
+			key5: 333
+		};
+		const obj2 = {
+			key1: 'val1',
+			key2: { key2_1: 'val2_1', key2_2: 'val2_2', },
+			key3: "val3"
+		};
+		expect(deepEqual(obj1,obj2)).toBeFalsy()
+	});
+
 })

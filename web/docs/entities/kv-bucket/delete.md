@@ -5,7 +5,7 @@ delete a bucket by name
 
 ### URL
 ```
-GET /api/connection/:connection_id/kv/:bucket
+DELETE /api/connection/:connection_id/kv/:bucket
 ```
 - `connection_id`  
 uuid of the connection to get the bucket from

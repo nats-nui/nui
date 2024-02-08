@@ -1,14 +1,13 @@
-import bucketApi from "@/api/buckets"
+import kventryApi from "@/api/kventries"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
+import docsSo from "@/stores/docs"
+import { buildKVEntry, buildKVEntryNew } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
-import { StoreCore, mixStores } from "@priolo/jon"
-import docsSo from "@/stores/docs"
-import { buildBucket, buildKVEntry } from "@/stores/docs/utils/factory"
-import { KVEntryStore } from "./detail"
 import { KVEntry } from "@/types/KVEntry"
+import { StoreCore, mixStores } from "@priolo/jon"
 
 
 
@@ -16,6 +15,7 @@ import { KVEntry } from "@/types/KVEntry"
 const setup = {
 
 	state: {
+		/** connessione di riferimento */
 		connectionId: <string>null,
 		bucket: <BucketState>null,
 		/** nome del BUCKET selezionato */
@@ -39,6 +39,7 @@ const setup = {
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
+				bucket: state.bucket,
 				select: state.select,
 			}
 		},
@@ -61,38 +62,43 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as KVEntriesState
 			state.connectionId = data.connectionId
+			state.bucket = data.bucket
 			state.select = data.select
 		},
 		//#endregion
 
-		/** load tutti i BUCKETS di una CONNECTION */
+		/** carico tutti gli elementi */
 		async fetch(_: void, store?: KVEntriesStore) {
-			const buckets = await bucketApi.index(store.state.connectionId)
-			store.setAll(buckets)
+			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket)
+			store.setAll(kventries)
 		},
 
-		/** visualizzo dettaglio di un KVENTRY */
+		/** apro la CARD del dettaglio */
 		select(key: string, store?: KVEntriesStore) {
-			const keyOld = store.state.select
-			let keyNew = null
-			let view: KVEntryStore = null
-			if (key && keyOld != key) {
-				keyNew = key
-				const kventry = store.getByName(keyNew)
-				const bucket = store.state.bucket
-				view = buildKVEntry(store.state.connectionId, bucket, kventry)
-			}
-			store.setSelect(keyNew)
-			docsSo.addLink({ view, parent: store, anim: !keyOld || !keyNew, })
+			const oldkey = store.state.select
+			const newKey = (key && oldkey !== key) ? key : null
+			const view = newKey ? buildKVEntry(store.state.connectionId, store.state.bucket, store.getByName(key)) : null
+			store.setSelect(newKey)
+			docsSo.addLink({ view, parent: store, anim: !oldkey || !newKey })
 		},
 
-		create(_: void, store?: KVEntriesStore) {
+		async create(_: void, store?: KVEntriesStore) {
+			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
+			docsSo.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+
+		async delete(_: void, store?: KVEntriesStore) {
+			const key = store.state.select
+			if (!key) return
+			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key)
+			store.setAll(store.state.all.filter(entry => entry.key != key))
 		},
 
 	},
 
 	mutators: {
-		setAll: (all: BucketState[]) => ({ all }),
+		setAll: (all: KVEntry[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
 	},
 }

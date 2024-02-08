@@ -17,7 +17,6 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const kventrySa = useStore(kventrySo)
-	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {

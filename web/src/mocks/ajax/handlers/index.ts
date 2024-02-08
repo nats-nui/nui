@@ -1,7 +1,7 @@
 import connection from "./connection"
 import stream from "./stream"
 import consumer from "./consumer"
-import keyValueEntry from "./keyValueEntry.ts"
+import kventry from "./kventry"
 import bucket from "./bucket"
 
 
@@ -9,6 +9,6 @@ export const handlers = [
 	...connection,
 	...stream,
 	...consumer,
-	...keyValueEntry,
+	...kventry,
 	...bucket,
 ]

@@ -13,6 +13,12 @@ export function createUUID(): string {
 	return uuid;
 }
 
+let GLOBAL_ID = 10
+/** restituisce un id cosecutivo a ll'ultimo preso */
+export function getNextId(): number {
+	return GLOBAL_ID++
+}
+
 /** restituisce il timestamp string della data di oggi */
 export function getNow(): string {
 	return new Date().toISOString()

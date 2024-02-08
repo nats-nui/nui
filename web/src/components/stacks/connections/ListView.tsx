@@ -2,7 +2,7 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { CnnListStore } from "@/stores/stacks/connection/list"
+import { CnnListStore } from "@/stores/stacks/connection"
 import { CNN_STATUS, Connection } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
@@ -33,7 +33,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn)
+	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn.id)
 	const handleNew = () => cnnListSo.create()
 	const handleDel = () => {
 		cnnSo.delete(selectedId)

@@ -69,7 +69,6 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				/>
 			</BoxV>
 		}
-
 	>
 		{!isNew && <div style={{ marginBottom: 20 }}>
 			<RowButton

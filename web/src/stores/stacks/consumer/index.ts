@@ -1,14 +1,12 @@
+import conApi from "@/api/consumers"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
+import docSo from "@/stores/docs"
+import { buildConsumer } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
-import docSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
-import conApi from "@/api/consumers"
-import { buildStore } from "@/stores/docs/utils/factory"
-import { DOC_TYPE } from "@/types"
-import docSo from "@/stores/docs"
-import { ConsumerState } from "./detail"
 
 
 
@@ -36,6 +34,14 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<ConsumersStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "CONSUMERS",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
+		getSerialization: (_: void, store?: ViewStore) => {
+			const state = store.state as ConsumersState
+			return {
+				...viewSetup.getters.getSerialization(null, store),
+				connectionId: state.connectionId,
+				streamName: state.streamName,
+			}
+		},
 		//#endregion
 
 		getByName(name: string, store?: ConsumersStore) {
@@ -45,32 +51,32 @@ const setup = {
 	},
 
 	actions: {
+
+		//#region VIEWBASE
+		setSerialization: (data: any, store?: ViewStore) => {
+			viewSetup.actions.setSerialization(data, store)
+			const state = store.state as ConsumersState
+			state.connectionId = data.connectionId
+			state.streamName = data.streamName
+		},
+		//#endregion
+		
 		async fetch(_: void, store?: ConsumersStore) {
 			const consumers = await conApi.index(store.state.connectionId, store.state.streamName)
 			store.setAll(consumers)
 		},
-		/** visualizzo dettaglio di uno STREAM */
+
+		/** apro la CARD del dettaglio */
 		select(name: string, store?: ConsumersStore) {
 			const nameOld = store.state.select
-			// se è uguale a quello precedente allora deseleziona
-			let nameNew = (name && nameOld != name) ? name : null
+			const nameNew = (name && nameOld !== name) ? name : null
+			const view = nameNew ? buildConsumer(
+				store.state.connectionId,
+				store.state.streamName,
+				store.getByName(nameNew)
+			) : null
 			store.setSelect(nameNew)
-
-			// eventualmente creo la nuova VIEW
-			let consumerStore:ViewStore = null
-			if (nameNew != null) consumerStore = buildStore({
-				type: DOC_TYPE.CONSUMER,
-				connectionId: store.state.connectionId,
-				streamName: store.state.streamName,
-				consumer: store.getByName(nameNew),
-			} as ConsumerState)
-
-			// aggiungo la nuova VIEW (o null)
-			docSo.addLink({
-				view: consumerStore,
-				parent: store,
-				anim: !nameOld || !nameNew,
-			})
+			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 	},
 
@@ -87,5 +93,5 @@ export type ConsumersMutators = typeof setup.mutators
 export interface ConsumersStore extends ViewStore, StoreCore<ConsumersState>, ConsumersGetters, ConsumersActions, ConsumersMutators {
 	state: ConsumersState
 }
-const consumersSetup = mixStores(docSetup, setup)
+const consumersSetup = mixStores(viewSetup, setup)
 export default consumersSetup
