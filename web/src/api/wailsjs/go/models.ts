@@ -152,6 +152,7 @@ export namespace nats {
 	    max_deliver?: number;
 	    backoff?: number[];
 	    filter_subject?: string;
+	    filter_subjects?: string[];
 	    replay_policy: number;
 	    rate_limit_bps?: number;
 	    sample_freq?: string;
@@ -168,6 +169,7 @@ export namespace nats {
 	    inactive_threshold?: number;
 	    num_replicas: number;
 	    mem_storage?: boolean;
+	    metadata?: {[key: string]: string};
 	
 	    static createFrom(source: any = {}) {
 	        return new ConsumerConfig(source);
@@ -186,6 +188,7 @@ export namespace nats {
 	        this.max_deliver = source["max_deliver"];
 	        this.backoff = source["backoff"];
 	        this.filter_subject = source["filter_subject"];
+	        this.filter_subjects = source["filter_subjects"];
 	        this.replay_policy = source["replay_policy"];
 	        this.rate_limit_bps = source["rate_limit_bps"];
 	        this.sample_freq = source["sample_freq"];
@@ -202,6 +205,7 @@ export namespace nats {
 	        this.inactive_threshold = source["inactive_threshold"];
 	        this.num_replicas = source["num_replicas"];
 	        this.mem_storage = source["mem_storage"];
+	        this.metadata = source["metadata"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -355,12 +359,41 @@ export namespace nats {
 	    }
 	}
 	
+	export class StreamConsumerLimits {
+	    inactive_threshold?: number;
+	    max_ack_pending?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StreamConsumerLimits(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.inactive_threshold = source["inactive_threshold"];
+	        this.max_ack_pending = source["max_ack_pending"];
+	    }
+	}
+	export class SubjectTransformConfig {
+	    src?: string;
+	    dest: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SubjectTransformConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.src = source["src"];
+	        this.dest = source["dest"];
+	    }
+	}
 	export class StreamSource {
 	    name: string;
 	    opt_start_seq?: number;
 	    // Go type: time
 	    opt_start_time?: any;
 	    filter_subject?: string;
+	    subject_transforms?: SubjectTransformConfig[];
 	    external?: ExternalStream;
 	
 	    static createFrom(source: any = {}) {
@@ -373,6 +406,7 @@ export namespace nats {
 	        this.opt_start_seq = source["opt_start_seq"];
 	        this.opt_start_time = this.convertValues(source["opt_start_time"], null);
 	        this.filter_subject = source["filter_subject"];
+	        this.subject_transforms = this.convertValues(source["subject_transforms"], SubjectTransformConfig);
 	        this.external = this.convertValues(source["external"], ExternalStream);
 	    }
 	
@@ -419,9 +453,14 @@ export namespace nats {
 	    deny_delete?: boolean;
 	    deny_purge?: boolean;
 	    allow_rollup_hdrs?: boolean;
+	    compression: number;
+	    first_seq?: number;
+	    subject_transform?: SubjectTransformConfig;
 	    republish?: RePublish;
 	    allow_direct: boolean;
 	    mirror_direct: boolean;
+	    consumer_limits?: StreamConsumerLimits;
+	    metadata?: {[key: string]: string};
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamConfig(source);
@@ -453,9 +492,14 @@ export namespace nats {
 	        this.deny_delete = source["deny_delete"];
 	        this.deny_purge = source["deny_purge"];
 	        this.allow_rollup_hdrs = source["allow_rollup_hdrs"];
+	        this.compression = source["compression"];
+	        this.first_seq = source["first_seq"];
+	        this.subject_transform = this.convertValues(source["subject_transform"], SubjectTransformConfig);
 	        this.republish = this.convertValues(source["republish"], RePublish);
 	        this.allow_direct = source["allow_direct"];
 	        this.mirror_direct = source["mirror_direct"];
+	        this.consumer_limits = this.convertValues(source["consumer_limits"], StreamConsumerLimits);
+	        this.metadata = source["metadata"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -476,6 +520,7 @@ export namespace nats {
 		    return a;
 		}
 	}
+	
 	export class StreamAlternate {
 	    name: string;
 	    domain?: string;
@@ -498,6 +543,8 @@ export namespace nats {
 	    active: number;
 	    external?: ExternalStream;
 	    error?: APIError;
+	    filter_subject?: string;
+	    subject_transforms?: SubjectTransformConfig[];
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamSourceInfo(source);
@@ -510,6 +557,8 @@ export namespace nats {
 	        this.active = source["active"];
 	        this.external = this.convertValues(source["external"], ExternalStream);
 	        this.error = this.convertValues(source["error"], APIError);
+	        this.filter_subject = source["filter_subject"];
+	        this.subject_transforms = this.convertValues(source["subject_transforms"], SubjectTransformConfig);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -625,6 +674,7 @@ export namespace nats {
 		    return a;
 		}
 	}
+	
 	
 	
 

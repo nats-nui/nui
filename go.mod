@@ -14,6 +14,7 @@ require (
 	github.com/nats-io/nats-server/v2 v2.9.19
 	github.com/nats-io/nats.go v1.32.0
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
+	github.com/samber/slog-fiber v1.11.0
 	github.com/stretchr/testify v1.8.4
 	github.com/wailsapp/wails/v2 v2.7.1
 )
@@ -67,9 +68,6 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
-	github.com/samber/slog-common v0.11.0 // indirect
-	github.com/samber/slog-fiber v1.11.0 // indirect
-	github.com/samber/slog-nats v0.1.1 // indirect
 	github.com/sanity-io/litter v1.5.5 // indirect
 	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
