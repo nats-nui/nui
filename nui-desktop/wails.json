@@ -1,6 +1,6 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "nui-deskop",
+  "name": "nui-desktop",
   "outputfilename": "nui-desktop",
   "frontend:install": "npm install --prefix ../web",
   "frontend:dir": "../web",
