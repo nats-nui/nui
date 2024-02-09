@@ -15,10 +15,11 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { buildNewSource } from "@/stores/stacks/streams/utils/factory"
 import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useRef, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import ElementDialog from "../../../dialogs/ElementDialog"
-import EditSourceCmp from "./EditSourceCmp"
 import ListDialog from "../../../dialogs/ListDialog"
+import EditSourceCmp from "./EditSourceCmp"
+import { EDIT_STATE } from "@/types"
 
 
 
@@ -88,8 +89,8 @@ const EditForm: FunctionComponent<Props> = ({
 	// RENDER
 	if (streamSa.stream?.config == null) return null
 	const config: StreamConfig = streamSa.stream.config
-	const readOnly = streamSa.readOnly
-	const isNew = streamSo.isNew()
+	const inRead = streamSa.editState == EDIT_STATE.READ
+	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const variant = streamSa.colorVar
 	const allStreams = streamSa.allStreams
 
@@ -100,7 +101,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<TextInput
 				value={config.name}
 				onChange={name => handlePropChange({ name })}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 			/>
 		</BoxV>
 
@@ -109,7 +110,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<TextInput
 				value={config.description}
 				onChange={description => handlePropChange({ description })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -119,7 +120,7 @@ const EditForm: FunctionComponent<Props> = ({
 				items={config.subjects}
 				onChangeItems={subjects => handlePropChange({ subjects })}
 				variant={variant}
-				readOnly={readOnly}
+				readOnly={inRead}
 				fnNewItem={() => "<new>"}
 				RenderRow={EditStringRow}
 			/>
@@ -132,7 +133,7 @@ const EditForm: FunctionComponent<Props> = ({
 				select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
 				items={Object.values(RETENTION)}
 				RenderRow={({ item }) => item}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
 			/>
 		</BoxV>
@@ -143,7 +144,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxConsumers}
 				onChange={maxConsumers => handlePropChange({ maxConsumers })}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 			/>
 		</BoxV>
 
@@ -153,7 +154,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxMsgs}
 				onChange={maxMsgs => handlePropChange({ maxMsgs })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -163,7 +164,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxBytes}
 				onChange={maxBytes => handlePropChange({ maxBytes })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -174,7 +175,7 @@ const EditForm: FunctionComponent<Props> = ({
 				select={Object.values(DISCARD).indexOf(config.discard ?? DISCARD.OLD)}
 				items={Object.values(DISCARD)}
 				RenderRow={({ item }) => item.toUpperCase()}
-				readOnly={readOnly}
+				readOnly={inRead}
 				onSelect={index => {
 					console.log(index)
 					handlePropChange({ discard: Object.values(DISCARD)[index] })
@@ -188,7 +189,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxAge}
 				onChange={maxAge => handlePropChange({ maxAge })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -198,7 +199,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxMsgsPerSubject}
 				onChange={maxMsgsPerSubject => handlePropChange({ maxMsgsPerSubject })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -208,7 +209,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.maxMsgSize}
 				onChange={maxMsgSize => handlePropChange({ maxMsgSize })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -219,7 +220,7 @@ const EditForm: FunctionComponent<Props> = ({
 				select={Object.values(STORAGE).indexOf(config.storage ?? STORAGE.FILE)}
 				items={Object.values(STORAGE)}
 				RenderRow={({ item }) => item}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
 		</BoxV>
@@ -230,7 +231,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.numReplicas}
 				onChange={numReplicas => handlePropChange({ numReplicas })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -238,7 +239,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<IconToggle
 				check={config.noAck}
 				onChange={noAck => handlePropChange({ noAck })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 			<Label>NO ACK</Label>
 		</Box>
@@ -248,7 +249,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<TextInput
 				value={config.templateOwner}
 				onChange={templateOwner => handlePropChange({ templateOwner })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -258,7 +259,7 @@ const EditForm: FunctionComponent<Props> = ({
 				style={{ flex: 1 }}
 				value={config.duplicateWindow}
 				onChange={duplicateWindow => handlePropChange({ duplicateWindow })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -270,7 +271,7 @@ const EditForm: FunctionComponent<Props> = ({
 					<TextInput
 						value={config.templateOwner}
 						onChange={templateOwner => handlePropChange({ templateOwner })}
-						readOnly={readOnly}
+						readOnly={inRead}
 					/>
 				</BoxV>
 				{/* <Label type={LABELS.SUBTEXT}>TAGS</Label> */}
@@ -283,7 +284,7 @@ const EditForm: FunctionComponent<Props> = ({
 				<IconToggle
 					check={!!config.mirror}
 					onChange={handleMirrorCheck}
-					readOnly={readOnly || !isNew}
+					readOnly={inRead || !inNew}
 				/>
 				<Label type={LABELS.TEXT}>MIRROR</Label>
 			</Box>
@@ -296,7 +297,7 @@ const EditForm: FunctionComponent<Props> = ({
 							select={0}
 							items={allStreams}
 							RenderRow={({ item }) => item}
-							readOnly={readOnly || !isNew}
+							readOnly={inRead || !inNew}
 						// onSelect={index => {
 						// 	console.log(index)
 						// 	handlePropChange({ discard: Object.values(DISCARD)[index] })
@@ -316,7 +317,7 @@ const EditForm: FunctionComponent<Props> = ({
 							style={{ flex: 1 }}
 							value={config.mirror?.optStartSeq}
 							onChange={optStartSeq => handleMirrorPropChange({ optStartSeq })}
-							readOnly={readOnly || !isNew}
+							readOnly={inRead || !inNew}
 						/>
 					</BoxV>
 					<BoxV>
@@ -324,7 +325,7 @@ const EditForm: FunctionComponent<Props> = ({
 						<TextInput
 							value={config.mirror?.filterSubject}
 							onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
-							readOnly={readOnly || !isNew}
+							readOnly={inRead || !inNew}
 						/>
 					</BoxV>
 				</Quote>
@@ -337,7 +338,7 @@ const EditForm: FunctionComponent<Props> = ({
 				items={config.sources}
 				onChangeItems={handleSourcesChange}
 				onSelect={handleSourceSelect}
-				readOnly={readOnly}
+				readOnly={inRead}
 				fnNewItem={() => buildNewSource()}
 				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
 				ref={listRef}
@@ -355,7 +356,7 @@ const EditForm: FunctionComponent<Props> = ({
 					source={config.sources?.[souceIndex]}
 					onChange={handleSourceChange}
 					allStream={allStreams}
-					readOnly={readOnly}
+					readOnly={inRead}
 				/>
 			</ElementDialog>
 		</BoxV>
@@ -364,7 +365,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<IconToggle
 				check={config.sealed}
 				onChange={sealed => handlePropChange({ sealed })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 			<Label>SEALED</Label>
 		</Box>
@@ -373,7 +374,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<IconToggle
 				check={config.denyDelete}
 				onChange={denyDelete => handlePropChange({ denyDelete })}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 			/>
 			<Label>DENY DELETE</Label>
 		</Box>
@@ -382,7 +383,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<IconToggle
 				check={config.denyPurge}
 				onChange={denyPurge => handlePropChange({ denyPurge })}
-				readOnly={readOnly || !isNew}
+				readOnly={inRead || !inNew}
 			/>
 			<Label>DENY PURGE</Label>
 		</Box>
@@ -391,7 +392,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<IconToggle
 				check={config.allowRollupHdrs}
 				onChange={allowRollupHdrs => handlePropChange({ allowRollupHdrs })}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 			<Label>ALLOW ROLL UP HDRS</Label>
 		</Box>
@@ -417,7 +418,7 @@ const EditForm: FunctionComponent<Props> = ({
 							}
 						}
 					}}
-					readOnly={readOnly}
+					readOnly={inRead}
 				/>
 				<Label>REPUBLISH</Label>
 			</Box>
@@ -428,7 +429,7 @@ const EditForm: FunctionComponent<Props> = ({
 						<TextInput
 							value={config.republish?.src}
 							onChange={src => handleRepublishPropChange({ src })}
-							readOnly={readOnly}
+							readOnly={inRead}
 						/>
 					</BoxV>
 					<BoxV>
@@ -436,14 +437,14 @@ const EditForm: FunctionComponent<Props> = ({
 						<TextInput
 							value={config.republish?.dest}
 							onChange={dest => handleRepublishPropChange({ dest })}
-							readOnly={readOnly}
+							readOnly={inRead}
 						/>
 					</BoxV>
 					<Box>
 						<IconToggle
 							check={config.republish?.headersOnly}
 							onChange={headersOnly => handleRepublishPropChange({ headersOnly })}
-							readOnly={readOnly}
+							readOnly={inRead}
 						/>
 						<Label type={LABELS.SUBTEXT}>HEADERS ONLY</Label>
 					</Box>

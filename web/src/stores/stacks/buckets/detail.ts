@@ -18,7 +18,7 @@ const setup = {
 		connectionId: <string>null,
 		bucket: <BucketState>null,
 		bucketConfig: <BucketConfig>null,
-		
+
 		readOnly: true,
 
 		//#region VIEWBASE
@@ -50,7 +50,7 @@ const setup = {
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
 
-		getIsNew: (_: void, store?: BucketStore) => !!store.state.bucketConfig && !store.state.bucket
+		isNew: (_: void, store?: BucketStore) => !!store.state.bucketConfig && !store.state.bucket
 
 	},
 
@@ -66,12 +66,11 @@ const setup = {
 		},
 		//#endregion
 
-		/** carico tutti i dati dello STREAM se ce ne fosse bisogno */
-		fetch: async (_: void, store?: BucketStore) => {
+		/** load all ENTITY */
+		async fetch(_: void, store?: BucketStore) {
 			const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket)
 			store.setBucket(bucket)
 		},
-
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
 			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig)
@@ -87,7 +86,6 @@ const setup = {
 			const view = buildKVEntries(store.state.connectionId, store.state.bucket)
 			docSo.addLink({ view, parent: store, anim: true })
 		},
-
 	},
 
 	mutators: {

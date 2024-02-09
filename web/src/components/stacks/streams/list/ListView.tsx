@@ -2,8 +2,11 @@ import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import BoxV from "@/components/format/BoxV"
 import IconRow from "@/components/rows/IconRow"
+import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { StreamsStore } from "@/stores/stacks/streams"
+import { StreamStore } from "@/stores/stacks/streams/detail"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { CSSProperties, FunctionComponent, useEffect } from "react"
@@ -20,27 +23,26 @@ const StreamsListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const streamsSa = useStore(streamsSo)
+	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
-		streamsSo.fetch()
+		streamsSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
 	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream.config.name)
 	const handleNew = () => streamsSo.create()
-	const handleDel = () => {
-		streamsSo.delete(selected)
-		streamsSo.select(null)
-	}
-	const handleMessages = (e: React.MouseEvent, stream: StreamInfo) => {
-		e.stopPropagation()
-		streamsSo.openMessages(stream.config?.name)
-	}
-	const handleConsumer = (e: React.MouseEvent, stream: StreamInfo) => {
-		e.stopPropagation()
-		streamsSo.openConsumers(stream.config?.name)
-	}
+	const handleDelete = () => streamsSo.delete()
+
+	// const handleMessages = (e: React.MouseEvent, stream: StreamInfo) => {
+	// 	e.stopPropagation()
+	// 	streamsSo.openMessages(stream.config?.name)
+	// }
+	// const handleConsumer = (e: React.MouseEvent, stream: StreamInfo) => {
+	// 	e.stopPropagation()
+	// 	streamsSo.openConsumers(stream.config?.name)
+	// }
 
 	// RENDER
 	const streams = streamsSa.all
@@ -50,20 +52,21 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const isSelected = (stream: StreamInfo) => selected == stream.config.name
 	const getTitle = (stream: StreamInfo) => stream.config.name
 	const getSubtitle = (stream: StreamInfo) => stream.config.description
+	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={streamsSo}
 		actionsRender={<>
-			<Button
-				label="NEW"
-				//select={bttNewSelect}
-				variant={variant}
-				onClick={handleNew}
-			/>
-			<Button
+			{!!selected && <Button
 				label="DELETE"
 				variant={variant}
-				onClick={handleDel}
+				onClick={handleDelete}
+			/>}
+			<Button
+				label="NEW"
+				select={isNewSelect}
+				variant={variant}
+				onClick={handleNew}
 			/>
 		</>}
 		iconizedRender={<BoxV>{
@@ -103,7 +106,8 @@ const StreamsListView: FunctionComponent<Props> = ({
 				</thead>
 				<tbody>
 					{streams.map((stream, index) => (
-						<tr style={cssRow(index, isSelected(stream), variant)}
+						<tr key={stream.config.name}
+							style={cssRow(index, isSelected(stream), variant)}
 							onClick={() => handleSelect(stream)}
 						>
 							<td style={{ ...cssRowCellString, width: "100%" }}>
@@ -143,8 +147,8 @@ const cssHead: CSSProperties = {
 	fontSize: 13,
 	fontWeight: 600,
 	height: 28,
-	position: 'sticky', 
-	top: '0', 
+	position: 'sticky',
+	top: '0',
 	backgroundColor: '#3e3e3e',
 }
 const cssHeadCell: CSSProperties = {

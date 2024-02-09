@@ -7,8 +7,8 @@ import EditList from "@/components/lists/EditList"
 import EditAuthRow from "@/components/rows/EditAuthRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
-import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Auth, Subscription } from "@/types"
+import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -50,7 +50,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const hosts = cnnDetailSa.connection.hosts ?? []
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 	const auths = cnnDetailSa.connection.auth ?? []
-	const readOnly = cnnDetailSa.readOnly
+	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 	const variant = cnnDetailSa.colorVar
 
 	return <Form>
@@ -60,7 +60,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			<TextInput
 				value={name}
 				onChange={handleChangeName}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 
@@ -71,7 +71,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				onChangeItems={handleHostsChange}
 				fnNewItem={() => "<new>"}
 				RenderRow={EditStringRow}
-				readOnly={readOnly}
+				readOnly={inRead}
 				variant={variant}
 			/>
 		</BoxV>
@@ -85,7 +85,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				onChangeItems={handleSubscriptionsChange}
 				fnNewItem={() => ({ subject: "<new>" })}
 				RenderRow={EditSubscriptionNoDisableRow}
-				readOnly={readOnly}
+				readOnly={inRead}
 				variant={variant}
 			/>
 		</BoxV>
@@ -96,7 +96,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				items={auths}
 				onChangeItems={handleAuthsChange}
 				RenderRow={EditAuthRow}
-				readOnly={readOnly}
+				readOnly={inRead}
 				variant={variant}
 			/>
 		</BoxV>

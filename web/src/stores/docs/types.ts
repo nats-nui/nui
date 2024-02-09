@@ -31,5 +31,11 @@ export enum DOC_ANIM {
 	SHOWING="showing",
 }
 
+export enum EDIT_STATE {
+	NEW,
+	READ,
+	EDIT,
+}
+
 export const ANIM_TIME = 200
 export const ANIM_TIME_CSS = 200

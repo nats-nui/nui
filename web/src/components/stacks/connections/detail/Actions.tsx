@@ -2,6 +2,7 @@ import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -23,34 +24,35 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEditClick = async () => cnnDetailSo.setReadOnly(false)
+	const handleEditClick = async () => cnnDetailSo.setEditState(EDIT_STATE.EDIT)
 	const handleCancelClick = () => {
-		cnnDetailSo.setReadOnly(true)
 		cnnDetailSo.restore()
+		cnnDetailSo.setEditState(EDIT_STATE.READ)
 	}
 	const handleSaveClick = async () => {
-		cnnDetailSo.setReadOnly(true)
 		await cnnSo.save(cnnDetailSa.connection)
+		cnnDetailSo.setEditState(EDIT_STATE.READ)
 	}
 
 	// RENDER
-	const isNew = cnnDetailSa.connection?.id == null
-	const readOnly = cnnDetailSa.readOnly
 	const variant = cnnDetailSa.colorVar
 
-	return isNew ? (
-		<Button
+	if (cnnDetailSa.editState == EDIT_STATE.NEW) {
+		return <Button
 			label="CREATE"
 			variant={variant}
 			onClick={handleSaveClick}
 		/>
-	) : readOnly ? (
-		<Button
+
+	} else if (cnnDetailSa.editState == EDIT_STATE.READ) {
+		return <Button
 			label="EDIT"
 			variant={variant}
 			onClick={handleEditClick}
 		/>
-	) : (<>
+	}
+
+	return <>
 		<Button
 			label="SAVE"
 			variant={variant}
@@ -61,7 +63,7 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 			variant={variant}
 			onClick={handleCancelClick}
 		/>
-	</>)
+	</>
 }
 
 export default ConnectionDetailActions

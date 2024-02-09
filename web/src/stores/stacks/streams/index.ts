@@ -2,14 +2,12 @@ import strApi from "@/api/streams"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildConsumers, buildStore, buildStream, buildStreamMessages } from "@/stores/docs/utils/factory"
+import { buildConsumers } from "@/stores/docs/utils/factory"
+import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
-import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { StreamState } from "./detail"
-import { buildNewStreamInfo } from "./utils/factory"
 
 
 
@@ -20,7 +18,7 @@ const setup = {
 		connectionId: <string>null,
 		/** nome dello STREAM selezionato */
 		select: <string>null,
-		all: <StreamInfo[]>[],
+		all: <StreamInfo[]>null,
 
 		//#region VIEWBASE
 		width: 366,
@@ -52,6 +50,10 @@ const setup = {
 			if (!name) return null
 			return store.state.all?.findIndex(s => s.config.name == name)
 		},
+
+		getAllStreamName(_: void, store?: StreamsStore) {
+			return store.state.all?.map(si => si.config.name) ?? []
+		}
 	},
 
 	actions: {
@@ -64,72 +66,63 @@ const setup = {
 			state.select = data.select
 		},
 		//#endregion
-
-
+		
+		async fetchIfVoid(_: void, store?: StreamsStore) {
+			if ( !!store.state.all ) return
+			await store.fetch()
+		},
 		async fetch(_: void, store?: StreamsStore) {
 			const streams = await strApi.index(store.state.connectionId)
 			store.setAll(streams)
 		},
-		async delete(name: string, store?: StreamsStore) {
-			await strApi.remove(store.state.connectionId, name)
-			store.setAll(store.state.all.filter(s => s.config.name != name))
-		},
+		// [II] da capire se conviene fare cosi' o aggiornare tutta la lista
 		update(stream: StreamInfo, store?: StreamsStore) {
 			const all = [...store.state.all]
 			const index = !stream.state ? -1 : store.getIndexByName(stream.config.name)
-			if (index == -1) {
-				all.push(stream)
-			} else {
-				all[index] = { ...all[index], ...stream }
-			}
+			index == -1 ? all.push(stream) : (all[index] = { ...all[index], ...stream })
 			store.setAll(all)
 		},
+		/** open CREATION CARD */
+		create(_: void, store?: StreamsStore) {
+			const view = buildStreamNew(store.state.connectionId, store.getAllStreamName())
+			docSo.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+		async delete(_: void, store?: StreamsStore) {
+			const name = store.state.select
+			await strApi.remove(store.state.connectionId, name)
+			store.setAll(store.state.all.filter(s => s.config.name != name))
+			store.setSelect(null)
+		},
+
+
 
 		/** visualizzo dettaglio di uno STREAM */
 		select(name: string, store?: StreamsStore) {
 			const nameOld = store.state.select
-    		const nameNew = (name && nameOld !== name) ? name : null
-    		const view = nameNew ? buildStream(store.state.connectionId, store.getByName(nameNew)) : null
-    		store.setSelect(nameNew)
-    		docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
+			const nameNew = (name && nameOld !== name) ? name : null
+			const view = nameNew 
+				? buildStream(store.state.connectionId, store.getByName(nameNew), store.getAllStreamName()) 
+				: null
+			store.setSelect(nameNew)
+			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
-
-		/** visualizza nuovo STORE DETTAGLIO STREAM */
-		create(_: void, store?: StreamsStore) {
-			store.setSelect(null)
-			const view = buildStore({
-				type: DOC_TYPE.STREAM,
-				connectionId: store.state.connectionId,
-				stream: buildNewStreamInfo(),
-				readOnly: false,
-			} as Partial<StreamState>)
-			docSo.addLink({ view, parent: store, anim: true })
-		},
-
-
-
-
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
-			docSo.addLink({ 
-				view: buildConsumers(store.state.connectionId, store.getByName(streamName)), 
-				parent: store, 
-				anim: true 
+			docSo.addLink({
+				view: buildConsumers(store.state.connectionId, store.getByName(streamName)),
+				parent: store,
+				anim: true
 			})
 		},
 		/** apertura della CARD MESSAGES */
 		openMessages(streamName: string, store?: StreamsStore) {
-			docSo.addLink({ 
-				view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)), 
-				parent: store, 
-				anim: true 
+			docSo.addLink({
+				view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)),
+				parent: store,
+				anim: true
 			})
 		},
-
-
-
-
-
 	},
 
 	mutators: {

@@ -1,7 +1,7 @@
 import kventryApi from "@/api/kventries"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
+import docSo from "@/stores/docs"
 import { buildKVEntry, buildKVEntryNew } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
@@ -72,6 +72,19 @@ const setup = {
 			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket)
 			store.setAll(kventries)
 		},
+		async create(_: void, store?: KVEntriesStore) {
+			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
+			docSo.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+		async delete(_: void, store?: KVEntriesStore) {
+			const key = store.state.select
+			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key)
+			store.setAll(store.state.all.filter(entry => entry.key != key))
+			store.setSelect(null)
+		},
+
+
 
 		/** apro la CARD del dettaglio */
 		select(key: string, store?: KVEntriesStore) {
@@ -79,20 +92,7 @@ const setup = {
 			const newKey = (key && oldkey !== key) ? key : null
 			const view = newKey ? buildKVEntry(store.state.connectionId, store.state.bucket, store.getByName(key)) : null
 			store.setSelect(newKey)
-			docsSo.addLink({ view, parent: store, anim: !oldkey || !newKey })
-		},
-
-		async create(_: void, store?: KVEntriesStore) {
-			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
-			docsSo.addLink({ view, parent: store, anim: true })
-			store.setSelect(null)
-		},
-
-		async delete(_: void, store?: KVEntriesStore) {
-			const key = store.state.select
-			if (!key) return
-			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key)
-			store.setAll(store.state.all.filter(entry => entry.key != key))
+			docSo.addLink({ view, parent: store, anim: !oldkey || !newKey })
 		},
 
 	},

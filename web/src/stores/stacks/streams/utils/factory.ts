@@ -1,6 +1,57 @@
-import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo, StreamState } from "@/types/Stream";
+import cnnSo from "@/stores/connections";
+import { buildStore } from "@/stores/docs/utils/factory";
+import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo, StreamState as StreamEntityState } from "@/types/Stream";
+import { StreamsState, StreamsStore } from "..";
+import { DOC_TYPE, EDIT_STATE } from "@/types";
+import { StreamState, StreamStore } from "../detail";
+import { StreamMessagesState, StreamMessagesStore } from "../messages";
 
 
+
+
+export function buildStreams(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId);
+	if (!cnn) { console.error("no param"); return null; }
+	const streamsStore = buildStore({
+		type: DOC_TYPE.STREAMS,
+		connectionId: cnn.id,
+	} as StreamsState) as StreamsStore;
+	return streamsStore;
+}
+
+export function buildStream(connectionId: string, stream: StreamInfo, allStreams: string[]) {
+	if (!connectionId || !stream) { console.error("no param"); return null; }
+	const store = buildStore({
+		type: DOC_TYPE.STREAM,
+		connectionId: connectionId,
+		stream,
+		allStreams,
+		editState: EDIT_STATE.READ,
+	} as StreamState) as StreamStore;
+	return store;
+}
+
+export function buildStreamNew(connectionId: string, allStreams: string[]) {
+	if (!connectionId) { console.error("no param"); return null; }
+	const store = buildStore({
+		type: DOC_TYPE.STREAM,
+		connectionId: connectionId,
+		stream: buildNewStreamInfo(),
+		allStreams,
+		editState: EDIT_STATE.NEW,
+	} as StreamState) as StreamStore;
+	return store;
+}
+
+export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
+	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null; }
+	const streamMessagesStore = buildStore({
+		type: DOC_TYPE.STREAM_MESSAGES,
+		connectionId,
+		stream,
+	} as StreamMessagesState) as StreamMessagesStore;
+	return streamMessagesStore;
+}
 
 export function buildNewStreamInfo(): StreamInfo {
 	return {
@@ -40,7 +91,7 @@ export function buildNewStreamConfig(): StreamConfig {
 	}
 }
 
-export function buildNewStreamState(): StreamState {
+export function buildNewStreamState(): StreamEntityState {
 	return {
 		messages: 0,
 		bytes: 0,

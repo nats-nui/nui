@@ -10,6 +10,11 @@ function index(connectionId: string): Promise<StreamInfo[]> {
 	return ajax.get(`connection/${connectionId}/stream`)
 }
 
+/** GET */
+function get(connectionId: string, streamName: string): Promise<StreamInfo> {
+	return ajax.get(`connection/${connectionId}/stream/${streamName}`)
+}
+
 /** DELETE */
 function remove(connectionId: string, streamName: string): Promise<void> {
 	if (!connectionId || !streamName) return
@@ -44,6 +49,7 @@ async function messages(connectionId: string, streamName: string, filter:StreamM
 
 const api = {
 	index,
+	get,
 	remove,
 	create,
 	update,

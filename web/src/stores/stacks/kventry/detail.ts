@@ -83,6 +83,7 @@ const setup = {
 			store.getParentList()?.fetch()
 			store.getParentList()?.setSelect(kventry.key)
 		},
+		/** reset EBTITY */
 		restore: (_: void, store?: KVEntryStore) => {
 			store.fetch()
 			store.setReadOnly(true)
