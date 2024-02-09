@@ -6,7 +6,7 @@ import SettingsIcon from "@/icons/SettingsIcon"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { DOC_TYPE } from "@/types"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
@@ -40,8 +40,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
 	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
 	const isBucketsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.BUCKETS
-	const isNew = cnnDetailSa.connection?.id == null
-	const readOnly = cnnDetailSa.readOnly
+	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const variant = cnnDetailSa.colorVar
 
 	return <FrameworkCard

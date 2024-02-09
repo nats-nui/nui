@@ -10,14 +10,22 @@ import streams_S from "../../data/streams"
 
 const handlers = [
 
-	/** INDEX
-	 * Preleva tutti gli STREAMS di una determinata CONNECTION
-	 */
+	/** INDEX */
 	rest.get('/api/connection/:connId/stream', async (req, res, ctx) => {
 		const { cnnId } = req.params
 		return res(
 			ctx.status(200),
 			ctx.json(streams_S),
+		)
+	}),
+
+	/** GET */
+	rest.get('/api/connection/:connId/stream/:streamName', async (req, res, ctx) => {
+		const { cnnId, streamName } = req.params
+		const stream_S = streams_S.find( s => s.config.name == streamName )
+		return res(
+			ctx.status(200),
+			ctx.json(stream_S),
 		)
 	}),
 

@@ -1,6 +1,6 @@
 import Button from "@/components/buttons/Button"
-import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -20,23 +20,21 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEditClick = async () => streamSo.setReadOnly(false)
+	const handleEditClick = async () => streamSo.setEditState(EDIT_STATE.EDIT)
 	const handleCancelClick = () => {
-		streamSo.setReadOnly(true)
 		streamSo.restore()
+		streamSo.setEditState(EDIT_STATE.READ)
 	}
 	const handleSaveClick = async () => {
-		streamSo.setReadOnly(true)
-		streamSo.save()
+		await streamSo.save()
+		streamSo.setEditState(EDIT_STATE.READ)
 	}
 
 	// RENDER
 	if (streamSa.stream == null) return null
-	const isNew = streamSo.isNew()
-	const readOnly = streamSa.readOnly
 	const variant = streamSa.colorVar
 
-	if (isNew) {
+	if (streamSa.editState == EDIT_STATE.NEW) {
 		return (
 			<Button
 				label="CREATE"
@@ -45,7 +43,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			/>
 		)
 
-	} else if (readOnly) {
+	} else if (streamSa.editState == EDIT_STATE.READ) {
 		return (
 			<Button
 				label="EDIT"

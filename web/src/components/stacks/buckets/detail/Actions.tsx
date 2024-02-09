@@ -22,7 +22,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleSave = () => bucketSo.save()
 
 	// RENDER
-	if (!bucketSo.getIsNew()) return null
+	if (!bucketSo.isNew()) return null
 	const variant = bucketSa.colorVar
 
 	return (<>

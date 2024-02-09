@@ -71,6 +71,20 @@ const setup = {
 			store.setAll(buckets)
 			
 		},
+		/** apro la CARD per creare un nuovo elemento */
+		create(_: void, store?: BucketsStore) {
+			const view = buildBucketNew(store.state.connectionId, buildNewBucketConfig())
+			docsSo.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+		async delete(_: void, store?: BucketsStore) {
+			const name = store.state.select
+			await bucketApi.remove(store.state.connectionId, name)
+			store.setAll(store.state.all.filter(b => b.bucket != name))
+			store.setSelect(null)
+		},
+
+
 
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: BucketsStore) {
@@ -79,20 +93,6 @@ const setup = {
     		const view = nameNew ? buildBucket(store.state.connectionId, store.getByName(nameNew)) : null
     		store.setSelect(nameNew)
     		docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
-		},
-
-		/** apro la CARD per creare un nuovo elemento */
-		create(_: void, store?: BucketsStore) {
-			const view = buildBucketNew(store.state.connectionId, buildNewBucketConfig())
-			docsSo.addLink({ view, parent: store, anim: true })
-			store.setSelect(null)
-		},
-
-		async delete(_: void, store?: BucketsStore) {
-			const name = store.state.select
-			if (!name) return
-			await bucketApi.remove(store.state.connectionId, name)
-			store.setAll(store.state.all.filter(b => b.bucket != name))
 		},
 
 	},

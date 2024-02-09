@@ -3,11 +3,13 @@ import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { CnnListStore } from "@/stores/stacks/connection"
-import { CNN_STATUS, Connection } from "@/types"
+import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
+import docSo from "@/stores/docs"
 
 
 
@@ -26,6 +28,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	// STORE
 	const cnnListSa = useStore(cnnListSo)
 	const cnnSa = useStore(cnnSo)
+	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -35,40 +38,42 @@ const CnnListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn.id)
 	const handleNew = () => cnnListSo.create()
-	const handleDel = () => {
-		cnnSo.delete(selectedId)
+	const handleDelete = () => {
+		cnnSo.delete(selected)
 		cnnListSo.select(null)
 	}
-	const handleMessages = (e: React.MouseEvent, cnn: Connection) => {
-		e.stopPropagation()
-		cnnListSo.openMessages(cnn.id)
-	}
-	const handleStreams = (e: React.MouseEvent, cnn: Connection) => {
-		e.stopPropagation()
-		cnnListSo.openStreams(cnn.id)
-	}
+	// const handleMessages = (e: React.MouseEvent, cnn: Connection) => {
+	// 	e.stopPropagation()
+	// 	cnnListSo.openMessages(cnn.id)
+	// }
+	// const handleStreams = (e: React.MouseEvent, cnn: Connection) => {
+	// 	e.stopPropagation()
+	// 	cnnListSo.openStreams(cnn.id)
+	// }
 
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const selectedId = cnnListSa.selectId
-	const isSelected = (cnn: Connection) => selectedId == cnn.id
+	const selected = cnnListSa.select
+	const isSelected = (cnn: Connection) => cnn.id == cnnListSa.select
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
 	const variant = cnnListSa.colorVar
+	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard
 		store={cnnListSo}
 		actionsRender={<>
-			<Button
-				label="NEW"
-				variant={variant}
-				onClick={handleNew}
-			/>
-			<Button
+			{!!selected && <Button
 				label="DELETE"
 				variant={variant}
-				onClick={handleDel}
+				onClick={handleDelete}
+			/>}
+			<Button
+				label="NEW"
+				select={isNewSelect}
+				variant={variant}
+				onClick={handleNew}
 			/>
 		</>}
 		iconizedRender={<div style={cssIconized}>{
@@ -91,11 +96,11 @@ const CnnListView: FunctionComponent<Props> = ({
 				selected={isSelected(cnn)}
 				variant={variant}
 				onClick={() => handleSelect(cnn)}
-				testRender={<>
-					<Button label="Str" onClick={(e) => handleStreams(e, cnn)} />
-					<Button label="Msg" onClick={(e) => handleMessages(e, cnn)} />
-					<Button label="Stt" />
-				</>}
+			// testRender={<>
+			// 	<Button label="Str" onClick={(e) => handleStreams(e, cnn)} />
+			// 	<Button label="Msg" onClick={(e) => handleMessages(e, cnn)} />
+			// 	<Button label="Stt" />
+			// </>}
 			/>
 		))}
 	</FrameworkCard>

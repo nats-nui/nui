@@ -1,18 +1,17 @@
-import servicesSetup, { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
+import servicesSetup from "@/stores/stacks/connection/detail";
 import cnnSetup from "@/stores/stacks/connection";
 import messageSetup, { MessageState } from "@/stores/stacks/message";
-import messagesSetup, { MessagesState, MessagesStore } from "@/stores/stacks/messages";
+import messagesSetup from "@/stores/stacks/messages";
 import messageSendSetup from "@/stores/stacks/send";
-import streamsSetup, { StreamsState, StreamsStore } from "@/stores/stacks/streams";
-import streamSetup, { StreamState, StreamStore } from "@/stores/stacks/streams/detail";
+import streamsSetup from "@/stores/stacks/streams";
+import streamSetup from "@/stores/stacks/streams/detail";
 import logsSetup from "@/stores/stacks/mainLogs";
-import { Connection, DOC_TYPE } from "@/types";
+import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
 import consumerSetup, { ConsumerState, ConsumerStore } from "@/stores/stacks/consumer/detail";
 import consumersSetup, { ConsumersState, ConsumersStore } from "@/stores/stacks/consumer";
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
-import { StreamMessagesState, StreamMessagesStore } from "@/stores/stacks/streams/messages";
 import { StreamInfo } from "@/types/Stream";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
@@ -75,81 +74,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 }
 
 
-
-//#region  CONNECTION
-
-export function buildConnectionMessages(connectionId: string) {
-	const cnn = cnnSo.getById(connectionId)
-	if (!cnn) { console.error("no param"); return null }
-	const cnnMessageStore = buildStore({
-		type: DOC_TYPE.MESSAGES,
-		connectionId: cnn.id,
-		subscriptions: [...(cnn?.subscriptions ?? [])]
-	} as MessagesState) as MessagesStore
-	return cnnMessageStore
-}
-
-/** dettaglio CONNECTION NEW */
-export function buildConnectionNew() {
-	const cnnStore = buildStore({
-		type: DOC_TYPE.CONNECTION,
-		readOnly: false,
-		connection: {
-			name: "",
-			hosts: [],
-			subscriptions: [],
-			auth: []
-		}
-	} as CnnDetailState) as CnnDetailStore
-	return cnnStore
-}
-
-/** dettaglio CONNECTION */
-export function buildConnection(connection: Connection) {
-	const cnnStore = buildStore({
-		type: DOC_TYPE.CONNECTION,
-		readOnly: true,
-		connection
-	} as CnnDetailState) as CnnDetailStore
-	return cnnStore
-}
-
-//#endregion
-
-
-
-//#region STREAM
-
-export function buildStreams(connectionId: string) {
-	const cnn = cnnSo.getById(connectionId)
-	if (!cnn) { console.error("no param"); return null }
-	const streamsStore = buildStore({
-		type: DOC_TYPE.STREAMS,
-		connectionId: cnn.id,
-	} as StreamsState) as StreamsStore
-	return streamsStore
-}
-
-export function buildStream(connectionId: string, stream: StreamInfo) {
-	if (!connectionId || !stream) { console.error("no param"); return null }
-	const store = buildStore({
-		type: DOC_TYPE.STREAM,
-		connectionId: connectionId,
-		stream,
-		readOnly: true,
-	} as StreamState) as StreamStore
-	return store
-}
-
-export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
-	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
-	const streamMessagesStore = buildStore({
-		type: DOC_TYPE.STREAM_MESSAGES,
-		connectionId,
-		stream,
-	} as StreamMessagesState) as StreamMessagesStore
-	return streamMessagesStore
-}
 
 //#endregion
 

@@ -1,16 +1,17 @@
 import FrameworkCard from "@/components/FrameworkCard"
+import RowButton from "@/components/buttons/RowButton"
+import BoxV from "@/components/format/BoxV"
+import IconRow from "@/components/rows/IconRow"
+import MessagesIcon from "@/icons/MessagesIcon"
+import docSo from "@/stores/docs"
 import { StreamStore } from "@/stores/stacks/streams/detail"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import EditForm from "./EditForm"
 import ShowForm from "./ShowForm"
-import RowButton from "@/components/buttons/RowButton"
-import MessagesIcon from "@/icons/MessagesIcon"
-import { DOC_TYPE } from "@/types"
-import docSo from "@/stores/docs"
-import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
+
 
 
 interface Props {
@@ -27,7 +28,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		streamSo.fetch()
+		streamSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -35,7 +36,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const handleMessagesClick = () => streamSo.openMessages()
 
 	// RENDER
-	const readOnly = streamSa.readOnly
+	const inRead = streamSa.editState == EDIT_STATE.READ
 	const variant = streamSa.colorVar
 	const isConsumersSelect = streamSa.linked?.state.type == DOC_TYPE.CONSUMERS
 	const isMessagesSelect = streamSa.linked?.state.type == DOC_TYPE.STREAM_MESSAGES
@@ -60,25 +61,22 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				/>
 			</BoxV>
 		}
-
 	>
-		{readOnly ? (<>
-
-				<RowButton
-					icon={<MessagesIcon />}
-					label="CONSUMERS"
-					variant={variant}
-					selected={isConsumersSelect}
-					onClick={handleConsumersClick}
-				/>
-				<RowButton style={{ marginBottom: 15}}
-					icon={<MessagesIcon />}
-					label="MESSAGES"
-					variant={variant}
-					selected={isMessagesSelect}
-					onClick={handleMessagesClick}
-				/>
-
+		{inRead ? (<>
+			<RowButton
+				icon={<MessagesIcon />}
+				label="CONSUMERS"
+				variant={variant}
+				selected={isConsumersSelect}
+				onClick={handleConsumersClick}
+			/>
+			<RowButton style={{ marginBottom: 15 }}
+				icon={<MessagesIcon />}
+				label="MESSAGES"
+				variant={variant}
+				selected={isMessagesSelect}
+				onClick={handleMessagesClick}
+			/>
 			<ShowForm store={streamSo} />
 		</>) : (
 			<EditForm store={streamSo} />

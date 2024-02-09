@@ -30,7 +30,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 	const handleKVEntriesClick = () => bucketSo.openKVEntries()
 
 	// RENDER
-	const isNew = bucketSo.getIsNew()
+	const isNew = bucketSo.isNew()
 	const variant = bucketSa.colorVar
 	const isKVEntriesSelect = bucketSa.linked?.state.type == DOC_TYPE.KVENTRIES
 

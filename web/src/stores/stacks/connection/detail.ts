@@ -1,11 +1,14 @@
 import srcIcon from "@/assets/ConnectionIcon.svg"
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
+import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { Connection } from "@/types"
+import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildBuckets, buildConnectionMessages, buildStreams } from "../../docs/utils/factory"
+import { buildBuckets } from "../../docs/utils/factory"
+import { buildConnectionMessages } from "./utils/factory"
+import { buildStreams } from "../streams/utils/factory"
+import { CnnListState, CnnListStore } from "."
 
 
 
@@ -16,8 +19,8 @@ const setup = {
 		subOpen: false,
 		/** connection caricata nella CARD */
 		connection: <Connection>null,
-		/** indica se la connection caricata nella CARD è editabile */
-		readOnly: true,
+		
+		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
 		width: 200,
@@ -36,11 +39,14 @@ const setup = {
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connection: state.connection,
-				readOnly: state.readOnly
+				editState: state.editState,
 			}
 		},
 		//#endregion
 
+		getParentList: (_: void, store?: CnnDetailStore): CnnListStore => docSo.find({
+			type: DOC_TYPE.CONNECTIONS,
+		} as Partial<CnnListState>) as CnnListStore,
 	},
 
 	actions: {
@@ -50,7 +56,7 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnDetailState
 			state.connection = data.connection
-			state.readOnly = data.readOnly
+			state.editState = data.editState
 		},
 		//#endregion
 
@@ -62,22 +68,22 @@ const setup = {
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {
-			docsSo.addLink({ view: buildConnectionMessages(store.state.connection?.id), parent: store, anim: true })
+			docSo.addLink({ view: buildConnectionMessages(store.state.connection?.id), parent: store, anim: true })
 		},
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
-			docsSo.addLink({  view: buildStreams(store.state.connection?.id),  parent: store,  anim: true  })
+			docSo.addLink({  view: buildStreams(store.state.connection?.id),  parent: store,  anim: true  })
 		},
 		/** apertura della CARD BUCKETS */
 		openBuckets(_: void, store?: CnnDetailStore) {
-			docsSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
+			docSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
 		},
 	},
 
 	mutators: {
 		setConnection: (connection: Connection) => ({ connection }),
 		setSubOpen: (subOpen: boolean) => ({ subOpen }),
-		setReadOnly: (readOnly: boolean) => ({ readOnly }),
+		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},
 }
 
