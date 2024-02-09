@@ -2,8 +2,8 @@ name: desktop build
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 env:
   # Necessary for most environments as build failure can occur due to OOM issues
