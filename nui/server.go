@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
 	"github.com/pricelessrabbit/nui/ws"
@@ -30,7 +31,9 @@ func NewServer(port string, nui *Nui, l *slog.Logger) *App {
 	}
 
 	app.Use(slogfiber.New(l))
-
+	app.Use(compress.New(compress.Config{
+		Level: compress.LevelBestCompression,
+	}))
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://wails.localhost, wails://wails, wails://localhost",
 		AllowHeaders: "Origin, Content-Type, Accept",

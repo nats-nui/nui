@@ -129,7 +129,7 @@ func (a *App) handleIndexKeys(c *fiber.Ctx) error {
 	}
 	watcher, err := kv.WatchAll(c.Context(), jetstream.IgnoreDeletes(), jetstream.MetaOnly())
 
-	var keysData []KevValueEntry
+	keysData := make([]KevValueEntry, 0)
 
 watch:
 	for {

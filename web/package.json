@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev-desktop": "cross-env VITE_TARGET=desktop vite",
     "build": "cross-env VITE_TARGET=web vite build",
-    "build-desktop": "tsc && cross-env VITE_TARGET=desktop vite build",
+    "build-desktop": "cross-env VITE_TARGET=desktop vite build",
     "typescript": "tsc",
     "start:socket:mock": "node ./src/mocks/socket/index.js",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
