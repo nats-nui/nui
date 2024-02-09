@@ -33,7 +33,6 @@ jobs:
         with:
           submodules: recursive
       - name: Build wails
-        working-directory: nui-desktop
         uses: dAppServer/wails-build-action@v2.2
         id: build
         with:
