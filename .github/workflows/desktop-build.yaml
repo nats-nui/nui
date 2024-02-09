@@ -39,7 +39,7 @@ jobs:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           app-working-directory: 'nui-desktop'
-          package: false
+          package: true
           go-version: '1.21'
           nsis: false
           
