@@ -57,7 +57,7 @@ jobs:
             nui-desktop\build\bin\*
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: inputs.package == 'true' && startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             nui-desktop/build/bin/*
