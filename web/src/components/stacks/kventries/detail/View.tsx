@@ -33,7 +33,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 	// RENDER
 	const variant = kventrySa.colorVar
 	const history = kventrySa.kventry.history
-	const historySelected = history.findIndex( kv => kv.revision == kventrySa.revisionSelected )
+	const historySelected = history?.findIndex( kv => kv.revision == kventrySa.revisionSelected )
 
 	return <FrameworkCard
 		variantBg={variant}
