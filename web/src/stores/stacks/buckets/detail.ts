@@ -1,14 +1,14 @@
 import bucketApi from "@/api/buckets"
 import srcIcon from "@/assets/StreamsIcon.svg"
+import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildNewBucketConfig } from "./utils/factory"
-import { buildKVEntries, buildKVEntry } from "../kventry/utils/factory"
-import docSo from "@/stores/docs"
 import { BucketsState, BucketsStore } from "."
-import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { buildKVEntries } from "../kventry/utils/factory"
+
 
 
 /** STREAM DETAIL */
@@ -65,6 +65,8 @@ const setup = {
 
 		/** load all ENTITY */
 		async fetch(_: void, store?: BucketStore) {
+			// se NEW è valorizzato solo "bucketConfig"
+			if ( !store.state.bucket) return
 			const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket)
 			store.setBucket(bucket)
 		},

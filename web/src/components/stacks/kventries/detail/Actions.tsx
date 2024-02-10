@@ -23,15 +23,28 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleEdit = () => kventrySo.setEditState(EDIT_STATE.EDIT)
 	const handleSave = () => kventrySo.save()
 	const handleCancel = () => kventrySo.restore()
+	const handleHistoryOpen = () => {
+		kventrySo.fetch()
+		kventrySo.setHistoryOpen(true)
+	}
 
 	// RENDER
 	const variant = kventrySa.colorVar
 
-	if (kventrySa.editState == EDIT_STATE.READ) return <Button
-		label="EDIT"
-		variant={variant}
-		onClick={handleEdit}
-	/>
+	if (kventrySa.editState == EDIT_STATE.READ) return <>
+		<Button
+			label="HISTORY"
+			variant={variant}
+			onClick={handleHistoryOpen}
+		/>
+		<Button
+			label="EDIT"
+			variant={variant}
+			onClick={handleEdit}
+		/>
+	</>
+
+
 
 	const inNew = kventrySa.editState == EDIT_STATE.NEW
 	const label = inNew ? "CREATE" : "SAVE"

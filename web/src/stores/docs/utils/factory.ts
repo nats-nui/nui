@@ -9,17 +9,15 @@ import logsSetup from "@/stores/stacks/mainLogs";
 import { DOC_TYPE } from "@/types";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
-import consumerSetup, { ConsumerState, ConsumerStore } from "@/stores/stacks/consumer/detail";
-import consumersSetup, { ConsumersState, ConsumersStore } from "@/stores/stacks/consumer";
+import consumerSetup from "@/stores/stacks/consumer/detail";
+import consumersSetup from "@/stores/stacks/consumer";
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
-import { StreamInfo } from "@/types/Stream";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
 import bucketSetup from "@/stores/stacks/buckets/detail";
 import kventriesSetup from "@/stores/stacks/kventry";
 import kventrySetup from "@/stores/stacks/kventry/detail";
 import bucketsSetup from "@/stores/stacks/buckets";
-import { StreamConsumer } from "@/types/Consumer";
 
 
 
@@ -71,33 +69,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 }
 
 
-
-//#endregion
-
-
-
-//#region CONSUMER
-
-export function buildConsumer(connectionId: string, streamName: string, consumer: StreamConsumer) {
-	if (!connectionId || !streamName || !consumer) { console.error("no param"); return null }
-	const consumerStore = buildStore({
-		type: DOC_TYPE.CONSUMER,
-		connectionId: connectionId,
-		streamName: streamName,
-		consumer,
-	} as ConsumerState) as ConsumerStore
-	return consumerStore
-}
-
-export function buildConsumers(connectionId: string, stream: Partial<StreamInfo>) {
-	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null }
-	const consumerStore = buildStore({
-		type: DOC_TYPE.CONSUMERS,
-		connectionId: connectionId,
-		streamName: stream.config.name,
-	} as ConsumersState) as ConsumersStore
-	return consumerStore
-}
 
 //#endregion
 

@@ -28,12 +28,14 @@ const ShowForm: FunctionComponent<Props> = ({
 	const handleKeyChange = (key: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, key })
 
 	// RENDER
-	const kventry = kventrySa.kventry
+	const kventry = kventrySo.getKVToShow()
 	if (!kventry) return null
 	const inRead = kventrySa.editState == EDIT_STATE.READ
 
 	return <Form>
 
+		<Label>REVISION {kventry.revision}</Label>
+		
 		<BoxV>
 			<Label>KEY</Label>
 			<TextInput

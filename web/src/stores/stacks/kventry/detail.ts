@@ -21,6 +21,9 @@ const setup = {
 
 		editState: EDIT_STATE.READ,
 
+		historyOpen: false,
+		revisionSelected: <number>null,
+
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
@@ -51,6 +54,12 @@ const setup = {
 			bucket: { bucket: store.state.bucket.bucket }
 		} as Partial<KVEntriesState>) as KVEntriesStore,
 
+		getKVToShow(_: void, store?: KVEntryStore): KVEntry {
+			const history = store.state.kventry?.history
+			const revision = store.state.revisionSelected
+			const kv = history?.find( kv => kv.revision == revision ) ?? store.state.kventry
+			return kv
+		},
 	},
 
 	actions: {
@@ -89,11 +98,21 @@ const setup = {
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
 		},
+
+
+
+		revisionSelect(revision: number, store?: KVEntryStore) {
+			//const kv = store.state.kventry?.history?.find( kv => kv.revision == revision )
+			store.setRevisionSelected(revision)
+			store.setHistoryOpen(false)
+		},
 	},
 
 	mutators: {
 		setKVEntry: (kventry: KVEntry) => ({ kventry }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
+		setHistoryOpen: (historyOpen: boolean) => ({ historyOpen }),
+		setRevisionSelected: (revisionSelected: number) => ({ revisionSelected }),
 	},
 }
 

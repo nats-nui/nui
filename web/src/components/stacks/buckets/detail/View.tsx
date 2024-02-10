@@ -1,6 +1,7 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import RowButton from "@/components/buttons/RowButton"
 import MessagesIcon from "@/icons/MessagesIcon"
+import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -8,6 +9,7 @@ import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import CreateForm from "./CreateForm"
 import ShowForm from "./ShowForm"
+
 
 
 interface Props {
@@ -20,6 +22,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const bucketSa = useStore(bucketSo)
+	useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
