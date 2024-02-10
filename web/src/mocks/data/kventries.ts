@@ -75,18 +75,45 @@ export default [
 
 export const keyValueEntryDetail: any = {
     "key": "host.name",
-    "payload": "dmFsdWU=",
-    "last_update": "2022-11-17T04:28:29Z",
+    "payload": "444",
+    "last_update": "2022-11-17T05:31:29+01:00",
     "operation": "KeyValuePutOp",
-    "revision": 2,
+    "revision": 6,
     "is_deleted": false,
     "history": [
         {
             "key": "host.name",
-            "payload": "dmFsdWU=",
+            "payload": "222",
             "last_update": "2022-11-17T05:28:29+01:00",
             "operation": "KeyValuePutOp",
             "revision": 2,
+            "is_deleted": false,
+            "history": null
+        },
+        {
+            "key": "host.name",
+            "payload": "333",
+            "last_update": "2022-11-17T05:29:29+01:00",
+            "operation": "KeyValuePutOp",
+            "revision": 3,
+            "is_deleted": false,
+            "history": null
+        },
+        {
+            "key": "host.name",
+            "payload": "444",
+            "last_update": "2022-11-17T05:30:29+01:00",
+            "operation": "KeyValuePutOp",
+            "revision": 4,
+            "is_deleted": false,
+            "history": null
+        },
+        {
+            "key": "host.name",
+            "payload": "777",
+            "last_update": "2022-11-17T05:31:29+01:00",
+            "operation": "KeyValuePutOp",
+            "revision": 6,
             "is_deleted": false,
             "history": null
         }
