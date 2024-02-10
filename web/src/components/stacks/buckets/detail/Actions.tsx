@@ -1,5 +1,6 @@
 import Button from "@/components/buttons/Button"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -22,8 +23,9 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleSave = () => bucketSo.save()
 
 	// RENDER
-	if (!bucketSo.isNew()) return null
 	const variant = bucketSa.colorVar
+
+	if (bucketSa.editState == EDIT_STATE.READ) return null
 
 	return (<>
 		<Button

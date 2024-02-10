@@ -20,7 +20,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		kventrySo.fetch()
+		kventrySo.fetchIfVoid()
 	}, [])
 
 	// HANDLER

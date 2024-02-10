@@ -88,7 +88,7 @@ const setup = {
 		},
 		/** crea un nuovo STREAM-INFO tramite STREAM-CONFIG */
 		async save(_: void, store?: StreamStore) {
-			let streamSaved = null
+			let streamSaved:StreamInfo = null
 			if (store.state.editState == EDIT_STATE.NEW) {
 				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
 			} else {
@@ -96,6 +96,8 @@ const setup = {
 			}
 			store.setStream(streamSaved)
 			store.getParentList()?.update(streamSaved)
+			store.getParentList()?.setSelect(streamSaved.config.name)
+			store.setEditState(EDIT_STATE.READ)
 		},
 		/** reset ENTITY */
 		restore: (_: void, store?: StreamStore) => {

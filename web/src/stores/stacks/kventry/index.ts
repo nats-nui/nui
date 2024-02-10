@@ -2,7 +2,7 @@ import kventryApi from "@/api/kventries"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildKVEntry, buildKVEntryNew } from "@/stores/docs/utils/factory"
+import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
@@ -20,7 +20,7 @@ const setup = {
 		bucket: <BucketState>null,
 		/** nome del BUCKET selezionato */
 		select: <string>null,
-		all: <KVEntry[]>[],
+		all: <KVEntry[]>null,
 
 		//#region VIEWBASE
 		width: 366,
@@ -50,7 +50,7 @@ const setup = {
 			return store.state.all?.find(s => s.key == key)
 		},
 		getIndexByName(name: string, store?: KVEntriesStore) {
-			if (!name) return null
+			if (!name) return -1
 			return store.state.all?.findIndex(s => s.key == name)
 		},
 	},
@@ -67,7 +67,12 @@ const setup = {
 		},
 		//#endregion
 
-		/** carico tutti gli elementi */
+
+
+		async fetchIfVoid(_: void, store?: KVEntriesStore) {
+			if (!!store.state.all) return
+			await store.fetch()
+		},
 		async fetch(_: void, store?: KVEntriesStore) {
 			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket)
 			store.setAll(kventries)
@@ -94,7 +99,6 @@ const setup = {
 			store.setSelect(newKey)
 			docSo.addLink({ view, parent: store, anim: !oldkey || !newKey })
 		},
-
 	},
 
 	mutators: {

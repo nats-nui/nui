@@ -2,12 +2,11 @@ import bucketApi from "@/api/buckets"
 import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
-import { buildBucket, buildBucketNew } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildNewBucketConfig } from "./utils/factory"
+import { buildBucket, buildBucketNew } from "./utils/factory"
 
 
 
@@ -49,7 +48,7 @@ const setup = {
 			return store.state.all?.find(s => s.bucket == name)
 		},
 		getIndexByName(name: string, store?: BucketsStore) {
-			if (!name) return null
+			if (!name) return -1
 			return store.state.all?.findIndex(s => s.bucket == name)
 		},
 	},
@@ -65,7 +64,12 @@ const setup = {
 		},
 		//#endregion
 
-		/** carico tutti gli elementi */
+
+		
+		async fetchIfVoid(_: void, store?: BucketsStore) {
+			if (!!store.state.all) return
+			await store.fetch()
+		},
 		async fetch(_: void, store?: BucketsStore) {
 			const buckets = await bucketApi.index(store.state.connectionId)
 			store.setAll(buckets)
@@ -73,7 +77,7 @@ const setup = {
 		},
 		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: BucketsStore) {
-			const view = buildBucketNew(store.state.connectionId, buildNewBucketConfig())
+			const view = buildBucketNew(store.state.connectionId)
 			docsSo.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
@@ -86,6 +90,12 @@ const setup = {
 
 
 
+		update(bucket: BucketState, store?: BucketsStore) {
+			const all = [...store.state.all]
+			const index = store.getIndexByName(bucket.bucket)
+			index == -1 ? all.push(bucket) : (all[index] = { ...all[index], ...bucket })
+			store.setAll(all)
+		},
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: BucketsStore) {
 			const nameOld = store.state.select
@@ -94,7 +104,6 @@ const setup = {
     		store.setSelect(nameNew)
     		docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
-
 	},
 
 	mutators: {

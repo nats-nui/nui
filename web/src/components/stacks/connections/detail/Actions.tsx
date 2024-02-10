@@ -25,10 +25,7 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleEditClick = async () => cnnDetailSo.setEditState(EDIT_STATE.EDIT)
-	const handleCancelClick = () => {
-		cnnDetailSo.restore()
-		cnnDetailSo.setEditState(EDIT_STATE.READ)
-	}
+	const handleCancelClick = () => cnnDetailSo.restore()
 	const handleSaveClick = async () => {
 		await cnnSo.save(cnnDetailSa.connection)
 		cnnDetailSo.setEditState(EDIT_STATE.READ)

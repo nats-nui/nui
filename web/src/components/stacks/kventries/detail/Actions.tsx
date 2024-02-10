@@ -1,5 +1,6 @@
 import Button from "@/components/buttons/Button"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -19,19 +20,21 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEdit = () => kventrySo.setReadOnly(false)
+	const handleEdit = () => kventrySo.setEditState(EDIT_STATE.EDIT)
 	const handleSave = () => kventrySo.save()
 	const handleCancel = () => kventrySo.restore()
 
 	// RENDER
 	const variant = kventrySa.colorVar
-	const label = kventrySa.isNew ? "CREATE" : "SAVE"
 
-	if (kventrySa.readOnly) return <Button
+	if (kventrySa.editState == EDIT_STATE.READ) return <Button
 		label="EDIT"
 		variant={variant}
 		onClick={handleEdit}
 	/>
+
+	const inNew = kventrySa.editState == EDIT_STATE.NEW
+	const label = inNew ? "CREATE" : "SAVE"
 
 	return (<>
 		<Button
@@ -39,7 +42,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			variant={variant}
 			onClick={handleSave}
 		/>
-		{!kventrySa.isNew && (
+		{!inNew && (
 			<Button
 				label="CANCEL"
 				variant={variant}

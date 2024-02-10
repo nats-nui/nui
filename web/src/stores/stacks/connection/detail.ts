@@ -5,7 +5,7 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildBuckets } from "../../docs/utils/factory"
+import { buildBuckets } from "../buckets/utils/factory"
 import { buildConnectionMessages } from "./utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { CnnListState, CnnListStore } from "."
@@ -64,6 +64,7 @@ const setup = {
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
 			store.setConnection(cnn)
+			store.setEditState(EDIT_STATE.READ)
 		},
 
 		/** apertura della CARD MESSAGES */

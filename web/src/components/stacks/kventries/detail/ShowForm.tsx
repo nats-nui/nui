@@ -4,6 +4,7 @@ import Label from "@/components/format/Label"
 import TextArea from "@/components/input/TextArea"
 import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 
@@ -21,9 +22,6 @@ const ShowForm: FunctionComponent<Props> = ({
 	const kventrySa = useStore(kventrySo)
 
 	// HOOKs
-	useEffect(() => {
-		kventrySo.fetch()
-	}, [])
 
 	// HANDLER
 	const handleEntryChange = (payload: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, payload })
@@ -32,7 +30,7 @@ const ShowForm: FunctionComponent<Props> = ({
 	// RENDER
 	const kventry = kventrySa.kventry
 	if (!kventry) return null
-	const readOnly = kventrySa.readOnly
+	const inRead = kventrySa.editState == EDIT_STATE.READ
 
 	return <Form>
 
@@ -41,7 +39,7 @@ const ShowForm: FunctionComponent<Props> = ({
 			<TextInput
 				value={kventry.key ?? ""}
 				onChange={handleKeyChange}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 		<BoxV>
@@ -49,7 +47,7 @@ const ShowForm: FunctionComponent<Props> = ({
 			<TextArea
 				value={kventry.payload ?? ""}
 				onChange={handleEntryChange}
-				readOnly={readOnly}
+				readOnly={inRead}
 			/>
 		</BoxV>
 

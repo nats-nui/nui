@@ -23,10 +23,10 @@ export function buildStream(connectionId: string, stream: StreamInfo, allStreams
 	if (!connectionId || !stream) { console.error("no param"); return null; }
 	const store = buildStore({
 		type: DOC_TYPE.STREAM,
+		editState: EDIT_STATE.READ,
 		connectionId: connectionId,
 		stream,
 		allStreams,
-		editState: EDIT_STATE.READ,
 	} as StreamState) as StreamStore;
 	return store;
 }
@@ -35,10 +35,10 @@ export function buildStreamNew(connectionId: string, allStreams: string[]) {
 	if (!connectionId) { console.error("no param"); return null; }
 	const store = buildStore({
 		type: DOC_TYPE.STREAM,
+		editState: EDIT_STATE.NEW,
 		connectionId: connectionId,
 		stream: buildNewStreamInfo(),
 		allStreams,
-		editState: EDIT_STATE.NEW,
 	} as StreamState) as StreamStore;
 	return store;
 }

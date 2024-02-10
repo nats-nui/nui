@@ -1,5 +1,6 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import ElementRow from "@/components/rows/ElementRow"
+import docSo from "@/stores/docs"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"
 import { useStore } from "@priolo/jon"
@@ -17,10 +18,11 @@ const ConsumersListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const consumersSa = useStore(consumersSo)
+	const docSa = useStore(docSo)
 
 	// HOOKs
 	useEffect(() => {
-		consumersSo.fetch()
+		consumersSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -33,15 +35,13 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	const variant = consumersSa.colorVar
 	const isSelected = (consumer: StreamConsumer) => selected == consumer.config?.name
 	const getTitle = (consumer: StreamConsumer) => consumer.config?.name ?? "--"
-	//const getSubtitle = (consumer: ConsumerInfo) => consumer.config.description
-
+	
 	return <FrameworkCard
 		store={consumersSo}
 	>
 		{consumers.map(consumer => (
 			<ElementRow key={consumer.config.name}
 				title={getTitle(consumer)}
-				//subtitle={getSubtitle(consumer)}
 				selected={isSelected(consumer)}
 				variant={variant}
 				onClick={() => handleSelect(consumer)}

@@ -15,13 +15,10 @@ import streamMessagesSetup from "@/stores/stacks/streams/messages";
 import { StreamInfo } from "@/types/Stream";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
-import cnnSo from "@/stores/connections"
-import bucketSetup, { BucketStatus, BucketStore } from "@/stores/stacks/buckets/detail";
-import { BucketConfig, BucketState } from "@/types/Bucket";
-import kventriesSetup, { KVEntriesState, KVEntriesStore } from "@/stores/stacks/kventry";
-import kventrySetup, { KVEntryState, KVEntryStore } from "@/stores/stacks/kventry/detail";
-import bucketsSetup, { BucketsState, BucketsStore } from "@/stores/stacks/buckets";
-import { KVEntry } from "@/types/KVEntry";
+import bucketSetup from "@/stores/stacks/buckets/detail";
+import kventriesSetup from "@/stores/stacks/kventry";
+import kventrySetup from "@/stores/stacks/kventry/detail";
+import bucketsSetup from "@/stores/stacks/buckets";
 import { StreamConsumer } from "@/types/Consumer";
 
 
@@ -74,75 +71,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 }
 
 
-
-//#endregion
-
-
-
-//#region BUCKET
-
-export function buildBuckets(connectionId: string) {
-	const cnn = cnnSo.getById(connectionId)
-	if (!cnn) { console.error("no param"); return null }
-	const bucketsStore = buildStore({
-		type: DOC_TYPE.BUCKETS,
-		connectionId: cnn.id,
-	} as BucketsState) as BucketsStore
-	return bucketsStore
-}
-
-export function buildBucket(connectionId: string, bucket: Partial<BucketState>) {
-	if (!connectionId) { console.error("no param"); return null }
-	const bucketStore = buildStore({
-		type: DOC_TYPE.BUCKET,
-		connectionId,
-		bucket,
-	} as BucketStatus) as BucketStore
-	return bucketStore
-}
-export function buildBucketNew(connectionId: string, bucketConfig: BucketConfig) {
-	if (!connectionId || !bucketConfig) { console.error("no param"); return null }
-	const bucketStore = buildStore({
-		type: DOC_TYPE.BUCKET,
-		connectionId,
-		bucketConfig,
-	} as BucketStatus) as BucketStore
-	return bucketStore
-}
-
-export function buildKVEntries(connectionId: string, bucket: BucketState) {
-	if (!bucket || !connectionId) { console.error("no param"); return null }
-	const bucketsStore = buildStore({
-		type: DOC_TYPE.KVENTRIES,
-		connectionId: connectionId,
-		bucket,
-	} as KVEntriesState) as KVEntriesStore
-	return bucketsStore
-}
-
-export function buildKVEntry(connectionId: string, bucket: Partial<BucketState>, kventry: KVEntry) {
-	if (!bucket || !connectionId) { console.error("no param"); return null }
-	const store = buildStore({
-		type: DOC_TYPE.KVENTRY,
-		connectionId,
-		bucket,
-		kventry,
-	} as KVEntryState) as KVEntryStore
-	return store
-}
-
-export function buildKVEntryNew(connectionId: string, bucket: Partial<BucketState>) {
-	if (!bucket || !connectionId) { console.error("no param"); return null }
-	const store = buildStore({
-		type: DOC_TYPE.KVENTRY,
-		connectionId,
-		bucket,
-		kventry: { key: "", payload: "" },
-		readOnly: false,
-		isNew: true,
-	} as KVEntryState) as KVEntryStore
-	return store
-}
 
 //#endregion
 

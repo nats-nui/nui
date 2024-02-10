@@ -21,7 +21,7 @@ const setup = {
 
 		/** nome del CONSUMER selezionato */
 		select: <string>null,
-		all: <StreamConsumer[]>[],
+		all: <StreamConsumer[]>null,
 
 		//#region VIEWBASE
 		width: 200,
@@ -40,6 +40,7 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				streamName: state.streamName,
+				select: state.select,
 			}
 		},
 		//#endregion
@@ -47,6 +48,10 @@ const setup = {
 		getByName(name: string, store?: ConsumersStore) {
 			if (!name) return null
 			return store.state.all?.find(c => c.config.name == name)
+		},
+		getIndexByName(name: string, store?: ConsumersStore) {
+			if (!name) return -1
+			return store.state.all?.findIndex(c => c.name == name)
 		},
 	},
 
@@ -60,12 +65,20 @@ const setup = {
 			state.streamName = data.streamName
 		},
 		//#endregion
-		
+
+
+
+		async fetchIfVoid(_: void, store?: ConsumersStore) {
+			if (!!store.state.all) return
+			await store.fetch()
+		},
 		async fetch(_: void, store?: ConsumersStore) {
 			const consumers = await conApi.index(store.state.connectionId, store.state.streamName)
 			store.setAll(consumers)
 		},
 
+
+		
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: ConsumersStore) {
 			const nameOld = store.state.select
