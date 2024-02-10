@@ -4,7 +4,7 @@ import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
-import { DOC_TYPE } from "@/types"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { KVEntry } from "@/types/KVEntry"
 import { useStore } from "@priolo/jon"
 import { CSSProperties, FunctionComponent, useEffect } from "react"
@@ -24,7 +24,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		kventriesSo.fetch()
+		kventriesSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -38,7 +38,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	const selected = kventriesSa.select
 	const variant = kventriesSa.colorVar
 	const isSelected = (kventry: KVEntry) => selected == kventry.key
-	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.isNew
+	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={kventriesSo}

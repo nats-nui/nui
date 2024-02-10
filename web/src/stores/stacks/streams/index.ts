@@ -47,10 +47,9 @@ const setup = {
 			return store.state.all?.find(s => s.config.name == name)
 		},
 		getIndexByName(name: string, store?: StreamsStore) {
-			if (!name) return null
+			if (!name) return -1
 			return store.state.all?.findIndex(s => s.config.name == name)
 		},
-
 		getAllStreamName(_: void, store?: StreamsStore) {
 			return store.state.all?.map(si => si.config.name) ?? []
 		}
@@ -66,21 +65,16 @@ const setup = {
 			state.select = data.select
 		},
 		//#endregion
+
+
 		
 		async fetchIfVoid(_: void, store?: StreamsStore) {
-			if ( !!store.state.all ) return
+			if (!!store.state.all) return
 			await store.fetch()
 		},
 		async fetch(_: void, store?: StreamsStore) {
 			const streams = await strApi.index(store.state.connectionId)
 			store.setAll(streams)
-		},
-		// [II] da capire se conviene fare cosi' o aggiornare tutta la lista
-		update(stream: StreamInfo, store?: StreamsStore) {
-			const all = [...store.state.all]
-			const index = !stream.state ? -1 : store.getIndexByName(stream.config.name)
-			index == -1 ? all.push(stream) : (all[index] = { ...all[index], ...stream })
-			store.setAll(all)
 		},
 		/** open CREATION CARD */
 		create(_: void, store?: StreamsStore) {
@@ -97,16 +91,25 @@ const setup = {
 
 
 
+		update(stream: StreamInfo, store?: StreamsStore) {
+			const all = [...store.state.all]
+			const index = store.getIndexByName(stream.config?.name)
+			index == -1 ? all.push(stream) : (all[index] = { ...all[index], ...stream })
+			store.setAll(all)
+		},
 		/** visualizzo dettaglio di uno STREAM */
 		select(name: string, store?: StreamsStore) {
 			const nameOld = store.state.select
 			const nameNew = (name && nameOld !== name) ? name : null
-			const view = nameNew 
-				? buildStream(store.state.connectionId, store.getByName(nameNew), store.getAllStreamName()) 
+			const view = nameNew
+				? buildStream(store.state.connectionId, store.getByName(nameNew), store.getAllStreamName())
 				: null
 			store.setSelect(nameNew)
 			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
+
+
+
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
 			docSo.addLink({

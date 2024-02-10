@@ -21,14 +21,8 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleEditClick = async () => streamSo.setEditState(EDIT_STATE.EDIT)
-	const handleCancelClick = () => {
-		streamSo.restore()
-		streamSo.setEditState(EDIT_STATE.READ)
-	}
-	const handleSaveClick = async () => {
-		await streamSo.save()
-		streamSo.setEditState(EDIT_STATE.READ)
-	}
+	const handleCancelClick = () => streamSo.restore()
+	const handleSaveClick = () => streamSo.save()
 
 	// RENDER
 	if (streamSa.stream == null) return null

@@ -3,6 +3,10 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
+import { ConsumersState, ConsumersStore } from "."
+import docSo from "@/stores/docs"
+import { DOC_TYPE } from "@/types"
+import cnsApi from "@/api/consumers"
 
 
 
@@ -32,22 +36,40 @@ const setup = {
 			const state = store.state as ConsumerState
 			return {
 				...viewSetup.getters.getSerialization(null, store),
+				connectionId: state.connectionId,
+				streamName: state.streamName,
+				consumer: state.consumer,
 			}
 		},
 		//#endregion
+
+		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => docSo.find({
+			type: DOC_TYPE.CONSUMERS,
+			connectionId: store.state.connectionId,
+			streamName: store.state.streamName,
+		} as Partial<ConsumersState>) as ConsumersStore,
 	},
 
 	actions: {
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
+			const state = store.state as ConsumerState
+			state.connectionId = data.connectionId
+			state.streamName = data.streamName
+			state.consumer = data.consumer
 		},
 		//#endregion
 
-		/** carico tutti i dati del CONSUMER se ce ne fosse bisogno */
+
+		
+		async fetchIfVoid(_: void, store?: ConsumerStore) {
+			if (!!store.state.consumer) return
+			await store.fetch()
+		},
 		fetch: async (_: void, store?: ConsumerStore) => {
-			// verifico che ci siano i dati del dettaglio
-			// TO DO
+			const consumer = await cnsApi.get(store.state.connectionId, store.state.streamName, store.state.consumer.name)
+			store.setConsumer(consumer)
 		},
 	},
 

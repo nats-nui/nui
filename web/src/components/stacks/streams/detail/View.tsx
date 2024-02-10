@@ -37,9 +37,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inRead = streamSa.editState == EDIT_STATE.READ
-	const variant = streamSa.colorVar
 	const isConsumersSelect = streamSa.linked?.state.type == DOC_TYPE.CONSUMERS
 	const isMessagesSelect = streamSa.linked?.state.type == DOC_TYPE.STREAM_MESSAGES
+	const variant = streamSa.colorVar
 
 	return <FrameworkCard
 		variantBg={variant}

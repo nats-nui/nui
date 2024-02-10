@@ -5,10 +5,10 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildNewBucketConfig } from "./utils/factory"
-import { buildKVEntries, buildKVEntry } from "@/stores/docs/utils/factory"
+import { buildKVEntries, buildKVEntry } from "../kventry/utils/factory"
 import docSo from "@/stores/docs"
 import { BucketsState, BucketsStore } from "."
-import { DOC_TYPE } from "@/types"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 
 
 /** STREAM DETAIL */
@@ -19,7 +19,7 @@ const setup = {
 		bucket: <BucketState>null,
 		bucketConfig: <BucketConfig>null,
 
-		readOnly: true,
+		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
@@ -40,7 +40,7 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				bucket: state.bucket,
-				readOnly: state.readOnly,
+				editState: state.editState,
 			}
 		},
 		//#endregion
@@ -49,9 +49,6 @@ const setup = {
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
-
-		isNew: (_: void, store?: BucketStore) => !!store.state.bucketConfig && !store.state.bucket
-
 	},
 
 	actions: {
@@ -62,7 +59,7 @@ const setup = {
 			const state = store.state as BucketStatus
 			state.connectionId = data.connectionId
 			state.bucket = data.bucket
-			state.readOnly = data.readOnly
+			state.editState = data.editState
 		},
 		//#endregion
 
@@ -75,8 +72,9 @@ const setup = {
 		async save(_: void, store?: BucketStore) {
 			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig)
 			store.setBucket(bucketSaved)
-			store.getParentList()?.fetch()
+			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)
+			store.setEditState(EDIT_STATE.READ)
 		},
 
 
@@ -91,7 +89,7 @@ const setup = {
 	mutators: {
 		setBucket: (bucket: BucketState) => ({ bucket }),
 		setBucketConfig: (bucketConfig: BucketConfig) => ({ bucketConfig }),
-		setReadOnly: (readOnly: boolean) => ({ readOnly }),
+		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},
 }
 
