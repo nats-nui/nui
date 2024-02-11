@@ -10,7 +10,9 @@ env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
-  build:
+  build_and_test:
+    uses: ./.github/workflows/build-and-test.yml
+  release:
     needs: [build_test_fe, build_test_be]
     permissions: write-all
     strategy:
