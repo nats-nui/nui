@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
+	"github.com/pricelessrabbit/nui/pkg/logging"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"testing"
 	"time"
 )
@@ -63,27 +65,26 @@ func (m *mockConnection) Status() nats.Status {
 	return m.NatsStatus
 }
 
-type hubSuite struct {
+type HubSuite struct {
+	suite.Suite
 	hub  *Hub[*mockSubscription, *mockConnection]
 	pool *mockPool
+	l    logging.Slogger
 }
 
-func setupHubSuite() *hubSuite {
-	s := &hubSuite{}
+func (s *HubSuite) SetupSuite() {
+	s.l = &logging.MockedLogger{}
 	s.pool = &mockPool{Conn: &mockConnection{}}
-	s.hub = NewHub[*mockSubscription, *mockConnection](s.pool)
-	return s
+	s.hub = NewHub[*mockSubscription, *mockConnection](s.pool, s.l)
 }
 
-func TestHub_Register(t *testing.T) {
-	s := setupHubSuite()
-	require.NotPanics(t, func() {
+func (s *HubSuite) TestHub_Register() {
+	require.NotPanics(s.T(), func() {
 		_ = s.hub.Register(context.Background(), "test", "connection", make(chan *Request), make(chan Payload))
 	})
 }
 
-func TestHub_ListenRequests(t *testing.T) {
-	s := setupHubSuite()
+func (s *HubSuite) TestHub_ListenRequests() {
 	req := make(chan *Request, 1)
 	msg := make(chan Payload, 1)
 	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
@@ -118,7 +119,7 @@ func TestHub_ListenRequests(t *testing.T) {
 		received1 = (<-msg).(*NatsMsg)
 		received2 = (<-msg).(*NatsMsg)
 	}()
-	require.EventuallyWithT(t, func(c *assert.CollectT) {
+	require.EventuallyWithT(s.T(), func(c *assert.CollectT) {
 		assert.NotNil(c, received1)
 		assert.NotNil(c, received2)
 		if received1 == nil || received2 == nil {
@@ -131,8 +132,7 @@ func TestHub_ListenRequests(t *testing.T) {
 
 }
 
-func TestHub_HandleConnectionEvents(t *testing.T) {
-	s := setupHubSuite()
+func (s *HubSuite) TestHub_HandleConnectionEvents() {
 	req := make(chan *Request, 1)
 	msg := make(chan Payload, 1)
 	_ = s.hub.Register(context.Background(), "test", "connection", req, msg)
@@ -147,14 +147,14 @@ func TestHub_HandleConnectionEvents(t *testing.T) {
 		received3 = (<-msg).(*ConnectionStatus)
 	}()
 
-	require.EventuallyWithT(t, func(c *assert.CollectT) {
-		assert.NotPanics(t, func() {
+	require.EventuallyWithT(s.T(), func(c *assert.CollectT) {
+		assert.NotPanics(s.T(), func() {
 			s.pool.Conn.StatusChangedCh[0] <- connection.ConnStatusChanged{Status: Disconnected}
 			s.pool.Conn.StatusChangedCh[0] <- connection.ConnStatusChanged{Status: Reconnected}
 		})
 	}, 1*time.Second, time.Millisecond*20)
 
-	require.EventuallyWithT(t, func(c *assert.CollectT) {
+	require.EventuallyWithT(s.T(), func(c *assert.CollectT) {
 		assert.NotNil(c, received1)
 		assert.NotNil(c, received2)
 		assert.NotNil(c, received3)
@@ -165,4 +165,8 @@ func TestHub_HandleConnectionEvents(t *testing.T) {
 		assert.Equal(c, received2.Status, Disconnected)
 		assert.Equal(c, received3.Status, Reconnected)
 	}, 1*time.Second, time.Millisecond*20)
+}
+
+func TestHubSuite(t *testing.T) {
+	suite.Run(t, new(HubSuite))
 }

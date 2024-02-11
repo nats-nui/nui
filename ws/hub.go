@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/pricelessrabbit/nui/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
-	"log/slog"
+	"github.com/pricelessrabbit/nui/pkg/logging"
 	"sync"
 )
 
@@ -33,10 +33,10 @@ type Hub[S Subscription, T Conn[S]] struct {
 	pool            Pool[S, T]
 	reg             map[string]*ClientConn[S]
 	connectionMutex sync.Mutex
-	l               *slog.Logger
+	l               logging.Slogger
 }
 
-func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l *slog.Logger) *Hub[S, T] {
+func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l logging.Slogger) *Hub[S, T] {
 	return &Hub[S, T]{
 		pool: pool,
 		reg:  make(map[string]*ClientConn[S]),
@@ -44,7 +44,7 @@ func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l *slog.Logger) *Hub[S, 
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn], l *slog.Logger) *Hub[*nats.Subscription, *connection.NatsConn] {
+func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn], l logging.Slogger) *Hub[*nats.Subscription, *connection.NatsConn] {
 	return NewHub[*nats.Subscription, *connection.NatsConn](pool, l)
 }
 
