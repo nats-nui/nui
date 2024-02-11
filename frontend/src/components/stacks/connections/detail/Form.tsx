@@ -1,16 +1,19 @@
+import ListDialog from "@/components/lists/ListDialog"
 import BoxV from "@/components/format/BoxV"
 import Divider from "@/components/format/Divider"
 import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
-import EditAuthRow from "@/components/rows/EditAuthRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Auth, EDIT_STATE, Subscription } from "@/types"
+import { AUTH_MODE, Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import Box from "@/components/format/Box"
+import IconToggle from "@/components/buttons/IconToggle"
+import Options from "@/components/Options"
 
 
 
@@ -92,13 +95,46 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<Label>AUTH</Label>
-			<EditList<Auth>
+			<ListDialog<Auth>
+				store={cnnDetailSo}
+				items={auths}
+				renderLabel={(item) => item?.mode}
+				renderForm={(item) => <>
+					<Options<string>
+						value={item?.mode}
+						items={Object.values(AUTH_MODE)}
+						RenderRow={({ item }) => item}
+					//readOnly={readOnly}
+					//height={100}
+					//onSelect={(mode)=>item.mode=mode}
+					/>
+					<BoxV>
+						<Label>USERNAME</Label>
+						<TextInput
+							value={""}
+							//onChange={handleSequenceChange}
+							// variant={variant}
+							//readOnly={readOnly}
+						/>
+					</BoxV>
+					<BoxV>
+						<Label>PASSWORD</Label>
+						<TextInput
+							value={""}
+							//onChange={handleSequenceChange}
+							// variant={variant}
+							//readOnly={readOnly}
+						/>
+					</BoxV>
+				</>}
+			/>
+			{/* <EditList<Auth>
 				items={auths}
 				onChangeItems={handleAuthsChange}
-				RenderRow={EditAuthRow}
+				RenderRow={({item})=>item.mode}
 				readOnly={inRead}
 				variant={variant}
-			/>
+			/>*/}
 		</BoxV>
 
 	</Form>
