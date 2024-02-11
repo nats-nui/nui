@@ -17,18 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         build:
-          - name: 'nui-desktop'
+          - name: 'nui-linux-amd64'
             platform:  'linux/amd64'
             os: 'ubuntu-latest'
-          - name: 'nui-desktop.exe'
+          - name: 'nui-windows-amd64.exe'
             platform:  'windows/amd64'
             os: 'windows-latest'
-            nsis: false
-          - name: 'nui-desktop-setup.exe'
-            platform: 'windows/amd64'
-            os: 'windows-latest'
             nsis: true
-          - name: 'nui-desktop'
+          - name: 'nui-macOS-universal'
             platform:  'darwin/universal'
             os: 'macos-latest'
 
