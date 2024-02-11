@@ -38,6 +38,7 @@ Auth {
 	jwt?: string
 	nkey?: string
 	creds?: string
+    active: boolean 
 }
 ```
 
