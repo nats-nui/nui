@@ -4,7 +4,7 @@ on:
 
 jobs:
   build_test_fe:
-    name: Build
+    name: Build and test FE
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -25,6 +25,7 @@ jobs:
           name: web-build
           path: web/dist
   build_test_be:
+      name : Build and test BE
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
@@ -35,6 +36,6 @@ jobs:
         - name: Install dependencies
           run: go get .
         - name: Build
-          run: go build -v ./...
+          run: go build -v .
         - name: Test with the Go CLI
           run: go test -v ./...
