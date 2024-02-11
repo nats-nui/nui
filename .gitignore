@@ -22,13 +22,8 @@ go.work
 
 .idea
 
-db
 
 db
-
 credentials
-
-nui-desktop/frontend/dist
-nui-desktop/frontend/node_modules
-
-build
+build/*
+!build/.gitkeep

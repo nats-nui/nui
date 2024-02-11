@@ -7,6 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/pricelessrabbit/nui/nui"
+	"github.com/pricelessrabbit/nui/pkg/logging"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
 	"net/http"
@@ -59,10 +60,12 @@ func (s *NuiTestSuite) connectNatsClient() {
 }
 
 func (s *NuiTestSuite) startNuiServer() {
-	nuiSvc, err := nui.Setup(":memory:")
+
+	mockedLogger := &logging.MockedLogger{}
+	nuiSvc, err := nui.Setup(":memory:", mockedLogger)
 	s.NoError(err)
 
-	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc)
+	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
 	go func() {

@@ -33,6 +33,7 @@ func setupDocRepoSuite(t *testing.T) *docRepoSuite {
 		Name:          "c2",
 		Hosts:         []string{"localhost:4222"},
 		Subscriptions: []Subscription{},
+		Auth:          make([]Auth, 0),
 	}
 	store, err := docstore.NewDocStore(":memory:")
 	if err != nil {

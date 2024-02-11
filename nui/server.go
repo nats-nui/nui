@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
+	"github.com/pricelessrabbit/nui/pkg/logging"
 	"github.com/pricelessrabbit/nui/ws"
 	slogfiber "github.com/samber/slog-fiber"
 	"log/slog"
@@ -15,13 +16,13 @@ import (
 
 type App struct {
 	*fiber.App
-	l    *slog.Logger
+	l    logging.Slogger
 	Port string
 	nui  *Nui
 	ctx  context.Context
 }
 
-func NewServer(port string, nui *Nui, l *slog.Logger) *App {
+func NewServer(port string, nui *Nui, l logging.Slogger) *App {
 
 	app := &App{
 		App:  fiber.New(),
@@ -29,8 +30,10 @@ func NewServer(port string, nui *Nui, l *slog.Logger) *App {
 		nui:  nui,
 		l:    l,
 	}
-
-	app.Use(slogfiber.New(l))
+	sLog, ok := l.(*slog.Logger)
+	if ok {
+		app.Use(slogfiber.New(sLog))
+	}
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression,
 	}))
@@ -85,8 +88,8 @@ func (a *App) registerHandlers() {
 	})
 	a.Get("/ws/sub", websocket.New(a.handleWsSub))
 
-	a.Static("/", "./web/dist")
-	a.Static("/*", "./web/dist/index,html")
+	a.Static("/", "./frontend/dist")
+	a.Static("/*", "./frontend/dist/index,html")
 
 }
 
