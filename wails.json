@@ -4,6 +4,7 @@
   "outputfilename": "nui-app",
   "build:dir": "build",
   "frontend:dir": "frontend",
+  "frontend:install": "npm install",
   "wailsjsdir": "./frontend/src/api",
   "frontend:build": "npm run build-desktop",
   "frontend:dev:watcher": "npm run dev-desktop",
