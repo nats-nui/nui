@@ -54,13 +54,14 @@ jobs:
       - name: rename artifacts windows
         if : ${{ matrix.build.platform_name == 'windows-amd64' }}
         run: |
-          mv nui-desktop/build/bin/nui-app.exe nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app.exe
+          mv nui-desktop/build/bin/nui-app nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app.exe
           mv nui-desktop/build/bin/nui-app-installer.exe nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app-installer.exe
       - name : rename artifacts macOS
         if : ${{ matrix.build.platform_name == 'macOS' }}
         run: |
-          ./build/bin/nui-app.app.zip
           mv nui-desktop/build/bin/nui-app.app.zip nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app.app.zip
+          mv nui-desktop/build/bin/nui-app.pkg nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app.pkg
+
       # Upload build assets
       - uses: actions/upload-artifact@v3
         with:
