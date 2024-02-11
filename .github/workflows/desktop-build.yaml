@@ -55,7 +55,7 @@ jobs:
         if : ${{ matrix.build.platform_name == 'windows-amd64' }}
         run: |
           mv nui-desktop/build/bin/nui-app nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app.exe
-          mv nui-desktop/build/bin/nui-app-amd-64-installer.exe nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app-installer.exe
+          mv nui-desktop/build/bin/nui-app-amd64-installer.exe nui-desktop/build/bin/${{ matrix.build.platform_name }}-nui-app-installer.exe
       - name : rename artifacts macOS
         if : ${{ matrix.build.platform_name == 'macOS' }}
         run: |
