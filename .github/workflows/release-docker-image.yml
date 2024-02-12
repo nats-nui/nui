@@ -13,8 +13,6 @@ env:
   NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
-  build_and_test:
-    uses: ./.github/workflows/build-and-test.yml
   release-edge:
     needs: [build_and_test]
     runs-on: ubuntu-latest
@@ -31,7 +29,7 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
