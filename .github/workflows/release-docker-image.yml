@@ -1,4 +1,4 @@
-name: desktop build
+name: release docker edge
 
 on:
   workflow_dispatch:
@@ -43,8 +43,8 @@ jobs:
           tags: |
             type=edge
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@5.1.0
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v5.1.0
         with:
           context: .
           push: true
