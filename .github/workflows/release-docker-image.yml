@@ -14,7 +14,6 @@ env:
 
 jobs:
   release-edge:
-    needs: [build_and_test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
