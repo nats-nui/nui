@@ -86,9 +86,9 @@ const StreamsListView: FunctionComponent<Props> = ({
 			<table style={cssTable}>
 				<thead >
 					<tr style={cssHead}>
-						<th style={{ ...cssHeadCell, width: "100%" }}>
+						{/* <th style={{ ...cssHeadCell, width: "100%" }}>
 							NAME
-						</th>
+						</th> */}
 						<th style={cssHeadCell}>
 							SIZE
 						</th>
@@ -105,14 +105,19 @@ const StreamsListView: FunctionComponent<Props> = ({
 					</tr>
 				</thead>
 				<tbody>
-					{streams.map((stream, index) => (
+					{streams.map((stream, index) => (<>
+						<tr key={`${stream.config.name}_1`} style={{ height: 25}}>
+							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9 }}>
+								{stream.config.name}
+							</td>
+						</tr>
 						<tr key={stream.config.name}
 							style={cssRow(index, isSelected(stream), variant)}
 							onClick={() => handleSelect(stream)}
 						>
-							<td style={{ ...cssRowCellString, width: "100%" }}>
+							{/* <td style={{ ...cssRowCellString, width: "100%" }}>
 								{stream.config.name}
-							</td>
+							</td> */}
 							<td style={cssRowCellNumber}>
 								{stream.state.messages}
 							</td>
@@ -126,7 +131,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 								{stream.state.bytes}
 							</td>
 						</tr>
-					))}
+					</>))}
 				</tbody>
 			</table>
 		</div>
@@ -150,6 +155,7 @@ const cssHead: CSSProperties = {
 	position: 'sticky',
 	top: '0',
 	backgroundColor: '#3e3e3e',
+	zIndex: 1,
 }
 const cssHeadCell: CSSProperties = {
 	padding: "5px"
@@ -160,23 +166,22 @@ const cssRow = (index: number, select: boolean, variant: number): CSSProperties 
 		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
-		backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
+		backgroundColor:  "rgba(0, 0, 0, 0.3)",
+		//backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
 	},
 	height: 20,
-
 })
 const cssRowCell: CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
-
 	borderRight: '1px solid rgb(255 255 255 / 15%)',
 	padding: "7px 3px",
 }
 const cssRowCellNumber: CSSProperties = {
 	...cssRowCell,
 	fontFamily: "monospace",
-	fontSize: 11,
-	fontWeight: 400,
+	fontSize: 12,
+	fontWeight: 600,
 	textAlign: "right",
 }
 const cssRowCellString: CSSProperties = {
