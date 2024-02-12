@@ -15,6 +15,7 @@ export interface Auth {
 	jwt?: string
 	nkey?: string
 	creds?: string
+	active?: boolean
 }
 
 export interface Subscription {
@@ -23,8 +24,6 @@ export interface Subscription {
 }
 
 export enum AUTH_MODE {
-	// no other info to set
-	NONE = "auth_none",
 	// use token field  
 	TOKEN = "auth_token",
 	// use username and password fields

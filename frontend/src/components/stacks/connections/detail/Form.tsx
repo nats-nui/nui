@@ -1,19 +1,19 @@
-import ListDialog from "@/components/lists/ListDialog"
 import BoxV from "@/components/format/BoxV"
 import Divider from "@/components/format/Divider"
 import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
+import ListDialog from "@/components/lists/ListDialog"
 import EditStringRow from "@/components/rows/EditStringRow"
 import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { AUTH_MODE, Auth, EDIT_STATE, Subscription } from "@/types"
+import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
+import EditAuthRow from "./EditAuthRow"
 import Box from "@/components/format/Box"
 import IconToggle from "@/components/buttons/IconToggle"
-import Options from "@/components/Options"
 
 
 
@@ -32,6 +32,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const cnnDetailSa = useStore(cnnDetailSo)
 
 	// HOOKs
+	const [authSelect, setAuthSelect] = useState(-1)
 
 	// HANDLER
 	const handleChangeName = (name: string) => {
@@ -45,6 +46,25 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	}
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
 		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, subscriptions })
+	}
+
+
+
+	const handleAuthChange = (auth: Auth, index: number) => {
+		if (!auth) return
+		const cnnAuth = cnnDetailSa.connection.auth
+		if (index == -1) cnnAuth.push(auth); else cnnAuth[index] = auth
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
+	}
+	const handleAuthDelete = (index: number) => {
+		if (index < 0) return
+		cnnDetailSa.connection.auth.splice(index, 1)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
+	}
+	const handleActivate = (check: boolean, indexSel: number, e: React.MouseEvent) => {
+		e.stopPropagation()
+		cnnDetailSa.connection.auth.forEach((auth, index) => auth.active = check && index == indexSel)
+		cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
 	}
 
 	// RENDER
@@ -98,43 +118,26 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			<ListDialog<Auth>
 				store={cnnDetailSo}
 				items={auths}
-				renderLabel={(item) => item?.mode}
-				renderForm={(item) => <>
-					<Options<string>
-						value={item?.mode}
-						items={Object.values(AUTH_MODE)}
-						RenderRow={({ item }) => item}
-					//readOnly={readOnly}
-					//height={100}
-					//onSelect={(mode)=>item.mode=mode}
-					/>
-					<BoxV>
-						<Label>USERNAME</Label>
-						<TextInput
-							value={""}
-							//onChange={handleSequenceChange}
-							// variant={variant}
-							//readOnly={readOnly}
-						/>
-					</BoxV>
-					<BoxV>
-						<Label>PASSWORD</Label>
-						<TextInput
-							value={""}
-							//onChange={handleSequenceChange}
-							// variant={variant}
-							//readOnly={readOnly}
-						/>
-					</BoxV>
-				</>}
-			/>
-			{/* <EditList<Auth>
-				items={auths}
-				onChangeItems={handleAuthsChange}
-				RenderRow={({item})=>item.mode}
 				readOnly={inRead}
-				variant={variant}
-			/>*/}
+				renderLabel={(auth, index) => (
+					<Box>
+						<IconToggle
+							check={auth.active}
+							onChange={(check, e) => handleActivate(check, index, e)}
+							readOnly={inRead}
+						/>
+						{auth?.mode}
+					</Box>
+				)}
+				onDelete={handleAuthDelete}
+				renderForm={(item, index, onClose) => (
+					<EditAuthRow
+						auth={item}
+						readOnly={inRead}
+						onClose={(auth) => { onClose(); handleAuthChange(auth, index) }}
+					/>
+				)}
+			/>
 		</BoxV>
 
 	</Form>

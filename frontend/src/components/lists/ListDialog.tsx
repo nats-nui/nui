@@ -1,11 +1,11 @@
-import { FunctionComponent, useRef, useState } from "react"
-import ListRow from "./ListRow"
-import IconButton from "../buttons/IconButton"
 import AddIcon from "@/icons/AddIcon"
-import Component from "../format/Component"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import { useRef, useState } from "react"
+import IconButton from "../buttons/IconButton"
 import ElementDialog from "../dialogs/ElementDialog"
+import Component from "../format/Component"
+import CloseIcon from "@/icons/CloseIcon"
 
 
 
@@ -16,7 +16,8 @@ interface Props<T> {
 	readOnly?: boolean
 
 	renderLabel: (item: T, index?: number) => React.ReactNode
-	renderForm: (item:T)=> React.ReactNode
+	renderForm: (item: T, index: number, onClose: () => void) => React.ReactNode
+	onDelete: (index: number) => void
 
 	style?: React.CSSProperties
 }
@@ -28,6 +29,7 @@ function LiastDialog<T>({
 
 	renderLabel,
 	renderForm,
+	onDelete,
 
 	style,
 }: Props<T>) {
@@ -48,6 +50,10 @@ function LiastDialog<T>({
 		setSourceIndex(-1)
 		setElementSource(e.target as HTMLElement)
 	}
+	const handleOnClose = () => {
+		setSourceIndex(-1)
+		setElementSource(null)
+	}
 
 	// RENDER
 	if (!items) return null
@@ -61,13 +67,16 @@ function LiastDialog<T>({
 		//onKeyDown={handleKeyDown}
 		//onBlur={handleBlur}
 		>
-
-			{items?.map((item, index) => <Component
-				onClick={(e) => handleRowClick(index, e)}
-				enterRender={<ArrowRightIcon style={{ opacity: 0.5 }} />}
-			>
-				{renderLabel(item, index)}
-			</Component>)}
+			{items?.map((item, index) => (
+				<Component
+					selected={index == souceIndex}
+					onClick={(e) => handleRowClick(index, e)}
+					enterRender={!readOnly && <CloseIcon onClick={() => onDelete(index)} />}
+					readOnly={readOnly}
+				>
+					{renderLabel(item, index)}
+				</Component>)
+			)}
 
 			{!readOnly && (
 				<IconButton style={{ backgroundColor: '#00000010', }}
@@ -79,13 +88,15 @@ function LiastDialog<T>({
 		<ElementDialog
 			element={elementSource}
 			store={store}
-			width={150}
+			//width={150}
+			title="AUTH"
 			onClose={(e) => {
 				if (ref && ref.current.contains(e.target)) return
+				setSourceIndex(-1)
 				setElementSource(null)
 			}}
 		>
-			{renderForm(itemSelect)}
+			{renderForm(itemSelect, souceIndex, handleOnClose)}
 		</ElementDialog>
 	</>
 }

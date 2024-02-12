@@ -5,6 +5,8 @@ import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import layoutSo from "@/stores/layout"
 import Label, { LABELS } from "../format/Label"
+import CloseIcon from "@/icons/CloseIcon"
+import IconButton from "../buttons/IconButton"
 
 
 
@@ -95,7 +97,13 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			ref={(node) => setRef(node)}
 			style={cssRoot(variant, width, y)}
 		>
-			<Label type={LABELS.TITLE_DIALOG}>{title}</Label>
+			<div style={{ display: "flex" }}>
+				<Label type={LABELS.TITLE_DIALOG} style={{flex:1}}>{title}</Label>
+				<IconButton onClick={(e) => onClose(e)}>
+					<CloseIcon />
+				</IconButton>
+
+			</div>
 			{children}
 		</div>,
 		refDialog
