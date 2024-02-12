@@ -88,7 +88,7 @@ const cssTitleDialog: React.CSSProperties = {
 	lineHeight: "23px",
 	fontWeight: 800,
 	fontFamily: "Darker Grotesque",
-	marginBottom: 15,
+	//marginBottom: 15,
 }
 
 const cssRoot: React.CSSProperties = {

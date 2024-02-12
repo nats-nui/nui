@@ -8,6 +8,7 @@ interface Props {
 	preRender?: React.ReactNode
 	enterRender?: React.ReactNode
 	children?: React.ReactNode
+	selected?: boolean
 	readOnly?: boolean
 	onClick?: (e: React.MouseEvent) => void
 }
@@ -17,6 +18,7 @@ const Component: FunctionComponent<Props> = ({
 	preRender,
 	enterRender,
 	children,
+	selected,
 	readOnly,
 	onClick,
 }) => {
@@ -34,7 +36,7 @@ const Component: FunctionComponent<Props> = ({
 
 	return (
 		<div
-			style={{ ...cssRoot(isCliccable), ...style }}
+			style={{ ...cssRoot(isCliccable, selected, readOnly), ...style }}
 			onMouseEnter={enterRender ? handleEnter : null}
 			onMouseLeave={enterRender ? handleLeave : null}
 			onClick={onClick}
@@ -65,8 +67,8 @@ const cssText: React.CSSProperties = {
 	gap: 5,
 }
 
-const cssRoot = (isCliccable: boolean): React.CSSProperties => ({
+const cssRoot = (isCliccable: boolean, selected: boolean, readOnly: boolean): React.CSSProperties => ({
 	...cssText,
-	backgroundColor: '#00000010',
+	backgroundColor: selected ? "#00000020" : readOnly ? null : '#00000010',
 	cursor: isCliccable ? "pointer" : null,
 })

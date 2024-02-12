@@ -1,73 +1,102 @@
-import Button from "@/components/buttons/Button"
-import IconButton from "@/components/buttons/IconButton"
+import Options from "@/components/Options"
+import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
-import CloseIcon from "@/icons/CloseIcon"
 import { AUTH_MODE, Auth } from "@/types"
-import { FunctionComponent } from "react"
-import Box from "../../../format/Box"
+import { FunctionComponent, useEffect, useState } from "react"
 import TextInput from "../../../input/TextInput"
-import { RenderRowBaseProps } from "../../../lists/EditList"
+import Button from "@/components/buttons/Button"
 
 
 
-const EditAuthRow: FunctionComponent<RenderRowBaseProps<Auth>> = ({
-	item,
-	isSelect,
+interface Props {
+	auth: Auth
+	readOnly?: boolean,
+	onClose?: (auth: Auth) => void
+}
+
+const EditAuthRow: FunctionComponent<Props> = ({
+	auth,
 	readOnly,
-	onChange,
-	onSelect,
+	onClose,
 }) => {
 
 	// HOOKS
+	const [authEdit, setAuthEdit] = useState<Auth>(auth)
+	useEffect(() => {
+		setAuthEdit(auth ?? {
+			mode: AUTH_MODE.TOKEN, creds: "", jwt: "", nkey: "", password: "", token: "", username: ""
+		})
+	}, [auth])
 
 	// HANDLER
-	const handleDelete = () => onChange?.(null)
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
-			event.preventDefault()
-			onChange?.(null)
-		}
-	}
-	const handleFileMode = () => onChange({ mode: AUTH_MODE.CREDS_FILE, creds: "" })
-	const handleNoneMode = () => onChange({ mode: AUTH_MODE.NONE })
-	const handleChange = (newValue: string) => onChange?.({ ...item, creds: newValue })
+	const handlePropChange = (prop: Partial<Auth>) => setAuthEdit({ ...authEdit, ...prop })
 
 	// RENDER
-	return <Box
-		style={cssRow}
-		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
-	>
-		{item == null ? (
-			<div style={{ display: "flex", flex: 1, alignItems: "center", minHeight: 24 }}>
-				<Button label="NONE" onClick={handleNoneMode} />
-				<Button label="FILE" onClick={handleFileMode} />
-				<Button label="PSW" disabled />
-				<Button label="JWT" disabled />
-			</div>
-
-		) : item.mode == AUTH_MODE.CREDS_FILE ? (
-			<TextInput
-				style={{ flex: 1 }}
-				placeholder="path of creds file"
-				focus={isSelect}
-				readOnly={readOnly}
-				value={item.creds}
-				onChange={handleChange}
-				onKeyDown={handleKeyDown}
-				onFocus={onSelect}
+	if (!authEdit) return null
+	return <>
+		<Options<string>
+			value={authEdit?.mode}
+			items={Object.values(AUTH_MODE)}
+			RenderRow={({ item }) => item}
+			readOnly={readOnly}
+			//height={100}
+			onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
+		/>
+		{{
+			[AUTH_MODE.USER_PASSWORD]: <>
+				<BoxV><Label>USERNAME</Label><TextInput
+					value={authEdit.username}
+					onChange={username => handlePropChange({ username })}
+					readOnly={readOnly}
+				/></BoxV>
+				<BoxV><Label>PASSWORD</Label><TextInput
+					value={authEdit.password}
+					onChange={password => handlePropChange({ password })}
+					readOnly={readOnly}
+				/></BoxV>
+			</>,
+			[AUTH_MODE.TOKEN]: (
+				<BoxV><Label>TOKEN</Label><TextInput
+					value={authEdit.token}
+					onChange={token => handlePropChange({ token })}
+					readOnly={readOnly}
+				/></BoxV>
+			),
+			[AUTH_MODE.JWT]: <>
+				<BoxV><Label>JWT</Label><TextInput
+					value={authEdit.jwt}
+					onChange={jwt => handlePropChange({ jwt })}
+					readOnly={readOnly}
+				/></BoxV>
+				<BoxV><Label>NKEY</Label><TextInput
+					value={authEdit.nkey}
+					onChange={nkey => handlePropChange({ nkey })}
+					readOnly={readOnly}
+				/></BoxV>
+			</>,
+			[AUTH_MODE.CREDS_FILE]: <>
+				<BoxV><Label>CREDS PATH FILE:</Label><TextInput
+					value={authEdit.creds}
+					onChange={creds => handlePropChange({ creds })}
+					readOnly={readOnly}
+				/></BoxV>
+			</>,
+		}[authEdit.mode]}
+		<div style={{ display: "flex" }}>
+			<div style={{flex:1}} />
+			<Button label="CANCEL"
+				onClick={() => onClose(null)}
 			/>
-
-		) : (
-			<Label>NONE</Label>
-		)}
-
-	</Box>
-
+			{!readOnly && (
+				<Button label="SAVE"
+					onClick={() => onClose(authEdit)}
+				/>
+			)}
+		</div>
+	</>
 }
 
 export default EditAuthRow
-
-const isVoid = (item: Auth) => !item || (item.mode == AUTH_MODE.CREDS_FILE && !(item.creds?.length > 0))
 
 const cssRow: React.CSSProperties = {
 	display: "flex",
