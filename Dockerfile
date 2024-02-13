@@ -1,4 +1,5 @@
 
+## be build
 FROM golang:1.21 AS build_be
 WORKDIR /src
 COPY . .
@@ -12,7 +13,7 @@ RUN npm install
 RUN npm run build
 
 ### production image
-FROM golang:1.21
+FROM alpine:3
 WORKDIR /
 COPY --from=build_be /cmd/nui-web /cmd/nui-web
 COPY --from=build_fe /frontend/dist /frontend/dist
