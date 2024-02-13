@@ -1,9 +1,9 @@
-package main
+package desktop
 
 import (
 	"context"
 	"flag"
-	"github.com/pricelessrabbit/nui/nui"
+	"github.com/pricelessrabbit/nui/internal/nui"
 	"log"
 	"log/slog"
 	"os"
@@ -19,9 +19,9 @@ func NewApp() *App {
 	return &App{}
 }
 
-// startup is called when the app starts. The context is saved
+// Startup is called when the app starts. The context is saved
 // so we can call the runtime methods
-func (a *App) startup(ctx context.Context) {
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 	port := flag.String("port", "3111", "port to listen on")
 	dbPath := flag.String("db", ":memory:", "path to db")

@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/pricelessrabbit/nui/ws"
+	"github.com/pricelessrabbit/nui/internal/ws"
 	"math"
 	"strconv"
 	"strings"

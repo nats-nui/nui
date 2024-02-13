@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/pricelessrabbit/nui/nui"
+	nui2 "github.com/pricelessrabbit/nui/internal/nui"
 	"log"
 	"log/slog"
 	"os"
@@ -19,13 +19,13 @@ func main() {
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: parseLogLevel(*logLevel)}))
 	logger.Info("Starting nui")
-	nuiSvc, err := nui.Setup(*dbPath, logger)
+	nuiSvc, err := nui2.Setup(*dbPath, logger)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	logger.Info("Starting frontend-server")
-	server := nui.NewServer(*port, nuiSvc, logger)
+	server := nui2.NewServer(*port, nuiSvc, logger)
 	ctx, cancel := context.WithCancel(context.Background())
 	err = server.Start(ctx)
 	if err != nil {

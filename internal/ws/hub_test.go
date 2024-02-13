@@ -3,7 +3,7 @@ package ws
 import (
 	"context"
 	"github.com/nats-io/nats.go"
-	"github.com/pricelessrabbit/nui/connection"
+	"github.com/pricelessrabbit/nui/internal/connection"
 	"github.com/pricelessrabbit/nui/pkg/logging"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

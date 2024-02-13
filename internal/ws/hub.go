@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
-	"github.com/pricelessrabbit/nui/connection"
+	connection2 "github.com/pricelessrabbit/nui/internal/connection"
 	"github.com/pricelessrabbit/nui/pkg/channels"
 	"github.com/pricelessrabbit/nui/pkg/logging"
 	"sync"
@@ -21,7 +21,7 @@ type Subscription interface {
 
 type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
-	ObserveConnectionEvents(ctx context.Context) <-chan connection.ConnStatusChanged
+	ObserveConnectionEvents(ctx context.Context) <-chan connection2.ConnStatusChanged
 	Status() nats.Status
 }
 
@@ -44,8 +44,8 @@ func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l logging.Slogger) *Hub[
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *connection.NatsConn], l logging.Slogger) *Hub[*nats.Subscription, *connection.NatsConn] {
-	return NewHub[*nats.Subscription, *connection.NatsConn](pool, l)
+func NewNatsHub(pool Pool[*nats.Subscription, *connection2.NatsConn], l logging.Slogger) *Hub[*nats.Subscription, *connection2.NatsConn] {
+	return NewHub[*nats.Subscription, *connection2.NatsConn](pool, l)
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
