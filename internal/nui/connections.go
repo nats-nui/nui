@@ -2,7 +2,7 @@ package nui
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/pricelessrabbit/nui/connection"
+	"github.com/pricelessrabbit/nui/internal/connection"
 )
 
 func (a *App) handleIndexConnections(c *fiber.Ctx) error {

@@ -16,7 +16,7 @@ require (
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
 	github.com/samber/slog-fiber v1.11.0
 	github.com/stretchr/testify v1.8.4
-	github.com/wailsapp/wails/v2 v2.8.0
+	github.com/wailsapp/wails/v2 v2.7.1
 )
 
 require (

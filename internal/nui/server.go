@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
+	"github.com/pricelessrabbit/nui/internal/ws"
 	"github.com/pricelessrabbit/nui/pkg/logging"
-	"github.com/pricelessrabbit/nui/ws"
 	slogfiber "github.com/samber/slog-fiber"
 	"log/slog"
 )
@@ -37,8 +37,9 @@ func NewServer(port string, nui *Nui, l logging.Slogger) *App {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression,
 	}))
+	allowedOrigins := "http://wails.localhost, wails://wails, wails://localhost, http://wails.:34115, wails://wails:34115, wails://wails.localhost:34115"
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://wails.localhost, wails://wails, wails://localhost",
+		AllowOrigins: allowedOrigins,
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 	app.registerHandlers()
