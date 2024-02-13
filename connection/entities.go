@@ -6,7 +6,6 @@ type Connection struct {
 	Hosts         []string       `json:"hosts" `
 	Subscriptions []Subscription `json:"subscriptions" `
 	Auth          []Auth         `json:"auth" `
-	CurrentAuth   Auth           `json:"current_auth" `
 }
 
 type Subscription struct {
@@ -23,6 +22,7 @@ const StatusConnected = "connected"
 const StatusDisconnected = "disconnected"
 
 type Auth struct {
+	Active   bool   `json:"active"`
 	Mode     string `json:"mode"`
 	Username string `json:"username"`
 	Password string `json:"password"`

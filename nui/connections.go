@@ -41,13 +41,9 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	// refresh the connection in the pool if exists
-	_, err = a.nui.ConnPool.Get(conn.Id)
-	if err == nil {
-		err := a.nui.ConnPool.Refresh(conn.Id)
-		if err != nil {
-			return a.logAndFiberError(c, err, 500)
-		}
+	err = a.nui.ConnPool.Refresh(conn.Id)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(conn)
 }

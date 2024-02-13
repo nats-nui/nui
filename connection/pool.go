@@ -41,7 +41,7 @@ func (p *ConnPool[T]) Get(id string) (T, error) {
 	p.m.Lock()
 	defer p.m.Unlock()
 	if t, ok := p.conns[id]; !ok {
-		err := p.refresh(id)
+		err := p.refreshLocked(id)
 		if err != nil {
 			return t, err
 		}
@@ -56,7 +56,7 @@ func (p *ConnPool[T]) Get(id string) (T, error) {
 func (p *ConnPool[T]) Refresh(id string) error {
 	p.m.Lock()
 	defer p.m.Unlock()
-	return p.refresh(id)
+	return p.refreshLocked(id)
 }
 
 func (p *ConnPool[T]) Purge() {
@@ -68,7 +68,7 @@ func (p *ConnPool[T]) Purge() {
 	}
 }
 
-func (p *ConnPool[T]) refresh(id string) error {
+func (p *ConnPool[T]) refreshLocked(id string) error {
 	c, err := p.repo.GetById(id)
 	if err != nil {
 		return err
@@ -96,23 +96,29 @@ func natsBuilder(connection *Connection) (*NatsConn, error) {
 }
 
 func appendAuthOption(connection *Connection, options []nats.Option) []nats.Option {
-	if len(connection.Auth) == 0 {
+	var activeAuth *Auth
+	for _, auth := range connection.Auth {
+		if auth.Active {
+			activeAuth = &auth
+			break
+		}
+	}
+	if activeAuth == nil {
 		return options
 	}
-	preferredAuth := connection.Auth[0]
-	switch preferredAuth.Mode {
+	switch activeAuth.Mode {
 	case "":
 		return options
 	case AuthModeNone:
 		return options
 	case AuthModeToken:
-		return append(options, nats.Token(preferredAuth.Token))
+		return append(options, nats.Token(activeAuth.Token))
 	case AuthModeUserPassword:
-		return append(options, nats.UserInfo(preferredAuth.Username, preferredAuth.Password))
+		return append(options, nats.UserInfo(activeAuth.Username, activeAuth.Password))
 	case AuthModeJwt:
-		return append(options, nats.UserJWTAndSeed(preferredAuth.Jwt, preferredAuth.NKeySeed))
+		return append(options, nats.UserJWTAndSeed(activeAuth.Jwt, activeAuth.NKeySeed))
 	case AuthModeCredsFile:
-		return append(options, nats.UserCredentials(preferredAuth.Creds))
+		return append(options, nats.UserCredentials(activeAuth.Creds))
 	}
 	return options
 }
