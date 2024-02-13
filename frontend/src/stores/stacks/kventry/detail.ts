@@ -57,7 +57,7 @@ const setup = {
 		getKVToShow(_: void, store?: KVEntryStore): KVEntry {
 			const history = store.state.kventry?.history
 			const revision = store.state.revisionSelected
-			const kv = history?.find( kv => kv.revision == revision ) ?? store.state.kventry
+			const kv = history?.find(kv => kv.revision == revision) ?? store.state.kventry
 			return kv
 		},
 	},
@@ -78,7 +78,7 @@ const setup = {
 
 
 		async fetchIfVoid(_: void, store?: KVEntryStore) {
-			if (!!store.state.kventry) return
+			if (!!store.state.kventry?.payload) return
 			await store.fetch()
 		},
 		fetch: async (_: void, store?: KVEntryStore) => {

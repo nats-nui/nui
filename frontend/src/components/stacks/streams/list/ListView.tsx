@@ -106,8 +106,13 @@ const StreamsListView: FunctionComponent<Props> = ({
 				</thead>
 				<tbody>
 					{streams.map((stream, index) => (<>
-						<tr key={`${stream.config.name}_1`} style={{ height: 25}}>
-							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9 }}>
+
+						<tr 
+							key={`${stream.config.name}_1`} 
+							style={cssRow1(isSelected(stream), variant)}
+							onClick={() => handleSelect(stream)}
+						>
+							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9, paddingTop: 5 }}>
 								{stream.config.name}
 							</td>
 						</tr>
@@ -171,6 +176,16 @@ const cssRow = (index: number, select: boolean, variant: number): CSSProperties 
 	},
 	height: 20,
 })
+const cssRow1 = (select: boolean, variant: number): CSSProperties => ({
+	cursor: "pointer",
+	...select ? {
+		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
+		color: layoutSo.state.theme.palette.var[variant].fg
+	} : {
+	},
+	height: 20,
+})
+
 const cssRowCell: CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
