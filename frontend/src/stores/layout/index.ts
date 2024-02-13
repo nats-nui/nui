@@ -27,7 +27,7 @@ const ThemeDefault: Theme = {
 			// magenta
 			{ bg: "#C220FA", fg: "#393939" },
 			// yellow
-			{ bg: "#ebfb35", fg: "#393939" },
+			{ bg: "#ebfb35", fg: "#393939", bg2: "#f9ffb3" },
 			// fuchsia
 			{ bg: "#F51DDF", fg: "#393939" },
 
