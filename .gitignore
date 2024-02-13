@@ -27,3 +27,5 @@ db
 credentials
 build/*
 !build/.gitkeep
+nui-desktop/frontend/dist/*
+!nui-desktop/frontend/dist/.gitkeep
