@@ -1,5 +1,5 @@
 
-## CONSUMER-CONFIG
+## RESPONSE-ERROR
 
 ```typescript
 ResponseError {
