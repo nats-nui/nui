@@ -6,16 +6,16 @@ import (
 	"sync"
 )
 
-type subscriber struct {
-	events chan<- ConnStatusChanged
-	stop   context.CancelFunc
-}
-
 type NatsConn struct {
 	*nats.Conn
 	connectionEventsSubs []*subscriber
 	subsMutex            sync.Mutex
 	mockMode             bool
+}
+
+type subscriber struct {
+	events chan<- ConnStatusChanged
+	stop   context.CancelFunc
 }
 
 func (n *NatsConn) ObserveConnectionEvents(ctx context.Context) <-chan ConnStatusChanged {
