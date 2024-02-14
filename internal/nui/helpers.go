@@ -35,5 +35,5 @@ func (a *App) bucketOrFail(c *fiber.Ctx, bucket string) (jetstream.KeyValue, boo
 
 func (a *App) logAndFiberError(c *fiber.Ctx, err error, status int, args ...any) error {
 	a.l.Error(err.Error(), args...)
-	return c.Status(status).JSON(err.Error())
+	return c.Status(status).JSON(NewError(err.Error()))
 }
