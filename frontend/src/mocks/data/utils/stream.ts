@@ -1,4 +1,6 @@
+import dayjs from "dayjs";
 import { randomDate, randomInt, randomName } from "../utils";
+import { Message } from "@/types/Message"
 
 
 export function randomStreams(length: number) {
@@ -45,4 +47,29 @@ export function randomStream() {
 	};
 }
 
+export function randomMessages(start: number, interval: number): Message[] {
+	return Array.from({ length: interval }, (_, i) => ({
+		seqNum: i+start,
+		headers: [],
+		subject: "subject",
+		payload: btoa(`payload:${i}`),
+		size: 10,
+		receivedAt: dayjs().add(i, "minutes").valueOf(),
+	})) as Message[]
+}
 
+
+const streamMessages: any[] = Array.from({ length: 100 }, (_, i) => {
+	return {
+		seq_num: i,
+		headers: [],
+		subject: "subject",
+		payload: btoa(`payload:${i}`),
+		size: 10,
+		received_at: dayjs().add(i, "minutes").format(),
+	}
+})
+
+
+
+export default streamMessages

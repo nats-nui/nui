@@ -1,6 +1,5 @@
-import streamMessages_S from '@/mocks/data/streamMessages'
+import { randomMessages } from '@/mocks/data/utils/stream'
 import { buildNewStreamState } from '@/stores/stacks/streams/utils/factory'
-import { Message } from '@/types/Message'
 import { StreamInfo } from '@/types/Stream'
 import { camelToSnake, snakeToCamel } from '@/utils/object'
 import { rest } from 'msw'
@@ -83,18 +82,11 @@ const handlers = [
 		const seqStart = Number.parseInt(params.get("seq_start"))
 		const interval = Number.parseInt(params.get("interval"))
 		const subjects = params.getAll("subjects")
-
-		const streamMessages_C: Message[] = snakeToCamel(streamMessages_S)
-		const msgs_C = streamMessages_C.filter((msg: Message) => {
-			if (Number.isNaN(seqStart) || msg.seqNum < seqStart) return false
-			if (subjects && subjects.length > 0 && !subjects.includes(msg.subject)) return false
-			return true
-		}).slice(0, interval ?? Number.POSITIVE_INFINITY)
-
+		const messages = randomMessages(seqStart, interval)
 		return res(
 			ctx.delay(1000),
 			ctx.status(200),
-			ctx.json(camelToSnake(msgs_C)),
+			ctx.json(camelToSnake(messages)),
 		)
 	}),
 

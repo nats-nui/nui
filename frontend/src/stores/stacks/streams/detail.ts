@@ -70,14 +70,16 @@ const setup = {
 
 		/** load all ENTITY */
 		async fetchIfVoid(_: void, store?: StreamStore) {
-			if (!store.state.stream?.config || !store.state.stream?.state) {
+			if (store.state.editState != EDIT_STATE.NEW && (!store.state.stream?.state || !store.state.stream.state.subjects)) {
 				await store.fetch()
-			} else if (!store.state.allStreams) {
+			}
+			if (!store.state.allStreams) {
 				await store.fetchAllStreams()
 			}
 		},
 		async fetch(_: void, store?: StreamStore) {
-			const stream = await strApi.get(store.state.connectionId, store.state.stream.config.name)
+			const name = store.state.stream.config.name
+			const stream = await strApi.get(store.state.connectionId, name)
 			store.setStream(stream)
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
@@ -88,7 +90,7 @@ const setup = {
 		},
 		/** crea un nuovo STREAM-INFO tramite STREAM-CONFIG */
 		async save(_: void, store?: StreamStore) {
-			let streamSaved:StreamInfo = null
+			let streamSaved: StreamInfo = null
 			if (store.state.editState == EDIT_STATE.NEW) {
 				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
 			} else {
