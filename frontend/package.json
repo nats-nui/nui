@@ -19,10 +19,12 @@
     "_@priolo/jon": "^0.7.6"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "@fontsource/darker-grotesque": "^5.0.8",
     "@priolo/jon": "^0.7.7",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
+    "monaco-editor": "^0.46.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-virtuoso": "^4.6.2",

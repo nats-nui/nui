@@ -17,7 +17,7 @@ const setup = {
 		
 		//#region VIEWBASE
 		urlSerializable: false,
-		width: 320,
+		width: 420,
 		colorVar: COLOR_VAR.CYAN,
 		//#endregion
 	},

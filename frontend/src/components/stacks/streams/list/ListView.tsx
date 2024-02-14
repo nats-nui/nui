@@ -112,7 +112,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 							style={cssRow1(isSelected(stream), variant)}
 							onClick={() => handleSelect(stream)}
 						>
-							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9, paddingTop: 5 }}>
+							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9, padding: "3px 2px" }}>
 								{stream.config.name}
 							</td>
 						</tr>
@@ -163,7 +163,8 @@ const cssHead: CSSProperties = {
 	zIndex: 1,
 }
 const cssHeadCell: CSSProperties = {
-	padding: "5px"
+	padding: "5px",
+	textAlign: "right",
 }
 const cssRow = (index: number, select: boolean, variant: number): CSSProperties => ({
 	cursor: "pointer",
@@ -171,10 +172,10 @@ const cssRow = (index: number, select: boolean, variant: number): CSSProperties 
 		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
-		backgroundColor:  "rgba(0, 0, 0, 0.3)",
+		backgroundColor:  "rgba(0, 0, 0, 0.5)",
 		//backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
 	},
-	height: 20,
+	//height: 20,
 })
 const cssRow1 = (select: boolean, variant: number): CSSProperties => ({
 	cursor: "pointer",
@@ -183,14 +184,14 @@ const cssRow1 = (select: boolean, variant: number): CSSProperties => ({
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
 	},
-	height: 20,
+	//height: 20,
 })
 
 const cssRowCell: CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
 	borderRight: '1px solid rgb(255 255 255 / 15%)',
-	padding: "7px 3px",
+	padding: "3px 2px",
 }
 const cssRowCellNumber: CSSProperties = {
 	...cssRowCell,

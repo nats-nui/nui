@@ -25,6 +25,7 @@ export function buildStream(connectionId: string, stream: StreamInfo, allStreams
 		type: DOC_TYPE.STREAM,
 		editState: EDIT_STATE.READ,
 		connectionId: connectionId,
+		//stream: { config: { name: stream.config.name } },
 		stream,
 		allStreams,
 	} as StreamState) as StreamStore;
