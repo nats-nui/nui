@@ -66,14 +66,23 @@ const setup = {
 		},
 		//#endregion
 
+		async error(_: void, store?: StreamsStore) {
+			store.setLoadingMessage("LOADING...")
+			try {
+				const streams = await strApi._error(store.state.connectionId, { targetId: store.state.uuid })
+				store.setAll(streams)
+			} finally {
+				store.setLoadingMessage(null)
+			}
+		},
 
-		
+
 		async fetchIfVoid(_: void, store?: StreamsStore) {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
 		async fetch(_: void, store?: StreamsStore) {
-			const streams = await strApi.index(store.state.connectionId)
+			const streams = await strApi.index(store.state.connectionId, { targetId: store.state.uuid })
 			store.setAll(streams)
 		},
 		/** open CREATION CARD */

@@ -1,34 +1,79 @@
 import FrameworkCard from "@/components/FrameworkCard"
-import { LogsStore } from "@/stores/stacks/mainLogs"
+import { ViewLogStore } from "@/stores/stacks/log"
+import { Log } from "@/stores/log/utils"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useRef } from "react"
+import { Virtuoso } from "react-virtuoso"
+import ItemRow from "./ItemRow"
+import logSo from "@/stores/log"
+import Button from "@/components/buttons/Button"
+
 
 
 interface Props {
-	store?: LogsStore
+	store?: ViewLogStore
 	style?: React.CSSProperties,
 }
 
 const LogsView: FunctionComponent<Props> = ({
-	store: lgsSo,
+	store: viewLogSo,
 	style,
 }) => {
 
 	// STORE
-	const lgsSa = useStore(lgsSo)
+	const viewLogSa = useStore(viewLogSo)
+	const logSa = useStore(logSo)
 
 	// HOOKs
+	const virtuoso = useRef(null);
 
 	// HANDLER
+	const handleMessageClick = (log: Log) => viewLogSo.select(log)
+	const handleClear = () => logSo.clear()
 
 	// RENDER
+	const allLogs = logSa.all
+	if (!allLogs) return <div>no messages</div>
+	const variant = viewLogSa.colorVar
 
 	return <FrameworkCard
-		store={lgsSo}
+		store={viewLogSo}
+		actionsRender={<>
+			<Button
+				label="CLEAR"
+				variant={variant}
+				onClick={handleClear}
+			/>
+		</>}
 	>
+		<Virtuoso
+			ref={virtuoso}
+			style={{ height: "100%" }}
 
-		CIAO
+			// KEEP DOWN
+			initialTopMostItemIndex={allLogs?.length - 1}
+			//atBottomStateChange={handleBottomChange}
+			followOutput={'auto'}
 
+			// LOADING
+			//startReached={handleStartReached}
+			//endReached={handleEndReached}
+			//atTopStateChange={handleTopChange}
+
+			// RENDERING
+			data={allLogs}
+			//computeItemKey={(index, item: Message) => item.seqNum}
+			totalCount={allLogs?.length ?? 0}
+			//overscan={200}
+			defaultItemHeight={96}
+			itemContent={(index, log) => (
+				<ItemRow
+					log={log}
+					index={index}
+					onClick={handleMessageClick}
+				/>
+			)}
+		/>
 	</FrameworkCard>
 }
 

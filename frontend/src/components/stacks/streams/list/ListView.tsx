@@ -45,8 +45,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// }
 
 	// RENDER
-	const streams = streamsSa.all
-	if (!streams) return null
+	const streams = streamsSa.all ?? []
 	const selected = streamsSa.select
 	const variant = streamsSa.colorVar
 	const isSelected = (stream: StreamInfo) => selected == stream.config.name
@@ -67,6 +66,11 @@ const StreamsListView: FunctionComponent<Props> = ({
 				select={isNewSelect}
 				variant={variant}
 				onClick={handleNew}
+			/>
+			<Button
+				label="###"
+				variant={variant}
+				onClick={()=>streamsSo.error()}
 			/>
 		</>}
 		iconizedRender={<BoxV>{

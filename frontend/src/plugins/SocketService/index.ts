@@ -1,5 +1,7 @@
+import logSo from "@/stores/log/index.js";
 import { Reconnect } from "./reconnect.js";
 import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
+import { MESSAGE_TYPE } from "@/stores/log/utils.js";
 
 const wsUrlBuilder = () => {
 	if(import.meta.env.VITE_TARGET =="desktop"){
@@ -60,7 +62,11 @@ export class SocketService {
 			let url = `${protocol}//${host}:${port}/ws/sub`
 			if (base) url = `${url}/${base}`
 			if (connId) url = `${url}?id=${connId}`
-			console.debug("socket:try_connecting:", url)
+			logSo.add({ type: MESSAGE_TYPE.INFO,
+				title: "WS-CONNECTIONS",
+				body: `try_connecting`,
+				data: url,
+			})
 			this.websocket = new WebSocket(url);
 		} catch (error) {
 			this.reconnect.start()
@@ -88,7 +94,10 @@ export class SocketService {
 	 * chiude il socket e mantiene chiuso (usato nel logout)
 	 */
 	disconnect() {
-		console.debug("socket:disconnect")		
+		logSo.add({ type: MESSAGE_TYPE.INFO,
+			title: "WS-CONNECTIONS",
+			body: `disconnect`
+		})
 		this.cnnId = null
 		this.reconnect.enabled = false
 		this.reconnect.stop()
@@ -99,12 +108,20 @@ export class SocketService {
 	 * invia un messaggio al server
 	 */
 	send(msg: string) {
-		console.debug("socket:FE>BE:", msg)
+		logSo.add({ type: MESSAGE_TYPE.INFO,
+			title: "WS-CONNECTIONS",
+			body: `send:FE>BE`,
+			data: msg,
+		})
 		this.websocket.send(msg)
 	}
 
 	sendSubjects(subjects: string[]) {
-		console.debug("socket:sendSubjects:", subjects)
+		logSo.add({ type: MESSAGE_TYPE.INFO,
+			title: "WS-CONNECTIONS",
+			body: `send:FE>BE`,
+			data: subjects
+		})
 		const msg: SocketMessage = {
 			type: MSG_TYPE.SUB_REQUEST,
 			payload: { subjects },
@@ -146,13 +163,21 @@ export class SocketService {
 				})
 				break
 			case MSG_TYPE.ERROR:
-				this.onError?.(message.payload as PayloadError)
+				const error:string = (message.payload as PayloadError)?.error
+				//this.onError?.(message.payload as PayloadError)
+				logSo.add({ type: MESSAGE_TYPE.ERROR,
+					title: "WS-CONNECTIONS-ERROR",
+					body: error,
+				})
 				break
 		}
 	}
 
-	handleError(_: Event) {
-		//console.log("socket:error:", e)
+	handleError(e: Event) {
+		logSo.add({ type: MESSAGE_TYPE.ERROR,
+			title: "WS-CONNECTIONS",
+			body: `error`
+		})
 	}
 
 	//#endregion

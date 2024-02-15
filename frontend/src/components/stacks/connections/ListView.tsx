@@ -75,6 +75,11 @@ const CnnListView: FunctionComponent<Props> = ({
 				variant={variant}
 				onClick={handleNew}
 			/>
+			<Button
+				label="###"
+				variant={variant}
+				onClick={() => cnnListSo.setSnackbar({ ...cnnListSa.snackbar, open: !cnnListSa.snackbar.open })}
+			/>
 		</>}
 		iconizedRender={<div style={cssIconized}>{
 			connnections.map(cnn => (
