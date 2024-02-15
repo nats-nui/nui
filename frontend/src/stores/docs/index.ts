@@ -1,12 +1,12 @@
-import { DOC_ANIM, DOC_TYPE } from "@/stores/docs/types"
+import { DOC_ANIM } from "@/stores/docs/types"
+import { deepEqual } from "@/utils/object"
 import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { dbLoad, dbSave } from "./utils/db"
 import { buildStore } from "./utils/factory"
 import { forEachViews, getById } from "./utils/manage"
-import { VIEW_PARAMS, VIEW_SIZE } from "../stacks/utils"
-import { compare, deepEqual } from "@/utils/object"
+import logSo from "../log"
 
 
 
@@ -24,6 +24,7 @@ const setup = {
 
 	getters: {
 		getById(id: string, store?: DocStore): ViewStore {
+			if (!id) return null
 			return getById(store.state.all, id)
 		},
 		getIndexByView(view: ViewStore, store?: DocStore) {
@@ -47,7 +48,7 @@ const setup = {
 			return store.state.menu.some(view => view.state.uuid == uuid)
 		},
 		find(state: any, store?: DocStore) {
-			return forEachViews( 
+			return forEachViews(
 				store.state.all,
 				(view) => deepEqual(state, view.state) ? view : null
 			)
@@ -56,7 +57,7 @@ const setup = {
 
 	actions: {
 		focus(view: ViewStore, store?: DocStore) {
-			const elm = document.getElementById(view.state.uuid)
+			const elm = document.getElementById(view?.state?.uuid)
 			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 			store.setFocus(view)
 		},
@@ -220,21 +221,36 @@ export type DocMutators = typeof setup.mutators
 export interface DocStore extends StoreCore<DocState>, DocGetters, DocActions, DocMutators {
 	state: DocState
 }
-const docsStore = createStore(setup) as DocStore
-export default docsStore
+const docsSo = createStore(setup) as DocStore
+export default docsSo
 
 
 window.addEventListener("load", async (event) => {
-	const states = await dbLoad()
+	const records = await dbLoad()
+	const { log, states } = records.reduce((acc, record) => {
+		if (record.uuid == "logs") {
+			acc.log = record.all
+		} else {
+			acc.states.push(record)
+		}
+		return acc
+	}, { log: [], states: [] })
+
 	const stores = states.map(state => {
 		const store = buildStore({ type: state.type })
 		store.setSerialization(state)
 		return store
 	})
-	docsStore.setAll(stores)
+	docsSo.setAll(stores)
+
+	logSo.setAll(log)
+	logSo.add({ body: "STARTUP NUI - load session" })
 })
 
 window.addEventListener("beforeunload", async (event) => {
-	const states = docsStore.state.all.map(store => store.getSerialization())
-	await dbSave(states)
+	const states = docsSo.state.all.map(store => store.getSerialization())
+	await dbSave([
+		{ uuid: "logs", all: logSo.state.all },
+		...states
+	])
 })

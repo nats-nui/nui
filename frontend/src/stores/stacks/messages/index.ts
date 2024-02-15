@@ -94,8 +94,6 @@ console.log("CONNECT")
 			ss.onStatus = (payload: PayloadStatus) => {
 				cnnSo.update({ id: store.state.connectionId, status: payload.status })
 			}
-			ss.onError = error => {
-			}
 		},
 		disconnect(_: void, store?: MessagesStore) {
 console.log("DISCONNECT")			

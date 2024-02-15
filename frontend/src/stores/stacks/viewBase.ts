@@ -6,6 +6,7 @@ import { StoreCore } from "@priolo/jon"
 import { buildStore } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { VIEW_SIZE } from "./utils"
+import { MESSAGE_TYPE } from "../log/utils"
 
 
 
@@ -37,6 +38,11 @@ const viewSetup = {
 		parent: <ViewStore>null,
 		/** la sua VIEW LINKED */
 		linked: <ViewStore>null,
+
+		snackbar: <SnackbarState>{
+			open:false,
+		},
+		loadingMessage: <string>null,
 	},
 
 	getters: {
@@ -156,6 +162,8 @@ const viewSetup = {
 	mutators: {
 		setSize: (size: VIEW_SIZE) => ({ size }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
+		setSnackbar: (snackbar: SnackbarState) => ({ snackbar }),
+		setLoadingMessage: (loadingMessage: string) => ({ loadingMessage }),
 	},
 }
 
@@ -172,4 +180,11 @@ export interface ViewStore extends StoreCore<ViewState>, ViewGetters, ViewAction
 }
 
 export default viewSetup
+
+export interface SnackbarState {
+	open: boolean
+	title?: string
+	body?: string
+	type?: MESSAGE_TYPE
+}
 

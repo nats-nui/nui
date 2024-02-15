@@ -5,6 +5,7 @@ import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import DocCmp from "./DocCmp"
+import SnackbarCmp from "./SnackbarCmp"
 
 
 
@@ -14,7 +15,7 @@ interface Props {
 }
 
 /** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
-const DocViewCmp: FunctionComponent<Props> = ({
+const DocView: FunctionComponent<Props> = ({
 	view,
 	deep = 100,
 }) => {
@@ -57,7 +58,13 @@ const DocViewCmp: FunctionComponent<Props> = ({
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
 			<DocCmp view={view} />
-			{/* <ModalCmp view={view} /> */}
+			<SnackbarCmp view={view} />
+			{!!view.state.loadingMessage && (
+				<div style={cssLoading}>
+					<div>{view.state.loadingMessage}</div>
+					<div>[00:01:545]</div>
+				</div>
+			)}
 		</div>
 
 		<div style={cssDesk}>
@@ -80,6 +87,10 @@ const DocViewCmp: FunctionComponent<Props> = ({
 	</div>
 }
 
+const DocViewCmp = React.memo(
+	DocView,
+	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
+)
 export default DocViewCmp
 
 const cssRoot = (deep: number): React.CSSProperties => ({
@@ -120,13 +131,16 @@ const cssDesk: React.CSSProperties = {
 	position: "relative",
 }
 
-const cssSnackbar: React.CSSProperties = {
-	position: "absolute",
-	bottom: 0, left: 0, right: 0,
 
-	margin: 5,
-	padding: 5,
-	borderRadius: 10,
-	backgroundColor: "black",
 
+const cssLoading: React.CSSProperties = {
+	position: 'absolute',
+	height: 'calc(100% - 48px)',
+	width: '100%',
+	backgroundColor: 'rgba(0, 0, 0, 0.6)',
+	zIndex: '1',
+	display: 'flex', flexDirection: "column",
+	alignItems: 'center',
+	justifyContent: 'center',
+	bottom: '0px',
 }

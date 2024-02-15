@@ -4,7 +4,7 @@ import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
-import { LogsStore } from "@/stores/stacks/mainLogs"
+import { ViewLogStore } from "@/stores/stacks/log"
 import { MessageStore } from "@/stores/stacks/message"
 import { MessagesStore } from "@/stores/stacks/messages"
 import { MessageSendStore } from "@/stores/stacks/send"
@@ -78,7 +78,7 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 				return <KvEntryDetailView store={view as KVEntryStore} />
 
 			case DOC_TYPE.LOGS:
-				return <LogsView store={view as LogsStore} />
+				return <LogsView store={view as ViewLogStore} />
 			default:
 				return null
 		}
