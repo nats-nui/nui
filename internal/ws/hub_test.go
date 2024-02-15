@@ -73,7 +73,7 @@ type HubSuite struct {
 }
 
 func (s *HubSuite) SetupSuite() {
-	s.l = &logging.MockedLogger{}
+	s.l = &logging.NullLogger{}
 	s.pool = &mockPool{Conn: &mockConnection{}}
 	s.hub = NewHub[*mockSubscription, *mockConnection](s.pool, s.l)
 }
