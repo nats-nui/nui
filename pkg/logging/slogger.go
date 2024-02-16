@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"io"
 	"log/slog"
 	"os"
 )
@@ -19,8 +20,23 @@ func (m *NullLogger) Info(msg string, args ...any)  {}
 func (m *NullLogger) Warn(msg string, args ...any)  {}
 func (m *NullLogger) Error(msg string, args ...any) {}
 
-func NewSlogger(logLevel, output string) *slog.Logger {
-	return slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: parseLogLevel(logLevel)}))
+func NewSlogger(logLevel, output string) (*slog.Logger, error) {
+	w, err := openLogWriter(output)
+	if err != nil {
+		return nil, err
+	}
+	return slog.New(slog.NewJSONHandler(w, &slog.HandlerOptions{Level: parseLogLevel(logLevel)})), nil
+}
+func openLogWriter(output string) (io.Writer, error) {
+	var w io.Writer
+	if output != "" {
+		f, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			return nil, err
+		}
+		w = f
+	}
+	return w, nil
 }
 
 func parseLogLevel(level string) slog.Level {

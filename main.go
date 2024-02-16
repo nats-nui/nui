@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/pricelessrabbit/nui/desktop/mapping"
 	"github.com/pricelessrabbit/nui/internal/app"
 	"github.com/pricelessrabbit/nui/pkg/logging"
@@ -18,24 +19,35 @@ var assets embed.FS
 
 func main() {
 
-	paths := ospaths.Defaults()
-	logLevel := flag.String("log-level", "info", "log level")
-	logOutput := flag.String("log-output", "", "log output")
-	dbPath := flag.String("db-path", "", "path to the database")
+	logLevel := *flag.String("log-level", "info", "log level")
+	logsOutput := *flag.String("log-output", "", "log output")
+	dbPath := *flag.String("db-path", "", "path to the database")
 
-	if *logOutput != "" {
-		paths.LogsPath = *logOutput
-	}
-	if *dbPath != "" {
-		paths.DbPath = *dbPath
+	if logsOutput == "" {
+		lo, err := ospaths.LogsPath()
+		if err != nil {
+			log.Fatal("error getting logs path: " + err.Error())
+		}
+		logsOutput = lo
 	}
 
-	logger := logging.NewSlogger(*logLevel, paths.LogsPath)
+	if dbPath == "" {
+		dbp, err := ospaths.DbPath()
+		if err != nil {
+			log.Fatal("error getting db path: " + err.Error())
+		}
+		dbPath = dbp
+	}
+
+	logger, err := logging.NewSlogger(logLevel, logsOutput)
+	if err != nil {
+		log.Fatal("error creating logger: " + err.Error())
+	}
 
 	// Create an instance of the app structure
 	desktopApp, err := app.NewApp(
 		app.WithTarget(app.TargetDesktop),
-		app.WithDb(paths.DbPath),
+		app.WithDb(dbPath),
 		app.WithLogger(logger),
 	)
 	if err != nil {
