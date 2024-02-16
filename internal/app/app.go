@@ -48,13 +48,13 @@ func (a *App) Startup(ctx context.Context) {
 
 	nuiSvc, err := nui.Setup(a.dbPath, a.l)
 	if err != nil {
-		a.l.Error("fatal error setting up nui app: " + err.Error())
+		a.l.Error("fatal error setting up app nui service: " + err.Error())
 		os.Exit(1)
 	}
 	server := nui.NewServer(a.serverPort, nuiSvc, a.l)
 	err = server.Start(ctx)
 	if err != nil {
-		a.l.Error("fatal error setting up nui app: " + err.Error())
+		a.l.Error("fatal error setting up app webserver: " + err.Error())
 		os.Exit(1)
 	}
 }

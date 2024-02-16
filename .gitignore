@@ -27,5 +27,3 @@ db
 credentials
 build/*
 !build/.gitkeep
-desktop/frontend/dist/*
-!desktop/frontend/dist/.gitkeep

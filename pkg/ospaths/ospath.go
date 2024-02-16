@@ -1,13 +1,15 @@
 package ospaths
 
-type Paths struct {
-	LogsPath string
-	DbPath   string
+import "github.com/adrg/xdg"
+
+const APPNAME = "nui-app"
+const DBPATH = APPNAME + "/databases/nui"
+const LOGSPATH = APPNAME + "/logs/logs.log"
+
+func LogsPath() (string, error) {
+	return xdg.DataFile(LOGSPATH)
 }
 
-func Defaults() Paths {
-	return Paths{
-		LogsPath: "./logs",
-		DbPath:   "./db",
-	}
+func DbPath() (string, error) {
+	return xdg.DataFile(DBPATH)
 }

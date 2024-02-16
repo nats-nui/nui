@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.21.4
 
 require (
+	github.com/adrg/xdg v0.4.0
 	github.com/dgraph-io/badger/v4 v4.2.0
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/gofiber/contrib/websocket v1.0.0

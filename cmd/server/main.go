@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/pricelessrabbit/nui/internal/app"
 	"github.com/pricelessrabbit/nui/pkg/logging"
 	"os"
@@ -17,10 +18,14 @@ func main() {
 	dbPath := flag.String("db-path", ":memory:", "path to the database")
 
 	flag.Parse()
+	logger, err := logging.NewSlogger(*logLevel, *logOutput)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	logger := logging.NewSlogger(*logLevel, *logOutput)
+	logger.Info("Starting up...")
+
 	ctx, cancel := context.WithCancel(context.Background())
-
 	webApp, err := app.NewApp(
 		app.WithTarget(app.TargetWeb),
 		app.WithDb(*dbPath),
@@ -39,7 +44,7 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		sig := <-sigCh
-		logger.Info("Shutting down...", sig)
+		logger.Info("Shutting down...", "signal", sig.String())
 		cancel()
 	}()
 	<-ctx.Done()
