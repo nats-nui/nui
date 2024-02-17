@@ -65,15 +65,15 @@ const setup = {
 		//#endregion
 
 
-		
+
 		async fetchIfVoid(_: void, store?: BucketsStore) {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
 		async fetch(_: void, store?: BucketsStore) {
-			const buckets = await bucketApi.index(store.state.connectionId)
+			const buckets = await bucketApi.index(store.state.connectionId, { store })
 			store.setAll(buckets)
-			
+
 		},
 		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: BucketsStore) {
@@ -83,7 +83,7 @@ const setup = {
 		},
 		async delete(_: void, store?: BucketsStore) {
 			const name = store.state.select
-			await bucketApi.remove(store.state.connectionId, name)
+			await bucketApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(b => b.bucket != name))
 			store.setSelect(null)
 		},
@@ -99,10 +99,10 @@ const setup = {
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: BucketsStore) {
 			const nameOld = store.state.select
-    		const nameNew = (name && nameOld !== name) ? name : null
-    		const view = nameNew ? buildBucket(store.state.connectionId, store.getByName(nameNew)) : null
-    		store.setSelect(nameNew)
-    		docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
+			const nameNew = (name && nameOld !== name) ? name : null
+			const view = nameNew ? buildBucket(store.state.connectionId, store.getByName(nameNew)) : null
+			store.setSelect(nameNew)
+			docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 	},
 

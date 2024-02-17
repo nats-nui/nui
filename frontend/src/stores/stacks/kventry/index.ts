@@ -74,7 +74,7 @@ const setup = {
 			await store.fetch()
 		},
 		async fetch(_: void, store?: KVEntriesStore) {
-			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket)
+			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket, {store})
 			store.setAll(kventries)
 		},
 		async create(_: void, store?: KVEntriesStore) {
@@ -84,7 +84,7 @@ const setup = {
 		},
 		async delete(_: void, store?: KVEntriesStore) {
 			const key = store.state.select
-			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key)
+			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key, {store})
 			store.setAll(store.state.all.filter(entry => entry.key != key))
 			store.setSelect(null)
 		},

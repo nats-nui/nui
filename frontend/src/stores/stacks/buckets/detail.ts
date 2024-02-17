@@ -66,13 +66,13 @@ const setup = {
 		/** load all ENTITY */
 		async fetch(_: void, store?: BucketStore) {
 			// se NEW è valorizzato solo "bucketConfig"
-			if ( !store.state.bucket) return
-			const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket)
+			if (!store.state.bucket) return
+			const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket, { store })
 			store.setBucket(bucket)
 		},
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
-			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig)
+			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
 			store.setBucket(bucketSaved)
 			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)

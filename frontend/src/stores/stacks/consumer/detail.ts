@@ -68,7 +68,7 @@ const setup = {
 			await store.fetch()
 		},
 		fetch: async (_: void, store?: ConsumerStore) => {
-			const consumer = await cnsApi.get(store.state.connectionId, store.state.streamName, store.state.consumer.name)
+			const consumer = await cnsApi.get(store.state.connectionId, store.state.streamName, store.state.consumer.name, {store})
 			store.setConsumer(consumer)
 		},
 	},

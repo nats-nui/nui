@@ -24,7 +24,8 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
-		messages: <Message[]>historyTest,//[],
+		messages: <Message[]>[],
+		//messages: <Message[]>historyTest,
 		/** testo per la ricerca */
 		textSearch: <string>null,
 		/** DIALOG SUBS aperta */

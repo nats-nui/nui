@@ -73,7 +73,7 @@ const setup = {
 			await store.fetch()
 		},
 		async fetch(_: void, store?: ConsumersStore) {
-			const consumers = await conApi.index(store.state.connectionId, store.state.streamName)
+			const consumers = await conApi.index(store.state.connectionId, store.state.streamName, {store})
 			store.setAll(consumers)
 		},
 

@@ -144,7 +144,7 @@ const setup = {
 			//***** */
 
 			const name = store.state.stream.config.name
-			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval })
+			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, {store})
 
 
 
@@ -178,7 +178,7 @@ const setup = {
 			//***** */
 
 			const name = store.state.stream.config.name
-			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval })
+			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, {store})
 			if (!msgs || msgs.length == 0) return 0
 			const ret = msgs.length
 			let all = store.state.messages ?? []
@@ -208,7 +208,7 @@ const setup = {
 			}
 
 			store.setFilter(filter)
-			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter)
+			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter, {store})
 			store.state.rangeTop = filter.startSeq ?? msgs[0].seqNum
 			store.setMessages(msgs)
 		},

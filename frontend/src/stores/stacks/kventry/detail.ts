@@ -82,12 +82,12 @@ const setup = {
 			await store.fetch()
 		},
 		fetch: async (_: void, store?: KVEntryStore) => {
-			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key)
+			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, {store})
 			store.setKVEntry(kventry)
 		},
 		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
-			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload)
+			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, {store})
 			store.setKVEntry(kventry)
 			store.getParentList()?.fetch()
 			store.getParentList()?.setSelect(kventry.key)

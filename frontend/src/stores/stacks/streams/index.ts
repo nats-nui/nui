@@ -88,7 +88,7 @@ const setup = {
 		},
 		async delete(_: void, store?: StreamsStore) {
 			const name = store.state.select
-			await strApi.remove(store.state.connectionId, name)
+			await strApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(s => s.config.name != name))
 			store.setSelect(null)
 		},
