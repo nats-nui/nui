@@ -79,12 +79,12 @@ const setup = {
 		},
 		async fetch(_: void, store?: StreamStore) {
 			const name = store.state.stream.config.name
-			const stream = await strApi.get(store.state.connectionId, name)
+			const stream = await strApi.get(store.state.connectionId, name, {store})
 			store.setStream(stream)
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
 			const parent = store.getParentList()
-			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId)
+			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId, {store})
 			const allStreams = streams?.map(si => si.config.name) ?? []
 			store.setAllStreams(allStreams)
 		},
@@ -92,9 +92,9 @@ const setup = {
 		async save(_: void, store?: StreamStore) {
 			let streamSaved: StreamInfo = null
 			if (store.state.editState == EDIT_STATE.NEW) {
-				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config)
+				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config, {store})
 			} else {
-				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config)
+				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config, {store})
 			}
 			store.setStream(streamSaved)
 			store.getParentList()?.update(streamSaved)

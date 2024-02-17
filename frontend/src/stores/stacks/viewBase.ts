@@ -42,7 +42,7 @@ const viewSetup = {
 		snackbar: <SnackbarState>{
 			open:false,
 		},
-		loadingMessage: <string>null,
+		loadingMessage: <React.ReactNode>null,
 	},
 
 	getters: {
