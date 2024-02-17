@@ -4,7 +4,25 @@ import cnnApi from "@/api/connection"
 import cnnSo from "@/stores/connections"
 import srcIcon from "@/assets/MessageSendIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
+import { editor } from "monaco-editor"
 
+
+
+const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
+	//readOnly: true,
+	//readOnlyMessage: "",
+	wordWrap: "on",
+	lineNumbers: 'off',
+	glyphMargin: false,
+	lineDecorationsWidth: 0,
+	lineNumbersMinChars: 0,
+	folding: false,
+	showFoldingControls: "mouseover",
+	minimap: {
+		enabled: false,
+	},
+	tabSize: 2,
+}
 
 const setup = {
 
@@ -13,6 +31,7 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subsOpen: false,
+		editor: editorOptionsDefault,
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,

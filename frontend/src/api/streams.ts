@@ -48,7 +48,7 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 
 
 function _error(connectionId: string, opt?: CallOptions): Promise<StreamInfo[]> {
-	return ajax.get(`connection/${connectionId}/stream_`, null, opt)
+	return ajax.get(`connection/${connectionId}/stream_error`, null, opt)
 }
 
 

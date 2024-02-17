@@ -75,7 +75,7 @@ const setup = {
 			}
 		},
 		//#endregion
-
+		
 	},
 
 	actions: {
@@ -113,7 +113,7 @@ const setup = {
 			let desired = store.state.filter.interval
 			for (let i = 0; i < 200; i++) {
 				const msgsLoad = await store.fetchPrev()
-				if ( msgsLoad == null ) break
+				if (msgsLoad == null) break
 				msgsTot += msgsLoad
 				if (msgsTot >= desired) break
 				store.state.filter.interval = Math.round(store.state.filter.interval * 1.5)
@@ -214,6 +214,10 @@ const setup = {
 		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: StreamMessagesStore) {
+			// message = {
+			// 	subject: "test",
+			// 	payload: '{"pippo": 45, "pluto": { "var1": 1, "var2": 2}, "paperino": "www"}',
+			// }
 			docsSo.addLink({
 				view: buildMessageDetail(message, store.state.format),
 				parent: store,

@@ -67,13 +67,8 @@ const setup = {
 		//#endregion
 
 		async error(_: void, store?: StreamsStore) {
-			store.setLoadingMessage("LOADING...")
-			try {
-				const streams = await strApi._error(store.state.connectionId, { targetId: store.state.uuid })
-				store.setAll(streams)
-			} finally {
-				store.setLoadingMessage(null)
-			}
+			const streams = await strApi._error(store.state.connectionId, { store })
+			store.setAll(streams)
 		},
 
 
@@ -82,7 +77,7 @@ const setup = {
 			await store.fetch()
 		},
 		async fetch(_: void, store?: StreamsStore) {
-			const streams = await strApi.index(store.state.connectionId, { targetId: store.state.uuid })
+			const streams = await strApi.index(store.state.connectionId, { store })
 			store.setAll(streams)
 		},
 		/** open CREATION CARD */

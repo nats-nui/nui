@@ -1,10 +1,12 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import TextArea from "@/components/input/TextArea"
-import { MessageSendState, MessageSendStore } from "@/stores/stacks/send"
+import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import SubjectsDialog from "./SubjectsDialog"
+import { Editor, Monaco } from "@monaco-editor/react"
+import { editor } from "monaco-editor"
 
 
 
@@ -20,18 +22,23 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const sendSa = useStore(sendSo) as MessageSendState
 
 	// HOOKs
+	const editorRef = useRef<editor.IStandaloneCodeEditor>(null)
 
 	// HANDLER
 	const handleSend = () => {
 		sendSo.publish()
 	}
-	const handleTextChange = (text: string) => {
-		sendSo.setText(text)
+	const handleValueChange = (value: string | undefined, ev: editor.IModelContentChangedEvent) => {
+		sendSo.setText(value)
 	}
 	const handleSubsClick = (e: React.MouseEvent, select: boolean) => {
 		if (select) return
 		sendSo.setSubsOpen(!select)
 	}
+	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+		editorRef.current = editor
+	}
+	const handleFormat = () => editorRef.current.getAction('editor.action.formatDocument').run()
 
 	// RENDER
 	const variant = sendSa.colorVar
@@ -39,6 +46,11 @@ const MessageSendView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={sendSo}
 		actionsRender={<>
+			<Button
+				label="FORMAT"
+				onClick={handleFormat}
+				variant={variant}
+			/>
 			<Button
 				select={sendSa.subsOpen}
 				label="SUBJECT"
@@ -52,15 +64,18 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div style={cssForm}>
-			<TextArea style={{ flex: 1 }}
-				value={sendSa.text}
-				onChange={handleTextChange}
-			/>
-		</div>
+
+		<Editor
+			defaultLanguage="json"
+			value={sendSa.text}
+			onChange={handleValueChange}
+			options={sendSa.editor}
+			theme="vs-dark"
+			onMount={handleEditorDidMount}
+		/>
 
 		<SubjectsDialog store={sendSo} />
-		
+
 	</FrameworkCard>
 
 }

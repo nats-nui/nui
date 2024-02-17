@@ -5,8 +5,25 @@ import { MSG_FORMAT } from "../messages/utils"
 import { Message } from "@/types/Message"
 import { COLOR_VAR } from "@/stores/layout"
 import dayjs from "dayjs"
+import { editor } from "monaco-editor"
 
 
+
+const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
+	//readOnly: true,
+	//readOnlyMessage: "",
+	wordWrap: "on",
+	lineNumbers: 'off',
+	glyphMargin: false,
+	lineDecorationsWidth: 0,
+	lineNumbersMinChars: 0,
+	folding: true,
+	showFoldingControls: "mouseover",
+	minimap: {
+		enabled: false,
+	},
+	tabSize: 2,
+}
 
 const setup = {
 
@@ -14,7 +31,8 @@ const setup = {
 		message: <Message>null,
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
-		
+		editor: editorOptionsDefault,
+
 		//#region VIEWBASE
 		urlSerializable: false,
 		width: 420,
@@ -26,7 +44,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.subject,
-		getSubTitle: (_: void, store?: ViewStore):string => {
+		getSubTitle: (_: void, store?: ViewStore): string => {
 			const timestamp = (store as MessageStore).state.message?.receivedAt
 			return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		},
@@ -40,7 +58,9 @@ const setup = {
 			}
 		},
 		//#endregion
-		
+
+		getEditorLanguage: (_: void, store?: MessageStore) => store.state.format == MSG_FORMAT.JSON ? "json" : "plaintext",
+
 	},
 
 	actions: {
@@ -53,12 +73,13 @@ const setup = {
 			state.format = data.format
 		},
 		//#endregion
-
+		
 	},
 
 	mutators: {
 		setFormat: (format: MSG_FORMAT) => ({ format }),
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
+		setEditor: (editor: editor.IStandaloneEditorConstructionOptions) => ({ editor }),
 	},
 }
 
@@ -71,3 +92,5 @@ export interface MessageStore extends ViewStore, StoreCore<MessageState>, Messag
 }
 const msgSetup = mixStores(viewSetup, setup)
 export default msgSetup
+
+
