@@ -26,7 +26,7 @@ export function dbLoad(): Promise<any[]> {
 				} else {
 					res(result)
 				}
-			};
+			}
 		}		
 	})
 }
@@ -44,7 +44,6 @@ export function dbSave(states:any[]): Promise<void> {
 			rej(openRequest.error)
 		}
 		openRequest.onsuccess = function () {
-			console.log("eeeee")
 			let db = openRequest.result;
 			let transaction = db.transaction(["myStore"], "readwrite");
 			let store = transaction.objectStore("myStore");
@@ -54,7 +53,6 @@ export function dbSave(states:any[]): Promise<void> {
 				request.onerror = (e) => console.error("Error", request.error);
 				request.onsuccess = (e) => console.log("JSON added to IndexedDB");
 			}
-			console.log("iiiiiiiiii")
 			res()
 		}	
 	})

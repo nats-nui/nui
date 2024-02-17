@@ -58,9 +58,12 @@ const ItemRow: FunctionComponent<Props> = ({
 				onMouseLeave={handleTitleLeave}
 			>
 				<div style={{ display: "flex", flex: 1 }}>
-					{message.seqNum && <div style={{ width: 20 }}>{message.seqNum}</div>}
-					<div style={cssTitleText}>{message.subject}</div>
+					{!!message.seqNum && (
+						<div style={{ width: 20 }}>{message.seqNum}</div>
+					)}
+					<div style={cssSubject}>{message.subject}</div>
 				</div>
+
 				{bttCopyVisible && (
 					<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
 						<IconButton onClick={handleClipboardClick}>
@@ -77,7 +80,9 @@ const ItemRow: FunctionComponent<Props> = ({
 				[MSG_FORMAT.HEX]: <HexTable text={message.payload} maxRows={10} />,
 			}[format]}
 
-			{time && <div style={cssFooter}>{time}</div>}
+			{time && (
+				<div style={cssFooter}>{time}</div>
+			)}
 		</div>
 	)
 }
@@ -93,14 +98,15 @@ const cssRoot = (index: number): React.CSSProperties => ({
 
 const cssTitle: React.CSSProperties = {
 	display: "flex",
-	alignItems: "center",
-	height: 24,
+	alignItems: "start",
+	//height: 24,
 	fontSize: 10,
 }
 
-const cssTitleText: React.CSSProperties = {
+const cssSubject: React.CSSProperties = {
 	flex: 1,
 	color: layoutSo.state.theme.palette.default.fg2,
+	overflowWrap: "anywhere",
 }
 
 const cssFooter: React.CSSProperties = {
