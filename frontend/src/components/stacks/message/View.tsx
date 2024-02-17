@@ -7,7 +7,7 @@ import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Editor, Monaco } from "@monaco-editor/react"
 import { useStore } from "@priolo/jon"
 import { editor } from "monaco-editor"
-import { FunctionComponent, useEffect, useRef } from "react"
+import { FunctionComponent, useRef } from "react"
 import FormatDialog from "../messages/FormatDialog"
 
 
