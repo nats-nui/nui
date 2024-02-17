@@ -1,6 +1,6 @@
-import docsSo from "@/stores/docs"
 import logSo from "@/stores/log"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { camelToSnake, snakeToCamel } from "@/utils/object"
 
 
@@ -19,7 +19,7 @@ export interface CallOptions {
 	isLogin?: boolean
 	loading?: boolean
 	noError?: boolean
-	targetId?: string
+	store?: ViewStore
 }
 
 const httpUrlBuilder = () => {
@@ -29,8 +29,9 @@ const httpUrlBuilder = () => {
 
 const optionsParamDefault: CallOptions = {
 	isLogin: false,
-	loading: false,
+	loading: true,
 	noError: false,
+	store: null,
 }
 const optionsDefault: Options = {
 	baseUrl: httpUrlBuilder(),
@@ -68,14 +69,18 @@ export class AjaxService {
 	async send(url: string, method: METHOD, data?: any, options: CallOptions = {}) {
 		options = { ...optionsParamDefault, ...options }
 
-		// SEND REQUEST
+		// PREPARE DATA
 		data = camelToSnake(data)
 		const headers = {
 			"Content-Type": "application/json",
 			"Accept": "application/json",
 		}
+
+
+		// SEND REQUEST
 		let response = null
 		try {
+			if ( options.store && options.loading ) options.store.setLoadingMessage("LOADING...")
 			response = await fetch(
 				`${this.options.baseUrl}${url}`,
 				{
@@ -88,10 +93,13 @@ export class AjaxService {
 			if ( options.noError ) return
 			logSo.add({
 				type: MESSAGE_TYPE.ERROR,
+				title: "http:error:fetch",
 				body: e.toString(),
-				targetId: options.targetId,
+				targetId: options.store?.state?.uuid,
 			})
 			throw e
+		} finally {
+			if ( options.store && options.loading ) options.store.setLoadingMessage(null)
 		}
 
 		// GET DATA
@@ -106,11 +114,12 @@ export class AjaxService {
 		// MANAGE HTTP ERRORS
 		const status = response.status
 		if (status >= 400 && !options.noError) {
-			const error = response?.error as string ?? jsonError ?? `${status} generic`
+			const error = ret?.error as string ?? jsonError ?? `${status} generic`
 			logSo.add({
 				type: MESSAGE_TYPE.ERROR,
+				title: `http:error:${status}`,
 				body: error,
-				targetId: options.targetId,
+				targetId: options.store?.state?.uuid,
 			})
 			throw error
 		}
@@ -119,4 +128,3 @@ export class AjaxService {
 }
 
 export default new AjaxService()
-

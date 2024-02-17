@@ -9,7 +9,7 @@ import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
 import { Message } from "@/types/Message"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
-import { MessageSendState } from "../send"
+import { MessageSendState } from "../messageSend"
 import { ViewState } from "../viewBase"
 import { MSG_FORMAT } from "./utils"
 

@@ -7,6 +7,8 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import IconRow from "../rows/IconRow"
 import StoreIcon from "./StoreIcon"
+import CircularIndicatorCmp from "../CircularIndicatorCmp"
+import TimerCmp, { TIMER_STATE } from "../TimerCmp"
 
 
 
@@ -52,6 +54,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		})
 		docSo.setAll(stores)
 	}
+	const handleTimeout = () => console.log("timeout")
 
 	// RENDER
 	const stores = docSa.menu

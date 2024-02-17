@@ -10,6 +10,16 @@ import streams_S from "../../data/streams"
 const handlers = [
 
 	/** INDEX */
+	rest.get('/api/connection/:connId/stream_error', async (req, res, ctx) => {
+		const { cnnId } = req.params
+		return res(
+			ctx.status(500),
+			ctx.json({ error: "messaggio generico di errore"}),
+		)
+	}),
+
+
+	/** INDEX */
 	rest.get('/api/connection/:connId/stream', async (req, res, ctx) => {
 		const { cnnId } = req.params
 		return res(
