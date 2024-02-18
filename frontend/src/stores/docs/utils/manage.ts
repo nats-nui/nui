@@ -18,7 +18,7 @@ export function forEachViews<T>(views: ViewStore[], callback: (view: ViewStore) 
 function forEachView<T>(view: ViewStore, callback: (view: ViewStore) => T): T {
 	if (!view) return null
 	const ret = callback(view)
-	if ( ret != null ) return ret
+	if ( ret != null && ret !== false ) return ret
 	if (view.state.linked) {
 		return forEachView(view.state.linked, callback)
 	}

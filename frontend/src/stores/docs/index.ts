@@ -178,32 +178,17 @@ const setup = {
 		/** fissa una VIEW al lato sinistro */
 		async pinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
-			//view.state.size = VIEW_SIZE.ICONIZED
-			//await store.remove({ view, anim: true })
 			store.setMenu([...store.state.menu, view])
 		},
 		/** rende mobile una VIEW fissata */
 		async unpinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
-			//view.state.size = VIEW_SIZE.NORMAL
-			//store.add({ view, anim: true })
 			const menu = [...store.state.menu]
 			const index = menu.findIndex(s => s == view)
 			if (index == -1) return
 			menu.splice(index, 1)
 			store.setMenu(menu)
 		},
-
-
-
-
-		/** sostituisco tutti i DOC con quelli ricavati da una stringa (tipicamente URL) */
-		// updateFromString(docsStr: string, store?: DocStore) {
-		// 	const viewsState = stringToViewsState(docsStr)
-		// 	const stores = viewsState.map(viewState => buildStore(viewState)).filter(store => !!store)
-		// 	const storesAgg = aggregate(stores)
-		// 	store.setAll(storesAgg)
-		// },
 	},
 
 	mutators: {
