@@ -28,15 +28,14 @@ func NewSlogger(logLevel, output string) (*slog.Logger, error) {
 	return slog.New(slog.NewJSONHandler(w, &slog.HandlerOptions{Level: parseLogLevel(logLevel)})), nil
 }
 func openLogWriter(output string) (io.Writer, error) {
-	var w io.Writer
 	if output != "" {
-		f, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		w, err := os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
 			return nil, err
 		}
-		w = f
+		return w, nil
 	}
-	return w, nil
+	return os.Stdout, nil
 }
 
 func parseLogLevel(level string) slog.Level {
