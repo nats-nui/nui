@@ -22,7 +22,7 @@ const setup = {
 		all: <BucketState[]>[],
 
 		//#region VIEWBASE
-		width: 366,
+		width: 310,
 		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},

@@ -23,7 +23,7 @@ const setup = {
 		all: <KVEntry[]>null,
 
 		//#region VIEWBASE
-		width: 366,
+		width: 310,
 		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},
