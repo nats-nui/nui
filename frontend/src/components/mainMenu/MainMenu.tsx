@@ -7,8 +7,6 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import IconRow from "../rows/IconRow"
 import StoreIcon from "./StoreIcon"
-import CircularIndicatorCmp from "../CircularIndicatorCmp"
-import TimerCmp, { TIMER_STATE } from "../TimerCmp"
 
 
 
@@ -57,7 +55,7 @@ const MainMenu: FunctionComponent<Props> = ({
 	const handleTimeout = () => console.log("timeout")
 
 	// RENDER
-	const stores = docSa.menu
+	const views = docSa.menu
 
 	return <div style={{ ...cssContainer, ...style }}>
 		<IconRow onClick={handleConnectionsClick}
@@ -65,10 +63,8 @@ const MainMenu: FunctionComponent<Props> = ({
 			variant={COLOR_VAR.GREEN}
 			selected
 		/>
-		{/* <button onClick={handleLoad}>LOAD</button>
-		<button onClick={handleSave}>SAVE</button> */}
-		{stores.map((store) => (
-			<StoreIcon key={store.state.uuid} store={store} />
+		{views.map((view) => (
+			<StoreIcon key={view.state.uuid} store={view} />
 		))}
 		<div style={{ flex: 1 }} />
 		<IconRow onClick={handleLogsClick}

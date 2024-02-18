@@ -20,14 +20,9 @@ const StoreIcon: FunctionComponent<Props> = ({
 
 	// HOOKs
 
-
 	// HANDLER
-	const handleOpenStoreClick = (view: ViewStore) => {
-		docSo.add({ view, anim: true })
-	}
-	const handleCloseStoreClick = (store: ViewStore) => {
-		docSo.unpinned(store)
-	}
+	const handleOpenStoreClick = (view: ViewStore) => docSo.add({ view, anim: true })
+	const handleCloseStoreClick = (store: ViewStore) => docSo.unpinned(store)
 
 	// RENDER
 	return (
