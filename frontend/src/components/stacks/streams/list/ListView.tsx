@@ -1,15 +1,12 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
+import Table from "@/components/table"
 import docSo from "@/stores/docs"
-import layoutSo from "@/stores/layout"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
-import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
-import { CSSProperties, FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect } from "react"
 
 
 
@@ -31,27 +28,16 @@ const StreamsListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream.config.name)
+	const handleSelect = (index: number) => streamsSo.select(streams[index].config.name)
 	const handleNew = () => streamsSo.create()
 	const handleDelete = () => streamsSo.delete()
-
-	// const handleMessages = (e: React.MouseEvent, stream: StreamInfo) => {
-	// 	e.stopPropagation()
-	// 	streamsSo.openMessages(stream.config?.name)
-	// }
-	// const handleConsumer = (e: React.MouseEvent, stream: StreamInfo) => {
-	// 	e.stopPropagation()
-	// 	streamsSo.openConsumers(stream.config?.name)
-	// }
 
 	// RENDER
 	const streams = streamsSa.all ?? []
 	const selected = streamsSa.select
-	const variant = streamsSa.colorVar
-	const isSelected = (stream: StreamInfo) => selected == stream.config.name
-	const getTitle = (stream: StreamInfo) => stream.config.name
-	const getSubtitle = (stream: StreamInfo) => stream.config.description
+	const selectedIndex = streamsSo.getIndexByName(streamsSa.select)
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
+	const variant = streamsSa.colorVar
 
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={streamsSo}
@@ -70,144 +56,28 @@ const StreamsListView: FunctionComponent<Props> = ({
 			<Button
 				label="###"
 				variant={variant}
-				onClick={()=>streamsSo.error()}
+				onClick={() => streamsSo.error()}
 			/>
 		</>}
-		iconizedRender={<BoxV>{
-			streams.map(stream => (
-				<IconRow key={stream.config.name}
-					title={getTitle(stream)}
-					subtitle={getSubtitle(stream)}
-					selected={isSelected(stream)}
-					variant={variant}
-					onClick={() => handleSelect(stream)}
-				/>
-			))
-		}</BoxV>}
 	>
-
 		<div style={{ marginLeft: -9, marginRight: -9 }}>
-			<table style={cssTable}>
-				<thead >
-					<tr style={cssHead}>
-						{/* <th style={{ ...cssHeadCell, width: "100%" }}>
-							NAME
-						</th> */}
-						<th style={cssHeadCell}>
-							SIZE
-						</th>
-						<th style={cssHeadCell}>
-							FIRST
-						</th>
-						<th style={cssHeadCell}>
-							LAST
-						</th>
-						<th style={cssHeadCell}>
-							BYTEs
-						</th>
 
-					</tr>
-				</thead>
-				<tbody>
-					{streams.map((stream, index) => (<>
-
-						<tr 
-							key={`${stream.config.name}_1`} 
-							style={cssRow1(isSelected(stream), variant)}
-							onClick={() => handleSelect(stream)}
-						>
-							<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9, padding: "3px 2px" }}>
-								{stream.config.name}
-							</td>
-						</tr>
-						<tr key={stream.config.name}
-							style={cssRow(index, isSelected(stream), variant)}
-							onClick={() => handleSelect(stream)}
-						>
-							{/* <td style={{ ...cssRowCellString, width: "100%" }}>
-								{stream.config.name}
-							</td> */}
-							<td style={cssRowCellNumber}>
-								{stream.state.messages}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.firstSeq}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.lastSeq}
-							</td>
-							<td style={cssRowCellNumber}>
-								{stream.state.bytes}
-							</td>
-						</tr>
-					</>))}
-				</tbody>
-			</table>
+			<Table
+				items={streams}
+				props={[
+					{ label: "SIZE", getValue: s => s.state.messages },
+					{ label: "FIRST", getValue: s => s.state.firstSeq },
+					{ label: "LAST", getValue: s => s.state.lastSeq },
+					{ label: "BYTES", getValue: s => s.state.bytes },
+				]}
+				propMain={{ getValue: s => s.config.name }}
+				select={selectedIndex}
+				onSelectChange={handleSelect}
+				variant={variant}
+			/>
 		</div>
 
 	</FrameworkCard>
 }
 
 export default StreamsListView
-
-
-
-const cssTable: CSSProperties = {
-	width: "100%",
-	borderCollapse: "collapse",
-	borderSpacing: 0,
-}
-const cssHead: CSSProperties = {
-	fontSize: 13,
-	fontWeight: 600,
-	height: 28,
-	position: 'sticky',
-	top: '0',
-	backgroundColor: '#3e3e3e',
-	zIndex: 1,
-}
-const cssHeadCell: CSSProperties = {
-	padding: "5px",
-	textAlign: "right",
-}
-const cssRow = (index: number, select: boolean, variant: number): CSSProperties => ({
-	cursor: "pointer",
-	...select ? {
-		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-		color: layoutSo.state.theme.palette.var[variant].fg
-	} : {
-		backgroundColor:  "rgba(0, 0, 0, 0.5)",
-		//backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
-	},
-	//height: 20,
-})
-const cssRow1 = (select: boolean, variant: number): CSSProperties => ({
-	cursor: "pointer",
-	...select ? {
-		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
-		color: layoutSo.state.theme.palette.var[variant].fg
-	} : {
-	},
-	//height: 20,
-})
-
-const cssRowCell: CSSProperties = {
-	fontSize: 12,
-	fontWeight: 600,
-	borderRight: '1px solid rgb(255 255 255 / 15%)',
-	padding: "3px 2px",
-}
-const cssRowCellNumber: CSSProperties = {
-	...cssRowCell,
-	fontFamily: "monospace",
-	fontSize: 12,
-	fontWeight: 600,
-	textAlign: "right",
-}
-const cssRowCellString: CSSProperties = {
-	...cssRowCell,
-	overflow: "hidden",
-	whiteSpace: "nowrap",
-	textOverflow: "ellipsis",
-	maxWidth: 0,
-}
