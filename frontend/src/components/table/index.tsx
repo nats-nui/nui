@@ -1,8 +1,5 @@
-import SortDownIcon from "@/icons/SortDownIcon"
 import layoutSo from "@/stores/layout"
 import { CSSProperties, FunctionComponent, useMemo, useState } from "react"
-import IconButton from "../buttons/IconButton"
-import Box from "../format/Box"
 import Header, { ORDER_TYPE } from "./Header"
 
 
@@ -19,9 +16,7 @@ interface Props {
 	propMain?: ItemProp
 	items?: any[]
 	select?: number
-
 	variant?: number
-
 	onSelectChange?: (select: number) => void
 }
 
@@ -30,9 +25,7 @@ const Table: FunctionComponent<Props> = ({
 	propMain,
 	items = [],
 	select = -1,
-
 	variant = 0,
-
 	onSelectChange,
 }) => {
 
@@ -42,7 +35,13 @@ const Table: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const itemsSort: any[] = useMemo(() => {
-		if (!propOrder || typeOrder == ORDER_TYPE.NOTHING) return items
+		if (!propOrder || typeOrder == ORDER_TYPE.NOTHING) {
+			return items.sort((i1, i2) => {
+				const v1 = getValueString(i1, propMain)
+				const v2 = getValueString(i2, propMain)
+				return v1.localeCompare(v2)
+			})
+		}
 		return items.sort((i1, i2) => {
 			const v1 = propOrder.getValue(i1)
 			const v2 = propOrder.getValue(i2)
@@ -59,7 +58,7 @@ const Table: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isSelected = (index: number) => index == select
-	function getValueString(item: any, prop: ItemProp) {
+	function getValueString(item: any, prop: ItemProp): string {
 		return prop.getShow?.(item) ?? prop.getValue?.(item)
 	}
 
@@ -78,17 +77,17 @@ const Table: FunctionComponent<Props> = ({
 				{!!propMain && (
 					<tr
 						key={`${index}_1`}
-						style={cssRow1(isSelected(index), variant)}
+						style={cssRowMain(isSelected(index), variant)}
 						onClick={() => handleSelect(index)}
 					>
-						<td colSpan={4} style={{ fontSize: 12, fontWeight: 400, opacity: 0.9, padding: "3px 2px" }}>
+						<td colSpan={4} style={{ opacity: 0.8, padding: "5px 2px" }}>
 							{getValueString(item, propMain)}
 						</td>
 					</tr>
 				)}
 
 				<tr key={index}
-					style={cssRow(index, isSelected(index), variant)}
+					style={cssRow(isSelected(index), variant)}
 					onClick={() => handleSelect(index)}
 				>
 					{props.map((prop) => (
@@ -122,29 +121,31 @@ const cssHead: CSSProperties = {
 	zIndex: 1,
 }
 const cssHeadCell: CSSProperties = {
-	//padding: "5px",
 	padding: "3px 2px",
 	textAlign: "right",
 }
-const cssRow = (index: number, select: boolean, variant: number): CSSProperties => ({
+
+const cssRowMain = (select: boolean, variant: number): CSSProperties => ({
+	cursor: "pointer",
+	fontSize: '12px',
+	//fontWeight: '600',
+	//backgroundColor: '#bfbfbf',
+	//color: 'black',
+	...select ? {
+		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
+		color: layoutSo.state.theme.palette.var[variant].fg
+	} : {
+	},
+})
+
+const cssRow = (select: boolean, variant: number): CSSProperties => ({
 	cursor: "pointer",
 	...select ? {
 		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
-		//backgroundColor: index % 2 == 0 ? "rgba(0, 0, 0, 0.3)" : null,
 	},
-	//height: 20,
-})
-const cssRow1 = (select: boolean, variant: number): CSSProperties => ({
-	cursor: "pointer",
-	...select ? {
-		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
-		color: layoutSo.state.theme.palette.var[variant].fg
-	} : {
-	},
-	//height: 20,
 })
 
 const cssRowCell: CSSProperties = {
