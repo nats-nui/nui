@@ -27,3 +27,4 @@ db
 credentials
 build/*
 !build/.gitkeep
+!build/appicon.png
