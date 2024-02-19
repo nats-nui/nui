@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"errors"
-	"github.com/pricelessrabbit/nui/internal/nui"
-	"github.com/pricelessrabbit/nui/pkg/logging"
+	"github.com/nats-nui/nui/internal/nui"
+	"github.com/nats-nui/nui/pkg/logging"
 	"os"
 )
 

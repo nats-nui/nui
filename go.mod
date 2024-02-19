@@ -1,4 +1,4 @@
-module github.com/pricelessrabbit/nui
+module github.com/nats-nui/nui
 
 go 1.21
 

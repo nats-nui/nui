@@ -10,7 +10,7 @@
   "frontend:dev:watcher": "npm run dev-desktop",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "pricelessrabbit",
-    "email": "pricelessrabbit@gmail.com"
+    "name": "nats-nui",
+    "email": "nats-nui@gmail.com"
   }
 }

@@ -2,9 +2,9 @@ package connection
 
 import (
 	"errors"
+	docstore "github.com/nats-nui/nui/pkg/storage"
 	"github.com/ostafen/clover/v2/document"
 	"github.com/ostafen/clover/v2/query"
-	docstore "github.com/pricelessrabbit/nui/pkg/storage"
 )
 
 type DocStoreConnRepo struct {
