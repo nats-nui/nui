@@ -1,7 +1,7 @@
 package connection
 
 import (
-	docstore "github.com/pricelessrabbit/nui/pkg/storage"
+	docstore "github.com/nats-nui/nui/pkg/storage"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

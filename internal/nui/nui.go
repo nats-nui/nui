@@ -1,10 +1,10 @@
 package nui
 
 import (
-	"github.com/pricelessrabbit/nui/internal/connection"
-	"github.com/pricelessrabbit/nui/internal/ws"
-	"github.com/pricelessrabbit/nui/pkg/logging"
-	docstore "github.com/pricelessrabbit/nui/pkg/storage"
+	"github.com/nats-nui/nui/internal/connection"
+	"github.com/nats-nui/nui/internal/ws"
+	"github.com/nats-nui/nui/pkg/logging"
+	docstore "github.com/nats-nui/nui/pkg/storage"
 )
 
 type Nui struct {

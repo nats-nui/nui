@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/pricelessrabbit/nui/pkg/logging"
+	"github.com/nats-nui/nui/pkg/logging"
 )
 
 type AppOption func(a *App)

@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
-	"github.com/pricelessrabbit/nui/internal/ws"
-	"github.com/pricelessrabbit/nui/pkg/logging"
+	"github.com/nats-nui/nui/internal/ws"
+	"github.com/nats-nui/nui/pkg/logging"
 	slogfiber "github.com/samber/slog-fiber"
 	"log/slog"
 )

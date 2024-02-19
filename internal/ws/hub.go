@@ -5,9 +5,9 @@ import (
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
-	connection2 "github.com/pricelessrabbit/nui/internal/connection"
-	"github.com/pricelessrabbit/nui/pkg/channels"
-	"github.com/pricelessrabbit/nui/pkg/logging"
+	connection2 "github.com/nats-nui/nui/internal/connection"
+	"github.com/nats-nui/nui/pkg/channels"
+	"github.com/nats-nui/nui/pkg/logging"
 	"sync"
 )
 
