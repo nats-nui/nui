@@ -11,11 +11,16 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"os"
 )
 
 //go:embed all:frontend/dist-app
 var assets embed.FS
+
+//go:embed build/appicon.png
+var icon []byte
 
 func main() {
 
@@ -56,9 +61,8 @@ func main() {
 	}
 	// Create application with options
 	err = wails.Run(&options.App{
-		Title:  "NUI",
-		Width:  1024,
-		Height: 768,
+		Title:            "NUI",
+		WindowStartState: options.Maximised,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -66,6 +70,15 @@ func main() {
 		OnStartup:        desktopApp.Startup,
 		Bind: []interface{}{
 			&mapping.Api{},
+		},
+		Linux: &linux.Options{
+			Icon: icon,
+		},
+		Mac: &mac.Options{
+			About: &mac.AboutInfo{
+				Title: "NUI",
+				Icon:  icon,
+			},
 		},
 	})
 	if err != nil {
