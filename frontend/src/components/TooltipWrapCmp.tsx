@@ -27,10 +27,10 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	// HANDLERS
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
 		const elem = e.target as HTMLElement
-		const { x, y, width, height } = elem.getBoundingClientRect()
-		tooltipSo.open({
+		const rect = elem.getBoundingClientRect()
+		tooltipSo.open({ 
 			content,
-			position: { x: x + (width / 2), y },
+			rect,
 			variant,
 		})
 		onMouseOver?.(true)

@@ -1,10 +1,10 @@
 import { StoreCore, createStore } from "@priolo/jon"
-import { Position } from "../mouse/utils"
+
 
 
 export interface TooltipContent {
 	content?: React.ReactNode
-	position?: Position
+	rect: DOMRect
 	variant?: number
 }
 
@@ -19,15 +19,13 @@ const setup = {
 	},
 
 	actions: {
-		openOnElem (content: TooltipContent, store?: TooltipStore) {
-
-		},
 		open(content: TooltipContent, store?: TooltipStore) {
 			store.setContent(content)
 			store.setShow(true)
 		},
-		close(_: void, store?: TooltipStore) {
+		async close(_: void, store?: TooltipStore) {
 			store.setShow(false)
+			// ... hide
 		},
 	},
 

@@ -80,7 +80,7 @@ const Table: FunctionComponent<Props> = ({
 						style={cssRowMain(isSelected(index), variant)}
 						onClick={() => handleSelect(index)}
 					>
-						<td colSpan={4} style={{ opacity: 0.8, padding: "5px 2px" }}>
+						<td colSpan={4} style={{ padding: "5px 2px" }}>
 							{getValueString(item, propMain)}
 						</td>
 					</tr>
@@ -132,9 +132,12 @@ const cssRowMain = (select: boolean, variant: number): CSSProperties => ({
 	//backgroundColor: '#bfbfbf',
 	//color: 'black',
 	...select ? {
+		opacity: 1,
+		fontWeight: '600',
 		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
 		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
+		opacity: 0.8,
 	},
 })
 
