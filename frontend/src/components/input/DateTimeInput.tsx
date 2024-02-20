@@ -5,6 +5,7 @@ import TextInput, { TextInputProps } from "./TextInput"
 
 
 interface Props extends TextInputProps {
+	onChange?: (newValue: string | number) => void
 }
 
 const DateTimeInput: FunctionComponent<Props> = ({

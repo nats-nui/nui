@@ -11,6 +11,7 @@ export interface TextInputProps {
 	focus?: boolean
 	onChange?: (newValue: string) => void
 	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
+	onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
 	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }
 
@@ -23,6 +24,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		focus,
 		onChange,
 		onFocus,
+		onBlur,
 		onKeyDown,
 	},
 	ref: any
@@ -56,6 +58,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 			value={value}
 			onChange={handleChange}
 			onFocus={handleFocus}
+			onBlur={onBlur}
 			onKeyDown={onKeyDown}
 		/>
 	)
