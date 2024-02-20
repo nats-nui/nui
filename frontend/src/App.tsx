@@ -6,9 +6,10 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
 import CardCmp from "./CardCmp"
 import DragCmp from "./components/DragCmp"
-import MainMenu from "./components/mainMenu/MainMenu"
 import TooltipCmp from "./components/TooltipCmp"
+import MainMenu from "./components/mainMenu/MainMenu"
 import { Theme } from "./stores/layout/utils"
+
 
 
 const App: FunctionComponent = () => {
@@ -70,7 +71,7 @@ const cssApp = (theme: Theme): React.CSSProperties => ({
 
 	backgroundImage: `url("${srcBg}")`,
 	backgroundColor: "rgba(0, 0, 0, 0.8)",
-  	backgroundBlendMode: "darken",
+	backgroundBlendMode: "darken",
 	// backgroundSize: "100% 100%",
 	//backgroundRepeat: "repeat-x",
 })
