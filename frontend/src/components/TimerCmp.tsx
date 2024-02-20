@@ -34,14 +34,13 @@ const TimerCmp: FunctionComponent<Props> = ({
 	const idInterval = useRef(null)
 	useEffect(() => {
 		stopTimer()
-		if (state == TIMER_STATE.PLAY) {
+		if (state == TIMER_STATE.PLAY && timeout > 0) {
 			timeStart.current = Date.now()
 			setAnimTime(interval)
 			setPerc(interval / timeout)
 			startTimer()
 		} else if (state == TIMER_STATE.STOP) {
-			stopTimer()
-			setAnimTime(200)
+			setAnimTime(10)
 			setPerc(0)
 		}
 		return stopTimer
