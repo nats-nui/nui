@@ -54,7 +54,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.maxValueSize}
-				onChange={maxValueSize => handlePropChange({ maxValueSize })}
+				onNumberChange={maxValueSize => handlePropChange({ maxValueSize })}
 			/>
 		</BoxV>
 
@@ -63,7 +63,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.history}
-				onChange={history => handlePropChange({ history })}
+				onNumberChange={history => handlePropChange({ history })}
 			/>
 		</BoxV>
 
@@ -72,7 +72,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.maxBytes}
-				onChange={maxBytes => handlePropChange({ maxBytes })}
+				onNumberChange={maxBytes => handlePropChange({ maxBytes })}
 			/>
 		</BoxV>
 
