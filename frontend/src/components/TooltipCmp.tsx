@@ -48,13 +48,14 @@ const TooltipCmp: FunctionComponent = () => {
 				const offset = (entryRect.width - contentRect.width) / 2
 				if (contentRect.left - offset < 0) pos.offset = offset
 				if (contentRect.right + offset > window.innerWidth) pos.offset = -offset
+				console.log("sxsx",entry)
 				
 			})
 			setPosition(pos)
 		});
 		resizeObserver.observe(observeTarget);
 		return () => resizeObserver.unobserve(observeTarget)
-	}, [])
+	}, [tooltipSa.show])
 
 	// HANDLERS
 
