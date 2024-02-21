@@ -49,7 +49,7 @@ func NewNatsHub(pool Pool[*nats.Subscription, *connection2.NatsConn], l logging.
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
-	h.l.Debug("registering new client connection", "client-id", clientId)
+	h.l.Info("registering new client ws connection to hub", "connection-id", connectionId, "client-id", clientId)
 	h.purgeConnection(clientId)
 	err := h.registerConnection(clientId, connectionId, req, messages)
 	if err != nil {
@@ -73,7 +73,7 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-c
 			}
 			err := h.handleRequestsByType(ctx, clientId, r, messages)
 			if err != nil {
-				messages = sendErr(messages, err)
+				messages = h.sendErr(messages, err)
 			}
 		}
 	}
@@ -99,7 +99,8 @@ func decodeAndHandleRequest[T any](ctx context.Context, clientId string, req *T,
 	return nil
 }
 
-func sendErr(messages chan<- Payload, err error) chan<- Payload {
+func (h *Hub[S, T]) sendErr(messages chan<- Payload, err error) chan<- Payload {
+	h.l.Error("error ws handling request", "error", err)
 	select {
 	case messages <- Error{Error: err.Error()}:
 	default:
@@ -108,18 +109,16 @@ func sendErr(messages chan<- Payload, err error) chan<- Payload {
 }
 
 func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
+	h.l.Info("registering new client ws subscription to subjects", "client-id", clientId, "subjects", subReq.Subjects)
 	h.purgeSubscriptions(clientId)
 	err := h.registerSubscriptions(clientId, subReq)
 	if err != nil {
-		select {
-		case messages <- Error{Error: err.Error()}:
-		default:
-		}
+		h.sendErr(messages, err)
 	}
 }
 
 func (h *Hub[S, T]) purgeConnection(clientId string) {
-	h.l.Debug("purging client connection", "client-id", clientId)
+	h.l.Info("purging client connection", "client-id", clientId)
 	h.connectionMutex.Lock()
 	defer h.connectionMutex.Unlock()
 	h.purgeConnectionLocked(clientId)
@@ -151,6 +150,7 @@ func (h *Hub[S, T]) purgeClientSubscriptions(clientConn *ClientConn[S]) {
 }
 
 func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
+	h.l.Debug("registering new client ws connection", "client-id", clientId)
 	_, err := h.pool.Get(connectionId)
 	if err != nil {
 		return err
