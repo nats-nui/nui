@@ -74,7 +74,7 @@ func (a *App) handleCreateStream(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(info.Config)
+	return c.JSON(info)
 }
 
 func (a *App) handleUpdateStream(c *fiber.Ctx) error {
