@@ -53,6 +53,21 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		return elm
 	}, [open])
 
+	// pensare ad un modo per cui se cambiano le dimensioni della dialog
+	// questa si riposiziona
+	// *******************************************************************
+	//const [contentRect, setContentRect] = useState<DOMRectReadOnly>(null)
+	// useEffect(() => {
+	// 	const observeTarget = ref.current;
+	// 	if (!observeTarget) return
+	// 	const resizeObserver = new ResizeObserver((entries) => {
+	// 		let rect: DOMRectReadOnly = null
+	// 		entries.forEach((entry) => rect = entry.contentRect)
+	// 		setContentRect(rect)
+	// 	})
+	// 	return () => resizeObserver.unobserve(observeTarget)
+	// }, [])
+
 	/** EVENT CLICK */
 	useEffect(() => {
 		// se clicco fuori dalla dialog allora la chiude

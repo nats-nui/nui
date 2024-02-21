@@ -4,7 +4,7 @@ import { StoreCore, createStore } from "@priolo/jon"
 
 export interface TooltipContent {
 	content?: React.ReactNode
-	rect: DOMRect
+	targetRect: DOMRect
 	variant?: number
 }
 

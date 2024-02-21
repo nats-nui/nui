@@ -21,41 +21,32 @@ const TooltipCmp: FunctionComponent = () => {
 
 	// STORES
 	const tooltipSa = useStore(tooltipSo)
+	
 
 	// HOOKS
 	const ref = useRef(null)
 	const [position, setPosition] = useState<TooltipPos>(null)
-
+	
 	useEffect(() => {
-		const observeTarget = ref.current;
-		if (!observeTarget) return
-		const resizeObserver = new ResizeObserver((entries) => {
+		const targetRect = tooltipSo.state.content?.targetRect
+		if (!tooltipSa.show || !targetRect || !ref.current ) return
 
-			const contentRect = tooltipSo.state.content?.rect
-			if (!contentRect) return
-			const pos: TooltipPos = {
-				position: { x: contentRect.x + (contentRect.width / 2), y: contentRect.y },
-				hook: TOOLTIP_HOOK.UP,
-				offset: 0,
-			}
-			entries.forEach((entry) => {
-				const entryRect = entry.contentRect
-				const tipHeight = entryRect.height + 20
-				if (contentRect.y - tipHeight < 0) {
-					pos.position.y = contentRect.bottom + tipHeight
-					pos.hook = TOOLTIP_HOOK.DOWN
-				}
-				const offset = (entryRect.width - contentRect.width) / 2
-				if (contentRect.left - offset < 0) pos.offset = offset
-				if (contentRect.right + offset > window.innerWidth) pos.offset = -offset
-				console.log("sxsx",entry)
-				
-			})
-			setPosition(pos)
-		});
-		resizeObserver.observe(observeTarget);
-		return () => resizeObserver.unobserve(observeTarget)
-	}, [tooltipSa.show])
+		const contentRect = ref.current.getBoundingClientRect()
+		const pos: TooltipPos = {
+			position: { x: targetRect.x + (targetRect.width / 2), y: targetRect.y },
+			hook: TOOLTIP_HOOK.UP,
+			offset: 0,
+		}
+		const tipHeight = contentRect.height + 20
+		if (targetRect.y - tipHeight < 0) {
+			pos.position.y = targetRect.bottom + tipHeight
+			pos.hook = TOOLTIP_HOOK.DOWN
+		}
+		const offset = (contentRect.width - targetRect.width) / 2
+		if (targetRect.left - offset < 0) pos.offset = offset
+		if (targetRect.right + offset > window.innerWidth) pos.offset = -offset
+		setPosition(pos)
+	}, [tooltipSa.show, tooltipSo.state.content])
 
 	// HANDLERS
 
