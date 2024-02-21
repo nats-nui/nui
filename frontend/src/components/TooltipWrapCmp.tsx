@@ -30,7 +30,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 		const rect = elem.getBoundingClientRect()
 		tooltipSo.open({ 
 			content,
-			rect,
+			targetRect: rect,
 			variant,
 		})
 		onMouseOver?.(true)
