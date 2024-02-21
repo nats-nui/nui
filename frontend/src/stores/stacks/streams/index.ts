@@ -66,12 +66,6 @@ const setup = {
 		},
 		//#endregion
 
-		async error(_: void, store?: StreamsStore) {
-			const streams = await strApi._error(store.state.connectionId, { store })
-			store.setAll(streams)
-		},
-
-
 		async fetchIfVoid(_: void, store?: StreamsStore) {
 			if (!!store.state.all) return
 			await store.fetch()
