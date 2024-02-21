@@ -93,7 +93,7 @@ export enum STORAGE {
 	MEMORY = "memory",
 }
 export enum RETENTION {
-	LIMIT = "limit",
+	LIMIT = "limits",
 	INTEREST = "interest",
 	WORKQUEQUE = "workqueque",
 }

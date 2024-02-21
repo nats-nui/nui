@@ -95,7 +95,7 @@ STORAGE {
 
 ```typescript
 RETENTION {
-	LIMIT = "limit",
+	LIMIT = "limits",
 	INTEREST = "interest",
 	WORKQUEQUE = "workqueque",
 }

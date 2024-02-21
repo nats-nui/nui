@@ -264,7 +264,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</BoxV>
 
 		<BoxV>
-			<Label>PLACMENT</Label>
+			<Label>PLACEMENT</Label>
 			<Quote>
 				<BoxV>
 					<Label type={LABELS.SUBTEXT}>NAME</Label>
@@ -294,22 +294,21 @@ const EditForm: FunctionComponent<Props> = ({
 						<Label type={LABELS.SUBTEXT}>NAME</Label>
 						<ListDialog
 							store={streamSo}
-							select={0}
+							select={allStreams.indexOf(config.mirror?.name ?? 0)}
 							items={allStreams}
 							RenderRow={({ item }) => item}
 							readOnly={inRead || !inNew}
-						// onSelect={index => {
-						// 	console.log(index)
-						// 	handlePropChange({ discard: Object.values(DISCARD)[index] })
-						// }}
+							onSelect={index => {
+								handleMirrorPropChange({name: allStreams[index]})
+							}}
 						/>
-						{/* <Options<string>
-								value={config.mirror?.name ?? ""}
-								items={["pippo", "pluto", "paperino"]}
-								RenderRow={({ item }) => item}
-								readOnly={readOnly}
-								onSelect={name => handleMirrorPropChange({ name })}
-							/> */}
+						{/*{ <Options<string>*/}
+						{/*		value={config.mirror?.name ?? ""}*/}
+						{/*		items={["pippo", "pluto", "paperino"]}*/}
+						{/*		RenderRow={({ item }) => item}*/}
+						{/*		readOnly={inRead || !inNew}*/}
+						{/*		onSelect={name => handleMirrorPropChange({ name })}*/}
+						{/*	}*/}
 					</BoxV>
 					<BoxV>
 						<Label type={LABELS.SUBTEXT}>START SEQUENCE</Label>
