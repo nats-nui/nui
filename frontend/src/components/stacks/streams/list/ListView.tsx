@@ -53,11 +53,6 @@ const StreamsListView: FunctionComponent<Props> = ({
 				variant={variant}
 				onClick={handleNew}
 			/>
-			<Button
-				label="###"
-				variant={variant}
-				onClick={() => streamsSo.error()}
-			/>
 		</>}
 	>
 		<div style={{ marginLeft: -9, marginRight: -9 }}>
