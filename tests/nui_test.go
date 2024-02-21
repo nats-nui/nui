@@ -73,7 +73,7 @@ func (s *NuiTestSuite) TestStreamRest() {
 		WithBytes([]byte(`{"name": "stream1", "storage": "memory", "subjects": ["sub1", "sub2"]}`)).
 		Expect().
 		Status(http.StatusOK).
-		JSON().Object().Value("name").String().IsEqual("stream1")
+		JSON().Object().Value("config").Object().Value("name").String().IsEqual("stream1")
 
 	// get list of streams with created one
 	r1 := e.GET("/api/connection/" + connId + "/stream").
