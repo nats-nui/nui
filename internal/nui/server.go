@@ -122,6 +122,8 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
 	clientId := uuid.NewString()
+	a.l.Info("incoming ws connection", "connection-id", conn.Id, "client-id", clientId)
+
 	reqCh := make(chan *ws.Request, 1)
 	msgCh := make(chan ws.Payload, 1000)
 
