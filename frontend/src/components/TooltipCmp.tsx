@@ -74,8 +74,8 @@ const cssRoot = (pos: TooltipPos, show: boolean = false): React.CSSProperties =>
 	zIndex: 99999,
 	position: 'absolute',
 
-	left: pos?.position.x + pos?.offset,
-	top: pos?.position.y,
+	left: pos ? pos.position.x + pos.offset : null,
+	top: pos ? pos.position.y : null,
 
 	transitionProperty: 'opacity, transform',
 	transitionDuration: "300ms",

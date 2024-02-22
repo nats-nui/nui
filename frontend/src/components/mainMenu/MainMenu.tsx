@@ -1,10 +1,11 @@
 import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/stores/docs/types"
-import { dbLoad, dbSave } from "@/stores/docs/utils/db"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
+import { LoadSession, SaveSession } from "@/utils/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
+import Button from "../buttons/Button"
 import IconRow from "../rows/IconRow"
 import StoreIcon from "./StoreIcon"
 
@@ -39,20 +40,6 @@ const MainMenu: FunctionComponent<Props> = ({
 			docSo.add({ view, anim: true })
 		}
 	}
-	const handleSave = async () => {
-		const states = docSo.state.all.map(store => store.getSerialization())
-		await dbSave(states)
-	}
-	const handleLoad = async () => {
-		const states = await dbLoad()
-		const stores = states.map(state => {
-			const store = buildStore({ type: state.type })
-			store.setSerialization(state)
-			return store
-		})
-		docSo.setAll(stores)
-	}
-	const handleTimeout = () => console.log("timeout")
 
 	// RENDER
 	const views = docSa.menu
@@ -67,6 +54,8 @@ const MainMenu: FunctionComponent<Props> = ({
 			<StoreIcon key={view.state.uuid} store={view} />
 		))}
 		<div style={{ flex: 1 }} />
+		<Button label="SAVE" onClick={() => SaveSession()} />
+		<Button label="LOAD" onClick={() => LoadSession()} />
 		<IconRow onClick={handleLogsClick}
 			title="LOGS"
 			variant={COLOR_VAR.CYAN}

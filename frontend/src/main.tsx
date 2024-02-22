@@ -8,10 +8,12 @@ import './css/index.css';
 import './css/input.css';
 import './css/textarea.css';
 import './css/scrollbar.css';
-
+import './css/scrollbar.css';
+import "./utils/startup"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
     <App />
   // </React.StrictMode>,
 )
+

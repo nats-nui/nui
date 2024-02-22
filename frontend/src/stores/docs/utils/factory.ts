@@ -68,12 +68,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	return store
 }
 
-
-
-//#endregion
-
-
-
 //#region MESSAGES
 
 export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
