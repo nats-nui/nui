@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import { FunctionComponent, useState } from "react"
 
 
@@ -52,8 +51,6 @@ const Component: FunctionComponent<Props> = ({
 
 export default Component
 
-
-
 const cssText: React.CSSProperties = {
 	flex: 1,
 	alignItems: "center",
@@ -71,4 +68,5 @@ const cssRoot = (isCliccable: boolean, selected: boolean, readOnly: boolean): Re
 	...cssText,
 	backgroundColor: selected ? "#00000020" : readOnly ? null : '#00000010',
 	cursor: isCliccable ? "pointer" : null,
+	overflowWrap: 'anywhere',
 })

@@ -7,6 +7,7 @@ import { FunctionComponent, useState } from "react"
 import ElementDialog from "./ElementDialog"
 
 
+
 /** un COMPONENT che se premuto apre una DIALOG con una LIST */
 interface Props extends DialogProps  {
 	items: string[]
