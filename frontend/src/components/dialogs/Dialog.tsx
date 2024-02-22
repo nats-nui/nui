@@ -1,7 +1,7 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useMemo, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import layoutSo from "@/stores/layout"
 import Label, { LABELS } from "../format/Label"
@@ -56,17 +56,16 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	// pensare ad un modo per cui se cambiano le dimensioni della dialog
 	// questa si riposiziona
 	// *******************************************************************
-	//const [contentRect, setContentRect] = useState<DOMRectReadOnly>(null)
+	// const [contentRect, setContentRect] = useState<DOMRectReadOnly>(null)
 	// useEffect(() => {
-	// 	const observeTarget = ref.current;
-	// 	if (!observeTarget) return
+	// 	if (!ref) return
 	// 	const resizeObserver = new ResizeObserver((entries) => {
 	// 		let rect: DOMRectReadOnly = null
 	// 		entries.forEach((entry) => rect = entry.contentRect)
 	// 		setContentRect(rect)
 	// 	})
-	// 	return () => resizeObserver.unobserve(observeTarget)
-	// }, [])
+	// 	return () => resizeObserver.unobserve(ref)
+	// }, [ref])
 
 	/** EVENT CLICK */
 	useEffect(() => {
@@ -96,8 +95,10 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		const rect = ref.getBoundingClientRect()
 		const docHeight = document.documentElement.scrollHeight
 		let y = top - (rect.height / 2)
+		if (y + rect.height > docHeight) y = docHeight - rect.height - 20
 		if (y < 0) y = 0
-		if (y > docHeight) y = docHeight - rect.height - 20
+		//if (y > docHeight) y = docHeight - rect.height - 20
+
 		return y
 	}, [ref, open, top])
 
@@ -113,13 +114,14 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			style={cssRoot(variant, width, y)}
 		>
 			<div style={{ display: "flex" }}>
-				<Label type={LABELS.TITLE_DIALOG} style={{flex:1}}>{title}</Label>
+				<Label type={LABELS.TITLE_DIALOG} style={{ flex: 1 }}>{title}</Label>
 				<IconButton onClick={(e) => onClose(e)}>
 					<CloseIcon />
 				</IconButton>
-
 			</div>
-			{children}
+			<div style={cssBody}>
+				{children}
+			</div>
 		</div>,
 		refDialog
 	)
@@ -141,4 +143,13 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	//overflow: "hidden",
 	borderRadius: '0px 10px 10px 0px',
 	boxShadow: layoutSo.state.theme.shadows[0],
+
+	maxHeight: 'calc( 100% - 20px )',
+	
 })
+
+const cssBody:React.CSSProperties = {
+	display: "flex",
+	flexDirection: "column",
+	overflowY: 'auto',
+}

@@ -22,7 +22,6 @@ const TooltipCmp: FunctionComponent = () => {
 	// STORES
 	const tooltipSa = useStore(tooltipSo)
 	
-
 	// HOOKS
 	const ref = useRef(null)
 	const [position, setPosition] = useState<TooltipPos>(null)

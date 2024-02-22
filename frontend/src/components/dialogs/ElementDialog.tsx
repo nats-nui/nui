@@ -15,10 +15,10 @@ const ElementDialog: FunctionComponent<ElementDialogProps> = ({
 	// STORE
 
 	// HOOKs
-	const top = useMemo(()=>{
-		if ( !element ) return null
+	const top = useMemo(() => {
+		if (!element) return null
 		return element.getBoundingClientRect().y
-	},[element])
+	}, [element])
 
 	// HANDLER
 
