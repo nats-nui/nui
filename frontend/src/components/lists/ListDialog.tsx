@@ -68,7 +68,7 @@ function LiastDialog<T>({
 		//onBlur={handleBlur}
 		>
 			{items?.map((item, index) => (
-				<Component
+				<Component key={index}
 					selected={index == souceIndex}
 					onClick={(e) => handleRowClick(index, e)}
 					enterRender={!readOnly && <CloseIcon onClick={() => onDelete(index)} />}

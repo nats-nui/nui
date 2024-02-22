@@ -3,10 +3,7 @@ import { deepEqual } from "@/utils/object"
 import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
-import { dbLoad, dbSave } from "./utils/db"
-import { buildStore } from "./utils/factory"
 import { forEachViews, getById } from "./utils/manage"
-import logSo from "../log"
 
 
 
@@ -210,32 +207,3 @@ const docsSo = createStore(setup) as DocStore
 export default docsSo
 
 
-window.addEventListener("load", async (event) => {
-	const records = await dbLoad()
-	const { log, states } = records.reduce((acc, record) => {
-		if (record.uuid == "logs") {
-			acc.log = record.all
-		} else {
-			acc.states.push(record)
-		}
-		return acc
-	}, { log: [], states: [] })
-
-	const stores = states.map(state => {
-		const store = buildStore({ type: state.type })
-		store.setSerialization(state)
-		return store
-	})
-	docsSo.setAll(stores)
-
-	logSo.setAll(log)
-	logSo.add({ body: "STARTUP NUI - load session" })
-})
-
-window.addEventListener("beforeunload", async (event) => {
-	const states = docsSo.state.all.map(store => store.getSerialization())
-	await dbSave([
-		{ uuid: "logs", all: logSo.state.all },
-		...states
-	])
-})
