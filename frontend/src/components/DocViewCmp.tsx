@@ -62,7 +62,6 @@ const DocView: FunctionComponent<Props> = ({
 			{!!view.state.loadingMessage && (
 				<div style={cssLoading}>
 					<div>{view.state.loadingMessage}</div>
-					<div>[00:01:545]</div>
 				</div>
 			)}
 		</div>
