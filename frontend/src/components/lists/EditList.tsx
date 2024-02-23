@@ -4,6 +4,7 @@ import { useState, FunctionComponent, forwardRef, LegacyRef } from "react"
 
 
 
+/** le PROPS da implementare per il componente di rendering della ROW */
 export interface RenderRowBaseProps<T> {
 	item: T
 	isSelect?: boolean

@@ -74,8 +74,8 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			if (!closeClickOut) return
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
-				//setTimeout(() => onClose?.(), 300)
-				onClose?.(e)
+				setTimeout(() => onClose?.(e), 200)
+				//onClose?.(e)
 			}
 		}
 		if (open) {

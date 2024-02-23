@@ -4,6 +4,8 @@ export enum MSG_FORMAT {
 	TEXT = "text",
 	HEX = "hex",
 	BASE64 = "base64",
+	XML = "xml",
+	HTML = "html",
 }
 
 export function toJson(text: string): { json: JSON, success: boolean } {

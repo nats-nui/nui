@@ -119,7 +119,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				store={cnnDetailSo}
 				items={auths}
 				readOnly={inRead}
-				renderLabel={(auth, index) => (
+				RenderLabel={({ item: auth, index }) => (
 					<Box>
 						<IconToggle
 							check={auth.active}
@@ -130,7 +130,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 					</Box>
 				)}
 				onDelete={handleAuthDelete}
-				renderForm={(item, index, onClose) => (
+				RenderForm={({ item, index, onClose }) => (
 					<EditAuthRow
 						auth={item}
 						readOnly={inRead}

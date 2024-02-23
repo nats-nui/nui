@@ -1,5 +1,4 @@
 import Dialog from "@/components/dialogs/Dialog"
-import TextInput from "@/components/input/TextInput"
 import List from "@/components/lists/List"
 import cnnSo from "@/stores/connections"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
@@ -27,9 +26,9 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		sendSo.setSubject(subs[index].subject)
 		sendSo.setSubsOpen(false)
 	}
-	const handleSubChange = (value: string) => {
-		sendSo.setSubject(value)
-	}
+	// const handleSubChange = (value: string) => {
+	// 	sendSo.setSubject(value)
+	// }
 	const handleSubsClose = () => {
 		sendSo.setSubsOpen(false)
 	}
@@ -46,18 +45,16 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		store={sendSo}
 		onClose={handleSubsClose}
 	>
-		<>
-			<TextInput style={{ marginBottom: 10 }}
-				value={sendSa.subject}
-				onChange={handleSubChange}
-			/>
-			<List<Subscription> style={cssList}
-				items={subs}
-				select={select}
-				RenderRow={({item})=>item.subject}
-				onSelect={handleSubSelectChange}
-			/>
-		</>
+		{/* <TextInput style={{ marginBottom: 10 }}
+			value={sendSa.subject}
+			onChange={handleSubChange}
+		/> */}
+		<List<Subscription> style={cssList}
+			items={subs}
+			select={select}
+			RenderRow={({ item }) => item.subject}
+			onSelect={handleSubSelectChange}
+		/>
 	</Dialog>
 }
 

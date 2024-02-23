@@ -1,34 +1,44 @@
 import AddIcon from "@/icons/AddIcon"
-import ArrowRightIcon from "@/icons/ArrowRightIcon"
+import CloseIcon from "@/icons/CloseIcon"
 import { ViewStore } from "@/stores/stacks/viewBase"
-import { useRef, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import IconButton from "../buttons/IconButton"
 import ElementDialog from "../dialogs/ElementDialog"
 import Component from "../format/Component"
-import CloseIcon from "@/icons/CloseIcon"
 
 
 
+export interface RenderFormProps<T> {
+	item: T
+	index?: number
+	onClose?: () => void
+}
+
+export interface RenderLabelProps<T> {
+	item: T
+	index?: number
+}
 
 interface Props<T> {
 	store: ViewStore
 	items: T[]
 	readOnly?: boolean
 
-	renderLabel: (item: T, index?: number) => React.ReactNode
-	renderForm: (item: T, index: number, onClose: () => void) => React.ReactNode
+	RenderLabel?: FunctionComponent<RenderLabelProps<T>>
+	/** renderizza la form che appare nella DIALOG. "onClose" permette di chiudere la DIALOG */
+	RenderForm?: FunctionComponent<RenderFormProps<T>>
 	onDelete: (index: number) => void
 
 	style?: React.CSSProperties
 }
 
-function LiastDialog<T>({
+function ListDialog<T>({
 	store,
 	items,
 	readOnly,
 
-	renderLabel,
-	renderForm,
+	RenderLabel,
+	RenderForm,
 	onDelete,
 
 	style,
@@ -39,7 +49,7 @@ function LiastDialog<T>({
 	// HOOKS
 	const ref = useRef(null)
 	const [elementSource, setElementSource] = useState<HTMLElement>(null)
-	const [souceIndex, setSourceIndex] = useState<number>(null)
+	const [sourceIndex, setSourceIndex] = useState<number>(null)
 
 	// HANDLERS
 	const handleRowClick = (index: number, e: React.MouseEvent) => {
@@ -57,7 +67,7 @@ function LiastDialog<T>({
 
 	// RENDER
 	if (!items) return null
-	const itemSelect = items[souceIndex]
+	const itemSelect = items[sourceIndex]
 
 	return <>
 		<div
@@ -69,12 +79,12 @@ function LiastDialog<T>({
 		>
 			{items?.map((item, index) => (
 				<Component key={index}
-					selected={index == souceIndex}
+					selected={index == sourceIndex}
 					onClick={(e) => handleRowClick(index, e)}
 					enterRender={!readOnly && <CloseIcon onClick={() => onDelete(index)} />}
 					readOnly={readOnly}
 				>
-					{renderLabel(item, index)}
+					<RenderLabel item={item} index={index} />
 				</Component>)
 			)}
 
@@ -96,12 +106,16 @@ function LiastDialog<T>({
 				setElementSource(null)
 			}}
 		>
-			{renderForm(itemSelect, souceIndex, handleOnClose)}
+			<RenderForm
+				item={itemSelect}
+				index={sourceIndex}
+				onClose={handleOnClose}
+			/>
 		</ElementDialog>
 	</>
 }
 
-export default LiastDialog
+export default ListDialog
 
 const cssContainer = (height: number): React.CSSProperties => ({
 	display: "flex",
