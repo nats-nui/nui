@@ -46,7 +46,6 @@ const ShowForm: FunctionComponent<Props> = ({
 			<Label>{bucket.ttl}</Label>
 		</BoxV>
 
-		<div>ETC ETC </div>
 
 	</Form>
 }

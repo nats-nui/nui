@@ -59,7 +59,6 @@ const ShowForm: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 
-		<div>ETC ETC </div>
 
 	</Form>
 }

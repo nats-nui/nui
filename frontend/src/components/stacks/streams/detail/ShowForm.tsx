@@ -46,8 +46,7 @@ const ShowForm: FunctionComponent<Props> = ({
 			<Label>LAST SEQ.</Label>
 			<Label>{state.lastSeq}</Label>
 		</BoxV>
-
-		<div>ETC ETC </div>
+		
 
 	</Form>
 }
