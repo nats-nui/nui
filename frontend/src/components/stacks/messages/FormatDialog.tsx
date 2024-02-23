@@ -6,14 +6,13 @@ import List from "../../lists/List"
 
 
 
-interface StoreMessageFormat{
+interface StoreMessageFormat {
 	state: {
 		format: MSG_FORMAT,
-		formatsOpen:boolean
-
+		formatsOpen: boolean
 	},
-	setFormat(format:MSG_FORMAT): void,
-	setFormatsOpen(open:boolean): void,
+	setFormat(format: MSG_FORMAT): void,
+	setFormatsOpen(open: boolean): void,
 }
 
 interface Props {

@@ -9,6 +9,7 @@ import { useStore } from "@priolo/jon"
 import { editor } from "monaco-editor"
 import { FunctionComponent, useRef } from "react"
 import FormatDialog from "../messages/FormatDialog"
+import { getEditorLanguage } from "@/stores/stacks/message/utils"
 
 
 
@@ -42,7 +43,6 @@ const MessageView: FunctionComponent<Props> = ({
 	const text = msgSa.message.payload
 	const format = msgSa.format
 	const formatLabel = format.toUpperCase()
-
 	const variant = msgSa.colorVar
 
 	return <FrameworkCard
@@ -66,7 +66,6 @@ const MessageView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-
 		{format == MSG_FORMAT.BASE64 ? (
 			<Base64Cmp text={text} />
 		) : format == MSG_FORMAT.HEX ? (
@@ -74,7 +73,7 @@ const MessageView: FunctionComponent<Props> = ({
 		) : (
 			<Editor
 				//defaultLanguage="json"
-				language={msgSo.getEditorLanguage()}
+				language={getEditorLanguage(msgSa.format)}
 				value={text}
 				options={msgSa.editor}
 				theme="vs-dark"

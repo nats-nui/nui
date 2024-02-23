@@ -1,12 +1,16 @@
 import FrameworkCard from "@/components/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import TextArea from "@/components/input/TextArea"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
+import { Editor, Monaco } from "@monaco-editor/react"
 import { useStore } from "@priolo/jon"
+import { editor } from "monaco-editor"
 import React, { FunctionComponent, useRef } from "react"
 import SubjectsDialog from "./SubjectsDialog"
-import { Editor, Monaco } from "@monaco-editor/react"
-import { editor } from "monaco-editor"
+import TextInput from "@/components/input/TextInput"
+import BoxV from "@/components/format/BoxV"
+import Label from "@/components/format/Label"
+import FormatDialog from "../messages/FormatDialog"
+import { getEditorLanguage } from "@/stores/stacks/message/utils"
 
 
 
@@ -39,13 +43,22 @@ const MessageSendView: FunctionComponent<Props> = ({
 		editorRef.current = editor
 	}
 	const handleFormat = () => editorRef.current.getAction('editor.action.formatDocument').run()
+	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
+	const handleFormatsClick = () => sendSo.setFormatsOpen(true)
 
 	// RENDER
+	const formatSel = sendSa.format?.toUpperCase() ?? ""
 	const variant = sendSa.colorVar
 
 	return <FrameworkCard
 		store={sendSo}
 		actionsRender={<>
+			<Button
+				select={sendSa.formatsOpen}
+				label={formatSel}
+				variant={variant}
+				onClick={handleFormatsClick}
+			/>
 			<Button
 				label="FORMAT"
 				onClick={handleFormat}
@@ -64,9 +77,17 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
+		<BoxV style={{marginBottom: 10}}>
+			<Label>Subject</Label>
+			<TextInput
+				value={sendSa.subject}
+				onChange={handleSubjectChange}
+			/>
+		</BoxV>
 
 		<Editor
-			defaultLanguage="json"
+			//defaultLanguage="json"
+			language={getEditorLanguage(sendSa.format)}
 			value={sendSa.text}
 			onChange={handleValueChange}
 			options={sendSa.editor}
@@ -76,15 +97,10 @@ const MessageSendView: FunctionComponent<Props> = ({
 
 		<SubjectsDialog store={sendSo} />
 
+		<FormatDialog store={sendSo} />
+
 	</FrameworkCard>
 
 }
 
 export default MessageSendView
-
-const cssForm: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "column",
-	flex: 1,
-	marginLeft: 8,
-}

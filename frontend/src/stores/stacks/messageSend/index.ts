@@ -5,6 +5,7 @@ import cnnSo from "@/stores/connections"
 import srcIcon from "@/assets/MessageSendIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import { editor } from "monaco-editor"
+import { MSG_FORMAT } from "../messages/utils"
 
 
 
@@ -22,6 +23,9 @@ const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
 		enabled: false,
 	},
 	tabSize: 2,
+	parameterHints: {
+		enabled: false,
+	  },
 }
 
 const setup = {
@@ -32,6 +36,11 @@ const setup = {
 		subject: <string>null,
 		subsOpen: false,
 		editor: editorOptionsDefault,
+
+		//#region StoreMessageFormat
+		format: MSG_FORMAT.JSON,
+		formatsOpen: false,
+		//#endregion
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
@@ -44,12 +53,9 @@ const setup = {
 		getTitle: (_: void, store?: ViewStore) => {
 			const cnnId = (store.state as MessageSendState).connectionId
 			const cnn = cnnSo.getById(cnnId)
-			return `TO ${cnn?.name ?? "..."}`
+			return cnn?.name ?? "..."
 		},
-		getSubTitle: (_: void, store?: ViewStore) => {
-			const subject = (store as MessageSendStore).state.subject
-			return subject ? `SUBJECT: ${subject}` : "NO SUBJECT!"
-		},
+		getSubTitle: (_: void, store?: ViewStore) => "SEND MESSAGE",
 		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageSendState
@@ -61,7 +67,7 @@ const setup = {
 			}
 		},
 		//#endregion
-		
+
 	},
 
 	actions: {
@@ -78,8 +84,8 @@ const setup = {
 
 		publish: (_: void, store?: MessageSendStore) => {
 			cnnApi.publish(
-				store.state.connectionId, 
-				store.state.subject, 
+				store.state.connectionId,
+				store.state.subject,
 				store.state.text
 			)
 		},
@@ -90,6 +96,11 @@ const setup = {
 		setText: (text: string, store?: MessageSendStore) => ({ text }),
 		setSubject: (subject: string) => ({ subject }),
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
+
+		//#region StoreMessageFormat
+		setFormat: (format: MSG_FORMAT, store?: MessageSendStore) => ({ format }),
+		setFormatsOpen: (formatsOpen: boolean, store?: MessageSendStore) => ({ formatsOpen }),
+		//#endregion
 	},
 }
 

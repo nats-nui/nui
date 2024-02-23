@@ -1,11 +1,10 @@
 import srcIcon from "@/assets/MessageIcon.svg"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
-import { MSG_FORMAT } from "../messages/utils"
-import { Message } from "@/types/Message"
 import { COLOR_VAR } from "@/stores/layout"
-import dayjs from "dayjs"
+import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { Message } from "@/types/Message"
+import { StoreCore, mixStores } from "@priolo/jon"
 import { editor } from "monaco-editor"
+import { MSG_FORMAT } from "../messages/utils"
 
 
 
@@ -58,9 +57,6 @@ const setup = {
 			}
 		},
 		//#endregion
-
-		getEditorLanguage: (_: void, store?: MessageStore) => store.state.format == MSG_FORMAT.JSON ? "json" : "plaintext",
-
 	},
 
 	actions: {
