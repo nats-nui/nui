@@ -1,8 +1,7 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/buttons/RowButton"
 import BoxV from "@/components/format/BoxV"
 import IconRow from "@/components/rows/IconRow"
-import MessagesIcon from "@/icons/MessagesIcon"
 import docSo from "@/stores/docs"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -11,6 +10,7 @@ import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import EditForm from "./EditForm"
 import ShowForm from "./ShowForm"
+import MessagesIcon from "@/icons/cards/MessagesIcon"
 
 
 

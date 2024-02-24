@@ -1,0 +1,27 @@
+.label-title {
+	font-size: 16px;
+	font-weight: 800;
+	font-family: "Darker Grotesque";
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.label-sub-title {
+	font-size: 10px;
+	font-weight: 700;
+	opacity: .7;
+}
+
+.label-form-1 {
+	font-size: 14px;
+	font-weight: 700;
+}
+.label-form-2 {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+
+.cliccable {
+	cursor: pointer;
+}

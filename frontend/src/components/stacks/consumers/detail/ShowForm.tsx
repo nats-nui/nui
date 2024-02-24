@@ -21,13 +21,11 @@ const ShowForm: FunctionComponent<Props> = ({
 
 	// HOOKs
 
-
 	// HANDLER
 
 	// RENDER
 	const consumer = consumerSa.consumer
 	if (!consumer) return null
-	
 
 	return <Form>
 

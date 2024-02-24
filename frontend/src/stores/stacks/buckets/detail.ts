@@ -1,5 +1,4 @@
 import bucketApi from "@/api/buckets"
-import srcIcon from "@/assets/StreamsIcon.svg"
 import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
@@ -33,7 +32,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<BucketStore>store).state.bucket?.bucket ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "BUCKET DETAIL",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as BucketStatus
 			return {

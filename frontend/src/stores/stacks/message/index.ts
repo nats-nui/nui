@@ -1,4 +1,3 @@
-import srcIcon from "@/assets/MessageIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
@@ -47,7 +46,6 @@ const setup = {
 		// 	const timestamp = (store as MessageStore).state.message?.receivedAt
 		// 	return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		// },
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageState
 			return {

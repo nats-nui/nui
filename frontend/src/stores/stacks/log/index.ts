@@ -1,10 +1,9 @@
-import srcIcon from "@/assets/MessagesIcon.svg"
+import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
+import { Log } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../viewBase"
-import { Log } from "@/stores/log/utils"
-import docsSo from "@/stores/docs"
 
 
 
@@ -21,7 +20,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "LOGS",
 		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ViewLogState
 			return {

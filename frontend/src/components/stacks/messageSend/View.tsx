@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
 import { Editor, Monaco } from "@monaco-editor/react"

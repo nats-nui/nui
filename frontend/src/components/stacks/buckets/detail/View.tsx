@@ -1,6 +1,5 @@
-import FrameworkCard from "@/components/FrameworkCard"
 import RowButton from "@/components/buttons/RowButton"
-import MessagesIcon from "@/icons/MessagesIcon"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -9,6 +8,7 @@ import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import CreateForm from "./CreateForm"
 import ShowForm from "./ShowForm"
+import MessagesIcon from "@/icons/cards/MessagesIcon"
 
 
 

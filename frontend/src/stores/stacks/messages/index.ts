@@ -1,4 +1,3 @@
-import srcIcon from "@/assets/MessagesIcon.svg"
 import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
@@ -12,7 +11,6 @@ import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { MessageSendState } from "../messageSend"
 import { ViewState } from "../viewBase"
 import { MSG_FORMAT } from "./utils"
-import historyTest from "./_test"
 
 
 
@@ -54,7 +52,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessagesState
 			return {

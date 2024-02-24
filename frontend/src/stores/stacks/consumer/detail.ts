@@ -1,12 +1,11 @@
-import srcIcon from "@/assets/StreamsIcon.svg"
+import cnsApi from "@/api/consumers"
+import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
-import docSo from "@/stores/docs"
-import { DOC_TYPE } from "@/types"
-import cnsApi from "@/api/consumers"
 
 
 
@@ -31,7 +30,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<ConsumerStore>store).state.consumer?.config.name ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "CONSUMER DETAIL",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ConsumerState
 			return {

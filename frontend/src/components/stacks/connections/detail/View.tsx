@@ -1,8 +1,10 @@
-import FrameworkCard from "@/components/FrameworkCard"
 import RowButton from "@/components/buttons/RowButton"
-import DatabaseIcon from "@/icons/DatabaseIcon"
-import MessagesIcon from "@/icons/MessagesIcon"
-import SettingsIcon from "@/icons/SettingsIcon"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import BoxV from "@/components/format/BoxV"
+import IconRow from "@/components/rows/IconRow"
+import BucketsIcon from "@/icons/cards/BucketsIcon"
+import MessagesIcon from "@/icons/cards/MessagesIcon"
+import StreamsIcon from "@/icons/cards/StreamsIcon"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -11,8 +13,6 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
-import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
 
 
 
@@ -71,21 +71,21 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	>
 		{!isNew && <div style={{ marginBottom: 20 }}>
 			<RowButton
-				icon={<MessagesIcon />}
+				icon={<MessagesIcon style={{ width: 18, height: 18}}/>}
 				label="MESSAGES"
 				variant={variant}
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
 			/>
 			<RowButton
-				icon={<DatabaseIcon />}
+				icon={<StreamsIcon style={{ width: 18, height: 18}}/>}
 				label="STREAMS"
 				variant={variant}
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton
-				icon={<SettingsIcon />}
+				icon={<BucketsIcon style={{ width: 18, height: 18}}/>}
 				variant={variant}
 				label="BUCKETS"
 				selected={isBucketsOpen}

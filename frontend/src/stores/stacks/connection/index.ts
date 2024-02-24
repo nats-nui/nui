@@ -1,11 +1,10 @@
-import srcIcon from "@/assets/ConnectionsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
 import { buildStreams } from "../streams/utils/factory"
+import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
 
 
 
@@ -28,7 +27,6 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnListState
 			return {

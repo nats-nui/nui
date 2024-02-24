@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"

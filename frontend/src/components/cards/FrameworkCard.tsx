@@ -1,7 +1,7 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
 import Header from "./Header"
-import ActionGroup from "./buttons/ActionGroup"
+import ActionGroup from "../buttons/ActionGroup"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { VIEW_SIZE } from "@/stores/stacks/utils"

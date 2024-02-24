@@ -77,8 +77,7 @@ const cssSubTitle: React.CSSProperties = {
 	opacity: .7,
 }
 const cssTitle: React.CSSProperties = {
-	fontSize: 22,
-	lineHeight: "23px",
+	fontSize: 16,
 	fontWeight: 800,
 	fontFamily: "Darker Grotesque",
 	whiteSpace: "nowrap",

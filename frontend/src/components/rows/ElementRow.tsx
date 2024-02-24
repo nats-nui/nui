@@ -40,8 +40,10 @@ const ElementRow: FunctionComponent<Props> = ({
 	>
 		{icon}
 		<div style={cssLabels}>
-			<div style={layoutSo.state.theme.texts.row.title}>{title}</div>
-			<div style={{...layoutSo.state.theme.texts.row.subtitle, display: "flex"}}>
+			<div className="label-form-1">
+				{title}
+			</div>
+			<div className="label-form-2" style={{display: "flex"}}>
 				<div>{subtitle}</div>
 				{testRender}
 			</div>
@@ -57,12 +59,12 @@ const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
 	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
 	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
 	margin: "3px -10px 0px -5px",
-	borderRadius: "20px 0px 0px 20px",
-	padding: '4px 0px 4px 12px',
+	borderRadius: "5px 0px 0px 5px",
+	padding: '4px 0px 4px 8px',
 })
 
 const cssLabels: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	marginLeft: '8px',
+	marginLeft: '7px',
 }

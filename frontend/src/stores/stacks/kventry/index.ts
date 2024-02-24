@@ -1,13 +1,12 @@
 import kventryApi from "@/api/kventries"
-import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
+import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 
 
 
@@ -33,7 +32,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<KVEntriesStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "KVENTRIES",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as KVEntriesState
 			return {

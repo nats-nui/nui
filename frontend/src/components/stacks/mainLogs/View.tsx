@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import { ViewLogStore } from "@/stores/stacks/log"
 import { Log } from "@/stores/log/utils"
 import { useStore } from "@priolo/jon"

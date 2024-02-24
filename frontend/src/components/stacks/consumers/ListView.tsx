@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import ElementRow from "@/components/rows/ElementRow"
 import docSo from "@/stores/docs"
 import { ConsumersStore } from "@/stores/stacks/consumer"

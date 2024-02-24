@@ -1,5 +1,4 @@
 import bucketApi from "@/api/buckets"
-import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
@@ -32,7 +31,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<BucketsStore>store).state.connectionId)?.name,
 		getSubTitle: (_: void, store?: ViewStore) => "BUCKETS",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as BucketsState
 			return {
