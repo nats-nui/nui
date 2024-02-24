@@ -294,7 +294,7 @@ const EditForm: FunctionComponent<Props> = ({
 						<Label type={LABELS.SUBTEXT}>NAME</Label>
 						<ListDialog
 							store={streamSo}
-							select={allStreams.indexOf(config.mirror?.name ?? 0)}
+							select={allStreams.indexOf(config.mirror?.name) ?? 0}
 							items={allStreams}
 							RenderRow={({ item }) => item}
 							readOnly={inRead || !inNew}

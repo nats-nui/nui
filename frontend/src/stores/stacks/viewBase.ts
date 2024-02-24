@@ -79,7 +79,6 @@ const viewSetup = {
 		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.COMPACT ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
-		getIcon: (_: void, store?: ViewStore): string => null,
 		getSerialization: (_: void, store?: ViewStore) => {
 			return {
 				uuid: store.state.uuid,

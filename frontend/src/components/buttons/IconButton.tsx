@@ -35,5 +35,5 @@ export default IconButton
 const cssContainer: React.CSSProperties = {
 	display: "flex",
 	cursor: "pointer",
-	padding: 5,
+	padding: 2,
 }

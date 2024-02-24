@@ -1,9 +1,8 @@
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
 import cnnApi from "@/api/connection"
 import cnnSo from "@/stores/connections"
-import srcIcon from "@/assets/MessageSendIcon.svg"
 import { COLOR_VAR } from "@/stores/layout"
+import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { StoreCore, mixStores } from "@priolo/jon"
 import { editor } from "monaco-editor"
 import { MSG_FORMAT } from "../messages/utils"
 
@@ -56,7 +55,6 @@ const setup = {
 			return cnn?.name ?? "..."
 		},
 		getSubTitle: (_: void, store?: ViewStore) => "SEND MESSAGE",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageSendState
 			return {

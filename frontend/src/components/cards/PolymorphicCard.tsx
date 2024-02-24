@@ -13,23 +13,23 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
-import CnnListView from "./stacks/connections/ListView"
-import ConsumersListView from "./stacks/consumers/ListView"
-import ConsumerDetailView from "./stacks/consumers/detail/View"
-import LogsView from "./stacks/mainLogs/View"
-import MessageView from "./stacks/message/View"
-import MessageSendView from "./stacks/messageSend/View"
-import StreamsListView from "./stacks/streams/list/ListView"
-import StreamDetailView from "./stacks/streams/detail/View"
-import StreamMessagesView from "./stacks/streams/messages/View"
+import CnnListView from "../stacks/connections/ListView"
+import ConsumersListView from "../stacks/consumers/ListView"
+import ConsumerDetailView from "../stacks/consumers/detail/View"
+import LogsView from "../stacks/mainLogs/View"
+import MessageView from "../stacks/message/View"
+import MessageSendView from "../stacks/messageSend/View"
+import StreamsListView from "../stacks/streams/list/ListView"
+import StreamDetailView from "../stacks/streams/detail/View"
+import StreamMessagesView from "../stacks/streams/messages/View"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
-import BucketsListView from "./stacks/buckets/list/ListView"
-import BucketDetailView from "./stacks/buckets/detail/View"
+import BucketsListView from "../stacks/buckets/list/ListView"
+import BucketDetailView from "../stacks/buckets/detail/View"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketsStore } from "@/stores/stacks/buckets"
-import KVEntryListView from "./stacks/kventries/list/ListView"
+import KVEntryListView from "../stacks/kventries/list/ListView"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
-import KvEntryDetailView from "./stacks/kventries/detail/View"
+import KvEntryDetailView from "../stacks/kventries/detail/View"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 
 
@@ -39,7 +39,7 @@ interface DocCmpProps {
 }
 
 /** Seleziona il contenuto da visualizzare in base al tipo di VIEW */
-const DocCmp: FunctionComponent<DocCmpProps> = ({
+const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 	view,
 }) => {
 	const content = useMemo(() => {
@@ -86,4 +86,4 @@ const DocCmp: FunctionComponent<DocCmpProps> = ({
 	return content
 }
 
-export default DocCmp
+export default PolymorphicCard

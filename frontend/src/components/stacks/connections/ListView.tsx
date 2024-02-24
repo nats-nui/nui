@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
@@ -116,7 +116,7 @@ const cssIconized: React.CSSProperties = {
 }
 
 const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
-	width: 14, height: 14,
+	width: 10, height: 10,
 	border: "2px solid black",
 	borderRadius: "50%",
 	backgroundColor: {
@@ -125,5 +125,4 @@ const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 		[CNN_STATUS.RECONNECTING]: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
 		[CNN_STATUS.DISCONNECTED]: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 	}[status]
-	//border: "2px solid black",
 })

@@ -1,7 +1,7 @@
 import docSo from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
-import DocViewCmp from "./components/DocViewCmp"
+import RootCard from "./components/cards/RootCard"
 import DropArea from "./components/DropArea"
 
 
@@ -32,7 +32,7 @@ const CardCmp: FunctionComponent<Props> = ({
 				index={index}
 				viewSo={store}
 			/>
-			<DocViewCmp view={store} />
+			<RootCard view={store} />
 			{isLast && !isAnchored && (
 				<DropArea index={length} isLast={isLast}/>
 			)}

@@ -1,16 +1,16 @@
+import AnchorIcon from "@/icons/AnchorIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
+import IconizedIcon from "@/icons/IconizeIcon"
 import docSo from "@/stores/docs"
 import { getRoot } from "@/stores/docs/utils/manage"
-import { ViewStore } from "@/stores/stacks/viewBase"
 import mouseSo from "@/stores/mouse"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
-import IconButton from "./buttons/IconButton"
-import Label, { LABELS } from "./format/Label"
-import AnchorIcon from "@/icons/AnchorIcon"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
-import IconizedIcon from "@/icons/IconizeIcon"
+import IconButton from "../buttons/IconButton"
+import CardIcon from "./CardIcon"
 
 
 
@@ -64,7 +64,6 @@ const Header: FunctionComponent<Props> = ({
 	const haveLinkDetachable = store.state.linked?.state.draggable
 	const title = store.getTitle()
 	const subTitle = store.getSubTitle()
-	const strIcon = store.getIcon()
 	const inRoot = !store.state.parent
 	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
@@ -74,27 +73,31 @@ const Header: FunctionComponent<Props> = ({
 	const showBttIconize = inRoot && enter && store.state.pinnable
 
 	return (
-		<div style={cssRoot(store.state.size)}
+		<div style={cssRoot(inRoot, store.state.size)}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 			onMouseEnter={() => setEnter(true)}
 			onMouseLeave={() => setEnter(false)}
 		>
-			{!!strIcon && (
-				<div onClick={handleSizeClick}>
-					<img src={strIcon} />
+			{!!store.state.type && (
+				<div onClick={handleSizeClick} className="cliccable"
+					style={{ margin: 8, alignSelf: "center" }}
+				>
+					<CardIcon style={{ width: 18, height: 18 }}
+						type={store.state.type}
+					/>
 				</div>
 			)}
 
 			<div style={cssTitle(store.state.size)}>
-				<Label
-					type={LABELS.TITLE}
+				<div className="label-title cliccable"
+					style={{ marginTop: 3 }}
 					onClick={handleFocus}
-					style={{ marginLeft: (!inRoot && !strIcon) ? 13 : null, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-				>{title}</Label>
-
+				>{title}</div>
 				{subTitle && (
-					<Label type={LABELS.SUB_TITLE}>{subTitle}</Label>
+					<div className="label-sub-title">
+						{subTitle}
+					</div>
 				)}
 			</div>
 
@@ -128,11 +131,12 @@ const Header: FunctionComponent<Props> = ({
 
 export default Header
 
-const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
+const cssRoot = (inRoot: boolean, size: VIEW_SIZE): React.CSSProperties => ({
 	display: "flex",
-	height: size != VIEW_SIZE.COMPACT ? 48 : null,
+	height: size != VIEW_SIZE.COMPACT ? 41 : null,
 	flexDirection: size != VIEW_SIZE.COMPACT ? null : "column",
 	alignItems: "flex-start",
+	marginLeft: !inRoot ? 5 : null,
 })
 
 const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
@@ -156,4 +160,6 @@ const cssButtons: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	alignItems: 'flex-end',
+	marginTop: 5,
+	marginRight: 5,
 }

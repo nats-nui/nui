@@ -4,7 +4,7 @@ import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
-import DocCmp from "./DocCmp"
+import PolymorphicCard from "./PolymorphicCard"
 import SnackbarCmp from "./SnackbarCmp"
 
 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 /** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
-const DocView: FunctionComponent<Props> = ({
+const RootCmpCard: FunctionComponent<Props> = ({
 	view,
 	deep = 100,
 }) => {
@@ -41,7 +41,7 @@ const DocView: FunctionComponent<Props> = ({
 	// styles
 	const styContainerDoc: React.CSSProperties = {
 		...cssDoc,
-		borderRadius: inRoot ? 10 : "0px 10px 10px 0px",
+		borderRadius: inRoot ? 5 : "0px 5px 5px 0px",
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
 		width: view.getWidth(),
@@ -57,7 +57,7 @@ const DocView: FunctionComponent<Props> = ({
 
 		{/* DOC BODY */}
 		<div style={styContainerDoc}>
-			<DocCmp view={view} />
+			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
 			{!!view.state.loadingMessage && (
 				<div style={cssLoading}>
@@ -76,7 +76,7 @@ const DocView: FunctionComponent<Props> = ({
 
 			{/* LINKED */}
 			{haveLinked && <div >
-				<DocViewCmp
+				<RootCard
 					deep={deep - 2}
 					view={view.state.linked}
 				/>
@@ -86,11 +86,11 @@ const DocView: FunctionComponent<Props> = ({
 	</div>
 }
 
-const DocViewCmp = React.memo(
-	DocView,
+const RootCard = React.memo(
+	RootCmpCard,
 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
 )
-export default DocViewCmp
+export default RootCard
 
 const cssRoot = (deep: number): React.CSSProperties => ({
 	zIndex: deep,
@@ -113,24 +113,13 @@ const cssDialog = (deep: number): React.CSSProperties => ({
 	position: "absolute",
 	zIndex: deep,
 	height: "100%",
-
-	//display: "flex",
-	//flexDirection: "column",
-
-	//overflow: "hidden",
-	//borderRadius: '0px 10px 10px 0px',
-
-	//boxShadow: layoutSo.state.theme.shadows[0],
 })
 
 const cssDesk: React.CSSProperties = {
 	marginLeft: -8,
 	display: "flex",
-	//height: "100%",
 	position: "relative",
 }
-
-
 
 const cssLoading: React.CSSProperties = {
 	position: 'absolute',

@@ -56,6 +56,7 @@ const cssRoot = (variant: number, select: boolean): React.CSSProperties => ({
 	borderTopLeftRadius: 5,
 	borderBottomLeftRadius: 5,
 	marginRight: -10,
+	marginLeft: -7,
 })
 const cssLabel: React.CSSProperties = {
 	...layoutSo.state.theme.texts.rowButton,

@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"

@@ -1,14 +1,13 @@
 import strApi from "@/api/streams"
-import srcIcon from "@/assets/StreamsIcon.svg"
 import docSo from "@/stores/docs"
-import { buildConsumers } from "../consumer/utils/factory"
-import { buildStreamMessages } from "./utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamConfig, StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { StreamsState, StreamsStore } from "."
+import { buildConsumers } from "../consumer/utils/factory"
+import { buildStreamMessages } from "./utils/factory"
 
 
 
@@ -36,7 +35,6 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (<StreamStore>store).state.stream?.config?.name ?? "--",
 		getSubTitle: (_: void, store?: ViewStore) => "STREAM DETAIL",
-		getIcon: (_: void, store?: ViewStore) => srcIcon,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as StreamState
 			return {

@@ -1,4 +1,4 @@
-import FrameworkCard from "@/components/FrameworkCard"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
 import BoxV from "@/components/format/BoxV"
 import ElementRow from "@/components/rows/ElementRow"
