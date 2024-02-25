@@ -1,7 +1,7 @@
-import RowButton from "@/components/buttons/RowButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
+import IconRow2 from "@/components/rows/IconRow2"
+import RowButton from "@/components/rows/RowButton"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
@@ -48,21 +48,25 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		variantBg={variant}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={
-			<BoxV style={{ gap: 5, marginTop: 5 }}>
-				<IconRow
-					title="MESSAGES"
+			<BoxV style={{ marginTop: 10 }}>
+				<IconRow2
+					icon={<MessagesIcon />}
+					tooltip="MESSAGES"
 					selected={isMessageOpen}
 					variant={variant}
 					onClick={handleMessagesClick}
 				/>
-				<IconRow
-					title="STREAMS"
+				<IconRow2
+					icon={<StreamsIcon />}
+					tooltip="STREAMS"
 					selected={isStreamsOpen}
 					variant={variant}
 					onClick={handleStreamsClick}
 				/>
-				<IconRow
-					title="BUCKETS"
+				<IconRow2
+					icon={<BucketsIcon />}
+					tooltip="BUCKETS"
+					selected={isBucketsOpen}
 					variant={variant}
 					onClick={handleBucketsClick}
 				/>
@@ -71,21 +75,21 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	>
 		{!isNew && <div style={{ marginBottom: 20 }}>
 			<RowButton
-				icon={<MessagesIcon style={{ width: 18, height: 18}}/>}
+				icon={<MessagesIcon  />}
 				label="MESSAGES"
 				variant={variant}
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
 			/>
 			<RowButton
-				icon={<StreamsIcon style={{ width: 18, height: 18}}/>}
+				icon={<StreamsIcon />}
 				label="STREAMS"
 				variant={variant}
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton
-				icon={<BucketsIcon style={{ width: 18, height: 18}}/>}
+				icon={<BucketsIcon />}
 				variant={variant}
 				label="BUCKETS"
 				selected={isBucketsOpen}

@@ -106,7 +106,7 @@ const cssDoc: React.CSSProperties = {
 	color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
 	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
 	transitionTimingFunction: layoutSo.state.theme.transitions[0],
-	boxShadow: layoutSo.state.theme.shadows[0],
+	//boxShadow: layoutSo.state.theme.shadows[0],
 }
 
 const cssDialog = (deep: number): React.CSSProperties => ({

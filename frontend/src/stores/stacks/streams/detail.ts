@@ -8,6 +8,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { StreamsState, StreamsStore } from "."
 import { buildConsumers } from "../consumer/utils/factory"
 import { buildStreamMessages } from "./utils/factory"
+import { VIEW_SIZE } from "../utils"
 
 
 
@@ -27,6 +28,7 @@ const setup = {
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
+		size: VIEW_SIZE.COMPACT,
 		//#endregion
 	},
 
@@ -116,6 +118,18 @@ const setup = {
 		openMessages(_: void, store?: StreamStore) {
 			const streamMessagesStore = buildStreamMessages(store.state.connectionId, store.state.stream)
 			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
+		},
+
+		onCreate: (_: void, store?: ViewStore) => { 
+			const cnnStore = store as StreamStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if ( options == DOC_TYPE.CONSUMERS ) {
+				cnnStore.openConsumers()
+			} else if ( options == DOC_TYPE.STREAM_MESSAGES ) {
+				cnnStore.openMessages()
+			}
+			store.state.docAniDisabled = false
 		},
 	},
 

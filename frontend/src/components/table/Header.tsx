@@ -65,7 +65,7 @@ const Header: FunctionComponent<Props> = ({
 									)}
 								</IconButton>
 							) : (
-								<div style={{ width: 24, height: 24 }} />
+								<div style={{ width: 18, height: 18 }} />
 							)}
 							<div>{prop.label}</div>
 						</div>

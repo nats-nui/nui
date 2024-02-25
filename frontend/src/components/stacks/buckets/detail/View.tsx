@@ -1,4 +1,4 @@
-import RowButton from "@/components/buttons/RowButton"
+import RowButton from "@/components/rows/RowButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
@@ -9,6 +9,9 @@ import ActionsCmp from "./Actions"
 import CreateForm from "./CreateForm"
 import ShowForm from "./ShowForm"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
+import BoxV from "@/components/format/BoxV"
+import IconRow2 from "@/components/rows/IconRow2"
+import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 
 
 
@@ -41,10 +44,21 @@ const BucketDetailView: FunctionComponent<Props> = ({
 		variantBg={variant}
 		store={bucketSo}
 		actionsRender={<ActionsCmp store={bucketSo} />}
+		iconizedRender={
+			<BoxV style={{ marginTop: 10 }}>
+				<IconRow2
+					icon={<KvEntriesIcon />}
+					tooltip="KVENTRIES"
+					selected={isKVEntriesSelect}
+					variant={variant}
+					onClick={handleKVEntriesClick}
+				/>
+			</BoxV>
+		}
 	>
 		{inRead ? (<>
 			<RowButton
-				icon={<MessagesIcon />}
+				icon={<KvEntriesIcon />}
 				label="KVENTRIES"
 				variant={variant}
 				selected={isKVEntriesSelect}

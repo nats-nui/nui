@@ -7,6 +7,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { CnnListState, CnnListStore } from "."
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
+import { VIEW_SIZE } from "../utils"
 import { buildConnectionMessages } from "./utils/factory"
 
 
@@ -24,6 +25,7 @@ const setup = {
 		//#region VIEWBASE
 		width: 200,
 		colorVar: COLOR_VAR.GREEN,
+		size: VIEW_SIZE.COMPACT,
 		//#endregion
 	},
 
@@ -31,7 +33,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).state.connection?.name ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => "CONNECTION DETAIL",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnDetailState
 			return {
@@ -77,6 +79,20 @@ const setup = {
 		openBuckets(_: void, store?: CnnDetailStore) {
 			docSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
 		},
+
+		onCreate: (_: void, store?: ViewStore) => { 
+			const cnnStore = store as CnnDetailStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if ( options == DOC_TYPE.MESSAGES ) {
+				cnnStore.openMessages()
+			} else if ( options == DOC_TYPE.STREAMS ) {
+				cnnStore.openStreams()
+			} else if ( options == DOC_TYPE.BUCKETS ) {
+				cnnStore.openBuckets()
+			}
+			store.state.docAniDisabled = false
+		},
 	},
 
 	mutators: {
@@ -93,5 +109,5 @@ export type CnnDetailMutators = typeof setup.mutators
 export interface CnnDetailStore extends ViewStore, StoreCore<CnnDetailState>, CnnDetailGetters, CnnDetailActions, CnnDetailMutators {
 	state: CnnDetailState
 }
-const srvSetup = mixStores(viewSetup, setup)
-export default srvSetup
+const connectonSetup = mixStores(viewSetup, setup) as typeof setup
+export default connectonSetup

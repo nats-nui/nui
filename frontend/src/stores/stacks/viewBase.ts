@@ -5,8 +5,8 @@ import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
 import { buildStore } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
-import { VIEW_SIZE } from "./utils"
 import { MESSAGE_TYPE } from "../log/utils"
+import { VIEW_SIZE } from "./utils"
 
 
 
@@ -26,6 +26,7 @@ const viewSetup = {
 		pinnable: true,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
+		sizeForce: false,
 
 		/** il width "normale" */
 		width: 300,
@@ -33,6 +34,8 @@ const viewSetup = {
 		colorVar: COLOR_VAR.DEFAULT,
 		/** il corrente stato di animazione */
 		docAnim: DOC_ANIM.EXIT,
+		/** disabilita qualsiasi animazione */
+		docAniDisabled: false,
 
 		/** la sua VIEW PARENT */
 		parent: <ViewStore>null,
@@ -76,7 +79,7 @@ const viewSetup = {
 
 		//#region OVERRIDABLE
 		/** restituisce il width effettivo */
-		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.COMPACT ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
+		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.COMPACT ? 45 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
 		getSerialization: (_: void, store?: ViewStore) => {

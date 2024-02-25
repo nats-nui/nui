@@ -7,6 +7,7 @@ import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
+import { VIEW_SIZE } from "../utils"
 
 
 
@@ -23,6 +24,7 @@ const setup = {
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
+		size: VIEW_SIZE.COMPACT,
 		//#endregion
 
 	},
@@ -83,6 +85,16 @@ const setup = {
 		openKVEntries(_: void, store?: BucketStore) {
 			const view = buildKVEntries(store.state.connectionId, store.state.bucket)
 			docSo.addLink({ view, parent: store, anim: true })
+		},
+
+		onCreate: (_: void, store?: ViewStore) => { 
+			const cnnStore = store as BucketStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if ( options == DOC_TYPE.KVENTRIES ) {
+				cnnStore.openKVEntries()
+			}
+			store.state.docAniDisabled = false
 		},
 	},
 

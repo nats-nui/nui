@@ -73,35 +73,37 @@ const Header: FunctionComponent<Props> = ({
 	const showBttIconize = inRoot && enter && store.state.pinnable
 
 	return (
-		<div style={cssRoot(inRoot, store.state.size)}
+		<div style={cssRoot(store.state.size)}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 			onMouseEnter={() => setEnter(true)}
 			onMouseLeave={() => setEnter(false)}
 		>
+
 			{!!store.state.type && (
 				<div onClick={handleSizeClick} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
-					<CardIcon style={{ width: 18, height: 18 }}
+					<CardIcon 
 						type={store.state.type}
 					/>
 				</div>
 			)}
 
-			<div style={cssTitle(store.state.size)}>
-				<div className="label-title cliccable"
-					style={{ marginTop: 3 }}
-					onClick={handleFocus}
-				>{title}</div>
-				{subTitle && (
-					<div className="label-sub-title">
-						{subTitle}
-					</div>
-				)}
-			</div>
+			{!isCompact && <>
 
-			{!isCompact && (
+				<div style={cssTitle(store.state.size)}>
+					<div className="label-title cliccable"
+						style={{ marginTop: 3 }}
+						onClick={handleFocus}
+					>{title}</div>
+					{subTitle && (
+						<div className="label-sub-title">
+							{subTitle}
+						</div>
+					)}
+				</div>
+
 				<div style={cssButtons}>
 					<div style={{ display: "flex" }}>
 						{showBttIconize && (
@@ -124,19 +126,19 @@ const Header: FunctionComponent<Props> = ({
 						onClick={handleLinkDetach}
 					><DetachIcon /></IconButton>}
 				</div>
-			)}
+
+			</>}
 		</div>
 	)
 }
 
 export default Header
 
-const cssRoot = (inRoot: boolean, size: VIEW_SIZE): React.CSSProperties => ({
+const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
 	display: "flex",
-	height: size != VIEW_SIZE.COMPACT ? 41 : null,
+	height:  41,
 	flexDirection: size != VIEW_SIZE.COMPACT ? null : "column",
 	alignItems: "flex-start",
-	marginLeft: !inRoot ? 5 : null,
 })
 
 const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
