@@ -55,23 +55,19 @@ const StreamsListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div style={{ marginLeft: -9, marginRight: -9 }}>
-
-			<Table
-				items={streams}
-				props={[
-					{ label: "SIZE", getValue: s => s.state.messages },
-					{ label: "FIRST", getValue: s => s.state.firstSeq },
-					{ label: "LAST", getValue: s => s.state.lastSeq },
-					{ label: "BYTES", getValue: s => s.state.bytes },
-				]}
-				propMain={{ getValue: s => s.config.name }}
-				select={selectedIndex}
-				onSelectChange={handleSelect}
-				variant={variant}
-			/>
-		</div>
-
+		<Table
+			items={streams}
+			props={[
+				{ label: "SIZE", getValue: s => s.state.messages },
+				{ label: "FIRST", getValue: s => s.state.firstSeq },
+				{ label: "LAST", getValue: s => s.state.lastSeq },
+				{ label: "BYTES", getValue: s => s.state.bytes },
+			]}
+			propMain={{ getValue: s => s.config.name }}
+			select={selectedIndex}
+			onSelectChange={handleSelect}
+			variant={variant}
+		/>
 	</FrameworkCard>
 }
 

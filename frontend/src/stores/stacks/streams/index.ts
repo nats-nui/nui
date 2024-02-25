@@ -1,13 +1,12 @@
 import strApi from "@/api/streams"
-import srcIcon from "@/assets/StreamsIcon.svg"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { buildConsumers } from "../consumer/utils/factory"
-import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
+import { buildConsumers } from "../consumer/utils/factory"
+import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 
 
 

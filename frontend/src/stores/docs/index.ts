@@ -1,4 +1,4 @@
-import { DOC_ANIM } from "@/stores/docs/types"
+import { DOC_ANIM, DOC_TYPE } from "@/stores/docs/types"
 import { deepEqual } from "@/utils/object"
 import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
@@ -17,6 +17,8 @@ const setup = {
 		all: <ViewStore[]>[],
 		menu: <ViewStore[]>[],
 		anchored: 0,
+
+		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 	},
 
 	getters: {
@@ -58,6 +60,7 @@ const setup = {
 			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 			store.setFocus(view)
 		},
+		/** aggiunge una CARD direttamente nel DECK */
 		async add(
 			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
 			store?: DocStore
@@ -76,13 +79,13 @@ const setup = {
 
 			store.setAll(newViews)
 
-			if (anim) {
+			if (anim && !view.state.docAniDisabled) {
 				await delayAnim()
 				await view.docAnim(DOC_ANIM.SHOWING)
 			}
 		},
 
-		/** inserisco una VIEW come link di un altra VIEW */
+		/** inserisco una CARD come link di un altra CARD */
 		async addLink(
 			{ view, parent, anim = false }: { view: ViewStore, parent: ViewStore, anim?: boolean },
 			store?: DocStore
@@ -91,16 +94,21 @@ const setup = {
 
 			// se c'e' gia' una view la rimuovo (stesso "size" della precedente)
 			if (parent.state.linked) {
-				if (!!view) view.state.size = parent.state.linked.state.size
+				if (!!view && !view.state.sizeForce) view.state.size = parent.state.linked.state.size
 				await store.remove({ view: parent.state.linked, anim })
 			}
-			if (!view) return
+			if (!view) {
+				delete store.state.cardOptions[parent.state.type]
+				return
+			} else {
+				store.state.cardOptions[parent.state.type] = view.state.type
+			}
 
 			// imposto la view
 			parent.setLinked(view)
 			store.setAll([...store.state.all])
 
-			if (anim) {
+			if (anim && !parent.state.docAniDisabled) {
 				//await delayAnim()
 				await delay(100)
 				await view.docAnim(DOC_ANIM.SHOWING)
@@ -109,9 +117,10 @@ const setup = {
 			}
 		},
 
-		/** inserisco una VIEW nello STACK di un altra VIEW */
+		/** inserisco una CARD nello STACK di un altra VIEW */
 		async remove({ view, anim = false }: { view: ViewStore, anim?: boolean }, store?: DocStore) {
-			if (anim) await view.docAnim(DOC_ANIM.EXITING)
+			if (!view) return
+			if (anim && !view.state.docAniDisabled) await view.docAnim(DOC_ANIM.EXITING)
 
 			const views = [...store.state.all]
 			let index: number
@@ -127,6 +136,7 @@ const setup = {
 
 				// LINKED
 			} else {
+				delete store.state.cardOptions[view.state.parent.state.type]
 				view.state.parent.setLinked(null)
 			}
 

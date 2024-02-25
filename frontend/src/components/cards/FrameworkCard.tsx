@@ -5,6 +5,8 @@ import ActionGroup from "../buttons/ActionGroup"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
+import IconButton from "../buttons/IconButton"
+import CloseIcon from "@/icons/CloseIcon"
 
 
 
@@ -29,40 +31,49 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	children,
 }) => {
 
+	// HANDLER
+	const handleClose = () => store.onDestroy()
+
 	// RENDER
 	const inRoot = !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
-	return <div style={{...cssRoot(variantBg, inDrag, isIconized), ...style}}>
+	return <div style={{ ...cssRoot(variantBg, inDrag, isIconized, inRoot), ...style }}>
 
 		<Header store={store} />
 
-		{isIconized ? iconizedRender : (<>
-
-			<ActionGroup
-				style={{ marginLeft: !inRoot ? 10 : null }}
-			>
+		{isIconized ? <>
+			{/* <div style={{ height: 38, backgroundColor: "rgb(0 0 0 / 50%)", alignSelf: 'stretch' }} > */}
+			<ActionGroup style={{ alignSelf: 'stretch', justifyContent: 'center' }}>
+				<IconButton
+					onClick={handleClose}
+				><CloseIcon /></IconButton>
+			</ActionGroup>
+			{/* </div> */}
+			{iconizedRender}
+		</> : <>
+			<ActionGroup>
 				{actionsRender}
 			</ActionGroup>
 
-			<div style={{...cssChildren(inRoot), ...styleBody}}>
+			<div style={{ ...cssChildren, ...styleBody }}>
 				{children}
 			</div>
-
-		</>)}
+		</>}
 	</div>
 }
 
 export default FrameworkCard
 
-const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean): React.CSSProperties => ({
+const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean, inRoot: boolean): React.CSSProperties => ({
 	position: "relative",
 	flex: 1,
 	display: "flex",
 	flexDirection: "column",
 	height: "100%",
 	alignItems: isIconized ? "center" : null,
+	paddingLeft: inRoot ? null : 8,
 
 	backgroundColor: layoutSo.state.theme.palette.var[variant]?.bg,
 	color: layoutSo.state.theme.palette.var[variant]?.fg,
@@ -71,10 +82,9 @@ const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean): React.C
 	opacity: inDrag ? .5 : null,
 })
 
-const cssChildren = (inRoot: boolean): React.CSSProperties => ({
-	marginLeft: inRoot ? 0 : 10,
+const cssChildren: React.CSSProperties = {
 	flex: 1,
 	overflowY: "auto",
 	padding: 10,
 	display: "flex", flexDirection: "column",
-})
+}

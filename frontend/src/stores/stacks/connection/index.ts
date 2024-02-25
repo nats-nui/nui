@@ -18,7 +18,6 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 220,
-		iconizzable: false,
 		colorVar: COLOR_VAR.GREEN,
 		//#endregion
 	},
@@ -27,6 +26,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
+		getSubTitle: (_: void, store?: ViewStore) => "ALL CONNECTION",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnListState
 			return {

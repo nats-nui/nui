@@ -59,29 +59,27 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div style={{ marginLeft: -9, marginRight: -9 }}>
-			<Table
-				items={kventries}
-				props={[
-					{ label: "REVISION", getValue: b => b.revision },
-					{ 
-						label: "LAST", 
-						getShow: i => dayjs(i.lastUpdate).format("DD/MM/YYYY HH:mm"), 
-						getValue: b => dayjs(b.lastUpdate).valueOf() 
-					},
-					//{ label: "OPERATION", getValue: b => b.operation },
-					{ 
-						label: "DELETED", 
-						getShow: i => i.isDeleted ? "YES" : "NO", 
-						getValue: b => b.isDeleted ? 1 : 0 
-					},
-				]}
-				propMain={{ getValue: b => b.key }}
-				select={selectedIndex}
-				onSelectChange={handleSelect}
-				variant={variant}
-			/>
-		</div>
+		<Table
+			items={kventries}
+			props={[
+				{ label: "REVISION", getValue: b => b.revision },
+				{
+					label: "LAST",
+					getShow: i => dayjs(i.lastUpdate).format("DD/MM/YYYY HH:mm"),
+					getValue: b => dayjs(b.lastUpdate).valueOf()
+				},
+				//{ label: "OPERATION", getValue: b => b.operation },
+				{
+					label: "DELETED",
+					getShow: i => i.isDeleted ? "YES" : "NO",
+					getValue: b => b.isDeleted ? 1 : 0
+				},
+			]}
+			propMain={{ getValue: b => b.key }}
+			select={selectedIndex}
+			onSelectChange={handleSelect}
+			variant={variant}
+		/>
 	</FrameworkCard>
 }
 

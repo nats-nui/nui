@@ -56,25 +56,19 @@ const BucketsListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-
-		<div style={{ marginLeft: -9, marginRight: -9 }}>
-
-			<Table
-				items={buckets}
-				props={[
-					{ label: "VALUES", getValue: b => b.values },
-					{ label: "HISTORY", getValue: b => b.history },
-					{ label: "TTL", getValue: b => b.ttl },
-					{ label: "BYTES", getValue: b => b.bytes },
-				]}
-				propMain={{ getValue: b => b.bucket }}
-				select={selectedIndex}
-				onSelectChange={handleSelect}
-				variant={variant}
-			/>
-
-		</div>
-
+		<Table
+			items={buckets}
+			props={[
+				{ label: "VALUES", getValue: b => b.values },
+				{ label: "HISTORY", getValue: b => b.history },
+				{ label: "TTL", getValue: b => b.ttl },
+				{ label: "BYTES", getValue: b => b.bytes },
+			]}
+			propMain={{ getValue: b => b.bucket }}
+			select={selectedIndex}
+			onSelectChange={handleSelect}
+			variant={variant}
+		/>
 	</FrameworkCard>
 }
 

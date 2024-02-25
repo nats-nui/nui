@@ -47,11 +47,14 @@ const RowButton: FunctionComponent<Props> = ({
 export default RowButton
 
 const cssRoot = (variant: number, select: boolean): React.CSSProperties => ({
+	...select && {
+		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
+		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
+	},
+
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
 	padding: "5px 8px",
-	color: layoutSo.state.theme.palette.var[select ? COLOR_VAR.DEFAULT : variant].fg,
-	backgroundColor: select ? layoutSo.state.theme.palette.default.bg : null,
 	cursor: "pointer",
 	borderTopLeftRadius: 5,
 	borderBottomLeftRadius: 5,

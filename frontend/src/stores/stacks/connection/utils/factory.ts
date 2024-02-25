@@ -3,6 +3,7 @@ import { buildStore } from "@/stores/docs/utils/factory";
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
 import { MessagesState, MessagesStore } from "@/stores/stacks/messages";
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types";
+import { VIEW_SIZE } from "../../utils";
 
 
 
@@ -21,6 +22,8 @@ export function buildConnectionNew() {
 	const cnnStore = buildStore({
 		type: DOC_TYPE.CONNECTION,
 		editState: EDIT_STATE.NEW,
+		size: VIEW_SIZE.NORMAL,
+		sizeForce: true,
 		connection: {
 			name: "",
 			hosts: [],

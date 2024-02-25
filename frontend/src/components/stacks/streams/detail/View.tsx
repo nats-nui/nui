@@ -1,7 +1,9 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import RowButton from "@/components/buttons/RowButton"
 import BoxV from "@/components/format/BoxV"
-import IconRow from "@/components/rows/IconRow"
+import IconRow2 from "@/components/rows/IconRow2"
+import RowButton from "@/components/rows/RowButton"
+import ConsumersIcon from "@/icons/cards/ConsumersIcon"
+import MessagesIcon from "@/icons/cards/MessagesIcon"
 import docSo from "@/stores/docs"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -10,7 +12,6 @@ import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import EditForm from "./EditForm"
 import ShowForm from "./ShowForm"
-import MessagesIcon from "@/icons/cards/MessagesIcon"
 
 
 
@@ -46,18 +47,20 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		store={streamSo}
 		actionsRender={<ActionsCmp store={streamSo} />}
 		iconizedRender={
-			<BoxV style={{ gap: 5, marginTop: 5 }}>
-				<IconRow
-					title="CONSUMERS"
-					selected={isConsumersSelect}
-					variant={variant}
-					onClick={handleConsumersClick}
-				/>
-				<IconRow
-					title="MESSAGES"
+			<BoxV style={{ marginTop: 10 }}>
+				<IconRow2
+					icon={<MessagesIcon />}
+					tooltip="MESSAGES"
 					selected={isMessagesSelect}
 					variant={variant}
 					onClick={handleMessagesClick}
+				/>
+				<IconRow2
+					icon={<ConsumersIcon />}
+					tooltip="CONSUMERS"
+					selected={isConsumersSelect}
+					variant={variant}
+					onClick={handleConsumersClick}
 				/>
 			</BoxV>
 		}
@@ -65,17 +68,17 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		{inRead ? (<>
 			<RowButton
 				icon={<MessagesIcon />}
-				label="CONSUMERS"
-				variant={variant}
-				selected={isConsumersSelect}
-				onClick={handleConsumersClick}
-			/>
-			<RowButton style={{ marginBottom: 15 }}
-				icon={<MessagesIcon />}
 				label="MESSAGES"
 				variant={variant}
 				selected={isMessagesSelect}
 				onClick={handleMessagesClick}
+			/>
+			<RowButton style={{ marginBottom: 15 }}
+				icon={<ConsumersIcon />}
+				label="CONSUMERS"
+				variant={variant}
+				selected={isConsumersSelect}
+				onClick={handleConsumersClick}
 			/>
 			<ShowForm store={streamSo} />
 		</>) : (
