@@ -1,6 +1,7 @@
 package nui
 
 import (
+	"context"
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -250,4 +251,45 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 	}
 	_ = stream.DeleteConsumer(c.Context(), config.Name)
 	return c.JSON(msgs)
+}
+
+func findFirstSeq(ctx context.Context, stream jetstream.Stream, config jetstream.ConsumerConfig, firstSeq int, interval int) (uint64, error) {
+	if interval >= 0 {
+		return uint64(firstSeq), nil
+	}
+	intervalMultiplier := 1
+	var msgs []jetstream.Msg
+
+	for {
+		batch := interval * intervalMultiplier
+		firstSeq -= batch
+		if firstSeq <= 1 {
+			return 1, nil
+		}
+		config.HeadersOnly = true
+		consumer, err := stream.CreateConsumer(ctx, config)
+		if err != nil {
+			return 0, err
+		}
+		msgBatch, err := consumer.FetchNoWait(batch)
+		if err != nil {
+			return 0, err
+		}
+		msgs = make([]jetstream.Msg, 0, batch)
+		for msg := range msgBatch.Messages() {
+			if msgBatch.Error() != nil {
+				return 0, msgBatch.Error()
+			}
+			msgs = append(msgs, msg)
+		}
+		if len(msgs) >= interval {
+			break
+		}
+	}
+	msg := msgs[len(msgs)-interval]
+	metadata, err := msg.Metadata()
+	if err != nil {
+		return 0, err
+	}
+	return metadata.Sequence.Stream, nil
 }
