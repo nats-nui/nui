@@ -4,6 +4,7 @@ import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
+import CloseIcon from "@/icons/CloseIcon"
 import CopyIcon from "@/icons/CopyIcon"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
@@ -18,13 +19,15 @@ interface Props {
 	format?: MSG_FORMAT
 	index?: number
 	onClick?: (message: Message) => void
+	onDelete?: (message: Message) => void
 }
 
-const ItemRow: FunctionComponent<Props> = ({
+const MessageRow: FunctionComponent<Props> = ({
 	message,
 	format,
 	index,
 	onClick,
+	onDelete,
 }) => {
 
 	// STORE
@@ -39,6 +42,11 @@ const ItemRow: FunctionComponent<Props> = ({
 		e.stopPropagation()
 		navigator.clipboard.writeText(message.payload)
 	}
+	const handleDeleteClick = (e: React.MouseEvent<Element, MouseEvent>) => {
+		e.preventDefault()
+		e.stopPropagation()
+		onDelete?.(message)
+	}
 	const handleTitleEnter = () => setBttCopyVisible(true)
 	const handleTitleLeave = () => setBttCopyVisible(false)
 
@@ -48,28 +56,34 @@ const ItemRow: FunctionComponent<Props> = ({
 		() => message.receivedAt ? dayjs(message.receivedAt).format("YYYY-MM-DD HH:mm:ss") : null,
 		[message.receivedAt]
 	)
+	const bgcolor = index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2
 
 	return (
-		<div style={cssRoot(index)}
+		<div style={cssRoot(bgcolor)}
 			onClick={handleClick}
+			onMouseEnter={handleTitleEnter}
+			onMouseLeave={handleTitleLeave}
 		>
-			<div style={cssTitle}
-				onMouseEnter={handleTitleEnter}
-				onMouseLeave={handleTitleLeave}
-			>
-				<div style={{ display: "flex", flex: 1 }}>
-					{!!message.seqNum && (
-						<div style={{ width: 20 }}>{message.seqNum}</div>
-					)}
-					<div style={cssSubject}>{message.subject}</div>
+			<div style={cssTitle}>
+				<div style={{ flex: 1 }}>
+					{message.seqNum} <span style={cssSubject}>{message.subject}</span>
 				</div>
 
 				{bttCopyVisible && (
-					<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
-						<IconButton onClick={handleClipboardClick}>
-							<CopyIcon />
-						</IconButton>
-					</TooltipWrapCmp>
+					<div style={{ position: "absolute", top: 0, right: 0, backgroundColor: bgcolor, display: "flex" }}>
+						<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
+							<IconButton onClick={handleClipboardClick}>
+								<CopyIcon />
+							</IconButton>
+						</TooltipWrapCmp>
+						{!!onDelete && (
+							<TooltipWrapCmp content="DELETE" variant={COLOR_VAR.CYAN}>
+								<IconButton onClick={handleDeleteClick}>
+									<CloseIcon />
+								</IconButton>
+							</TooltipWrapCmp>
+						)}
+					</div>
 				)}
 			</div>
 
@@ -87,16 +101,17 @@ const ItemRow: FunctionComponent<Props> = ({
 	)
 }
 
-export default ItemRow
+export default MessageRow
 
-const cssRoot = (index: number): React.CSSProperties => ({
-	backgroundColor: index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2,
+const cssRoot = (bgcolor: string): React.CSSProperties => ({
+	backgroundColor: bgcolor,
 	display: "flex",
 	flexDirection: "column",
 	padding: "0px 7px 5px 7px",
 })
 
 const cssTitle: React.CSSProperties = {
+	position: "relative",
 	display: "flex",
 	alignItems: "start",
 	//height: 24,

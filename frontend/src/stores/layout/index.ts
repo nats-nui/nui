@@ -29,7 +29,7 @@ const ThemeDefault: Theme = {
 			// yellow
 			{ bg: "#ebfb35", fg: "#393939", bg2: "#f9ffb3" },
 			// fuchsia
-			{ bg: "#F51DDF", fg: "#393939" },
+			{ bg: "#F51DDF", fg: "#393939", bg2: "#f374e6" },
 
 		],
 		default: {
@@ -54,7 +54,7 @@ const ThemeDefault: Theme = {
 	},
 
 	shadows: [
-		"2px 2px 2px 0px rgba(0, 0, 0, 0.40)"
+		'rgba(0, 0, 0, 0.4) 1px 1px 0px 0px'
 	],
 
 	transitions: [

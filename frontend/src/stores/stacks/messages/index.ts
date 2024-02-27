@@ -41,7 +41,7 @@ const setup = {
 		getConnection: (_: void, store?: MessagesStore) => {
 			return cnnSo.getById(store.state.connectionId)
 		},
-		getHistoryFiltered: (_: void, store?: MessagesStore) => {
+		getFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()
 			if (!text || text.trim().length == 0) return store.state.messages
 			return store.state.messages.filter(h =>

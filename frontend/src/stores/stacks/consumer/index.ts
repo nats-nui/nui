@@ -17,13 +17,13 @@ const setup = {
 		connectionId: <string>null,
 		/** nome dello stream di riferimento */
 		streamName: <string>null,
-
 		/** nome del CONSUMER selezionato */
 		select: <string>null,
 		all: <StreamConsumer[]>null,
+		textSearch: <string>null,
 
 		//#region VIEWBASE
-		width: 200,
+		width: 310,
 		colorVar: COLOR_VAR.FUCHSIA,
 		//#endregion
 	},
@@ -51,6 +51,15 @@ const setup = {
 			if (!name) return -1
 			return store.state.all?.findIndex(c => c.name == name)
 		},
+		/** filtrati e da visualizzare in lista */
+		getFiltered(_: void, store?: ConsumersStore) {
+			if (!store.state.all) return null
+			const text = store.state.textSearch?.toLocaleLowerCase()
+			if (!text || text.trim().length == 0) return store.state.all
+			return store.state.all.filter(consumer =>
+				consumer.name.toLowerCase().includes(text)
+			)
+		}
 	},
 
 	actions: {
@@ -94,6 +103,7 @@ const setup = {
 	mutators: {
 		setAll: (all: StreamConsumer[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

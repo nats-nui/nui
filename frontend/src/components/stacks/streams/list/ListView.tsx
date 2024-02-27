@@ -7,6 +7,7 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import FindInput from "@/components/input/FindInput"
 
 
 
@@ -33,7 +34,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const handleDelete = () => streamsSo.delete()
 
 	// RENDER
-	const streams = streamsSa.all ?? []
+	const streams = streamsSo.getFiltered() ?? []
 	const selected = streamsSa.select
 	const selectedIndex = streamsSo.getIndexByName(streamsSa.select)
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
@@ -42,6 +43,10 @@ const StreamsListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={streamsSo}
 		actionsRender={<>
+			<FindInput
+				value={streamsSa.textSearch}
+				onChange={text => streamsSo.setTextSearch(text)}
+			/>
 			{!!selected && <Button
 				label="DELETE"
 				variant={variant}

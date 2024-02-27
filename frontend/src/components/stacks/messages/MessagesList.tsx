@@ -5,7 +5,7 @@ import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Message } from "@/types/Message"
 import { FunctionComponent, useRef, useState } from "react"
 import { Virtuoso } from "react-virtuoso"
-import ItemRow from "./rows/ItemRow"
+import MessageRow from "./MessageRow"
 
 
 
@@ -13,14 +13,16 @@ interface Props {
 	messages: Message[]
 	format: MSG_FORMAT
 	onMessageClick?: (message: Message) => void
+	onMessageDelete?: (message: Message) => void
 	onLoading?: (bottom: boolean) => Promise<number>
 	style?: React.CSSProperties
 }
 
-const ItemsList: FunctionComponent<Props> = ({
+const MessagesList: FunctionComponent<Props> = ({
 	messages,
 	format,
 	onMessageClick,
+	onMessageDelete,
 	onLoading,
 	style,
 }) => {
@@ -34,6 +36,7 @@ const ItemsList: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleMessageClick = (message: Message) => onMessageClick?.(message)
+	const handleMessageDelete = (message:Message) => onMessageDelete?.(message)
 	const handleKeepDownClick = () => {
 		virtuoso.current.scrollToIndex({ index: messages.length - 1/*, behavior: 'smooth'*/ })
 	}
@@ -77,11 +80,12 @@ const ItemsList: FunctionComponent<Props> = ({
 			//overscan={200}
 			defaultItemHeight={96}
 			itemContent={(index, message) => (
-				<ItemRow
+				<MessageRow
 					message={message}
 					format={format}
 					index={index}
 					onClick={handleMessageClick}
+					onDelete={handleMessageDelete}
 				/>
 			)}
 			components={{
@@ -97,4 +101,4 @@ const ItemsList: FunctionComponent<Props> = ({
 	</>)
 }
 
-export default ItemsList
+export default MessagesList

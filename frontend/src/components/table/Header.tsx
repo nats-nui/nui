@@ -35,7 +35,7 @@ const Header: FunctionComponent<Props> = ({
 		let newProp = prop
 		if (prop == order) {
 			newOrder = orderType == ORDER_TYPE.ASC ? ORDER_TYPE.DESC : orderType == ORDER_TYPE.DESC ? ORDER_TYPE.NOTHING : ORDER_TYPE.ASC
-			if ( newOrder == ORDER_TYPE.NOTHING ) newProp = null
+			if (newOrder == ORDER_TYPE.NOTHING) newProp = null
 		}
 		onOrderChange(newProp, newOrder)
 	}
@@ -45,8 +45,8 @@ const Header: FunctionComponent<Props> = ({
 	return (
 		<thead >
 			<tr style={cssHead}>
-				{props.map(prop => (
-					<th style={cssHeadCell}
+				{props.map((prop, index) => (
+					<th style={cssHeadCell} key={index}
 						onMouseLeave={() => setOverProp(null)}
 					>
 						<div style={{ display: "flex", alignItems: "center", justifyContent: 'flex-end' }}

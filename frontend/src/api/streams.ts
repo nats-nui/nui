@@ -45,6 +45,11 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 		return m
 	})
 }
+/** DELETE MESSAGE */
+function messageRemove(connectionId: string, streamName: string, sequence:number, opt?: CallOptions): Promise<void> {
+	if (!connectionId || !streamName || !sequence) return
+	return ajax.delete(`connection/${connectionId}/stream/${streamName}/messages/${sequence}`, null, opt)
+}
 
 
 function _error(connectionId: string, opt?: CallOptions): Promise<StreamInfo[]> {
@@ -60,5 +65,6 @@ const api = {
 	create,
 	update,
 	messages,
+	messageRemove,
 }
 export default api

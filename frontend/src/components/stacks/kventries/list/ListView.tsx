@@ -9,6 +9,7 @@ import { KVEntry } from "@/types/KVEntry"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
+import FindInput from "@/components/input/FindInput"
 
 
 
@@ -35,8 +36,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	const handleDelete = () => kventriesSo.delete()
 
 	// RENDER
-	const kventries = kventriesSa.all
-	if (!kventries) return null
+	const kventries = kventriesSo.getFiltered() ?? []
 	const selected = kventriesSa.select
 	const selectedIndex = kventriesSo.getIndexByName(kventriesSa.select)
 	const variant = kventriesSa.colorVar
@@ -46,6 +46,10 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={kventriesSo}
 		actionsRender={<>
+			<FindInput
+				value={kventriesSa.textSearch}
+				onChange={text => kventriesSo.setTextSearch(text)}
+			/>
 			{!!selected && <Button
 				label="DELETE"
 				variant={variant}

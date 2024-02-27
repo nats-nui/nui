@@ -1,5 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import ElementRow from "@/components/rows/ElementRow"
+import FindInput from "@/components/input/FindInput"
+import Table from "@/components/table"
 import docSo from "@/stores/docs"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"
@@ -26,27 +27,35 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (consumer: StreamConsumer) => consumersSo.select(consumer.config.name)
+	const handleSelect = (index: number) => consumersSo.select(consumers[index].name)
 
 	// RENDER
-	const consumers = consumersSa.all
-	if (!consumers) return null
-	const selected = consumersSa.select
+	const consumers = consumersSo.getFiltered() ?? []
+	const selectedIndex = consumersSo.getIndexByName(consumersSa.select)
 	const variant = consumersSa.colorVar
-	const isSelected = (consumer: StreamConsumer) => selected == consumer.config?.name
-	const getTitle = (consumer: StreamConsumer) => consumer.config?.name ?? "--"
 	
 	return <FrameworkCard
 		store={consumersSo}
-	>
-		{consumers.map(consumer => (
-			<ElementRow key={consumer.config.name}
-				title={getTitle(consumer)}
-				selected={isSelected(consumer)}
-				variant={variant}
-				onClick={() => handleSelect(consumer)}
+		actionsRender={<>
+			<FindInput
+				value={consumersSa.textSearch}
+				onChange={text => consumersSo.setTextSearch(text)}
 			/>
-		))}
+		</>}
+	>
+		<Table
+			items={consumers}
+			props={[
+				{ label: "ACK PENDING", getValue: item => item.numAckPending },
+				{ label: "REDELIVERED", getValue: item => item.numRedelivered },
+				{ label: "WAITING", getValue: item => item.numWaiting },
+				{ label: "PENDING", getValue: item => item.numPending },
+			]}
+			propMain={{ getValue: (item:StreamConsumer) => item.name }}
+			select={selectedIndex}
+			onSelectChange={handleSelect}
+			variant={variant}
+		/>
 	</FrameworkCard>
 }
 

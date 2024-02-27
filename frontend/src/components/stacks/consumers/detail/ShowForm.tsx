@@ -25,7 +25,7 @@ const ShowForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	const consumer = consumerSa.consumer
-	if (!consumer) return null
+	if (!consumer?.config) return null
 
 	return <Form>
 
