@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-nui/nui/internal/ws"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -214,18 +213,22 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 
 	batch, err := strconv.Atoi(c.Query("interval"))
 	if err != nil {
-		batch = 25
+		batch = -25
 	}
 
-	seq, err := strconv.Atoi(c.Query("seq_start"))
+	querySeq, err := strconv.Atoi(c.Query("seq_start"))
 	if err != nil {
 		info, err := stream.Info(c.Context())
 		if err != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
-		seq = int(math.Min(1, float64(info.State.LastSeq-uint64(batch))))
+		querySeq = int(info.State.LastSeq)
 	}
-	config.OptStartSeq = uint64(seq)
+	seekFromSeq, err := findSeekSeq(c.Context(), stream, config, querySeq, batch)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	config.OptStartSeq = seekFromSeq
 	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
@@ -253,7 +256,37 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 	return c.JSON(msgs)
 }
 
-func findFirstSeq(ctx context.Context, stream jetstream.Stream, config jetstream.ConsumerConfig, firstSeq int, interval int) (uint64, error) {
+func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return c.Status(422).JSON("stream_name is required")
+	}
+	stream, err := js.Stream(c.Context(), streamName)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	seq, err := strconv.Atoi(c.Params("seq"))
+	if err != nil {
+		return a.logAndFiberError(c, err, 422)
+	}
+	if seq <= 0 {
+		return c.Status(422).JSON("seq must be greater than 0")
+	}
+	err = stream.SecureDeleteMsg(c.Context(), uint64(seq))
+	if err != nil {
+		if errors.Is(err, jetstream.ErrMsgNotFound) {
+			return c.Status(404).JSON("message not found")
+		}
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.SendStatus(200)
+}
+
+func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, firstSeq int, interval int) (uint64, error) {
 	if interval >= 0 {
 		return uint64(firstSeq), nil
 	}
@@ -266,8 +299,8 @@ func findFirstSeq(ctx context.Context, stream jetstream.Stream, config jetstream
 		if firstSeq <= 1 {
 			return 1, nil
 		}
-		config.HeadersOnly = true
-		consumer, err := stream.CreateConsumer(ctx, config)
+		consumerConfig.HeadersOnly = true
+		consumer, err := stream.CreateConsumer(ctx, consumerConfig)
 		if err != nil {
 			return 0, err
 		}
@@ -281,6 +314,10 @@ func findFirstSeq(ctx context.Context, stream jetstream.Stream, config jetstream
 				return 0, msgBatch.Error()
 			}
 			msgs = append(msgs, msg)
+		}
+		err = stream.DeleteConsumer(context.Background(), consumerConfig.Name)
+		if err != nil {
+			return 0, err
 		}
 		if len(msgs) >= interval {
 			break
