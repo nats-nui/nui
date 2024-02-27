@@ -7,6 +7,7 @@ import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConsumers } from "../consumer/utils/factory"
 import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -18,6 +19,7 @@ const setup = {
 		/** nome dello STREAM selezionato */
 		select: <string>null,
 		all: <StreamInfo[]>null,
+		textSearch: <string>null,
 
 		//#region VIEWBASE
 		width: 310,
@@ -50,6 +52,16 @@ const setup = {
 		},
 		getAllStreamName(_: void, store?: StreamsStore) {
 			return store.state.all?.map(si => si.config.name) ?? []
+		},
+
+		/** gli STREAM filtrati e da visualizzare in lista */
+		getFiltered(_: void, store?: StreamsStore) {
+			if (!store.state.all) return null
+			const text = store.state.textSearch?.toLocaleLowerCase()
+			if (!text || text.trim().length == 0) return store.state.all
+			return store.state.all.filter(stream =>
+				stream.config.name.toLowerCase().includes(text)
+			)
 		}
 	},
 
@@ -83,9 +95,10 @@ const setup = {
 			await strApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(s => s.config.name != name))
 			store.setSelect(null)
+			// cerco eventuali CARD di questo stream e lo chiudo
+			const cardStreams = docSo.findAll({ type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
+			cardStreams.forEach(view => docSo.remove({ view, anim: true }))
 		},
-
-
 
 		update(stream: StreamInfo, store?: StreamsStore) {
 			const all = [...store.state.all]
@@ -127,6 +140,7 @@ const setup = {
 	mutators: {
 		setAll: (all: StreamInfo[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

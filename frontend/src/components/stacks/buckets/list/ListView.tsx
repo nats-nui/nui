@@ -1,5 +1,6 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import FindInput from "@/components/input/FindInput"
 import Table from "@/components/table"
 import docSo from "@/stores/docs"
 import { BucketsStore } from "@/stores/stacks/buckets"
@@ -33,7 +34,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const handleDelete = () => bucketsSo.delete()
 
 	// RENDER
-	const buckets = bucketsSa.all
+	const buckets = bucketsSo.getFiltered() ?? []
 	if (!buckets) return null
 	const selected = bucketsSa.select
 	const selectedIndex = bucketsSo.getIndexByName(bucketsSa.select)
@@ -43,6 +44,10 @@ const BucketsListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ paddingTop: 0 }}
 		store={bucketsSo}
 		actionsRender={<>
+			<FindInput
+				value={bucketsSa.textSearch}
+				onChange={text => bucketsSo.setTextSearch(text)}
+			/>
 			{!!selected && <Button
 				label="DELETE"
 				variant={variant}

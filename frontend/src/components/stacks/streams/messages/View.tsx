@@ -7,7 +7,7 @@ import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import FormatDialog from "../../messages/FormatDialog"
-import ItemsList from "../../messages/ItemsList"
+import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
 
 
@@ -46,6 +46,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 		}
 	}
 	const hendleMessageClick = (message: Message) => strMsgSo.openMessageDetail(message)
+	const hendleMessageDelete = (message: Message) => strMsgSo.deleteMessage(message)
 
 	// RENDER
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
@@ -73,11 +74,12 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<ItemsList
+		<MessagesList
 			messages={messages}
 			format={strMsgSa.format}
 			onLoading={handleLoad}
 			onMessageClick={hendleMessageClick}
+			onMessageDelete={hendleMessageDelete}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 

@@ -24,7 +24,7 @@ const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
 	tabSize: 2,
 	parameterHints: {
 		enabled: false,
-	  },
+	},
 }
 
 const setup = {

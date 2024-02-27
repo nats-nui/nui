@@ -19,6 +19,7 @@ const setup = {
 		select: <string>null,
 		/** all elements */
 		all: <BucketState[]>[],
+		textSearch: <string>null,
 
 		//#region VIEWBASE
 		width: 310,
@@ -49,6 +50,15 @@ const setup = {
 			if (!name) return -1
 			return store.state.all?.findIndex(s => s.bucket == name)
 		},
+		/** filtrati e da visualizzare in lista */
+		getFiltered(_: void, store?: BucketsStore) {
+			if (!store.state.all) return null
+			const text = store.state.textSearch?.toLocaleLowerCase()
+			if (!text || text.trim().length == 0) return store.state.all
+			return store.state.all.filter(bucket =>
+				bucket.bucket.toLowerCase().includes(text)
+			)
+		}
 	},
 
 	actions: {
@@ -107,6 +117,7 @@ const setup = {
 	mutators: {
 		setAll: (all: BucketState[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

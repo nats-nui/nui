@@ -51,7 +51,18 @@ const setup = {
 				store.state.all,
 				(view) => deepEqual(state, view.state) ? view : null
 			)
+		},
+		findAll(state: any, store?: DocStore) {
+			const ret:ViewStore[] = []
+			forEachViews(
+				store.state.all,
+				(view) => {
+					if ( deepEqual(state, view.state) ) ret.push(view)
+				}
+			)
+			return ret
 		}
+
 	},
 
 	actions: {

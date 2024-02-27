@@ -14,7 +14,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import FormatDialog from "./FormatDialog"
-import ItemsList from "./ItemsList"
+import MessagesList from "./MessagesList"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
@@ -78,7 +78,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	// RENDER
 	const formatSel = msgSa.format.toUpperCase()
 	const variant = msgSa.colorVar
-	const history = msgSo.getHistoryFiltered()
+	const history = msgSo.getFiltered()
 
 	return <FrameworkCard
 		store={msgSo}
@@ -112,7 +112,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		}
 	>
 
-		<ItemsList
+		<MessagesList
 			messages={history}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}

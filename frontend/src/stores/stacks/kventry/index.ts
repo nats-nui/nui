@@ -20,6 +20,7 @@ const setup = {
 		/** nome del BUCKET selezionato */
 		select: <string>null,
 		all: <KVEntry[]>null,
+		textSearch: <string>null,
 
 		//#region VIEWBASE
 		width: 310,
@@ -51,6 +52,16 @@ const setup = {
 			if (!name) return -1
 			return store.state.all?.findIndex(s => s.key == name)
 		},
+
+		/** gli STREAM filtrati e da visualizzare in lista */
+		getFiltered(_: void, store?: KVEntriesStore) {
+			if (!store.state.all) return null
+			const text = store.state.textSearch?.toLocaleLowerCase()
+			if (!text || text.trim().length == 0) return store.state.all
+			return store.state.all.filter(kventry =>
+				kventry.key.toLowerCase().includes(text)
+			)
+		}
 	},
 
 	actions: {
@@ -102,6 +113,7 @@ const setup = {
 	mutators: {
 		setAll: (all: KVEntry[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

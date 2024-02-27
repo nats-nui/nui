@@ -14,7 +14,7 @@ const handlers = [
 		const { cnnId } = req.params
 		return res(
 			ctx.status(500),
-			ctx.json({ error: "messaggio generico di errore"}),
+			ctx.json({ error: "messaggio generico di errore" }),
 		)
 	}),
 
@@ -31,7 +31,7 @@ const handlers = [
 	/** GET */
 	rest.get('/api/connection/:connId/stream/:streamName', async (req, res, ctx) => {
 		const { cnnId, streamName } = req.params
-		const stream_S = streams_S.find( s => s.config.name == streamName )
+		const stream_S = streams_S.find(s => s.config.name == streamName)
 		return res(
 			ctx.status(200),
 			ctx.json(stream_S),
@@ -99,6 +99,17 @@ const handlers = [
 			ctx.json(camelToSnake(messages)),
 		)
 	}),
+
+	/** MESSAGES DELETE*/
+	rest.delete('/api/connection/:connId/stream/:strName/messages/:seq', async (req, res, ctx) => {
+		const { cnnId, strName, seq } = req.params
+		if (!cnnId || !strName || !seq) res(ctx.status(500))
+		return res(
+			ctx.delay(500),
+			ctx.status(200),
+		)
+	}),
+
 
 ]
 

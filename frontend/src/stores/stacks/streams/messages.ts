@@ -1,5 +1,6 @@
 import strApi from "@/api/streams"
-import srcIcon from "@/assets/MessagesIcon.svg"
+import docsSo from "@/stores/docs"
+import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
@@ -7,8 +8,6 @@ import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { MSG_FORMAT } from "../messages/utils"
 import { ViewState } from "../viewBase"
-import docsSo from "@/stores/docs"
-import { buildMessageDetail } from "@/stores/docs/utils/factory"
 
 
 
@@ -28,7 +27,6 @@ const setup = {
 
 	state: {
 
-		//#region REACTIVE
 		/** messaggi da visualizzare */
 		messages: <Message[]>null,
 		/** testo per la ricerca */
@@ -44,13 +42,11 @@ const setup = {
 		filtersOpen: false,
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
-		//#endregion
 
-		//#region NOT REACTIVE
+		// NOT REACTIVE
 		connectionId: <string>null,
 		stream: <Partial<StreamInfo>>null,
 		rangeTop: <number>null,
-		//#endregion
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
@@ -74,7 +70,9 @@ const setup = {
 			}
 		},
 		//#endregion
-		
+
+		getIndexBySeq: (seq: number, store?: StreamMessagesStore) => store.state.messages.findIndex(m => m.seqNum == seq),
+
 	},
 
 	actions: {
@@ -143,7 +141,7 @@ const setup = {
 			//***** */
 
 			const name = store.state.stream.config.name
-			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, {store})
+			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, { store })
 
 
 
@@ -177,7 +175,7 @@ const setup = {
 			//***** */
 
 			const name = store.state.stream.config.name
-			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, {store})
+			const msgs = await strApi.messages(store.state.connectionId, name, { startSeq, interval }, { store })
 			if (!msgs || msgs.length == 0) return 0
 			const ret = msgs.length
 			let all = store.state.messages ?? []
@@ -207,7 +205,7 @@ const setup = {
 			}
 
 			store.setFilter(filter)
-			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter, {store})
+			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter, { store })
 			store.state.rangeTop = filter.startSeq ?? msgs[0].seqNum
 			store.setMessages(msgs)
 		},
@@ -223,6 +221,12 @@ const setup = {
 				anim: true,
 			})
 		},
+		/** elimina un messaggio  */
+		async deleteMessage(message: Message, store?: StreamMessagesStore) {
+			await strApi.messageRemove(store.state.connectionId, store.state.stream.config.name, message.seqNum, { store })
+			store.setMessages(store.state.messages.filter(m => m.seqNum != message.seqNum))
+		},
+
 	},
 
 	mutators: {
