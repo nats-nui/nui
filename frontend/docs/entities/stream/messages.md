@@ -41,5 +41,5 @@ DELETE /api/connection/:connection_id/stream/:stream_name/messages/:seq
 - `seq`: sequence number of the message to delete
 
 ### RESPONSE
-201
+200
 
