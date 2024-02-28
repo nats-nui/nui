@@ -210,21 +210,25 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 			config.FilterSubjects = subjects
 		}
 	}
-
-	batch, err := strconv.Atoi(c.Query("interval"))
+	interval, err := strconv.Atoi(c.Query("interval"))
 	if err != nil {
-		batch = -25
+		interval = 25
 	}
-
 	querySeq, err := strconv.Atoi(c.Query("seq_start"))
 	if err != nil {
 		info, err := stream.Info(c.Context())
 		if err != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
-		querySeq = int(info.State.LastSeq)
+		querySeq = int(info.State.FirstSeq)
 	}
-	seekFromSeq, err := findSeekSeq(c.Context(), stream, config, querySeq, batch)
+	// batch is the absolute value of the interval
+	batch := interval
+	if batch < 0 {
+		batch = -batch
+	}
+
+	seekFromSeq, err := findSeekSeq(c.Context(), stream, config, querySeq, interval)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -276,7 +280,7 @@ func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
 	if seq <= 0 {
 		return c.Status(422).JSON("seq must be greater than 0")
 	}
-	err = stream.SecureDeleteMsg(c.Context(), uint64(seq))
+	err = stream.DeleteMsg(c.Context(), uint64(seq))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrMsgNotFound) {
 			return c.Status(404).JSON("message not found")
@@ -294,11 +298,12 @@ func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig je
 	var msgs []jetstream.Msg
 
 	for {
-		batch := interval * intervalMultiplier
+		batch := min(10000, -interval*intervalMultiplier)
 		firstSeq -= batch
 		if firstSeq <= 1 {
 			return 1, nil
 		}
+		consumerConfig.OptStartSeq = uint64(firstSeq)
 		consumerConfig.HeadersOnly = true
 		consumer, err := stream.CreateConsumer(ctx, consumerConfig)
 		if err != nil {
@@ -323,7 +328,7 @@ func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig je
 			break
 		}
 	}
-	msg := msgs[len(msgs)-interval]
+	msg := msgs[len(msgs)+interval]
 	metadata, err := msg.Metadata()
 	if err != nil {
 		return 0, err
