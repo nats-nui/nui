@@ -1,4 +1,4 @@
-import ArrowDown2Icon from "@/icons/ArrowDown2Icon"
+import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import { FunctionComponent, useState } from "react"
 import Accordion from "./Accordion"
 import Component from "./format/Component"
@@ -57,7 +57,7 @@ function Options<T>({
 			<Component
 				readOnly={readOnly}
 				onClick={handleOpen}
-				enterRender={<ArrowDown2Icon style={{ opacity: .5 }} />}
+				enterRender={<ArrowDownIcon style={{ opacity: .5 }} />}
 			>{label}</Component>
 
 			<Accordion
