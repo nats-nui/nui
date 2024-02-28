@@ -153,7 +153,7 @@ func (s *NuiTestSuite) TestStreamMessagesRest() {
 
 	// filter by interval
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
-		WithQueryString("interval=5").
+		WithQueryString("interval=-5").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(5)
 
 	// filter by sequence number
@@ -170,6 +170,14 @@ func (s *NuiTestSuite) TestStreamMessagesRest() {
 	//ensure no consumers are pending
 	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
+
+	//delete a message
+	e.DELETE("/api/connection/" + connId + "/stream/stream1/messages/1").
+		Expect().Status(http.StatusOK)
+
+	// ensure message is deleted
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(14)
 
 }
 
