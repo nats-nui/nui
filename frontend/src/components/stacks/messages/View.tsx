@@ -70,6 +70,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)
+	const handleClear = () => msgSo.setMessages([])
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)
 		debounce(`text-find-${msgSa.uuid}`, () => msgSo.setTextSearch(value), 2000)
@@ -116,6 +117,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			messages={history}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}
+			onClear={handleClear}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 

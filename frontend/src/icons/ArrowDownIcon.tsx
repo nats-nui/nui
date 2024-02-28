@@ -1,11 +1,11 @@
 const ArrowDownIcon = (props) => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="24" height="24" viewBox="0 0 24 24"
-		fill="currentColor" stroke="none"
-		{...props}
+	<svg 
+		xmlns="http://www.w3.org/2000/svg" 
+		width="14" height="14" viewBox="0 0 14 14"
+		fill="none" stroke="currentColor"
+		{...props} 
 	>
-		<path d="M9,4H15V12H19.84L12,19.84L4.16,12H9V4Z" />
+		<path d="M11 5L7 9L3 5" strokeWidth="2"/>
 	</svg>
 )
 

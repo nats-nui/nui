@@ -11,6 +11,7 @@ import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { MessageSendState } from "../messageSend"
 import { ViewState } from "../viewBase"
 import { MSG_FORMAT } from "./utils"
+import historyTest from "./_test"
 
 
 

@@ -1,6 +1,8 @@
 import Button from "@/components/buttons/Button"
 import FloatButton from "@/components/buttons/FloatButton"
+import BoxFloat from "@/components/format/BoxFloat"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
+import ClearIcon from "@/icons/ClearIcon"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Message } from "@/types/Message"
 import { FunctionComponent, useRef, useState } from "react"
@@ -14,6 +16,7 @@ interface Props {
 	format: MSG_FORMAT
 	onMessageClick?: (message: Message) => void
 	onMessageDelete?: (message: Message) => void
+	onClear?: () => void
 	onLoading?: (bottom: boolean) => Promise<number>
 	style?: React.CSSProperties
 }
@@ -23,6 +26,7 @@ const MessagesList: FunctionComponent<Props> = ({
 	format,
 	onMessageClick,
 	onMessageDelete,
+	onClear,
 	onLoading,
 	style,
 }) => {
@@ -32,32 +36,34 @@ const MessagesList: FunctionComponent<Props> = ({
 	// HOOKs
 	const virtuoso = useRef(null);
 	// indica che dee automaticamente scrollare in basso se arriva un nuovo messaggio
-	const [showButton, setShowButton] = useState(true)
+	const [showKeepDown, setShowKeepDown] = useState(true)
 
 	// HANDLER
-	const handleMessageClick = (message: Message) => onMessageClick?.(message)
-	const handleMessageDelete = (message:Message) => onMessageDelete?.(message)
 	const handleKeepDownClick = () => {
 		virtuoso.current.scrollToIndex({ index: messages.length - 1/*, behavior: 'smooth'*/ })
 	}
+
 	const handleStartReached = (index: number) => {
 		console.log("handleStartReached", index)
 		//onLoading?.(false)
 	}
 	const handleLoadEnd = () => onLoading?.(true)
 	const handleLoadStart = () => onLoading?.(false)
-	const handleBottomChange = (bottom: boolean) => setShowButton(!bottom)
+	const handleBottomChange = (bottom: boolean) => setShowKeepDown(!bottom)
 	const handleTopChange = async (top: boolean) => {
 		if (top) {
 			const newItems = await onLoading?.(false)
 			//setTimeout(() => virtuoso.current.scrollToIndex({ index: newItems }), 1000)
 			console.log(newItems)
-			if ( newItems > 0 ) virtuoso.current.scrollToIndex({ index: newItems })
+			if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
 		}
 	}
 
 	// RENDER
+	const canClear = messages?.length > 0 && !!onClear
+
 	if (!messages) return <div>no messages</div>
+
 	return (<>
 		<Virtuoso
 			ref={virtuoso}
@@ -79,25 +85,34 @@ const MessagesList: FunctionComponent<Props> = ({
 			totalCount={messages?.length ?? 0}
 			//overscan={200}
 			defaultItemHeight={96}
-			itemContent={(index, message) => (
+			itemContent={(index, message) => 
 				<MessageRow
 					message={message}
 					format={format}
 					index={index}
-					onClick={handleMessageClick}
-					onDelete={handleMessageDelete}
+					onClick={onMessageClick}
+					onDelete={onMessageDelete}
 				/>
-			)}
+			}
 			components={{
 				Header: !!onLoading ? () => <Button label="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> : null,
 				Footer: !!onLoading ? () => <Button label="LOAD MOST RECENT" onClick={handleLoadEnd} /> : null,
 			}}
 		/>
-		{showButton && (
-			<FloatButton
-				onClick={handleKeepDownClick}
-			><ArrowDownIcon /></FloatButton>
-		)}
+
+		<BoxFloat>
+			{showKeepDown && 
+				<FloatButton
+					onClick={handleKeepDownClick}
+				><ArrowDownIcon /></FloatButton>
+			}
+			{canClear &&
+				<FloatButton
+					onClick={onClear}
+				><ClearIcon /></FloatButton>
+			}
+		</BoxFloat>
+
 	</>)
 }
 
