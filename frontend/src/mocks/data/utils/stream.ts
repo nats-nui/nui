@@ -48,6 +48,11 @@ export function randomStream() {
 }
 
 export function randomMessages(start: number, interval: number): Message[] {
+	if ( interval < 0 ) {
+		start = start + interval
+		if ( start < 0 ) return []
+		interval = -interval
+	}
 	return Array.from({ length: interval }, (_, i) => ({
 		seqNum: i+start,
 		headers: [],
