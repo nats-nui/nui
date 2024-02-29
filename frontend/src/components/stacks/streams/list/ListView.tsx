@@ -1,14 +1,15 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import AlertDialog from "@/components/dialogs/AlertDialog"
+import FindInput from "@/components/input/FindInput"
 import Table from "@/components/table"
 import docSo from "@/stores/docs"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
-import FindInput from "@/components/input/FindInput"
 import { StreamInfo } from "@/types/Stream"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent, useEffect, useState } from "react"
 
 
 
@@ -25,6 +26,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const docSa = useStore(docSo)
 
 	// HOOKs
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 	useEffect(() => {
 		streamsSo.fetchIfVoid()
 	}, [])
@@ -32,7 +34,11 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream?.config?.name)
 	const handleNew = () => streamsSo.create()
-	const handleDelete = () => streamsSo.delete()
+	const handleDelete = () => setDeleteDialogOpen(true)
+	const handleDeleteDialogClose = (ok:boolean) => {
+		setDeleteDialogOpen(false)
+		if ( ok ) streamsSo.delete()
+	}
 
 	// RENDER
 	const streams = streamsSo.getFiltered() ?? []
@@ -73,6 +79,11 @@ const StreamsListView: FunctionComponent<Props> = ({
 			onSelectChange={handleSelect}
 			getId={item => item.config.name}
 			variant={variant}
+		/>
+		<AlertDialog
+			open={deleteDialogOpen}
+			store={streamsSo}
+			onClose={handleDeleteDialogClose}
 		/>
 	</FrameworkCard>
 }

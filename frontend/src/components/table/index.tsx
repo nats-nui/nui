@@ -77,7 +77,7 @@ const Table: FunctionComponent<Props> = ({
 		/>
 
 		<tbody>
-			{itemsSort.map((item, index) => {
+			{itemsSort.map((item) => {
 				const id = getId(item)
 				const selected = isSelected(item)
 				return <>
