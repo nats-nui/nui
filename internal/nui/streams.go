@@ -290,20 +290,19 @@ func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, firstSeq int, interval int) (uint64, error) {
+func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, error) {
 	if interval >= 0 {
-		return uint64(firstSeq), nil
+		return uint64(startSeq), nil
 	}
 	intervalMultiplier := 1
-	var msgs []jetstream.Msg
-
+	fistSeq := startSeq
 	for {
 		batch := min(10000, -interval*intervalMultiplier)
-		firstSeq -= batch
-		if firstSeq <= 1 {
+		fistSeq -= batch
+		if fistSeq <= 1 {
 			return 1, nil
 		}
-		consumerConfig.OptStartSeq = uint64(firstSeq)
+		consumerConfig.OptStartSeq = uint64(fistSeq)
 		consumerConfig.HeadersOnly = true
 		consumer, err := stream.CreateConsumer(ctx, consumerConfig)
 		if err != nil {
@@ -313,25 +312,41 @@ func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig je
 		if err != nil {
 			return 0, err
 		}
-		msgs = make([]jetstream.Msg, 0, batch)
-		for msg := range msgBatch.Messages() {
-			if msgBatch.Error() != nil {
-				return 0, msgBatch.Error()
-			}
-			msgs = append(msgs, msg)
-		}
+		neededSeq, done, err := findSeqInBatch(msgBatch, startSeq, batch)
 		err = stream.DeleteConsumer(context.Background(), consumerConfig.Name)
 		if err != nil {
-			return 0, err
+			jsErr, ok := err.(jetstream.JetStreamError)
+			if !ok || jsErr.APIError().Code != 404 {
+				return 0, nil
+			}
 		}
-		if len(msgs) >= interval {
-			break
+		if done {
+			return neededSeq, nil
 		}
 	}
-	msg := msgs[len(msgs)+interval]
-	metadata, err := msg.Metadata()
-	if err != nil {
-		return 0, err
+}
+
+func findSeqInBatch(msgBatch jetstream.MessageBatch, startSeq int, batch int) (uint64, bool, error) {
+	neededSeq := uint64(0)
+	msgsCount := 0
+	for msg := range msgBatch.Messages() {
+		if msgBatch.Error() != nil {
+			return 0, false, msgBatch.Error()
+		}
+		msgsCount++
+		metadata, err := msg.Metadata()
+		if err != nil {
+			return 0, false, err
+		}
+		if neededSeq == 0 {
+			neededSeq = metadata.Sequence.Stream
+		}
+		if metadata.Sequence.Stream > uint64(startSeq) {
+			return 0, false, nil
+		}
+		if msgsCount >= batch {
+			return neededSeq, true, nil
+		}
 	}
-	return metadata.Sequence.Stream, nil
+	return 0, false, nil
 }
