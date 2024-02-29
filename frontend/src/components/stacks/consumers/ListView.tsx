@@ -27,14 +27,14 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (index: number) => consumersSo.select(consumers[index].name)
+	const handleSelect = (consumer: StreamConsumer) => consumersSo.select(consumer.name)
 
 	// RENDER
 	const consumers = consumersSo.getFiltered() ?? []
-	const selectedIndex = consumersSo.getIndexByName(consumersSa.select)
+	const selected = consumersSa.select
 	const variant = consumersSa.colorVar
 	
-	return <FrameworkCard
+	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={consumersSo}
 		actionsRender={<>
 			<FindInput
@@ -52,8 +52,9 @@ const ConsumersListView: FunctionComponent<Props> = ({
 				{ label: "PENDING", getValue: item => item.numPending },
 			]}
 			propMain={{ getValue: (item:StreamConsumer) => item.name }}
-			select={selectedIndex}
+			selectId={selected}
 			onSelectChange={handleSelect}
+			getId={(consumer:StreamConsumer)=> consumer.name}
 			variant={variant}
 		/>
 	</FrameworkCard>

@@ -31,19 +31,17 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (index: number) => kventriesSo.select(kventries[index].key)
+	const handleSelect = (item: KVEntry) => kventriesSo.select(item.key)
 	const handleNew = () => kventriesSo.create()
 	const handleDelete = () => kventriesSo.delete()
 
 	// RENDER
 	const kventries = kventriesSo.getFiltered() ?? []
 	const selected = kventriesSa.select
-	const selectedIndex = kventriesSo.getIndexByName(kventriesSa.select)
 	const variant = kventriesSa.colorVar
-	const isSelected = (kventry: KVEntry) => selected == kventry.key
 	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.editState == EDIT_STATE.NEW
 
-	return <FrameworkCard styleBody={{ paddingTop: 0 }}
+	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={kventriesSo}
 		actionsRender={<>
 			<FindInput
@@ -80,8 +78,9 @@ const KVEntryListView: FunctionComponent<Props> = ({
 				},
 			]}
 			propMain={{ getValue: b => b.key }}
-			select={selectedIndex}
+			selectId={selected}
 			onSelectChange={handleSelect}
+			getId={(item: KVEntry) => item.key}
 			variant={variant}
 		/>
 	</FrameworkCard>
