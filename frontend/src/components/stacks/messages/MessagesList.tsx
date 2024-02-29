@@ -5,7 +5,8 @@ import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ClearIcon from "@/icons/ClearIcon"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Message } from "@/types/Message"
-import { FunctionComponent, useRef, useState } from "react"
+import { debounce } from "@/utils/time"
+import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import MessageRow from "./MessageRow"
 
@@ -14,6 +15,7 @@ import MessageRow from "./MessageRow"
 interface Props {
 	messages: Message[]
 	format: MSG_FORMAT
+	inLoading?: boolean
 	onMessageClick?: (message: Message) => void
 	onMessageDelete?: (message: Message) => void
 	onClear?: () => void
@@ -34,7 +36,13 @@ const MessagesList: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOKs
-	const virtuoso = useRef<VirtuosoHandle>(null);
+	const virtuoso = useRef<VirtuosoHandle>(null)
+	// devo evitare che carichi alla CDC allo startup
+	const loadingDisabled = useRef(false)
+	useEffect(() => {
+		loadingDisabled.current = true
+		debounce(`messages-list`, () => loadingDisabled.current = false, 1000)
+	}, [messages])
 	// indica che dee automaticamente scrollare in basso se arriva un nuovo messaggio
 	const [showKeepDown, setShowKeepDown] = useState(true)
 
@@ -43,19 +51,18 @@ const MessagesList: FunctionComponent<Props> = ({
 		virtuoso.current.scrollToIndex({ index: messages.length - 1/*, behavior: 'smooth'*/ })
 	}
 
-	// const handleStartReached = async (index: number) => {
-	// 	console.log("handleStartReached", index)
-	// 	const newItems = await onLoading?.(false)
-	// 	if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
-	// }
+	//const handleStartReached = async (index: number) => {
+	// console.log("handleStartReached", index)
+	// const newItems = await onLoading?.(false)
+	// if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
+	//}
 	const handleLoadEnd = () => onLoading?.(true)
 	const handleLoadStart = () => onLoading?.(false)
 	const handleBottomChange = (bottom: boolean) => setShowKeepDown(!bottom)
 	const handleTopChange = async (top: boolean) => {
+		if (loadingDisabled.current) return
 		if (top) {
 			const newItems = await onLoading?.(false)
-			//setTimeout(() => virtuoso.current.scrollToIndex({ index: newItems }), 1000)
-			// console.log(newItems)
 			if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
 		}
 	}
@@ -68,7 +75,7 @@ const MessagesList: FunctionComponent<Props> = ({
 	return (<>
 		<Virtuoso
 			ref={virtuoso}
-			style={{ height: "100%" }}
+			style={{ ...style, height: "100%" }}
 
 			// KEEP DOWN
 			initialTopMostItemIndex={messages?.length - 1}
@@ -84,9 +91,10 @@ const MessagesList: FunctionComponent<Props> = ({
 			data={messages}
 			//computeItemKey={(index, item: Message) => item.seqNum}
 			totalCount={messages?.length ?? 0}
+			//permette di ottimizzare con rendering preventivo su 200 pixel
 			//overscan={200}
 			defaultItemHeight={96}
-			itemContent={(index, message) => 
+			itemContent={(index, message) =>
 				<MessageRow
 					message={message}
 					format={format}
@@ -102,7 +110,7 @@ const MessagesList: FunctionComponent<Props> = ({
 		/>
 
 		<BoxFloat>
-			{showKeepDown && 
+			{showKeepDown &&
 				<FloatButton
 					onClick={handleKeepDownClick}
 				><ArrowDownIcon /></FloatButton>

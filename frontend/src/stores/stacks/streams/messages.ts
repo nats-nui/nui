@@ -164,6 +164,7 @@ const setup = {
 		fetchPrev2: async (_?: void, store?: StreamMessagesStore) => {
 			const seq = store.state.messages[0].seqNum
 			const interval = -store.state.filter.interval
+			if ( interval == 0 || seq <= store.state.stream.state.firstSeq ) return 0
 			return store.fetchInterval({ seq, interval })
 		},
 		fetchPrev: async (seq?: number, store?: StreamMessagesStore) => {
@@ -212,6 +213,7 @@ const setup = {
 		fetchNext2: async (_?: void, store?: StreamMessagesStore) => {
 			const seq = store.state.messages[store.state.messages.length - 1].seqNum + 1
 			const interval = store.state.filter.interval
+			if ( interval == 0 || seq >= store.state.stream.state.lastSeq ) return 0
 			return store.fetchInterval({ seq, interval })
 		},
 		fetchNext: async (seq?: number, store?: StreamMessagesStore) => {
