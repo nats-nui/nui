@@ -6,7 +6,7 @@ import ClearIcon from "@/icons/ClearIcon"
 import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
 import { Message } from "@/types/Message"
 import { FunctionComponent, useRef, useState } from "react"
-import { Virtuoso } from "react-virtuoso"
+import { Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import MessageRow from "./MessageRow"
 
 
@@ -34,7 +34,7 @@ const MessagesList: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOKs
-	const virtuoso = useRef(null);
+	const virtuoso = useRef<VirtuosoHandle>(null);
 	// indica che dee automaticamente scrollare in basso se arriva un nuovo messaggio
 	const [showKeepDown, setShowKeepDown] = useState(true)
 
@@ -43,10 +43,11 @@ const MessagesList: FunctionComponent<Props> = ({
 		virtuoso.current.scrollToIndex({ index: messages.length - 1/*, behavior: 'smooth'*/ })
 	}
 
-	const handleStartReached = (index: number) => {
-		console.log("handleStartReached", index)
-		//onLoading?.(false)
-	}
+	// const handleStartReached = async (index: number) => {
+	// 	console.log("handleStartReached", index)
+	// 	const newItems = await onLoading?.(false)
+	// 	if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
+	// }
 	const handleLoadEnd = () => onLoading?.(true)
 	const handleLoadStart = () => onLoading?.(false)
 	const handleBottomChange = (bottom: boolean) => setShowKeepDown(!bottom)
@@ -54,7 +55,7 @@ const MessagesList: FunctionComponent<Props> = ({
 		if (top) {
 			const newItems = await onLoading?.(false)
 			//setTimeout(() => virtuoso.current.scrollToIndex({ index: newItems }), 1000)
-			console.log(newItems)
+			// console.log(newItems)
 			if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
 		}
 	}
@@ -75,7 +76,7 @@ const MessagesList: FunctionComponent<Props> = ({
 			followOutput={'auto'}
 
 			// LOADING
-			startReached={handleStartReached}
+			//startReached={handleStartReached}
 			//endReached={handleEndReached}
 			atTopStateChange={handleTopChange}
 

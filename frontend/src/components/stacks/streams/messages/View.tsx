@@ -40,9 +40,9 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	}
 	const handleLoad = async (bottom: boolean) => {
 		if (bottom) {
-			return await strMsgSo.fetchNext()
+			return await strMsgSo.fetchNext2()
 		} else {
-			return await strMsgSo.fetchPrevRec()
+			return await strMsgSo.fetchPrev2()
 		}
 	}
 	const hendleMessageClick = (message: Message) => strMsgSo.openMessageDetail(message)
