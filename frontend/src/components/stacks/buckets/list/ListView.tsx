@@ -6,6 +6,7 @@ import docSo from "@/stores/docs"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE } from "@/types"
+import { BucketState } from "@/types/Bucket"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 
@@ -29,7 +30,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (index: number) => bucketsSo.select(buckets[index].bucket)
+	const handleSelect = (bucket: BucketState) => bucketsSo.select(bucket.bucket)
 	const handleNew = () => bucketsSo.create()
 	const handleDelete = () => bucketsSo.delete()
 
@@ -37,11 +38,10 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const buckets = bucketsSo.getFiltered() ?? []
 	if (!buckets) return null
 	const selected = bucketsSa.select
-	const selectedIndex = bucketsSo.getIndexByName(bucketsSa.select)
 	const variant = bucketsSa.colorVar
 	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
 
-	return <FrameworkCard styleBody={{ paddingTop: 0 }}
+	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={bucketsSo}
 		actionsRender={<>
 			<FindInput
@@ -70,8 +70,9 @@ const BucketsListView: FunctionComponent<Props> = ({
 				{ label: "BYTES", getValue: b => b.bytes },
 			]}
 			propMain={{ getValue: b => b.bucket }}
-			select={selectedIndex}
+			selectId={selected}
 			onSelectChange={handleSelect}
+			getId={(bucket: BucketState) => bucket.bucket}
 			variant={variant}
 		/>
 	</FrameworkCard>

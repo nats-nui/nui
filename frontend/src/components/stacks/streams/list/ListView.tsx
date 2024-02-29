@@ -8,6 +8,7 @@ import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import FindInput from "@/components/input/FindInput"
+import { StreamInfo } from "@/types/Stream"
 
 
 
@@ -29,25 +30,24 @@ const StreamsListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (index: number) => streamsSo.select(streams[index].config.name)
+	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream?.config?.name)
 	const handleNew = () => streamsSo.create()
 	const handleDelete = () => streamsSo.delete()
 
 	// RENDER
 	const streams = streamsSo.getFiltered() ?? []
-	const selected = streamsSa.select
-	const selectedIndex = streamsSo.getIndexByName(streamsSa.select)
+	const nameSelected = streamsSa.select
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
 	const variant = streamsSa.colorVar
 
-	return <FrameworkCard styleBody={{ paddingTop: 0 }}
+	return <FrameworkCard styleBody={{ padding: 0, }}
 		store={streamsSo}
 		actionsRender={<>
 			<FindInput
 				value={streamsSa.textSearch}
 				onChange={text => streamsSo.setTextSearch(text)}
 			/>
-			{!!selected && <Button
+			{!!nameSelected && <Button
 				label="DELETE"
 				variant={variant}
 				onClick={handleDelete}
@@ -69,8 +69,9 @@ const StreamsListView: FunctionComponent<Props> = ({
 				{ label: "BYTES", getValue: s => s.state.bytes },
 			]}
 			propMain={{ getValue: s => s.config.name }}
-			select={selectedIndex}
+			selectId={nameSelected}
 			onSelectChange={handleSelect}
+			getId={item => item.config.name}
 			variant={variant}
 		/>
 	</FrameworkCard>

@@ -8,6 +8,7 @@ export interface ItemProp {
 	label?: string
 	getValue?: (item: any) => any
 	getShow?: (item: any) => string
+
 	notOrderable?: boolean
 }
 
@@ -15,18 +16,22 @@ interface Props {
 	props: ItemProp[]
 	propMain?: ItemProp
 	items?: any[]
-	select?: number
+	selectId?: string
 	variant?: number
-	onSelectChange?: (select: number) => void
+	onSelectChange?: (item: any) => void
+	getId?: (item: any) => string
+	style?: React.CSSProperties
 }
 
 const Table: FunctionComponent<Props> = ({
 	props,
 	propMain,
 	items = [],
-	select = -1,
+	selectId,
 	variant = 0,
 	onSelectChange,
+	getId = (item) => item.toString(),
+	style,
 }) => {
 
 	// STORE
@@ -50,19 +55,19 @@ const Table: FunctionComponent<Props> = ({
 	}, [items, propOrder, typeOrder])
 
 	// HANDLER
-	const handleSelect = (index: number) => onSelectChange(index)
+	const handleSelect = (item: any) => onSelectChange(item)
 	const handleOrderChange = (prop: ItemProp, type: ORDER_TYPE) => {
 		setPropOrder(prop)
 		setTypeOrder(type)
 	}
 
 	// RENDER
-	const isSelected = (index: number) => index == select
+	const isSelected = (item: any) => getId(item) == selectId
 	function getValueString(item: any, prop: ItemProp): string {
 		return prop.getShow?.(item) ?? prop.getValue?.(item)
 	}
 
-	return <table style={cssTable}>
+	return <table style={{ ...cssTable, ...style }}>
 
 		<Header
 			props={props}
@@ -72,32 +77,35 @@ const Table: FunctionComponent<Props> = ({
 		/>
 
 		<tbody>
-			{itemsSort.map((item, index) => (<>
+			{itemsSort.map((item, index) => {
+				const id = getId(item)
+				const selected = isSelected(item)
+				return <>
+					{!!propMain && (
+						<tr
+							key={`${id}_1`}
+							style={cssRowMain(selected, variant)}
+							onClick={() => handleSelect(item)}
+						>
+							<td colSpan={4} style={{ padding: "5px 2px" }}>
+								{getValueString(item, propMain)}
+							</td>
+						</tr>
+					)}
 
-				{!!propMain && (
-					<tr
-						key={`${index}_1`}
-						style={cssRowMain(isSelected(index), variant)}
-						onClick={() => handleSelect(index)}
+					<tr key={id}
+						style={cssRow(selected, variant)}
+						onClick={() => handleSelect(item)}
 					>
-						<td colSpan={4} style={{ padding: "5px 2px" }}>
-							{getValueString(item, propMain)}
-						</td>
+						{props.map((prop) => (
+							<td style={cssRowCellNumber}>
+								{getValueString(item, prop)}
+							</td>
+						))}
 					</tr>
-				)}
 
-				<tr key={index}
-					style={cssRow(isSelected(index), variant)}
-					onClick={() => handleSelect(index)}
-				>
-					{props.map((prop) => (
-						<td style={cssRowCellNumber}>
-							{getValueString(item, prop)}
-						</td>
-					))}
-				</tr>
-
-			</>))}
+				</>
+			})}
 		</tbody>
 	</table>
 }
