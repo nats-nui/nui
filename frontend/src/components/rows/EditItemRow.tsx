@@ -23,7 +23,10 @@ const EditItemRow: FunctionComponent<RenderRowBaseProps<any>> = ({
 	// RENDER
 	return <Box
 		style={cssRow}
-		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
+		enterRender={!readOnly && 
+			<IconButton onClick={handleDelete} >
+				<CloseIcon />
+			</IconButton>}
 	>
 		<ListRow style={{ flex: 1 }} onClick={onSelect} isSelect={isSelect}>
 			{item ?? ""}
@@ -36,7 +39,7 @@ export default EditItemRow
 const isVoid = (item: string) => !item || item.trim().length == 0
 
 const cssRow: React.CSSProperties = {
-	minHeight: 22,
+	//minHeight: 22,
 	display: "flex",
 	alignItems: 'stretch',
 }

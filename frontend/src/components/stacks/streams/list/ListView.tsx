@@ -26,7 +26,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const docSa = useStore(docSo)
 
 	// HOOKs
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+	const [deleteDialog, setDeleteDialog] = useState(false)
 	useEffect(() => {
 		streamsSo.fetchIfVoid()
 	}, [])
@@ -34,9 +34,9 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream?.config?.name)
 	const handleNew = () => streamsSo.create()
-	const handleDelete = () => setDeleteDialogOpen(true)
+	const handleDelete = () => setDeleteDialog(true)
 	const handleDeleteDialogClose = (ok:boolean) => {
-		setDeleteDialogOpen(false)
+		setDeleteDialog(false)
 		if ( ok ) streamsSo.delete()
 	}
 
@@ -81,7 +81,9 @@ const StreamsListView: FunctionComponent<Props> = ({
 			variant={variant}
 		/>
 		<AlertDialog
-			open={deleteDialogOpen}
+			open={deleteDialog}
+			title="STREAM DELETION"
+			text={"This action is irreversible.\nAre you sure you want to delete the STREAM?"}
 			store={streamsSo}
 			onClose={handleDeleteDialogClose}
 		/>

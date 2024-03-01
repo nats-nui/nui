@@ -10,6 +10,8 @@ import { editor } from "monaco-editor"
 import { FunctionComponent, useRef } from "react"
 import FormatDialog from "../messages/FormatDialog"
 import { getEditorLanguage } from "@/stores/stacks/message/utils"
+import BoxV from "@/components/format/BoxV"
+import Label from "@/components/format/Label"
 
 
 
@@ -66,6 +68,12 @@ const MessageView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
+		<BoxV style={{ marginBottom: 10 }}>
+			<Label>Subject</Label>
+			<div className="label-form-2">
+				{msgSa.message.subject}
+			</div>
+		</BoxV>
 		{format == MSG_FORMAT.BASE64 ? (
 			<Base64Cmp text={text} />
 		) : format == MSG_FORMAT.HEX ? (

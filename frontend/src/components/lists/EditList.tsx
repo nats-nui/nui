@@ -133,8 +133,8 @@ function EditList<T>({
 export default forwardRef(EditList) as <T>(props: Props<T>, ref: LegacyRef<HTMLDivElement>) => JSX.Element
 
 const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
-	display: "flex",
-	flexDirection: "column",
+	// display: "flex",
+	// flexDirection: "column",
 	borderRadius: 5,
 })
 

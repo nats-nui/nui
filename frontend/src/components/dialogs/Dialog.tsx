@@ -17,13 +17,17 @@ export interface DialogProps {
 	open?: boolean
 	/** titolo della dialog (dai ci arrivavi da solo no?) */
 	title?: React.ReactNode
+
 	/** larghezza della DIALOG */
 	width?: number | string
 	/** spazio da lasciare in alto */
 	top?: number
+
+	/** un timeout in ms chiude la dialog se si clicca fuori
+	 * se == -1 non chiude */
+	timeoutClose?: number
+
 	children?: React.ReactNode
-	/** se true(default) chiudo la dialog se clicco su un qualunque altro punto della pagina */
-	closeClickOut?: boolean
 	/** chiamato quando clicco su qualunque altro punto che non sia la DIALOG */
 	onClose?: (e) => void
 }
@@ -38,7 +42,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	width,
 	top = null,
 	children,
-	closeClickOut = true,
+	timeoutClose = 200,
 	onClose,
 }) => {
 
@@ -56,35 +60,37 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	// pensare ad un modo per cui se cambiano le dimensioni della dialog
 	// questa si riposiziona
 	// *******************************************************************
-	// const [contentRect, setContentRect] = useState<DOMRectReadOnly>(null)
-	// useEffect(() => {
-	// 	if (!ref) return
-	// 	const resizeObserver = new ResizeObserver((entries) => {
-	// 		let rect: DOMRectReadOnly = null
-	// 		entries.forEach((entry) => rect = entry.contentRect)
-	// 		setContentRect(rect)
-	// 	})
-	// 	return () => resizeObserver.unobserve(ref)
-	// }, [ref])
+	const [contentRect, setContentRect] = useState<DOMRectReadOnly>(null)
+	useEffect(() => {
+		if (!ref) return
+		const resizeObserver = new ResizeObserver((entries) => {
+			let rect: DOMRectReadOnly = null
+			entries.forEach((entry) => rect = entry.contentRect)
+			console.log("bound")	
+			setContentRect(rect)
+		})
+		resizeObserver.observe(ref)
+		return () => resizeObserver.unobserve(ref)
+	}, [ref])
 
 	/** EVENT CLICK */
 	useEffect(() => {
 		// se clicco fuori dalla dialog allora la chiude
 		const handleClick = (e: MouseEvent) => {
-			if (!closeClickOut) return
+			if (timeoutClose < 0) return
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
-				setTimeout(() => onClose?.(e), 200)
+				setTimeout(() => onClose?.(e), timeoutClose)
 				//onClose?.(e)
 			}
 		}
 		if (open) {
-			if (!closeClickOut) return
+			if (timeoutClose < 0) return
 			document.addEventListener('mousedown', handleClick)
 			//setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
 		}
 		return () => {
-			if (!closeClickOut) return
+			if (timeoutClose < 0) return
 			document.removeEventListener('mousedown', handleClick)
 		}
 	}, [open])
@@ -93,14 +99,14 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		if (top == null) return 0
 		if (!ref || open == false) return
 		const rect = ref.getBoundingClientRect()
+		const dialogHeight = rect.height
 		const docHeight = document.documentElement.scrollHeight
-		let y = top - (rect.height / 2)
-		if (y + rect.height > docHeight) y = docHeight - rect.height - 20
+		let y = top - (dialogHeight / 2)
+		if (y + dialogHeight > docHeight) y = docHeight - dialogHeight - 20
 		if (y < 0) y = 0
 		//if (y > docHeight) y = docHeight - rect.height - 20
-
 		return y
-	}, [ref, open, top])
+	}, [ref, open, top, contentRect])
 
 	// HANDLER
 
@@ -113,15 +119,18 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			ref={(node) => setRef(node)}
 			style={cssRoot(variant, width, y)}
 		>
-			<div style={{ display: "flex" }}>
+
+			<div style={cssTitle}>
 				<Label type={LABELS.TITLE_DIALOG} style={{ flex: 1 }}>{title}</Label>
 				<IconButton onClick={(e) => onClose(e)}>
 					<CloseIcon />
 				</IconButton>
 			</div>
+
 			<div style={cssBody}>
 				{children}
 			</div>
+
 		</div>,
 		refDialog
 	)
@@ -133,10 +142,9 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	display: "flex",
 	flexDirection: "column",
 	flex: 1,
-	gap: 5,
 	width,
 	marginTop: top,
-	padding: "10px 10px 10px 15px",
+	padding: "15px 15px 15px 25px",
 	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 	color: layoutSo.state.theme.palette.var[variant].fg,
 
@@ -144,11 +152,17 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	borderRadius: '0px 10px 10px 0px',
 	boxShadow: layoutSo.state.theme.shadows[0],
 
-	maxHeight: 'calc( 100% - 20px )',
-	
+	maxHeight: `calc( 100% - 30px )`,
+
 })
 
-const cssBody:React.CSSProperties = {
+const cssTitle: React.CSSProperties = {
+	display: "flex",
+	marginBottom: 10,
+	alignItems: "center",
+}
+
+const cssBody: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	overflowY: 'auto',

@@ -4,6 +4,7 @@ import Accordion from "./Accordion"
 import Component from "./format/Component"
 import { RenderRowBaseProps } from "./lists/EditList"
 import List from "./lists/List"
+import Divider from "./format/Divider"
 
 
 
@@ -64,17 +65,15 @@ function Options<T>({
 				height={height}
 				open={open}
 			>
-
-
-				<List<T>
+				<List<T> style={{ flex: 1, overflowY: "auto", marginTop: 5 }}
 					select={index}
 					items={items}
 					RenderRow={RenderRow}
 					readOnly={readOnly}
 					onSelect={handleSelect}
 				/>
+				<div style={{ width: "100%", borderBottom: "2px dashed rgb(0 0 0 / 35%)", marginTop: 5, }} />
 			</Accordion>
-
 		</div>
 	)
 }

@@ -42,10 +42,8 @@ function List<T>({
 	if (!items) return null
 
 	return <div style={{ ...cssContainer(height), ...style }}>
-
 		{items.map((item, index) =>
-			<ListRow
-				key={index}
+			<ListRow key={index}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
 				isSelect={select == index}
@@ -56,15 +54,14 @@ function List<T>({
 				/>
 			</ListRow>
 		)}
-
 	</div>
 }
 
 export default List
 
 const cssContainer = (height: number): React.CSSProperties => ({
-	display: "flex",
-	flexDirection: "column",
+	// display: "flex",
+	// flexDirection: "column",
 	...height && {
 		height: height,
 		overflowY: "auto",
