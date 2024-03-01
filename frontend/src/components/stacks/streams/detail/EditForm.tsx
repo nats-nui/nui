@@ -13,13 +13,13 @@ import EditStringRow from "@/components/rows/EditStringRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { buildNewSource } from "@/stores/stacks/streams/utils/factory"
+import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import ElementDialog from "../../../dialogs/ElementDialog"
 import ListDialog from "../../../dialogs/ListDialog"
 import EditSourceCmp from "./EditSourceCmp"
-import { EDIT_STATE } from "@/types"
 
 
 
@@ -58,9 +58,14 @@ const EditForm: FunctionComponent<Props> = ({
 	const handleSourceSelect = (index: number, e: React.BaseSyntheticEvent) => {
 		setSourceIndex(index)
 		setElementSource(e.target)
+		
 	}
 	const handleSourcesChange = (sources: Source[]) => {
 		config.sources = sources
+		streamSo.setStream({ ...streamSa.stream })
+	}
+	const sourcesClear = () => {
+		config.sources = config.sources.filter( s => s.name.length > 0)
 		streamSo.setStream({ ...streamSa.stream })
 	}
 	const handleSourceChange = (source: Source) => {
@@ -279,7 +284,7 @@ const EditForm: FunctionComponent<Props> = ({
 			</Quote>
 		</BoxV>
 
-		<BoxV>
+		<BoxV style={{ gap: 3}}>
 			<Box>
 				<IconToggle
 					check={!!config.mirror}
@@ -294,12 +299,12 @@ const EditForm: FunctionComponent<Props> = ({
 						<Label type={LABELS.SUBTEXT}>NAME</Label>
 						<ListDialog
 							store={streamSo}
-							select={allStreams.indexOf(config.mirror?.name) ?? 0}
+							select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
 							items={allStreams}
 							RenderRow={({ item }) => item}
 							readOnly={inRead || !inNew}
 							onSelect={index => {
-								handleMirrorPropChange({name: allStreams[index]})
+								handleMirrorPropChange({ name: allStreams[index] })
 							}}
 						/>
 						{/*{ <Options<string>*/}
@@ -333,22 +338,30 @@ const EditForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<Label>SOURCES</Label>
-			<EditList<Source>
-				items={config.sources}
-				onChangeItems={handleSourcesChange}
-				onSelect={handleSourceSelect}
-				readOnly={inRead}
-				fnNewItem={() => buildNewSource()}
-				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
-				ref={listRef}
-			/>
+			<Quote>
+				<EditList<Source>
+					items={config.sources}
+					onChangeItems={handleSourcesChange}
+					onSelect={handleSourceSelect}
+					readOnly={inRead}
+					fnNewItem={() => {
+						sourcesClear();
+						return buildNewSource();
+					}}
+					RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
+					ref={listRef}
+				/>
+			</Quote>
 			<ElementDialog
+				title="SOURCE"
 				element={elementSource}
 				store={streamSo}
-				width={150}
+				width={250}
+				timeoutClose={0}
 				onClose={(e) => {
 					if (listRef && listRef.current.contains(e.target)) return
 					setElementSource(null)
+					sourcesClear()
 				}}
 			>
 				<EditSourceCmp

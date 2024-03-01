@@ -1,15 +1,22 @@
 
 ## STREAM-CONFIG
 
-Sono i dati di creazione dello STREAM
-Alcuni di essi, ma non tutti, sono modificabili in edit
-Se uno di questi dati è omesso assume un valore di default
+This is the STREAM creation data
+Some of them, but not all, can be modified in edit
+If one of these data is omitted it assumes a default value
 
 ```typescript
 StreamConfig {
+	
+	// --- main 
+	// identificativo dello stream
 	name: string 				// not editable
+	// testo descrittivo dello STREAM
 	description: string			// omitted if empty
+	// i SUBJECTs disponibili nello stream
 	subjects: string[]			// omitted if empty
+
+	// --- 
 	retention: RETENTION 		// not editable
 	max_consumers: number 		// omitted if zero, not editable
 	max_msgs: number 			// omitted if zero

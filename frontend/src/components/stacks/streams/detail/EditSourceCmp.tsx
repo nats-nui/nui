@@ -5,6 +5,9 @@ import { Source } from "@/types/Stream"
 import { FunctionComponent } from "react"
 import NumberInput from "../../../input/NumberInput"
 import TextInput from "../../../input/TextInput"
+import Form from "@/components/format/Form"
+
+
 
 interface Props {
 	source: Source
@@ -40,15 +43,14 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!source) return null
 
-	return <>
+	return <Form>
 		<BoxV>
 			<Label>NAME</Label>
-			<Options<string>
+			<Options<string> height={500}
 				value={source.name}
 				items={allStream}
 				RenderRow={({ item }) => item}
 				readOnly={readOnly}
-				//height={100}
 				onSelect={handleNameChange}
 			/>
 		</BoxV>
@@ -88,7 +90,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				readOnly={readOnly}
 			/>
 		</BoxV>
-	</>
+	</Form>
 }
 
 export default EditSourceCmp

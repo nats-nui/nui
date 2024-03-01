@@ -11,4 +11,4 @@ StreamInfo {
 }
 ```
 
-- Se `state` è `null` allora vul dire che lo STREAM-INFO è nuovo
+- If `state` is `null` then it means that the STREAM-INFO is new

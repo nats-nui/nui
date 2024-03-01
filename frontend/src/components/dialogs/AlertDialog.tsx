@@ -8,12 +8,20 @@ import { FunctionComponent } from "react"
 
 interface Props {
 	store?: StreamsStore
+	title?: string
+	text?: string
+	labelYes?: string
+	labelNo?: string
 	open?: boolean
 	onClose?: (ok: boolean) => void
 }
 
 const AlertDialog: FunctionComponent<Props> = ({
 	store: streamsSo,
+	title,
+	text,
+	labelYes = "YES", 
+	labelNo = "NO",
 	open,
 	onClose,
 }) => {
@@ -27,18 +35,34 @@ const AlertDialog: FunctionComponent<Props> = ({
 	// RENDER
 
 	return <Dialog
-		title="ATTENTION"
+		title={title}
 		width={200}
 		open={open}
 		store={streamsSo}
 		onClose={() => onClose(false)}
 	>
-		<div>Ma che davvero?</div>
-		<Box>
-			<Button label="Si" onClick={() => onClose(true)} />
-			<Button label="No" onClick={() => onClose(false)} />
+		<div style={cssText}>
+			{text}
+		</div>
+
+		<Box style={{ display: "flex", gap: 15, justifyContent: 'flex-end' }}>
+			<Button 
+				label={labelYes} 
+				onClick={() => onClose(true)} 
+			/>
+			<Button 
+				label={labelNo} 
+				onClick={() => onClose(false)} 
+			/>
 		</Box>
 	</Dialog>
 }
 
 export default AlertDialog
+
+const cssText:React.CSSProperties = {
+	fontSize: 14,
+	fontWeight: 500,
+	marginBottom: 20,
+	whiteSpace: "pre-line",
+}

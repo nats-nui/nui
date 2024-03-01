@@ -48,4 +48,5 @@ const cssRoot = (readOnly: boolean, select: boolean): React.CSSProperties => ({
 	fontWeight: 600,
 	padding: "4px 3px",
 	minHeight: 14,
+	wordBreak: "break-all",
 })

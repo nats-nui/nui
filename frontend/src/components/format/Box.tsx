@@ -33,7 +33,7 @@ const Box: FunctionComponent<Props> = ({
 		>
 			{preRender}
 			{children}
-			{enter && <div style={{ position: "absolute", top: 0, right: 0 }}>
+			{enter && <div style={{ position: "absolute", top: 2, right: 1 }}>
 				{enterRender}
 			</div>}
 		</div>

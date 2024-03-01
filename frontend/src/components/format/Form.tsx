@@ -31,6 +31,6 @@ export default Form
 const cssRoot: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-	gap: "10px",
+	gap: 10,
 	marginBottom: 15,
 }

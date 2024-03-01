@@ -55,7 +55,7 @@ const cssRoot: React.CSSProperties = {
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	cursor: "pointer",
 	borderRadius: 10,
-	padding: '3px 6px',
+	padding: '5px 6px',
 }
 const cssDisabled: React.CSSProperties = {
 	opacity: 0.5,

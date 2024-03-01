@@ -54,8 +54,16 @@ const MainMenu: FunctionComponent<Props> = ({
 			<StoreIcon key={view.state.uuid} store={view} />
 		))}
 		<div style={{ flex: 1 }} />
-		<Button label="SAVE" onClick={() => SaveSession()} />
-		<Button label="LOAD" onClick={() => LoadSession()} />
+
+
+		{/* *** DEBUG *** */}
+		{process.env.NODE_ENV === 'development' && <>
+			<Button label="SAVE" onClick={() => SaveSession()} />
+			<Button label="LOAD" onClick={() => LoadSession()} />
+		</>}
+		{/* *** DEBUG *** */}
+
+
 		<IconRow onClick={handleLogsClick}
 			title="LOGS"
 			variant={COLOR_VAR.CYAN}
