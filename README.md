@@ -1,275 +1,61 @@
-# nui
+<p align="center">
+  <img width=200px src=https://github.com/nats-nui/nui/assets/22039194/626b87c8-66ba-433c-8785-dc934b61cbe2" alt="NATS WebUI Logo"/> 
+</p>
+
+# NUI 
+---
+#### Free and Open Source NATS management GUI. 
+Easily manage your NATS core, streams and buckets, both from Desktop App or Web interface!
+
+### Features :factory:
+
+- Core NATS Pub/Sub: view and send NATS messages
+- Multiple format visualization (text, json, hex and much more supported)
+- Streams management: view, create adn tweak stream configs
+- Stream messages: view, filter and operate with stream messages
+- Stream operations like purge and message deletion
+- KV Store management: View and create KV buckets
+- KV entries: view, filter and edit entries
+- KV entries history: acces each entry history to see past updates / deletes
+---
+### UI :computer:
+
+- Multiple parallel connection allowed at the same time
+- Card stack UI to manage the workspace as needed
+
+---
+### Coming soon...or later 😸
+
+- Streams backup / restore
+- Advanced stream and KV Stores operations
+- Server info adn metrics
+
+---
+# Get Started 🚀
+- Try the [Live Demo]().
+- [Download]() Desktop app or deploy with Docker.
 
 
-## Temp API doc
+---
+# Build and run Locally
+The projects uses Go and Wails.io as to run the BE and React on Vite on FE.
 
+### Prerequisites
+- Go 1.21
+- Node 18
+- Wails.io
 
-### Connection
+To build and run the project locally:
 
-```json
-{
-  "id" <uuid>,
-  "name: <string>,
-  "hosts": ["host1","host2"],
-  "subscriptions": []<subscribtion>,
-  "auth": []<auth>
-}
+#### web app
 ```
-
-#### Subscription
-
-```json
-{
-  "subject": <string>
-}
+npm install
+make dev-web
 ```
+starts the application in web mode, using the `db` dir as persistent data directory
 
-#### Auth
-
-```json
-{
-  "mode" : <mode>
-  "username" : <string>
-  "password" :  <string>
-  "token" : <string>
-  "jwt" :  <string>
-  "nkey" : <string>
-  "creds" :  <string>
-}
-
+####
 ```
-modes:
-- "auth_none" -> no other info to set
-- "auth_token" -> use token field
-- "auth_user_password" -> use username and password fields
-- "auth_jwt" -> use jwt and nkey fields
-- "auth_creds_file" -> use creds field (local path to a file)
-
-### Stream
-```json
-
-// stream info
-
-{
-    "config": <streamconfig>,
-    "state": <stream-state>
-}
-
-// stream config
-{
-  "name": "myStream", // string, not editable
-  "description": "", // string, omitted if empty
-  "subjects": [], // array of strings, omitted if empty
-  "retention": "limits", // string: "limits", "interest", or "workqueue", not editable
-  "max_consumers": 0, // integer, omitted if zero, not editable
-  "max_msgs": 0, // integer, omitted if zero
-  "max_bytes": 0, // integer, omitted if zero
-  "discard": "old", // string: "old" or "new"
-  "max_age": 0, // integer, omitted if zero
-  "max_msgs_per_subject": 0, // integer, omitted if zero
-  "max_msg_size": 0, // integer, omitted if zero
-  "storage": "file", // string: "file" or "memory", not editable
-  "num_replicas": 0, // integer, omitted if zero
-  "no_ack": false, // boolean, omitted if false
-  "template_owner": "", // string, omitted if empty
-  "duplicate_window": 0, // integer, omitted if zero
-  "placement": { // object, omitted if null
-    "cluster": "", // string, omitted if empty
-    "tags": [] // array of strings, omitted if empty
-  },
-  "mirror": { // object, omitted if null, not editable, "name" is taken from stream names
-    "name": "", // string, omitted if empty
-    "opt_start_seq": 0, // integer, omitted if zero
-    "filter_subject": "" // string, omitted if empty
-  },
-  "sources": [ // array of objects, omitted if empty, "name" is taken from stream names
-    {
-      "name": "", // string, omitted if empty
-      "opt_start_seq": 0, // integer, omitted if zero
-      "filter_subject": "", // string, omitted if empty
-      "external": { // object, omitted if null
-          "api": "" // string
-          "deliver": "" // string
-      }
-      "domain": "" // string, omitted if empty
-    }
-  ],
-  "sealed": false, // boolean, omitted if false
-  "deny_delete": false, // boolean, omitted if false, not editable
-  "deny_purge": false, // boolean, omitted if false, not editable
-  "allow_rollup_hdrs": false, // boolean, omitted if false
-  "republish": { // object, omitted if null
-    "src": "", // string, omitted if empty
-    "dest": "", // string, omitted if empty
-    "headers_only": false // boolean, omitted if false
-  },
-  "allow_direct": false, // boolean, omitted if false
-  "mirror_direct": false // boolean, omitted if false
-}
+make dev
 ```
-
-### stream purge req
-```
-{
-  "seq": 0, //integer, omit if not set!
-  "filter": "foo.bar", // string (subject), omit if not set!
-  "keep": 1 // integere, omit if not set!
-}
-```
-
-### consumer info
-
-```json
-{
-  "stream_name": "myStream",
-  "name": "myConsumer",
-  "created": "2022-03-01T12:00:00Z",
-  "config": {
-    "name": "myConsumer",
-    "durable_name": "myDurable",
-    "deliver_policy": "all",
-    "ack_policy": "all",
-    "ack_wait": 60000000000,
-    "max_deliver": 10,
-    "replay_policy": "instant",
-    "num_replicas": 1
-  },
-  "delivered": {
-    "consumer_seq": 1,
-    "stream_seq": 1
-  },
-  "ack_floor": {
-    "consumer_seq": 1,
-    "stream_seq": 1
-  },
-  "num_ack_pending": 0,
-  "num_redelivered": 0,
-  "num_waiting": 0,
-  "num_pending": 0,
-  "push_bound": true
-}
-```
-
-#### CRUD on connection
-```
-GET /api/cconnection
-POST /api/connection
-POST /api/connection/:id
-DELETE /api/connection/:id
-```
-
-
-#### REST on streams
-```
-GET /api/cconnection/:conn_id/stream -> stream-info[]
-GET /api/cconnection/:conn_id/stream/:name -> stream-info
-POST /api/connection/:conn_id/stream (stream config) -> stream-info
-POST /api/connection/:conn_id/stream/:name (stream config) -> stream-info
-
-DELETE /api/connection/:conn_id/stream/:name
-
-POST /api/connection/:conn_id/stream/:name/purge
-
-GET /api/cconnection/:conn_id/stream/:name/consumers -> consumer-info[]
-
-```
-
-### TO publish a message
-
-#### Request
-
-```
-POST /api/connection/:id/publish
-
-{
-    "subject": <string>,
-    "payload": <string>  // base64 encoded
-}
-```
-
-#### Response
-
-200 OK - no body
-
-
-### To send a Request / Response
-
-#### Request
-
-```
-POST /api/connection/:id/request
-
-{
-    "subject": <string>,
-    "payload": <string>
-}
-```
-
-
-#### Response
-
-```
-200 OK
-
-{
-  "payload" <string> // base64 encoded
-}
-```
-
-### To subscribe to websocket 
-
-```
-GET /ws/sub?id=<connection-id>
-```
-
-
-#### Ws messages
-
-```
-MESSAGE WRAPPER
-wraps all the messages and events to and from the server.
-{
-  "type": <string>,
-  "payload": <object> // based on type
-}
-```
-
-```
-SUBSCRIPTIONS REQUEST
-send an array of subject the client want to stream from
-sender: client
-type: subscriptions_req
-{
-    "subjects": []<string>
-}
-```
-
-
-```
-NATS MESSAGE
-message stream of subscribed subjects
-sender: server
-type: nats_msg
-{
-  "subject": <string>,
-  "payload": <string> // base64 encoded
-}
-```
-
-```
-CONNECTION STATUS
-sender: server
-type: connection_status
-{
-  "status": <string> // connected - reconnecting - disconnected
-}
-```
-    
-```
-ERROR MESSAGE
-sender: client, server
-type: error
-{
-  "error": <string>
-}
-```
+starts wails in development mode, building the application based on the underlying operating system
