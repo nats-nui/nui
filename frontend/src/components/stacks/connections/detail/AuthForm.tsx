@@ -5,6 +5,7 @@ import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useState } from "react"
 import TextInput from "../../../input/TextInput"
 import Button from "@/components/buttons/Button"
+import Form from "@/components/format/Form"
 
 
 
@@ -14,7 +15,7 @@ interface Props {
 	onClose?: (auth: Auth) => void
 }
 
-const EditAuthRow: FunctionComponent<Props> = ({
+const AuthForm: FunctionComponent<Props> = ({
 	auth,
 	readOnly,
 	onClose,
@@ -33,7 +34,7 @@ const EditAuthRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!authEdit) return null
-	return <>
+	return <Form>
 		<Options<string>
 			value={authEdit?.mode}
 			items={Object.values(AUTH_MODE)}
@@ -44,46 +45,46 @@ const EditAuthRow: FunctionComponent<Props> = ({
 		/>
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
-				<BoxV><Label>USERNAME</Label><TextInput
+				<BoxV><div className="lbl-prop">USERNAME</div><TextInput
 					value={authEdit.username}
 					onChange={username => handlePropChange({ username })}
 					readOnly={readOnly}
 				/></BoxV>
-				<BoxV><Label>PASSWORD</Label><TextInput
+				<BoxV><div className="lbl-prop">PASSWORD</div><TextInput
 					value={authEdit.password}
 					onChange={password => handlePropChange({ password })}
 					readOnly={readOnly}
 				/></BoxV>
 			</>,
 			[AUTH_MODE.TOKEN]: (
-				<BoxV><Label>TOKEN</Label><TextInput
+				<BoxV><div className="lbl-prop">TOKEN</div><TextInput
 					value={authEdit.token}
 					onChange={token => handlePropChange({ token })}
 					readOnly={readOnly}
 				/></BoxV>
 			),
 			[AUTH_MODE.JWT]: <>
-				<BoxV><Label>JWT</Label><TextInput
+				<BoxV><div className="lbl-prop">JWT</div><TextInput
 					value={authEdit.jwt}
 					onChange={jwt => handlePropChange({ jwt })}
 					readOnly={readOnly}
 				/></BoxV>
-				<BoxV><Label>NKEY</Label><TextInput
+				<BoxV><div className="lbl-prop">NKEY</div><TextInput
 					value={authEdit.nkey}
 					onChange={nkey => handlePropChange({ nkey })}
 					readOnly={readOnly}
 				/></BoxV>
 			</>,
 			[AUTH_MODE.CREDS_FILE]: <>
-				<BoxV><Label>CREDS PATH FILE:</Label><TextInput
+				<BoxV><div className="lbl-prop">CREDS PATH FILE</div><TextInput
 					value={authEdit.creds}
 					onChange={creds => handlePropChange({ creds })}
 					readOnly={readOnly}
 				/></BoxV>
 			</>,
 		}[authEdit.mode]}
-		<div style={{ display: "flex" }}>
-			<div style={{flex:1}} />
+		
+		<div style={{ display: "flex", gap: 5, justifyContent: 'flex-end', }}>
 			<Button label="CANCEL"
 				onClick={() => onClose(null)}
 			/>
@@ -93,10 +94,11 @@ const EditAuthRow: FunctionComponent<Props> = ({
 				/>
 			)}
 		</div>
-	</>
+		</Form>
+	
 }
 
-export default EditAuthRow
+export default AuthForm
 
 const cssRow: React.CSSProperties = {
 	display: "flex",

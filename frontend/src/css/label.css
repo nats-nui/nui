@@ -23,6 +23,14 @@
 
 
 
+
+
+.lbl-input-readonly {
+	font-size: 12px;
+    font-weight: 600;
+    padding: 4px 0px;
+}
+
 .lbl-prop-title {
 	font-size: 11px;
 	border-bottom: 1px solid rgb(0 0 0 / 32%);
@@ -35,7 +43,7 @@
 }
 .lbl-prop {
 	font-size: 10px;
-	font-weight: 600;
+	font-weight: 800;
 }
 
 

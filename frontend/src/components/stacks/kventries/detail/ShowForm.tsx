@@ -1,12 +1,11 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
-import TextArea from "@/components/input/TextArea"
 import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 
 
 
@@ -46,14 +45,12 @@ const ShowForm: FunctionComponent<Props> = ({
 		</BoxV>
 		<BoxV>
 			<Label>PAYLOAD</Label>
-			<TextArea
+			<TextInput multiline
 				value={kventry.payload ?? ""}
 				onChange={handleEntryChange}
 				readOnly={inRead}
 			/>
 		</BoxV>
-
-
 	</Form>
 }
 

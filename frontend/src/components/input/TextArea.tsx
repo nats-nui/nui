@@ -1,8 +1,7 @@
-import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
 import Label, { LABELS } from "../format/Label"
 
-
+// DA ELIMINARE
 
 interface Props {
 	value?: string
@@ -29,6 +28,8 @@ const TextArea: FunctionComponent<Props> = ({
 
 	return (
 		<textarea style={{ ...cssRoot, ...style }}
+			autoComplete="off"
+			spellCheck="false"
 			value={value}
 			onChange={handleChange}
 		/>
@@ -38,7 +39,4 @@ const TextArea: FunctionComponent<Props> = ({
 export default TextArea
 
 const cssRoot: React.CSSProperties = {
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	color: layoutSo.state.theme.palette.default.fg,
-	padding: '5px 7px',
 }

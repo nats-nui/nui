@@ -65,15 +65,17 @@ function Options<T>({
 				height={height}
 				open={open}
 			>
-				<List<T> style={{ flex: 1, overflowY: "auto", marginTop: 5 }}
+				<List<T> style={{ flex: 1, marginTop: 5 }}
 					select={index}
 					items={items}
 					RenderRow={RenderRow}
 					readOnly={readOnly}
 					onSelect={handleSelect}
 				/>
-				<div style={{ width: "100%", borderBottom: "2px dashed rgb(0 0 0 / 35%)", marginTop: 5, }} />
 			</Accordion>
+			{ open &&
+				<div style={{ width: "100%", borderBottom: "2px dashed rgb(0 0 0 / 35%)", marginTop: 5, }} />
+			}
 		</div>
 	)
 }
