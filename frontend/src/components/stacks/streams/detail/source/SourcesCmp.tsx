@@ -1,7 +1,7 @@
 import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
 import Quote from "@/components/format/Quote"
-import EditList from "@/components/lists/EditList"
+import EditList, { LIST_ACTIONS } from "@/components/lists/EditList"
 import EditItemRow from "@/components/rows/EditItemRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
@@ -20,15 +20,15 @@ interface Props {
 	store?: StreamStore
 }
 
-const SourceCmp: FunctionComponent<Props> = ({
+const SourcesCmp: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
 	const sourcesClear = () => {
-		config.sources = config.sources.filter(s => s.name.length > 0)
+		config.sources = config.sources?.filter(s => s.name.length > 0) ?? []
 		streamSo.setStream({ ...streamSa.stream })
 	}
-	const haveNew = () => config.sources.some(s => !(s.name?.length > 0))
+	const haveNew = () => config.sources?.some(s => !(s.name?.length > 0))
 
 	// STORE
 	const streamSa = useStore(streamSo)
@@ -42,19 +42,21 @@ const SourceCmp: FunctionComponent<Props> = ({
 	const listRef = useRef(null)
 
 	// HANDLER
-	const handleSourceSelect = (index: number, e: React.BaseSyntheticEvent) => {
-		setSourceIndex(index)
-		if ( index == -1 ) {
+
+	const handleSelectChange = (index: number, e?: React.BaseSyntheticEvent) => {
+		if (index == -1) {
 			setElementSource(null)
 			sourcesClear()
 		} else {
 			setElementSource(e.target)
 		}
+		setSourceIndex(index)
 	}
 
-	const handleSourcesChange = (sources: Source[]) => {
+	const handleSourcesChange = (sources: Source[], action:LIST_ACTIONS) => {
 		config.sources = sources
 		streamSo.setStream({ ...streamSa.stream })
+		if (action == LIST_ACTIONS.DELETE) handleSelectChange(-1)
 	}
 
 	const handleSourceChange = (source: Source) => {
@@ -69,8 +71,7 @@ const SourceCmp: FunctionComponent<Props> = ({
 		const x = e.clientX;
 		const y = e.clientY;
 		if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return
-		setElementSource(null)
-		sourcesClear()
+		handleSelectChange(-1)
 	}
 
 	const handleNewSource = (index: number) => {
@@ -79,19 +80,21 @@ const SourceCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if (streamSa.stream?.config == null) return null
-	const config: StreamConfig = streamSa.stream.config
+	const config: StreamConfig = streamSa.stream?.config
+	if (config == null) return null
+	const sources = config.sources ?? []
 	const inRead = streamSa.editState == EDIT_STATE.READ
 	const allStreams = streamSa.allStreams
 
 	return <BoxV>
 		<Label>SOURCES</Label>
 		<Quote>
-			<EditList<Source> ref={listRef}
-				items={config.sources}
+			<EditList<Source> ref={listRef} keepSelectOnBlur
+				items={sources}
+				select={souceIndex}
 				readOnly={inRead}
-				onChangeItems={handleSourcesChange}
-				onSelect={handleSourceSelect}
+				onItemsChange={handleSourcesChange}
+				onSelectChange={handleSelectChange}
 				onNewItem={handleNewSource}
 				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
 			/>
@@ -105,7 +108,7 @@ const SourceCmp: FunctionComponent<Props> = ({
 			onClose={handleDialogClose}
 		>
 			<EditSourceCmp
-				source={config.sources?.[souceIndex]}
+				source={sources?.[souceIndex]}
 				onChange={handleSourceChange}
 				allStream={allStreams}
 				readOnly={inRead}
@@ -114,7 +117,7 @@ const SourceCmp: FunctionComponent<Props> = ({
 	</BoxV>
 }
 
-export default SourceCmp
+export default SourcesCmp
 
 const cssList = (readOnly: boolean, variant: number): React.CSSProperties => ({
 	backgroundColor: readOnly ? "rgb(0 0 0 / 50%)" : layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,

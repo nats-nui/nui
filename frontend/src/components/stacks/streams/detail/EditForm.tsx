@@ -16,7 +16,7 @@ import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Strea
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
-import SourceCmp from "./source/SourceCmp"
+import SourcesCmp from "./source/SourcesCmp"
 
 
 
@@ -97,7 +97,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<Label>SUBJECTS</Label>
 			<EditList<string>
 				items={config.subjects}
-				onChangeItems={subjects => handlePropChange({ subjects })}
+				onItemsChange={subjects => handlePropChange({ subjects })}
 				variant={variant}
 				readOnly={inRead}
 				onNewItem={() => "<new>"}
@@ -310,7 +310,7 @@ const EditForm: FunctionComponent<Props> = ({
 			</Accordion>
 		</BoxV>
 
-		<SourceCmp store={streamSo} />
+		<SourcesCmp store={streamSo} />
 		
 		<Box>
 			<IconToggle

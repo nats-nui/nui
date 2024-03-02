@@ -1,8 +1,12 @@
 import IconButton from "@/components/buttons/IconButton"
 import AddIcon from "@/icons/AddIcon"
-import { useState, FunctionComponent, forwardRef, LegacyRef } from "react"
+import { useState, FunctionComponent, forwardRef, LegacyRef, useEffect } from "react"
 
-
+export enum LIST_ACTIONS {
+	DELETE,
+	UPDATE,
+	NEW
+}
 
 /** le PROPS da implementare per il componente di rendering della ROW */
 export interface RenderRowBaseProps<T> {
@@ -15,69 +19,79 @@ export interface RenderRowBaseProps<T> {
 
 interface Props<T> {
 	items: T[]
+	select?: number
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	variant?: number
 	readOnly?: boolean
+	keepSelectOnBlur?: boolean
 	style?: React.CSSProperties
 
 	/** restituisce nuovo ITEM (su click btt NEW) */
-	onNewItem?: (index:number) => T
-	onChangeItems?: (newItems: T[]) => void
-	onSelect?: (index: number, e: React.BaseSyntheticEvent) => void
-	
-	ref?:LegacyRef<HTMLDivElement>
+	onNewItem?: (index: number) => T
+	onItemsChange?: (newItems: T[], action?: LIST_ACTIONS) => void
+	onSelectChange?: (index: number, e: React.BaseSyntheticEvent) => void
+
+	ref?: LegacyRef<HTMLDivElement>
 }
 
 function EditList<T>({
 	items,
+	select,
 	RenderRow,
 	variant = 0,
 	readOnly = false,
+	keepSelectOnBlur,
 	style,
 
 	onNewItem,
-	onChangeItems,
-	onSelect,
+	onItemsChange,
+	onSelectChange,
 
 }: Props<T>, ref: LegacyRef<HTMLDivElement>) {
 
 	// STORES
 
 	// HOOKS
-	const [indexSelect, setIndexSelect] = useState(-1)
+	const [indexSelect, _setIndexSelect] = useState(-1)
+	const getIndexSelect = () => select == undefined ? indexSelect : select
+	const setIndexSelect = (index: number, e?: React.BaseSyntheticEvent) => {
+		if (select == undefined) _setIndexSelect(index)
+		onSelectChange?.(index, e)
+	}
 
 	// HANDLERS
+
 	const handleChangeItem = (newItem: T, index: number) => {
 		if (readOnly) return
 		const newItems = [...items]
 		if (newItem == null) {
 			newItems.splice(index, 1)
-			setIndexSelect(index >= items.length ? items.length - 1 : index)
+			onItemsChange?.(newItems, LIST_ACTIONS.DELETE)
 		} else {
 			newItems[index] = newItem
+			onItemsChange?.(newItems, LIST_ACTIONS.UPDATE)
 		}
-		onChangeItems?.(newItems)
 	}
-	const handleNewItem = (index?: number, e?:any) => {
+
+	const handleNewItem = (index?: number, e?: any) => {
 		if (readOnly) return
 		if (index == null) index = items.length
 		const newItem = onNewItem(index)
-		if ( newItem == null ) return
+		if (newItem == null) return
 		items.splice(index, 0, newItem)
-		onChangeItems?.([...items])
+		onItemsChange?.([...items], LIST_ACTIONS.NEW)
 		handleSelect(index, e)
-		//setIndexSelect(index)
+	}
 
-	}
 	const handleSelect = (index: number, e: React.BaseSyntheticEvent) => {
-		if ( index == indexSelect ) index = -1
-		setIndexSelect(index)
-		onSelect?.(index, e)
+		//if (index == getIndexSelect()) index = -1
+		setIndexSelect(index, e)
 	}
+
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		if (indexSelect == -1) return
-		let newFocus = indexSelect
+		if (getIndexSelect() == -1) return
+		let newFocus = getIndexSelect()
 		switch (event.key) {
 			case 'ArrowUp':
 				event.preventDefault()
@@ -89,38 +103,40 @@ function EditList<T>({
 				break
 			case "Enter":
 				event.preventDefault()
-				handleNewItem(indexSelect + 1)
+				handleNewItem(getIndexSelect() + 1)
 				return
 		}
 		if (newFocus < 0) newFocus = 0
 		if (newFocus >= items.length) newFocus = items.length - 1
 		setIndexSelect(newFocus)
 	}
+
 	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+		if ( keepSelectOnBlur ) return 
 		const isChild = e.currentTarget.contains(e.relatedTarget)
 		if (!isChild) setIndexSelect(-1)
 	}
 
 	// RENDER
-	if ( !items ) return null
+	if (!items) return null
 	return (
-		<div  
-			//tabIndex={0}
+		<div
+			tabIndex={0}
 			ref={ref}
 			style={{ ...cssRoot(variant, readOnly), ...style }}
 			onKeyDown={handleKeyDown}
 			onBlur={handleBlur}
 		>
 			{/* LISTA */}
-			{items?.map((item, index) => (
+			{items?.length > 0 ? items.map((item, index) =>
 				<RenderRow key={index}
 					item={item}
-					isSelect={indexSelect == index}
+					isSelect={getIndexSelect() == index}
 					readOnly={readOnly}
 					onChange={(newItem) => handleChangeItem(newItem, index)}
 					onSelect={(e) => handleSelect(index, e)}
 				/>
-			))}
+			) : readOnly ? <div>empty</div> : null}
 
 			{/* BOTTONE NEW */}
 			{!readOnly && onNewItem && (
@@ -140,7 +156,7 @@ const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
 	borderRadius: 5,
 })
 
-const cssButton:React.CSSProperties = {
+const cssButton: React.CSSProperties = {
 	backgroundColor: '#00000010',
 	borderRadius: 3,
 }
