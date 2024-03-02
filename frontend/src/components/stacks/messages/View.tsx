@@ -131,7 +131,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			<EditList<Subscription>
 				items={msgSa.subscriptions}
 				onChangeItems={handleChangeSubs}
-				fnNewItem={() => ({ subject: "<new>" })}
+				onNewItem={() => ({ subject: "<new>" })}
 				RenderRow={EditSubscriptionRow}
 			/>
 		</Dialog>

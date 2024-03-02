@@ -8,18 +8,15 @@ import Quote from "@/components/format/Quote"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
-import EditItemRow from "@/components/rows/EditItemRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { buildNewSource } from "@/stores/stacks/streams/utils/factory"
 import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE, Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
-import ElementDialog from "../../../dialogs/ElementDialog"
 import ListDialog from "../../../dialogs/ListDialog"
-import EditSourceCmp from "./EditSourceCmp"
+import SourceCmp from "./source/SourceCmp"
 
 
 
@@ -49,29 +46,6 @@ const EditForm: FunctionComponent<Props> = ({
 		streamSo.setStreamConfig(config)
 	}
 
-
-
-
-	const [elementSource, setElementSource] = useState<HTMLElement>(null)
-	const [souceIndex, setSourceIndex] = useState<number>(null)
-	const listRef = useRef(null)
-	const handleSourceSelect = (index: number, e: React.BaseSyntheticEvent) => {
-		setSourceIndex(index)
-		setElementSource(e.target)
-		
-	}
-	const handleSourcesChange = (sources: Source[]) => {
-		config.sources = sources
-		streamSo.setStream({ ...streamSa.stream })
-	}
-	const sourcesClear = () => {
-		config.sources = config.sources.filter( s => s.name.length > 0)
-		streamSo.setStream({ ...streamSa.stream })
-	}
-	const handleSourceChange = (source: Source) => {
-		config.sources[souceIndex] = source
-		streamSo.setStream({ ...streamSa.stream })
-	}
 
 	const handleMirrorCheck = (check: boolean) => {
 		if (check) {
@@ -126,7 +100,7 @@ const EditForm: FunctionComponent<Props> = ({
 				onChangeItems={subjects => handlePropChange({ subjects })}
 				variant={variant}
 				readOnly={inRead}
-				fnNewItem={() => "<new>"}
+				onNewItem={() => "<new>"}
 				RenderRow={EditStringRow}
 			/>
 		</BoxV>
@@ -284,7 +258,7 @@ const EditForm: FunctionComponent<Props> = ({
 			</Quote>
 		</BoxV>
 
-		<BoxV style={{ gap: 3}}>
+		<BoxV>
 			<Box>
 				<IconToggle
 					check={!!config.mirror}
@@ -336,43 +310,8 @@ const EditForm: FunctionComponent<Props> = ({
 			</Accordion>
 		</BoxV>
 
-		<BoxV>
-			<Label>SOURCES</Label>
-			<Quote>
-				<EditList<Source>
-					items={config.sources}
-					onChangeItems={handleSourcesChange}
-					onSelect={handleSourceSelect}
-					readOnly={inRead}
-					fnNewItem={() => {
-						sourcesClear();
-						return buildNewSource();
-					}}
-					RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
-					ref={listRef}
-				/>
-			</Quote>
-			<ElementDialog
-				title="SOURCE"
-				element={elementSource}
-				store={streamSo}
-				width={250}
-				timeoutClose={0}
-				onClose={(e) => {
-					if (listRef && listRef.current.contains(e.target)) return
-					setElementSource(null)
-					sourcesClear()
-				}}
-			>
-				<EditSourceCmp
-					source={config.sources?.[souceIndex]}
-					onChange={handleSourceChange}
-					allStream={allStreams}
-					readOnly={inRead}
-				/>
-			</ElementDialog>
-		</BoxV>
-
+		<SourceCmp store={streamSo} />
+		
 		<Box>
 			<IconToggle
 				check={config.sealed}

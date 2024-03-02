@@ -22,7 +22,7 @@ interface Props<T> {
 	style?: React.CSSProperties
 
 	/** restituisce nuovo ITEM (su click btt NEW) */
-	fnNewItem?: () => T
+	onNewItem?: (index:number) => T
 	onChangeItems?: (newItems: T[]) => void
 	onSelect?: (index: number, e: React.BaseSyntheticEvent) => void
 	
@@ -36,7 +36,7 @@ function EditList<T>({
 	readOnly = false,
 	style,
 
-	fnNewItem = () => null,
+	onNewItem,
 	onChangeItems,
 	onSelect,
 
@@ -61,8 +61,9 @@ function EditList<T>({
 	}
 	const handleNewItem = (index?: number, e?:any) => {
 		if (readOnly) return
-		const newItem = fnNewItem()
 		if (index == null) index = items.length
+		const newItem = onNewItem(index)
+		if ( newItem == null ) return
 		items.splice(index, 0, newItem)
 		onChangeItems?.([...items])
 		handleSelect(index, e)
@@ -70,6 +71,7 @@ function EditList<T>({
 
 	}
 	const handleSelect = (index: number, e: React.BaseSyntheticEvent) => {
+		if ( index == indexSelect ) index = -1
 		setIndexSelect(index)
 		onSelect?.(index, e)
 	}
@@ -121,7 +123,7 @@ function EditList<T>({
 			))}
 
 			{/* BOTTONE NEW */}
-			{!readOnly && fnNewItem && (
+			{!readOnly && onNewItem && (
 				<IconButton style={{ backgroundColor: '#00000010', }}
 					onClick={(e) => handleNewItem(null, e)}
 				><AddIcon /></IconButton>

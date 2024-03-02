@@ -1,12 +1,12 @@
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { CnnDetailState } from "@/stores/stacks/connection/detail"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
-import { createPortal } from "react-dom"
-import layoutSo from "@/stores/layout"
-import Label, { LABELS } from "../format/Label"
 import CloseIcon from "@/icons/CloseIcon"
+import layoutSo from "@/stores/layout"
+import { CnnDetailState } from "@/stores/stacks/connection/detail"
+import { ViewStore } from "@/stores/stacks/viewBase"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
+import { createPortal } from "react-dom"
 import IconButton from "../buttons/IconButton"
+import Label, { LABELS } from "../format/Label"
 
 
 
@@ -66,7 +66,6 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		const resizeObserver = new ResizeObserver((entries) => {
 			let rect: DOMRectReadOnly = null
 			entries.forEach((entry) => rect = entry.contentRect)
-			console.log("bound")	
 			setContentRect(rect)
 		})
 		resizeObserver.observe(ref)
@@ -80,8 +79,11 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			if (timeoutClose < 0) return
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
-				setTimeout(() => onClose?.(e), timeoutClose)
-				//onClose?.(e)
+				if ( timeoutClose > 0 ) {
+					setTimeout(() => onClose?.(e), timeoutClose)
+				} else {
+					onClose?.(e)
+				}
 			}
 		}
 		if (open) {

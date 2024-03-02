@@ -1,11 +1,11 @@
 import Options from "@/components/Options"
 import BoxV from "@/components/format/BoxV"
+import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
+import NumberInput from "@/components/input/NumberInput"
+import TextInput from "@/components/input/TextInput"
 import { Source } from "@/types/Stream"
 import { FunctionComponent } from "react"
-import NumberInput from "../../../input/NumberInput"
-import TextInput from "../../../input/TextInput"
-import Form from "@/components/format/Form"
 
 
 
