@@ -22,6 +22,27 @@
 }
 
 
+
+.lbl-prop-title {
+	font-size: 11px;
+	border-bottom: 1px solid rgb(0 0 0 / 32%);
+	border-top: 1px solid rgb(0 0 0 / 32%);
+	padding: 3px;
+	text-align: center;
+	font-weight: 600;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.lbl-prop {
+	font-size: 10px;
+	font-weight: 600;
+}
+
+
+
+
+
+
 .cliccable {
 	cursor: pointer;
 }
