@@ -6,6 +6,7 @@ interface Props {
 	style?: React.CSSProperties
 	preRender?: React.ReactNode
 	enterRender?: React.ReactNode
+	readOnly?:boolean
 	children?: React.ReactNode
 }
 
@@ -13,6 +14,7 @@ const Box: FunctionComponent<Props> = ({
 	style,
 	preRender,
 	enterRender,
+	readOnly,
 	children,
 }) => {
 	// STORE
@@ -33,7 +35,7 @@ const Box: FunctionComponent<Props> = ({
 		>
 			{preRender}
 			{children}
-			{enter && <div style={{ position: "absolute", top: 2, right: 1 }}>
+			{!readOnly && enter && <div style={{ position: "absolute", top: 2, right: 1 }}>
 				{enterRender}
 			</div>}
 		</div>

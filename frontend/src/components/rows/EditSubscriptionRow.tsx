@@ -27,7 +27,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleDelete = () => onChange?.(null)
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
 			onChange?.(null)
@@ -41,22 +41,24 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	const value = item.subject
-	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
 
 	return <Box
 		style={cssRow}
+		readOnly={readOnly}
 		enterRender={<IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		{!noDisable && (
 			<IconToggle
 				check={!item.disabled}
 				onChange={handleChangeEnabled}
+				readOnly={readOnly}
 			/>
 		)}
 		<TextInput
 			style={cssInput(item.disabled)}
 			value={value}
 			focus={isSelect}
+			readOnly={readOnly}
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
 			onFocus={onSelect}

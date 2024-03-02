@@ -9,10 +9,12 @@ export interface TextInputProps {
 	readOnly?: boolean
 	style?: React.CSSProperties
 	focus?: boolean
+	multiline?: boolean
+	rows?: number
 	onChange?: (newValue: string) => void
-	onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
-	onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
-	onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void
+	onFocus?: (e: React.FocusEvent<HTMLInput>) => void
+	onBlur?: (e: React.FocusEvent<HTMLInput>) => void
+	onKeyDown?: (event: React.KeyboardEvent<HTMLInput>) => void
 }
 
 const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
@@ -22,6 +24,8 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		readOnly,
 		style,
 		focus,
+		multiline,
+		rows,
 		onChange,
 		onFocus,
 		onBlur,
@@ -33,7 +37,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	// STORE
 
 	// HOOK
-	const inputRef = useRef<HTMLInputElement>(null)
+	const inputRef = useRef<any>(null)
 	useEffect(() => {
 		if (!focus) return
 		inputRef.current?.select()
@@ -41,30 +45,32 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	useImperativeHandle(ref, () => inputRef.current, [inputRef.current])
 
 	// HANDLER
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)
-	const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInput>) => onChange?.(e.target.value)
+	const handleFocus = (e: React.FocusEvent<HTMLInput>) => {
 		e.target.select()
 		onFocus?.(e)
 	}
 
 	// RENDER
+	if (readOnly) return <div className="lbl-input-readonly">{value}</div>
+	const TagInput = multiline ? "textarea" : "input"
 
-	if (readOnly) return <Label type={LABELS.READ}>{value}</Label>
-
-	return (
-		<input ref={inputRef}
-			style={{ ...cssRoot, ...style }}
-			placeholder={placeholder}
-			value={value}
-			onChange={handleChange}
-			onFocus={handleFocus}
-			onBlur={onBlur}
-			onKeyDown={onKeyDown}
-		/>
-	)
+	return <TagInput ref={inputRef}
+		style={{ ...cssRoot, ...style }}
+		placeholder={placeholder}
+		spellCheck="false"
+		value={value}
+		onChange={handleChange}
+		onFocus={handleFocus}
+		onBlur={onBlur}
+		onKeyDown={onKeyDown}
+		rows={rows}
+	/>
 }
 
 export default forwardRef(TextInput)
 
 const cssRoot: React.CSSProperties = {
 }
+
+type HTMLInput = HTMLInputElement | HTMLTextAreaElement

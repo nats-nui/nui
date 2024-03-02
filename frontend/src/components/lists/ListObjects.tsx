@@ -32,7 +32,7 @@ interface Props<T> {
 	style?: React.CSSProperties
 }
 
-function ListDialog<T>({
+function ListObjects<T>({
 	store,
 	items,
 	readOnly,
@@ -115,7 +115,7 @@ function ListDialog<T>({
 	</>
 }
 
-export default ListDialog
+export default ListObjects
 
 const cssContainer = (height: number): React.CSSProperties => ({
 	display: "flex",

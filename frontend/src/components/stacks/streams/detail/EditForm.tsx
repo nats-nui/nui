@@ -17,7 +17,8 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
 import SourcesCmp from "./source/SourcesCmp"
-import TextArea from "@/components/input/TextArea"
+import MaxAgeCmp from "./source/MaxAgeCmp"
+import MaxBytesCmp from "./source/MaxBytesCmp"
 
 
 
@@ -89,7 +90,7 @@ const EditForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">DESCRIPTION</div>
-			<TextArea
+			<TextInput multiline rows={3}
 				value={config.description}
 				onChange={description => handlePropChange({ description })}
 				readOnly={inRead}
@@ -132,11 +133,11 @@ const EditForm: FunctionComponent<Props> = ({
 		<div className="lbl-prop-title">RETENTION</div>
 		<BoxV>
 			<div className="lbl-prop">POLICY</div>
-			<ListDialog width={80}
+			<ListDialog width={100}
 				store={streamSo}
 				select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
 				items={Object.values(RETENTION)}
-				RenderRow={({ item }) => item}
+				RenderRow={({ item }) => item.toUpperCase()}
 				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
 			/>
@@ -187,21 +188,11 @@ const EditForm: FunctionComponent<Props> = ({
 		<div className="lbl-prop-title">LIMIT</div>
 		<BoxV>
 			<div className="lbl-prop">MAX AGE</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxAge}
-				onChange={maxAge => handlePropChange({ maxAge })}
-				readOnly={inRead}
-			/>
+			<MaxAgeCmp store={streamSo} />
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">MAX BYTES</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxBytes}
-				onChange={maxBytes => handlePropChange({ maxBytes })}
-				readOnly={inRead}
-			/>
+			<MaxBytesCmp store={streamSo} />
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">MAX CONSUMERS</div>
@@ -243,7 +234,7 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 
-		
+
 
 		<div className="lbl-prop-title">PLACMENT</div>
 		<BoxV>

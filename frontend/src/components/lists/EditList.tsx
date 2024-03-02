@@ -85,7 +85,7 @@ function EditList<T>({
 	}
 
 	const handleSelect = (index: number, e: React.BaseSyntheticEvent) => {
-		//if (index == getIndexSelect()) index = -1
+		if (index == getIndexSelect()) index = -1
 		setIndexSelect(index, e)
 	}
 

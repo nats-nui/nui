@@ -5,14 +5,15 @@ import Divider from "@/components/format/Divider"
 import Form from "@/components/format/Form"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
-import ListDialog from "@/components/lists/ListDialog"
+import ListObjects from "@/components/lists/ListObjects"
 import EditStringRow from "@/components/rows/EditStringRow"
 import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import EditAuthRow from "./EditAuthRow"
+import AuthForm from "./AuthForm"
+import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 
 
 
@@ -115,7 +116,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">AUTH</div>
-			<ListDialog<Auth>
+			<ListObjects<Auth>
 				store={cnnDetailSo}
 				items={auths}
 				readOnly={inRead}
@@ -125,13 +126,14 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 							check={auth.active}
 							onChange={(check, e) => handleActivate(check, index, e)}
 							readOnly={inRead}
+							trueIcon={<CheckRadioOnIcon />}
 						/>
 						{auth?.mode}
 					</Box>
 				)}
 				onDelete={handleAuthDelete}
 				RenderForm={({ item, index, onClose }) => (
-					<EditAuthRow
+					<AuthForm
 						auth={item}
 						readOnly={inRead}
 						onClose={(auth) => { onClose(); handleAuthChange(auth, index) }}

@@ -34,7 +34,7 @@ const cssRoot: React.CSSProperties = {
 	gap: "5px",
 	borderLeft: '2px solid rgba(0, 0, 0, 0.4)',
 	paddingLeft: "5px",
-	paddingBottom: "5px",
+	//paddingBottom: "5px",
 	marginTop: '3px',
 
 }
