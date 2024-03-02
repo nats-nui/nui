@@ -130,7 +130,7 @@ const MessagesView: FunctionComponent<Props> = ({
 		>
 			<EditList<Subscription>
 				items={msgSa.subscriptions}
-				onChangeItems={handleChangeSubs}
+				onItemsChange={handleChangeSubs}
 				onNewItem={() => ({ subject: "<new>" })}
 				RenderRow={EditSubscriptionRow}
 			/>
