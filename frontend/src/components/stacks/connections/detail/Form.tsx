@@ -1,7 +1,8 @@
+import IconToggle from "@/components/buttons/IconToggle"
+import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import Divider from "@/components/format/Divider"
 import Form from "@/components/format/Form"
-import Label from "@/components/format/Label"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import ListDialog from "@/components/lists/ListDialog"
@@ -12,8 +13,6 @@ import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
 import EditAuthRow from "./EditAuthRow"
-import Box from "@/components/format/Box"
-import IconToggle from "@/components/buttons/IconToggle"
 
 
 
@@ -78,8 +77,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 	return <Form>
 
+		<div className="lbl-prop-title">BASE</div>
 		<BoxV>
-			<Label>NAME</Label>
+			<div className="lbl-prop">NAME</div>
 			<TextInput
 				value={name}
 				onChange={handleChangeName}
@@ -88,7 +88,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 		</BoxV>
 
 		<BoxV>
-			<Label>HOST</Label>
+			<div className="lbl-prop">HOST</div>
 			<EditList<string>
 				items={hosts}
 				onItemsChange={handleHostsChange}
@@ -102,7 +102,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 		<Divider style={{ marginBottom: 5 }} label="ADVANCED" />
 
 		<BoxV>
-			<Label>SUBSCRIPTIONS</Label>
+			<div className="lbl-prop">SUBSCRIPTIONS</div>
 			<EditList<Subscription>
 				items={subscriptions}
 				onItemsChange={handleSubscriptionsChange}
@@ -114,7 +114,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 		</BoxV>
 
 		<BoxV>
-			<Label>AUTH</Label>
+			<div className="lbl-prop">AUTH</div>
 			<ListDialog<Auth>
 				store={cnnDetailSo}
 				items={auths}

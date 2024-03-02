@@ -79,7 +79,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			if (timeoutClose < 0) return
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
 			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
-				if ( timeoutClose > 0 ) {
+				if (timeoutClose > 0) {
 					setTimeout(() => onClose?.(e), timeoutClose)
 				} else {
 					onClose?.(e)
@@ -121,13 +121,14 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			ref={(node) => setRef(node)}
 			style={cssRoot(variant, width, y)}
 		>
-
-			<div style={cssTitle}>
-				<Label type={LABELS.TITLE_DIALOG} style={{ flex: 1 }}>{title}</Label>
-				<IconButton onClick={(e) => onClose(e)}>
-					<CloseIcon />
-				</IconButton>
-			</div>
+			{title != null &&
+				<div style={cssTitle}>
+					<Label type={LABELS.TITLE_DIALOG} style={{ flex: 1 }}>{title}</Label>
+					<IconButton onClick={(e) => onClose(e)}>
+						<CloseIcon />
+					</IconButton>
+				</div>
+			}
 
 			<div style={cssBody}>
 				{children}

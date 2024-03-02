@@ -86,8 +86,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	const inRead = streamSa.editState == EDIT_STATE.READ
 	const allStreams = streamSa.allStreams
 
-	return <BoxV>
-		<Label>SOURCES</Label>
+	return <>
 		<Quote>
 			<EditList<Source> ref={listRef} keepSelectOnBlur
 				items={sources}
@@ -114,7 +113,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 				readOnly={inRead}
 			/>
 		</ElementDialog>
-	</BoxV>
+	</>
 }
 
 export default SourcesCmp
