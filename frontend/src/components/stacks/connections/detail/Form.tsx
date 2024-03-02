@@ -92,7 +92,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			<EditList<string>
 				items={hosts}
 				onChangeItems={handleHostsChange}
-				fnNewItem={() => "<new>"}
+				onNewItem={() => "<new>"}
 				RenderRow={EditStringRow}
 				readOnly={inRead}
 				variant={variant}
@@ -106,7 +106,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			<EditList<Subscription>
 				items={subscriptions}
 				onChangeItems={handleSubscriptionsChange}
-				fnNewItem={() => ({ subject: "<new>" })}
+				onNewItem={() => ({ subject: "<new>" })}
 				RenderRow={EditSubscriptionNoDisableRow}
 				readOnly={inRead}
 				variant={variant}
