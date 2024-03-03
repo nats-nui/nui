@@ -1,6 +1,5 @@
 import IconButton from "@/components/buttons/IconButton"
 import IconToggle from "@/components/buttons/IconToggle"
-import Label, { LABELS } from "@/components/format/Label"
 import CloseIcon from "@/icons/CloseIcon"
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
@@ -19,6 +18,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 	isSelect,
 	readOnly = false,
 	noDisable,
+	placeholder,
 	onChange,
 	onSelect,
 }) => {
@@ -57,6 +57,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 		<TextInput
 			style={cssInput(item.disabled)}
 			value={value}
+			placeholder={placeholder}
 			focus={isSelect}
 			readOnly={readOnly}
 			onChange={handleChange}

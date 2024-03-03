@@ -41,6 +41,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
 	const isBucketsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.BUCKETS
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
+	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 	const variant = cnnDetailSa.colorVar
 
 	return <FrameworkCard
@@ -73,29 +74,31 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			</BoxV>
 		}
 	>
-		{!isNew && <div style={{ marginBottom: 20 }}>
-			<RowButton
-				icon={<MessagesIcon  />}
-				label="MESSAGES"
-				variant={variant}
-				selected={isMessageOpen}
-				onClick={handleMessagesClick}
-			/>
-			<RowButton
-				icon={<StreamsIcon />}
-				label="STREAMS"
-				variant={variant}
-				selected={isStreamsOpen}
-				onClick={handleStreamsClick}
-			/>
-			<RowButton
-				icon={<BucketsIcon />}
-				variant={variant}
-				label="BUCKETS"
-				selected={isBucketsOpen}
-				onClick={handleBucketsClick}
-			/>
-		</div>}
+		{inRead &&
+			<div style={{ marginBottom: 20 }}>
+				<RowButton
+					icon={<MessagesIcon />}
+					label="MESSAGES"
+					variant={variant}
+					selected={isMessageOpen}
+					onClick={handleMessagesClick}
+				/>
+				<RowButton
+					icon={<StreamsIcon />}
+					label="STREAMS"
+					variant={variant}
+					selected={isStreamsOpen}
+					onClick={handleStreamsClick}
+				/>
+				<RowButton
+					icon={<BucketsIcon />}
+					variant={variant}
+					label="BUCKETS"
+					selected={isBucketsOpen}
+					onClick={handleBucketsClick}
+				/>
+			</div>
+		}
 
 		<ConnectionDetailForm
 			cnnDetailSo={cnnDetailSo}

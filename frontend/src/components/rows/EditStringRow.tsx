@@ -11,6 +11,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	item,
 	isSelect,
 	readOnly = false,
+	placeholder,
 	onChange,
 	onSelect,
 }) => {
@@ -18,7 +19,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 	// HOOKS
 
 	// HANDLER
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 		if ((event.key == "Delete" || event.key == "Backspace") && isVoid(item)) {
 			event.preventDefault()
 			onChange?.(null)
@@ -35,6 +36,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		<TextInput
 			style={{ flex: 1 }}
 			value={item}
+			placeholder={placeholder}
 			readOnly={readOnly}
 			focus={isSelect}
 			onChange={handleChange}

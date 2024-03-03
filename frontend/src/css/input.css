@@ -25,6 +25,10 @@ input::selection {
   background: var(--text-bg);
   color: #DEDEDE;
 }
+
+input::placeholder {
+  opacity: .6;
+}
 /*
 .var0 input::selection {
   background: var(--text-bg);
