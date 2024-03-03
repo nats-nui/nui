@@ -16,9 +16,10 @@ import { DISCARD, RETENTION, STORAGE, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
-import SourcesCmp from "./source/SourcesCmp"
-import MaxAgeCmp from "./source/MaxAgeCmp"
-import MaxBytesCmp from "./source/MaxBytesCmp"
+import SourcesCmp from "./cmp/SourcesCmp"
+import MaxAgeCmp from "./cmp/MaxAgeCmp"
+import MaxBytesCmp from "./cmp/MaxBytesCmp"
+import MaxNumberCmp from "./cmp/MaxNumberCmp"
 
 
 
@@ -114,9 +115,10 @@ const EditForm: FunctionComponent<Props> = ({
 			<EditList<string>
 				items={config.subjects}
 				onItemsChange={subjects => handlePropChange({ subjects })}
+				placeholder="ex. orders.* or telemetry.>"
 				variant={variant}
 				readOnly={inRead}
-				onNewItem={() => "<new>"}
+				onNewItem={() => ""}
 				RenderRow={EditStringRow}
 			/>
 		</BoxV>
@@ -186,50 +188,35 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 		<div className="lbl-prop-title">LIMIT</div>
-		<BoxV>
-			<div className="lbl-prop">MAX AGE</div>
-			<MaxAgeCmp store={streamSo} />
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">MAX BYTES</div>
-			<MaxBytesCmp store={streamSo} />
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">MAX CONSUMERS</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxConsumers}
-				onChange={maxConsumers => handlePropChange({ maxConsumers })}
-				readOnly={inRead || !inNew}
-			/>
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">MAX MSG SIZE</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxMsgSize}
-				onChange={maxMsgSize => handlePropChange({ maxMsgSize })}
-				readOnly={inRead}
-			/>
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">MAX MESSAGES</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxMsgs}
-				onChange={maxMsgs => handlePropChange({ maxMsgs })}
-				readOnly={inRead}
-			/>
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">MAX MSGS PER SUBJECT</div>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={config.maxMsgsPerSubject}
-				onChange={maxMsgsPerSubject => handlePropChange({ maxMsgsPerSubject })}
-				readOnly={inRead}
-			/>
-		</BoxV>
+		<MaxAgeCmp store={streamSo} label="MAX AGE" />
+		<MaxBytesCmp store={streamSo}
+			label="MAX BYTES"
+			value={config.maxBytes}
+			onChange={maxBytes => streamSo.setStreamConfig({ ...streamSa.stream.config, maxBytes })}
+		/>
+		<MaxNumberCmp
+			label="MAX CONSUMERS"
+			store={streamSo}
+			value={config.maxConsumers}
+			onChange={maxConsumers => streamSo.setStreamConfig({ ...streamSa.stream.config, maxConsumers })}
+		/>
+		<MaxBytesCmp store={streamSo}
+			label="MAX MSG SIZE"
+			value={config.maxMsgSize}
+			onChange={maxMsgSize => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgSize })}
+		/>
+		<MaxNumberCmp
+			label="MAX MESSAGES"
+			store={streamSo}
+			value={config.maxMsgs}
+			onChange={maxMsgs => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgs })}
+		/>
+		<MaxNumberCmp
+			label="MAX MSGS PER SUBJECT"
+			store={streamSo}
+			value={config.maxMsgsPerSubject}
+			onChange={maxMsgsPerSubject => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgsPerSubject })}
+		/>
 
 
 

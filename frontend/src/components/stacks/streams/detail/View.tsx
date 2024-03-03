@@ -65,7 +65,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			</BoxV>
 		}
 	>
-		{inRead ? (<>
+		{inRead ? <>
 			<RowButton
 				icon={<MessagesIcon />}
 				label="MESSAGES"
@@ -81,7 +81,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				onClick={handleConsumersClick}
 			/>
 			<ShowForm store={streamSo} />
-		</>) : (
+		</> : (
 			<EditForm store={streamSo} />
 		)}
 	</FrameworkCard>

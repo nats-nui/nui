@@ -13,6 +13,7 @@ export interface RenderRowBaseProps<T> {
 	item: T
 	isSelect?: boolean
 	readOnly?: boolean
+	placeholder?: string
 	onChange?: (newItem: T) => void
 	onSelect?: (e: React.SyntheticEvent) => void
 }
@@ -22,6 +23,7 @@ interface Props<T> {
 	select?: number
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
+	placeholder?:string
 	variant?: number
 	readOnly?: boolean
 	keepSelectOnBlur?: boolean
@@ -39,6 +41,7 @@ function EditList<T>({
 	items,
 	select,
 	RenderRow,
+	placeholder,
 	variant = 0,
 	readOnly = false,
 	keepSelectOnBlur,
@@ -131,6 +134,7 @@ function EditList<T>({
 			{items?.length > 0 ? items.map((item, index) =>
 				<RenderRow key={index}
 					item={item}
+					placeholder={placeholder}
 					isSelect={getIndexSelect() == index}
 					readOnly={readOnly}
 					onChange={(newItem) => handleChangeItem(newItem, index)}

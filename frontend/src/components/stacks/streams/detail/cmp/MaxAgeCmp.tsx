@@ -1,6 +1,8 @@
+import Accordion from "@/components/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import ListDialog from "@/components/dialogs/ListDialog"
 import Box from "@/components/format/Box"
+import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
@@ -19,10 +21,12 @@ enum TIME {
 
 interface Props {
 	store?: StreamStore
+	label?: string
 }
 
 const MaxAgeCmp: FunctionComponent<Props> = ({
 	store: streamSo,
+	label,
 }) => {
 
 	// STORE
@@ -46,29 +50,35 @@ const MaxAgeCmp: FunctionComponent<Props> = ({
 	const isEnabled = config.maxAge != -1
 	const valueShow = secondsToValue(config.maxAge, unit)
 
-	return <Box style={{ minHeight: 22 }}>
-		<IconToggle
-			check={isEnabled}
-			onChange={handleEnabledCheck}
-			readOnly={inRead || !inNew}
-		/>
-		{isEnabled && <>
-			<NumberInput
-				style={{ flex: 1 }}
-				value={valueShow}
-				onChange={handlePropChange}
-				readOnly={inRead}
-			/>
-			<ListDialog width={100}
-				store={streamSo}
-				select={Object.values(TIME).indexOf(unit ?? TIME.SECONDS)}
-				items={Object.values(TIME)}
-				RenderRow={({ item }) => item.toUpperCase()}
+	return <BoxV>
+		<Box>
+			<IconToggle
+				check={isEnabled}
+				onChange={handleEnabledCheck}
 				readOnly={inRead || !inNew}
-				onSelect={handleUnitChange}
 			/>
-		</>}
-	</Box>
+			<div className="lbl-prop">{label}</div>
+
+		</Box>
+		<Accordion open={isEnabled}>
+			<Box style={{ minHeight: 22 }}>
+				<NumberInput
+					style={{ flex: 1.5 }}
+					value={valueShow}
+					onChange={handlePropChange}
+					readOnly={inRead}
+				/>
+				<ListDialog width={100}
+					store={streamSo}
+					select={Object.values(TIME).indexOf(unit ?? TIME.SECONDS)}
+					items={Object.values(TIME)}
+					RenderRow={({ item }) => item.toUpperCase()}
+					readOnly={inRead || !inNew}
+					onSelect={handleUnitChange}
+				/>
+			</Box>
+		</Accordion>
+	</BoxV>
 }
 
 export default MaxAgeCmp
