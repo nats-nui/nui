@@ -3,7 +3,6 @@ import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
-import Label, { LABELS } from "@/components/format/Label"
 import Quote from "@/components/format/Quote"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
@@ -78,8 +77,8 @@ const EditForm: FunctionComponent<Props> = ({
 
 	return <Form>
 
+		<div className="lbl-prop-title">BASE</div>
 
-		<div className="lbl-prop-title">BASIC INFO</div>
 		<BoxV>
 			<div className="lbl-prop">NAME</div>
 			<TextInput
@@ -91,7 +90,7 @@ const EditForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">DESCRIPTION</div>
-			<TextInput multiline rows={3}
+			<TextInput multiline rows={2}
 				value={config.description}
 				onChange={description => handlePropChange({ description })}
 				readOnly={inRead}
@@ -188,32 +187,39 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 		<div className="lbl-prop-title">LIMIT</div>
-		<MaxAgeCmp store={streamSo} label="MAX AGE" />
+		<MaxAgeCmp store={streamSo}
+			readOnly={inRead || !inNew}
+			label="MAX AGE"
+			value={config.maxAge}
+			onChange={maxAge => streamSo.setStreamConfig({ ...streamSa.stream.config, maxAge })}
+		/>
 		<MaxBytesCmp store={streamSo}
+			readOnly={inRead || !inNew}
 			label="MAX BYTES"
 			value={config.maxBytes}
 			onChange={maxBytes => streamSo.setStreamConfig({ ...streamSa.stream.config, maxBytes })}
 		/>
 		<MaxNumberCmp
+			readOnly={inRead || !inNew}
 			label="MAX CONSUMERS"
-			store={streamSo}
 			value={config.maxConsumers}
 			onChange={maxConsumers => streamSo.setStreamConfig({ ...streamSa.stream.config, maxConsumers })}
 		/>
 		<MaxBytesCmp store={streamSo}
+			readOnly={inRead || !inNew}
 			label="MAX MSG SIZE"
 			value={config.maxMsgSize}
 			onChange={maxMsgSize => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgSize })}
 		/>
 		<MaxNumberCmp
+			readOnly={inRead || !inNew}
 			label="MAX MESSAGES"
-			store={streamSo}
 			value={config.maxMsgs}
 			onChange={maxMsgs => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgs })}
 		/>
 		<MaxNumberCmp
+			readOnly={inRead || !inNew}
 			label="MAX MSGS PER SUBJECT"
-			store={streamSo}
 			value={config.maxMsgsPerSubject}
 			onChange={maxMsgsPerSubject => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgsPerSubject })}
 		/>
@@ -234,10 +240,18 @@ const EditForm: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 		<BoxV>
-			<div className="lbl-prop">PLACEMENT</div>
+			<div className="lbl-prop">CLUSTER</div>
 			<Quote>
 				<BoxV>
-					<Label type={LABELS.SUBTEXT}>NAME</Label>
+					<div className="lbl-prop">NAME</div>
+					<TextInput
+						value={config.templateOwner}
+						onChange={templateOwner => handlePropChange({ templateOwner })}
+						readOnly={inRead}
+					/>
+				</BoxV>
+				<BoxV>
+					<div className="lbl-prop">TAGS</div>
 					<TextInput
 						value={config.templateOwner}
 						onChange={templateOwner => handlePropChange({ templateOwner })}
@@ -291,7 +305,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<Accordion open={!!config.mirror}>
 				<Quote>
 					<BoxV>
-						<Label type={LABELS.SUBTEXT}>NAME</Label>
+						<div className="lbl-prop">NAME</div>
 						<ListDialog
 							store={streamSo}
 							select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
@@ -311,7 +325,7 @@ const EditForm: FunctionComponent<Props> = ({
 						{/*	}*/}
 					</BoxV>
 					<BoxV>
-						<Label type={LABELS.SUBTEXT}>START SEQUENCE</Label>
+						<div className="lbl-prop">START SEQUENCE</div>
 						<NumberInput
 							style={{ flex: 1 }}
 							value={config.mirror?.optStartSeq}
@@ -320,7 +334,7 @@ const EditForm: FunctionComponent<Props> = ({
 						/>
 					</BoxV>
 					<BoxV>
-						<Label type={LABELS.SUBTEXT}>FILTER SUBJECT</Label>
+						<div className="lbl-prop">FILTER SUBJECT</div>
 						<TextInput
 							value={config.mirror?.filterSubject}
 							onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
@@ -366,7 +380,7 @@ const EditForm: FunctionComponent<Props> = ({
 			<Accordion open={!!config.republish}>
 				<Quote>
 					<BoxV>
-						<Label type={LABELS.SUBTEXT}>SOURCE</Label>
+						<div className="lbl-prop">SOURCE</div>
 						<TextInput
 							value={config.republish?.src}
 							onChange={src => handleRepublishPropChange({ src })}
@@ -374,7 +388,7 @@ const EditForm: FunctionComponent<Props> = ({
 						/>
 					</BoxV>
 					<BoxV>
-						<Label type={LABELS.SUBTEXT}>DESTINATION</Label>
+						<div className="lbl-prop">DESTINATION</div>
 						<TextInput
 							value={config.republish?.dest}
 							onChange={dest => handleRepublishPropChange({ dest })}
@@ -387,7 +401,7 @@ const EditForm: FunctionComponent<Props> = ({
 							onChange={headersOnly => handleRepublishPropChange({ headersOnly })}
 							readOnly={inRead}
 						/>
-						<Label type={LABELS.SUBTEXT}>HEADERS ONLY</Label>
+						<div className="lbl-prop">HEADERS ONLY</div>
 					</Box>
 				</Quote>
 			</Accordion>

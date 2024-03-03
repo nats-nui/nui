@@ -5,6 +5,7 @@ import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { BucketConfig, BucketState } from "@/types/Bucket";
 import { STORAGE } from "@/types/Stream";
 import { BucketStatus, BucketStore } from "../detail";
+import { VIEW_SIZE } from "../../utils";
 
 
 
@@ -66,7 +67,9 @@ export function buildBucketNew(connectionId: string) {
 	if (!connectionId) { console.error("no param"); return null; }
 	const bucketStore = buildStore({
 		type: DOC_TYPE.BUCKET,
-		editState: EDIT_STATE.NEW,		
+		editState: EDIT_STATE.NEW,
+		size: VIEW_SIZE.NORMAL,
+		sizeForce: true,
 		connectionId,
 		bucketConfig: buildNewBucketConfig(),
 	} as BucketStatus) as BucketStore;

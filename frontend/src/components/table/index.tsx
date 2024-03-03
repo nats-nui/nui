@@ -1,5 +1,5 @@
 import layoutSo from "@/stores/layout"
-import { CSSProperties, FunctionComponent, useMemo, useState } from "react"
+import React, { CSSProperties, FunctionComponent, useMemo, useState } from "react"
 import Header, { ORDER_TYPE } from "./Header"
 
 
@@ -77,13 +77,14 @@ const Table: FunctionComponent<Props> = ({
 		/>
 
 		<tbody>
-			{itemsSort.map((item) => {
+			{itemsSort.map((item, index) => {
 				const id = getId(item)
+			
 				const selected = isSelected(item)
-				return <>
+				return <React.Fragment key={id}>
+
 					{!!propMain && (
-						<tr
-							key={`${id}_1`}
+						<tr 
 							style={cssRowMain(selected, variant)}
 							onClick={() => handleSelect(item)}
 						>
@@ -93,18 +94,18 @@ const Table: FunctionComponent<Props> = ({
 						</tr>
 					)}
 
-					<tr key={id}
+					<tr 
 						style={cssRow(selected, variant)}
 						onClick={() => handleSelect(item)}
 					>
-						{props.map((prop) => (
-							<td style={cssRowCellNumber}>
+						{props.map((prop, index) => (
+							<td key={index} style={cssRowCellNumber}>
 								{getValueString(item, prop)}
 							</td>
 						))}
 					</tr>
 
-				</>
+				</React.Fragment>
 			})}
 		</tbody>
 	</table>
