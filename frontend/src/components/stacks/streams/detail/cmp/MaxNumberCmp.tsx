@@ -3,29 +3,26 @@ import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
-import { StreamStore } from "@/stores/stacks/streams/detail"
-import { EDIT_STATE } from "@/types"
-import { useStore } from "@priolo/jon"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
 
 
 
 interface Props {
-	store?: StreamStore
 	value: number
 	label?: string
+	readOnly?: boolean
 	onChange?: (valueNew: number) => void
 }
 
 const MaxNumberCmp: FunctionComponent<Props> = ({
-	store: streamSo,
 	value,
 	label,
+	readOnly,
 	onChange,
 }) => {
 
 	// STORE
-	const streamSa = useStore(streamSo)
 
 	// HOOKs
 
@@ -36,8 +33,6 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	const handleEnabledCheck = (check: boolean) => handlePropChange(check ? 0 : -1)
 
 	// RENDER
-	const inRead = streamSa.editState == EDIT_STATE.READ
-	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const isEnabled = value != -1
 	const valueShow = value
 
@@ -46,7 +41,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
-				readOnly={inRead || !inNew}
+				readOnly={readOnly}
 			/>
 			<div className="lbl-prop">{label}</div>
 		</Box>
@@ -56,7 +51,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 					style={{ flex: 1 }}
 					value={valueShow}
 					onChange={handlePropChange}
-					readOnly={inRead}
+					readOnly={readOnly}
 				/>
 			</Box>
 		</Accordion>

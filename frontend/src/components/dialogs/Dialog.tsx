@@ -78,7 +78,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		const handleClick = (e: MouseEvent) => {
 			if (timeoutClose < 0) return
 			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
-			if (open == true && refDialog && !refDialog.contains(e.target as any)) {
+			if (open == true && ref && !ref.contains(e.target as any)) {
 				if (timeoutClose > 0) {
 					setTimeout(() => onClose?.(e), timeoutClose)
 				} else {
@@ -95,7 +95,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			if (timeoutClose < 0) return
 			document.removeEventListener('mousedown', handleClick)
 		}
-	}, [open])
+	}, [open, ref])
 
 	const y = useMemo(() => {
 		if (top == null) return 0

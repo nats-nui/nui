@@ -5,8 +5,7 @@ import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { EDIT_STATE } from "@/types"
-import { StreamConfig } from "@/types/Stream"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
 
@@ -20,17 +19,22 @@ enum TIME {
 }
 
 interface Props {
-	store?: StreamStore
+	store?: ViewStore
 	label?: string
+	value: number
+	readOnly?: boolean
+	onChange?: (valueNew: number) => void
 }
 
 const MaxAgeCmp: FunctionComponent<Props> = ({
-	store: streamSo,
+	store,
+	value,
 	label,
+	readOnly,
+	onChange,
 }) => {
 
 	// STORE
-	const streamSa = useStore(streamSo)
 
 	// HOOKs
 	const [unit, setUnit] = useState(TIME.SECONDS)
@@ -38,27 +42,23 @@ const MaxAgeCmp: FunctionComponent<Props> = ({
 	// HANDLER
 	const handlePropChange = (value: number) => {
 		const maxAge = valueToSeconds(value, unit)
-		streamSo.setStreamConfig({ ...streamSa.stream.config, maxAge })
+		onChange?.(maxAge)
 	}
 	const handleEnabledCheck = (check: boolean) => handlePropChange(check ? 0 : -1)
 	const handleUnitChange = (index: number) => setUnit(Object.values(TIME)[index])
 
 	// RENDER
-	const config: StreamConfig = streamSa.stream.config
-	const inRead = streamSa.editState == EDIT_STATE.READ
-	const inNew = streamSa.editState == EDIT_STATE.NEW
-	const isEnabled = config.maxAge != -1
-	const valueShow = secondsToValue(config.maxAge, unit)
+	const isEnabled = value != -1
+	const valueShow = secondsToValue(value, unit)
 
 	return <BoxV>
 		<Box>
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
-				readOnly={inRead || !inNew}
+				readOnly={readOnly}
 			/>
 			<div className="lbl-prop">{label}</div>
-
 		</Box>
 		<Accordion open={isEnabled}>
 			<Box style={{ minHeight: 22 }}>
@@ -66,14 +66,14 @@ const MaxAgeCmp: FunctionComponent<Props> = ({
 					style={{ flex: 1.5 }}
 					value={valueShow}
 					onChange={handlePropChange}
-					readOnly={inRead}
+					readOnly={readOnly}
 				/>
 				<ListDialog width={100}
-					store={streamSo}
+					store={store}
 					select={Object.values(TIME).indexOf(unit ?? TIME.SECONDS)}
 					items={Object.values(TIME)}
 					RenderRow={({ item }) => item.toUpperCase()}
-					readOnly={inRead || !inNew}
+					readOnly={readOnly}
 					onSelect={handleUnitChange}
 				/>
 			</Box>

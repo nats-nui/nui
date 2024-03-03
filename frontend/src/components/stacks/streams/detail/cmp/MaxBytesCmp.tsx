@@ -5,8 +5,7 @@ import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { EDIT_STATE } from "@/types"
-import { useStore } from "@priolo/jon"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
 
 
@@ -20,21 +19,22 @@ enum BYTE {
 }
 
 interface Props {
-	store?: StreamStore
+	store?: ViewStore
 	value: number
 	label?: string
+	readOnly?: boolean
 	onChange?: (valueNew: number) => void
 }
 
 const MaxBytesCmp: FunctionComponent<Props> = ({
-	store: streamSo,
+	store,
 	value,
 	label,
+	readOnly,
 	onChange,
 }) => {
 
 	// STORE
-	const streamSa = useStore(streamSo)
 
 	// HOOKs
 	const [unit, setUnit] = useState(BYTE.BYTES)
@@ -48,8 +48,6 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 	const handleUnitChange = (index: number) => setUnit(Object.values(BYTE)[index])
 
 	// RENDER
-	const inRead = streamSa.editState == EDIT_STATE.READ
-	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const isEnabled = value != -1
 	const valueShow = bytesToValue(value, unit)
 
@@ -58,24 +56,24 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
-				readOnly={inRead || !inNew}
+				readOnly={readOnly}
 			/>
 			<div className="lbl-prop">{label}</div>
 		</Box>
-		<Accordion open={isEnabled}>
+		<Accordion open={isEnabled} height={22}>
 			<Box style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 2 }}
 					value={valueShow}
 					onChange={handlePropChange}
-					readOnly={inRead}
+					readOnly={readOnly}
 				/>
 				<ListDialog width={100}
-					store={streamSo}
+					store={store}
 					select={Object.values(BYTE).indexOf(unit ?? BYTE.BYTES)}
 					items={Object.values(BYTE)}
 					RenderRow={({ item }) => item.toUpperCase()}
-					readOnly={inRead || !inNew}
+					readOnly={readOnly}
 					onSelect={handleUnitChange}
 				/>
 			</Box>

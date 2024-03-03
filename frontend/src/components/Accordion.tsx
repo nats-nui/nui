@@ -1,5 +1,5 @@
 import { ANIM_TIME_CSS } from "@/types"
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 
 
 
@@ -18,14 +18,22 @@ const Accordion: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOK
-	const ref = useRef(null)
+	const ref = useRef<HTMLDivElement>(null)
+	const [heightLoc, setHeightLoc] = useState<number>(null)
+	useEffect(()=>{
+		setTimeout(()=>setHeightLoc(ref.current.scrollHeight), 200)
+	},[])
 
 	// HANDLER
 
 	// RENDER
-	const currentHeight = !open ? 0 : height != null ? height : (!ref.current || !ref.current?.scrollHeight ? "auto" : ref.current?.scrollHeight)
+	const currentHeight = !open ? 0 : height ?? heightLoc ?? "auto"
+
 	return (
-		<div ref={ref} style={cssRoot(currentHeight, height == null)}>
+		<div 
+			ref={ref}
+			style={cssRoot(currentHeight, height == null)}
+		>
 			{children}
 		</div>
 	)
@@ -33,7 +41,7 @@ const Accordion: FunctionComponent<Props> = ({
 
 export default Accordion
 
-const cssRoot = (height: number, noScroll: boolean): React.CSSProperties => ({
+const cssRoot = (height: number | string, noScroll: boolean): React.CSSProperties => ({
 	display: "flex", flexDirection: "column",
 	//overflowY: "hidden",
 	overflowY: noScroll ? "hidden" : "auto",

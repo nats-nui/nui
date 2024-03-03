@@ -5,6 +5,7 @@ import { StreamsState, StreamsStore } from "..";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { StreamState, StreamStore } from "../detail";
 import { StreamMessagesState, StreamMessagesStore } from "../messages";
+import { VIEW_SIZE } from "../../utils";
 
 
 
@@ -37,6 +38,8 @@ export function buildStreamNew(connectionId: string, allStreams: string[]) {
 	const store = buildStore({
 		type: DOC_TYPE.STREAM,
 		editState: EDIT_STATE.NEW,
+		size: VIEW_SIZE.NORMAL,
+		sizeForce: true,
 		connectionId: connectionId,
 		stream: buildNewStreamInfo(),
 		allStreams,
@@ -67,13 +70,16 @@ export function buildNewStreamConfig(): StreamConfig {
 		description: "",
 		subjects: [],
 		retention: RETENTION.LIMIT,
-		maxConsumers: 0,
-		maxMsgs: 0,
-		maxBytes: 0,
+
+		// LIMIT
+		maxAge: -1,
+		maxBytes: -1,
+		maxConsumers: -1,
+		maxMsgSize: -1,
+		maxMsgs: -1,
+		maxMsgsPerSubject: -1,
+
 		discard: DISCARD.OLD,
-		maxAge: 0,
-		maxMsgsPerSubject: 0,
-		maxMsgSize: 0,
 		storage: STORAGE.FILE,
 		numReplicas: 0,
 		noAck: false,

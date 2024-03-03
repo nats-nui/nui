@@ -27,4 +27,3 @@ export interface BucketState {
     bytes: number // The size of the bucket in bytes
     compressed: boolean // Whether the bucket is compressed or not
 }
-
