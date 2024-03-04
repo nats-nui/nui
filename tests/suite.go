@@ -6,7 +6,7 @@ import (
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
-	nui2 "github.com/nats-nui/nui/internal/nui"
+	"github.com/nats-nui/nui/internal/nui"
 	"github.com/nats-nui/nui/pkg/logging"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
@@ -20,7 +20,8 @@ type NuiTestSuite struct {
 	suite.Suite
 	ctx                 context.Context
 	NatsServer          *server.Server
-	NuiServer           *nui2.App
+	NuiService          *nui.Nui
+	NuiServer           *nui.App
 	nuiServerPort       string
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
@@ -62,10 +63,10 @@ func (s *NuiTestSuite) connectNatsClient() {
 func (s *NuiTestSuite) startNuiServer() {
 
 	mockedLogger := &logging.NullLogger{}
-	nuiSvc, err := nui2.Setup(":memory:", mockedLogger)
+	nuiSvc, err := nui.Setup(":memory:", mockedLogger)
 	s.NoError(err)
 
-	s.NuiServer = nui2.NewServer(s.nuiServerPort, nuiSvc, mockedLogger)
+	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
 	go func() {

@@ -106,7 +106,7 @@ func (s *NuiTestSuite) TestStreamRest() {
 	e.GET("/api/connection/" + connId + "/stream").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
-	s.filledStream("filled_stream")
+	s.filledStreamMultiSub("filled_stream", "sub1", "sub2")
 	// check that subject messages are added in state of the stream
 	e.GET("/api/connection/" + connId + "/stream/filled_stream").
 		Expect().
@@ -118,7 +118,7 @@ func (s *NuiTestSuite) TestStreamRest() {
 func (s *NuiTestSuite) TestStreamConsumerRest() {
 	e := s.e
 	connId := s.defaultConn()
-	stream := s.filledStream("stream1")
+	stream := s.filledStreamMultiSub("stream1", "sub1", "sub2")
 	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
@@ -141,12 +141,12 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 
 }
 
-func (s *NuiTestSuite) TestStreamMessagesRest() {
+func (s *NuiTestSuite) TestStreamMessagesIndex() {
 	e := s.e
 	connId := s.defaultConn()
-	s.filledStream("stream1")
+	s.filledStreamMultiSub("stream1", "sub1", "sub2")
 
-	// get stream messages
+	//get stream messages
 	r := e.GET("/api/connection/" + connId + "/stream/stream1/messages").
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(15)
@@ -166,10 +166,79 @@ func (s *NuiTestSuite) TestStreamMessagesRest() {
 		WithQueryString("subjects=sub1").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
 
-	time.Sleep(1 * time.Second)
-	//ensure no consumers are pending
-	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
-		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
+	s.ensureNoNuiConsumersPending(connId, "stream1")
+
+}
+
+func (s *NuiTestSuite) TestStreamMessagesIndexWithNegativeInterval() {
+	// test negative interval to get latests messages
+	connId := s.defaultConn()
+	e := s.e
+	// add a new stream to test
+	s.filledStream("neg_stream", "neg_sub")
+	stream, _ := s.js.Stream(s.ctx, "neg_stream")
+
+	//delete some messages to test negative interval with "holes"
+	_ = stream.DeleteMsg(s.ctx, 1)
+	_ = stream.DeleteMsg(s.ctx, 2)
+	_ = stream.DeleteMsg(s.ctx, 5)
+	_ = stream.DeleteMsg(s.ctx, 7)
+	_ = stream.DeleteMsg(s.ctx, 8)
+	_ = stream.DeleteMsg(s.ctx, 9)
+	_ = stream.DeleteMsg(s.ctx, 11)
+	_ = stream.DeleteMsg(s.ctx, 12)
+
+	// get from last seq last 2 messages
+	r := e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(2)
+	r.Value(0).Object().Value("seq_num").IsEqual(14)
+	r.Value(1).Object().Value("seq_num").IsEqual(15)
+
+	// get from seq 13 last 2 messages (10 and 13
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("seq_start=13&interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(2)
+	r.Value(0).Object().Value("seq_num").IsEqual(10)
+	r.Value(1).Object().Value("seq_num").IsEqual(13)
+
+	// get from seq 12 last 2 messages (7 and 10)
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("seq_start=12&interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(2)
+	r.Value(0).Object().Value("seq_num").IsEqual(6)
+	r.Value(1).Object().Value("seq_num").IsEqual(10)
+
+	// get from seq 9 last 2 messages (3 and 6)
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("seq_start=9&interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(2)
+	r.Value(0).Object().Value("seq_num").IsEqual(4)
+	r.Value(1).Object().Value("seq_num").IsEqual(6)
+
+	// get from seq 3 last 2 messages (only 3 because 1 and 2 are deleted)
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("seq_start=3&interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(1)
+	r.Value(0).Object().Value("seq_num").IsEqual(3)
+
+	// get from seq 2 last 2 messages (empty list)
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("seq_start=2&interval=-2").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(0)
+
+}
+
+func (s *NuiTestSuite) TestStreamMessagesDelete() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledStreamMultiSub("stream1", "sub1", "sub2")
 
 	//delete a message
 	e.DELETE("/api/connection/" + connId + "/stream/stream1/messages/1").
@@ -178,6 +247,8 @@ func (s *NuiTestSuite) TestStreamMessagesRest() {
 	// ensure message is deleted
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(14)
+
+	s.ensureNoNuiConsumersPending(connId, "stream1")
 
 }
 
