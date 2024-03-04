@@ -220,7 +220,11 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 		if err != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
-		querySeq = int(info.State.FirstSeq)
+		if interval > 0 {
+			querySeq = int(info.State.FirstSeq)
+		} else {
+			querySeq = int(info.State.LastSeq)
+		}
 	}
 	// batch is the absolute value of the interval
 	batch := interval
@@ -228,9 +232,13 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 		batch = -batch
 	}
 
-	seekFromSeq, err := findSeekSeq(c.Context(), stream, config, querySeq, interval)
+	seekFromSeq, msgCount, err := findSeekSeq(c.Context(), stream, config, querySeq, interval)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
+	}
+	msgs := make([]ws.NatsMsg, 0, batch)
+	if msgCount == 0 {
+		return c.JSON(msgs)
 	}
 	config.OptStartSeq = seekFromSeq
 	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
@@ -241,8 +249,10 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	msgs := make([]ws.NatsMsg, 0, batch)
 	for msg := range msgBatch.Messages() {
+		if len(msgs) == msgCount {
+			break
+		}
 		if msgBatch.Error() != nil {
 			return c.Status(500).JSON(msgBatch.Error().Error())
 		}
@@ -290,63 +300,73 @@ func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, error) {
+func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, int, error) {
 	if interval >= 0 {
-		return uint64(startSeq), nil
+		return uint64(startSeq), interval, nil
+	}
+	info, err := stream.Info(ctx)
+	if err != nil {
+		return 0, 0, err
+	}
+	if uint64(startSeq) < info.State.FirstSeq {
+		return info.State.FirstSeq, 0, nil
 	}
 	intervalMultiplier := 1
-	fistSeq := startSeq
+	firstSeq := startSeq
 	for {
 		batch := min(10000, -interval*intervalMultiplier)
-		fistSeq -= batch
-		if fistSeq <= 1 {
-			return 1, nil
+		firstSeq -= batch - 1
+		if uint64(firstSeq) <= info.State.FirstSeq {
+			return info.State.FirstSeq, int(info.State.FirstSeq - uint64(firstSeq)), nil
 		}
-		consumerConfig.OptStartSeq = uint64(fistSeq)
+		if uint64(firstSeq) == info.State.FirstSeq {
+			return info.State.FirstSeq, 1, nil
+		}
+		consumerConfig.OptStartSeq = uint64(firstSeq)
 		consumerConfig.HeadersOnly = true
 		consumer, err := stream.CreateConsumer(ctx, consumerConfig)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
 		msgBatch, err := consumer.FetchNoWait(batch)
 		if err != nil {
-			return 0, err
+			return 0, 0, err
 		}
-		neededSeq, done, err := findSeqInBatch(msgBatch, startSeq, batch)
+		neededSeq, msgsCount, done, err := findSeqInBatch(msgBatch, startSeq, batch)
 		err = stream.DeleteConsumer(context.Background(), consumerConfig.Name)
 		if err != nil {
 			jsErr, ok := err.(jetstream.JetStreamError)
 			if !ok || jsErr.APIError().Code != 404 {
-				return 0, nil
+				return 0, 0, nil
 			}
 		}
 		if done {
-			return neededSeq, nil
+			return neededSeq, msgsCount, nil
 		}
 	}
 }
 
-func findSeqInBatch(msgBatch jetstream.MessageBatch, startSeq int, batch int) (uint64, bool, error) {
+func findSeqInBatch(msgBatch jetstream.MessageBatch, startSeq int, batch int) (uint64, int, bool, error) {
 	neededSeq := uint64(0)
 	msgsCount := 0
 	for msg := range msgBatch.Messages() {
 		if msgBatch.Error() != nil {
-			return 0, false, msgBatch.Error()
+			return 0, 0, false, msgBatch.Error()
 		}
 		msgsCount++
 		metadata, err := msg.Metadata()
 		if err != nil {
-			return 0, false, err
+			return 0, 0, false, err
 		}
 		if neededSeq == 0 {
 			neededSeq = metadata.Sequence.Stream
 		}
 		if metadata.Sequence.Stream > uint64(startSeq) {
-			return 0, false, nil
+			return 0, 0, false, nil
 		}
 		if msgsCount >= batch {
-			return neededSeq, true, nil
+			return neededSeq, msgsCount, true, nil
 		}
 	}
-	return 0, false, nil
+	return 0, 0, false, nil
 }
