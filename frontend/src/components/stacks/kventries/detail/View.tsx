@@ -33,8 +33,8 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const variant = kventrySa.colorVar
-	const history = kventrySa.kventry.history.sort((h1, h2) => h2.revision - h1.revision)
-	const historySelected = kventrySa.kventry.history?.findIndex(kv => kv.revision == kventrySa.revisionSelected)
+	const history = kventrySa.kventry.history?.sort((h1, h2) => h2.revision - h1.revision)
+	const historySelected = kventrySo.getKVSelectIndex()
 
 	return <FrameworkCard
 		variantBg={variant}
@@ -49,7 +49,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 			onClose={handleHistoryClose}
 		>
 			<List<KVEntry>
-				items={kventrySa.kventry.history}
+				items={history}
 				select={historySelected}
 				onSelect={handleHistorySelect}
 				RenderRow={({ item }) => `${item.key} ${item.revision}`}
