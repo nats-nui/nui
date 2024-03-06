@@ -68,7 +68,7 @@ const setup = {
 		},
 		getKVSelectIndex(_: void, store?: KVEntryStore): number {
 			const current = store.state.revisionSelected ?? store.state.kventry?.revision
-			return store.state.kventry?.history.findIndex(kve => kve.revision == current) ?? -1
+			return store.state.kventry?.history?.findIndex(kve => kve.revision == current) ?? -1
 		}
 	},
 
