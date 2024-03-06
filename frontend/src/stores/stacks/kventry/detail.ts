@@ -7,6 +7,8 @@ import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
+import { MSG_FORMAT } from "../messages/utils"
+import { editorOptionsDefault } from "../messageSend"
 
 
 
@@ -22,6 +24,12 @@ const setup = {
 
 		historyOpen: false,
 		revisionSelected: <number>null,
+
+		editor: editorOptionsDefault,
+		//#region StoreMessageFormat
+		format: MSG_FORMAT.JSON,
+		formatsOpen: false,
+		//#endregion
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
@@ -52,12 +60,16 @@ const setup = {
 			bucket: { bucket: store.state.bucket.bucket }
 		} as Partial<KVEntriesState>) as KVEntriesStore,
 
-		getKVToShow(_: void, store?: KVEntryStore): KVEntry {
+		getKVSelect(_: void, store?: KVEntryStore): KVEntry {
 			const history = store.state.kventry?.history
 			const revision = store.state.revisionSelected
 			const kv = history?.find(kv => kv.revision == revision) ?? store.state.kventry
 			return kv
 		},
+		getKVSelectIndex(_: void, store?: KVEntryStore): number {
+			const current = store.state.revisionSelected ?? store.state.kventry?.revision
+			return store.state.kventry?.history.findIndex(kve => kve.revision == current) ?? -1
+		}
 	},
 
 	actions: {
@@ -80,12 +92,12 @@ const setup = {
 			await store.fetch()
 		},
 		fetch: async (_: void, store?: KVEntryStore) => {
-			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, {store})
+			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, { store })
 			store.setKVEntry(kventry)
 		},
 		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
-			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, {store})
+			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, { store })
 			store.setKVEntry(kventry)
 			store.getParentList()?.fetch()
 			store.getParentList()?.setSelect(kventry.key)
@@ -100,10 +112,16 @@ const setup = {
 
 
 		revisionSelect(revision: number, store?: KVEntryStore) {
-			//const kv = store.state.kventry?.history?.find( kv => kv.revision == revision )
 			store.setRevisionSelected(revision)
 			store.setHistoryOpen(false)
 		},
+		revisionOffset(offset: number, store?: KVEntryStore) {
+			const index = store.getKVSelectIndex()
+			if (index == -1) return
+			const next = store.state.kventry.history[index + offset]
+			if (!next) return
+			store.revisionSelect(next.revision)
+		}
 	},
 
 	mutators: {
@@ -111,6 +129,11 @@ const setup = {
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setHistoryOpen: (historyOpen: boolean) => ({ historyOpen }),
 		setRevisionSelected: (revisionSelected: number) => ({ revisionSelected }),
+
+		//#region StoreMessageFormat
+		setFormat: (format: MSG_FORMAT) => ({ format }),
+		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
+		//#endregion
 	},
 }
 

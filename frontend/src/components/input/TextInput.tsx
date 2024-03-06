@@ -5,6 +5,7 @@ import React, { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHa
 export interface TextInputProps {
 	value?: string | number
 	placeholder?: string
+	autoFocus?: boolean
 	readOnly?: boolean
 	style?: React.CSSProperties
 	focus?: boolean
@@ -20,6 +21,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	{
 		value,
 		placeholder,
+		autoFocus,
 		readOnly,
 		style,
 		focus,
@@ -57,6 +59,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	return <TagInput ref={inputRef}
 		style={{ ...cssRoot, ...style }}
 		placeholder={placeholder}
+		autoFocus={autoFocus}
 		spellCheck="false"
 		value={value}
 		onChange={handleChange}

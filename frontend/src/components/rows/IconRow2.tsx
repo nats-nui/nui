@@ -39,10 +39,8 @@ const IconRow2: FunctionComponent<Props> = ({
 
 	return (
 		<TooltipWrapCmp
-			//style={{ position: "relative" }}
 			content={<div>
 				<div style={{ fontWeight: 700 }}>{tooltip}</div>
-				{/* <div>{tooltip}</div> */}
 			</div>}
 			variant={variant}
 			onMouseOver={enter => setEnter(enter)}

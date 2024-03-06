@@ -31,7 +31,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	if (streamSa.editState == EDIT_STATE.NEW) {
 		return (
 			<Button
-				label="CREATE"
+				children="CREATE"
 				variant={variant}
 				onClick={handleSaveClick}
 			/>
@@ -40,7 +40,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	} else if (streamSa.editState == EDIT_STATE.READ) {
 		return (
 			<Button
-				label="EDIT"
+				children="EDIT"
 				variant={variant}
 				onClick={handleEditClick}
 			/>
@@ -50,12 +50,12 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// EDIT
 	return (<>
 		<Button
-			label="SAVE"
+			children="SAVE"
 			variant={variant}
 			onClick={handleSaveClick}
 		/>
 		<Button
-			label="CANCEL"
+			children="CANCEL"
 			variant={variant}
 			onClick={handleCancelClick}
 		/>

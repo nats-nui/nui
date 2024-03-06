@@ -24,10 +24,6 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
-	const sourcesClear = () => {
-		config.sources = config.sources?.filter(s => s.name.length > 0) ?? []
-		streamSo.setStream({ ...streamSa.stream })
-	}
 	const haveNew = () => config.sources?.some(s => !(s.name?.length > 0))
 
 	// STORE
@@ -44,16 +40,11 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	// HANDLER
 
 	const handleSelectChange = (index: number, e?: React.BaseSyntheticEvent) => {
-		if (index == -1) {
-			setElementSource(null)
-			sourcesClear()
-		} else {
-			setElementSource(e.target)
-		}
+		setElementSource(index == -1 ? null : e.target)
 		setSourceIndex(index)
 	}
 
-	const handleSourcesChange = (sources: Source[], action:LIST_ACTIONS) => {
+	const handleSourcesChange = (sources: Source[], action: LIST_ACTIONS) => {
 		config.sources = sources
 		streamSo.setStream({ ...streamSa.stream })
 		if (action == LIST_ACTIONS.DELETE) handleSelectChange(-1)
@@ -88,7 +79,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 
 	return <>
 		<Quote>
-			<EditList<Source> ref={listRef} keepSelectOnBlur
+			<EditList<Source> ref={listRef} keepSelectOnBlur toggleSelect
 				items={sources}
 				select={souceIndex}
 				readOnly={inRead}
@@ -96,6 +87,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 				onSelectChange={handleSelectChange}
 				onNewItem={handleNewSource}
 				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
+				fnIsVoid={item => !item.name || item.name.trim().length == 0}
 			/>
 		</Quote>
 		<ElementDialog

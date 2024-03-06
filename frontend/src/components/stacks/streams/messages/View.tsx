@@ -62,13 +62,13 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			/>
 			<Button
 				select={strMsgSa.formatsOpen}
-				label={formatSel}
+				children={formatSel}
 				variant={variant}
 				onClick={handleFormatsClick}
 			/>
 			<Button
 				select={strMsgSa.filtersOpen}
-				label="FILTERS"
+				children="FILTERS"
 				onClick={handleFilterClick}
 				variant={variant}
 			/>

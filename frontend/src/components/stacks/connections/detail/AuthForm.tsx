@@ -85,11 +85,11 @@ const AuthForm: FunctionComponent<Props> = ({
 		}[authEdit.mode]}
 		
 		<div style={{ display: "flex", gap: 5, justifyContent: 'flex-end', }}>
-			<Button label="CANCEL"
+			<Button children="CANCEL"
 				onClick={() => onClose(null)}
 			/>
 			{!readOnly && (
-				<Button label="SAVE"
+				<Button children="SAVE"
 					onClick={() => onClose(authEdit)}
 				/>
 			)}

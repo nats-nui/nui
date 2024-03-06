@@ -47,11 +47,11 @@ const AlertDialog: FunctionComponent<Props> = ({
 
 		<Box style={{ display: "flex", gap: 15, justifyContent: 'flex-end' }}>
 			<Button 
-				label={labelYes} 
+				children={labelYes} 
 				onClick={() => onClose(true)} 
 			/>
 			<Button 
-				label={labelNo} 
+				children={labelNo} 
 				onClick={() => onClose(false)} 
 			/>
 		</Box>

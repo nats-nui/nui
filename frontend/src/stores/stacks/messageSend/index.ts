@@ -8,7 +8,7 @@ import { MSG_FORMAT } from "../messages/utils"
 
 
 
-const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
+export const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
 	//readOnly: true,
 	//readOnlyMessage: "",
 	wordWrap: "on",
@@ -34,8 +34,8 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subsOpen: false,
-		editor: editorOptionsDefault,
 
+		editor: editorOptionsDefault,
 		//#region StoreMessageFormat
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
@@ -96,8 +96,8 @@ const setup = {
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
 
 		//#region StoreMessageFormat
-		setFormat: (format: MSG_FORMAT, store?: MessageSendStore) => ({ format }),
-		setFormatsOpen: (formatsOpen: boolean, store?: MessageSendStore) => ({ formatsOpen }),
+		setFormat: (format: MSG_FORMAT) => ({ format }),
+		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 		//#endregion
 	},
 }

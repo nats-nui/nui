@@ -1,8 +1,11 @@
 import TimerCmp, { TIMER_STATE } from "@/components/TimerCmp"
 import Button from "@/components/buttons/Button"
+import IconButton from "@/components/buttons/IconButton"
 import Dialog from "@/components/dialogs/Dialog"
+import Box from "@/components/format/Box"
 import List from "@/components/lists/List"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -31,9 +34,9 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const kventrySa = useStore(kventrySo)
 
 	// HOOKs
-	useEffect(()=>{
+	useEffect(() => {
 		setTimerState(TIMER_STATE.PLAY)
-		return ()=>setTimerState(TIMER_STATE.STOP)
+		return () => setTimerState(TIMER_STATE.STOP)
 	})
 	const [reloadOpen, setRealoadOpen] = useState(false)
 	const [reloadIndex, setReloadIndex] = useState(3)
@@ -60,11 +63,18 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		}
 		setRealoadOpen(false)
 	}
+	const handleFormatsClick = () => kventrySo.setFormatsOpen(true)
+	const handleRevisionNextChange = () => kventrySo.revisionOffset(+1)
+	const handleRevisionPrevChange = () => kventrySo.revisionOffset(-1)
+
 
 	// RENDER
+	const kventry = kventrySo.getKVSelect()
+	if (!kventry) return null
 	const variant = kventrySa.colorVar
 	const isReloadParent = reloads[reloadIndex]?.value == -1
 	const timeout = reloads[reloadIndex]?.value ?? 0
+
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 
@@ -101,31 +111,45 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 		<div style={{ flex: 1 }} />
 		<Button
-			label="HISTORY"
-			variant={variant}
-			onClick={handleHistoryOpen}
-		/>
-		<Button
-			label="EDIT"
+			children="EDIT"
 			variant={variant}
 			onClick={handleEdit}
 		/>
+		<div style={{ display: "flex" }}>
+			<IconButton style={{ padding: "2px 0px" }}
+				onClick={handleRevisionPrevChange}
+			><ArrowLeftIcon /></IconButton>
+			<Button
+				variant={variant}
+				onClick={handleHistoryOpen}
+			>VER: {kventry.revision ?? "--"}</Button>
+			<IconButton style={{ padding: "2px 0px" }}
+				onClick={handleRevisionNextChange}
+			><ArrowRightIcon /></IconButton>
+		</div>
 	</>
 
 
 
 	const inNew = kventrySa.editState == EDIT_STATE.NEW
 	const label = inNew ? "CREATE" : "SAVE"
+	const formatSel = kventrySa.format?.toUpperCase() ?? ""
 
 	return (<>
 		<Button
-			label={label}
+			select={kventrySa.formatsOpen}
+			children={formatSel}
+			variant={variant}
+			onClick={handleFormatsClick}
+		/>
+		<Button
+			children={label}
 			variant={variant}
 			onClick={handleSave}
 		/>
 		{!inNew && (
 			<Button
-				label="CANCEL"
+				children="CANCEL"
 				variant={variant}
 				onClick={handleCancel}
 			/>

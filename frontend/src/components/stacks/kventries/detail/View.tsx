@@ -3,10 +3,11 @@ import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
-import ShowForm from "./ShowForm"
+import DetailForm from "./DetailForm"
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
 import { KVEntry } from "@/types/KVEntry"
+import FormatDialog from "../../messages/FormatDialog"
 
 
 
@@ -28,19 +29,19 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleHistoryClose = () => kventrySo.setHistoryOpen(false)
-	const handleHistorySelect = (index:number) => kventrySo.revisionSelect(history[index]?.revision)
+	const handleHistorySelect = (index: number) => kventrySo.revisionSelect(kventrySa.kventry.history[index]?.revision)
 
 	// RENDER
 	const variant = kventrySa.colorVar
-	const history = kventrySa.kventry.history
-	const historySelected = history?.findIndex( kv => kv.revision == kventrySa.revisionSelected )
+	const history = kventrySa.kventry.history.sort((h1, h2) => h2.revision - h1.revision)
+	const historySelected = kventrySa.kventry.history?.findIndex(kv => kv.revision == kventrySa.revisionSelected)
 
 	return <FrameworkCard
 		variantBg={variant}
 		store={kventrySo}
 		actionsRender={<ActionsCmp store={kventrySo} />}
 	>
-		<ShowForm store={kventrySo} />
+		<DetailForm store={kventrySo} />
 		<Dialog
 			open={kventrySa.historyOpen}
 			title="HISTORY"
@@ -51,9 +52,10 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 				items={kventrySa.kventry.history}
 				select={historySelected}
 				onSelect={handleHistorySelect}
-				RenderRow={({item})=> `${item.key} ${item.revision}`}
+				RenderRow={({ item }) => `${item.key} ${item.revision}`}
 			/>
 		</Dialog>
+		<FormatDialog store={kventrySo} />
 	</FrameworkCard>
 }
 

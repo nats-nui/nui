@@ -49,7 +49,6 @@ const ThemeDefault: Theme = {
 			title: { fontSize: 14, fontWeight: 700 },
 			subtitle: { opacity: .8, fontSize: 12, fontWeight: 500 },
 		},
-		button: { fontSize: 10, fontWeight: 800 },
 		rowButton: { fontSize: 14, fontWeight: 800, fontFamily: "Darker Grotesque" },
 	},
 

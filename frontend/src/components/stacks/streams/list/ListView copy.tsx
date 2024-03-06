@@ -56,13 +56,13 @@ const StreamsListView: FunctionComponent<Props> = ({
 		store={streamsSo}
 		actionsRender={<>
 			<Button
-				label="NEW"
+				children="NEW"
 				//select={bttNewSelect}
 				variant={variant}
 				onClick={handleNew}
 			/>
 			<Button
-				label="DELETE"
+				children="DELETE"
 				variant={variant}
 				onClick={handleDel}
 			/>

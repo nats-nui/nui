@@ -1,6 +1,8 @@
 import IconButton from "@/components/buttons/IconButton"
 import AddIcon from "@/icons/AddIcon"
-import { useState, FunctionComponent, forwardRef, LegacyRef, useEffect } from "react"
+import { FunctionComponent, LegacyRef, forwardRef, useEffect, useState } from "react"
+
+
 
 export enum LIST_ACTIONS {
 	DELETE,
@@ -23,16 +25,21 @@ interface Props<T> {
 	select?: number
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
-	placeholder?:string
+	placeholder?: string
 	variant?: number
 	readOnly?: boolean
+	/** quando perde il fuoco seve mantenere la selezione (utile per le dialog) */
 	keepSelectOnBlur?: boolean
+	/** se riclicco sulla stessa row gia' selezionata la deseleziono */
+	toggleSelect?: boolean
 	style?: React.CSSProperties
 
 	/** restituisce nuovo ITEM (su click btt NEW) */
 	onNewItem?: (index: number) => T
 	onItemsChange?: (newItems: T[], action?: LIST_ACTIONS) => void
 	onSelectChange?: (index: number, e: React.BaseSyntheticEvent) => void
+
+	fnIsVoid?: (item: T) => boolean
 
 	ref?: LegacyRef<HTMLDivElement>
 }
@@ -45,23 +52,36 @@ function EditList<T>({
 	variant = 0,
 	readOnly = false,
 	keepSelectOnBlur,
+	toggleSelect,
 	style,
 
 	onNewItem,
 	onItemsChange,
 	onSelectChange,
 
+	fnIsVoid,
+
 }: Props<T>, ref: LegacyRef<HTMLDivElement>) {
+
+	const clearVoid = () => {
+		if (!fnIsVoid || !items || items.length == 0) return
+		const itemsClear = items.filter(i => !fnIsVoid(i))
+		onItemsChange(itemsClear)
+	}
 
 	// STORES
 
 	// HOOKS
-	const [indexSelect, _setIndexSelect] = useState(-1)
-	const getIndexSelect = () => select == undefined ? indexSelect : select
+	const [_indexSelect, _setIndexSelect] = useState(-1)
+	const indexSelect = select == undefined ? _indexSelect : select
 	const setIndexSelect = (index: number, e?: React.BaseSyntheticEvent) => {
 		if (select == undefined) _setIndexSelect(index)
+		if (index == -1 && keepSelectOnBlur) clearVoid()
 		onSelectChange?.(index, e)
 	}
+	useEffect (()=>{
+		if (indexSelect == -1 && keepSelectOnBlur) clearVoid()
+	}, [indexSelect])
 
 	// HANDLERS
 
@@ -88,13 +108,16 @@ function EditList<T>({
 	}
 
 	const handleSelect = (index: number, e: React.BaseSyntheticEvent) => {
-		if (index == getIndexSelect()) index = -1
+		if (index == indexSelect) {
+			if (!toggleSelect) return
+			index = -1
+		}
 		setIndexSelect(index, e)
 	}
 
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		if (getIndexSelect() == -1) return
-		let newFocus = getIndexSelect()
+		if (indexSelect == -1) return
+		let newFocus = indexSelect
 		switch (event.key) {
 			case 'ArrowUp':
 				event.preventDefault()
@@ -106,7 +129,7 @@ function EditList<T>({
 				break
 			case "Enter":
 				event.preventDefault()
-				handleNewItem(getIndexSelect() + 1)
+				handleNewItem(indexSelect + 1)
 				return
 		}
 		if (newFocus < 0) newFocus = 0
@@ -115,9 +138,13 @@ function EditList<T>({
 	}
 
 	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-		if ( keepSelectOnBlur ) return 
 		const isChild = e.currentTarget.contains(e.relatedTarget)
-		if (!isChild) setIndexSelect(-1)
+		if( isChild ) return
+		if (!keepSelectOnBlur) {
+			setIndexSelect(-1)
+			clearVoid()
+		} 
+		
 	}
 
 	// RENDER
@@ -135,7 +162,7 @@ function EditList<T>({
 				<RenderRow key={index}
 					item={item}
 					placeholder={placeholder}
-					isSelect={getIndexSelect() == index}
+					isSelect={indexSelect == index}
 					readOnly={readOnly}
 					onChange={(newItem) => handleChangeItem(newItem, index)}
 					onSelect={(e) => handleSelect(index, e)}

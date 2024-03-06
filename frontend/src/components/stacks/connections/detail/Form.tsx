@@ -8,12 +8,12 @@ import EditList from "@/components/lists/EditList"
 import ListObjects from "@/components/lists/ListObjects"
 import EditStringRow from "@/components/rows/EditStringRow"
 import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
+import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 
 
 
@@ -32,7 +32,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const cnnDetailSa = useStore(cnnDetailSo)
 
 	// HOOKs
-	const [authSelect, setAuthSelect] = useState(-1)
 
 	// HANDLER
 	const handleChangeName = (name: string) => {
@@ -40,9 +39,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	}
 	const handleHostsChange = (hosts: string[]) => {
 		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
-	}
-	const handleAuthsChange = (auth: Auth[]) => {
-		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, auth })
 	}
 	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
 		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, subscriptions })
@@ -98,6 +94,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				RenderRow={EditStringRow}
 				readOnly={inRead}
 				variant={variant}
+				fnIsVoid={h => !h || h.trim().length == 0}
 			/>
 		</BoxV>
 
@@ -113,6 +110,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				placeholder="ex. house1.room4.*"
 				readOnly={inRead}
 				variant={variant}
+				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
 			/>
 		</BoxV>
 

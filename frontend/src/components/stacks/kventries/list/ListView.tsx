@@ -49,12 +49,12 @@ const KVEntryListView: FunctionComponent<Props> = ({
 				onChange={text => kventriesSo.setTextSearch(text)}
 			/>
 			{!!selected && <Button
-				label="DELETE"
+				children="DELETE"
 				variant={variant}
 				onClick={handleDelete}
 			/>}
 			<Button
-				label="NEW"
+				children="NEW"
 				select={isNewSelect}
 				variant={variant}
 				onClick={handleNew}

@@ -11,7 +11,6 @@ export interface Theme {
 			title: React.CSSProperties
 			subtitle: React.CSSProperties
 		}
-		button: React.CSSProperties
 		rowButton: React.CSSProperties
 	},
 	shadows: string[],

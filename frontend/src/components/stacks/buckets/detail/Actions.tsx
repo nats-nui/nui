@@ -29,7 +29,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	return (<>
 		<Button
-			label="CREATE"
+			children="CREATE"
 			variant={variant}
 			onClick={handleSave}
 		/>
