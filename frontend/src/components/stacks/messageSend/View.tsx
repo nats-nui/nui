@@ -55,23 +55,23 @@ const MessageSendView: FunctionComponent<Props> = ({
 		actionsRender={<>
 			<Button
 				select={sendSa.formatsOpen}
-				label={formatSel}
+				children={formatSel}
 				variant={variant}
 				onClick={handleFormatsClick}
 			/>
 			<Button
-				label="FORMAT"
+				children="FORMAT"
 				onClick={handleFormat}
 				variant={variant}
 			/>
 			<Button
 				select={sendSa.subsOpen}
-				label="SUBJECT"
+				children="SUBJECT"
 				onClick={handleSubsClick}
 				variant={variant}
 			/>
 			<Button
-				label="SEND"
+				children="SEND"
 				onClick={handleSend}
 				variant={variant}
 			/>

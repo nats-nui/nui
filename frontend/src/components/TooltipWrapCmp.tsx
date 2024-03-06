@@ -41,6 +41,8 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	if ( !content ) return children
+	
 	return (
 		<div style={style}
 			onMouseEnter={handleEnter}

@@ -49,12 +49,12 @@ const BucketsListView: FunctionComponent<Props> = ({
 				onChange={text => bucketsSo.setTextSearch(text)}
 			/>
 			{!!selected && <Button
-				label="DELETE"
+				children="DELETE"
 				variant={variant}
 				onClick={handleDelete}
 			/>}
 			<Button
-				label="NEW"
+				children="NEW"
 				select={isNewSelect}
 				variant={variant}
 				onClick={handleNew}

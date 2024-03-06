@@ -54,12 +54,12 @@ const StreamsListView: FunctionComponent<Props> = ({
 				onChange={text => streamsSo.setTextSearch(text)}
 			/>
 			{!!nameSelected && <Button
-				label="DELETE"
+				children="DELETE"
 				variant={variant}
 				onClick={handleDelete}
 			/>}
 			<Button
-				label="NEW"
+				children="NEW"
 				select={isNewSelect}
 				variant={variant}
 				onClick={handleNew}

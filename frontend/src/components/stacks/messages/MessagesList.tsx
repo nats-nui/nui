@@ -104,8 +104,8 @@ const MessagesList: FunctionComponent<Props> = ({
 				/>
 			}
 			components={{
-				Header: !!onLoading ? () => <Button label="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> : null,
-				Footer: !!onLoading ? () => <Button label="LOAD MOST RECENT" onClick={handleLoadEnd} /> : null,
+				Header: !!onLoading ? () => <Button children="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> : null,
+				Footer: !!onLoading ? () => <Button children="LOAD MOST RECENT" onClick={handleLoadEnd} /> : null,
 			}}
 		/>
 

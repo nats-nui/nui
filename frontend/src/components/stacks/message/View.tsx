@@ -51,18 +51,18 @@ const MessageView: FunctionComponent<Props> = ({
 		store={msgSo}
 		actionsRender={<>
 			<Button
-				label="COPY"
+				children="COPY"
 				onClick={handleCopy}
 				variant={variant}
 			/>
 			<Button
-				label="FORMAT"
+				children="FORMAT"
 				onClick={handleFormat}
 				variant={variant}
 			/>
 			<Button
 				select={msgSa.formatsOpen}
-				label={formatLabel}
+				children={formatLabel}
 				onClick={handleOpenDialogFormats}
 				variant={variant}
 			/>

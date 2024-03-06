@@ -120,7 +120,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				/>
 			</BoxV>
 
-			<Button label="APPLY"
+			<Button children="APPLY"
 				onClick={handleApply}
 			/>
 

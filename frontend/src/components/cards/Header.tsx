@@ -11,6 +11,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
+import TooltipWrapCmp from "../TooltipWrapCmp"
 
 
 
@@ -65,12 +66,20 @@ const Header: FunctionComponent<Props> = ({
 	const title = store.getTitle()
 	const subTitle = store.getSubTitle()
 	const inRoot = !store.state.parent
+	const variant = store.state.colorVar
 	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
 	const isIconized = docSo.isPinned(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showBttClose = !store.state.unclosable
 	const showBttIconize = inRoot && enter && store.state.pinnable
+
+	const tooltip = isCompact ?
+		<div>
+			<div className="label-title">{title}</div>
+			<div className="label-sub-title">{subTitle}</div>
+		</div>
+		: null
 
 	return (
 		<div style={cssRoot(store.state.size)}
@@ -84,9 +93,14 @@ const Header: FunctionComponent<Props> = ({
 				<div onClick={handleSizeClick} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
-					<CardIcon 
-						type={store.state.type}
-					/>
+					<TooltipWrapCmp
+						content={tooltip}
+						variant={variant}
+					>
+						<CardIcon
+							type={store.state.type}
+						/>
+					</TooltipWrapCmp>
 				</div>
 			)}
 
@@ -136,7 +150,7 @@ export default Header
 
 const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
 	display: "flex",
-	height:  41,
+	height: 41,
 	flexDirection: size != VIEW_SIZE.COMPACT ? null : "column",
 	alignItems: "flex-start",
 })

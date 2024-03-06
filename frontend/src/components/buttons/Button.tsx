@@ -6,7 +6,8 @@ import React, { FunctionComponent, useState } from "react"
 
 interface Props {
 	select?: boolean
-	label?: string
+	children?: React.ReactNode
+
 	variant?: number
 	disabled?: boolean
 	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
@@ -14,7 +15,8 @@ interface Props {
 
 const Button: FunctionComponent<Props> = ({
 	select,
-	label,
+	children,
+
 	variant = 0,
 	disabled,
 	onClick,
@@ -44,7 +46,7 @@ const Button: FunctionComponent<Props> = ({
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
 		>
-			<div style={cssLabel}>{label}</div>
+			{children}
 		</div>
 	)
 }
@@ -56,6 +58,8 @@ const cssRoot: React.CSSProperties = {
 	cursor: "pointer",
 	borderRadius: 10,
 	padding: '5px 6px',
+	fontSize: 10, 
+	fontWeight: 800,
 }
 const cssDisabled: React.CSSProperties = {
 	opacity: 0.5,
@@ -65,7 +69,3 @@ const cssSelect = (variant: number): React.CSSProperties => ({
 	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 	color: layoutSo.state.theme.palette.var[variant].fg,
 })
-
-const cssLabel: React.CSSProperties = {
-	...layoutSo.state.theme.texts.button,
-}

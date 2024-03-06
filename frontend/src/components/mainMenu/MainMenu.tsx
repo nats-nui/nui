@@ -58,8 +58,8 @@ const MainMenu: FunctionComponent<Props> = ({
 
 		{/* *** DEBUG *** */}
 		{process.env.NODE_ENV === 'development' && <>
-			<Button label="SAVE" onClick={() => SaveSession()} />
-			<Button label="LOAD" onClick={() => LoadSession()} />
+			<Button children="SAVE" onClick={() => SaveSession()} />
+			<Button children="LOAD" onClick={() => LoadSession()} />
 		</>}
 		{/* *** DEBUG *** */}
 

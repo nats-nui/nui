@@ -40,7 +40,7 @@ const LogsView: FunctionComponent<Props> = ({
 		store={viewLogSo}
 		actionsRender={<>
 			<Button
-				label="CLEAR"
+				children="CLEAR"
 				variant={variant}
 				onClick={handleClear}
 			/>
