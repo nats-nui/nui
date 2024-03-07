@@ -45,7 +45,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
 		width: view.getWidth(),
-		...haveFocus ? { /*boxSizing: "border-box",*/ border: `2px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
+		...haveFocus ? { /*boxSizing: "border-box",*/ outline: `2px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
 		...view.getStyAni(),
 	}
 

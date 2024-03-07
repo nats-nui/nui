@@ -36,6 +36,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 		onMouseOver?.(true)
 	}
 	const handleLeave = () => {
+		console.log("leave")
 		tooltipSo.close()
 		onMouseOver?.(false)
 	}

@@ -8,7 +8,6 @@ import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import { MSG_FORMAT } from "../messages/utils"
-import { editorOptionsDefault } from "../messageSend"
 
 
 
@@ -25,10 +24,10 @@ const setup = {
 		historyOpen: false,
 		revisionSelected: <number>null,
 
-		editor: editorOptionsDefault,
 		//#region StoreMessageFormat
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+		editorRef: null,
 		//#endregion
 
 		//#region VIEWBASE

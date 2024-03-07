@@ -35,10 +35,10 @@ const setup = {
 		subject: <string>null,
 		subsOpen: false,
 
-		editor: editorOptionsDefault,
 		//#region StoreMessageFormat
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+		editorRef: null,
 		//#endregion
 
 		//#region VIEWBASE
