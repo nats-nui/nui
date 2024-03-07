@@ -2,7 +2,6 @@ import TimerCmp, { TIMER_STATE } from "@/components/TimerCmp"
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
 import Dialog from "@/components/dialogs/Dialog"
-import Box from "@/components/format/Box"
 import List from "@/components/lists/List"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
@@ -64,17 +63,18 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		setRealoadOpen(false)
 	}
 	const handleFormatsClick = () => kventrySo.setFormatsOpen(true)
+	const handleFormat = () => kventrySa.editorRef.format()
 	const handleRevisionNextChange = () => kventrySo.revisionOffset(+1)
 	const handleRevisionPrevChange = () => kventrySo.revisionOffset(-1)
 
 
 	// RENDER
+
 	const kventry = kventrySo.getKVSelect()
 	if (!kventry) return null
 	const variant = kventrySa.colorVar
 	const isReloadParent = reloads[reloadIndex]?.value == -1
 	const timeout = reloads[reloadIndex]?.value ?? 0
-
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 
@@ -105,9 +105,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 				RenderRow={({ item }) => item.label}
 			/>
 		</Dialog>
-
-
-
 
 		<div style={{ flex: 1 }} />
 		<Button
@@ -142,6 +139,11 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			variant={variant}
 			onClick={handleFormatsClick}
 		/>
+		<Button
+				children="FORMAT"
+				onClick={handleFormat}
+				variant={variant}
+			/>
 		<Button
 			children={label}
 			variant={variant}

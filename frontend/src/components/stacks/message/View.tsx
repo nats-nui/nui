@@ -1,17 +1,13 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
-import HexTable from "@/components/formatters/hex/HexTable"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import MyEditor from "@/components/editor"
+import BoxV from "@/components/format/BoxV"
+import Label from "@/components/format/Label"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
-import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
-import { Editor, Monaco } from "@monaco-editor/react"
 import { useStore } from "@priolo/jon"
 import { editor } from "monaco-editor"
 import { FunctionComponent, useRef } from "react"
 import FormatDialog from "../messages/FormatDialog"
-import { getEditorLanguage } from "@/stores/stacks/message/utils"
-import BoxV from "@/components/format/BoxV"
-import Label from "@/components/format/Label"
 
 
 
@@ -19,6 +15,7 @@ interface Props {
 	store?: MessageStore
 }
 
+/** dettaglio di un messaggio */
 const MessageView: FunctionComponent<Props> = ({
 	store: msgSo,
 }) => {
@@ -27,24 +24,15 @@ const MessageView: FunctionComponent<Props> = ({
 	const msgSa = useStore(msgSo) as MessageState
 
 	// HOOKs
-	const editorRef = useRef<editor.IStandaloneCodeEditor>(null)
 
 	// HANDLER
 	const handleOpenDialogFormats = () => msgSo.setFormatsOpen(true)
 	const handleCopy = () => navigator.clipboard.writeText(text)
-	const handleFormat = () => editorRef.current.getAction('editor.action.formatDocument').run()
-	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
-		editorRef.current = editor
-		// // Formatta automaticamente il JSON all'avvio
-		// setTimeout(() => {
-		// 	editor.getAction('editor.action.formatDocument').run();
-		// }, 300)
-	}
+	const handleFormat = () => msgSa.editorRef.format()
 
 	// RENDER
 	const text = msgSa.message.payload
-	const format = msgSa.format
-	const formatLabel = format.toUpperCase()
+	const formatLabel = msgSa.format.toUpperCase()
 	const variant = msgSa.colorVar
 
 	return <FrameworkCard
@@ -74,20 +62,12 @@ const MessageView: FunctionComponent<Props> = ({
 				{msgSa.message.subject}
 			</div>
 		</BoxV>
-		{format == MSG_FORMAT.BASE64 ? (
-			<Base64Cmp text={text} />
-		) : format == MSG_FORMAT.HEX ? (
-			<HexTable text={text} />
-		) : (
-			<Editor
-				//defaultLanguage="json"
-				language={getEditorLanguage(msgSa.format)}
-				value={text}
-				options={msgSa.editor}
-				theme="vs-dark"
-				onMount={handleEditorDidMount}
-			/>
-		)}
+
+		<MyEditor 
+			ref={ref => msgSa.editorRef = ref}
+			format={msgSa.format}
+			value={text}
+		/>
 
 		<FormatDialog store={msgSo} />
 

@@ -32,5 +32,5 @@ const cssRoot: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
 	gap: 7,
-	marginBottom: 15,
+	//marginBottom: 15,
 }

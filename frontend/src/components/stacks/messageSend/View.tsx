@@ -1,16 +1,14 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
-import { Editor, Monaco } from "@monaco-editor/react"
-import { useStore } from "@priolo/jon"
-import { editor } from "monaco-editor"
-import React, { FunctionComponent, useRef } from "react"
-import SubjectsDialog from "./SubjectsDialog"
-import TextInput from "@/components/input/TextInput"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import MyEditor from "@/components/editor"
 import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
+import TextInput from "@/components/input/TextInput"
+import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
+import { useStore } from "@priolo/jon"
+import React, { FunctionComponent, useRef } from "react"
 import FormatDialog from "../messages/FormatDialog"
-import { getEditorLanguage } from "@/stores/stacks/message/utils"
+import SubjectsDialog from "./SubjectsDialog"
 
 
 
@@ -26,25 +24,18 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const sendSa = useStore(sendSo) as MessageSendState
 
 	// HOOKs
-	const editorRef = useRef<editor.IStandaloneCodeEditor>(null)
 
 	// HANDLER
-	const handleSend = () => {
-		sendSo.publish()
-	}
-	const handleValueChange = (value: string | undefined, ev: editor.IModelContentChangedEvent) => {
-		sendSo.setText(value)
-	}
+	const handleSend = () => sendSo.publish()
+	const handleValueChange = (value: string) => sendSo.setText(value)
 	const handleSubsClick = (e: React.MouseEvent, select: boolean) => {
 		if (select) return
 		sendSo.setSubsOpen(!select)
 	}
-	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
-		editorRef.current = editor
-	}
-	const handleFormat = () => editorRef.current.getAction('editor.action.formatDocument').run()
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
-	const handleFormatsClick = () => sendSo.setFormatsOpen(true)
+
+	const handleFormat = () => sendSa.editorRef.format()
+	const handleDialogFormatOpen = () => sendSo.setFormatsOpen(true)
 
 	// RENDER
 	const formatSel = sendSa.format?.toUpperCase() ?? ""
@@ -57,7 +48,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 				select={sendSa.formatsOpen}
 				children={formatSel}
 				variant={variant}
-				onClick={handleFormatsClick}
+				onClick={handleDialogFormatOpen}
 			/>
 			<Button
 				children="FORMAT"
@@ -85,14 +76,11 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 
-		<Editor
-			//defaultLanguage="json"
-			language={getEditorLanguage(sendSa.format)}
+		<MyEditor
+			ref={ref => sendSa.editorRef = ref}
+			format={sendSa.format}
 			value={sendSa.text}
 			onChange={handleValueChange}
-			options={sendSa.editor}
-			theme="vs-dark"
-			onMount={handleEditorDidMount}
 		/>
 
 		<SubjectsDialog store={sendSo} />

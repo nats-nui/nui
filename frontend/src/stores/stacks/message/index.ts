@@ -27,9 +27,12 @@ const setup = {
 
 	state: {
 		message: <Message>null,
+
+		//#region StoreMessageFormat
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
-		editor: editorOptionsDefault,
+		editorRef: null,
+		//#endregion
 
 		//#region VIEWBASE
 		urlSerializable: false,
