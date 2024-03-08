@@ -2,6 +2,7 @@ import TimerCmp, { TIMER_STATE } from "@/components/TimerCmp"
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
 import Dialog from "@/components/dialogs/Dialog"
+import FormatAction from "@/components/editor/FormatAction"
 import List from "@/components/lists/List"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
@@ -62,8 +63,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		}
 		setRealoadOpen(false)
 	}
-	const handleFormatsClick = () => kventrySo.setFormatsOpen(true)
-	const handleFormat = () => kventrySa.editorRef.format()
 	const handleRevisionNextChange = () => kventrySo.revisionOffset(+1)
 	const handleRevisionPrevChange = () => kventrySo.revisionOffset(-1)
 
@@ -78,6 +77,8 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 
+
+
 		<div style={{ cursor: "pointer", position: "relative", marginLeft: 3 }}
 			onClick={() => setRealoadOpen(true)}
 		>
@@ -91,7 +92,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 				onTimeout={handleTimeout}
 			/>
 		</div>
-
 		<Dialog
 			open={reloadOpen}
 			title="AUTORELOAD"
@@ -107,6 +107,13 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		</Dialog>
 
 		<div style={{ flex: 1 }} />
+
+
+
+		<FormatAction store={kventrySo} />
+		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
+
+
 		<Button
 			children="EDIT"
 			variant={variant}
@@ -133,17 +140,8 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const formatSel = kventrySa.format?.toUpperCase() ?? ""
 
 	return (<>
-		<Button
-			select={kventrySa.formatsOpen}
-			children={formatSel}
-			variant={variant}
-			onClick={handleFormatsClick}
-		/>
-		<Button
-				children="FORMAT"
-				onClick={handleFormat}
-				variant={variant}
-			/>
+		<FormatAction store={kventrySo} />
+		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
 		<Button
 			children={label}
 			variant={variant}

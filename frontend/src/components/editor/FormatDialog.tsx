@@ -1,40 +1,32 @@
-import { MSG_FORMAT } from "@/stores/stacks/messages/utils"
+import { EditorStore } from "@/stores/stacks/editorBase"
+import { MSG_FORMAT } from "@/utils/editor"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import Dialog from "../../dialogs/Dialog"
-import List from "../../lists/List"
+import Dialog from "../dialogs/Dialog"
+import List from "../lists/List"
 
 
-
-interface StoreMessageFormat {
-	state: {
-		format: MSG_FORMAT,
-		formatsOpen: boolean
-	},
-	setFormat(format: MSG_FORMAT): void,
-	setFormatsOpen(open: boolean): void,
-}
 
 interface Props {
-	store?: StoreMessageFormat
+	store?: EditorStore
 }
 
 const FormatDialog: FunctionComponent<Props> = ({
-	store: formatSo,
+	store,
 }) => {
 
 	// STORE
-	const formatSa = useStore(formatSo as any) as typeof formatSo.state
+	const formatSa = useStore(store as any) as typeof store.state
 
 	// HOOKs
 
 	// HANDLER
 	const handleClose = () => {
-		formatSo.setFormatsOpen(false)
+		store.setFormatsOpen(false)
 	}
 	const handleSelect = (index: number) => {
-		formatSo.setFormat(formats[index])
-		formatSo.setFormatsOpen(false)
+		store.setFormat(formats[index])
+		store.setFormatsOpen(false)
 	}
 
 	// RENDER
@@ -46,7 +38,7 @@ const FormatDialog: FunctionComponent<Props> = ({
 			open={formatSa.formatsOpen}
 			title="FORMATS"
 			width={90}
-			store={formatSo as any}
+			store={store as any}
 			onClose={handleClose}
 		>
 			<List<string>

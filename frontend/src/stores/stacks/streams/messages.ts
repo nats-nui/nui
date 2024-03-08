@@ -6,8 +6,9 @@ import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { MSG_FORMAT } from "../messages/utils"
+import { MSG_FORMAT } from "../../../utils/editor"
 import { ViewState } from "../viewBase"
+import editorSetup, { EditorState, EditorStore } from "../editorBase"
 
 
 
@@ -40,8 +41,6 @@ const setup = {
 		},
 		/** DIALOG FILTER aperta */
 		filtersOpen: false,
-		format: MSG_FORMAT.JSON,
-		formatsOpen: false,
 
 		// NOT REACTIVE
 		connectionId: <string>null,
@@ -162,7 +161,7 @@ const setup = {
 			return msgsTot
 		},
 		fetchPrev2: async (_?: void, store?: StreamMessagesStore) => {
-			const seq = store.state.messages[0].seqNum
+			const seq = store.state.messages[0].seqNum - 1
 			const interval = -store.state.filter.interval
 			if ( interval == 0 || seq <= store.state.stream.state.firstSeq ) return 0
 			return store.fetchInterval({ seq, interval })
@@ -292,21 +291,19 @@ const setup = {
 
 	mutators: {
 		setMessages: (messages: Message[]) => ({ messages }),
-		setFormat: (format: MSG_FORMAT) => ({ format }),
-		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setFilter: (filter: StreamMessagesFilter) => ({ filter }),
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
 	},
 }
 
-export type StreamMessagesState = typeof setup.state & ViewState
+export type StreamMessagesState = typeof setup.state & ViewState & EditorState
 export type StreamMessagesGetters = typeof setup.getters
 export type StreamMessagesActions = typeof setup.actions
 export type StreamMessagesMutators = typeof setup.mutators
-export interface StreamMessagesStore extends ViewStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
+export interface StreamMessagesStore extends ViewStore, EditorStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
 	state: StreamMessagesState
 }
-const streamMessagesSetup = mixStores(viewSetup, setup)
+const streamMessagesSetup = mixStores(viewSetup, editorSetup, setup)
 export default streamMessagesSetup
 

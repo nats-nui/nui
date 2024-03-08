@@ -7,7 +7,7 @@ import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
-import { MSG_FORMAT } from "../messages/utils"
+import editorSetup, { EditorState, EditorStore } from "../editorBase"
 
 
 
@@ -24,15 +24,9 @@ const setup = {
 		historyOpen: false,
 		revisionSelected: <number>null,
 
-		//#region StoreMessageFormat
-		format: MSG_FORMAT.JSON,
-		formatsOpen: false,
-		editorRef: null,
-		//#endregion
-
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.YELLOW,
-		width: 230,
+		width: 420,
 		//#endregion
 	},
 
@@ -52,6 +46,8 @@ const setup = {
 			}
 		},
 		//#endregion
+
+		getEditorText: (_: void, store?: ViewStore) => (<KVEntryStore>store).getKVSelect()?.payload ?? "",
 
 		getParentList: (_: void, store?: KVEntryStore): KVEntriesStore => docSo.find({
 			type: DOC_TYPE.KVENTRIES,
@@ -128,20 +124,15 @@ const setup = {
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setHistoryOpen: (historyOpen: boolean) => ({ historyOpen }),
 		setRevisionSelected: (revisionSelected: number) => ({ revisionSelected }),
-
-		//#region StoreMessageFormat
-		setFormat: (format: MSG_FORMAT) => ({ format }),
-		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
-		//#endregion
 	},
 }
 
-export type KVEntryState = typeof setup.state & ViewState
+export type KVEntryState = typeof setup.state & ViewState & EditorState
 export type KVEntryGetters = typeof setup.getters
 export type KVEntryActions = typeof setup.actions
 export type KVEntryMutators = typeof setup.mutators
-export interface KVEntryStore extends ViewStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
+export interface KVEntryStore extends ViewStore, EditorStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
 	state: KVEntryState
 }
-const kventrySetup = mixStores(viewSetup, setup)
+const kventrySetup = mixStores(viewSetup, editorSetup, setup)
 export default kventrySetup

@@ -7,8 +7,14 @@ import TextInput from "@/components/input/TextInput"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
-import FormatDialog from "../messages/FormatDialog"
+import FormatDialog from "../../editor/FormatDialog"
 import SubjectsDialog from "./SubjectsDialog"
+import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import IconButton from "@/components/buttons/IconButton"
+import CopyIcon from "@/icons/CopyIcon"
+import FormatIcon from "@/icons/FormatIcon"
+import FormatAction from "@/components/editor/FormatAction"
+import Form from "@/components/format/Form"
 
 
 
@@ -34,27 +40,16 @@ const MessageSendView: FunctionComponent<Props> = ({
 	}
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
 
-	const handleFormat = () => sendSa.editorRef.format()
-	const handleDialogFormatOpen = () => sendSo.setFormatsOpen(true)
-
 	// RENDER
-	const formatSel = sendSa.format?.toUpperCase() ?? ""
 	const variant = sendSa.colorVar
 
 	return <FrameworkCard
 		store={sendSo}
 		actionsRender={<>
-			<Button
-				select={sendSa.formatsOpen}
-				children={formatSel}
-				variant={variant}
-				onClick={handleDialogFormatOpen}
-			/>
-			<Button
-				children="FORMAT"
-				onClick={handleFormat}
-				variant={variant}
-			/>
+
+			<FormatAction store={sendSo} />
+			<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
+
 			<Button
 				select={sendSa.subsOpen}
 				children="SUBJECT"
@@ -68,23 +63,23 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<BoxV style={{marginBottom: 10}}>
-			<Label>Subject</Label>
-			<TextInput
-				value={sendSa.subject}
-				onChange={handleSubjectChange}
+		<Form style={{ height: "100%" }}>
+			<BoxV>
+				<div className="lbl-prop">SUBJECT</div>
+				<TextInput
+					value={sendSa.subject}
+					onChange={handleSubjectChange}
+				/>
+			</BoxV>
+			<MyEditor
+				ref={ref => sendSa.editorRef = ref}
+				format={sendSa.format}
+				value={sendSo.getEditorText()}
+				onChange={handleValueChange}
 			/>
-		</BoxV>
-
-		<MyEditor
-			ref={ref => sendSa.editorRef = ref}
-			format={sendSa.format}
-			value={sendSa.text}
-			onChange={handleValueChange}
-		/>
+		</Form>
 
 		<SubjectsDialog store={sendSo} />
-
 		<FormatDialog store={sendSo} />
 
 	</FrameworkCard>

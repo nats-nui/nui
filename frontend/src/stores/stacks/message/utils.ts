@@ -1,4 +1,4 @@
-import { MSG_FORMAT } from "../messages/utils";
+import { MSG_FORMAT } from "../../../utils/editor";
 
 
 

@@ -3,29 +3,9 @@ import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { editor } from "monaco-editor"
-import { MSG_FORMAT } from "../messages/utils"
+import editorSetup, { EditorState, EditorStore } from "../editorBase"
 
 
-
-export const editorOptionsDefault: editor.IStandaloneEditorConstructionOptions = {
-	//readOnly: true,
-	//readOnlyMessage: "",
-	wordWrap: "on",
-	lineNumbers: 'off',
-	glyphMargin: false,
-	lineDecorationsWidth: 0,
-	lineNumbersMinChars: 0,
-	folding: false,
-	showFoldingControls: "mouseover",
-	minimap: {
-		enabled: false,
-	},
-	tabSize: 2,
-	parameterHints: {
-		enabled: false,
-	},
-}
 
 const setup = {
 
@@ -35,14 +15,9 @@ const setup = {
 		subject: <string>null,
 		subsOpen: false,
 
-		//#region StoreMessageFormat
-		format: MSG_FORMAT.JSON,
-		formatsOpen: false,
-		editorRef: null,
-		//#endregion
-
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
+		width: 420,
 		//#endregion
 	},
 
@@ -66,6 +41,7 @@ const setup = {
 		},
 		//#endregion
 
+		getEditorText: (_: void, store?: ViewStore) => (<MessageSendStore>store).state.text ?? ""
 	},
 
 	actions: {
@@ -94,20 +70,15 @@ const setup = {
 		setText: (text: string, store?: MessageSendStore) => ({ text }),
 		setSubject: (subject: string) => ({ subject }),
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
-
-		//#region StoreMessageFormat
-		setFormat: (format: MSG_FORMAT) => ({ format }),
-		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
-		//#endregion
 	},
 }
 
-export type MessageSendState = typeof setup.state & ViewState
+export type MessageSendState = typeof setup.state & ViewState & EditorState
 export type MessageSendGetters = typeof setup.getters
 export type MessageSendActions = typeof setup.actions
 export type MessageSendMutators = typeof setup.mutators
-export interface MessageSendStore extends ViewStore, StoreCore<MessageSendState>, MessageSendGetters, MessageSendActions, MessageSendMutators {
+export interface MessageSendStore extends ViewStore, EditorStore, StoreCore<MessageSendState>, MessageSendGetters, MessageSendActions, MessageSendMutators {
 	state: MessageSendState
 }
-const msgSetup = mixStores(viewSetup, setup)
+const msgSetup = mixStores(viewSetup, editorSetup, setup)
 export default msgSetup

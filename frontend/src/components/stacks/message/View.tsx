@@ -5,9 +5,14 @@ import BoxV from "@/components/format/BoxV"
 import Label from "@/components/format/Label"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { useStore } from "@priolo/jon"
-import { editor } from "monaco-editor"
-import { FunctionComponent, useRef } from "react"
-import FormatDialog from "../messages/FormatDialog"
+import { FunctionComponent } from "react"
+import FormatDialog from "../../editor/FormatDialog"
+import IconButton from "@/components/buttons/IconButton"
+import FormatIcon from "@/icons/FormatIcon"
+import CopyIcon from "@/icons/CopyIcon"
+import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import FormatAction from "@/components/editor/FormatAction"
+import Form from "@/components/format/Form"
 
 
 
@@ -26,48 +31,29 @@ const MessageView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleOpenDialogFormats = () => msgSo.setFormatsOpen(true)
-	const handleCopy = () => navigator.clipboard.writeText(text)
-	const handleFormat = () => msgSa.editorRef.format()
 
 	// RENDER
-	const text = msgSa.message.payload
-	const formatLabel = msgSa.format.toUpperCase()
-	const variant = msgSa.colorVar
 
 	return <FrameworkCard
 		store={msgSo}
 		actionsRender={<>
-			<Button
-				children="COPY"
-				onClick={handleCopy}
-				variant={variant}
-			/>
-			<Button
-				children="FORMAT"
-				onClick={handleFormat}
-				variant={variant}
-			/>
-			<Button
-				select={msgSa.formatsOpen}
-				children={formatLabel}
-				onClick={handleOpenDialogFormats}
-				variant={variant}
-			/>
+			<FormatAction store={msgSo} />
 		</>}
 	>
-		<BoxV style={{ marginBottom: 10 }}>
-			<Label>Subject</Label>
-			<div className="label-form-2">
-				{msgSa.message.subject}
-			</div>
-		</BoxV>
+		<Form style={{ height: "100%" }}>
+			<BoxV>
+				<div className="lbl-prop">SUBJECT</div>
+				<div className="lbl-input-readonly">
+					{msgSa.message.subject}
+				</div>
+			</BoxV>
 
-		<MyEditor 
-			ref={ref => msgSa.editorRef = ref}
-			format={msgSa.format}
-			value={text}
-		/>
+			<MyEditor autoFormat readOnly
+				ref={ref => msgSa.editorRef = ref}
+				format={msgSa.format}
+				value={msgSo.getEditorText()}
+			/>
+		</Form>
 
 		<FormatDialog store={msgSo} />
 

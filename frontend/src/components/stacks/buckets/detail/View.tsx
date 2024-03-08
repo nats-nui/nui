@@ -1,5 +1,8 @@
-import RowButton from "@/components/rows/RowButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
+import BoxV from "@/components/format/BoxV"
+import IconRow2 from "@/components/rows/IconRow2"
+import RowButton from "@/components/rows/RowButton"
+import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -8,10 +11,6 @@ import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import CreateForm from "./CreateForm"
 import ShowForm from "./ShowForm"
-import MessagesIcon from "@/icons/cards/MessagesIcon"
-import BoxV from "@/components/format/BoxV"
-import IconRow2 from "@/components/rows/IconRow2"
-import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 
 
 

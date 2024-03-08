@@ -10,7 +10,7 @@ import { Message } from "@/types/Message"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { MessageSendState } from "../messageSend"
 import { ViewState } from "../viewBase"
-import { MSG_FORMAT } from "./utils"
+import { MSG_FORMAT } from "../../../utils/editor"
 import historyTest from "./_test"
 
 
@@ -23,8 +23,8 @@ const setup = {
 		subscriptions: <Subscription[]>[],
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
-		messages: <Message[]>[],
-		//messages: <Message[]>historyTest,
+		//messages: <Message[]>[],
+		messages: <Message[]>historyTest,
 		/** testo per la ricerca */
 		textSearch: <string>null,
 		/** DIALOG SUBS aperta */

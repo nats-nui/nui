@@ -23,27 +23,31 @@
 
 
 
+.lbl-card-title {
+	font-size: 16px;
+	font-weight: 800;
+	font-family: "Darker Grotesque";
+}
 
+.lbl-prop-title {
+	font-size: 12px;
+	border-bottom: 1px solid rgb(0 0 0 / 32%);
+	border-top: 1px solid rgb(0 0 0 / 32%);
+	padding: 3px;
+	text-align: center;
+	font-weight: 700;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.lbl-prop {
+	font-size: 11px;
+	font-weight: 700;
+}
 
 .lbl-input-readonly {
 	font-size: 12px;
     font-weight: 600;
     padding: 4px 0px;
-}
-
-.lbl-prop-title {
-	font-size: 11px;
-	border-bottom: 1px solid rgb(0 0 0 / 32%);
-	border-top: 1px solid rgb(0 0 0 / 32%);
-	padding: 3px;
-	text-align: center;
-	font-weight: 600;
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-.lbl-prop {
-	font-size: 10px;
-	font-weight: 800;
 }
 
 

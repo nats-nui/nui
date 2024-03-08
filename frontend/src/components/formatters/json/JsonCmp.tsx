@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import JsonKeyValueCmp from "./JsonKeyValueCmp"
 import { COLLAPSE_TYPE, inShow, isPrimitive } from "./utils"
 import TextCmp from "../text/TextCmp"
-import { toJson } from "@/stores/stacks/messages/utils"
+import { toJson } from "@/utils/editor"
 
 
 
