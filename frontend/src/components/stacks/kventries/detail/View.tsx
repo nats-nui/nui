@@ -7,7 +7,7 @@ import DetailForm from "./DetailForm"
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
 import { KVEntry } from "@/types/KVEntry"
-import FormatDialog from "../../messages/FormatDialog"
+import FormatDialog from "../../../editor/FormatDialog"
 
 
 

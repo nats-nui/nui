@@ -41,7 +41,8 @@ const cssRoot = (readOnly: boolean, select: boolean): React.CSSProperties => ({
 	cursor: !readOnly ? "pointer" : null,
 	...select ? {
 		//border: "1px solid rgb(0 0 0 / 15%)",
-		backgroundColor: '#00000010',
+		backgroundColor: 'rgba(0,0,0,.2)',
+		//color: "#FFF"
 	} : {
 	},
 	fontSize: 12,

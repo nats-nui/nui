@@ -13,7 +13,7 @@ import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
-import FormatDialog from "./FormatDialog"
+import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 

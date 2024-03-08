@@ -34,7 +34,7 @@ const DetailForm: FunctionComponent<Props> = ({
 	return <Form style={{ height: "100%" }}>
 
 		<BoxV>
-			{/* <div className="lbl-prop">KEY</div> */}
+			<div className="lbl-prop">KEY</div>
 			<TextInput autoFocus
 				value={kventry.key ?? ""}
 				onChange={handleKeyChange}
@@ -44,7 +44,7 @@ const DetailForm: FunctionComponent<Props> = ({
 
 		<MyEditor
 			ref={ref => kventrySo.state.editorRef = ref}
-			value={kventry.payload ?? ""}
+			value={kventrySo.getEditorText()}
 			onChange={handlePayloadChange}
 			format={kventrySa.format}
 			readOnly={inRead}

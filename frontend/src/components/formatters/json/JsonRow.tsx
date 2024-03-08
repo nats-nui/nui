@@ -1,7 +1,7 @@
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { FunctionComponent, useMemo } from "react"
 import TextRow from "../text/TextRow"
-import { toJson } from "@/stores/stacks/messages/utils"
+import { toJson } from "@/utils/editor"
 
 const limLength = [8, 3, 2]
 const limitDeept = 2

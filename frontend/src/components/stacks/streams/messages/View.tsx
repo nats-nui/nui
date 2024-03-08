@@ -5,8 +5,8 @@ import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useState } from "react"
-import FormatDialog from "../../messages/FormatDialog"
+import { FunctionComponent, useEffect, useState } from "react"
+import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
 
@@ -14,12 +14,10 @@ import FilterDialog from "./FilterDialog"
 
 interface Props {
 	store?: StreamMessagesStore
-	style?: React.CSSProperties,
 }
 
 const StreamMessagesView: FunctionComponent<Props> = ({
 	store: strMsgSo,
-	style,
 }) => {
 
 	// STORE

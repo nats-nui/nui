@@ -13,7 +13,7 @@ import consumerSetup from "@/stores/stacks/consumer/detail";
 import consumersSetup from "@/stores/stacks/consumer";
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
 import { Message } from "@/types/Message";
-import { MSG_FORMAT } from "@/stores/stacks/messages/utils";
+import { MSG_FORMAT } from "@/utils/editor";
 import bucketSetup from "@/stores/stacks/buckets/detail";
 import kventriesSetup from "@/stores/stacks/kventry";
 import kventrySetup from "@/stores/stacks/kventry/detail";

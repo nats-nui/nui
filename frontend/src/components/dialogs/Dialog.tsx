@@ -6,7 +6,6 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import IconButton from "../buttons/IconButton"
-import Label, { LABELS } from "../format/Label"
 
 
 
@@ -123,7 +122,9 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		>
 			{title != null &&
 				<div style={cssTitle}>
-					<Label type={LABELS.TITLE_DIALOG} style={{ flex: 1 }}>{title}</Label>
+					<div className="lbl-card-title" style={{ flex: 1, marginRight: 5 }}>
+						{title}
+					</div>
 					<IconButton onClick={(e) => onClose(e)}>
 						<CloseIcon />
 					</IconButton>
@@ -147,7 +148,8 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	flex: 1,
 	width,
 	marginTop: top,
-	padding: "15px 15px 15px 25px",
+	//padding: "15px 15px 15px 25px",
+	padding: "3px 15px 15px 25px",
 	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
 	color: layoutSo.state.theme.palette.var[variant].fg,
 
