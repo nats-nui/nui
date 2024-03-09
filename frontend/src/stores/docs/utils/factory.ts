@@ -37,6 +37,12 @@ export function createUUID(): string {
 
 /** crea lo STORE adeguato */
 export function buildStore(state: Partial<ViewState>): ViewStore {
+	const store = buildStore2(state)
+	store.onCreate()
+	return store
+	
+}
+export function buildStore2(state: Partial<ViewState>): ViewStore {
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
@@ -64,7 +70,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	store.state = { ...store.state, ...state }
 	// se non c'e' l'uuid lo creo IO!
 	if (store.state.uuid == null) store.state.uuid = createUUID()
-	store.onCreate()
 	return store
 }
 

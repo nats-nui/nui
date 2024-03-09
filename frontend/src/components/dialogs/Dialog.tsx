@@ -157,7 +157,8 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 
 	//overflow: "hidden",
 	borderRadius: '0px 10px 10px 0px',
-	boxShadow: layoutSo.state.theme.shadows[0],
+	boxShadow: 'rgba(0, 0, 0, 0.3) 3px 3px 2px 1px',
+	//boxShadow: 'rgba(0, 0, 0, 0.4) 1px 1px 0px 0px',
 
 	maxHeight: `calc( 100% - 30px )`,
 
