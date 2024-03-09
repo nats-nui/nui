@@ -9,30 +9,30 @@ class SocketPool {
 
 	sockets: { [key: string]: SocketService } = {}
 
-	getById(storeId: string) {
-		return this.sockets[storeId]
+	getById(key: string) {
+		return this.sockets[key]
 	}
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
-	create(storeId: string, cnnId: string) {
-		debounce(`ss::destroy::${storeId}`)
-		let ss = this.getById(storeId)
+	create(key: string, cnnId: string) {
+		debounce(`ss::destroy::${key}`)
+		let ss = this.getById(key)
 		if (!ss) {
 			ss = new SocketService()
 			ss.connect(cnnId)
-			this.sockets[storeId] = ss
+			this.sockets[key] = ss
 		}
 		return ss
 	}
 
 	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! */
-	destroy(storeId: string) {
-		const ss = this.getById(storeId)
+	destroy(key: string) {
+		const ss = this.getById(key)
 		if (!ss) return
-		debounce(`ss::destroy::${storeId}`, () => {
+		debounce(`ss::destroy::${key}`, () => {
 			cnnSo.update({ id: ss.cnnId, status: CNN_STATUS.UNDEFINED })
 			ss.disconnect()
-			delete this.sockets[storeId]
+			delete this.sockets[key]
 		}, 2000)
 	}
 }

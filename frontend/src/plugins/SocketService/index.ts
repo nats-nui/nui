@@ -2,30 +2,13 @@ import logSo from "@/stores/log/index.js";
 import { Reconnect } from "./reconnect.js";
 import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
 import { MESSAGE_TYPE } from "@/stores/log/utils.js";
+import { optionsDefault } from "./utils.js";
 
-const wsUrlBuilder = () => {
-	if(import.meta.env.VITE_TARGET =="desktop"){
-		return {
-			protocol: "ws:",
-			host: "localhost",
-			port: 3111,
-			base: "",
-		}
-	}
-	return {
-		protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
-		host: window.location.hostname,
-		port: import.meta.env.VITE_API_WS_PORT ?? window.location.port,
-		base: "",
-	}
-}
 
-const optionsDefault: SocketOptions = wsUrlBuilder()
 
 /**
  * Crea una connessione WS
  * gestisce le riconnessioni
- * gestisce il PING
  * gestisce la tabella dei COMMANDS
  */
 export class SocketService {
@@ -62,7 +45,8 @@ export class SocketService {
 			let url = `${protocol}//${host}:${port}/ws/sub`
 			if (base) url = `${url}/${base}`
 			if (connId) url = `${url}?id=${connId}`
-			logSo.add({ type: MESSAGE_TYPE.INFO,
+			logSo.add({
+				type: MESSAGE_TYPE.INFO,
 				title: "WS-CONNECTIONS",
 				body: `try_connecting`,
 				data: url,
@@ -94,7 +78,8 @@ export class SocketService {
 	 * chiude il socket e mantiene chiuso (usato nel logout)
 	 */
 	disconnect() {
-		logSo.add({ type: MESSAGE_TYPE.INFO,
+		logSo.add({
+			type: MESSAGE_TYPE.INFO,
 			title: "WS-CONNECTIONS",
 			body: `disconnect`
 		})
@@ -108,7 +93,8 @@ export class SocketService {
 	 * invia un messaggio al server
 	 */
 	send(msg: string) {
-		logSo.add({ type: MESSAGE_TYPE.INFO,
+		logSo.add({
+			type: MESSAGE_TYPE.INFO,
 			title: "WS-CONNECTIONS",
 			body: `send:FE>BE`,
 			data: msg,
@@ -117,7 +103,8 @@ export class SocketService {
 	}
 
 	sendSubjects(subjects: string[]) {
-		logSo.add({ type: MESSAGE_TYPE.INFO,
+		logSo.add({
+			type: MESSAGE_TYPE.INFO,
 			title: "WS-CONNECTIONS",
 			body: `send:FE>BE`,
 			data: subjects
@@ -149,7 +136,7 @@ export class SocketService {
 	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
-		let payload:Payload = null
+		let payload: Payload = null
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS:
 				this.onStatus?.(message.payload as PayloadStatus)
@@ -163,9 +150,10 @@ export class SocketService {
 				})
 				break
 			case MSG_TYPE.ERROR:
-				const error:string = (message.payload as PayloadError)?.error
+				const error: string = (message.payload as PayloadError)?.error
 				//this.onError?.(message.payload as PayloadError)
-				logSo.add({ type: MESSAGE_TYPE.ERROR,
+				logSo.add({
+					type: MESSAGE_TYPE.ERROR,
 					title: "WS-CONNECTIONS-ERROR",
 					body: error,
 				})
@@ -174,7 +162,8 @@ export class SocketService {
 	}
 
 	handleError(e: Event) {
-		logSo.add({ type: MESSAGE_TYPE.ERROR,
+		logSo.add({
+			type: MESSAGE_TYPE.ERROR,
 			title: "WS-CONNECTIONS",
 			body: `error`
 		})

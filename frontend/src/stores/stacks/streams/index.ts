@@ -8,6 +8,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConsumers } from "../consumer/utils/factory"
 import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 import { DOC_TYPE } from "@/types"
+import { socketPool } from "@/plugins/SocketService/pool"
 
 
 
@@ -73,6 +74,19 @@ const setup = {
 			const state = store.state as StreamsState
 			state.connectionId = data.connectionId
 			state.select = data.select
+		},
+		onCreate: (_: void, store?: ViewStore) => {
+			viewSetup.actions.onCreate(_, store)
+
+			const cnnId = (<StreamsStore>store).state.connectionId
+			socketPool.create(`global::${cnnId}`, cnnId)
+		},
+		onDestroy: (_: void, store?: ViewStore) => {
+			viewSetup.actions.onDestroy(_, store)
+			docSo.remove({ view: store, anim: true })
+
+			const cnnId = (<StreamsStore>store).state.connectionId
+			socketPool.destroy(`global::${cnnId}`)
 		},
 		//#endregion
 

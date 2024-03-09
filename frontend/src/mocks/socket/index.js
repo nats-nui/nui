@@ -81,12 +81,14 @@ function send(cws, msg) {
 }
 
 let messagesSend = 0
+/** messaggi dopo i quali deve simulare una disconnessione */
 const numMsg = 50000000
 
 function sendTestMessages(client, subjects) {
 
 	const subject = subjects[messagesSend % subjects.length]
 
+	// è connesso e quindi manda il messaggio
 	if (messagesSend < numMsg) {
 		const json = getJsonData(messagesSend)
 		const payload = Buffer.from(json, "utf8").toString("base64")
@@ -97,6 +99,7 @@ function sendTestMessages(client, subjects) {
 				payload,
 			},
 		})
+	// manda il messaggio di disconnessione
 	} else if (messagesSend == numMsg) {
 		send(client.cws, {
 			type: "connection_status",
@@ -104,6 +107,7 @@ function sendTestMessages(client, subjects) {
 				status: "diconnected"
 			},
 		})
+	// manda il messaggio che si sta riconnettendo
 	} else if (messagesSend == numMsg + 2) {
 		send(client.cws, {
 			type: "connection_status",
@@ -111,6 +115,7 @@ function sendTestMessages(client, subjects) {
 				status: "reconnecting"
 			},
 		})
+	// manda il messaggio che s'e' riconnesso
 	} else if (messagesSend == numMsg + 5) {
 		send(client.cws, {
 			type: "connection_status",

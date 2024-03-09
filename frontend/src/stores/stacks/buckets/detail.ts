@@ -61,6 +61,15 @@ const setup = {
 			state.bucket = data.bucket
 			state.editState = data.editState
 		},
+		onCreate: (_: void, store?: ViewStore) => { 
+			const cnnStore = store as BucketStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if ( options == DOC_TYPE.KVENTRIES ) {
+				cnnStore.openKVEntries()
+			}
+			store.state.docAniDisabled = false
+		},
 		//#endregion
 
 		/** load all ENTITY */
@@ -79,22 +88,10 @@ const setup = {
 			store.setEditState(EDIT_STATE.READ)
 		},
 
-
-
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
 			const view = buildKVEntries(store.state.connectionId, store.state.bucket)
 			docSo.addLink({ view, parent: store, anim: true })
-		},
-
-		onCreate: (_: void, store?: ViewStore) => { 
-			const cnnStore = store as BucketStore
-			const options = docSo.state.cardOptions[store.state.type]
-			store.state.docAniDisabled = true
-			if ( options == DOC_TYPE.KVENTRIES ) {
-				cnnStore.openKVEntries()
-			}
-			store.state.docAniDisabled = false
 		},
 	},
 

@@ -58,6 +58,19 @@ const setup = {
 			state.connection = data.connection
 			state.editState = data.editState
 		},
+		onCreate: (_: void, store?: ViewStore) => { 
+			const cnnStore = store as CnnDetailStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if ( options == DOC_TYPE.MESSAGES ) {
+				cnnStore.openMessages()
+			} else if ( options == DOC_TYPE.STREAMS ) {
+				cnnStore.openStreams()
+			} else if ( options == DOC_TYPE.BUCKETS ) {
+				cnnStore.openBuckets()
+			}
+			store.state.docAniDisabled = false
+		},
 		//#endregion
 
 		/** ripristino la CONNECTION visualizzata da quella contenuta nelle CONNECTIONS */
@@ -80,19 +93,6 @@ const setup = {
 			docSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
 		},
 
-		onCreate: (_: void, store?: ViewStore) => { 
-			const cnnStore = store as CnnDetailStore
-			const options = docSo.state.cardOptions[store.state.type]
-			store.state.docAniDisabled = true
-			if ( options == DOC_TYPE.MESSAGES ) {
-				cnnStore.openMessages()
-			} else if ( options == DOC_TYPE.STREAMS ) {
-				cnnStore.openStreams()
-			} else if ( options == DOC_TYPE.BUCKETS ) {
-				cnnStore.openBuckets()
-			}
-			store.state.docAniDisabled = false
-		},
 	},
 
 	mutators: {

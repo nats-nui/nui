@@ -85,7 +85,7 @@ const setup = {
 
 		connect(_: void, store?: MessagesStore) {
 console.log("CONNECT")
-			const ss = socketPool.create(store.state.uuid, store.state.connectionId)
+			const ss = socketPool.create(`msg::${store.state.uuid}`, store.state.connectionId)
 			ss.onOpen = () => {
 				store.sendSubscriptions()
 				cnnSo.update({ id: store.state.connectionId, status: CNN_STATUS.CONNECTED })

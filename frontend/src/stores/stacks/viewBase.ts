@@ -3,7 +3,7 @@ import layoutSo from "@/stores/layout"
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
 import { delay } from "@/utils/time"
 import { StoreCore } from "@priolo/jon"
-import { buildStore } from "../docs/utils/factory"
+import { buildStore, buildStore2 } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { VIEW_SIZE } from "./utils"
@@ -99,7 +99,8 @@ const viewSetup = {
 
 	actions: {
 		//#region OVERRIDABLE
-		onCreate: (_: void, store?: ViewStore) => { },
+		onCreate: (_: void, store?: ViewStore) => { 
+		},
 		onDestroy: (_: void, store?: ViewStore) => {
 			docSo.remove({ view: store, anim: true })
 		},
@@ -110,9 +111,10 @@ const viewSetup = {
 			const linkedState = state.linked
 			delete state.linked
 			if (linkedState) {
-				const linkedStore = buildStore({ type: linkedState.type })
+				const linkedStore = buildStore2({ type: linkedState.type })
 				linkedStore.setSerialization(linkedState)
 				store.setLinked(linkedStore)
+				linkedStore.onCreate()
 			}
 		},
 		//#endregion

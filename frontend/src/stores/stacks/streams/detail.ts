@@ -66,6 +66,17 @@ const setup = {
 			state.allStreams = data.allStreams
 			state.editState = data.editState
 		},
+		onCreate: (_: void, store?: ViewStore) => {
+			const cnnStore = store as StreamStore
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if (options == DOC_TYPE.CONSUMERS) {
+				cnnStore.openConsumers()
+			} else if (options == DOC_TYPE.STREAM_MESSAGES) {
+				cnnStore.openMessages()
+			}
+			store.state.docAniDisabled = false
+		},
 		//#endregion
 
 		/** load all ENTITY */
@@ -79,12 +90,12 @@ const setup = {
 		},
 		async fetch(_: void, store?: StreamStore) {
 			const name = store.state.stream.config.name
-			const stream = await strApi.get(store.state.connectionId, name, {store})
+			const stream = await strApi.get(store.state.connectionId, name, { store })
 			store.setStream(stream)
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
 			const parent = store.getParentList()
-			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId, {store})
+			const streams = parent?.state.all ?? await strApi.index(store.state.connectionId, { store })
 			const allStreams = streams?.map(si => si.config.name) ?? []
 			store.setAllStreams(allStreams)
 		},
@@ -92,9 +103,9 @@ const setup = {
 		async save(_: void, store?: StreamStore) {
 			let streamSaved: StreamInfo = null
 			if (store.state.editState == EDIT_STATE.NEW) {
-				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config, {store})
+				streamSaved = await strApi.create(store.state.connectionId, store.state.stream.config, { store })
 			} else {
-				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config, {store})
+				streamSaved = await strApi.update(store.state.connectionId, store.state.stream.config, { store })
 			}
 			store.setStream(streamSaved)
 			store.getParentList()?.update(streamSaved)
@@ -120,17 +131,6 @@ const setup = {
 			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
 		},
 
-		onCreate: (_: void, store?: ViewStore) => { 
-			const cnnStore = store as StreamStore
-			const options = docSo.state.cardOptions[store.state.type]
-			store.state.docAniDisabled = true
-			if ( options == DOC_TYPE.CONSUMERS ) {
-				cnnStore.openConsumers()
-			} else if ( options == DOC_TYPE.STREAM_MESSAGES ) {
-				cnnStore.openMessages()
-			}
-			store.state.docAniDisabled = false
-		},
 	},
 
 	mutators: {
