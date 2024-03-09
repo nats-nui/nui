@@ -17,7 +17,9 @@ interface Props {
 	children?: React.ReactNode
 	style?: React.CSSProperties
 }
-
+/**
+ * DA ELIMINARE A FAVORE DEL DIV CON CLASSE APPPROPPRIATA
+ */
 const Label: FunctionComponent<Props> = ({
 	type = LABELS.TEXT,
 	onClick,

@@ -98,10 +98,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 
-		<Divider style={{ marginBottom: 5 }} label="ADVANCED" />
-
+		<div className="lbl-prop-title">ADVANCED</div>
 		<BoxV>
-			<div className="lbl-prop">SUBSCRIPTIONS</div>
+			<div className="lbl-prop">FAVORITE SUBJ.</div>
 			<EditList<Subscription>
 				items={subscriptions}
 				onItemsChange={handleSubscriptionsChange}
