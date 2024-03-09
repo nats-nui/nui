@@ -120,16 +120,20 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			onClick={handleEdit}
 		/>
 		<div style={{ display: "flex" }}>
+
 			<IconButton style={{ padding: "2px 0px" }}
 				onClick={handleRevisionPrevChange}
 			><ArrowLeftIcon /></IconButton>
-			<Button
-				variant={variant}
+
+			<Button variant={variant}
 				onClick={handleHistoryOpen}
+				select={kventrySa.historyOpen}
 			>VER: {kventry.revision ?? "--"}</Button>
+
 			<IconButton style={{ padding: "2px 0px" }}
 				onClick={handleRevisionNextChange}
 			><ArrowRightIcon /></IconButton>
+			
 		</div>
 	</>
 

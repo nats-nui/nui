@@ -6,8 +6,10 @@ import ActionsCmp from "./Actions"
 import DetailForm from "./DetailForm"
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
-import { KVEntry } from "@/types/KVEntry"
+import { KVEntry, OPERATION } from "@/types/KVEntry"
 import FormatDialog from "../../../editor/FormatDialog"
+import { RenderRowBaseProps } from "@/components/lists/EditList"
+import dayjs from "dayjs"
 
 
 
@@ -52,7 +54,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 				items={history}
 				select={historySelected}
 				onSelect={handleHistorySelect}
-				RenderRow={({ item }) => `${item.key} ${item.revision}`}
+				RenderRow={HystoryRow}
 			/>
 		</Dialog>
 		<FormatDialog store={kventrySo} />
@@ -60,3 +62,24 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 }
 
 export default KVEntryDetailView
+
+
+
+const HystoryRow: FunctionComponent<RenderRowBaseProps<KVEntry>> = ({
+	item,
+}) => {
+
+	const operation = {
+		[OPERATION.DELETE]: "DELETE",
+		[OPERATION.PURGE]: "PURGE",
+		[OPERATION.PUT]: "PUT",
+	}[item.operation] ?? "--"
+	const time = dayjs(item.lastUpdate).format("DD/MM/YYYY HH:mm")
+
+	return <div style={{whiteSpace: 'pre'}}>
+		<span style={{ fontSize:13, fontWeight: 800}}>{item.revision} </span>
+		<span style={{ backgroundColor: "rgba(0,0,0,.5)",  color: "#FFF", borderRadius: 3, padding: "2px 4px"}}>{operation}</span>
+		<span style={{ fontWeight: 400}}> {time}</span>
+	</div>
+
+}
