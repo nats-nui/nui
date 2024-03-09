@@ -92,6 +92,11 @@ const setup = {
 			store.setSelect(null)
 		},
 		async delete(_: void, store?: KVEntriesStore) {
+			if (!await store.alertOpen({
+				title: "KVENTRY DELETION",
+				body: "This action is irreversible.\nAre you sure you want to delete the KVENTRY?",
+			})) return
+
 			const key = store.state.select
 			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key, { store })
 			store.setAll(store.state.all.filter(entry => entry.key != key))

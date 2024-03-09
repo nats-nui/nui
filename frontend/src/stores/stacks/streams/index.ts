@@ -90,7 +90,13 @@ const setup = {
 			docSo.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
+		/** elimina lo sTREAM selezionato "state.select" */
 		async delete(_: void, store?: StreamsStore) {
+			if (!await store.alertOpen({
+				title: "STREAM DELETION",
+				body: "This action is irreversible.\nAre you sure you want to delete the STREAM?",
+			})) return
+
 			const name = store.state.select
 			await strApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(s => s.config.name != name))

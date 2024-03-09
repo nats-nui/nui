@@ -90,6 +90,11 @@ const setup = {
 			store.setSelect(null)
 		},
 		async delete(_: void, store?: BucketsStore) {
+			if (!await store.alertOpen({
+				title: "BUCKET DELETION",
+				body: "This action is irreversible.\nAre you sure you want to delete the BUCKET?",
+			})) return
+
 			const name = store.state.select
 			await bucketApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(b => b.bucket != name))

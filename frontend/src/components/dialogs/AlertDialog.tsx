@@ -1,68 +1,57 @@
 import Button from "@/components/buttons/Button"
 import Dialog from "@/components/dialogs/Dialog"
 import Box from "@/components/format/Box"
-import { StreamsStore } from "@/stores/stacks/streams"
+import { AlertState, ViewStore } from "@/stores/stacks/viewBase"
+import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
 
 
 interface Props {
-	store?: StreamsStore
-	title?: string
-	text?: string
-	labelYes?: string
-	labelNo?: string
-	open?: boolean
-	onClose?: (ok: boolean) => void
+	store?: ViewStore
 }
 
 const AlertDialog: FunctionComponent<Props> = ({
-	store: streamsSo,
-	title,
-	text,
-	labelYes = "YES", 
-	labelNo = "NO",
-	open,
-	onClose,
+	store,
 }) => {
 
 	// STORE
+	const storeSa = useStore(store)
 
 	// HOOKs
 
 	// HANDLER
+	const handleClose = (ok: boolean) => {
+		storeSa.alert.open = false
+		store.setAlert({ ...storeSa.alert })
+		storeSa.alert.resolve(ok)
+	}
 
 	// RENDER
+	const alert = storeSa.alert
 
 	return <Dialog
-		title={title}
+		title={alert.title}
 		width={200}
-		open={open}
-		store={streamsSo}
-		onClose={() => onClose(false)}
+		open={alert.open}
+		store={store}
+		onClose={() => handleClose(false)}
 	>
-		<div style={cssText}>
-			{text}
+		<div className="lbl-dialog-text">
+			{alert.body}
 		</div>
 
-		<Box style={{ display: "flex", gap: 15, justifyContent: 'flex-end' }}>
-			<Button 
-				children={labelYes} 
-				onClick={() => onClose(true)} 
+		<Box style={{ display: "flex", gap: 15, marginTop: 10 }}>
+			<Button
+				children={alert.labelOk}
+				onClick={() => handleClose(true)}
 			/>
-			<Button 
-				children={labelNo} 
-				onClick={() => onClose(false)} 
+			<Button
+				children={alert.labelCancel}
+				onClick={() => handleClose(false)}
 			/>
 		</Box>
 	</Dialog>
 }
 
 export default AlertDialog
-
-const cssText:React.CSSProperties = {
-	fontSize: 14,
-	fontWeight: 500,
-	marginBottom: 20,
-	whiteSpace: "pre-line",
-}

@@ -10,6 +10,7 @@ import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
 import FindInput from "@/components/input/FindInput"
+import AlertDialog from "@/components/dialogs/AlertDialog"
 
 
 
@@ -83,6 +84,9 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			getId={(item: KVEntry) => item.key}
 			variant={variant}
 		/>
+
+		<AlertDialog store={kventriesSo} />
+
 	</FrameworkCard>
 }
 
