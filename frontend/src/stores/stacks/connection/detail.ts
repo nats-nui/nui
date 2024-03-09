@@ -32,8 +32,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).state.connection?.name ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "CONNECTION DETAIL",
+		getTitle: (_: void, store?: ViewStore) => "CONNECTION",
+		getSubTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).state.connection?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnDetailState
 			return {

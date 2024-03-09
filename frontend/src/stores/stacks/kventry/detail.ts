@@ -33,8 +33,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (<KVEntryStore>store).state.bucket?.bucket ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "KVENTRY DETAIL",
+		getTitle: (_: void, store?: ViewStore) => "KVENTRY DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => (<KVEntryStore>store).state.bucket?.bucket ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as KVEntryState
 			return {

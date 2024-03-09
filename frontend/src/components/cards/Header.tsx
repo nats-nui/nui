@@ -76,8 +76,8 @@ const Header: FunctionComponent<Props> = ({
 
 	const tooltip = isCompact ?
 		<div>
-			<div className="label-title">{title}</div>
-			<div className="label-sub-title">{subTitle}</div>
+			<div className="lbl-header-title">{title}</div>
+			<div className="lbl-header-subtitle">{subTitle}</div>
 		</div>
 		: null
 
@@ -107,12 +107,12 @@ const Header: FunctionComponent<Props> = ({
 			{!isCompact && <>
 
 				<div style={cssTitle(store.state.size)}>
-					<div className="label-title cliccable"
+					<div className="lbl-header-title cliccable"
 						style={{ marginTop: 3 }}
 						onClick={handleFocus}
 					>{title}</div>
 					{subTitle && (
-						<div className="label-sub-title">
+						<div className="lbl-header-subtitle">
 							{subTitle}
 						</div>
 					)}

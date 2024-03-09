@@ -20,8 +20,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (store as MessageStore).state.message?.subject,
-		getSubTitle: (_: void, store?: ViewStore): string => "MESSAGE",
+		getTitle: (_: void, store?: ViewStore) => "MESSAGE DETAIL",
+		getSubTitle: (_: void, store?: ViewStore): string => (store as MessageStore).state.message?.subject ?? "--",
 		// 	const timestamp = (store as MessageStore).state.message?.receivedAt
 		// 	return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		// },

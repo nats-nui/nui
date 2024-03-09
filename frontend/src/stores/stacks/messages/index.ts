@@ -51,8 +51,8 @@ const setup = {
 		},
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name,
-		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
+		getTitle: (_: void, store?: ViewStore) => "MESSAGES",
+		getSubTitle: (_: void, store?: ViewStore) => (<MessagesStore>store).getConnection()?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessagesState
 			return {

@@ -26,7 +26,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
-		getSubTitle: (_: void, store?: ViewStore) => "ALL CONNECTION",
+		getSubTitle: (_: void, store?: ViewStore) => "All connections available",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnListState
 			return {

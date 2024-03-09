@@ -30,8 +30,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<StreamsStore>store).state.connectionId)?.name,
-		getSubTitle: (_: void, store?: ViewStore) => "STREAMS",
+		getTitle: (_: void, store?: ViewStore) => "STREAMS",
+		getSubTitle: (_: void, store?: ViewStore) => cnnSo.getById((<StreamsStore>store).state.connectionId)?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as StreamsState
 			return {
