@@ -120,7 +120,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 			ref={(node) => setRef(node)}
 			style={cssRoot(variant, width, y)}
 		>
-			{title != null &&
+			{title != null ? (
 				<div style={cssTitle}>
 					<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
 						{title}
@@ -129,7 +129,9 @@ const Dialog: FunctionComponent<DialogProps> = ({
 						<CloseIcon />
 					</IconButton>
 				</div>
-			}
+			) : (
+				<div style={{ height: 12 }} />
+			)}
 
 			<div style={cssBody}>
 				{children}

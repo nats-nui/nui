@@ -43,7 +43,10 @@ const viewSetup = {
 		linked: <ViewStore>null,
 
 		snackbar: <SnackbarState>{
-			open:false,
+			open: false,
+		},
+		alert: <AlertState>{
+			open: false,
 		},
 		loadingMessage: <React.ReactNode>null,
 	},
@@ -106,7 +109,7 @@ const viewSetup = {
 			store.state.size = state.size
 			const linkedState = state.linked
 			delete state.linked
-			if ( linkedState ) {
+			if (linkedState) {
 				const linkedStore = buildStore({ type: linkedState.type })
 				linkedStore.setSerialization(linkedState)
 				store.setLinked(linkedStore)
@@ -159,12 +162,24 @@ const viewSetup = {
 				store.setDocAnim(docAnim)
 			}
 		},
+
+		async alertOpen(alert: AlertState, store?: ViewStore): Promise<boolean> {
+			return new Promise<boolean>((res, rej) => {
+				alert.resolve = res
+				store.setAlert({ 
+					...{ labelCancel: "CANCEL", labelOk: "OK", title: "ALERT", open: true },
+					...alert 
+				})
+			})
+		},
 	},
 
 	mutators: {
 		setSize: (size: VIEW_SIZE) => ({ size }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
+
 		setSnackbar: (snackbar: SnackbarState) => ({ snackbar }),
+		setAlert: (alert: AlertState) => ({ alert }),
 		setLoadingMessage: (loadingMessage: string) => ({ loadingMessage }),
 	},
 }
@@ -188,5 +203,13 @@ export interface SnackbarState {
 	title?: string
 	body?: string
 	type?: MESSAGE_TYPE
+}
+export interface AlertState {
+	open?: boolean
+	title: string
+	body: string
+	labelOk?: string
+	labelCancel?: string
+	resolve?: (value: boolean) => void
 }
 

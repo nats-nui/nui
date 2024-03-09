@@ -33,21 +33,27 @@
 	font-weight: 800;
 	font-family: "Darker Grotesque";
 }
+.lbl-dialog-text {
+	font-size: 13px;
+	font-weight: 500;
+	margin-bottom: 20;
+	white-space: pre-line;
+}
 
 
 .lbl-prop-title {
 	font-size: 13px;
+	font-weight: 800;
 	border-bottom: 1px solid rgb(0 0 0 / 32%);
 	border-top: 1px solid rgb(0 0 0 / 32%);
 	padding: 3px;
 	text-align: center;
-	font-weight: 700;
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
 .lbl-prop {
 	font-size: 12px;
-	font-weight: 800;
+	font-weight: 700;
 }
 
 .lbl-input-readonly {

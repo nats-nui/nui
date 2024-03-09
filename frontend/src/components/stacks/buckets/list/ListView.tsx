@@ -1,5 +1,6 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
+import AlertDialog from "@/components/dialogs/AlertDialog"
 import FindInput from "@/components/input/FindInput"
 import Table from "@/components/table"
 import docSo from "@/stores/docs"
@@ -75,6 +76,9 @@ const BucketsListView: FunctionComponent<Props> = ({
 			getId={(bucket: BucketState) => bucket.bucket}
 			variant={variant}
 		/>
+
+		<AlertDialog store={bucketsSo} />
+
 	</FrameworkCard>
 }
 

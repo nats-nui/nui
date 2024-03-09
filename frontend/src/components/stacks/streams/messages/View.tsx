@@ -9,6 +9,7 @@ import { FunctionComponent, useEffect, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
+import AlertDialog from "@/components/dialogs/AlertDialog"
 
 
 
@@ -84,6 +85,8 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 		<FilterDialog store={strMsgSo} />
 
 		<FormatDialog store={strMsgSo} />
+
+		<AlertDialog store={strMsgSo} />
 
 	</FrameworkCard>
 }
