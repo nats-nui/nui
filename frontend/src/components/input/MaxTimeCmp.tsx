@@ -4,9 +4,7 @@ import ListDialog from "@/components/dialogs/ListDialog"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
-import { StreamStore } from "@/stores/stacks/streams/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
-import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
 
 
@@ -26,7 +24,7 @@ interface Props {
 	onChange?: (valueNew: number) => void
 }
 
-const MaxAgeCmp: FunctionComponent<Props> = ({
+const MaxTimeCmp: FunctionComponent<Props> = ({
 	store,
 	value,
 	label,
@@ -81,7 +79,7 @@ const MaxAgeCmp: FunctionComponent<Props> = ({
 	</BoxV>
 }
 
-export default MaxAgeCmp
+export default MaxTimeCmp
 
 function secondsToValue(value: number, to: TIME) {
 	switch (to) {

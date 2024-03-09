@@ -9,8 +9,8 @@ import { STORAGE } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
-import MaxAgeCmp from "../../streams/detail/cmp/MaxAgeCmp"
-import MaxBytesCmp from "../../streams/detail/cmp/MaxBytesCmp"
+import MaxTimeCmp from "../../../input/MaxTimeCmp"
+import MaxBytesCmp from "../../../input/MaxBytesCmp"
 
 
 
@@ -76,7 +76,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 
-		<MaxAgeCmp store={bucketSo}
+		<MaxTimeCmp store={bucketSo}
 			label="TTL"
 			value={bucket.ttl}
 			onChange={ttl => handlePropChange({ ttl })}

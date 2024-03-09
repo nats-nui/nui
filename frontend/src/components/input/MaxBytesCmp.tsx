@@ -4,7 +4,6 @@ import ListDialog from "@/components/dialogs/ListDialog"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
-import { StreamStore } from "@/stores/stacks/streams/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
 

@@ -3,7 +3,6 @@ import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
-import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
 
 

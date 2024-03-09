@@ -16,9 +16,9 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
 import SourcesCmp from "./cmp/SourcesCmp"
-import MaxAgeCmp from "./cmp/MaxAgeCmp"
-import MaxBytesCmp from "./cmp/MaxBytesCmp"
-import MaxNumberCmp from "./cmp/MaxNumberCmp"
+import MaxTimeCmp from "../../../input/MaxTimeCmp"
+import MaxBytesCmp from "../../../input/MaxBytesCmp"
+import MaxNumberCmp from "../../../input/MaxNumberCmp"
 
 
 
@@ -232,7 +232,7 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 		<div className="lbl-prop-title">LIMIT</div>
-		<MaxAgeCmp store={streamSo}
+		<MaxTimeCmp store={streamSo}
 			readOnly={inRead || !inNew}
 			label="MAX AGE"
 			value={config.maxAge}
