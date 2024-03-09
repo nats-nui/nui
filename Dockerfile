@@ -18,5 +18,5 @@ WORKDIR /
 RUN apk add libc6-compat
 COPY --from=build_be /cmd/nui-web /cmd/nui-web
 COPY --from=build_fe /frontend/dist /frontend/dist
-EXPOSE 3111/tcp
+EXPOSE 31311/tcp
 ENTRYPOINT ["/cmd/nui-web"]
