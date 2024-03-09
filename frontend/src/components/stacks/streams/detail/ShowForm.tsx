@@ -30,23 +30,43 @@ const ShowForm: FunctionComponent<Props> = ({
 
 	return <Form>
 
+		<div className="lbl-prop-title">MESSAGES</div>
+
 		<BoxV>
-			<Label>MESSAGES</Label>
+			<div className="lbl-prop">COUNT</div>
 			<Label>{state.messages}</Label>
 		</BoxV>
 		<BoxV>
-			<Label>BYTES</Label>
+			<div className="lbl-prop">BYTES</div>
 			<Label>{state.bytes}</Label>
 		</BoxV>
 		<BoxV>
-			<Label>FIRST SEQ.</Label>
+			<div className="lbl-prop">FIRST SEQ.</div>
 			<Label>{state.firstSeq}</Label>
 		</BoxV>
 		<BoxV>
-			<Label>LAST SEQ.</Label>
+			<div className="lbl-prop">FIRST DATETIME</div>
+			<Label>{state.firstTs}</Label>
+		</BoxV>
+		<BoxV>
+			<div className="lbl-prop">LAST SEQ.</div>
 			<Label>{state.lastSeq}</Label>
 		</BoxV>
-		
+		<BoxV>
+			<div className="lbl-prop">LAST DATETIME</div>
+			<Label>{state.lastTs}</Label>
+		</BoxV>
+		<BoxV>
+			<div className="lbl-prop">DELETED COUNT</div>
+			<Label>{state.numDeleted}</Label>
+		</BoxV>
+
+		<div className="lbl-prop-title">CONSUMERS</div>
+
+		<BoxV>
+			<div className="lbl-prop">COUNT</div>
+			<Label>{state.consumerCount}</Label>
+		</BoxV>
 
 	</Form>
 }
