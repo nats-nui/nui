@@ -6,7 +6,9 @@ interface Props {
 	label?: string
 	style?: React.CSSProperties
 }
-
+/**
+ * DA ELIMINARE A FAVORE DEL DIV CON CLASSE APPPROPPRIATA
+ */
 const Divider: FunctionComponent<Props> = ({
 	label,
 	style,

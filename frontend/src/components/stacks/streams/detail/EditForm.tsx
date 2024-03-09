@@ -110,7 +110,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</BoxV>
 
 		<BoxV>
-			<div className="lbl-prop">FAVORITE SUBS</div>
+			<div className="lbl-prop">SUBJECTS</div>
 			<EditList<string>
 				items={config.subjects}
 				onItemsChange={subjects => handlePropChange({ subjects })}

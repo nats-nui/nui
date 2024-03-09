@@ -30,7 +30,7 @@
 }
 
 .lbl-prop-title {
-	font-size: 12px;
+	font-size: 13px;
 	border-bottom: 1px solid rgb(0 0 0 / 32%);
 	border-top: 1px solid rgb(0 0 0 / 32%);
 	padding: 3px;
@@ -40,14 +40,15 @@
 	margin-bottom: 5px;
 }
 .lbl-prop {
-	font-size: 11px;
-	font-weight: 700;
+	font-size: 12px;
+	font-weight: 800;
 }
 
 .lbl-input-readonly {
 	font-size: 12px;
     font-weight: 600;
     padding: 4px 0px;
+	overflow-wrap: break-word;
 }
 
 
