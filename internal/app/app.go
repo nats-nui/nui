@@ -24,7 +24,7 @@ func NewApp(opts ...AppOption) (*App, error) {
 		target:     TargetDesktop,
 		l:          &logging.NullLogger{},
 		dbPath:     ":memory:",
-		serverPort: "3111",
+		serverPort: "31311",
 	}
 	for _, o := range opts {
 		o(app)

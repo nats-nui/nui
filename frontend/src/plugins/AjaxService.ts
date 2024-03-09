@@ -23,7 +23,7 @@ export interface CallOptions {
 }
 
 const httpUrlBuilder = () => {
-	if (import.meta.env.VITE_TARGET == "desktop") return "http://localhost:3111/api/"
+	if (import.meta.env.VITE_TARGET == "desktop") return "http://localhost:31311/api/"
 	return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
 }
 

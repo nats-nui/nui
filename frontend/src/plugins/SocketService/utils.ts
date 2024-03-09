@@ -5,7 +5,7 @@ const wsOptionBuilder = () => {
 	return (import.meta.env.VITE_TARGET == "desktop") ? {
 		protocol: "ws:",
 		host: "localhost",
-		port: 3111,
+		port: 31311,
 		base: "",
 	} : {
 		protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
