@@ -30,7 +30,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	const handlePropChange = (maxConsumers: number) => {
 		onChange?.(maxConsumers)
 	}
-	const handleEnabledCheck = (check: boolean) => handlePropChange(check ? 0 : -1)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
 
 	// RENDER
 	const isEnabled = value != -1

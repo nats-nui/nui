@@ -32,7 +32,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 }) => {
 
 	// HANDLER
-	const handleClose = () => store.onDestroy()
+	const handleClose = () => store.onRemoveFromDeck()
 
 	// RENDER
 	const inRoot = !store.state.parent

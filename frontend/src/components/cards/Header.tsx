@@ -31,7 +31,7 @@ const Header: FunctionComponent<Props> = ({
 	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-	const handleClose = () => store.onDestroy()
+	const handleClose = () => store.onRemoveFromDeck()
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
