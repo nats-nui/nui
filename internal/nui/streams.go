@@ -316,7 +316,7 @@ func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig je
 	for {
 		batch := min(10000, -interval*intervalMultiplier)
 		firstSeq -= batch - 1
-		if uint64(firstSeq) <= info.State.FirstSeq {
+		if firstSeq <= 1 || uint64(firstSeq) <= info.State.FirstSeq {
 			return info.State.FirstSeq, int(info.State.FirstSeq - uint64(firstSeq)), nil
 		}
 		if uint64(firstSeq) == info.State.FirstSeq {

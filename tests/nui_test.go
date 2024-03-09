@@ -233,6 +233,12 @@ func (s *NuiTestSuite) TestStreamMessagesIndexWithNegativeInterval() {
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(0)
 
+	// get with an interval bigger than the number of messages
+	r = e.GET("/api/connection/" + connId + "/stream/neg_stream/messages").
+		WithQueryString("interval=-20").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Value(0).Object().Value("seq_num").IsEqual(3)
+
 }
 
 func (s *NuiTestSuite) TestStreamMessagesDelete() {
