@@ -44,7 +44,7 @@ const MaxAgeCmp: FunctionComponent<Props> = ({
 		const maxAge = valueToSeconds(value, unit)
 		onChange?.(maxAge)
 	}
-	const handleEnabledCheck = (check: boolean) => handlePropChange(check ? 0 : -1)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
 	const handleUnitChange = (index: number) => setUnit(Object.values(TIME)[index])
 
 	// RENDER

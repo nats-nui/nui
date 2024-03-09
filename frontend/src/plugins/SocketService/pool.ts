@@ -15,6 +15,7 @@ class SocketPool {
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
 	create(key: string, cnnId: string) {
+		if (!cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)
 		if (!ss) {

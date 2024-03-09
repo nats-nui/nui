@@ -44,7 +44,7 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 		const maxBytes = valueToBytes(valueNew, unit)
 		onChange?.(maxBytes)
 	}
-	const handleEnabledCheck = (check: boolean) => handlePropChange(check ? 0 : -1)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
 	const handleUnitChange = (index: number) => setUnit(Object.values(BYTE)[index])
 
 	// RENDER

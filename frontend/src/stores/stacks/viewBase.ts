@@ -2,11 +2,12 @@ import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
 import { delay } from "@/utils/time"
-import { StoreCore } from "@priolo/jon"
+import { LISTENER_CHANGE, StoreCore } from "@priolo/jon"
 import { buildStore, buildStore2 } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { VIEW_SIZE } from "./utils"
+import { socketPool } from "@/plugins/SocketService/pool"
 
 
 
@@ -99,9 +100,9 @@ const viewSetup = {
 
 	actions: {
 		//#region OVERRIDABLE
-		onCreate: (_: void, store?: ViewStore) => { 
+		onCreate: (_: void, store?: ViewStore) => {
 		},
-		onDestroy: (_: void, store?: ViewStore) => {
+		onRemoveFromDeck: (_: void, store?: ViewStore) => {
 			docSo.remove({ view: store, anim: true })
 		},
 		setSerialization: (state: any, store?: ViewStore) => {
@@ -168,9 +169,9 @@ const viewSetup = {
 		async alertOpen(alert: AlertState, store?: ViewStore): Promise<boolean> {
 			return new Promise<boolean>((res, rej) => {
 				alert.resolve = res
-				store.setAlert({ 
+				store.setAlert({
 					...{ labelCancel: "CANCEL", labelOk: "OK", title: "ALERT", open: true },
-					...alert 
+					...alert
 				})
 			})
 		},
@@ -184,6 +185,16 @@ const viewSetup = {
 		setAlert: (alert: AlertState) => ({ alert }),
 		setLoadingMessage: (loadingMessage: string) => ({ loadingMessage }),
 	},
+
+	onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
+		if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
+			const cnnId = store.state["connectionId"]
+			if (cnnId) socketPool.create(`global::${cnnId}`, cnnId)
+		} else if (store._listeners.size == 0) {
+			const cnnId = store.state["connectionId"]
+			if (cnnId) socketPool.destroy(`global::${cnnId}`)
+		}
+	}
 }
 
 export type ViewState = Partial<typeof viewSetup.state>
