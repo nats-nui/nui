@@ -1,4 +1,4 @@
-.label-title {
+.lbl-header-title {
 	font-size: 16px;
 	font-weight: 800;
 	font-family: "Darker Grotesque";
@@ -6,28 +6,34 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.label-sub-title {
-	font-size: 10px;
+.lbl-header-subtitle {
+	font-size: 12px;
 	font-weight: 700;
 	opacity: .7;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-.label-form-1 {
+
+
+.lbl-rowelement-title {
 	font-size: 14px;
 	font-weight: 700;
 }
-.label-form-2 {
+.lbl-rowelement-subtitle {
 	font-size: 12px;
 	font-weight: 500;
 }
 
 
 
-.lbl-card-title {
+.lbl-dialog-title {
 	font-size: 16px;
 	font-weight: 800;
 	font-family: "Darker Grotesque";
 }
+
 
 .lbl-prop-title {
 	font-size: 13px;
@@ -46,7 +52,7 @@
 
 .lbl-input-readonly {
 	font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 4px 0px;
 	overflow-wrap: break-word;
 }

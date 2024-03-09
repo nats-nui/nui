@@ -32,8 +32,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (<BucketStore>store).state.bucket?.bucket ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "BUCKET DETAIL",
+		getTitle: (_: void, store?: ViewStore) => "BUCKET DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => (<BucketStore>store).state.bucket?.bucket ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as BucketStatus
 			return {

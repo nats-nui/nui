@@ -28,8 +28,8 @@ const setup = {
 
 	getters: {
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (<ConsumerStore>store).state.consumer?.config?.name ?? "--",
-		getSubTitle: (_: void, store?: ViewStore) => "CONSUMER DETAIL",
+		getTitle: (_: void, store?: ViewStore) => "CONSUMER DETAIL",
+		getSubTitle: (_: void, store?: ViewStore) => (<ConsumerStore>store).state.consumer?.config?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ConsumerState
 			return {

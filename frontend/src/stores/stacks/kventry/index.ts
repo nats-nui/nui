@@ -31,8 +31,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<KVEntriesStore>store).state.connectionId)?.name,
-		getSubTitle: (_: void, store?: ViewStore) => "KVENTRIES",
+		getTitle: (_: void, store?: ViewStore) => "KVENTRIES",
+		getSubTitle: (_: void, store?: ViewStore) => cnnSo.getById((<KVEntriesStore>store).state.connectionId)?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as KVEntriesState
 			return {

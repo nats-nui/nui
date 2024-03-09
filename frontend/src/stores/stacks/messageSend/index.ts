@@ -24,12 +24,12 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => {
+		getTitle: (_: void, store?: ViewStore) => "SEND MESSAGE",
+		getSubTitle: (_: void, store?: ViewStore) => {
 			const cnnId = (store.state as MessageSendState).connectionId
 			const cnn = cnnSo.getById(cnnId)
-			return cnn?.name ?? "..."
+			return cnn?.name ?? "--"
 		},
-		getSubTitle: (_: void, store?: ViewStore) => "SEND MESSAGE",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as MessageSendState
 			return {

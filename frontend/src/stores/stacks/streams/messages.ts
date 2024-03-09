@@ -55,8 +55,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => (<StreamMessagesStore>store).state.stream?.config?.name ?? "???",
-		getSubTitle: (_: void, store?: ViewStore) => "STREAM-MESSAGES",
+		getTitle: (_: void, store?: ViewStore) => "STREAM MESSAGES",
+		getSubTitle: (_: void, store?: ViewStore) => (<StreamMessagesStore>store).state.stream?.config?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as StreamMessagesState
 			return {

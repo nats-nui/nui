@@ -40,10 +40,10 @@ const ElementRow: FunctionComponent<Props> = ({
 	>
 		{icon}
 		<div style={cssLabels}>
-			<div className="label-form-1">
+			<div className="lbl-rowelement-title">
 				{title}
 			</div>
-			<div className="label-form-2" style={{display: "flex"}}>
+			<div className="lbl-rowelement-subtitle" style={{display: "flex"}}>
 				<div>{subtitle}</div>
 				{testRender}
 			</div>

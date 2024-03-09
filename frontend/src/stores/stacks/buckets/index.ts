@@ -30,8 +30,8 @@ const setup = {
 	getters: {
 
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => cnnSo.getById((<BucketsStore>store).state.connectionId)?.name,
-		getSubTitle: (_: void, store?: ViewStore) => "BUCKETS",
+		getTitle: (_: void, store?: ViewStore) => "BUCKETS",
+		getSubTitle: (_: void, store?: ViewStore) => cnnSo.getById((<BucketsStore>store).state.connectionId)?.name,
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as BucketsState
 			return {
