@@ -28,24 +28,40 @@ const ShowForm: FunctionComponent<Props> = ({
 	if (!bucket) return null
 	
 	return <Form>
+		<div className="lbl-prop-title">BUCKET</div>
 
 		<BoxV>
-			<Label>NAME</Label>
+			<div className="lbl-prop">NAME</div>
 			<Label>{bucket.bucket}</Label>
 		</BoxV>
+
 		<BoxV>
-			<Label>VALUES</Label>
+			<div className="lbl-prop">VALUES COUNT</div>
 			<Label>{bucket.values}</Label>
 		</BoxV>
+
+		<BoxV>
+			<div className="lbl-prop">BYTES COUNT</div>
+			<Label>{bucket.bytes}</Label>
+		</BoxV>
+
+		<div className="lbl-prop-title">CONFIG</div>
 		<BoxV>
 			<Label>HISTORY</Label>
 			<Label>{bucket.history}</Label>
 		</BoxV>
 		<BoxV>
-			<Label>TTL</Label>
+			<div className="lbl-prop">TTL</div>
 			<Label>{bucket.ttl}</Label>
 		</BoxV>
-
+		<BoxV>
+			<div className="lbl-prop">BACKING STORE</div>
+			<Label>{bucket.backingStore}</Label>
+		</BoxV>
+		<BoxV>
+			<div className="lbl-prop">COMPRESSION</div>
+			<Label>{bucket.compressed ? "YES" : "NO"}</Label>
+		</BoxV>
 
 	</Form>
 }
