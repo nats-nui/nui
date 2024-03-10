@@ -81,9 +81,23 @@ const PurgeDialog: FunctionComponent<Props> = ({
                     />
                 </BoxV>
 
-                <Button children="APPLY"
-                        onClick={handleApply}
-                />
+                <div className="lbl-prop-title">DANGER</div>
+
+                <div className="lbl-dialog-text">
+                    This action is irreversible.
+                    Are you sure you want to purge the STREAM?
+                </div>
+
+                <Box style={{display: "flex", gap: 15, marginTop: 10}}>
+                    <Button
+                        children="PURGE"
+                        onClick={() => handleApply()}
+                    />
+                    <Button
+                        children="CANCEL"
+                        onClick={() => handleClose()}
+                    />
+                </Box>
             </Form>
         </Dialog>
     )
