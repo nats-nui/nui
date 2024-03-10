@@ -80,6 +80,7 @@ func (a *App) registerHandlers() {
 	a.Get("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleShowKey)
 	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key", a.handlePutKey)
 	a.Delete("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleDeleteKey)
+	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key/purge", a.handlePurgeKey)
 
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
