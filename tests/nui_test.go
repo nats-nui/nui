@@ -313,6 +313,15 @@ func (s *NuiTestSuite) TestKvRest() {
 
 	//delete key
 	e.DELETE("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusNoContent)
+	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusOK)
+	// history have 1 create, 1 update and 1 delete
+	r.JSON().Object().Value("history").Array().Length().IsEqual(3)
+	r.JSON().Object().Value("operation").String().IsEqual("KeyValueDeleteOp")
+
+	// purge key
+	e.POST("/api/connection/" + connId + "/kv/bucket1/key/key1/purge").Expect()
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().
+		JSON().Object().Value("history").Array().Length().IsEqual(1)
 
 }
 
