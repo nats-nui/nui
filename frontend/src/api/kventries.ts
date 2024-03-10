@@ -28,10 +28,16 @@ function remove(connectionId: string, bucketName: string, key: string, opt?: Cal
 	return ajax.delete(`connection/${connectionId}/kv/${bucketName}/key/${key}`, null, opt)
 }
 
+/** PURGE */
+function purge(connectionId: string, bucketName: string, key: string, opt?: CallOptions): Promise<void> {
+	return ajax.post(`connection/${connectionId}/kv/${bucketName}/key/${key}/purge`, {}, opt)
+}
+
 const api = {
 	index,
 	get,
 	put,
-	remove
+	remove,
+	purge
 }
 export default api
