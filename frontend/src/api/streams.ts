@@ -2,6 +2,7 @@ import ajax, { CallOptions } from "@/plugins/AjaxService"
 import { StreamMessagesFilter } from "@/stores/stacks/streams/messages"
 import { Message } from "@/types/Message"
 import { StreamConfig, StreamInfo } from "@/types/Stream"
+import {PurgeParams} from "@/stores/stacks/streams";
 
 
 
@@ -19,6 +20,14 @@ function get(connectionId: string, streamName: string, opt?: CallOptions): Promi
 function remove(connectionId: string, streamName: string, opt?: CallOptions): Promise<void> {
 	if (!connectionId || !streamName) return
 	return ajax.delete(`connection/${connectionId}/stream/${streamName}`, null, opt)
+}
+
+function purge(connectionId: string, streamName: string, purgeParams: PurgeParams, opt?: CallOptions): Promise<void> {
+	if (!connectionId || !streamName) return
+	const seq = purgeParams.bySeq ? purgeParams.number : null
+	const keep = purgeParams.byKeep ? purgeParams.number : null
+	const subject = purgeParams.subject
+	return ajax.post(`connection/${connectionId}/stream/${streamName}/purge`, {seq, keep, subject}, opt)
 }
 
 /** CREATE */
@@ -64,6 +73,7 @@ const api = {
 	remove,
 	create,
 	update,
+	purge,
 	messages,
 	messageRemove,
 }

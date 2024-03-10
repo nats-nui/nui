@@ -115,6 +115,43 @@ func (s *NuiTestSuite) TestStreamRest() {
 
 }
 
+func (s *NuiTestSuite) TestStreamPurge() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledStreamMultiSub("stream1", "sub1", "sub2")
+
+	// purge by subject
+	e.POST("/api/connection/" + connId + "/stream/stream1/purge").
+		WithBytes([]byte(`{"seq": null, "keep": null, "subject": "sub2"}`)).
+		Expect().Status(204)
+
+	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+
+	s.filledStreamMultiSub("stream2", "s2_sub1", "s2_sub2")
+
+	// purge by seq number
+	e.POST("/api/connection/" + connId + "/stream/stream2/purge").
+		WithBytes([]byte(`{"seq": 5, "keep": null, "subject": null}`)).
+		Expect().Status(204)
+
+	r := e.GET("/api/connection/" + connId + "/stream/stream2/messages").
+		Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(11)
+	r.JSON().Array().Value(0).Object().Value("seq_num").IsEqual(5)
+
+	s.filledStreamMultiSub("stream3", "s3_sub1", "s3_sub2")
+
+	// purge keeping last 5 messages
+	e.POST("/api/connection/" + connId + "/stream/stream3/purge").
+		WithBytes([]byte(`{"seq": null, "keep": 5, "subject": null}`)).
+		Expect().Status(204)
+
+	e.GET("/api/connection/" + connId + "/stream/stream3/messages").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(5)
+
+}
+
 func (s *NuiTestSuite) TestStreamConsumerRest() {
 	e := s.e
 	connId := s.defaultConn()

@@ -143,11 +143,17 @@ func (a *App) handlePurgeStream(c *fiber.Ctx) error {
 		for key, value := range *reqOptions {
 			switch key {
 			case "seq":
-				options = append(options, jetstream.WithPurgeSequence(value.(uint64)))
+				if val, ok := value.(float64); ok && val >= 1 {
+					options = append(options, jetstream.WithPurgeSequence(uint64(val)))
+				}
 			case "keep":
-				options = append(options, jetstream.WithPurgeKeep(value.(uint64)))
+				if val, ok := value.(float64); ok && val >= 1 {
+					options = append(options, jetstream.WithPurgeKeep(uint64(val)))
+				}
 			case "subject":
-				options = append(options, jetstream.WithPurgeSubject(value.(string)))
+				if val, ok := value.(string); ok && val != "" {
+					options = append(options, jetstream.WithPurgeSubject(val))
+				}
 			}
 		}
 	}
@@ -155,7 +161,7 @@ func (a *App) handlePurgeStream(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.SendStatus(200)
+	return c.SendStatus(204)
 }
 
 func (a *App) handleSealStream(c *fiber.Ctx) error {

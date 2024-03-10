@@ -5,12 +5,12 @@ Restituisce uno STREAM tramite il suo NAME e CONNECTION
 
 ### URL
 ```
-GET /api/connection/:connection_id/stream/:name
+GET /api/connection/:connection_id/stream/:stream_name
 ```
 - `connection_id`  
-identificativo CONNECTION che contiene lo STREAM
-- `name`
-nome dello STREAM da restituire
+  uuid of the CONNECTION that contains the STREAM messages
+- `stream_name`
+  name of the STREAM to retrieve messages from
 
 
 ### BODY

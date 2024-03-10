@@ -63,7 +63,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			<Button variant={variant}
 				onClick={handleHistoryOpen}
 				select={kventrySa.historyOpen}
-			>VER: {kventry.revision ?? "--"}</Button>
+			>REV: {kventry.revision ?? "--"}</Button>
 
 			<IconButton style={{ padding: "2px 0px" }}
 				onClick={handleRevisionNextChange}

@@ -85,6 +85,19 @@ const handlers = [
 		)
 	}),
 
+	/** PURGE */
+	rest.post('/api/connection/:cnnId/stream/:name/purge', async (req, res, ctx) => {
+		const name = req.params.name
+		if (!name) return res(ctx.status(500))
+
+		const index = streams_S.findIndex(si => si.config.name == name)
+		if (index == -1) return res(ctx.status(500))
+		streams_S[index].messages.splice(0, streams_S[index].messages.length - 1)
+		return res(
+			ctx.status(200),
+		)
+	}),
+
 	/** MESSAGES */
 	rest.get('/api/connection/:connId/stream/:strName/messages', async (req, res, ctx) => {
 		const { cnnId, strName } = req.params
