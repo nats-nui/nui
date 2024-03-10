@@ -64,6 +64,7 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
 	a.Post("/api/connection/:connection_id/stream/:stream_name", a.handleUpdateStream)
 	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.handleDeleteStream)
+	a.Post("/api/connection/:connection_id/stream/:stream_name/purge", a.handlePurgeStream)
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleIndexStreamConsumers)
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleShowStreamConsumer)

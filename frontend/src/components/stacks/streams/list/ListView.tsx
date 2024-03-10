@@ -10,6 +10,7 @@ import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx";
 
 
 
@@ -32,6 +33,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleSelect = (stream: StreamInfo) => streamsSo.select(stream?.config?.name)
+	const handlePurgeClick = () => streamsSo.setPurgeOpen(true)
 	const handleNew = () => streamsSo.create()
 	const handleDelete = () => streamsSo.delete()
 
@@ -53,6 +55,12 @@ const StreamsListView: FunctionComponent<Props> = ({
 				variant={variant}
 				onClick={handleDelete}
 			/>}
+			{!!nameSelected && <Button
+				children="PURGE"
+				variant={variant}
+				onClick={handlePurgeClick}
+			/>}
+			{!!nameSelected && <div> | </div>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
@@ -75,6 +83,8 @@ const StreamsListView: FunctionComponent<Props> = ({
 			getId={item => item.config.name}
 			variant={variant}
 		/>
+
+		<PurgeDialog store={streamsSo} />
 
 		<AlertDialog store={streamsSo} />
 

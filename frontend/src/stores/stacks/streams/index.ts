@@ -11,6 +11,13 @@ import { DOC_TYPE } from "@/types"
 import { socketPool } from "@/plugins/SocketService/pool"
 
 
+export interface PurgeParams {
+	bySeq?: boolean
+	byKeep?: boolean
+	number?: number
+	subject?: string
+}
+
 
 /** STREAMS COLLECTION */
 const setup = {
@@ -21,6 +28,9 @@ const setup = {
 		select: <string>null,
 		all: <StreamInfo[]>null,
 		textSearch: <string>null,
+
+		purgeParams: <PurgeParams>null,
+		purgeOpen: false,
 
 		//#region VIEWBASE
 		width: 310,
@@ -113,6 +123,13 @@ const setup = {
 			index == -1 ? all.push(stream) : (all[index] = { ...all[index], ...stream })
 			store.setAll(all)
 		},
+
+		async purge(_: void, store?: StreamsStore) {
+			const name = store.state.select
+			if (!name) return
+			await strApi.purge(store.state.connectionId, name, store.state.purgeParams, { store })
+		},
+
 		/** visualizzo dettaglio di uno STREAM */
 		select(name: string, store?: StreamsStore) {
 			const nameOld = store.state.select
@@ -124,8 +141,6 @@ const setup = {
 			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 
-
-
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
 			docSo.addLink({
@@ -134,6 +149,7 @@ const setup = {
 				anim: true
 			})
 		},
+
 		/** apertura della CARD MESSAGES */
 		openMessages(streamName: string, store?: StreamsStore) {
 			docSo.addLink({
@@ -148,6 +164,8 @@ const setup = {
 		setAll: (all: StreamInfo[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
+		setPurgeParams: (purgeParams: PurgeParams) => ({ purgeParams }),
+		setPurgeOpen: (purgeOpen: boolean) => ({ purgeOpen }),
 	},
 }
 
