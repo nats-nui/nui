@@ -47,7 +47,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleSave = () => kventrySo.save()
 	const handleCancel = () => kventrySo.restore()
 	const handleHistoryOpen = () => {
-		kventrySo.fetch()
+		//kventrySo.fetch()
 		kventrySo.setHistoryOpen(true)
 	}
 	const handleTimeout = () => kventrySo.fetch()
@@ -115,7 +115,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 
 		<Button
-			children="EDIT"
+			children="PUT"
 			variant={variant}
 			onClick={handleEdit}
 		/>
