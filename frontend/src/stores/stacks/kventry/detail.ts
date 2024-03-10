@@ -83,7 +83,7 @@ const setup = {
 
 
 		async fetchIfVoid(_: void, store?: KVEntryStore) {
-			if (!!store.state.kventry?.payload) return
+			if (!!store.state.kventry?.payload || store.state.editState == EDIT_STATE.NEW) return
 			await store.fetch()
 		},
 		fetch: async (_: void, store?: KVEntryStore) => {
@@ -93,7 +93,14 @@ const setup = {
 		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
 			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, { store })
-			store.setKVEntry(kventry)
+
+			const current = store.state.kventry
+			if ( !current.history ) current.history = []
+			current.history.push({ ...kventry })
+			delete kventry.history
+			store.setKVEntry({ ...current, ...kventry })
+			store.setRevisionSelected(kventry.revision)
+
 			store.getParentList()?.fetch()
 			store.getParentList()?.setSelect(kventry.key)
 			store.setEditState(EDIT_STATE.READ)

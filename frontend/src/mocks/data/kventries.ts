@@ -75,7 +75,7 @@ export default [
 
 export const keyValueEntryDetail: any = {
     "key": "host.name",
-    "payload": "444",
+    "payload": btoa("444"),
     "last_update": "2022-11-17T05:31:29+01:00",
     "operation": "KeyValuePutOp",
     "revision": 6,
@@ -83,7 +83,7 @@ export const keyValueEntryDetail: any = {
     "history": [
         {
             "key": "host.name",
-            "payload": "222",
+            "payload": btoa("222"),
             "last_update": "2022-11-17T05:28:29+01:00",
             "operation": "KeyValuePutOp",
             "revision": 2,
@@ -92,7 +92,7 @@ export const keyValueEntryDetail: any = {
         },
         {
             "key": "host.name",
-            "payload": "333",
+            "payload": btoa("333"),
             "last_update": "2022-11-17T05:29:29+01:00",
             "operation": "KeyValuePutOp",
             "revision": 3,
@@ -101,7 +101,7 @@ export const keyValueEntryDetail: any = {
         },
         {
             "key": "host.name",
-            "payload": "444",
+            "payload": btoa("444"),
             "last_update": "2022-11-17T05:30:29+01:00",
             "operation": "KeyValuePutOp",
             "revision": 4,
@@ -110,7 +110,7 @@ export const keyValueEntryDetail: any = {
         },
         {
             "key": "host.name",
-            "payload": "777",
+            "payload": btoa("777"),
             "last_update": "2022-11-17T05:31:29+01:00",
             "operation": "KeyValuePutOp",
             "revision": 6,

@@ -30,6 +30,7 @@ const DetailForm: FunctionComponent<Props> = ({
 	const kventry = kventrySo.getKVSelect()
 	if (!kventry) return null
 	const inRead = kventrySa.editState == EDIT_STATE.READ
+	const inEdit = kventrySa.editState == EDIT_STATE.EDIT
 
 	return <Form style={{ height: "100%" }}>
 
@@ -38,7 +39,7 @@ const DetailForm: FunctionComponent<Props> = ({
 			<TextInput autoFocus
 				value={kventry.key ?? ""}
 				onChange={handleKeyChange}
-				readOnly={inRead}
+				readOnly={inRead || inEdit}
 			/>
 		</BoxV>
 

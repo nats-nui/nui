@@ -186,15 +186,15 @@ const viewSetup = {
 		setLoadingMessage: (loadingMessage: string) => ({ loadingMessage }),
 	},
 
-	onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
-		if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
-			const cnnId = store.state["connectionId"]
-			if (cnnId) socketPool.create(`global::${cnnId}`, cnnId)
-		} else if (store._listeners.size == 0) {
-			const cnnId = store.state["connectionId"]
-			if (cnnId) socketPool.destroy(`global::${cnnId}`)
-		}
-	}
+	// onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
+	// 	if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
+	// 		const cnnId = store.state["connectionId"]
+	// 		if (cnnId) socketPool.create(`global::${cnnId}`, cnnId)
+	// 	} else if (store._listeners.size == 0) {
+	// 		const cnnId = store.state["connectionId"]
+	// 		if (cnnId) socketPool.destroy(`global::${cnnId}`)
+	// 	}
+	// }
 }
 
 export type ViewState = Partial<typeof viewSetup.state>
