@@ -103,6 +103,18 @@ const setup = {
 			store.setSelect(null)
 		},
 
+		async purge(_: void, store?: KVEntriesStore) {
+			if (!await store.alertOpen({
+				title: "KVENTRY PURGE",
+				body: "This action is irreversible.\nAre you sure you want to purge the KVENTRY?",
+			})) return
+
+			const key = store.state.select
+			await kventryApi.purge(store.state.connectionId, store.state.bucket.bucket, key, { store })
+			store.setAll(store.state.all.filter(entry => entry.key != key))
+			store.setSelect(null)
+		},
+
 		/** apro la CARD del dettaglio */
 		select(key: string, store?: KVEntriesStore) {
 			const oldkey = store.state.select

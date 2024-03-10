@@ -284,8 +284,8 @@ const setup = {
 		/** elimina un messaggio  */
 		async deleteMessage(message: Message, store?: StreamMessagesStore) {
 			if (!await store.alertOpen({
-				title: "STREAM DELETION",
-				body: "This action is irreversible.\nAre you sure you want to delete the STREAM?",
+				title: "MESSAGE DELETE",
+				body: "This action is irreversible.\nAre you sure you want to delete the MESSAGE?",
 			})) return
 
 			await strApi.messageRemove(store.state.connectionId, store.state.stream.config.name, message.seqNum, { store })

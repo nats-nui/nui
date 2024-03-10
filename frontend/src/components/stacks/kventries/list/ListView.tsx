@@ -35,6 +35,8 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	const handleSelect = (item: KVEntry) => kventriesSo.select(item.key)
 	const handleNew = () => kventriesSo.create()
 	const handleDelete = () => kventriesSo.delete()
+	const handlePurge = () => kventriesSo.purge()
+
 
 	// RENDER
 	const kventries = kventriesSo.getFiltered() ?? []
@@ -53,6 +55,11 @@ const KVEntryListView: FunctionComponent<Props> = ({
 				children="DELETE"
 				variant={variant}
 				onClick={handleDelete}
+			/>}
+			{!!selected && <Button
+				children="PURGE"
+				variant={variant}
+				onClick={handlePurge}
 			/>}
 			<Button
 				children="NEW"

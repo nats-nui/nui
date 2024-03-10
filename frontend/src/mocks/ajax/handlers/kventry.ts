@@ -65,6 +65,19 @@ const kventry = [
             ctx.status(204),
         )
     }),
+
+    // PURGE
+    rest.post('/api/connection/:connId/kv/:bucketName/key/:key/purge', (req, res, ctx) => {
+        const { key } = req.params
+        const index = keyValueEntries_S.findIndex(e => e.key === key)
+        if (index === -1) return res(ctx.status(404))
+        const history = keyValueEntries_S[index].history
+        history.splice(0, history.length -1)
+        return res(
+            ctx.status(204),
+        )
+    }),
+
 ]
 
 export default kventry
