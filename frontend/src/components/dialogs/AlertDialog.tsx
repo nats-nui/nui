@@ -37,11 +37,14 @@ const AlertDialog: FunctionComponent<Props> = ({
 		store={store}
 		onClose={() => handleClose(false)}
 	>
+
+		<div className="lbl-prop-title">DANGER</div>
+
 		<div className="lbl-dialog-text">
 			{alert.body}
 		</div>
 
-		<Box style={{ display: "flex", gap: 15, marginTop: 10 }}>
+		<Box style={{display: "flex", gap: 15, marginTop: 10}}>
 			<Button
 				children={alert.labelOk}
 				onClick={() => handleClose(true)}
