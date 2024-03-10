@@ -2,7 +2,7 @@ import { StoreCore } from "@priolo/jon"
 import { ViewState, ViewStore } from "./viewBase"
 
 
-
+/** DA FARE */
 const connectionBaseSetup = {
 
 	state: {

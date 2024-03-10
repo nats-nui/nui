@@ -1,4 +1,4 @@
-@keyframes ruotaContinuamente {
+@keyframes ani-rotation-loop {
 	from {
 		transform: rotate(0deg);
 	}
@@ -7,7 +7,7 @@
 	}
 }
 
-.circle-rotante {
+.rotation-loop {
 	transform-origin: center;
-	animation: ruotaContinuamente 2s linear infinite;
+	animation: ani-rotation-loop 1s linear infinite;
 }

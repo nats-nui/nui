@@ -45,7 +45,8 @@ const TimerCmp: FunctionComponent<Props> = ({
 		if (state == TIMER_STATE.PLAY && timeout > 0) {
 			timeStart.current = Date.now()
 			setAnimTime(interval)
-			setPerc(interval / timeout)
+			setPerc(0)
+			//setPerc(interval / timeout)
 			startTimer()
 		} else if (state == TIMER_STATE.STOP || state == TIMER_STATE.LOADING) {
 			setAnimTime(10)

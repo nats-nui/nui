@@ -24,7 +24,7 @@ const CircularIndicatorCmp: FunctionComponent<Props> = ({
 	const radius = 50; // Raggio del cerchio
 	const circonference = 2 * Math.PI * radius; // Calcolo della circonferenza
 	const offset = (1 - perc) * circonference; // Calcolo dell'offset basato sulla percentuale
-console.log(fgColor)
+	
 	return (
 		<svg width="120" height="120" viewBox="0 0 120 120" style={style}>
 			<circle
@@ -42,7 +42,7 @@ console.log(fgColor)
 				r={radius}
 				fill="none"
 				stroke={fgColor}
-				strokeWidth="20"
+				strokeWidth="15"
 				strokeDasharray={circonference}
 				strokeDashoffset={offset}
 				transform="rotate(-90 60 60)"

@@ -23,7 +23,7 @@ const setup = {
 		textSearch: <string>null,
 
 		//#region VIEWBASE
-		width: 310,
+		width: 340,
 		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},

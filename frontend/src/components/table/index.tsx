@@ -79,22 +79,22 @@ const Table: FunctionComponent<Props> = ({
 		<tbody>
 			{itemsSort.map((item, index) => {
 				const id = getId(item)
-			
+
 				const selected = isSelected(item)
 				return <React.Fragment key={id}>
 
 					{!!propMain && (
-						<tr 
+						<tr
 							style={cssRowMain(selected, variant)}
 							onClick={() => handleSelect(item)}
 						>
-							<td colSpan={4} style={{ padding: "5px 2px" }}>
+							<td colSpan={4} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
 								{getValueString(item, propMain)}
 							</td>
 						</tr>
 					)}
 
-					<tr 
+					<tr
 						style={cssRow(selected, variant)}
 						onClick={() => handleSelect(item)}
 					>
@@ -117,21 +117,7 @@ export default Table
 
 const cssTable: CSSProperties = {
 	width: "100%",
-	borderCollapse: "collapse",
 	borderSpacing: 0,
-}
-const cssHead: CSSProperties = {
-	fontSize: 13,
-	fontWeight: 600,
-	height: 28,
-	position: 'sticky',
-	top: '0',
-	backgroundColor: '#3e3e3e',
-	zIndex: 1,
-}
-const cssHeadCell: CSSProperties = {
-	padding: "3px 2px",
-	textAlign: "right",
 }
 
 const cssRowMain = (select: boolean, variant: number): CSSProperties => ({
@@ -163,8 +149,8 @@ const cssRow = (select: boolean, variant: number): CSSProperties => ({
 const cssRowCell: CSSProperties = {
 	fontSize: 12,
 	fontWeight: 600,
-	borderRight: '1px solid rgb(255 255 255 / 15%)',
-	padding: "3px 2px",
+	borderRight: '2px solid rgba(255,255,255,.2)',
+	padding: "3px 5px",
 }
 const cssRowCellNumber: CSSProperties = {
 	...cssRowCell,
