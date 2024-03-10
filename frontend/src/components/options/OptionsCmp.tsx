@@ -2,16 +2,14 @@ import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
 import TimerCmp, { TIMER_STATE } from "@/components/options/TimerCmp"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
+import CloseIcon from "@/icons/CloseIcon"
+import ReloadIcon from "@/icons/ReloadIcon"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { LOAD_MODE, LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo, useState } from "react"
 import IconButton from "../buttons/IconButton"
-import ArrowRightIcon from "@/icons/ArrowRightIcon"
-import { ANIM_TIME_CSS } from "@/types"
-import CloseIcon from "@/icons/CloseIcon"
-import ReloadIcon from "@/icons/ReloadIcon"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -161,5 +159,5 @@ const cssIconContainer: React.CSSProperties = {
 
 const cssAcc = (mouseEnter: boolean): React.CSSProperties => ({
 	width: mouseEnter ? 40 : 0,
-	transition: `width ${ANIM_TIME_CSS}ms`,
+	transition: `width 400ms`,
 })

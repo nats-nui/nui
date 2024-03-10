@@ -36,10 +36,10 @@ const CircularLoadingCmp: FunctionComponent<Props> = ({
 				r={radius}
 				fill="none"
 				stroke={fgColor}
-				strokeWidth="20"
+				strokeWidth="15"
 				strokeDasharray={circonference}
 				strokeDashoffset={offset}
-				className="circle-rotante"
+				className="rotation-loop"
 			/>
 		</svg>
 	);

@@ -200,7 +200,6 @@ const EditForm: FunctionComponent<Props> = ({
 				RenderRow={({ item }) => item.toUpperCase()}
 				readOnly={inRead}
 				onSelect={index => {
-					console.log(index)
 					handlePropChange({ discard: Object.values(DISCARD)[index] })
 				}}
 			/>

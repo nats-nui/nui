@@ -40,6 +40,9 @@ const AlertDialog: FunctionComponent<Props> = ({
 
 		<div className="lbl-prop-title">DANGER</div>
 
+		<div style={cssBGStop}></div>
+
+
 		<div className="lbl-dialog-text">
 			{alert.body}
 		</div>
@@ -58,3 +61,14 @@ const AlertDialog: FunctionComponent<Props> = ({
 }
 
 export default AlertDialog
+
+const cssBGStop:React.CSSProperties = {
+	height: 50,
+	background: `repeating-linear-gradient(
+		135deg,
+		${"transparent"},
+		${"transparent"} 10px,
+		#000 10px,
+		#000 20px
+	)`,
+}

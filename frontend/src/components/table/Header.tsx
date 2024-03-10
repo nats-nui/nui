@@ -78,21 +78,21 @@ const Header: FunctionComponent<Props> = ({
 
 export default Header
 
-
-
 const cssHead: CSSProperties = {
 	fontSize: 10,
 	fontWeight: 600,
 	height: 28,
 	position: 'sticky',
-	top: '0',
-	backgroundColor: '#3e3e3e',
+	top: 2,
+	//backgroundColor: '#3e3e3e',
+	backgroundColor: "#1f1f1f",
 	zIndex: 1,
 }
+
 const cssHeadCell: CSSProperties = {
-	//padding: "5px",
-	padding: "3px 2px",
 	textAlign: "right",
+	borderRight: '2px solid #3e3e3e',
+	padding: "3px 5px",
 }
 
 

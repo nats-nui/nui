@@ -2,28 +2,36 @@ import { EditorRefProps } from "@/components/editor"
 import { MSG_FORMAT } from "@/utils/editor"
 import { StoreCore } from "@priolo/jon"
 import { ViewState, ViewStore } from "./viewBase"
+import { LOAD_MODE, LOAD_STATE } from "./utils"
 
 
-
+/** DA FARE  */
 const loadBaseSetup = {
 
 	state: {
-		format: MSG_FORMAT.JSON,
-		formatsOpen: false,
-		editorRef: <EditorRefProps>null,
+		loadingMode: LOAD_MODE.MANUAL,
+		loadingState: LOAD_STATE.IDLE,
+		pollingTime: 0,
+		fetchAbort: <AbortController>null,
+
 	},
 
 	getters: {
-		getEditorText: (_:void, store?:ViewStore ):string => "<OVERWRITE>"
 	},
 
 	actions: {
-		
+		fetch: async (_: void, store?: LoadBaseStore) => {
+			// VIRTUAL
+		},
+		fetchAbort:(_: void, store?: LoadBaseStore) => {
+			store.state.fetchAbort.abort()
+		},
 	},
 
 	mutators: {
-		setFormat: (format: MSG_FORMAT) => ({ format }),
-		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
+		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
+		setLoadingMode: (loadingMode: LOAD_MODE) => ({ loadingMode }),
+		setPollingTime: (pollingTime: number) => ({ pollingTime })
 	},
 }
 

@@ -55,7 +55,7 @@ const viewSetup = {
 		loadingMode: LOAD_MODE.MANUAL,
 		loadingState: LOAD_STATE.IDLE,
 		pollingTime: 0,
-		fetchAbort: new AbortController(),
+		fetchAbort: <AbortController>null,
 		/** load */
 	},
 
