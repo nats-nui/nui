@@ -61,11 +61,11 @@ const setup = {
 			state.bucket = data.bucket
 			state.editState = data.editState
 		},
-		onCreate: (_: void, store?: ViewStore) => { 
+		onCreate: (_: void, store?: ViewStore) => {
 			const cnnStore = store as BucketStore
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
-			if ( options == DOC_TYPE.KVENTRIES ) {
+			if (options == DOC_TYPE.KVENTRIES) {
 				cnnStore.openKVEntries()
 			}
 			store.state.docAniDisabled = false
@@ -76,8 +76,12 @@ const setup = {
 		async fetch(_: void, store?: BucketStore) {
 			// se NEW è valorizzato solo "bucketConfig"
 			if (!store.state.bucket) return
-			const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket, { store })
-			store.setBucket(bucket)
+			try {
+				const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket, { store })
+				store.setBucket(bucket)
+			} catch (error) {
+				//...
+			}
 		},
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {

@@ -86,10 +86,20 @@ const setup = {
 			if (!!store.state.kventry?.payload || store.state.editState == EDIT_STATE.NEW) return
 			await store.fetch()
 		},
+
+/** load */
 		fetch: async (_: void, store?: KVEntryStore) => {
-			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, { store })
+			store.state.fetchAbort = new AbortController()
+			const signal = store.state.fetchAbort.signal;
+			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, { store, signal })
 			store.setKVEntry(kventry)
 		},
+		fetchAbort:(_: void, store?: KVEntryStore) => {
+			store.state.fetchAbort.abort()
+		},
+/** load */
+
+
 		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
 			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, { store })

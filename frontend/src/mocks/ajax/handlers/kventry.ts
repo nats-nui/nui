@@ -18,7 +18,8 @@ const kventry = [
     // GET
     rest.get('/api/connection/:connId/kv/:bucketName/key/:key', (req, res, ctx) => {
         return res(
-            ctx.status(200),
+            ctx.delay(5000),
+            ctx.status(400),
             ctx.json(keyValueEntryDetail),
         )
     }),
