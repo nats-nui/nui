@@ -1,16 +1,22 @@
+import { delay } from "@/utils/time"
 import { CSSProperties, FunctionComponent, useEffect, useRef, useState } from "react"
 import CircularIndicatorCmp from "./CircularIndicatorCmp"
-import { delay } from "@/utils/time"
-
+import CircularLoadingCmp from "./CircularLoadingCmp"
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 
 
 interface Props {
 	state?: TIMER_STATE
 	timeout?: number
+	/** OGNI QUANTO DEVE AGGIORNARE LA PERCENTUALE */
 	interval?: number
 	style?: CSSProperties
+	bgColor?:string
+	fgColor?:string
 
+	/** ha raggiunto il 100% */
 	onTimeout?: () => void
+	/** è scattato un "INTERVAL" */
 	onInterval?: () => void
 }
 
@@ -20,6 +26,8 @@ const TimerCmp: FunctionComponent<Props> = ({
 	timeout,
 	interval = 1000,
 	style,
+	bgColor = "rgba(0,0,0,.4)",
+	fgColor = layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
 
 	onTimeout,
 	onInterval,
@@ -39,11 +47,11 @@ const TimerCmp: FunctionComponent<Props> = ({
 			setAnimTime(interval)
 			setPerc(interval / timeout)
 			startTimer()
-		} else if (state == TIMER_STATE.STOP) {
+		} else if (state == TIMER_STATE.STOP || state == TIMER_STATE.LOADING) {
 			setAnimTime(10)
 			setPerc(0)
 		}
-		return stopTimer
+		return () => stopTimer()
 	}, [state, timeout])
 
 	const update = async () => {
@@ -66,16 +74,33 @@ const TimerCmp: FunctionComponent<Props> = ({
 		startTimer()
 	}
 	const stopTimer = () => {
-		if (!!idInterval.current) clearInterval(idInterval.current)
+		if (!idInterval.current) return
+		clearTimeout(idInterval.current)
+		idInterval.current = null
 	}
-	const startTimer = () => idInterval.current = setTimeout(update, interval)
+	const startTimer = () => {
+		if (!!idInterval.current) stopTimer()
+		idInterval.current = setTimeout(update, interval)
+	}
 
 	// RENDER
-	return <CircularIndicatorCmp
-		style={style}
-		perc={perc}
-		animTime={animTime}
-	/>
+	if (state == TIMER_STATE.LOADING) return (
+		<CircularLoadingCmp
+			style={style}
+			// bgColor={bgColor}
+			fgColor={fgColor}
+		/>
+	)
+
+	return (
+		<CircularIndicatorCmp
+			style={style}
+			perc={perc}
+			animTime={animTime}
+			bgColor={bgColor}
+			fgColor={fgColor}
+		/>
+	)
 }
 
 export default TimerCmp
@@ -83,5 +108,5 @@ export default TimerCmp
 export enum TIMER_STATE {
 	STOP,
 	PLAY,
-	PAUSE,
+	LOADING,
 }

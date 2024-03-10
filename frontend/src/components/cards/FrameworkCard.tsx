@@ -44,13 +44,11 @@ const FrameworkCard: FunctionComponent<Props> = ({
 		<Header store={store} />
 
 		{isIconized ? <>
-			{/* <div style={{ height: 38, backgroundColor: "rgb(0 0 0 / 50%)", alignSelf: 'stretch' }} > */}
-			<ActionGroup style={{ alignSelf: 'stretch', justifyContent: 'center' }}>
+			<ActionGroup style={cssActions}>
 				<IconButton
 					onClick={handleClose}
 				><CloseIcon /></IconButton>
 			</ActionGroup>
-			{/* </div> */}
 			{iconizedRender}
 		</> : <>
 			<ActionGroup>
@@ -81,6 +79,11 @@ const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean, inRoot: 
 	transition: `opacity ${ANIM_TIME_CSS}ms`,
 	opacity: inDrag ? .5 : null,
 })
+
+const cssActions: React.CSSProperties = {
+	alignSelf: 'stretch', 
+	justifyContent: 'center',
+}
 
 const cssChildren: React.CSSProperties = {
 	flex: 1,

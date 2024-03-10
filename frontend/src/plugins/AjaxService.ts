@@ -1,6 +1,7 @@
 import logSo from "@/stores/log"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import { LOAD_STATE } from "@/stores/stacks/utils"
 import { camelToSnake, snakeToCamel } from "@/utils/object"
 
 
@@ -20,6 +21,7 @@ export interface CallOptions {
 	loading?: boolean
 	noError?: boolean
 	store?: ViewStore
+	signal?: AbortSignal
 }
 
 const httpUrlBuilder = () => {
@@ -80,34 +82,37 @@ export class AjaxService {
 		// SEND REQUEST
 		let response = null
 		try {
-			if ( options.store && options.loading ) options.store.setLoadingMessage("LOADING...")
+			if (options.loading) options.store?.setLoadingState(LOAD_STATE.LOADING)
 			response = await fetch(
 				`${this.options.baseUrl}${url}`,
 				{
 					method: method,
 					headers,
 					body: data ? JSON.stringify(data) : undefined,
+					signal: options.signal,
 				}
 			)
 		} catch (e) {
-			if ( options.noError ) return
-			logSo.add({
-				type: MESSAGE_TYPE.ERROR,
-				title: "http:error:fetch",
-				body: e.toString(),
-				targetId: options.store?.state?.uuid,
-			})
+			if (options.noError) return
+			if (e.code != 20) {
+				logSo.add({
+					type: MESSAGE_TYPE.ERROR,
+					title: "http:error:fetch",
+					body: e.toString(),
+					targetId: options.store?.state?.uuid,
+				})
+			}
 			throw e
 		} finally {
-			if ( options.store && options.loading ) options.store.setLoadingMessage(null)
+			if (options.loading) options.store?.setLoadingState(LOAD_STATE.IDLE)
 		}
 
 		// GET DATA
 		let ret = null
-		let jsonError:string = null
+		let jsonError: string = null
 		try {
 			ret = snakeToCamel(await response.json())
-		} catch (e) { 
+		} catch (e) {
 			jsonError = e.toString()
 		}
 
@@ -121,6 +126,7 @@ export class AjaxService {
 				body: error,
 				targetId: options.store?.state?.uuid,
 			})
+			if (options.loading) options.store?.setLoadingState(LOAD_STATE.ERROR)
 			throw error
 		}
 		return ret

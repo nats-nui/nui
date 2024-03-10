@@ -2,12 +2,12 @@ import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
 import { delay } from "@/utils/time"
-import { LISTENER_CHANGE, StoreCore } from "@priolo/jon"
-import { buildStore, buildStore2 } from "../docs/utils/factory"
+import { StoreCore } from "@priolo/jon"
+import { buildStore2 } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { VIEW_SIZE } from "./utils"
-import { socketPool } from "@/plugins/SocketService/pool"
+import { LOAD_MODE, LOAD_STATE } from "./utils"
 
 
 
@@ -49,7 +49,14 @@ const viewSetup = {
 		alert: <AlertState>{
 			open: false,
 		},
-		loadingMessage: <React.ReactNode>null,
+
+
+		/** load */
+		loadingMode: LOAD_MODE.MANUAL,
+		loadingState: LOAD_STATE.IDLE,
+		pollingTime: 0,
+		fetchAbort: new AbortController(),
+		/** load */
 	},
 
 	getters: {
@@ -183,7 +190,13 @@ const viewSetup = {
 
 		setSnackbar: (snackbar: SnackbarState) => ({ snackbar }),
 		setAlert: (alert: AlertState) => ({ alert }),
-		setLoadingMessage: (loadingMessage: string) => ({ loadingMessage }),
+
+		/** load */
+		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
+		setLoadingMode: (loadingMode: LOAD_MODE) => ({ loadingMode }),
+		setPollingTime: (pollingTime: number) => ({ pollingTime })
+		/** load */
+
 	},
 
 	// onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
@@ -225,4 +238,6 @@ export interface AlertState {
 	labelCancel?: string
 	resolve?: (value: boolean) => void
 }
+
+
 

@@ -13,6 +13,9 @@ interface Props {
 	store?: EditorStore
 }
 
+/**
+ * Set di bottoni per le CARD che hanno MONACO EDITOR
+ */
 const FormatAction: FunctionComponent<Props> = ({
 	store,
 }) => {

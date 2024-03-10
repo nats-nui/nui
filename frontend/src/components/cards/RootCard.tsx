@@ -1,6 +1,6 @@
 import docSo from "@/stores/docs"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
@@ -21,7 +21,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 }) => {
 
 	// STORES
-	const viewSa = useStore(view) as ViewState
+	const viewSa = useStore(view)
 	const docSa = useStore(docSo)
 
 	// HOOKS
@@ -36,7 +36,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
 	const haveFocus = docSa.focus == view
-	const variant = viewSa.colorVar
+	const variant = view.state.colorVar
 
 	// styles
 	const styContainerDoc: React.CSSProperties = {
@@ -59,11 +59,11 @@ const RootCmpCard: FunctionComponent<Props> = ({
 		<div style={styContainerDoc}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
-			{!!view.state.loadingMessage && (
+			{/* {!!view.state.loadingMessage && (
 				<div style={cssLoading}>
 					<div>{view.state.loadingMessage}</div>
 				</div>
-			)}
+			)} */}
 		</div>
 
 		<div style={cssDesk}>
@@ -121,14 +121,14 @@ const cssDesk: React.CSSProperties = {
 	position: "relative",
 }
 
-const cssLoading: React.CSSProperties = {
-	position: 'absolute',
-	height: 'calc(100% - 48px)',
-	width: '100%',
-	backgroundColor: 'rgba(0, 0, 0, 0.6)',
-	zIndex: '1',
-	display: 'flex', flexDirection: "column",
-	alignItems: 'center',
-	justifyContent: 'center',
-	bottom: '0px',
-}
+// const cssLoading: React.CSSProperties = {
+// 	position: 'absolute',
+// 	height: 'calc(100% - 48px)',
+// 	width: '100%',
+// 	backgroundColor: 'rgba(0, 0, 0, 0.6)',
+// 	zIndex: '1',
+// 	display: 'flex', flexDirection: "column",
+// 	alignItems: 'center',
+// 	justifyContent: 'center',
+// 	bottom: '0px',
+// }
