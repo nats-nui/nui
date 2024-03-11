@@ -11,6 +11,9 @@ import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
+import Quote from "@/components/format/Quote.tsx";
+import IconToggle from "@/components/buttons/IconToggle.tsx";
+import Box from "@/components/format/Box.tsx";
 
 
 
@@ -64,8 +67,8 @@ const CreateForm: FunctionComponent<Props> = ({
 			/>
 		</BoxV>
 
-
 		<div className="lbl-prop-title">KEY/VALUE STORE SETTINGS</div>
+
 
 		<BoxV>
 			<div className="lbl-prop">HISTORY</div>
@@ -79,6 +82,7 @@ const CreateForm: FunctionComponent<Props> = ({
 		<MaxTimeCmp store={bucketSo}
 			label="TTL"
 			value={bucket.ttl}
+			desiredDefault={0}
 			onChange={ttl => handlePropChange({ ttl })}
 		/>
 		<MaxBytesCmp store={bucketSo}
@@ -92,8 +96,24 @@ const CreateForm: FunctionComponent<Props> = ({
 			onChange={maxBytes => handlePropChange({ maxBytes })}
 		/>
 
+		<Box>
+			<IconToggle
+				check={bucket.compression}
+				onChange={compression => handlePropChange({ compression })}
+			/>
+			<div className="lbl-prop">COMPRESSION</div>
+		</Box>
 
-		<div className="lbl-prop-title">PLACMENT</div>
+		<div className="lbl-prop-title">PLACEMENT</div>
+
+		<BoxV>
+			<div className="lbl-prop">NUM REPLICAS</div>
+			<NumberInput
+				style={{ flex: 1 }}
+				value={bucket.replicas}
+				onChange={numReplicas => handlePropChange({ numReplicas })}
+			/>
+		</BoxV>
 
 	</Form>
 }

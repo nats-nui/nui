@@ -293,7 +293,7 @@ const EditForm: FunctionComponent<Props> = ({
 				<BoxV>
 					<div className="lbl-prop">TAGS</div>
 					<TextInput
-						value={config.templateOwner}
+						value={config.tags}
 						onChange={templateOwner => handlePropChange({ templateOwner })}
 						readOnly={inRead}
 					/>
