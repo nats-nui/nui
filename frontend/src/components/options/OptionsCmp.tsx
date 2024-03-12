@@ -5,7 +5,8 @@ import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import ReloadIcon from "@/icons/ReloadIcon"
-import { KVEntryStore } from "@/stores/stacks/kventry/detail"
+import SkullIcon from "@/icons/SkullIcon"
+import { LoadBaseStore } from "@/stores/stacks/loadBase"
 import { LOAD_MODE, LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo, useState } from "react"
@@ -28,7 +29,7 @@ const options: OptionSelect[] = [
 ]
 
 interface Props {
-	store?: KVEntryStore
+	store?: LoadBaseStore
 	style?: React.CSSProperties
 }
 
@@ -84,33 +85,35 @@ const OptionsCmp: FunctionComponent<Props> = ({
 	const inError = storeSa.loadingState == LOAD_STATE.ERROR
 	const inLoading = storeSa.loadingState == LOAD_STATE.LOADING
 	const inParentMode = storeSa.loadingMode == LOAD_MODE.PARENT
-	const color = inError ? "red" : undefined
+
+	const color = inError ? "red" : (style.backgroundColor as string ?? "rgba(0,0,0,.4)")
 
 	return <>
 
-		<div style={{ ...cssRoot, ...style }}
+		<div style={{ ...cssRoot, ...style, backgroundColor: null, color }}
 			onMouseEnter={() => setMouseEnter(true)}
 			onMouseLeave={() => setMouseEnter(false)}
 		>
-			<TimerCmp style={{ width: 24, height: 24 }}
-				bgColor={color}
+			<TimerCmp style={{ width: 24, height: 24, color }}
 				state={timerState}
 				timeout={timeout}
 				interval={1000}
 				onTimeout={handleTimeout}
 			/>
 
-			<div style={cssAcc(mouseEnter)}>
+			<div style={cssAcc(mouseEnter)} className="color-fg">
 				<IconButton
 					onClick={() => setDialogOpen(true)}
 				><ArrowRightIcon /></IconButton>
 			</div>
 
-			<div style={{...cssIconContainer, ...{ color }}}
+			<div style={cssIconContainer} className={`ani-color ${mouseEnter ? "color-fg": ""}`}
 				onClick={handleCircleClick}
 			>
-				{inLoading || inError ? (
+				{inLoading ? (
 					<CloseIcon />
+				) : inError ? (
+					<SkullIcon style={{ width: 14, height: 14 }} />
 				) : <>
 					{inParentMode ? (
 						<ArrowLeftIcon />
@@ -148,16 +151,16 @@ const cssRoot: React.CSSProperties = {
 	alignItems: "center",
 }
 
-const cssIconContainer: React.CSSProperties = {
+const cssIconContainer: React.CSSProperties ={
 	width: 24,
 	height: 24,
 	position: "absolute",
 	display: "flex",
 	alignItems: "center",
-	justifyContent: "center"
+	justifyContent: "center",
 }
 
 const cssAcc = (mouseEnter: boolean): React.CSSProperties => ({
-	width: mouseEnter ? 40 : 0,
+	width: mouseEnter ? 20 : 0,
 	transition: `width 400ms`,
 })

@@ -1,8 +1,6 @@
-import { EditorRefProps } from "@/components/editor"
-import { MSG_FORMAT } from "@/utils/editor"
 import { StoreCore } from "@priolo/jon"
-import { ViewState, ViewStore } from "./viewBase"
 import { LOAD_MODE, LOAD_STATE } from "./utils"
+import { ViewState, ViewStore } from "./viewBase"
 
 
 /** DA FARE  */
@@ -24,7 +22,7 @@ const loadBaseSetup = {
 			// VIRTUAL
 		},
 		fetchAbort:(_: void, store?: LoadBaseStore) => {
-			store.state.fetchAbort.abort()
+			store.state.fetchAbort?.abort()
 		},
 	},
 

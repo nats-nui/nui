@@ -8,3 +8,23 @@
 
 	--text-bg: #393939;
 }
+
+
+.var0 .color-fg {
+	color: var(--var-0);
+}
+.var1 .color-fg {
+	color: var(--var-1);
+}
+.var2 .color-fg {
+	color: var(--var-2);
+}
+.var3 .color-fg {
+	color: var(--var-3);
+}
+.var4 .color-fg {
+	color: var(--var-4);
+}
+.var5 .color-fg {
+	color: var(--var-5);
+}

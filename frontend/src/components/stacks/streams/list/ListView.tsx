@@ -11,6 +11,7 @@ import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx";
+import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -46,6 +47,10 @@ const StreamsListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ padding: 0, }}
 		store={streamsSo}
 		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={streamsSo}
+			/>
 			<FindInput
 				value={streamsSa.textSearch}
 				onChange={text => streamsSo.setTextSearch(text)}

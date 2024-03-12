@@ -7,7 +7,11 @@
 	}
 }
 
-.rotation-loop {
+.ani-rot-loop {
 	transform-origin: center;
 	animation: ani-rotation-loop 1s linear infinite;
+}
+
+.ani-color {
+	transition: color 300ms;
 }

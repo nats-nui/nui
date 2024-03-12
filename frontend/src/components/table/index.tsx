@@ -63,6 +63,7 @@ const Table: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isSelected = (item: any) => getId(item) == selectId
+	const colspan = props.length
 	function getValueString(item: any, prop: ItemProp): string {
 		return prop.getShow?.(item) ?? prop.getValue?.(item)
 	}
@@ -88,7 +89,7 @@ const Table: FunctionComponent<Props> = ({
 							style={cssRowMain(selected, variant)}
 							onClick={() => handleSelect(item)}
 						>
-							<td colSpan={4} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
+							<td colSpan={colspan} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
 								{getValueString(item, propMain)}
 							</td>
 						</tr>

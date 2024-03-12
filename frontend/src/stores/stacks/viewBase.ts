@@ -8,6 +8,7 @@ import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { VIEW_SIZE } from "./utils"
 import { LOAD_MODE, LOAD_STATE } from "./utils"
+import { LoadBaseStore } from "./loadBase"
 
 
 
@@ -49,14 +50,6 @@ const viewSetup = {
 		alert: <AlertState>{
 			open: false,
 		},
-
-
-		/** load */
-		loadingMode: LOAD_MODE.MANUAL,
-		loadingState: LOAD_STATE.IDLE,
-		pollingTime: 0,
-		fetchAbort: <AbortController>null,
-		/** load */
 	},
 
 	getters: {
@@ -110,7 +103,8 @@ const viewSetup = {
 		onCreate: (_: void, store?: ViewStore) => {
 		},
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
-			docSo.remove({ view: store, anim: true })
+			docSo.remove({ view: store, anim: true });
+			(store as LoadBaseStore)?.fetchAbort()
 		},
 		setSerialization: (state: any, store?: ViewStore) => {
 			store.state.uuid = state.uuid
@@ -190,13 +184,6 @@ const viewSetup = {
 
 		setSnackbar: (snackbar: SnackbarState) => ({ snackbar }),
 		setAlert: (alert: AlertState) => ({ alert }),
-
-		/** load */
-		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
-		setLoadingMode: (loadingMode: LOAD_MODE) => ({ loadingMode }),
-		setPollingTime: (pollingTime: number) => ({ pollingTime })
-		/** load */
-
 	},
 
 	// onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
