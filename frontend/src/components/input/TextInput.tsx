@@ -53,7 +53,14 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	}
 
 	// RENDER
-	if (readOnly) return <div className="lbl-input-readonly">{value}</div>
+	if (readOnly) return (
+		<div className="lbl-input-readonly"
+			style={style}
+		>
+			{value ?? ""}
+		</div>
+	)
+
 	const TagInput = multiline ? "textarea" : "input"
 
 	return <TagInput ref={inputRef}
@@ -61,7 +68,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		placeholder={placeholder}
 		autoFocus={autoFocus}
 		spellCheck="false"
-		value={value}
+		value={value ?? ""}
 		onChange={handleChange}
 		onFocus={handleFocus}
 		onBlur={onBlur}
