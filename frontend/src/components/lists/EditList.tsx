@@ -148,7 +148,7 @@ function EditList<T>({
 	}
 
 	// RENDER
-	if (!items) return null
+	if (!items) items = []
 	return (
 		<div
 			tabIndex={0}

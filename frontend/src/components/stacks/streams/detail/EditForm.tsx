@@ -47,6 +47,11 @@ const EditForm: FunctionComponent<Props> = ({
 		config.republish = { ...config.republish, ...prop }
 		streamSo.setStreamConfig(config)
 	}
+	const handlePlacementPropChange = (prop: { [name: string]: any }) => {
+		const config = { ...streamSa.stream.config }
+		config.placement = { ...config.placement, ...prop }
+		streamSo.setStreamConfig(config)
+	}
 
 
 	const handleMirrorCheck = (check: boolean) => {
@@ -285,21 +290,23 @@ const EditForm: FunctionComponent<Props> = ({
 				<BoxV>
 					<div className="lbl-prop">NAME</div>
 					<TextInput
-						value={config.templateOwner}
-						onChange={templateOwner => handlePropChange({ templateOwner })}
+						value={config.placement?.cluster}
+						onChange={cluster => handlePlacementPropChange({ cluster })}
 						readOnly={inRead}
 					/>
 				</BoxV>
 				<BoxV>
 					<div className="lbl-prop">TAGS</div>
-					<TextInput
-						value={config.tags}
-						onChange={templateOwner => handlePropChange({ templateOwner })}
+					<EditList<string>
+						items={config.placement?.tags}
+						onItemsChange={tags => handlePlacementPropChange({ tags })}
+						placeholder="ex. client or java"
+						variant={variant}
 						readOnly={inRead}
+						onNewItem={() => ""}
+						RenderRow={EditStringRow}
 					/>
 				</BoxV>
-				{/* <Label type={LABELS.SUBTEXT}>TAGS</Label> */}
-				{/* TAGS propr "placement.tags" */}
 			</Quote>
 		</BoxV>
 

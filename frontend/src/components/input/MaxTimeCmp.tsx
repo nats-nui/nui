@@ -23,7 +23,7 @@ interface Props {
 	label?: string
 	value: number
 	readOnly?: boolean
-	defaultValue?: number
+	desiredDefault?: number
 	onChange?: (valueNew: number) => void
 }
 
