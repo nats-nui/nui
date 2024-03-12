@@ -7,6 +7,7 @@ import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import IconButton from "../buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
+import ErrorBoundary from "./ErrorBoundary"
 
 
 
@@ -43,22 +44,27 @@ const FrameworkCard: FunctionComponent<Props> = ({
 
 		<Header store={store} />
 
-		{isIconized ? <>
-			<ActionGroup style={cssActions}>
-				<IconButton
-					onClick={handleClose}
-				><CloseIcon /></IconButton>
-			</ActionGroup>
-			{iconizedRender}
-		</> : <>
-			<ActionGroup>
-				{actionsRender}
-			</ActionGroup>
+		<ErrorBoundary>
 
-			<div style={{ ...cssChildren, ...styleBody }}>
-				{children}
-			</div>
-		</>}
+			{isIconized ? <>
+				<ActionGroup style={cssActions}>
+					<IconButton
+						onClick={handleClose}
+					><CloseIcon /></IconButton>
+				</ActionGroup>
+				{iconizedRender}
+			</> : <>
+				<ActionGroup>
+					{actionsRender}
+				</ActionGroup>
+
+				<div style={{ ...cssChildren, ...styleBody }}>
+					{children}
+				</div>
+			</>}
+
+		</ErrorBoundary>
+		
 	</div>
 }
 
@@ -81,7 +87,7 @@ const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean, inRoot: 
 })
 
 const cssActions: React.CSSProperties = {
-	alignSelf: 'stretch', 
+	alignSelf: 'stretch',
 	justifyContent: 'center',
 }
 

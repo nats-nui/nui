@@ -1,5 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
+import OptionsCmp from "@/components/options/OptionsCmp"
 import Table from "@/components/table"
 import docSo from "@/stores/docs"
 import { ConsumersStore } from "@/stores/stacks/consumer"
@@ -33,10 +34,14 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	const consumers = consumersSo.getFiltered() ?? []
 	const selected = consumersSa.select
 	const variant = consumersSa.colorVar
-	
+
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={consumersSo}
 		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={consumersSo}
+			/>
 			<FindInput
 				value={consumersSa.textSearch}
 				onChange={text => consumersSo.setTextSearch(text)}
@@ -51,10 +56,10 @@ const ConsumersListView: FunctionComponent<Props> = ({
 				{ label: "WAITING", getValue: item => item.numWaiting },
 				{ label: "PENDING", getValue: item => item.numPending },
 			]}
-			propMain={{ getValue: (item:StreamConsumer) => item.name }}
+			propMain={{ getValue: (item: StreamConsumer) => item.name }}
 			selectId={selected}
 			onSelectChange={handleSelect}
-			getId={(consumer:StreamConsumer)=> consumer.name}
+			getId={(consumer: StreamConsumer) => consumer.name}
 			variant={variant}
 		/>
 	</FrameworkCard>

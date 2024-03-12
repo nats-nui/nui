@@ -28,22 +28,22 @@ export async function SaveSession() {
 export async function LoadSession() {
 	const records = await dbLoad()
 	const [log, menuUuids, dockUuids, states] = records
-	logSo.setAll(log)
+	logSo.setAll(log ?? [])
 
-	const dockStates = dockUuids.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s)
+	const dockStates = dockUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
 	const dockStores = dockStates.map(state => {
 		const store = buildStore({ type: state.type })
-		store.setSerialization(state)
+		store?.setSerialization(state)
 		return store
-	})
+	}).filter( s => !!s)
 	docsSo.setAll(dockStores)
 
-	const menuStates = menuUuids.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s)
+	const menuStates = menuUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
 	const menuStores = menuStates.map(state => {
 		const store = buildStore({ type: state.type })
-		store.setSerialization(state)
+		store?.setSerialization(state)
 		return store
-	})
+	}).filter( s => !!s)
 	docsSo.setMenu(menuStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })
