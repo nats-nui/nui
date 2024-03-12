@@ -6,6 +6,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConsumer } from "./utils/factory"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -72,19 +73,16 @@ const setup = {
 			state.streamName = data.streamName
 		},
 		//#endregion
-
-
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <ConsumersStore>store
+			const consumers = await conApi.index(s.state.connectionId, s.state.streamName, {store})
+			s.setAll(consumers)
+		},
 
 		async fetchIfVoid(_: void, store?: ConsumersStore) {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
-		async fetch(_: void, store?: ConsumersStore) {
-			const consumers = await conApi.index(store.state.connectionId, store.state.streamName, {store})
-			store.setAll(consumers)
-		},
-
-
 		
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: ConsumersStore) {
@@ -107,12 +105,12 @@ const setup = {
 	},
 }
 
-export type ConsumersState = typeof setup.state & ViewState
+export type ConsumersState = typeof setup.state & ViewState & LoadBaseState
 export type ConsumersGetters = typeof setup.getters
 export type ConsumersActions = typeof setup.actions
 export type ConsumersMutators = typeof setup.mutators
-export interface ConsumersStore extends ViewStore, StoreCore<ConsumersState>, ConsumersGetters, ConsumersActions, ConsumersMutators {
+export interface ConsumersStore extends ViewStore, LoadBaseStore, StoreCore<ConsumersState>, ConsumersGetters, ConsumersActions, ConsumersMutators {
 	state: ConsumersState
 }
-const consumersSetup = mixStores(viewSetup, setup)
+const consumersSetup = mixStores(viewSetup, loadBaseSetup, setup)
 export default consumersSetup

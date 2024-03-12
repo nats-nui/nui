@@ -64,7 +64,7 @@ export function buildStore2(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.CONSUMER]: consumerSetup,
 
 		[DOC_TYPE.LOGS]: logsSetup,
-	}[state.type]
+	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)
 	store.state = { ...store.state, ...state }

@@ -17,6 +17,11 @@ const kventry = [
 
     // GET
     rest.get('/api/connection/:connId/kv/:bucketName/key/:key', (req, res, ctx) => {
+        // return res(
+        //     ctx.delay(1000),
+        //     ctx.status(400),
+        //     ctx.json({ error: "bestiale!!!"}),
+        // )
         return res(
             ctx.delay(1000),
             ctx.status(200),
