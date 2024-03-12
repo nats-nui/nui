@@ -2,6 +2,7 @@ import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import FindInput from "@/components/input/FindInput"
+import OptionsCmp from "@/components/options/OptionsCmp"
 import Table from "@/components/table"
 import docSo from "@/stores/docs"
 import { BucketsStore } from "@/stores/stacks/buckets"
@@ -45,6 +46,10 @@ const BucketsListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={bucketsSo}
 		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={bucketsSo}
+			/>
 			<FindInput
 				value={bucketsSa.textSearch}
 				onChange={text => bucketsSo.setTextSearch(text)}

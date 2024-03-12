@@ -52,11 +52,10 @@ const RootCmpCard: FunctionComponent<Props> = ({
 	return <div
 		id={view.state.uuid}
 		style={cssRoot(deep)}
-		className={`var${variant}`}
 	>
 
 		{/* DOC BODY */}
-		<div style={styContainerDoc}>
+		<div style={styContainerDoc} className={`var${variant}`}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
 			{/* {!!view.state.loadingMessage && (
@@ -69,7 +68,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 		<div style={cssDesk}>
 
 			{/* DIALOG */}
-			<div
+			<div className={`var${variant}`}
 				style={cssDialog(deep - 1)}
 				id={`dialog_${view.state.uuid}`}
 			/>

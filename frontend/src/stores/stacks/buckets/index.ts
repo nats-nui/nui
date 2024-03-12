@@ -6,6 +6,7 @@ import { ViewState, ViewStore, default as docSetup, default as viewSetup } from 
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildBucket, buildBucketNew } from "./utils/factory"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -71,17 +72,15 @@ const setup = {
 			state.select = data.select
 		},
 		//#endregion
-
-
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <BucketsStore>store
+			const buckets = await bucketApi.index(s.state.connectionId, { store })
+			s.setAll(buckets)
+		},
 
 		async fetchIfVoid(_: void, store?: BucketsStore) {
 			if (!!store.state.all) return
 			await store.fetch()
-		},
-		async fetch(_: void, store?: BucketsStore) {
-			const buckets = await bucketApi.index(store.state.connectionId, { store })
-			store.setAll(buckets)
-
 		},
 		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: BucketsStore) {
@@ -126,12 +125,12 @@ const setup = {
 	},
 }
 
-export type BucketsState = typeof setup.state & ViewState
+export type BucketsState = typeof setup.state & ViewState & LoadBaseState
 export type BucketsGetters = typeof setup.getters
 export type BucketsActions = typeof setup.actions
 export type BucketsMutators = typeof setup.mutators
-export interface BucketsStore extends ViewStore, StoreCore<BucketsState>, BucketsGetters, BucketsActions, BucketsMutators {
+export interface BucketsStore extends ViewStore, LoadBaseStore, StoreCore<BucketsState>, BucketsGetters, BucketsActions, BucketsMutators {
 	state: BucketsState
 }
-const bucketsSetup = mixStores(docSetup, setup)
+const bucketsSetup = mixStores(docSetup, loadBaseSetup, setup)
 export default bucketsSetup

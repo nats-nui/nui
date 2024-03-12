@@ -2,11 +2,12 @@ import kventryApi from "@/api/kventries"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
-import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
+import { ViewState, ViewStore, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -75,17 +76,17 @@ const setup = {
 			state.select = data.select
 		},
 		//#endregion
-
-
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <KVEntriesStore>store
+			const kventries = await kventryApi.index(s.state.connectionId, s.state.bucket.bucket, { store })
+			s.setAll(kventries)
+		},
 
 		async fetchIfVoid(_: void, store?: KVEntriesStore) {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
-		async fetch(_: void, store?: KVEntriesStore) {
-			const kventries = await kventryApi.index(store.state.connectionId, store.state.bucket.bucket, { store })
-			store.setAll(kventries)
-		},
+		
 		async create(_: void, store?: KVEntriesStore) {
 			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
 			docSo.addLink({ view, parent: store, anim: true })
@@ -132,12 +133,12 @@ const setup = {
 	},
 }
 
-export type KVEntriesState = typeof setup.state & ViewState
+export type KVEntriesState = typeof setup.state & ViewState & LoadBaseState
 export type KVEntriesGetters = typeof setup.getters
 export type KVEntriesActions = typeof setup.actions
 export type KVEntriesMutators = typeof setup.mutators
-export interface KVEntriesStore extends ViewStore, StoreCore<KVEntriesState>, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
+export interface KVEntriesStore extends ViewStore, LoadBaseStore, StoreCore<KVEntriesState>, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
 	state: KVEntriesState
 }
-const kventriesSetup = mixStores(docSetup, setup)
+const kventriesSetup = mixStores(viewSetup, loadBaseSetup, setup)
 export default kventriesSetup

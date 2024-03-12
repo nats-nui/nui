@@ -8,6 +8,7 @@ import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -86,18 +87,13 @@ const setup = {
 			if (!!store.state.kventry?.payload || store.state.editState == EDIT_STATE.NEW) return
 			await store.fetch()
 		},
-
-/** load */
-		fetch: async (_: void, store?: KVEntryStore) => {
+		fetch: async (_: void, store?: LoadBaseStore) => {
+			const s = <KVEntryStore>store
 			store.state.fetchAbort = new AbortController()
 			const signal = store.state.fetchAbort.signal;
-			const kventry = await kventryApi.get(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, { store, signal })
-			store.setKVEntry(kventry)
+			const kventry = await kventryApi.get(s.state.connectionId, s.state.bucket.bucket, s.state.kventry.key, { store, signal })
+			s.setKVEntry(kventry)
 		},
-		fetchAbort:(_: void, store?: KVEntryStore) => {
-			store.state.fetchAbort.abort()
-		},
-/** load */
 
 
 		/** crea un nuovo KVENTRY */
@@ -144,12 +140,12 @@ const setup = {
 	},
 }
 
-export type KVEntryState = typeof setup.state & ViewState & EditorState
+export type KVEntryState = typeof setup.state & ViewState & LoadBaseState & EditorState
 export type KVEntryGetters = typeof setup.getters
 export type KVEntryActions = typeof setup.actions
 export type KVEntryMutators = typeof setup.mutators
-export interface KVEntryStore extends ViewStore, EditorStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
+export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
 	state: KVEntryState
 }
-const kventrySetup = mixStores(viewSetup, editorSetup, setup)
+const kventrySetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)
 export default kventrySetup

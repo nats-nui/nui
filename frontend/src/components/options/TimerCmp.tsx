@@ -2,7 +2,7 @@ import { delay } from "@/utils/time"
 import { CSSProperties, FunctionComponent, useEffect, useRef, useState } from "react"
 import CircularIndicatorCmp from "./CircularIndicatorCmp"
 import CircularLoadingCmp from "./CircularLoadingCmp"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
+
 
 
 interface Props {
@@ -11,8 +11,6 @@ interface Props {
 	/** OGNI QUANTO DEVE AGGIORNARE LA PERCENTUALE */
 	interval?: number
 	style?: CSSProperties
-	bgColor?:string
-	fgColor?:string
 
 	/** ha raggiunto il 100% */
 	onTimeout?: () => void
@@ -26,8 +24,6 @@ const TimerCmp: FunctionComponent<Props> = ({
 	timeout,
 	interval = 1000,
 	style,
-	bgColor = "rgba(0,0,0,.4)",
-	fgColor = layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
 
 	onTimeout,
 	onInterval,
@@ -88,8 +84,6 @@ const TimerCmp: FunctionComponent<Props> = ({
 	if (state == TIMER_STATE.LOADING) return (
 		<CircularLoadingCmp
 			style={style}
-			// bgColor={bgColor}
-			fgColor={fgColor}
 		/>
 	)
 
@@ -98,8 +92,6 @@ const TimerCmp: FunctionComponent<Props> = ({
 			style={style}
 			perc={perc}
 			animTime={animTime}
-			bgColor={bgColor}
-			fgColor={fgColor}
 		/>
 	)
 }

@@ -11,6 +11,7 @@ import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
 import FindInput from "@/components/input/FindInput"
 import AlertDialog from "@/components/dialogs/AlertDialog"
+import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -47,6 +48,10 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={kventriesSo}
 		actionsRender={<>
+			<OptionsCmp 
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={kventriesSo}  
+			/>
 			<FindInput
 				value={kventriesSa.textSearch}
 				onChange={text => kventriesSo.setTextSearch(text)}

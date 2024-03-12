@@ -1,8 +1,8 @@
 import docSo from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
-import RootCard from "./components/cards/RootCard"
-import DropArea from "./components/DropArea"
+import RootCard from "./RootCard"
+import DropArea from "../DropArea"
 
 
 

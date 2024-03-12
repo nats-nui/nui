@@ -3,6 +3,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { camelToSnake, snakeToCamel } from "@/utils/object"
+import { LoadBaseStore } from "@/stores/stacks/loadBase"
 
 
 
@@ -82,7 +83,7 @@ export class AjaxService {
 		// SEND REQUEST
 		let response = null
 		try {
-			if (options.loading) options.store?.setLoadingState(LOAD_STATE.LOADING)
+			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.LOADING)
 			response = await fetch(
 				`${this.options.baseUrl}${url}`,
 				{
@@ -104,7 +105,7 @@ export class AjaxService {
 			}
 			throw e
 		} finally {
-			if (options.loading) options.store?.setLoadingState(LOAD_STATE.IDLE)
+			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.IDLE)
 		}
 
 		// GET DATA
@@ -126,7 +127,7 @@ export class AjaxService {
 				body: error,
 				targetId: options.store?.state?.uuid,
 			})
-			if (options.loading) options.store?.setLoadingState(LOAD_STATE.ERROR)
+			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.ERROR)
 			throw error
 		}
 		return ret

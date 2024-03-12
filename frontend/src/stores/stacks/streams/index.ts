@@ -9,6 +9,7 @@ import { buildConsumers } from "../consumer/utils/factory"
 import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 import { DOC_TYPE } from "@/types"
 import { socketPool } from "@/plugins/SocketService/pool"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 export interface PurgeParams {
@@ -86,14 +87,15 @@ const setup = {
 			state.select = data.select
 		},
 		//#endregion
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <StreamsStore>store
+			const streams = await strApi.index(s.state.connectionId, { store })
+			s.setAll(streams)
+		},
 
 		async fetchIfVoid(_: void, store?: StreamsStore) {
 			if (!!store.state.all) return
 			await store.fetch()
-		},
-		async fetch(_: void, store?: StreamsStore) {
-			const streams = await strApi.index(store.state.connectionId, { store })
-			store.setAll(streams)
 		},
 		/** open CREATION CARD */
 		create(_: void, store?: StreamsStore) {
@@ -169,12 +171,12 @@ const setup = {
 	},
 }
 
-export type StreamsState = typeof setup.state & ViewState
+export type StreamsState = typeof setup.state & ViewState & LoadBaseState
 export type StreamsGetters = typeof setup.getters
 export type StreamsActions = typeof setup.actions
 export type StreamsMutators = typeof setup.mutators
-export interface StreamsStore extends ViewStore, StoreCore<StreamsState>, StreamsGetters, StreamsActions, StreamsMutators {
+export interface StreamsStore extends ViewStore, LoadBaseStore, StoreCore<StreamsState>, StreamsGetters, StreamsActions, StreamsMutators {
 	state: StreamsState
 }
-const streamsSetup = mixStores(docSetup, setup)
+const streamsSetup = mixStores(docSetup, loadBaseSetup, setup)
 export default streamsSetup
