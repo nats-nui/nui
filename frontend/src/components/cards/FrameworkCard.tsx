@@ -40,7 +40,9 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 
-	return <div style={{ ...cssRoot(variantBg, inDrag, isIconized, inRoot), ...style }}>
+	return <div 
+		style={{ ...cssRoot(variantBg, inDrag, isIconized, inRoot), ...style }} 
+	>
 
 		<Header store={store} />
 

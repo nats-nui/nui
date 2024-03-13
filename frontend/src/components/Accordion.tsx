@@ -21,7 +21,7 @@ const Accordion: FunctionComponent<Props> = ({
 	const ref = useRef<HTMLDivElement>(null)
 	const [heightLoc, setHeightLoc] = useState<number>(null)
 	useEffect(()=>{
-		setTimeout(()=>setHeightLoc(ref.current.scrollHeight), 200)
+		setTimeout(()=>setHeightLoc(ref.current?.scrollHeight ?? 0), 200)
 	},[])
 
 	// HANDLER

@@ -2,7 +2,7 @@ import docSo from "@/stores/docs"
 import { DOC_TYPE } from "@/stores/docs/types"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
-import { LoadSession, SaveSession } from "@/utils/startup"
+import { StartSession, EndSession } from "@/utils/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import Button from "../buttons/Button"
@@ -58,8 +58,8 @@ const MainMenu: FunctionComponent<Props> = ({
 
 		{/* *** DEBUG *** */}
 		{process.env.NODE_ENV === 'development' && <>
-			<Button children="SAVE" onClick={() => SaveSession()} />
-			<Button children="LOAD" onClick={() => LoadSession()} />
+			<Button children="SAVE" onClick={() => EndSession()} />
+			<Button children="LOAD" onClick={() => StartSession()} />
 		</>}
 		{/* *** DEBUG *** */}
 

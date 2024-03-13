@@ -2,6 +2,8 @@ import tooltipSo from "@/stores/tooltip"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 
+
+
 interface Props {
 	content?: React.ReactNode
 	variant?: number

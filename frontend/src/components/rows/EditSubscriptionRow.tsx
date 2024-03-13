@@ -54,7 +54,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 				readOnly={readOnly}
 			/>
 		)}
-		<TextInput
+		<TextInput multiline
 			style={cssInput(item.disabled)}
 			value={value}
 			placeholder={placeholder}

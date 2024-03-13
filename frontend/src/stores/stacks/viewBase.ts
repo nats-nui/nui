@@ -104,7 +104,7 @@ const viewSetup = {
 		},
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
 			docSo.remove({ view: store, anim: true });
-			(store as LoadBaseStore)?.fetchAbort()
+			(store as LoadBaseStore).fetchAbort?.()
 		},
 		setSerialization: (state: any, store?: ViewStore) => {
 			store.state.uuid = state.uuid
