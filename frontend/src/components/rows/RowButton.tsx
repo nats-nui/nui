@@ -8,7 +8,6 @@ interface Props {
 	icon?: React.ReactNode
 	label?: string
 	selected?: boolean
-	variant?: number
 	onClick?: (e: React.MouseEvent) => void
 	style?: React.CSSProperties
 }
@@ -17,7 +16,6 @@ const RowButton: FunctionComponent<Props> = ({
 	icon,
 	label,
 	selected,
-	variant = 0,
 	onClick,
 	style,
 }) => {
@@ -33,7 +31,7 @@ const RowButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	return (
-		<div style={{ ...cssRoot(variant, selected), ...style }}
+		<div style={{ ...cssRoot(selected), ...style }}
 			onClick={onClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
@@ -46,7 +44,7 @@ const RowButton: FunctionComponent<Props> = ({
 
 export default RowButton
 
-const cssRoot = (variant: number, select: boolean): React.CSSProperties => ({
+const cssRoot = (select: boolean): React.CSSProperties => ({
 	...select && {
 		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
 		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,

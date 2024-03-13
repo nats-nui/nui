@@ -47,7 +47,6 @@ const MainMenu: FunctionComponent<Props> = ({
 	return <div style={{ ...cssContainer, ...style }}>
 		<IconRow onClick={handleConnectionsClick}
 			title="CONNECTIONS"
-			variant={COLOR_VAR.GREEN}
 			selected
 		/>
 		{views.map((view) => (
@@ -66,7 +65,6 @@ const MainMenu: FunctionComponent<Props> = ({
 
 		<IconRow onClick={handleLogsClick}
 			title="LOGS"
-			variant={COLOR_VAR.CYAN}
 			selected
 		/>
 	</div>

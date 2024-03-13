@@ -79,20 +79,17 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				<RowButton
 					icon={<MessagesIcon />}
 					label="MESSAGES"
-					variant={variant}
 					selected={isMessageOpen}
 					onClick={handleMessagesClick}
 				/>
 				<RowButton
 					icon={<StreamsIcon />}
 					label="STREAMS"
-					variant={variant}
 					selected={isStreamsOpen}
 					onClick={handleStreamsClick}
 				/>
 				<RowButton
 					icon={<BucketsIcon />}
-					variant={variant}
 					label="BUCKETS"
 					selected={isBucketsOpen}
 					onClick={handleBucketsClick}

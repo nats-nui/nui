@@ -9,7 +9,6 @@ interface Props  {
 	selected?: boolean
 	title: string
 	subtitle?: string
-	variant?: number
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
@@ -21,7 +20,6 @@ const IconRow: FunctionComponent<Props> = ({
 	title,
 	subtitle,
 	selected,
-	variant = 0,
 	onClick,
 	onClose,
 }) => {
@@ -45,14 +43,13 @@ const IconRow: FunctionComponent<Props> = ({
 				<div style={{ fontWeight: 700 }}>{title}</div>
 				<div>{subtitle}</div>
 			</div>}
-			variant={variant}
 			onMouseOver={enter=>setEnter(enter)}
 		>
 			{showCloseBtt && <div style={cssBttCancel}
 				onClick={onClose}
 			><CloseIcon /></div>}
 
-			<div style={cssRow(selected, variant)}
+			<div style={cssRow(selected)} className="color-bg"
 				onClick={onClick}
 			>
 				<div style={layoutSo.state.theme.texts.row.title}>
@@ -65,11 +62,11 @@ const IconRow: FunctionComponent<Props> = ({
 
 export default IconRow
 
-const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
+const cssRow = (select: boolean): React.CSSProperties => ({
 	display: "flex", alignItems: 'center', justifyContent: 'center',
 	cursor: "pointer",
-	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "rgb(0 0 0 / 20%)",
-	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
+	backgroundColor: select ? null : "rgb(0 0 0 / 20%)",
+	color: select ? "#393939" : "unset",
 	borderRadius: "50%",
 	border: "2px solid black",
 	width: 30, height: 30,

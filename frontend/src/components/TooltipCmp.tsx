@@ -53,13 +53,14 @@ const TooltipCmp: FunctionComponent = () => {
 	const content = tooltipSa.content?.content
 	const variant = tooltipSa.content?.variant
 	const show = tooltipSa.show
+	const color = tooltipSa.content?.color
 
 	return (
 		<div ref={ref} style={cssRoot(position, show)}>
 			{content && (
-				<div style={cssContent(variant)}>
+				<div style={cssContent(color)}>
 					{content}
-					<div style={cssArrow(position, variant)} />
+					<div style={cssArrow(position, color)} />
 				</div>
 			)}
 		</div>
@@ -83,25 +84,26 @@ const cssRoot = (pos: TooltipPos, show: boolean = false): React.CSSProperties =>
 	opacity: show ? 1 : 0,
 })
 
-const cssContent = (variant: number = 0): React.CSSProperties => ({
+const cssContent = (color:string): React.CSSProperties => ({
 	transform: 'translate(-50%, calc( -100% - 5px ) )',
 	fontSize: 11,
 	fontWeight: 700,
 	padding: '6px 8px',
 	borderRadius: 5,
-	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	color: layoutSo.state.theme.palette.var[variant].fg,
+	backgroundColor: color,
+	color: "#393939",
+	
 	boxShadow: layoutSo.state.theme.shadows[0],
 })
 
-const cssArrow = (pos: TooltipPos, variant: number = 0): React.CSSProperties => ({
+const cssArrow = (pos: TooltipPos, color:string): React.CSSProperties => ({
 	position: 'absolute',
 	...pos?.hook == TOOLTIP_HOOK.UP ? {
 		bottom: -10,
-		borderColor: `${layoutSo.state.theme.palette.var[variant].bg} transparent transparent transparent`
+		borderColor: `${color} transparent transparent transparent`
 	} : {
 		top: -10,
-		borderColor: `transparent transparent ${layoutSo.state.theme.palette.var[variant].bg} transparent`,
+		borderColor: `transparent transparent ${color} transparent`,
 	},
 	right: `calc( 50% - ${5 - (pos?.offset ?? 0)}px )`,
 	borderWidth: 5,

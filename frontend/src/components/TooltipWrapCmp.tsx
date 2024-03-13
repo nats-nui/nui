@@ -6,7 +6,6 @@ import { FunctionComponent, useEffect } from "react"
 
 interface Props {
 	content?: React.ReactNode
-	variant?: number
 	style?: React.CSSProperties
 	onMouseOver?: (enter: boolean) => void
 	children: React.ReactNode
@@ -14,7 +13,6 @@ interface Props {
 
 const TooltipWrapCmp: FunctionComponent<Props> = ({
 	content,
-	variant,
 	style,
 	onMouseOver,
 	children
@@ -29,11 +27,16 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	// HANDLERS
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
 		const elem = e.target as HTMLElement
+
+		const colorRef = e.currentTarget.querySelector('#colorRef')
+		var stili = window.getComputedStyle(colorRef);
+		var color = stili.getPropertyValue('color');
+
 		const rect = elem.getBoundingClientRect()
-		tooltipSo.open({ 
+		tooltipSo.open({
 			content,
 			targetRect: rect,
-			variant,
+			color,
 		})
 		onMouseOver?.(true)
 	}
@@ -43,13 +46,16 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if ( !content ) return children
-	
+	if (!content) return children
+
 	return (
 		<div style={style}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
-		>{children}</div>
+		>
+			<div id="colorRef" style={{display: "none"}} className="color-fg"/>
+			{children}
+		</div>
 	)
 }
 

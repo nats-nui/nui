@@ -82,7 +82,6 @@ const CnnListView: FunctionComponent<Props> = ({
 					title={getTitle(cnn)}
 					subtitle={getSubtitle(cnn)}
 					selected={isSelected(cnn)}
-					variant={variant}
 					onClick={() => handleSelect(cnn)}
 				/>
 			))
