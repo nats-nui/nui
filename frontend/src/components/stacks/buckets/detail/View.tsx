@@ -59,7 +59,6 @@ const BucketDetailView: FunctionComponent<Props> = ({
 			<RowButton
 				icon={<KvEntriesIcon />}
 				label="KVENTRIES"
-				variant={variant}
 				selected={isKVEntriesSelect}
 				onClick={handleKVEntriesClick}
 			/>

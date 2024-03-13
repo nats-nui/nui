@@ -69,14 +69,12 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			<RowButton
 				icon={<MessagesIcon />}
 				label="MESSAGES"
-				variant={variant}
 				selected={isMessagesSelect}
 				onClick={handleMessagesClick}
 			/>
 			<RowButton style={{ marginBottom: 15 }}
 				icon={<ConsumersIcon />}
 				label="CONSUMERS"
-				variant={variant}
 				selected={isConsumersSelect}
 				onClick={handleConsumersClick}
 			/>

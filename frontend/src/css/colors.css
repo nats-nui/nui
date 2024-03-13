@@ -6,7 +6,7 @@
 	--var-4: #EBFB35;
 	--var-5: #F51DDF;
 
-	--text-bg: #393939;
+	--text-bg: ;
 }
 
 
@@ -19,7 +19,7 @@
 	color: var(--var-0);
 }
 .var0 .color-bg {
-	background-color: "#3E3E3E";
+	background-color: var(--var-0);
 }
 
 .var1 .color-fg {

@@ -34,7 +34,11 @@ const CreateForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => bucketSo.setBucketConfig({ ...bucketSa.bucketConfig, ...prop })
-
+	const handlePlacementPropChange = (prop: { [name: string]: any }) => {
+		const config = { ...bucketSa.bucketConfig }
+		config.placement = { ...config.placement, ...prop }
+		bucketSo.setBucketConfig(config)
+	}
 	// RENDER
 	if (bucketSa.bucketConfig == null) return null
 	const bucket: BucketConfig = bucketSa.bucketConfig
@@ -46,26 +50,26 @@ const CreateForm: FunctionComponent<Props> = ({
 			<div className="lbl-prop">NAME</div>
 			<TextInput
 				value={bucket.bucket}
-				onChange={bucket => handlePropChange({bucket})}
+				onChange={bucket => handlePropChange({ bucket })}
 			/>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">DESCRIPTION</div>
 			<TextInput multiline rows={2}
-					   value={bucket.description}
-					   onChange={description => handlePropChange({description})}
+				value={bucket.description}
+				onChange={description => handlePropChange({ description })}
 			/>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">STORAGE</div>
 			<ListDialog width={80}
-						store={bucketSo}
-						select={Object.values(STORAGE).indexOf(bucket.storage ?? STORAGE.FILE)}
-						items={Object.values(STORAGE)}
-						RenderRow={({item}) => item.toUpperCase()}
-						onSelect={index => handlePropChange({storage: Object.values(STORAGE)[index]})}
+				store={bucketSo}
+				select={Object.values(STORAGE).indexOf(bucket.storage ?? STORAGE.FILE)}
+				items={Object.values(STORAGE)}
+				RenderRow={({ item }) => item.toUpperCase()}
+				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
 		</BoxV>
 
@@ -75,33 +79,33 @@ const CreateForm: FunctionComponent<Props> = ({
 		<BoxV>
 			<div className="lbl-prop">HISTORY</div>
 			<NumberInput
-				style={{flex: 1}}
+				style={{ flex: 1 }}
 				value={bucket.history}
-				onChange={history => handlePropChange({history})}
+				onChange={history => handlePropChange({ history })}
 			/>
 		</BoxV>
 
 		<MaxTimeCmp store={bucketSo}
-					label="TTL"
-					value={bucket.ttl}
-					desiredDefault={0}
-					onChange={ttl => handlePropChange({ttl})}
+			label="TTL"
+			value={bucket.ttl}
+			desiredDefault={0}
+			onChange={ttl => handlePropChange({ ttl })}
 		/>
 		<MaxBytesCmp store={bucketSo}
-					 label="MAX VALUE SIZE"
-					 value={bucket.maxValueSize}
-					 onChange={maxValueSize => handlePropChange({maxValueSize})}
+			label="MAX VALUE SIZE"
+			value={bucket.maxValueSize}
+			onChange={maxValueSize => handlePropChange({ maxValueSize })}
 		/>
 		<MaxBytesCmp store={bucketSo}
-					 label="MAX BYTES"
-					 value={bucket.maxBytes}
-					 onChange={maxBytes => handlePropChange({maxBytes})}
+			label="MAX BYTES"
+			value={bucket.maxBytes}
+			onChange={maxBytes => handlePropChange({ maxBytes })}
 		/>
 
 		<Box>
 			<IconToggle
 				check={bucket.compression}
-				onChange={compression => handlePropChange({compression})}
+				onChange={compression => handlePropChange({ compression })}
 			/>
 			<div className="lbl-prop">COMPRESSION</div>
 		</Box>
@@ -110,10 +114,9 @@ const CreateForm: FunctionComponent<Props> = ({
 		<BoxV>
 			<div className="lbl-prop">NUM REPLICAS</div>
 			<NumberInput
-				style={{flex: 1}}
+				style={{ flex: 1 }}
 				value={bucket.replicas}
-				onChange={numReplicas => handlePropChange({numReplicas})}
-				readOnly={inRead}
+				onChange={numReplicas => handlePropChange({ numReplicas })}
 			/>
 		</BoxV>
 		<BoxV>
@@ -123,18 +126,15 @@ const CreateForm: FunctionComponent<Props> = ({
 					<div className="lbl-prop">NAME</div>
 					<TextInput
 						value={bucket.placement?.cluster}
-						onChange={cluster => handlePlacementPropChange({cluster})}
-						readOnly={inRead}
+						onChange={cluster => handlePlacementPropChange({ cluster })}
 					/>
 				</BoxV>
 				<BoxV>
 					<div className="lbl-prop">TAGS</div>
 					<EditList<string>
 						items={bucket.placement?.tags}
-						onItemsChange={tags => handlePlacementPropChange({tags})}
+						onItemsChange={tags => handlePlacementPropChange({ tags })}
 						placeholder="ex. client or java"
-						variant={variant}
-						readOnly={inRead}
 						onNewItem={() => ""}
 						RenderRow={EditStringRow}
 					/>

@@ -37,11 +37,11 @@ const Button: FunctionComponent<Props> = ({
 	// RENDER
 	const styRoot: React.CSSProperties = {
 		...cssRoot,
-		...(mouseOver || select ? cssSelect(variant) : {}),
+		...(mouseOver || select ? {color: "#393939"} : {}),
 		...(disabled ? cssDisabled : {}),
 	}
 	return (
-		<div style={styRoot}
+		<div style={styRoot} className={(mouseOver || select) ? "color-bg" : null}
 			onClick={handleClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
@@ -65,7 +65,4 @@ const cssDisabled: React.CSSProperties = {
 	opacity: 0.5,
 	pointerEvents: "none",
 }
-const cssSelect = (variant: number): React.CSSProperties => ({
-	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	color: layoutSo.state.theme.palette.var[variant].fg,
-})
+
