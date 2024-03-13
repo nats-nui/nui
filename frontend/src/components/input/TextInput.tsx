@@ -26,7 +26,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		style,
 		focus,
 		multiline,
-		rows,
+		rows = 1,
 		onChange,
 		onFocus,
 		onBlur,
@@ -35,14 +35,34 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	ref: any
 ) => {
 
+
 	// STORE
 
 	// HOOK
-	const inputRef = useRef<any>(null)
+	const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+	const multilineUpdate = () => {
+		if (!inputRef.current) return
+		inputRef.current.style.height = 'auto';
+		const current = inputRef.current.scrollHeight
+		inputRef.current.style.height = `${current - 7}px`;
+	}
+
 	useEffect(() => {
 		if (!focus) return
 		inputRef.current?.select()
 	}, [focus])
+
+	useEffect(() => {
+		if (!multiline || !inputRef.current) return
+		setTimeout(multilineUpdate, 400)
+		inputRef.current?.addEventListener('input', multilineUpdate)
+		return () => inputRef.current?.removeEventListener('input', multilineUpdate)
+	}, [multiline])
+
+	useEffect(()=>{
+		multilineUpdate()
+	},[readOnly])
+
 	useImperativeHandle(ref, () => inputRef.current, [inputRef.current])
 
 	// HANDLER
@@ -63,7 +83,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 
 	const TagInput = multiline ? "textarea" : "input"
 
-	return <TagInput ref={inputRef}
+	return <TagInput ref={inputRef as any}
 		style={{ ...cssRoot, ...style }}
 		placeholder={placeholder}
 		autoFocus={autoFocus}
@@ -80,6 +100,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 export default forwardRef(TextInput)
 
 const cssRoot: React.CSSProperties = {
+	height: "auto",
 }
 
 type HTMLInput = HTMLInputElement | HTMLTextAreaElement

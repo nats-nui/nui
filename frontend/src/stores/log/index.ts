@@ -28,6 +28,14 @@ const setup = {
 			}
 			store.setAll([...store.state.all, log])
 		},
+		addError(error: Error, store?: LogStore) {
+			if ( !error ) return
+			store.add({
+				type: MESSAGE_TYPE.ERROR,
+				title: error.message,
+				body: error.stack,
+			})
+		},
 		clear(_:void, store?:LogStore) {
 			store.setAll([])
 		}

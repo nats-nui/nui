@@ -5,10 +5,13 @@ import logSo from "@/stores/log"
 
 
 
-window.addEventListener("load", async (event) => LoadSession())
-window.addEventListener("beforeunload", async (event) => SaveSession())
+window.addEventListener("load", async (event) => StartSession())
+window.addEventListener("beforeunload", async (event) => EndSession())
+window.onerror = (message, url, line, col, error) => {
+	logSo.addError(error)
+}
 
-export async function SaveSession() {
+export async function EndSession() {
 	const dockViews = docsSo.state.all
 	const menuViews = docsSo.state.menu
 	const dockStates = dockViews.map(store => store.getSerialization())
@@ -25,7 +28,7 @@ export async function SaveSession() {
 	])
 }
 
-export async function LoadSession() {
+export async function StartSession() {
 	const records = await dbLoad()
 	const [log, menuUuids, dockUuids, states] = records
 	logSo.setAll(log ?? [])
@@ -35,7 +38,7 @@ export async function LoadSession() {
 		const store = buildStore({ type: state.type })
 		store?.setSerialization(state)
 		return store
-	}).filter( s => !!s)
+	}).filter(s => !!s)
 	docsSo.setAll(dockStores)
 
 	const menuStates = menuUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
@@ -43,7 +46,7 @@ export async function LoadSession() {
 		const store = buildStore({ type: state.type })
 		store?.setSerialization(state)
 		return store
-	}).filter( s => !!s)
+	}).filter(s => !!s)
 	docsSo.setMenu(menuStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })

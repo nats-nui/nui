@@ -1,3 +1,5 @@
+
+
 .lbl-header-title {
 	font-size: 16px;
 	font-weight: 800;
@@ -16,7 +18,7 @@
 }
 
 
-
+/** PER ESEMPIO I BOTTONI DELLE CONNECTIONS */
 .lbl-rowelement-title {
 	font-size: 14px;
 	font-weight: 700;
@@ -36,8 +38,8 @@
 .lbl-dialog-text {
 	font-size: 13px;
 	font-weight: 500;
-	margin-bottom: 20;
-	white-space: pre-line;
+	margin-bottom: 20px;
+	overflow-wrap: break-word;
 }
 
 

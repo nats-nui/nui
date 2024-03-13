@@ -56,7 +56,7 @@ export default Button
 const cssRoot: React.CSSProperties = {
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	cursor: "pointer",
-	borderRadius: 10,
+	borderRadius: 5,
 	padding: '5px 6px',
 	fontSize: 10, 
 	fontWeight: 800,

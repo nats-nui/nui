@@ -33,7 +33,7 @@ const EditStringRow: FunctionComponent<RenderRowBaseProps<string>> = ({
 		style={cssRow}
 		enterRender={!readOnly && <IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
-		<TextInput
+		<TextInput multiline
 			style={{ flex: 1 }}
 			value={item}
 			placeholder={placeholder}

@@ -10,21 +10,49 @@
 }
 
 
+.color-text {
+	color: var(--text-bg);
+}
+
+
 .var0 .color-fg {
 	color: var(--var-0);
 }
+.var0 .color-bg {
+	background-color: "#3E3E3E";
+}
+
 .var1 .color-fg {
 	color: var(--var-1);
 }
+.var1 .color-bg {
+	background: var(--var-1);
+}
+
 .var2 .color-fg {
 	color: var(--var-2);
 }
+.var2 .color-bg {
+	background: var(--var-2);
+}
+
 .var3 .color-fg {
 	color: var(--var-3);
 }
+.var3 .color-bg {
+	background: var(--var-3);
+}
+
 .var4 .color-fg {
 	color: var(--var-4);
 }
+.var4 .color-bg {
+	background: var(--var-4);
+}
+
 .var5 .color-fg {
 	color: var(--var-5);
+}
+.var5 .color-bg {
+	background: var(--var-5);
 }
