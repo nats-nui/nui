@@ -3,6 +3,7 @@ import Form from "@/components/format/Form"
 import Label from "@/components/format/Label"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { useStore } from "@priolo/jon"
+import dayjs from "dayjs"
 import { FunctionComponent } from "react"
 
 
@@ -27,6 +28,8 @@ const ShowForm: FunctionComponent<Props> = ({
 	if (!streamSa.stream?.config || !streamSa.stream?.state) return null
 	const config = streamSa.stream.config
 	const state = streamSa.stream.state
+	const firstTs = dayjs(state.firstTs).format("DD/MM/YYYY HH:mm")
+	const lastTs = dayjs(state.lastTs).format("DD/MM/YYYY HH:mm")
 
 	return <Form>
 
@@ -34,38 +37,39 @@ const ShowForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">COUNT</div>
-			<Label>{state.messages}</Label>
+			<div className="lbl-input-readonly">{state.messages}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">BYTES</div>
-			<Label>{state.bytes}</Label>
+			<div className="lbl-input-readonly">{state.bytes}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">FIRST SEQ.</div>
-			<Label>{state.firstSeq}</Label>
+			<div className="lbl-input-readonly">{state.firstSeq}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">FIRST DATETIME</div>
-			<Label>{state.firstTs}</Label>
+			<div className="lbl-input-readonly">{firstTs}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">LAST SEQ.</div>
-			<Label>{state.lastSeq}</Label>
+			<div className="lbl-input-readonly">{state.lastSeq}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">LAST DATETIME</div>
-			<Label>{state.lastTs}</Label>
+			<div className="lbl-input-readonly">{lastTs}</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">DELETED COUNT</div>
-			<Label>{state.numDeleted}</Label>
+			<div className="lbl-input-readonly">{state.numDeleted}</div>
 		</BoxV>
+
 
 		<div className="lbl-prop-title">CONSUMERS</div>
 
 		<BoxV>
 			<div className="lbl-prop">COUNT</div>
-			<Label>{state.consumerCount}</Label>
+			<div className="lbl-input-readonly">{state.consumerCount}</div>
 		</BoxV>
 
 	</Form>
