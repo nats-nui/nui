@@ -30,10 +30,8 @@ const FormatAction: FunctionComponent<Props> = ({
 	const handleCopy = () => navigator.clipboard.writeText(store.getEditorText())
 	const handleFormat = () => storeSa.editorRef.format()
 
-
 	// RENDER
 	const formatLabel = storeSa.format?.toUpperCase() ?? ""
-	const variant = storeSa.colorVar
 
 	return <>
 		<TooltipWrapCmp content="COPY">

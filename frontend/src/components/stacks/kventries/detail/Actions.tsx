@@ -38,7 +38,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// RENDER
 	const kventry = kventrySo.getKVSelect()
 	if (!kventry) return null
-	const variant = kventrySa.colorVar
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 

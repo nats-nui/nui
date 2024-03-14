@@ -26,8 +26,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (streamSa.stream == null) return null
-	const variant = streamSa.colorVar
-
 	if (streamSa.editState == EDIT_STATE.NEW) {
 		return (
 			<Button

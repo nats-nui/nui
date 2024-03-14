@@ -69,7 +69,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
 	const auths = cnnDetailSa.connection.auth ?? []
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
-	const variant = cnnDetailSa.colorVar
 
 	return <Form>
 
@@ -92,7 +91,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				onNewItem={() => ""}
 				RenderRow={EditStringRow}
 				readOnly={inRead}
-				variant={variant}
 				fnIsVoid={h => !h || h.trim().length == 0}
 			/>
 		</BoxV>
@@ -107,7 +105,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				RenderRow={EditSubscriptionNoDisableRow}
 				placeholder="ex. house1.room4.*"
 				readOnly={inRead}
-				variant={variant}
 				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
 			/>
 		</BoxV>

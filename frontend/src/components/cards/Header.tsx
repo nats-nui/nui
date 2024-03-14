@@ -9,9 +9,9 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useState } from "react"
+import TooltipWrapCmp from "../TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
-import TooltipWrapCmp from "../TooltipWrapCmp"
 
 
 
@@ -66,7 +66,6 @@ const Header: FunctionComponent<Props> = ({
 	const title = store.getTitle()
 	const subTitle = store.getSubTitle()
 	const inRoot = !store.state.parent
-	const variant = store.state.colorVar
 	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
 	const isIconized = docSo.isPinned(store.state.uuid)

@@ -12,7 +12,6 @@ import ElementDialog from "./ElementDialog"
 interface Props extends DialogProps  {
 	items: string[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<string>>
-	variant?: number
 	readOnly?: boolean
 	/** indice selezionato */
 	select?: number

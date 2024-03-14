@@ -49,7 +49,6 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
-	const variant = strMsgSa.colorVar
 	const messages = strMsgSa.messages
 
 	return <FrameworkCard

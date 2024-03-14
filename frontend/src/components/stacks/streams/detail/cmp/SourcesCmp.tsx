@@ -1,5 +1,4 @@
-import BoxV from "@/components/format/BoxV"
-import Label from "@/components/format/Label"
+import ElementDialog from "@/components/dialogs/ElementDialog"
 import Quote from "@/components/format/Quote"
 import EditList, { LIST_ACTIONS } from "@/components/lists/EditList"
 import EditItemRow from "@/components/rows/EditItemRow"
@@ -11,8 +10,6 @@ import { Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import EditSourceCmp from "./EditSourceCmp"
-import ElementDialog from "@/components/dialogs/ElementDialog"
-
 
 
 
@@ -109,8 +106,3 @@ const SourcesCmp: FunctionComponent<Props> = ({
 }
 
 export default SourcesCmp
-
-const cssList = (readOnly: boolean, variant: number): React.CSSProperties => ({
-	backgroundColor: readOnly ? "rgb(0 0 0 / 50%)" : layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-	color: layoutSo.state.theme.palette.var[variant].bg,
-})

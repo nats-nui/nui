@@ -49,7 +49,6 @@ const BucketDetailView: FunctionComponent<Props> = ({
 					icon={<KvEntriesIcon />}
 					tooltip="KVENTRIES"
 					selected={isKVEntriesSelect}
-					variant={variant}
 					onClick={handleKVEntriesClick}
 				/>
 			</BoxV>
