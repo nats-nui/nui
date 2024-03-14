@@ -47,19 +47,16 @@ const handlers = [
 		const bucketState:BucketState = bucketStateFromConfig(bucketConfig)
 		buckets.push(bucketState)
 
-		return res(
-			ctx.status(400),
-
-			ctx.json({
-				error: "TITOLO ABBASTANZA LUNGO"
-			}),
-		)
-
-
 		// return res(
-		// 	ctx.status(201),
-		// 	ctx.json(camelToSnake(bucketState)),
+		// 	ctx.status(400),
+		// 	ctx.json({
+		// 		error: "TITOLO ABBASTANZA LUNGO DA ESSERE PREOCCUPOANTE	http:error:500 nats: API error: code=500 err_code=10052 description=max age needs to be = 100ms etc etc etc etc etc etc"
+		// 	}),
 		// )
+		return res(
+			ctx.status(201),
+			ctx.json(camelToSnake(bucketState)),
+		)
 	}),
 
 ]
