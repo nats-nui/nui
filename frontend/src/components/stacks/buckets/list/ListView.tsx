@@ -56,13 +56,11 @@ const BucketsListView: FunctionComponent<Props> = ({
 			/>
 			{!!selected && <Button
 				children="DELETE"
-				variant={variant}
 				onClick={handleDelete}
 			/>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
-				variant={variant}
 				onClick={handleNew}
 			/>
 		</>}
@@ -79,7 +77,6 @@ const BucketsListView: FunctionComponent<Props> = ({
 			selectId={selected}
 			onSelectChange={handleSelect}
 			getId={(bucket: BucketState) => bucket.bucket}
-			variant={variant}
 		/>
 
 		<AlertDialog store={bucketsSo} />

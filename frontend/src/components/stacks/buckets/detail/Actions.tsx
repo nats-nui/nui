@@ -23,14 +23,12 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleSave = () => bucketSo.save()
 
 	// RENDER
-	const variant = bucketSa.colorVar
 
 	if (bucketSa.editState == EDIT_STATE.READ) return null
 
 	return (<>
 		<Button
 			children="CREATE"
-			variant={variant}
 			onClick={handleSave}
 		/>
 	</>)

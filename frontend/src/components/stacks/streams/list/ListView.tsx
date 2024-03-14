@@ -57,19 +57,16 @@ const StreamsListView: FunctionComponent<Props> = ({
 			/>
 			{!!nameSelected && <Button
 				children="DELETE"
-				variant={variant}
 				onClick={handleDelete}
 			/>}
 			{!!nameSelected && <Button
 				children="PURGE"
-				variant={variant}
 				onClick={handlePurgeClick}
 			/>}
 			{!!nameSelected && <div> | </div>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
-				variant={variant}
 				onClick={handleNew}
 			/>
 		</>}
@@ -86,7 +83,6 @@ const StreamsListView: FunctionComponent<Props> = ({
 			selectId={nameSelected}
 			onSelectChange={handleSelect}
 			getId={item => item.config.name}
-			variant={variant}
 		/>
 
 		<PurgeDialog store={streamsSo} />

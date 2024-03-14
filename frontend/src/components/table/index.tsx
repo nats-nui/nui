@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import React, { CSSProperties, FunctionComponent, useMemo, useState } from "react"
 import Header, { ORDER_TYPE } from "./Header"
 
@@ -17,7 +16,6 @@ interface Props {
 	propMain?: ItemProp
 	items?: any[]
 	selectId?: string
-	variant?: number
 	onSelectChange?: (item: any) => void
 	getId?: (item: any) => string
 	style?: React.CSSProperties
@@ -28,7 +26,6 @@ const Table: FunctionComponent<Props> = ({
 	propMain,
 	items = [],
 	selectId,
-	variant = 0,
 	onSelectChange,
 	getId = (item) => item.toString(),
 	style,
@@ -86,7 +83,7 @@ const Table: FunctionComponent<Props> = ({
 
 					{!!propMain && (
 						<tr
-							style={cssRowMain(selected, variant)}
+							style={cssRowMain(selected)} className={selected ? "color-bg-l1 color-text" : null}
 							onClick={() => handleSelect(item)}
 						>
 							<td colSpan={colspan} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
@@ -96,7 +93,7 @@ const Table: FunctionComponent<Props> = ({
 					)}
 
 					<tr
-						style={cssRow(selected, variant)}
+						style={cssRow(selected)} className={selected ? "color-bg color-text" : null}
 						onClick={() => handleSelect(item)}
 					>
 						{props.map((prop, index) => (
@@ -121,7 +118,7 @@ const cssTable: CSSProperties = {
 	borderSpacing: 0,
 }
 
-const cssRowMain = (select: boolean, variant: number): CSSProperties => ({
+const cssRowMain = (select: boolean): CSSProperties => ({
 	cursor: "pointer",
 	fontSize: '12px',
 	//fontWeight: '600',
@@ -130,18 +127,16 @@ const cssRowMain = (select: boolean, variant: number): CSSProperties => ({
 	...select ? {
 		opacity: 1,
 		fontWeight: '600',
-		backgroundColor: layoutSo.state.theme.palette.var[variant].bg2,
-		color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
 		opacity: 0.8,
 	},
 })
 
-const cssRow = (select: boolean, variant: number): CSSProperties => ({
+const cssRow = (select: boolean): CSSProperties => ({
 	cursor: "pointer",
 	...select ? {
-		backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-		color: layoutSo.state.theme.palette.var[variant].fg
+		// backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
+		// color: layoutSo.state.theme.palette.var[variant].fg
 	} : {
 		backgroundColor: "rgba(0, 0, 0, 0.5)",
 	},

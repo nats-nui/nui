@@ -71,13 +71,13 @@ const MessageRow: FunctionComponent<Props> = ({
 
 				{bttCopyVisible && (
 					<div style={{ position: "absolute", top: 0, right: 0, backgroundColor: bgcolor, display: "flex" }}>
-						<TooltipWrapCmp content="COPY" variant={COLOR_VAR.CYAN}>
+						<TooltipWrapCmp content="COPY">
 							<IconButton onClick={handleClipboardClick}>
 								<CopyIcon />
 							</IconButton>
 						</TooltipWrapCmp>
 						{!!onDelete && (
-							<TooltipWrapCmp content="DELETE" variant={COLOR_VAR.CYAN}>
+							<TooltipWrapCmp content="DELETE">
 								<IconButton onClick={handleDeleteClick}>
 									<CloseIcon />
 								</IconButton>

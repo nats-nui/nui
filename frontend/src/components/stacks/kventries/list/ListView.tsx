@@ -58,18 +58,15 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			/>
 			{!!selected && <Button
 				children="DELETE"
-				variant={variant}
 				onClick={handleDelete}
 			/>}
 			{!!selected && <Button
 				children="PURGE"
-				variant={variant}
 				onClick={handlePurge}
 			/>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
-				variant={variant}
 				onClick={handleNew}
 			/>
 		</>}
@@ -94,7 +91,6 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			selectId={selected}
 			onSelectChange={handleSelect}
 			getId={(item: KVEntry) => item.key}
-			variant={variant}
 		/>
 
 		<AlertDialog store={kventriesSo} />

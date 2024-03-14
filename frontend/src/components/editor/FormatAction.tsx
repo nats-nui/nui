@@ -36,23 +36,20 @@ const FormatAction: FunctionComponent<Props> = ({
 	const variant = storeSa.colorVar
 
 	return <>
-		<TooltipWrapCmp content="COPY" variant={variant}>
-			<IconButton
+		<TooltipWrapCmp content="COPY">
+			<IconButton effect
 				onClick={handleCopy}
-				variant={variant}
 			><CopyIcon /></IconButton>
 		</TooltipWrapCmp>
-		<TooltipWrapCmp content="FORMAT" variant={variant}>
-			<IconButton
+		<TooltipWrapCmp content="FORMAT">
+			<IconButton effect
 				onClick={handleFormat}
-				variant={variant}
 			><FormatIcon /></IconButton>
 		</TooltipWrapCmp>
 		<Button
 			select={storeSa.formatsOpen}
 			children={formatLabel}
 			onClick={handleOpenDialogFormats}
-			variant={variant}
 		/>
 	</>
 }

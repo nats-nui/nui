@@ -41,7 +41,6 @@ const LogsView: FunctionComponent<Props> = ({
 		actionsRender={<>
 			<Button
 				children="CLEAR"
-				variant={variant}
 				onClick={handleClear}
 			/>
 		</>}

@@ -93,10 +93,7 @@ const Header: FunctionComponent<Props> = ({
 				<div onClick={handleSizeClick} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
-					<TooltipWrapCmp
-						content={tooltip}
-						variant={variant}
-					>
+					<TooltipWrapCmp content={tooltip} >
 						<CardIcon
 							type={store.state.type}
 						/>

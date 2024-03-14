@@ -51,7 +51,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 		<Button
 			children="PUT"
-			variant={variant}
 			onClick={handleEdit}
 		/>
 		<div style={{ display: "flex" }}>
@@ -60,7 +59,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 				onClick={handleRevisionPrevChange}
 			><ArrowLeftIcon /></IconButton>
 
-			<Button variant={variant}
+			<Button
 				onClick={handleHistoryOpen}
 				select={kventrySa.historyOpen}
 			>REV: {kventry.revision ?? "--"}</Button>
@@ -82,13 +81,11 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
 		<Button
 			children={label}
-			variant={variant}
 			onClick={handleSave}
 		/>
 		{!inNew && (
 			<Button
 				children="CANCEL"
-				variant={variant}
 				onClick={handleCancel}
 			/>
 		)}

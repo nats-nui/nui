@@ -1,21 +1,20 @@
+import IconToggle from "@/components/buttons/IconToggle.tsx"
+import Box from "@/components/format/Box.tsx"
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
-import Label from "@/components/format/Label"
+import Quote from "@/components/format/Quote.tsx"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
+import EditList from "@/components/lists/EditList.tsx"
+import EditStringRow from "@/components/rows/EditStringRow.tsx"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketConfig } from "@/types/Bucket"
 import { STORAGE } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
-import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
-import Quote from "@/components/format/Quote.tsx";
-import IconToggle from "@/components/buttons/IconToggle.tsx";
-import Box from "@/components/format/Box.tsx";
-import EditList from "@/components/lists/EditList.tsx";
-import EditStringRow from "@/components/rows/EditStringRow.tsx";
+import MaxTimeCmp from "../../../input/MaxTimeCmp"
 
 
 
