@@ -41,8 +41,6 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
 
 	// RENDER
-	const variant = sendSa.colorVar
-
 	return <FrameworkCard
 		store={sendSo}
 		actionsRender={<>

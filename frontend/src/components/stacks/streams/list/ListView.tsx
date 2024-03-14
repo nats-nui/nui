@@ -42,7 +42,6 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const streams = streamsSo.getFiltered() ?? []
 	const nameSelected = streamsSa.select
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
-	const variant = streamsSa.colorVar
 
 	return <FrameworkCard styleBody={{ padding: 0, }}
 		store={streamsSo}

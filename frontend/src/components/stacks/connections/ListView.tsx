@@ -1,6 +1,7 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import cnnSo from "@/stores/connections"
+import docSo from "@/stores/docs"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -9,7 +10,6 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
-import docSo from "@/stores/docs"
 
 
 
@@ -58,7 +58,6 @@ const CnnListView: FunctionComponent<Props> = ({
 	const isSelected = (cnn: Connection) => cnn.id == cnnListSa.select
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
-	const variant = cnnListSa.colorVar
 	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard
@@ -91,7 +90,6 @@ const CnnListView: FunctionComponent<Props> = ({
 				subtitle={getSubtitle(cnn)}
 				icon={<div style={cssLed(cnn.status ?? CNN_STATUS.UNDEFINED)} />}
 				selected={isSelected(cnn)}
-				variant={variant}
 				onClick={() => handleSelect(cnn)}
 			// testRender={<>
 			// 	<Button label="Str" onClick={(e) => handleStreams(e, cnn)} />

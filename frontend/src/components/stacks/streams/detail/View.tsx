@@ -52,14 +52,12 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
 					selected={isMessagesSelect}
-					variant={variant}
 					onClick={handleMessagesClick}
 				/>
 				<IconRow2
 					icon={<ConsumersIcon />}
 					tooltip="CONSUMERS"
 					selected={isConsumersSelect}
-					variant={variant}
 					onClick={handleConsumersClick}
 				/>
 			</BoxV>

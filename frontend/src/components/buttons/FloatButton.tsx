@@ -1,18 +1,16 @@
 import React, { FunctionComponent } from "react"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import layoutSo from "@/stores/layout"
 
 
 
 interface Props {
 	onClick?: (e: React.MouseEvent) => void
 	children?: React.ReactNode
-	variant?: number
 }
 
 const FloatButton: FunctionComponent<Props> = ({
 	onClick,
 	children,
-	variant = COLOR_VAR.CYAN,
 }) => {
 	// STORE
 
@@ -23,7 +21,7 @@ const FloatButton: FunctionComponent<Props> = ({
 	// RENDER
 
 	return (
-		<div style={cssContainer(variant)}
+		<div style={cssContainer} className="color-bg color-text"
 			onClick={onClick}
 		>
 			{children}
@@ -33,18 +31,16 @@ const FloatButton: FunctionComponent<Props> = ({
 
 export default FloatButton
 
-const cssContainer = (variant:number): React.CSSProperties => ({
+const cssContainer: React.CSSProperties = {
 	display: "flex",
 	alignItems: "center",
     justifyContent: "center",
 
 	cursor: "pointer",
 	padding: 5,
-	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	color: layoutSo.state.theme.palette.var[variant].fg,
 
 	width: 25, height: 25,
 	borderRadius: '50%',
 
 	boxShadow: layoutSo.state.theme.shadows[0],
-})
+}

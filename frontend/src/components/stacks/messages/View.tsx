@@ -18,6 +18,7 @@ import MessagesList from "./MessagesList"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
+
 interface Props {
 	store?: MessagesStore
 	style?: React.CSSProperties,

@@ -77,7 +77,6 @@ const EditForm: FunctionComponent<Props> = ({
 	const config: StreamConfig = streamSa.stream.config
 	const inRead = streamSa.editState == EDIT_STATE.READ
 	const inNew = streamSa.editState == EDIT_STATE.NEW
-	const variant = streamSa.colorVar
 	const allStreams = streamSa.allStreams
 
 	return <Form>
@@ -120,7 +119,6 @@ const EditForm: FunctionComponent<Props> = ({
 				items={config.subjects}
 				onItemsChange={subjects => handlePropChange({ subjects })}
 				placeholder="ex. orders.* or telemetry.>"
-				variant={variant}
 				readOnly={inRead}
 				onNewItem={() => ""}
 				RenderRow={EditStringRow}
@@ -301,7 +299,6 @@ const EditForm: FunctionComponent<Props> = ({
 						items={config.placement?.tags}
 						onItemsChange={tags => handlePlacementPropChange({ tags })}
 						placeholder="ex. client or java"
-						variant={variant}
 						readOnly={inRead}
 						onNewItem={() => ""}
 						RenderRow={EditStringRow}
@@ -410,7 +407,3 @@ const EditForm: FunctionComponent<Props> = ({
 
 export default EditForm
 
-const cssList = (readOnly: boolean, variant: number): React.CSSProperties => ({
-	backgroundColor: readOnly ? "rgb(0 0 0 / 50%)" : layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-	color: layoutSo.state.theme.palette.var[variant].bg,
-})

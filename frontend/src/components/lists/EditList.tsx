@@ -26,7 +26,6 @@ interface Props<T> {
 	/** renderizza una ROW ITEM in lista */
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
 	placeholder?: string
-	variant?: number
 	readOnly?: boolean
 	/** quando perde il fuoco seve mantenere la selezione (utile per le dialog) */
 	keepSelectOnBlur?: boolean
@@ -49,7 +48,6 @@ function EditList<T>({
 	select,
 	RenderRow,
 	placeholder,
-	variant = 0,
 	readOnly = false,
 	keepSelectOnBlur,
 	toggleSelect,
@@ -153,7 +151,7 @@ function EditList<T>({
 		<div
 			tabIndex={0}
 			ref={ref}
-			style={{ ...cssRoot(variant, readOnly), ...style }}
+			style={{ ...cssRoot, ...style }}
 			onKeyDown={handleKeyDown}
 			onBlur={handleBlur}
 		>
@@ -181,11 +179,11 @@ function EditList<T>({
 
 export default forwardRef(EditList) as <T>(props: Props<T>, ref: LegacyRef<HTMLDivElement>) => JSX.Element
 
-const cssRoot = (variant: number, readOnly: boolean): React.CSSProperties => ({
+const cssRoot: React.CSSProperties = {
 	// display: "flex",
 	// flexDirection: "column",
 	borderRadius: 5,
-})
+}
 
 const cssButton: React.CSSProperties = {
 	backgroundColor: '#00000010',

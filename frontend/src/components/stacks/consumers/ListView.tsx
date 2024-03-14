@@ -33,7 +33,6 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	// RENDER
 	const consumers = consumersSo.getFiltered() ?? []
 	const selected = consumersSa.select
-	const variant = consumersSa.colorVar
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={consumersSo}

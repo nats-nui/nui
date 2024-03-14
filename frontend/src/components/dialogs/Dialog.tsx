@@ -1,5 +1,4 @@
 import CloseIcon from "@/icons/CloseIcon"
-import layoutSo from "@/stores/layout"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
@@ -116,7 +115,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	const variant = state.colorVar
 
 	return createPortal(
-		<div
+		<div className="color-bg color-text"
 			ref={(node) => setRef(node)}
 			style={cssRoot(variant, width, y)}
 		>
@@ -152,8 +151,6 @@ const cssRoot = (variant: number, width: number | string, top: number): React.CS
 	marginTop: top,
 	//padding: "15px 15px 15px 25px",
 	padding: "3px 15px 15px 25px",
-	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	color: layoutSo.state.theme.palette.var[variant].fg,
 
 	//overflow: "hidden",
 	borderRadius: '0px 10px 10px 0px',

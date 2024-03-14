@@ -134,12 +134,7 @@ const cssRowMain = (select: boolean): CSSProperties => ({
 
 const cssRow = (select: boolean): CSSProperties => ({
 	cursor: "pointer",
-	...select ? {
-		// backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-		// color: layoutSo.state.theme.palette.var[variant].fg
-	} : {
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-	},
+	backgroundColor: !select ? "rgba(0, 0, 0, 0.5)" : null,
 })
 
 const cssRowCell: CSSProperties = {

@@ -42,7 +42,6 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	// RENDER
 	const kventries = kventriesSo.getFiltered() ?? []
 	const selected = kventriesSa.select
-	const variant = kventriesSa.colorVar
 	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ padding: 0 }}

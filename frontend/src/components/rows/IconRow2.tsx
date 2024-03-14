@@ -10,7 +10,6 @@ interface Props {
 	icon: React.ReactNode
 	tooltip?: string
 	selected?: boolean
-	variant?: number
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
@@ -22,7 +21,6 @@ const IconRow2: FunctionComponent<Props> = ({
 	icon,
 	tooltip,
 	selected,
-	variant = 0,
 	onClick,
 	onClose,
 }) => {
@@ -42,14 +40,13 @@ const IconRow2: FunctionComponent<Props> = ({
 			content={<div>
 				<div style={{ fontWeight: 700 }}>{tooltip}</div>
 			</div>}
-			variant={variant}
 			onMouseOver={enter => setEnter(enter)}
 		>
 			{showCloseBtt && <div style={cssBttCancel}
 				onClick={onClose}
 			><CloseIcon /></div>}
 
-			<div style={cssRow(selected, variant)}
+			<div style={cssRow(selected)}
 				onClick={onClick}
 			>
 				{icon}
@@ -60,7 +57,7 @@ const IconRow2: FunctionComponent<Props> = ({
 
 export default IconRow2
 
-const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
+const cssRow = (select: boolean): React.CSSProperties => ({
 	...select && {
 		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
 		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,

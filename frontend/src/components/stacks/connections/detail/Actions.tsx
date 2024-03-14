@@ -32,8 +32,6 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const variant = cnnDetailSa.colorVar
-
 	if (cnnDetailSa.editState == EDIT_STATE.NEW) {
 		return <Button
 			children="CREATE"

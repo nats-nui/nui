@@ -40,7 +40,6 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const buckets = bucketsSo.getFiltered() ?? []
 	if (!buckets) return null
 	const selected = bucketsSa.select
-	const variant = bucketsSa.colorVar
 	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
 
 	return <FrameworkCard styleBody={{ padding: 0 }}

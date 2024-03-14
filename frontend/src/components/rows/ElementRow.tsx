@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
 
 
@@ -8,7 +7,6 @@ interface Props {
 	title: string
 	icon?: React.ReactNode
 	subtitle?: string
-	variant?: number
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	testRender?: React.ReactNode
 }
@@ -21,7 +19,6 @@ const ElementRow: FunctionComponent<Props> = ({
 	subtitle,
 	icon,
 	selected,
-	variant = 0,
 	onClick,
 	testRender,
 }) => {
@@ -35,7 +32,7 @@ const ElementRow: FunctionComponent<Props> = ({
 	// RENDER
 	if (!title) return null
 
-	return <div style={cssRow(selected, variant)}
+	return <div style={cssRow} className={selected ? "color-bg color-text" : null}
 		onClick={onClick}
 	>
 		{icon}
@@ -43,7 +40,7 @@ const ElementRow: FunctionComponent<Props> = ({
 			<div className="lbl-rowelement-title">
 				{title}
 			</div>
-			<div className="lbl-rowelement-subtitle" style={{display: "flex"}}>
+			<div className="lbl-rowelement-subtitle" style={{ display: "flex" }}>
 				<div>{subtitle}</div>
 				{testRender}
 			</div>
@@ -53,15 +50,13 @@ const ElementRow: FunctionComponent<Props> = ({
 
 export default ElementRow
 
-const cssRow = (select: boolean, variant: number): React.CSSProperties => ({
+const cssRow: React.CSSProperties = {
 	display: "flex", alignItems: "center",
 	cursor: "pointer",
-	backgroundColor: select ? layoutSo.state.theme.palette.var[variant].bg : "unset",
-	color: select ? layoutSo.state.theme.palette.var[variant].fg : "unset",
 	margin: "3px -10px 0px -5px",
 	borderRadius: "5px 0px 0px 5px",
 	padding: '4px 0px 4px 8px',
-})
+}
 
 const cssLabels: React.CSSProperties = {
 	display: "flex",
