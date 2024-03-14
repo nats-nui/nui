@@ -88,6 +88,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			label="TTL"
 			value={bucket.ttl}
 			desiredDefault={0}
+			initDefault={1}
 			onChange={ttl => handlePropChange({ ttl })}
 		/>
 		<MaxBytesCmp store={bucketSo}
@@ -115,7 +116,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.replicas}
-				onChange={numReplicas => handlePropChange({ numReplicas })}
+				onChange={replicas => handlePropChange({ replicas })}
 			/>
 		</BoxV>
 		<BoxV>
