@@ -41,7 +41,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	// HOOK
 	const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
 	const multilineUpdate = () => {
-		if (!inputRef.current) return
+		if (!multiline || !inputRef.current) return
 		inputRef.current.style.height = 'auto';
 		const current = inputRef.current.scrollHeight
 		inputRef.current.style.height = `${current - 7}px`;
