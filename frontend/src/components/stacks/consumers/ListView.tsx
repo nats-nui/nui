@@ -50,7 +50,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 		<Table
 			items={consumers}
 			props={[
-				{ label: "ACK PENDING", getValue: item => item.numAckPending },
+				{ label: "ACK", getValue: item => item.numAckPending },
 				{ label: "REDELIVERED", getValue: item => item.numRedelivered },
 				{ label: "WAITING", getValue: item => item.numWaiting },
 				{ label: "PENDING", getValue: item => item.numPending },

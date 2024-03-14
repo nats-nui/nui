@@ -1,7 +1,7 @@
 import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
-import { MessagesState, MessagesStore } from "@/stores/stacks/messages";
+import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages";
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types";
 import { VIEW_SIZE } from "../../utils";
 

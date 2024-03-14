@@ -29,7 +29,7 @@ input::selection {
 input::placeholder {
   opacity: .6;
 }
-/*
+
 .var0 input::selection {
   background: var(--text-bg);
   color: var(--var-0);
@@ -59,4 +59,3 @@ input::placeholder {
   background: var(--var-5);
   color: var(--text-bg);
 }
-*/

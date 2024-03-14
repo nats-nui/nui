@@ -84,14 +84,15 @@ const cssHead: CSSProperties = {
 	height: 28,
 	position: 'sticky',
 	top: 2,
-	//backgroundColor: '#3e3e3e',
 	backgroundColor: "#1f1f1f",
 	zIndex: 1,
+	boxShadow: 'rgba(0, 0, 0, 0.5) 0px 2px 2px 0px',
 }
 
 const cssHeadCell: CSSProperties = {
 	textAlign: "right",
 	borderRight: '2px solid #3e3e3e',
+	borderTop: '2px solid #3e3e3e',
 	padding: "3px 5px",
 }
 
