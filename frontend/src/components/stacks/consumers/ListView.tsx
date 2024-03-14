@@ -60,7 +60,6 @@ const ConsumersListView: FunctionComponent<Props> = ({
 			selectId={selected}
 			onSelectChange={handleSelect}
 			getId={(consumer: StreamConsumer) => consumer.name}
-			variant={variant}
 		/>
 	</FrameworkCard>
 }

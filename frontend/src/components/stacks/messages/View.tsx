@@ -91,19 +91,17 @@ const MessagesView: FunctionComponent<Props> = ({
 			<Button
 				select={msgSa.formatsOpen}
 				children={formatSel}
-				variant={variant}
 				onClick={handleFormatsClick}
 			/>
 			<Button
 				select={msgSa.subscriptionsOpen}
 				children="SUBJECTS"
 				onClick={handleClickSubs}
-				variant={variant}
+
 			/>
 			<Button
 				children="SEND"
 				onClick={handleSendClick}
-				variant={variant}
 			/>
 		</>}
 		iconizedRender={

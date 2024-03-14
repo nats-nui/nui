@@ -51,7 +51,6 @@ const TooltipCmp: FunctionComponent = () => {
 
 	// RENDER
 	const content = tooltipSa.content?.content
-	const variant = tooltipSa.content?.variant
 	const show = tooltipSa.show
 	const color = tooltipSa.content?.color
 

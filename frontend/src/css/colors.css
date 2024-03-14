@@ -4,9 +4,11 @@
 	--var-2: #10F3F3;
 	--var-3: #C220FA;
 	--var-4: #EBFB35;
+	--var-4-l1: #f9ffb3;
 	--var-5: #F51DDF;
+	--var-5-l1: #f374e6;
 
-	--text-bg: ;
+	--text-bg: #393939;
 }
 
 
@@ -21,6 +23,10 @@
 .var0 .color-bg {
 	background-color: var(--var-0);
 }
+.var0 .color-bg-l1 {
+	background-color: var(--var-0);
+}
+
 
 .var1 .color-fg {
 	color: var(--var-1);
@@ -49,10 +55,16 @@
 .var4 .color-bg {
 	background: var(--var-4);
 }
+.var4 .color-bg-l1 {
+	background: var(--var-4-l1);
+}
 
 .var5 .color-fg {
 	color: var(--var-5);
 }
 .var5 .color-bg {
 	background: var(--var-5);
+}
+.var5 .color-bg-l1 {
+	background: var(--var-5-l1);
 }

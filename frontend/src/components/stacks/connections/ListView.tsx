@@ -66,13 +66,11 @@ const CnnListView: FunctionComponent<Props> = ({
 		actionsRender={<>
 			{!!selected && <Button
 				children="DELETE"
-				variant={variant}
 				onClick={handleDelete}
 			/>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
-				variant={variant}
 				onClick={handleNew}
 			/>
 		</>}

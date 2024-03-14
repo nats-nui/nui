@@ -54,12 +54,10 @@ const MessageSendView: FunctionComponent<Props> = ({
 				select={sendSa.subsOpen}
 				children="SUBJECT"
 				onClick={handleSubsClick}
-				variant={variant}
 			/>
 			<Button
 				children="SEND"
 				onClick={handleSend}
-				variant={variant}
 			/>
 		</>}
 	>

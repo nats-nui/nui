@@ -37,14 +37,12 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	if (cnnDetailSa.editState == EDIT_STATE.NEW) {
 		return <Button
 			children="CREATE"
-			variant={variant}
 			onClick={handleSaveClick}
 		/>
 
 	} else if (cnnDetailSa.editState == EDIT_STATE.READ) {
 		return <Button
 			children="EDIT"
-			variant={variant}
 			onClick={handleEditClick}
 		/>
 	}
@@ -52,12 +50,10 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	return <>
 		<Button
 			children="SAVE"
-			variant={variant}
 			onClick={handleSaveClick}
 		/>
 		<Button
 			children="CANCEL"
-			variant={variant}
 			onClick={handleCancelClick}
 		/>
 	</>

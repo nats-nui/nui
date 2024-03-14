@@ -32,7 +32,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		return (
 			<Button
 				children="CREATE"
-				variant={variant}
 				onClick={handleSaveClick}
 			/>
 		)
@@ -41,7 +40,6 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		return (
 			<Button
 				children="EDIT"
-				variant={variant}
 				onClick={handleEditClick}
 			/>
 		)
@@ -51,12 +49,10 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	return (<>
 		<Button
 			children="SAVE"
-			variant={variant}
 			onClick={handleSaveClick}
 		/>
 		<Button
 			children="CANCEL"
-			variant={variant}
 			onClick={handleCancelClick}
 		/>
 	</>)

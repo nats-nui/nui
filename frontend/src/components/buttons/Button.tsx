@@ -8,7 +8,6 @@ interface Props {
 	select?: boolean
 	children?: React.ReactNode
 
-	variant?: number
 	disabled?: boolean
 	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
 }
@@ -17,7 +16,6 @@ const Button: FunctionComponent<Props> = ({
 	select,
 	children,
 
-	variant = 0,
 	disabled,
 	onClick,
 }) => {
