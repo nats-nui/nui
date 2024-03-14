@@ -10,8 +10,8 @@ import { FunctionComponent, useState } from "react"
 
 
 enum TIME {
-	NS = "ns",
-	MS = "ms",
+	NS = "nano sec.",
+	MS = "milli sec.",
 	SECONDS = "seconds",
 	MINUTES = "minutes",
 	HOURS = "hours",
@@ -24,6 +24,7 @@ interface Props {
 	value: number
 	readOnly?: boolean
 	desiredDefault?: number
+	initDefault?: number
 	onChange?: (valueNew: number) => void
 }
 
@@ -32,25 +33,26 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	value,
 	label,
 	readOnly,
-    desiredDefault,
+	desiredDefault = -1,
+	initDefault = 0,
 	onChange,
 }) => {
 
 	// STORE
 
 	// HOOKs
-	const [unit, setUnit] = useState(TIME.SECONDS)
-	const defaultValue = desiredDefault ?? -1
+	const [unit, setUnit] = useState(TIME.NS)
+
 	// HANDLER
 	const handlePropChange = (value: number) => {
 		const duration = valueToNs(value, unit)
 		onChange?.(duration)
 	}
-	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : defaultValue)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
 	const handleUnitChange = (index: number) => setUnit(Object.values(TIME)[index])
 
 	// RENDER
-	const isEnabled = value != defaultValue
+	const isEnabled = value != desiredDefault
 	const valueShow = nsToValue(value, unit)
 
 	return <BoxV>
@@ -86,30 +88,30 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 export default MaxTimeCmp
 
 function nsToValue(value: number, from: TIME) {
-  let result: number;
-  switch (from) {
-    case TIME.DAYS:
-      result = value / 60 / 60 / 24 / 1e9;
-      break;
-    case TIME.HOURS:
-      result = value / 60 / 60 / 1e9;
-      break;
-    case TIME.MINUTES:
-      result = value / 60 / 1e9;
-      break;
-    case TIME.SECONDS:
-      result = value / 1e9;
-      break;
-    case TIME.MS:
-      result = value / 1e6;
-      break;
-    case TIME.NS:
-      result = value;
-      break;
-    default:
-      result = value;
-  }
-  return result
+	let result: number;
+	switch (from) {
+		case TIME.DAYS:
+			result = value / 60 / 60 / 24 / 1e9;
+			break;
+		case TIME.HOURS:
+			result = value / 60 / 60 / 1e9;
+			break;
+		case TIME.MINUTES:
+			result = value / 60 / 1e9;
+			break;
+		case TIME.SECONDS:
+			result = value / 1e9;
+			break;
+		case TIME.MS:
+			result = value / 1e6;
+			break;
+		case TIME.NS:
+			result = value;
+			break;
+		default:
+			result = value;
+	}
+	return result
 }
 
 function valueToNs(value: number, from: TIME) {
@@ -129,4 +131,4 @@ function valueToNs(value: number, from: TIME) {
 		default:
 			return value;
 	}
-	}
+}

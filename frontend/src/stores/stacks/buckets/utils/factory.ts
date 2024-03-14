@@ -25,10 +25,10 @@ export function buildNewBucketConfig(): BucketConfig {
 	return {
 		bucket: "",
 		description: "",
-		maxValueSize: 0,
+		maxValueSize: -1,
 		history: 0,
 		ttl: 0,
-		maxBytes: 0,
+		maxBytes: -1,
 		storage: STORAGE.FILE,
 		replicas: 0,
 		placement: null,

@@ -46,10 +46,20 @@ const handlers = [
 		const bucketConfig:BucketConfig = snakeToCamel(bucketConfig_S) as BucketConfig
 		const bucketState:BucketState = bucketStateFromConfig(bucketConfig)
 		buckets.push(bucketState)
+
 		return res(
-			ctx.status(201),
-			ctx.json(camelToSnake(bucketState)),
+			ctx.status(400),
+
+			ctx.json({
+				error: "TITOLO ABBASTANZA LUNGO"
+			}),
 		)
+
+
+		// return res(
+		// 	ctx.status(201),
+		// 	ctx.json(camelToSnake(bucketState)),
+		// )
 	}),
 
 ]
