@@ -153,7 +153,6 @@ console.log("DISCONNECT")
 	},
 
 	onListenerChange: (store: MessagesStore, type:LISTENER_CHANGE ) => {
-		console.log("CREATE", store._listeners.size, type)
 		if ( store._listeners.size == 1 && type== LISTENER_CHANGE.ADD) {
 			store.connect()
 		} else if (store._listeners.size == 0 ) {
