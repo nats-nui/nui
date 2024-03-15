@@ -8,6 +8,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
 import { VIEW_SIZE } from "../utils"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -53,7 +54,7 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as BucketStatus
@@ -70,19 +71,15 @@ const setup = {
 			}
 			store.state.docAniDisabled = false
 		},
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <BucketStore>store
+			// se NEW è valorizzato solo "bucketConfig"
+			if (!s.state.bucket) return
+			const bucket = await bucketApi.get(s.state.connectionId, s.state.bucket.bucket, { store })
+			s.setBucket(bucket)
+		},
 		//#endregion
 
-		/** load all ENTITY */
-		async fetch(_: void, store?: BucketStore) {
-			// se NEW è valorizzato solo "bucketConfig"
-			if (!store.state.bucket) return
-			try {
-				const bucket = await bucketApi.get(store.state.connectionId, store.state.bucket.bucket, { store })
-				store.setBucket(bucket)
-			} catch (error) {
-				//...
-			}
-		},
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
 			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
@@ -106,12 +103,12 @@ const setup = {
 	},
 }
 
-export type BucketStatus = typeof setup.state & ViewState
+export type BucketStatus = typeof setup.state & ViewState & LoadBaseState
 export type BucketGetters = typeof setup.getters
 export type BucketActions = typeof setup.actions
 export type BucketMutators = typeof setup.mutators
-export interface BucketStore extends ViewStore, StoreCore<BucketStatus>, BucketGetters, BucketActions, BucketMutators {
+export interface BucketStore extends ViewStore, LoadBaseStore, StoreCore<BucketStatus>, BucketGetters, BucketActions, BucketMutators {
 	state: BucketStatus
 }
-const bucketSetup = mixStores(viewSetup, setup)
+const bucketSetup = mixStores(viewSetup, loadBaseSetup, setup)
 export default bucketSetup

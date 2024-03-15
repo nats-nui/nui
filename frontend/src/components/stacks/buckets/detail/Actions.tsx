@@ -1,4 +1,5 @@
 import Button from "@/components/buttons/Button"
+import OptionsCmp from "@/components/options/OptionsCmp"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -24,7 +25,13 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// RENDER
 
-	if (bucketSa.editState == EDIT_STATE.READ) return null
+	if (bucketSa.editState == EDIT_STATE.READ) return <>
+		<OptionsCmp
+			style={{ marginLeft: 5 }}
+			store={bucketSo}
+		/>
+		<div style={{ flex: 1 }} />
+	</>
 
 	return (<>
 		<Button

@@ -21,7 +21,7 @@ const handlers = [
 		if (!consumer) return res(ctx.status(404))
 		return res(
 			ctx.status(200),
-			ctx.json(consumers),
+			ctx.json(consumer),
 		)
 	}),
 

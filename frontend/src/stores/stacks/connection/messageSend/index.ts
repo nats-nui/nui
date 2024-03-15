@@ -3,7 +3,7 @@ import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import editorSetup, { EditorState, EditorStore } from "../../editorBase"
 
 
 

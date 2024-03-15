@@ -1,7 +1,7 @@
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
 import cnnSo from "@/stores/connections"
-import { MessageSendState, MessageSendStore } from "@/stores/stacks/messageSend"
+import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"

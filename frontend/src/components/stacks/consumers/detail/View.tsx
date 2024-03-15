@@ -3,6 +3,7 @@ import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ShowForm from "./ShowForm"
+import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -21,7 +22,7 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	useEffect(() => {
 		consumerSo.fetch()
 	}, [])
-	
+
 	// HANDLER
 
 	// RENDER
@@ -30,6 +31,14 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		variantBg={variant}
 		store={consumerSo}
+		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5 }}
+				store={consumerSo}
+			/>
+			<div style={{ flex: 1 }} />
+		</>
+		}
 	>
 		<ShowForm store={consumerSo} />
 	</FrameworkCard>

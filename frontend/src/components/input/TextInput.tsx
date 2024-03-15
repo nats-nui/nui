@@ -88,6 +88,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		placeholder={placeholder}
 		autoFocus={autoFocus}
 		spellCheck="false"
+		autoComplete="_off"
 		value={value ?? ""}
 		onChange={handleChange}
 		onFocus={handleFocus}

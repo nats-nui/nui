@@ -1,4 +1,5 @@
 import Button from "@/components/buttons/Button"
+import OptionsCmp from "@/components/options/OptionsCmp"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -35,12 +36,17 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		)
 
 	} else if (streamSa.editState == EDIT_STATE.READ) {
-		return (
+		return <>
+			<OptionsCmp
+				style={{ marginLeft: 5 }}
+				store={streamSo}
+			/>
+			<div style={{ flex: 1}} />
 			<Button
 				children="EDIT"
 				onClick={handleEditClick}
 			/>
-		)
+		</>
 	}
 
 	// EDIT

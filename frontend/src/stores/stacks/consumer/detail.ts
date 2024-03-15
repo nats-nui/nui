@@ -6,6 +6,7 @@ import { DOC_TYPE } from "@/types"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -49,7 +50,9 @@ const setup = {
 	},
 
 	actions: {
-		//#region VIEWBASE
+
+		//#region OVERWRITE
+
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as ConsumerState
@@ -57,6 +60,13 @@ const setup = {
 			state.streamName = data.streamName
 			state.consumer = data.consumer
 		},
+
+		fetch: async (_: void, store?: LoadBaseStore) => {
+			const s = <ConsumerStore>store
+			const consumer = await cnsApi.get(s.state.connectionId, s.state.streamName, s.state.consumer.name, {store})
+			s.setConsumer(consumer)
+		},
+
 		//#endregion
 
 
@@ -65,10 +75,7 @@ const setup = {
 			if (!!store.state.consumer) return
 			await store.fetch()
 		},
-		fetch: async (_: void, store?: ConsumerStore) => {
-			const consumer = await cnsApi.get(store.state.connectionId, store.state.streamName, store.state.consumer.name, {store})
-			store.setConsumer(consumer)
-		},
+		
 	},
 
 	mutators: {
@@ -76,12 +83,12 @@ const setup = {
 	},
 }
 
-export type ConsumerState = typeof setup.state & ViewState
+export type ConsumerState = typeof setup.state & ViewState & LoadBaseState
 export type ConsumerGetters = typeof setup.getters
 export type ConsumerActions = typeof setup.actions
 export type ConsumerMutators = typeof setup.mutators
-export interface ConsumerStore extends ViewStore, StoreCore<ConsumerState>, ConsumerGetters, ConsumerActions, ConsumerMutators {
+export interface ConsumerStore extends ViewStore, LoadBaseStore, StoreCore<ConsumerState>, ConsumerGetters, ConsumerActions, ConsumerMutators {
 	state: ConsumerState
 }
-const consumerSetup = mixStores(viewSetup, setup)
+const consumerSetup = mixStores(viewSetup, loadBaseSetup, setup)
 export default consumerSetup

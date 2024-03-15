@@ -79,19 +79,19 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as StreamsState
 			state.connectionId = data.connectionId
 			state.select = data.select
 		},
-		//#endregion
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamsStore>store
 			const streams = await strApi.index(s.state.connectionId, { store })
 			s.setAll(streams)
 		},
+		//#endregion
 
 		async fetchIfVoid(_: void, store?: StreamsStore) {
 			if (!!store.state.all) return

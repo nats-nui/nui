@@ -24,7 +24,7 @@ const setup = {
 
 	getters: {
 
-		//#region VIEWBASE
+		//#region OVERRIDE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
 		getSubTitle: (_: void, store?: ViewStore) => "All connections available",
 		getSerialization: (_: void, store?: ViewStore) => {
@@ -40,7 +40,7 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERRIDE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnListState
