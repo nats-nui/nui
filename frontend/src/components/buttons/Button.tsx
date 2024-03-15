@@ -7,6 +7,7 @@ import React, { FunctionComponent, useState } from "react"
 interface Props {
 	select?: boolean
 	children?: React.ReactNode
+	style?: React.CSSProperties
 
 	disabled?: boolean
 	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
@@ -15,6 +16,7 @@ interface Props {
 const Button: FunctionComponent<Props> = ({
 	select,
 	children,
+	style,
 
 	disabled,
 	onClick,
@@ -35,11 +37,12 @@ const Button: FunctionComponent<Props> = ({
 	// RENDER
 	const styRoot: React.CSSProperties = {
 		...cssRoot,
-		...(mouseOver || select ? {color: "#393939"} : {}),
+		
 		...(disabled ? cssDisabled : {}),
+		...style,
 	}
 	return (
-		<div style={styRoot} className={(mouseOver || select) ? "color-bg" : null}
+		<div style={styRoot} className={(mouseOver || select) ? "color-bg color-text" : null}
 			onClick={handleClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}

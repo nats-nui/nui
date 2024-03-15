@@ -4,11 +4,13 @@ import { FunctionComponent } from "react"
 
 interface Props {
 	style?: React.CSSProperties
+	className?: string
 	children?: React.ReactNode
 }
 
 const Form: FunctionComponent<Props> = ({
 	style,
+	className,
 	children,
 }) => {
 
@@ -20,7 +22,7 @@ const Form: FunctionComponent<Props> = ({
 
 	// RENDER
 	return (
-		<div style={{ ...cssRoot, ...style }}>
+		<div style={{ ...cssRoot, ...style }} className={className}>
 			{children}
 		</div>
 	)

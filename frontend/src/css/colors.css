@@ -1,5 +1,5 @@
 :root {
-	--var-0: #DEDEDE;
+	--var-0: rgba(0,0,0,.4);
 	--var-1: #BBFB35;
 	--var-2: #10F3F3;
 	--var-3: #C220FA;
@@ -17,15 +17,6 @@
 }
 
 
-.var0 .color-fg {
-	color: var(--var-0);
-}
-.var0 .color-bg {
-	background-color: var(--var-0);
-}
-.var0 .color-bg-l1 {
-	background-color: var(--var-0);
-}
 
 
 .var1 .color-fg {
@@ -67,4 +58,19 @@
 }
 .var5 .color-bg-l1 {
 	background: var(--var-5-l1);
+}
+
+
+
+.var0 .color-fg {
+	color: var(--var-0);
+}
+.var0 .color-bg {
+	background-color: var(--var-0);
+}
+.var0 .color-bg-l1 {
+	background-color: var(--var-0);
+}
+.var0 .color-text {
+	color: rgba(255,255,255,.85);
 }

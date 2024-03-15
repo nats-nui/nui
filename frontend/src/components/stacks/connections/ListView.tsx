@@ -119,7 +119,7 @@ const cssIconized: React.CSSProperties = {
 
 const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 	width: 10, height: 10,
-	border: "2px solid black",
+	//border: "2px solid black",
 	borderRadius: "50%",
 	backgroundColor: {
 		[CNN_STATUS.UNDEFINED]: "grey",
