@@ -92,7 +92,7 @@ const handlers = [
 
 		const index = streams_S.findIndex(si => si.config.name == name)
 		if (index == -1) return res(ctx.status(500))
-		streams_S[index].messages.splice(0, streams_S[index].messages.length - 1)
+		streams_S[index]?.messages?.splice(0, streams_S[index].messages.length - 1)
 		return res(
 			ctx.status(200),
 		)

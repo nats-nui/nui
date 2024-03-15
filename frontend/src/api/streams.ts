@@ -1,8 +1,7 @@
-import ajax, { CallOptions } from "@/plugins/AjaxService"
-import { StreamMessagesFilter } from "@/stores/stacks/streams/messages"
-import { Message } from "@/types/Message"
-import { StreamConfig, StreamInfo } from "@/types/Stream"
-import {PurgeParams} from "@/stores/stacks/streams";
+import ajax, { CallOptions } from "@/plugins/AjaxService";
+import { StreamMessagesFilter } from "@/stores/stacks/streams/messages";
+import { Message } from "@/types/Message";
+import { StreamConfig, StreamInfo } from "@/types/Stream";
 
 
 
@@ -22,12 +21,9 @@ function remove(connectionId: string, streamName: string, opt?: CallOptions): Pr
 	return ajax.delete(`connection/${connectionId}/stream/${streamName}`, null, opt)
 }
 
-function purge(connectionId: string, streamName: string, purgeParams: PurgeParams, opt?: CallOptions): Promise<void> {
+function purge(connectionId: string, streamName: string, seq: number, keep: number, subject: string, opt?: CallOptions): Promise<void> {
 	if (!connectionId || !streamName) return
-	const seq = purgeParams.bySeq ? purgeParams.number : null
-	const keep = purgeParams.byKeep ? purgeParams.number : null
-	const subject = purgeParams.subject
-	return ajax.post(`connection/${connectionId}/stream/${streamName}/purge`, {seq, keep, subject}, opt)
+	return ajax.post(`connection/${connectionId}/stream/${streamName}/purge`, { seq, keep, subject }, opt)
 }
 
 /** CREATE */
@@ -55,7 +51,7 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 	})
 }
 /** DELETE MESSAGE */
-function messageRemove(connectionId: string, streamName: string, sequence:number, opt?: CallOptions): Promise<void> {
+function messageRemove(connectionId: string, streamName: string, sequence: number, opt?: CallOptions): Promise<void> {
 	if (!connectionId || !streamName || !sequence) return
 	return ajax.delete(`connection/${connectionId}/stream/${streamName}/messages/${sequence}`, null, opt)
 }

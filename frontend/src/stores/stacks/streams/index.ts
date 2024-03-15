@@ -3,21 +3,15 @@ import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConsumers } from "../consumer/utils/factory"
-import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
-import { DOC_TYPE } from "@/types"
-import { socketPool } from "@/plugins/SocketService/pool"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 
 
-export interface PurgeParams {
-	bySeq?: boolean
-	byKeep?: boolean
-	number?: number
-	subject?: string
-}
+
 
 
 /** STREAMS COLLECTION */
@@ -30,7 +24,6 @@ const setup = {
 		all: <StreamInfo[]>null,
 		textSearch: <string>null,
 
-		purgeParams: <PurgeParams>null,
 		purgeOpen: false,
 
 		//#region VIEWBASE
@@ -126,10 +119,10 @@ const setup = {
 			store.setAll(all)
 		},
 
-		async purge(_: void, store?: StreamsStore) {
+		async purge({ seq, keep, subject }: { seq: number, keep: number, subject: string }, store?: StreamsStore) {
 			const name = store.state.select
 			if (!name) return
-			await strApi.purge(store.state.connectionId, name, store.state.purgeParams, { store })
+			await strApi.purge(store.state.connectionId, name, seq, keep, subject, { store })
 		},
 
 		/** visualizzo dettaglio di uno STREAM */
@@ -166,7 +159,6 @@ const setup = {
 		setAll: (all: StreamInfo[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
-		setPurgeParams: (purgeParams: PurgeParams) => ({ purgeParams }),
 		setPurgeOpen: (purgeOpen: boolean) => ({ purgeOpen }),
 	},
 }
