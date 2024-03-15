@@ -3,6 +3,7 @@ import App from './App.tsx';
 
 import '@/plugins/msw';
 import '@fontsource/darker-grotesque/800.css';
+import '@fontsource-variable/inter';
 import './css/colors.css';
 import './css/index.css';
 import './css/input.css';

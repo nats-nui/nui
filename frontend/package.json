@@ -19,8 +19,9 @@
     "_@priolo/jon": "^0.7.6"
   },
   "dependencies": {
-    "@monaco-editor/react": "^4.6.0",
+    "@fontsource-variable/inter": "^5.0.17",
     "@fontsource/darker-grotesque": "^5.0.8",
+    "@monaco-editor/react": "^4.6.0",
     "@priolo/jon": "^0.7.7",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
