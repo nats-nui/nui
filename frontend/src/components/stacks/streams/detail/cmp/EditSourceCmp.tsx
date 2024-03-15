@@ -1,7 +1,6 @@
 import Options from "@/components/Options"
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
-import Label from "@/components/format/Label"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import { Source } from "@/types/Stream"
@@ -54,13 +53,6 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				readOnly={readOnly}
 			/>
 		</BoxV>
-		{/* <Label>START TIME</Label>
-		<DateTimeInput
-			value={source.startTime}
-			onChange={handleStartTimeChange}
-			// variant={variant}
-			readOnly={readOnly}
-		/> */}
 		<BoxV>
 			<div className="lbl-prop">FILTER SUBJECT</div>
 			<TextInput

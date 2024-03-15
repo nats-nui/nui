@@ -1,20 +1,15 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import MyEditor from "@/components/editor"
+import FormatAction from "@/components/editor/FormatAction"
 import BoxV from "@/components/format/BoxV"
-import Label from "@/components/format/Label"
+import Form from "@/components/format/Form"
 import TextInput from "@/components/input/TextInput"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import SubjectsDialog from "./SubjectsDialog"
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
-import IconButton from "@/components/buttons/IconButton"
-import CopyIcon from "@/icons/CopyIcon"
-import FormatIcon from "@/icons/FormatIcon"
-import FormatAction from "@/components/editor/FormatAction"
-import Form from "@/components/format/Form"
 
 
 
