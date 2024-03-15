@@ -65,7 +65,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
-			<Form>
+			<Form className="var0">
 				<Box>
 					<IconToggle
 						check={!filter.byTime}
@@ -110,8 +110,9 @@ const FilterDialog: FunctionComponent<Props> = ({
 						onChange={handleSearchChange}
 					/>
 					<List<string>
-						style={{ height: 200, overflowY: "auto" }}
-						items={subjects}
+						style={{ maxHeight: 200, overflowY: "auto" }}
+						//items={subjects}
+						items={["primo", "secondo",]}
 						RenderRow={({ item }) => <Box>
 							<IconToggle
 								check={filter.subjects.indexOf(item) != -1}
@@ -122,7 +123,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 				</BoxV>
 
-				<Button children="APPLY"
+				<Button children="APPLY" style={{ alignSelf: "start" }}
 					onClick={handleApply}
 				/>
 			</Form>

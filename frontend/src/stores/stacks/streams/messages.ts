@@ -6,11 +6,10 @@ import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { MSG_FORMAT } from "../../../utils/editor"
-import { ViewState } from "../viewBase"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import { ViewState } from "../viewBase"
 
-
+let globalInterval = 50
 
 export interface StreamMessagesFilter {
 	/** SUBJECTS selezionati da filtrare */
@@ -35,7 +34,7 @@ const setup = {
 		/** filtro da applicare */
 		filter: <StreamMessagesFilter>{
 			subjects: [],
-			interval: 50,
+			interval: globalInterval,
 			startSeq: null,
 			startTime: null,
 		},
@@ -85,6 +84,10 @@ const setup = {
 			state.format = data.format
 			state.textSearch = data.textSearch
 			state.filter = data.filter
+		},
+		onCreate: (_: void, store?: ViewStore) => {
+			const s = store as StreamMessagesStore
+			s.state.filter.interval = globalInterval
 		},
 		//#endregion
 
@@ -296,7 +299,10 @@ const setup = {
 	mutators: {
 		setMessages: (messages: Message[]) => ({ messages }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
-		setFilter: (filter: StreamMessagesFilter) => ({ filter }),
+		setFilter: (filter: StreamMessagesFilter) => { 
+			globalInterval = filter.interval
+			return {filter} 
+		},
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
 	},
 }
