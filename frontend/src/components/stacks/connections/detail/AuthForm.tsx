@@ -1,11 +1,10 @@
 import Options from "@/components/Options"
+import Button from "@/components/buttons/Button"
 import BoxV from "@/components/format/BoxV"
-import Label from "@/components/format/Label"
+import Form from "@/components/format/Form"
 import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useState } from "react"
 import TextInput from "../../../input/TextInput"
-import Button from "@/components/buttons/Button"
-import Form from "@/components/format/Form"
 
 
 
