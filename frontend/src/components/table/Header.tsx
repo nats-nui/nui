@@ -83,8 +83,8 @@ const cssHead: CSSProperties = {
 	fontWeight: 600,
 	height: 28,
 	position: 'sticky',
-	top: 2,
-	backgroundColor: "#1f1f1f",
+	top: 0,
+	backgroundColor: "#5b5b5b",
 	zIndex: 1,
 	boxShadow: 'rgba(0, 0, 0, 0.5) 0px 2px 2px 0px',
 }

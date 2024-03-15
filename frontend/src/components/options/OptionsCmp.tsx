@@ -11,6 +11,7 @@ import { LOAD_MODE, LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo, useState } from "react"
 import IconButton from "../buttons/IconButton"
+import { ViewStore } from "@/stores/stacks/viewBase"
 
 
 
@@ -30,6 +31,7 @@ const options: OptionSelect[] = [
 
 interface Props {
 	store?: LoadBaseStore
+	storeView?: ViewStore
 	style?: React.CSSProperties
 }
 
@@ -38,12 +40,15 @@ interface Props {
  */
 const OptionsCmp: FunctionComponent<Props> = ({
 	store,
+	storeView,
 	style,
 }) => {
 
 	// STORE
+	storeView = storeView ?? store
 	const storeSa = useStore(store)
-
+	if (storeView != store) useStore(storeView)
+	
 	// HOOKs
 	const [dialogOpen, setDialogOpen] = useState(false)
 	const [optionSelIndex, setOptionSelIndex] = useState(0)
@@ -107,7 +112,7 @@ const OptionsCmp: FunctionComponent<Props> = ({
 				><ArrowRightIcon /></IconButton>
 			</div>
 
-			<div style={cssIconContainer} className={`ani-color ${mouseEnter ? "color-fg": ""}`}
+			<div style={cssIconContainer} className={`ani-color ${mouseEnter ? "color-fg" : ""}`}
 				onClick={handleCircleClick}
 			>
 				{inLoading ? (
@@ -127,7 +132,7 @@ const OptionsCmp: FunctionComponent<Props> = ({
 		<Dialog
 			open={dialogOpen}
 			title="AUTORELOAD"
-			store={store}
+			store={storeView}
 			onClose={() => setDialogOpen(false)}
 		>
 			<List<OptionSelect>
@@ -151,7 +156,7 @@ const cssRoot: React.CSSProperties = {
 	alignItems: "center",
 }
 
-const cssIconContainer: React.CSSProperties ={
+const cssIconContainer: React.CSSProperties = {
 	width: 24,
 	height: 24,
 	position: "absolute",

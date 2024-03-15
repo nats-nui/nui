@@ -10,6 +10,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
 import IconRow from "../../rows/IconRow"
+import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -63,6 +64,12 @@ const CnnListView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={cnnListSo}
 		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={cnnSo}
+				storeView={cnnListSo}
+			/>
+			<div style={{ flex: 1 }} />
 			{!!selected && <Button
 				children="DELETE"
 				onClick={handleDelete}

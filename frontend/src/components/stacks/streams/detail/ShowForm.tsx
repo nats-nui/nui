@@ -1,6 +1,5 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
-import Label from "@/components/format/Label"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"

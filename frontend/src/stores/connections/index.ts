@@ -1,6 +1,7 @@
 import cnnApi from "@/api/connection"
 import { Connection } from "@/types/Connection"
-import { StoreCore, createStore } from "@priolo/jon"
+import { StoreCore, createStore, mixStores } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
 
 
 
@@ -22,10 +23,15 @@ const setup = {
 	},
 
 	actions: {
-		async fetch(_: void, store?: ConnectionStore) {
+
+		//#region OVERWRITE
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <ConnectionStore>store
 			const cnn = await cnnApi.index()
-			store.setAll(cnn)
+			s.setAll(cnn)
 		},
+		//#endregion
+
 		async delete(id: string, store?: ConnectionStore) {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
@@ -52,16 +58,18 @@ const setup = {
 	},
 }
 
-export type ConnectionState = typeof setup.state
+export type ConnectionState = typeof setup.state & LoadBaseState
 export type ConnectionGetters = typeof setup.getters
 export type ConnectionActions = typeof setup.actions
 export type ConnectionMutators = typeof setup.mutators
+
 /**
  * Gestisce le connessioni disponibili dal BE
  */
-export interface ConnectionStore extends StoreCore<ConnectionState>, ConnectionGetters, ConnectionActions, ConnectionMutators {
+export interface ConnectionStore extends StoreCore<ConnectionState>, LoadBaseStore, ConnectionGetters, ConnectionActions, ConnectionMutators {
 	state: ConnectionState
 }
-//export default setup
-const store = createStore(setup) as ConnectionStore
+
+const cnnSetup = mixStores(loadBaseSetup, setup)
+const store = createStore(cnnSetup) as ConnectionStore
 export default store

@@ -2,7 +2,7 @@ import servicesSetup from "@/stores/stacks/connection/detail";
 import cnnSetup from "@/stores/stacks/connection";
 import messageSetup, { MessageState } from "@/stores/stacks/message";
 import messagesSetup from "@/stores/stacks/connection/messages";
-import messageSendSetup from "@/stores/stacks/messageSend";
+import messageSendSetup from "@/stores/stacks/connection/messageSend";
 import streamsSetup from "@/stores/stacks/streams";
 import streamSetup from "@/stores/stacks/streams/detail";
 import logsSetup from "@/stores/stacks/log";

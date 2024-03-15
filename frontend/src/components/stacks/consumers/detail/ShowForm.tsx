@@ -1,7 +1,5 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
-import Label from "@/components/format/Label"
-import TextInput from "@/components/input/TextInput"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -33,120 +31,121 @@ const ShowForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">NAME</div>
-			<Label>{consumer.name || "-"}</Label>
+
+			<div className="lbl-input-readonly">{consumer.name ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">DESCRIPTION</div>
-			<Label>{consumer.description || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.description ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">DURABLE NAME</div>
-			<Label>{consumer.durableName || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.durableName ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">CREATION DATETIME</div>
-			<Label>{consumer.created || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.created ?? "-"}</div>
 		</BoxV>
 
 		<div className="lbl-prop-title">MESSAGES</div>
 
 		<BoxV>
 			<div className="lbl-prop">WAITING COUNT</div>
-			<Label>{consumer.numWaiting || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.numWaiting ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">PENDING COUNT</div>
-			<Label>{consumer.numPending || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.numPending ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">ACKS PENDING COUNT</div>
-			<Label>{consumer.numAckPending || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.numAckPending ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">REDELIVERED COUNT</div>
-			<Label>{consumer.numRedelivered || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.numRedelivered ?? "-"}</div>
 		</BoxV>
 
 		<div className="lbl-prop-title">LAST DELIVERED</div>
 
 		<BoxV>
 			<div className="lbl-prop">DATETIME</div>
-			<Label>{consumer.delivered?.lastActive || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.delivered?.lastActive ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">STREAM SEQ</div>
-			<Label>{consumer.delivered?.stream || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.delivered?.streamSeq ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">CONSUMER SEQ</div>
-			<Label>{consumer.delivered?.consumer || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.delivered?.consumerSeq ?? "-"}</div>
 		</BoxV>
 
 		<div className="lbl-prop-title">LAST ACKED</div>
 
 		<BoxV>
 			<div className="lbl-prop">DATETIME</div>
-			<Label>{consumer.ackFloor?.lastActive || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.ackFloor?.lastActive ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">STREAM SEQ</div>
-			<Label>{consumer.ackFloor?.stream || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.ackFloor?.streamSeq ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">CONSUMER SEQ</div>
-			<Label>{consumer.ackFloor?.consumer || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.ackFloor?.consumerSeq ?? "-"}</div>
 		</BoxV>
 
 		<div className="lbl-prop-title">CONFIG</div>
 
 		<BoxV>
 			<div className="lbl-prop">DELIVER POLICY</div>
-			<Label>{consumer.config.deliverPolicy || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.deliverPolicy ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">MAX DELIVER</div>
-			<Label>{consumer.config.maxDeliver || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.maxDeliver ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">OPT START SEQ</div>
-			<Label>{consumer.config.optStartSeq || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.optStartSeq ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">OPT START TIME</div>
-			<Label>{consumer.config.optStartTime || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.optStartTime ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">ACK POLICY</div>
-			<Label>{consumer.config.ackPolicy || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.ackPolicy ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">ACK WAIT</div>
-			<Label>{consumer.config.ackWait || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.ackWait ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">MAX WAITING</div>
-			<Label>{consumer.config.maxWaiting || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.maxWaiting ?? "-"}</div>
 		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">MAX ACK PENDING</div>
-			<Label>{consumer.config.maxAckPending || "-"}</Label>
+			<div className="lbl-input-readonly">{consumer.config.maxAckPending ?? "-"}</div>
 		</BoxV>
 
 	</Form>

@@ -9,6 +9,7 @@ import { StreamsState, StreamsStore } from "."
 import { buildConsumers } from "../consumer/utils/factory"
 import { buildStreamMessages } from "./utils/factory"
 import { VIEW_SIZE } from "../utils"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -57,7 +58,7 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as StreamState
@@ -77,6 +78,13 @@ const setup = {
 			}
 			store.state.docAniDisabled = false
 		},
+
+		async fetch(_: void, store?: LoadBaseStore) {
+			const s = <StreamStore>store
+			const name = s.state.stream.config.name
+			const stream = await strApi.get(s.state.connectionId, name, { store })
+			s.setStream(stream)
+		},
 		//#endregion
 
 		/** load all ENTITY */
@@ -87,11 +95,6 @@ const setup = {
 			if (!store.state.allStreams) {
 				await store.fetchAllStreams()
 			}
-		},
-		async fetch(_: void, store?: StreamStore) {
-			const name = store.state.stream.config.name
-			const stream = await strApi.get(store.state.connectionId, name, { store })
-			store.setStream(stream)
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
 			const parent = store.getParentList()
@@ -141,12 +144,12 @@ const setup = {
 	},
 }
 
-export type StreamState = typeof setup.state & ViewState
+export type StreamState = typeof setup.state & ViewState & LoadBaseState
 export type StreamGetters = typeof setup.getters
 export type StreamActions = typeof setup.actions
 export type StreamMutators = typeof setup.mutators
-export interface StreamStore extends ViewStore, StoreCore<StreamState>, StreamGetters, StreamActions, StreamMutators {
+export interface StreamStore extends ViewStore, LoadBaseStore, StoreCore<StreamState>, StreamGetters, StreamActions, StreamMutators {
 	state: StreamState
 }
-const streamSetup = mixStores(viewSetup, setup)
+const streamSetup = mixStores(viewSetup, loadBaseSetup, setup)
 export default streamSetup
