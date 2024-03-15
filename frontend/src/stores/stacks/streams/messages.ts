@@ -9,6 +9,8 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { ViewState } from "../viewBase"
 
+
+
 let globalInterval = 50
 
 export interface StreamMessagesFilter {
@@ -21,7 +23,6 @@ export interface StreamMessagesFilter {
 	startTime?: number
 	byTime?: boolean
 }
-
 
 const setup = {
 
