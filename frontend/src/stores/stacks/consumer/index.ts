@@ -46,7 +46,7 @@ const setup = {
 
 		getByName(name: string, store?: ConsumersStore) {
 			if (!name) return null
-			return store.state.all?.find(c => c.config.name == name)
+			return store.state.all?.find(c => c.name == name)
 		},
 		getIndexByName(name: string, store?: ConsumersStore) {
 			if (!name) return -1
