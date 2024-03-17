@@ -66,7 +66,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
             open={streamSa.purgeOpen}
             onClose={handleClose}
         >
-            <Form className="var0">
+            <Form className="var-dialog">
                 <Box>
                     <IconToggle
                         check={purgeParams.bySeq}

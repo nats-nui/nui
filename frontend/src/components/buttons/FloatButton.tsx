@@ -1,28 +1,37 @@
 import React, { FunctionComponent } from "react"
-import layoutSo from "@/stores/layout"
 
 
 
 interface Props {
 	onClick?: (e: React.MouseEvent) => void
 	children?: React.ReactNode
+	disabled?: boolean
+	style?: React.CSSProperties
 }
 
 const FloatButton: FunctionComponent<Props> = ({
 	onClick,
 	children,
+	disabled,
+	style,
 }) => {
 	// STORE
 
 	// HOOK
 
 	// HANDLER
+	const handleClick = (e) => {
+		if ( disabled ) return
+		onClick?.(e)
+	}
+
 
 	// RENDER
 
 	return (
-		<div style={cssContainer} className="color-bg color-text"
-			onClick={onClick}
+		<div style={style} 
+			className={`btt-float ${disabled ? "btt-disabled" : "color-bg color-text"}`}
+			onClick={handleClick}
 		>
 			{children}
 		</div>
@@ -30,17 +39,3 @@ const FloatButton: FunctionComponent<Props> = ({
 }
 
 export default FloatButton
-
-const cssContainer: React.CSSProperties = {
-	display: "flex",
-	alignItems: "center",
-    justifyContent: "center",
-
-	cursor: "pointer",
-	padding: 5,
-
-	width: 25, height: 25,
-	borderRadius: '50%',
-
-	boxShadow: layoutSo.state.theme.shadows[0],
-}

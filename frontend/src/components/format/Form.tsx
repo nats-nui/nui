@@ -31,6 +31,7 @@ const Form: FunctionComponent<Props> = ({
 export default Form
 
 const cssRoot: React.CSSProperties = {
+	position: "relative",
 	display: "flex",
 	flexDirection: "column",
 	gap: 7,

@@ -10,8 +10,8 @@ import './css/input.css';
 import './css/label.css';
 import './css/textarea.css';
 import './css/scrollbar.css';
-import './css/scrollbar.css';
 import './css/animation.css';
+import './css/button.css';
 import './css/interaction.css';
 import './css/monaco.css';
 import "./utils/startup"

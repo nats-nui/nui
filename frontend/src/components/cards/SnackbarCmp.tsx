@@ -20,16 +20,19 @@ const SnackbarCmp: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view) as ViewState
-	const { open, title, body, type } = viewSa.snackbar
+	const { open, title, body, type, timeout } = viewSa.snackbar
 	const [hide, setHide] = useState(true)
 
 	// HOOKS
 	useEffect(() => {
+		let timeoutId = null
 		if (open) {
 			setHide(false)
+			if (timeout) timeoutId = setTimeout(handleClose, timeout)
 		} else {
 			setTimeout(() => setHide(true), 300)
 		}
+		return () => clearTimeout(timeoutId)
 	}, [open])
 
 	// HANDLER
@@ -70,7 +73,7 @@ const cssRoot = (open: boolean, hide: boolean, type: MESSAGE_TYPE): React.CSSPro
 	display: "flex",
 
 	transition: 'bottom 300ms cubic-bezier(0.5, 0, 0, 1), opacity 300ms linear',
-	transform: hide ? "scale(0,0)": null,
+	transform: hide ? "scale(0,0)" : null,
 	...open ? {
 		bottom: 0,
 		opacity: 1,
@@ -84,5 +87,4 @@ const cssRoot = (open: boolean, hide: boolean, type: MESSAGE_TYPE): React.CSSPro
 const cssBody: React.CSSProperties = {
 	display: "flex",
 	flexDirection: "column",
-
 }

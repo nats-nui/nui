@@ -65,7 +65,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
-			<Form className="var0">
+			<Form className="var-dialog">
 				<Box>
 					<IconToggle
 						check={!filter.byTime}
