@@ -41,6 +41,7 @@ const setup = {
 			store.update(cnnSaved)
 			return cnnSaved
 		},
+		/** inserisce o aggiorna la CONNECTION passata come paramnetro */
 		update(cnn: Partial<Connection>, store?: ConnectionStore) {
 			const cnns = [...store.state.all]
 			const index = !cnn.id ? -1 : store.getIndexById(cnn.id)
