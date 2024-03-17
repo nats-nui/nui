@@ -97,7 +97,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 		<div className="lbl-prop-title">ADVANCED</div>
 		<BoxV>
-			<div className="lbl-prop">FAVORITE SUBJ.</div>
+			<div className="lbl-prop">FAVORITE SUBJECT</div>
 			<EditList<Subscription>
 				items={subscriptions}
 				onItemsChange={handleSubscriptionsChange}

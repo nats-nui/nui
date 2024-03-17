@@ -4,6 +4,8 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../../editorBase"
+import { LOAD_STATE } from "../../utils"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -14,6 +16,8 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subsOpen: false,
+
+		loadingState: LOAD_STATE.IDLE,
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
@@ -41,7 +45,9 @@ const setup = {
 		},
 		//#endregion
 
-		getEditorText: (_: void, store?: ViewStore) => (<MessageSendStore>store).state.text ?? ""
+		getEditorText: (_: void, store?: ViewStore) => (<MessageSendStore>store).state.text ?? "",
+
+		getCanEdit: (_: void, store?: MessageSendStore) => store.state.subject?.length > 0 && store.state.text?.length > 0 && store.state.loadingState != LOAD_STATE.LOADING,
 	},
 
 	actions: {
@@ -56,12 +62,21 @@ const setup = {
 		},
 		//#endregion
 
-		publish: (_: void, store?: MessageSendStore) => {
-			cnnApi.publish(
-				store.state.connectionId,
-				store.state.subject,
-				store.state.text
-			)
+		publish: async (_: void, store?: MessageSendStore) => {
+			try {
+				await cnnApi.publish(
+					store.state.connectionId,
+					store.state.subject,
+					store.state.text,
+					{ store }
+				)
+				store.setSnackbar({ open: true,
+					type: MESSAGE_TYPE.INFO,
+					title: "MESSAGGIO NVIATO",
+					body: "il tuo messaggio demmerda è stato inviation",
+					timeout: 2000,
+				})
+			} catch (e) { }
 		},
 
 	},
@@ -70,6 +85,8 @@ const setup = {
 		setText: (text: string, store?: MessageSendStore) => ({ text }),
 		setSubject: (subject: string) => ({ subject }),
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
+
+		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
 	},
 }
 

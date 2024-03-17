@@ -8,7 +8,11 @@
 	--var-5: #F51DDF;
 	--var-5-l1: #f374e6;
 
+
+
 	--text-bg: #393939;
+	--text: #dedede;
+	--bg-disabled: #494949;
 }
 
 
@@ -18,6 +22,19 @@
 
 
 
+
+.var0 .color-fg {
+	color: var(--var-0);
+}
+.var0 .color-bg {
+	background-color: var(--var-0);
+}
+.var0 .color-bg-l1 {
+	background-color: var(--var-0);
+}
+.var0 .color-text {
+	color: rgba(255,255,255,.85);
+}
 
 .var1 .color-fg {
 	color: var(--var-1);
@@ -62,15 +79,14 @@
 
 
 
-.var0 .color-fg {
+
+/** 
+su FORM su dialog con fondo colorato
+per i bottoni e input-text
+*/
+.var-dialog .color-fg {
 	color: var(--var-0);
 }
-.var0 .color-bg {
+.var-dialog .color-bg {
 	background-color: var(--var-0);
-}
-.var0 .color-bg-l1 {
-	background-color: var(--var-0);
-}
-.var0 .color-text {
-	color: rgba(255,255,255,.85);
 }

@@ -216,6 +216,7 @@ export interface SnackbarState {
 	title?: string
 	body?: string
 	type?: MESSAGE_TYPE
+	timeout?: number
 }
 export interface AlertState {
 	open?: boolean

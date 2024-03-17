@@ -74,6 +74,7 @@ const handlers = [
 		const { subject, payload } = await req.json()
 		if (!id || !subject || !payload) return res(ctx.status(500))
 		return res(
+			ctx.delay(1000),
 			ctx.status(200),
 		)
 	}),

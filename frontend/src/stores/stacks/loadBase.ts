@@ -11,7 +11,6 @@ const loadBaseSetup = {
 		loadingState: LOAD_STATE.IDLE,
 		pollingTime: 0,
 		fetchAbort: <AbortController>null,
-
 	},
 
 	getters: {

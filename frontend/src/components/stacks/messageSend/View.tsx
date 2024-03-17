@@ -10,6 +10,12 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import SubjectsDialog from "./SubjectsDialog"
+import BoxFloat from "@/components/format/BoxFloat"
+import FloatButton from "@/components/buttons/FloatButton"
+import ArrowDownIcon from "@/icons/ArrowDownIcon"
+import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
+import { LOAD_STATE } from "@/stores/stacks/utils"
+import SendIcon from "@/icons/SendIcon"
 
 
 
@@ -29,13 +35,16 @@ const MessageSendView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSend = () => sendSo.publish()
 	const handleValueChange = (value: string) => sendSo.setText(value)
-	const handleSubsClick = (e: React.MouseEvent, select: boolean) => {
+	const handleSubsClick = (e: React.MouseEvent, select?: boolean) => {
 		if (select) return
 		sendSo.setSubsOpen(!select)
 	}
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
 
 	// RENDER
+	const canSend = sendSo.getCanEdit()
+	const inLoading = sendSa.loadingState == LOAD_STATE.LOADING
+
 	return <FrameworkCard
 		store={sendSo}
 		actionsRender={<>
@@ -51,13 +60,16 @@ const MessageSendView: FunctionComponent<Props> = ({
 			<Button
 				children="SEND"
 				onClick={handleSend}
+				disabled={!canSend}
 			/>
 		</>}
 	>
 		<Form style={{ height: "100%" }}>
 			<BoxV>
-				<div className="lbl-prop">SUBJECT</div>
-				<TextInput
+				<div className="lbl-prop cliccable"
+					onClick={handleSubsClick}
+				>SUBJECT</div>
+				<TextInput autoFocus
 					value={sendSa.subject}
 					onChange={handleSubjectChange}
 				/>
@@ -66,8 +78,21 @@ const MessageSendView: FunctionComponent<Props> = ({
 				ref={ref => sendSa.editorRef = ref}
 				format={sendSa.format}
 				value={sendSo.getEditorText()}
+				readOnly={!canSend}
 				onChange={handleValueChange}
 			/>
+
+			<BoxFloat>
+				<FloatButton style={{ position: "relative" }}
+					onClick={handleSend}
+					disabled={!canSend}
+				>
+					{inLoading
+						? <CircularLoadingCmp style={{ width: 25, height: 25, color: "rgba(0,0,0,.5)" }} />
+						: <SendIcon />
+					}
+				</FloatButton>
+			</BoxFloat>
 		</Form>
 
 		<SubjectsDialog store={sendSo} />

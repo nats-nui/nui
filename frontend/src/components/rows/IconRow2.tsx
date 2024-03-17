@@ -59,7 +59,7 @@ export default IconRow2
 
 const cssRow = (select: boolean): React.CSSProperties => ({
 	...select && {
-		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
+		color: "red",//layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
 		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
 	},
 
