@@ -9,7 +9,7 @@ let server = null
 
 serverStart()
 
-function serverStart(port = 31311) {
+function serverStart(port = 3111) {
 	if (server) return
 	server = new WebSocketServer({ port });
 

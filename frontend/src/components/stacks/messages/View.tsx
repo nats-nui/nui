@@ -1,5 +1,5 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
 import EditList from "@/components/lists/EditList"
 import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
@@ -7,15 +7,15 @@ import DropIcon from "@/icons/DropIcon"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
-import { Message } from "@/types/Message"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { Subscription } from "@/types"
+import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 
@@ -135,7 +135,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			/>
 		</Dialog>
 
-		<FormatDialog store={msgSo} />
+		<FormatDialog store={msgSo as any} />
 
 	</FrameworkCard>
 }

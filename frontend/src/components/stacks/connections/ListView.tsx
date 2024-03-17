@@ -123,7 +123,7 @@ const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 	borderRadius: "50%",
 	backgroundColor: {
 		[CNN_STATUS.UNDEFINED]: "grey",
-		[CNN_STATUS.CONNECTED]: "#51FD15",
+		[CNN_STATUS.CONNECTED]: "#37d300",
 		[CNN_STATUS.RECONNECTING]: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
 		[CNN_STATUS.DISCONNECTED]: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
 	}[status]

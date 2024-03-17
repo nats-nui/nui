@@ -30,6 +30,7 @@ const setup = {
 		/** DIALOG SUBS aperta */
 		subscriptionsOpen: false,
 
+		/* per la dialog di FORMAT */
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
 
@@ -42,6 +43,7 @@ const setup = {
 		getConnection: (_: void, store?: MessagesStore) => {
 			return cnnSo.getById(store.state.connectionId)
 		},
+		getSocketServiceId: (_: void, store?: MessagesStore) => `msg::${store.state.uuid}`,
 		getFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()
 			if (!text || text.trim().length == 0) return store.state.messages
@@ -85,7 +87,7 @@ const setup = {
 
 		connect(_: void, store?: MessagesStore) {
 console.log("CONNECT")
-			const ss = socketPool.create(`msg::${store.state.uuid}`, store.state.connectionId)
+			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
 			ss.onOpen = () => {
 				store.sendSubscriptions()
 				cnnSo.update({ id: store.state.connectionId, status: CNN_STATUS.CONNECTED })
@@ -97,7 +99,7 @@ console.log("CONNECT")
 		},
 		disconnect(_: void, store?: MessagesStore) {
 console.log("DISCONNECT")			
-			socketPool.destroy(store.state.uuid)
+			socketPool.destroy(store.getSocketServiceId())
 		},
 
 		/** aggiungo un messaggio di questa CARD */
@@ -116,7 +118,7 @@ console.log("DISCONNECT")
 				?.filter(s => !!s?.subject && !s.disabled)
 				.map(s => s.subject) ?? []
 			if (store.state.lastSubjects && store.state.lastSubjects.length == subjects.length && subjects.every(s => store.state.lastSubjects.includes(s))) return
-			socketPool.getById(store.state.uuid).sendSubjects(subjects)
+			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjects)
 			store.state.lastSubjects = subjects
 		},
 		/** apertura CARD MESSAGE-DETAIL */
