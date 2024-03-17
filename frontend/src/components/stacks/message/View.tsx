@@ -35,12 +35,12 @@ const MessageView: FunctionComponent<Props> = ({
 		</>}
 	>
 		<Form style={{ height: "100%" }}>
-			<BoxV>
-				<div className="lbl-prop">SUBJECT</div>
-				<div className="lbl-input-readonly">
+			<div>
+				<span className="lbl-prop">SUBJECT: </span>
+				<span className="lbl-input-readonly">
 					{msgSa.message.subject}
-				</div>
-			</BoxV>
+				</span>
+			</div>
 
 			<MyEditor autoFormat readOnly
 				ref={ref => msgSa.editorRef = ref}
