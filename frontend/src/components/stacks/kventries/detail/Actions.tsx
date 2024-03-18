@@ -52,7 +52,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			children="PUT"
 			onClick={handleEdit}
 		/>
-		<div style={{ display: "flex" }}>
+		<div style={{ display: "flex", alignItems: "center" }}>
 
 			<IconButton style={{ padding: "2px 0px" }}
 				onClick={handleRevisionPrevChange}

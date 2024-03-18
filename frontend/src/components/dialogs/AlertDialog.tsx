@@ -1,7 +1,6 @@
 import Button from "@/components/buttons/Button"
 import Dialog from "@/components/dialogs/Dialog"
-import Box from "@/components/format/Box"
-import { AlertState, ViewStore } from "@/stores/stacks/viewBase"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -42,12 +41,11 @@ const AlertDialog: FunctionComponent<Props> = ({
 
 		<div style={cssBGStop}></div>
 
-
 		<div className="lbl-dialog-text">
 			{alert.body}
 		</div>
 
-		<Box style={{display: "flex", gap: 15, marginTop: 10}}>
+		<div className="var-dialog" style={{display: "flex", gap: 15, marginTop: 10}} >
 			<Button
 				children={alert.labelOk}
 				onClick={() => handleClose(true)}
@@ -56,7 +54,8 @@ const AlertDialog: FunctionComponent<Props> = ({
 				children={alert.labelCancel}
 				onClick={() => handleClose(false)}
 			/>
-		</Box>
+		</div>
+		
 	</Dialog>
 }
 

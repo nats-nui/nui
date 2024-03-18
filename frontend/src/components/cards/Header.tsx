@@ -37,6 +37,12 @@ const Header: FunctionComponent<Props> = ({
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
 		mouseSo.startDrag({ srcView: store })
 	}
+	const handleDetach = () => {
+		if (!store.state.parent) return
+		const root = getRoot(store) ?? store
+		const rootIndex = docSo.getIndexByView(root)
+		docSo.move({ view: store, index: rootIndex + 1, anim: false })
+	}
 	const handleLinkDetach = () => {
 		if (!store.state.linked) return
 		const root = getRoot(store) ?? store
@@ -70,11 +76,11 @@ const Header: FunctionComponent<Props> = ({
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
 	const isIconized = docSo.isPinned(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
+	const showDetachable = !inRoot && enter
 	const showBttClose = !store.state.unclosable
 	const showBttIconize = inRoot && enter && store.state.pinnable
-
-	const tooltip = isCompact ?
-		<div>
+	const tooltip = isCompact
+		? <div>
 			<div className="lbl-header-title">{title}</div>
 			<div className="lbl-header-subtitle">{subTitle}</div>
 		</div>
@@ -126,15 +132,20 @@ const Header: FunctionComponent<Props> = ({
 								onClick={handleAnchor}
 							><AnchorIcon /></IconButton>
 						)}
+						{showDetachable && (
+							<IconButton
+								onClick={handleDetach}
+							><DetachIcon /></IconButton>
+						)}
 						{showBttClose && (
 							<IconButton
 								onClick={handleClose}
 							><CloseIcon /></IconButton>
 						)}
 					</div>
-					{haveLinkDetachable && <IconButton
+					{/* {haveLinkDetachable && <IconButton
 						onClick={handleLinkDetach}
-					><DetachIcon /></IconButton>}
+					><DetachIcon /></IconButton>} */}
 				</div>
 
 			</>}
