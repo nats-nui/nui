@@ -72,8 +72,8 @@ const setup = {
 				)
 				store.setSnackbar({ open: true,
 					type: MESSAGE_TYPE.INFO,
-					title: "MESSAGGIO NVIATO",
-					body: "il tuo messaggio demmerda è stato inviation",
+					title: "MESSAGE SENT",
+					body: "Your message has been sent correctly",
 					timeout: 2000,
 				})
 			} catch (e) { }
