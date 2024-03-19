@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react"
+import classes from "./FloatButton.module.css"
 
 
 
@@ -27,10 +28,10 @@ const FloatButton: FunctionComponent<Props> = ({
 
 
 	// RENDER
-
+	const cls = `${classes.root} ${disabled ? classes.disabled : "color-bg color-text"}`
 	return (
 		<div style={style} 
-			className={`btt-float ${disabled ? "btt-disabled" : "color-bg color-text"}`}
+			className={cls}
 			onClick={handleClick}
 		>
 			{children}

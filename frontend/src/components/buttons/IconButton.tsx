@@ -1,5 +1,5 @@
-import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useState } from "react"
+import classes from "./IconButton.module.css"
 
 
 
@@ -24,9 +24,9 @@ const IconButton: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-
+	const cls = `${classes.root} ${mouseOver? "color-bg color-text" : ""}`
 	return (
-		<div style={{ ...cssContainer(mouseOver), ...style }} className={mouseOver? "color-bg color-text" : null}
+		<div style={style} className={cls}
 			onClick={onClick}
 			onMouseEnter={effect ? () => setMouseOver(true) : null}
 			onMouseLeave={effect ? () => setMouseOver(false) : null}
@@ -37,12 +37,3 @@ const IconButton: FunctionComponent<Props> = ({
 }
 
 export default IconButton
-
-const cssContainer = (mouseOver: boolean): React.CSSProperties => ({
-	display: "flex",
-	cursor: "pointer",
-	padding: 2,
-	
-	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
-	borderRadius: 3,
-})

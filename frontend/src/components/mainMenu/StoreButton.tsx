@@ -2,7 +2,8 @@ import docSo from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import IconRow from "../rows/IconRow"
+import MenuButton from "../buttons/MenuButton"
+import CardIcon from "../cards/CardIcon"
 
 
 
@@ -11,7 +12,7 @@ interface Props {
 	style?: React.CSSProperties,
 }
 
-const StoreIcon: FunctionComponent<Props> = ({
+const StoreButton: FunctionComponent<Props> = ({
 	store,
 }) => {
 
@@ -25,14 +26,19 @@ const StoreIcon: FunctionComponent<Props> = ({
 	const handleCloseStoreClick = (store: ViewStore) => docSo.unpinned(store)
 
 	// RENDER
+	const type = store.state.type
+	const cls = `var${store.state.colorVar}`
+
 	return (
-		<IconRow selected
+		<MenuButton className={cls} selected 
 			title={store.getTitle()}
 			subtitle={store.getSubTitle()}
 			onClick={() => handleOpenStoreClick(store)}
 			onClose={() => handleCloseStoreClick(store)}
-		/>
+		>
+			<CardIcon type={type} style={{width: 20}} className="color-fg"/>
+		</MenuButton>
 	)
 }
 
-export default StoreIcon
+export default StoreButton

@@ -1,6 +1,7 @@
 import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"

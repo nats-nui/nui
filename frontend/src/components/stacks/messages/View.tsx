@@ -16,6 +16,7 @@ import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
 import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 

@@ -79,7 +79,7 @@ const EditForm: FunctionComponent<Props> = ({
 	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const allStreams = streamSa.allStreams
 
-	return <Form>
+	return <Form className="var-dialog">
 
 		<div className="lbl-prop-title">BASE</div>
 
