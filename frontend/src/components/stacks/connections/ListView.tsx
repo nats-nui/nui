@@ -9,7 +9,7 @@ import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
-import IconRow from "../../rows/IconRow"
+import MenuButton from "../../buttons/MenuButton"
 import OptionsCmp from "@/components/options/OptionsCmp"
 
 
@@ -80,16 +80,6 @@ const CnnListView: FunctionComponent<Props> = ({
 				onClick={handleNew}
 			/>
 		</>}
-		iconizedRender={<div style={cssIconized}>{
-			connnections.map(cnn => (
-				<IconRow key={cnn.id}
-					title={getTitle(cnn)}
-					subtitle={getSubtitle(cnn)}
-					selected={isSelected(cnn)}
-					onClick={() => handleSelect(cnn)}
-				/>
-			))
-		}</div>}
 	>
 		{connnections.map(cnn => (
 			<ElementRow key={cnn.id}

@@ -6,8 +6,8 @@ import { StartSession, EndSession } from "@/utils/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import Button from "../buttons/Button"
-import IconRow from "../rows/IconRow"
-import StoreIcon from "./StoreIcon"
+import MenuButton from "../buttons/MenuButton"
+import StoreButton from "./StoreButton"
 
 
 
@@ -45,12 +45,12 @@ const MainMenu: FunctionComponent<Props> = ({
 	const views = docSa.menu
 
 	return <div style={{ ...cssContainer, ...style }}>
-		<IconRow onClick={handleConnectionsClick}
+		<MenuButton onClick={handleConnectionsClick}
 			title="CONNECTIONS"
 			selected
 		/>
 		{views.map((view) => (
-			<StoreIcon key={view.state.uuid} store={view} />
+			<StoreButton key={view.state.uuid} store={view} />
 		))}
 		<div style={{ flex: 1 }} />
 
@@ -63,7 +63,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		{/* *** DEBUG *** */}
 
 
-		<IconRow onClick={handleLogsClick}
+		<MenuButton onClick={handleLogsClick}
 			title="LOGS"
 			selected
 		/>

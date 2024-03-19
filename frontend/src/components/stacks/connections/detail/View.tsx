@@ -1,6 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import BoxV from "@/components/format/BoxV"
-import IconRow2 from "@/components/rows/IconRow2"
+import LinkButton from "@/components/buttons/LinkButton"
 import RowButton from "@/components/rows/RowButton"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -50,19 +50,19 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={
 			<BoxV style={{ marginTop: 10 }}>
-				<IconRow2
+				<LinkButton
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
 					selected={isMessageOpen}
 					onClick={handleMessagesClick}
 				/>
-				<IconRow2
+				<LinkButton
 					icon={<StreamsIcon />}
 					tooltip="STREAMS"
 					selected={isStreamsOpen}
 					onClick={handleStreamsClick}
 				/>
-				<IconRow2
+				<LinkButton
 					icon={<BucketsIcon />}
 					tooltip="BUCKETS"
 					selected={isBucketsOpen}

@@ -1,6 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import BoxV from "@/components/format/BoxV"
-import IconRow2 from "@/components/rows/IconRow2"
+import LinkButton from "@/components/buttons/LinkButton"
 import RowButton from "@/components/rows/RowButton"
 import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import docSo from "@/stores/docs"
@@ -45,7 +45,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={bucketSo} />}
 		iconizedRender={
 			<BoxV style={{ marginTop: 10 }}>
-				<IconRow2
+				<LinkButton
 					icon={<KvEntriesIcon />}
 					tooltip="KVENTRIES"
 					selected={isKVEntriesSelect}

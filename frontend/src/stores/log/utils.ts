@@ -3,9 +3,9 @@ import { Uuid } from "@/types/global"
 
 
 export enum MESSAGE_TYPE {
-	INFO,
-	WARNING,
-	ERROR,
+	INFO = "info",
+	WARNING = "warn",
+	ERROR = "error",
 }
 
 export interface Log {

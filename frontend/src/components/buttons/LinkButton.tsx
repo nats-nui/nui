@@ -17,7 +17,7 @@ interface Props {
 /**
  * Lo STACK di una collezione di CONNECTIONs
  */
-const IconRow2: FunctionComponent<Props> = ({
+const LinkButton: FunctionComponent<Props> = ({
 	icon,
 	tooltip,
 	selected,
@@ -55,7 +55,7 @@ const IconRow2: FunctionComponent<Props> = ({
 	)
 }
 
-export default IconRow2
+export default LinkButton
 
 const cssRow = (select: boolean): React.CSSProperties => ({
 	...select && {

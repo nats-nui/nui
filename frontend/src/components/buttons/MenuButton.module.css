@@ -1,0 +1,39 @@
+.root {
+	display: flex; 
+	flex-direction: column;
+	align-items: center; 
+	justify-content: center;
+
+	cursor: pointer;
+	position: relative;
+
+	background-color: rgba(0,0,0,0.8);
+	
+	border-radius: 50%;
+	/* border: 2px solid black; */
+	width: 30px;
+	height: 30px;
+
+	font-size: 14px;
+	font-weight: 700;
+}
+
+/* .select {
+	background-color: select ? null : "rgb(0 0 0 / 20%)",
+	color: select ? "#393939" : "unset",
+} */
+
+.cancel {
+	cursor: pointer;
+	display: flex; 
+	align-items: center; 
+	justify-content: center;
+	position: absolute; 
+	right: -7px; 
+	top: -5px;
+	border-radius: 50%;
+	width: 18px; 
+	height: 18px;
+	background-color: rgb(49, 49, 49);
+}
+

@@ -1,6 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import BoxV from "@/components/format/BoxV"
-import IconRow2 from "@/components/rows/IconRow2"
+import LinkButton from "@/components/buttons/LinkButton"
 import RowButton from "@/components/rows/RowButton"
 import ConsumersIcon from "@/icons/cards/ConsumersIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -48,13 +48,13 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={streamSo} />}
 		iconizedRender={
 			<BoxV style={{ marginTop: 10 }}>
-				<IconRow2
+				<LinkButton
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
 					selected={isMessagesSelect}
 					onClick={handleMessagesClick}
 				/>
-				<IconRow2
+				<LinkButton
 					icon={<ConsumersIcon />}
 					tooltip="CONSUMERS"
 					selected={isConsumersSelect}

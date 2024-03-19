@@ -1,6 +1,6 @@
 
 /** ButtonFoat */
-.btt-float {
+.root {
 	cursor: pointer;
 	transition: background-color 300ms, color 300ms;
 
@@ -20,7 +20,7 @@
 /**
 genericamente per bottoni disabilitati
 */
-.btt-disabled {
+.disabled {
 	cursor: default;
 	background-color: var(--bg-disabled);
 	color: var(--text);
