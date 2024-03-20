@@ -12,7 +12,7 @@ import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
-/** STREAM DETAIL */
+/** BUCKET DETAIL */
 const setup = {
 
 	state: {
@@ -27,7 +27,6 @@ const setup = {
 		width: 230,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion
-
 	},
 
 	getters: {

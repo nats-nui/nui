@@ -1,0 +1,17 @@
+.form {
+	height: 100%;
+	position: relative;
+}
+
+.boxActions {
+	position: absolute;
+	top: 0px; 
+	right: 0px; 
+	display: flex;
+}
+
+.timestamp {
+	align-self: flex-end;
+	font-size: 12px;
+	font-weight: 400;
+}

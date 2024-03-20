@@ -6,12 +6,11 @@ import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CloseIcon from "@/icons/CloseIcon"
 import CopyIcon from "@/icons/CopyIcon"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { MSG_FORMAT } from "@/utils/editor"
 import { Message } from "@/types/Message"
+import { MSG_FORMAT } from "@/utils/editor"
 import dayjs from "dayjs"
 import { FunctionComponent, useMemo, useState } from "react"
-
+import cls from "./MessageRow.module.css"
 
 
 interface Props {
@@ -31,9 +30,9 @@ const MessageRow: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const [bttCopyVisible, setBttCopyVisible] = useState(false)
-
+	
 	// HOOKs
+	const [bttCopyVisible, setBttCopyVisible] = useState(false)
 
 	// HANDLER
 	const handleClick = () => onClick?.(message)
@@ -56,21 +55,22 @@ const MessageRow: FunctionComponent<Props> = ({
 		() => message.receivedAt ? dayjs(message.receivedAt).format("YYYY-MM-DD HH:mm:ss") : null,
 		[message.receivedAt]
 	)
-	const bgcolor = index % 2 == 0 ? layoutSo.state.theme.palette.default.bg : layoutSo.state.theme.palette.default.bg2
+	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2
+	const clsRoot = `${cls.root} ${clsBg}`
 
 	return (
-		<div style={cssRoot(bgcolor)}
+		<div className={clsRoot}
 			onClick={handleClick}
 			onMouseEnter={handleTitleEnter}
 			onMouseLeave={handleTitleLeave}
 		>
-			<div style={cssTitle}>
+			<div className={cls.title}>
 				<div style={{ flex: 1 }}>
-					{message.seqNum} <span style={cssSubject}>{message.subject}</span>
+					{message.seqNum} <span className={cls.subject}>{message.subject}</span>
 				</div>
 
 				{bttCopyVisible && (
-					<div style={{ position: "absolute", top: 0, right: 0, backgroundColor: bgcolor, display: "flex" }}>
+					<div className={`${cls.boxActions} ${clsBg}`}>
 						<TooltipWrapCmp content="COPY">
 							<IconButton onClick={handleClipboardClick}>
 								<CopyIcon />
@@ -95,37 +95,10 @@ const MessageRow: FunctionComponent<Props> = ({
 			}[format]}
 
 			{time && (
-				<div style={cssFooter}>{time}</div>
+				<div className={cls.footer}>{time}</div>
 			)}
 		</div>
 	)
 }
 
 export default MessageRow
-
-const cssRoot = (bgcolor: string): React.CSSProperties => ({
-	backgroundColor: bgcolor,
-	display: "flex",
-	flexDirection: "column",
-	padding: "0px 7px 5px 7px",
-})
-
-const cssTitle: React.CSSProperties = {
-	position: "relative",
-	display: "flex",
-	alignItems: "start",
-	//height: 24,
-	fontSize: 10,
-}
-
-const cssSubject: React.CSSProperties = {
-	flex: 1,
-	color: layoutSo.state.theme.palette.default.fg2,
-	overflowWrap: "anywhere",
-}
-
-const cssFooter: React.CSSProperties = {
-	fontSize: 10,
-	opacity: .7,
-	alignSelf: "flex-end",
-}

@@ -6,9 +6,9 @@ import cls from "./MenuButton.module.css"
 
 
 interface Props {
-	selected?: boolean
 	title: string
 	subtitle?: string
+	label?: string
 	children?: React.ReactNode
 	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -21,7 +21,7 @@ interface Props {
 const MenuButton: FunctionComponent<Props> = ({
 	title,
 	subtitle,
-	selected,
+	label,
 	children,
 	className,
 	onClick,
@@ -57,7 +57,7 @@ const MenuButton: FunctionComponent<Props> = ({
 			</TooltipWrapCmp>
 
 			<div className={cls.label}>
-				{subtitle}
+				{label ?? subtitle}
 			</div>
 		</div>
 	)

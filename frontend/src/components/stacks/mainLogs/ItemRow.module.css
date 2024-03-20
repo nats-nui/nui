@@ -1,0 +1,51 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	padding: 0px 7px 0px 10px;
+	margin: 20px 0px;
+}
+
+.bg1 {
+	background-color: var(--bg-1);
+}
+.bg2 {
+	background-color: var(--bg-2);
+}
+
+.error {
+	border-left: 2px solid var(--var-1);
+}
+.warn {
+	border-left: 2px solid var(--var-2);
+}
+.info {
+}
+
+
+
+.title {
+	position: relative;
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+.body {
+	font-size: 12px;
+	font-weight: 400;
+	overflow-wrap: break-word;
+}
+.footer {
+	margin-top: 5px;
+	font-size: 10px;
+	opacity: .7;
+	align-self: flex-end;
+}
+
+.boxCopy {
+	position: absolute; 
+	top: 0px; 
+	right: 0px; 
+	display: flex;
+}
