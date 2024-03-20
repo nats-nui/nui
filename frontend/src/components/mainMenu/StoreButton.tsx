@@ -1,15 +1,15 @@
 import docSo from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import MenuButton from "../buttons/MenuButton"
 import CardIcon from "../cards/CardIcon"
+import { DOC_TYPE } from "@/types"
 
 
 
 interface Props {
 	store?: ViewStore
-	style?: React.CSSProperties,
 }
 
 const StoreButton: FunctionComponent<Props> = ({
@@ -23,18 +23,19 @@ const StoreButton: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleOpenStoreClick = (view: ViewStore) => docSo.add({ view, anim: true })
-	const handleCloseStoreClick = (store: ViewStore) => docSo.unpinned(store)
+	const handleCloseStoreClick = (store: ViewStore) => docSo.pinnedDelete(store)
 
 	// RENDER
 	const type = store.state.type
 	const cls = `var${store.state.colorVar}`
+	const canDelete = store.state.pinnable
 
 	return (
 		<MenuButton className={cls} selected 
 			title={store.getTitle()}
 			subtitle={store.getSubTitle()}
 			onClick={() => handleOpenStoreClick(store)}
-			onClose={() => handleCloseStoreClick(store)}
+			onClose={canDelete ? () => handleCloseStoreClick(store) : null}
 		>
 			<CardIcon type={type} style={{width: 20}} className="color-fg"/>
 		</MenuButton>

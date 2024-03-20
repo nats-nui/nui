@@ -19,7 +19,7 @@ const setup = {
 	getters: {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "LOGS",
-		getSubTitle: (_: void, store?: ViewStore) => "MESSAGES",
+		getSubTitle: (_: void, store?: ViewStore) => "System messages",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ViewLogState
 			return {

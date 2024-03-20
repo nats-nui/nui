@@ -19,6 +19,7 @@ const setup = {
 		//#region VIEWBASE
 		width: 220,
 		colorVar: COLOR_VAR.GREEN,
+		pinnable: false,
 		//#endregion
 	},
 

@@ -1,8 +1,7 @@
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 import CloseIcon from "@/icons/CloseIcon"
-import layoutSo from "@/stores/layout"
 import React, { FunctionComponent, useState } from "react"
-import classes from "./MenuButton.module.css"
+import cls from "./MenuButton.module.css"
 
 
 
@@ -38,17 +37,17 @@ const MenuButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	const showCloseBtt = enter && !!onClose
-
+	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
-		<div className={className}>
-			<TooltipWrapCmp className={classes.root}
+		<div className={clsRoot}>
+			<TooltipWrapCmp className={cls.circle}
 				content={<div>
 					<div style={{ fontWeight: 700 }}>{title}</div>
 					<div>{subtitle}</div>
 				</div>}
 				onMouseOver={enter => setEnter(enter)}
 			>
-				{showCloseBtt && <div className={classes.cancel}
+				{showCloseBtt && <div className={cls.cancel}
 					onClick={onClose}
 				><CloseIcon /></div>}
 
@@ -57,7 +56,9 @@ const MenuButton: FunctionComponent<Props> = ({
 				</div>
 			</TooltipWrapCmp>
 
-			<div>{subtitle}</div>
+			<div className={cls.label}>
+				{subtitle}
+			</div>
 		</div>
 	)
 }
