@@ -4,6 +4,7 @@ import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import { forEachViews, getById } from "./utils/manage"
+import { buildStore } from "./utils/factory"
 
 
 
@@ -13,11 +14,19 @@ import { forEachViews, getById } from "./utils/manage"
 const setup = {
 
 	state: {
+		/** CARD che ha il fuoco in questo momento */
 		focus: <ViewStore>null,
+		/** tutte le CARD nel DECK */
 		all: <ViewStore[]>[],
+		/** le CARD in MENU */
 		menu: <ViewStore[]>[],
-		anchored: 0,
 
+		/** CARD delle CONNECTIONS */
+		connView: <ViewStore>null,
+		/** CARD dei LOGS */
+		logsView: <ViewStore>null,
+
+		anchored: 0,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 	},
 
@@ -46,22 +55,25 @@ const setup = {
 		isPinned(uuid: string, store?: DocStore) {
 			return store.state.menu.some(view => view.state.uuid == uuid)
 		},
+		/** cerca nel DECK solo le CARD senza parent*/
 		find(state: any, store?: DocStore) {
 			return forEachViews(
 				store.state.all,
 				(view) => deepEqual(state, view.state) ? view : null
 			)
 		},
+		/** cerca nel DECK su tutte le CARD (anche i children) */
 		findAll(state: any, store?: DocStore) {
-			const ret:ViewStore[] = []
+			const ret: ViewStore[] = []
 			forEachViews(
 				store.state.all,
 				(view) => {
-					if ( deepEqual(state, view.state) ) ret.push(view)
+					if (deepEqual(state, view.state)) ret.push(view)
 				}
 			)
 			return ret
 		}
+
 
 	},
 
@@ -71,6 +83,7 @@ const setup = {
 			elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
 			store.setFocus(view)
 		},
+
 		/** aggiunge una CARD direttamente nel DECK */
 		async add(
 			{ view, index, anim = false }: { view: ViewStore, index?: number, anim?: boolean },
@@ -174,7 +187,9 @@ const setup = {
 			}
 		},
 
-		/** fissa una VIEW al lato sinistro */
+
+
+		/** fissa una CARD al lato sinistro */
 		async anchor(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			const storeIndex = store.getIndexByView(view)
@@ -183,7 +198,7 @@ const setup = {
 			if (storeIndex >= index) store.state.anchored++
 			store._update()
 		},
-		/** rende mobile una VIEW fissata */
+		/** rende mobile una CARD fissata */
 		async unanchor(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			const storeIndex = store.getIndexByView(view)
@@ -193,13 +208,15 @@ const setup = {
 			store._update()
 		},
 
-		/** fissa una VIEW al lato sinistro */
+
+
+		/** fissa una CARD al lato sinistro */
 		async pinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			store.setMenu([...store.state.menu, view])
 		},
-		/** rende mobile una VIEW fissata */
-		async unpinned(view: ViewStore, store?: DocStore) {
+		/** cancella una CARD dal MENU */
+		async pinnedDelete(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			const menu = [...store.state.menu]
 			const index = menu.findIndex(s => s == view)
@@ -225,6 +242,9 @@ export interface DocStore extends StoreCore<DocState>, DocGetters, DocActions, D
 	state: DocState
 }
 const docsSo = createStore(setup) as DocStore
+docsSo.state.connView = buildStore({ type: DOC_TYPE.CONNECTIONS })
+docsSo.state.logsView = buildStore({ type: DOC_TYPE.LOGS })
+
 export default docsSo
 
 

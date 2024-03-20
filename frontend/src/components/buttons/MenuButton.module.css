@@ -1,15 +1,20 @@
 .root {
 	display: flex; 
 	flex-direction: column;
+	align-items: center;
+}
+
+.circle {
+	display: flex; 
 	align-items: center; 
 	justify-content: center;
 
 	cursor: pointer;
 	position: relative;
 
-	background-color: rgba(0,0,0,0.8);
+	background-color: rgba(0,0,0,0.3);
 	
-	border-radius: 50%;
+	border-radius: 10px;
 	/* border: 2px solid black; */
 	width: 30px;
 	height: 30px;
@@ -17,11 +22,6 @@
 	font-size: 14px;
 	font-weight: 700;
 }
-
-/* .select {
-	background-color: select ? null : "rgb(0 0 0 / 20%)",
-	color: select ? "#393939" : "unset",
-} */
 
 .cancel {
 	cursor: pointer;
@@ -37,3 +37,13 @@
 	background-color: rgb(49, 49, 49);
 }
 
+.label {
+	width: 100%;
+	font-size: 12px;
+	font-weight: 500;
+
+	text-align: center;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}

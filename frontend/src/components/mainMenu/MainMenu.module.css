@@ -1,0 +1,10 @@
+.root {
+	display: flex; 
+	flex-direction: column; 
+	align-items: stretch;
+
+	width: 50px;
+	gap: 10px;
+	background-color: #494949;
+	padding: 10px;
+}

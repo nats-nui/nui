@@ -1,3 +1,4 @@
+import LogIcon from "@/icons/LogIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import ConnectionIcon from "@/icons/cards/ConnectionIcon"
@@ -61,6 +62,8 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <KvEntryIcon className={className} style={style}/>
 
 		case DOC_TYPE.LOGS:
+			return <LogIcon className={className} style={style}/>
+			
 		default:
 			return null
 	}

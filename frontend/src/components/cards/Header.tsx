@@ -62,7 +62,7 @@ const Header: FunctionComponent<Props> = ({
 		docSo.focus(store)
 	}
 	const handleToggleIconize = () => {
-		if (!isIconized) docSo.pinned(store); else docSo.unpinned(store)
+		if (!isIconized) docSo.pinned(store); else docSo.pinnedDelete(store)
 	}
 
 	// RENDER
