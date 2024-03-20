@@ -29,15 +29,17 @@ const StoreButton: FunctionComponent<Props> = ({
 	const type = store.state.type
 	const cls = `var${store.state.colorVar}`
 	const canDelete = store.state.pinnable
+	const label = { [DOC_TYPE.CONNECTIONS]: "CONN.S", [DOC_TYPE.LOGS]: "LOGS" }[type] ?? null
 
 	return (
-		<MenuButton className={cls} selected 
+		<MenuButton className={cls}
 			title={store.getTitle()}
 			subtitle={store.getSubTitle()}
+			label={label}
 			onClick={() => handleOpenStoreClick(store)}
 			onClose={canDelete ? () => handleCloseStoreClick(store) : null}
 		>
-			<CardIcon type={type} style={{width: 20}} className="color-fg"/>
+			<CardIcon type={type} style={{ width: 20 }} className="color-fg" />
 		</MenuButton>
 	)
 }
