@@ -6,3 +6,12 @@
 .cliccable {
 	cursor: pointer;
 }
+
+
+.hover-hide {
+	display: none;
+}
+
+.hover-container:hover .hover-show {
+	display: flex;
+}

@@ -70,7 +70,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const auths = cnnDetailSa.connection.auth ?? []
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-	return <Form>
+	return <Form className="var-dialog">
 
 		<div className="lbl-prop-title">BASE</div>
 		<BoxV>

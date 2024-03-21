@@ -1,5 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo, useState } from "react"
 import Header, { ORDER_TYPE } from "./Header"
+import cls from "./Table.module.css"
+import CopyButton from "../buttons/CopyButton"
 
 
 
@@ -62,10 +64,11 @@ const Table: FunctionComponent<Props> = ({
 	const isSelected = (item: any) => getId(item) == selectId
 	const colspan = props.length
 	function getValueString(item: any, prop: ItemProp): string {
+		if (!prop) return
 		return prop.getShow?.(item) ?? prop.getValue?.(item)
 	}
 
-	return <table style={{ ...cssTable, ...style }}>
+	return <table className={cls.root} style={style}>
 
 		<Header
 			props={props}
@@ -77,18 +80,20 @@ const Table: FunctionComponent<Props> = ({
 		<tbody>
 			{itemsSort.map((item, index) => {
 				const id = getId(item)
-
 				const selected = isSelected(item)
+				const mainText = getValueString(item, propMain)
+
 				return <React.Fragment key={id}>
 
 					{!!propMain && (
 						<tr
-							style={cssRowMain(selected)} className={selected ? "color-bg-l1 color-text" : null}
+							style={cssRowMain(selected)} className={`hover-container ${selected ? "color-bg-l1 color-text" : ""}`}
 							onClick={() => handleSelect(item)}
 						>
 							<td colSpan={colspan} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
-								{getValueString(item, propMain)}
+								{mainText}
 							</td>
+							<CopyButton absolute value={mainText} />
 						</tr>
 					)}
 
@@ -114,11 +119,11 @@ export default Table
 
 
 const cssTable: CSSProperties = {
-	width: "100%",
-	borderSpacing: 0,
+
 }
 
 const cssRowMain = (select: boolean): CSSProperties => ({
+	position: "relative",
 	cursor: "pointer",
 	fontSize: '12px',
 	//fontWeight: '600',

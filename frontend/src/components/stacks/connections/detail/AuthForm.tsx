@@ -33,7 +33,7 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!authEdit) return null
-	return <Form>
+	return <Form className="var-dialog">
 		<Options<string>
 			value={authEdit?.mode}
 			items={Object.values(AUTH_MODE)}
@@ -83,7 +83,7 @@ const AuthForm: FunctionComponent<Props> = ({
 			</>,
 		}[authEdit.mode]}
 		
-		<div style={{ display: "flex", gap: 5, justifyContent: 'flex-end', }}>
+		<div style={{ display: "flex", gap: 5 }}>
 			<Button children="CANCEL"
 				onClick={() => onClose(null)}
 			/>
@@ -98,8 +98,3 @@ const AuthForm: FunctionComponent<Props> = ({
 }
 
 export default AuthForm
-
-const cssRow: React.CSSProperties = {
-	display: "flex",
-	alignItems: "center",
-}

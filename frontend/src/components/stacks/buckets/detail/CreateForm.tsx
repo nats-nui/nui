@@ -136,6 +136,7 @@ const CreateForm: FunctionComponent<Props> = ({
 						onItemsChange={tags => handlePlacementPropChange({ tags })}
 						placeholder="ex. client or java"
 						onNewItem={() => ""}
+						fnIsVoid={i => !i || i.trim().length == 0}
 						RenderRow={EditStringRow}
 					/>
 				</BoxV>

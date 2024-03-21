@@ -1,17 +1,16 @@
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import CopyButton from "@/components/buttons/CopyButton"
 import IconButton from "@/components/buttons/IconButton"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CloseIcon from "@/icons/CloseIcon"
-import CopyIcon from "@/icons/CopyIcon"
 import { Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
-import dayjs from "dayjs"
-import { FunctionComponent, useMemo, useState } from "react"
-import cls from "./MessageRow.module.css"
 import { dateShow } from "@/utils/time"
+import { FunctionComponent, useMemo } from "react"
+import cls from "./MessageRow.module.css"
 
 
 interface Props {
@@ -31,24 +30,16 @@ const MessageRow: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	
+
 	// HOOKs
-	const [bttCopyVisible, setBttCopyVisible] = useState(false)
 
 	// HANDLER
 	const handleClick = () => onClick?.(message)
-	const handleClipboardClick = (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault()
-		e.stopPropagation()
-		navigator.clipboard.writeText(message.payload)
-	}
 	const handleDeleteClick = (e: React.MouseEvent<Element, MouseEvent>) => {
 		e.preventDefault()
 		e.stopPropagation()
 		onDelete?.(message)
 	}
-	const handleTitleEnter = () => setBttCopyVisible(true)
-	const handleTitleLeave = () => setBttCopyVisible(false)
 
 	// RENDER
 	if (!message) return null
@@ -60,32 +51,23 @@ const MessageRow: FunctionComponent<Props> = ({
 	const clsRoot = `${cls.root} ${clsBg}`
 
 	return (
-		<div className={clsRoot}
+		<div className={`hover-container ${clsRoot}`}
 			onClick={handleClick}
-			onMouseEnter={handleTitleEnter}
-			onMouseLeave={handleTitleLeave}
 		>
 			<div className={cls.title}>
 				<div style={{ flex: 1 }}>
 					{message.seqNum} <span className={cls.subject}>{message.subject}</span>
 				</div>
-
-				{bttCopyVisible && (
-					<div className={`${cls.boxActions} ${clsBg}`}>
-						<TooltipWrapCmp content="COPY">
-							<IconButton onClick={handleClipboardClick}>
-								<CopyIcon />
+				<div className={`hover-show ${cls.boxActions} ${clsBg}`}>
+					<CopyButton value={message.payload} />
+					{!!onDelete && (
+						<TooltipWrapCmp content="DELETE">
+							<IconButton onClick={handleDeleteClick}>
+								<CloseIcon />
 							</IconButton>
 						</TooltipWrapCmp>
-						{!!onDelete && (
-							<TooltipWrapCmp content="DELETE">
-								<IconButton onClick={handleDeleteClick}>
-									<CloseIcon />
-								</IconButton>
-							</TooltipWrapCmp>
-						)}
-					</div>
-				)}
+					)}
+				</div>
 			</div>
 
 			{{
