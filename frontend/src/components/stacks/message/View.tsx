@@ -11,6 +11,7 @@ import IconButton from "@/components/buttons/IconButton"
 import CopyIcon from "@/icons/CopyIcon"
 import cls from "./View.module.css"
 import dayjs from "dayjs"
+import { dateShow } from "@/utils/time"
 
 
 interface Props {
@@ -36,7 +37,7 @@ const MessageView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const timestamp = dayjs(msgSa.message.receivedAt).format("YYYY-MM-DD HH:mm:ss")
+	const timestamp = dateShow(msgSa.message.receivedAt)
 
 	return <FrameworkCard
 		store={msgSo}

@@ -1,7 +1,9 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
+import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
+import dayjs from "dayjs"
 import { FunctionComponent } from "react"
 
 
@@ -47,7 +49,7 @@ const ShowForm: FunctionComponent<Props> = ({
 
 		<BoxV>
 			<div className="lbl-prop">CREATION DATETIME</div>
-			<div className="lbl-input-readonly">{consumer.created ?? "-"}</div>
+			<div className="lbl-input-readonly">{dateShow(consumer.created)}</div>
 		</BoxV>
 
 		<div className="lbl-prop-title">MESSAGES</div>

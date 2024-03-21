@@ -5,6 +5,7 @@ import { Log } from "@/stores/log/utils"
 import dayjs from "dayjs"
 import { FunctionComponent, useMemo, useState } from "react"
 import cls from "./ItemRow.module.css"
+import { dateShow } from "@/utils/time"
 
 
 
@@ -38,7 +39,7 @@ const ItemRow: FunctionComponent<Props> = ({
 	// RENDER
 	if (!log) return null
 	const time = useMemo(
-		() => log.receivedAt ? dayjs(log.receivedAt).format("YYYY-MM-DD HH:mm:ss") : null,
+		() => log.receivedAt ? dateShow(log.receivedAt) : null,
 		[log.receivedAt]
 	)
 	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2

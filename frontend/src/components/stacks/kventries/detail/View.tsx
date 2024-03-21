@@ -10,6 +10,7 @@ import { KVEntry, OPERATION } from "@/types/KVEntry"
 import FormatDialog from "../../../editor/FormatDialog"
 import { RenderRowBaseProps } from "@/components/lists/EditList"
 import dayjs from "dayjs"
+import { dateShow } from "@/utils/time"
 
 
 
@@ -72,7 +73,7 @@ const HystoryRow: FunctionComponent<RenderRowBaseProps<KVEntry>> = ({
 		[OPERATION.PURGE]: "PURGE",
 		[OPERATION.PUT]: "PUT",
 	}[item.operation] ?? "--"
-	const time = dayjs(item.lastUpdate).format("DD/MM/YYYY HH:mm")
+	const time = dateShow(item.lastUpdate)
 
 	return <div style={{ whiteSpace: 'pre' }}>
 		<span style={{ fontSize: 13, fontWeight: 800 }}>{item.revision} </span>
