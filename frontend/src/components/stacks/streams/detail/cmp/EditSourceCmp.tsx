@@ -33,7 +33,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!source) return null
 
-	return <Form>
+	return <Form className="var-dialog">
 		<BoxV>
 			<div className="lbl-prop">NAME</div>
 			<Options<string> height={500}

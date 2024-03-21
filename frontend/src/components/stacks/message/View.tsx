@@ -1,17 +1,14 @@
+import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import MyEditor from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import Form from "@/components/format/Form"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
-import FormatDialog from "../../editor/FormatDialog"
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
-import IconButton from "@/components/buttons/IconButton"
-import CopyIcon from "@/icons/CopyIcon"
-import cls from "./View.module.css"
-import dayjs from "dayjs"
 import { dateShow } from "@/utils/time"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent } from "react"
+import FormatDialog from "../../editor/FormatDialog"
+import cls from "./View.module.css"
 
 
 interface Props {
@@ -27,14 +24,8 @@ const MessageView: FunctionComponent<Props> = ({
 	const msgSa = useStore(msgSo) as MessageState
 
 	// HOOKs
-	const [bttCopyVisible, setBttCopyVisible] = useState(false)
 
 	// HANDLER
-	const handleClipboardClick = (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault()
-		e.stopPropagation()
-		navigator.clipboard.writeText(msgSa.message.subject)
-	}
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
@@ -46,18 +37,8 @@ const MessageView: FunctionComponent<Props> = ({
 		</>}
 	>
 		<Form className={cls.form}>
-			<div
-				onMouseEnter={() => setBttCopyVisible(true)}
-				onMouseLeave={() => setBttCopyVisible(false)}
-			>
-				{bttCopyVisible && (
-					<TooltipWrapCmp content="COPY" className={cls.boxActions}>
-						<IconButton onClick={handleClipboardClick}>
-							<CopyIcon />
-						</IconButton>
-					</TooltipWrapCmp>
-				)}
-
+			<div className="hover-container">
+				<CopyButton absolute value={msgSa.message.subject} />
 				<span className="lbl-prop">SUBJECT: </span>
 				<span className="lbl-input-readonly">
 					{msgSa.message.subject}

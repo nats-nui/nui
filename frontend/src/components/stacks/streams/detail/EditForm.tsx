@@ -121,6 +121,7 @@ const EditForm: FunctionComponent<Props> = ({
 				placeholder="ex. orders.* or telemetry.>"
 				readOnly={inRead}
 				onNewItem={() => ""}
+				fnIsVoid={i => !i || i.trim().length == 0}
 				RenderRow={EditStringRow}
 			/>
 		</BoxV>
@@ -301,6 +302,7 @@ const EditForm: FunctionComponent<Props> = ({
 						placeholder="ex. client or java"
 						readOnly={inRead}
 						onNewItem={() => ""}
+						fnIsVoid={i => !i || i.trim().length == 0}
 						RenderRow={EditStringRow}
 					/>
 				</BoxV>

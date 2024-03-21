@@ -1,4 +1,5 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
+import cls from "./Component.module.css"
 
 
 
@@ -24,49 +25,25 @@ const Component: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOK
-	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-	const handleEnter = () => setEnter(true)
-	const handleLeave = () => setEnter(false)
 
 	// RENDER
 	const isCliccable = !!onClick
+	const clsRoot = `hover-container ${cls.root} ${isCliccable ? "cliccable" : ""} ${selected ? cls.selected : ""} ${readOnly ? cls.readonly : ""}`
 
 	return (
-		<div
-			style={{ ...cssRoot(isCliccable, selected, readOnly), ...style }}
-			onMouseEnter={enterRender ? handleEnter : null}
-			onMouseLeave={enterRender ? handleLeave : null}
+		<div className={clsRoot}
+			style={style}
 			onClick={onClick}
 		>
 			{preRender}
 			{children}
-			{enter && <div style={{ position: "absolute", top: 4, right: 4 }}>
+			<div className="hover-hide hover-show" style={{ position: "absolute", top: 4, right: 4 }}>
 				{enterRender}
-			</div>}
+			</div>
 		</div>
 	)
 }
 
 export default Component
-
-const cssText: React.CSSProperties = {
-	flex: 1,
-	alignItems: "center",
-	position: "relative",
-	display: "flex",
-	borderRadius: 3,
-	fontSize: 12,
-	fontWeight: 600,
-	padding: "4px 3px",
-	minHeight: 14,
-	gap: 5,
-}
-
-const cssRoot = (isCliccable: boolean, selected: boolean, readOnly: boolean): React.CSSProperties => ({
-	...cssText,
-	backgroundColor: selected ? "#00000020" : readOnly ? null : '#00000010',
-	cursor: isCliccable ? "pointer" : null,
-	overflowWrap: 'anywhere',
-})

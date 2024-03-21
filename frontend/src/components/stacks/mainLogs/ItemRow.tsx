@@ -1,11 +1,8 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
-import IconButton from "@/components/buttons/IconButton"
-import CopyIcon from "@/icons/CopyIcon"
+import CopyButton from "@/components/buttons/CopyButton"
 import { Log } from "@/stores/log/utils"
-import dayjs from "dayjs"
-import { FunctionComponent, useMemo, useState } from "react"
-import cls from "./ItemRow.module.css"
 import { dateShow } from "@/utils/time"
+import { FunctionComponent, useMemo } from "react"
+import cls from "./ItemRow.module.css"
 
 
 
@@ -22,19 +19,11 @@ const ItemRow: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const [bttCopyVisible, setBttCopyVisible] = useState(false)
 
 	// HOOKs
 
 	// HANDLER
 	const handleClick = () => onClick?.(log)
-	const handleClipboardClick = (e: React.MouseEvent<Element, MouseEvent>) => {
-		e.preventDefault()
-		e.stopPropagation()
-		navigator.clipboard.writeText(log.body)
-	}
-	const handleTitleEnter = () => setBttCopyVisible(true)
-	const handleTitleLeave = () => setBttCopyVisible(false)
 
 	// RENDER
 	if (!log) return null
@@ -49,21 +38,9 @@ const ItemRow: FunctionComponent<Props> = ({
 		<div className={clsRoot}
 			onClick={handleClick}
 		>
-			<div className={cls.title}
-				onMouseEnter={handleTitleEnter}
-				onMouseLeave={handleTitleLeave}
-			>
+			<div className={`hover-container ${cls.title}`}>
 				{log.title ?? "--"}
-
-				{bttCopyVisible && (
-					<TooltipWrapCmp className={`${cls.boxCopy} ${clsBg}`}
-						content="COPY"
-					>
-						<IconButton onClick={handleClipboardClick}>
-							<CopyIcon />
-						</IconButton>
-					</TooltipWrapCmp>
-				)}
+				<CopyButton absolute value={log.body} />
 			</div>
 
 			<div className={cls.body}>

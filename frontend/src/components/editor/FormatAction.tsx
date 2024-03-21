@@ -1,11 +1,11 @@
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
-import CopyIcon from "@/icons/CopyIcon"
 import FormatIcon from "@/icons/FormatIcon"
 import { EditorStore } from "@/stores/stacks/editorBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import CopyButton from "../buttons/CopyButton"
 
 
 
@@ -27,18 +27,13 @@ const FormatAction: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleOpenDialogFormats = () => store.setFormatsOpen(true)
-	const handleCopy = () => navigator.clipboard.writeText(store.getEditorText())
 	const handleFormat = () => storeSa.editorRef.format()
 
 	// RENDER
 	const formatLabel = storeSa.format?.toUpperCase() ?? ""
 
 	return <>
-		<TooltipWrapCmp content="COPY">
-			<IconButton effect
-				onClick={handleCopy}
-			><CopyIcon /></IconButton>
-		</TooltipWrapCmp>
+		<CopyButton value={()=>store.getEditorText()} />
 		<TooltipWrapCmp content="FORMAT">
 			<IconButton effect
 				onClick={handleFormat}

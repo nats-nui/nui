@@ -42,10 +42,3 @@
 	opacity: .7;
 	align-self: flex-end;
 }
-
-.boxCopy {
-	position: absolute; 
-	top: 0px; 
-	right: 0px; 
-	display: flex;
-}
