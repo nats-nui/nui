@@ -42,11 +42,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isBucketsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.BUCKETS
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
-	const variant = cnnDetailSa.colorVar
 
-	return <FrameworkCard
+	return <FrameworkCard variantBg
 		store={cnnDetailSo}
-		variantBg={variant}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={
 			<BoxV style={{ marginTop: 10 }}>

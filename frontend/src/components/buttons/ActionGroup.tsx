@@ -1,18 +1,20 @@
-import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
+import cls from "./ActionGroup.module.css"
 
 
 
 interface Props {
 	children: React.ReactNode
+	className?: string
 	style?: React.CSSProperties
 }
 
 /**
- * Lo STACK di una collezione di CONNECTIONs
+ * banda superiore di una CARD dove sono presenti i bottoni
  */
 const ActionGroup: FunctionComponent<Props> = ({
 	children,
+	className,
 	style,
 }) => {
 
@@ -23,21 +25,12 @@ const ActionGroup: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	if ( !children ) return null
-	
-	return <div style={{ ...cssRoot, ...style }}>
+	if (!children) return null
+	const clsRoot = `${cls.root} ${className}`
+
+	return <div className={clsRoot} style={style}>
 		{children}
 	</div>
 }
 
 export default ActionGroup
-
-const cssRoot: React.CSSProperties = {
-	display: "flex", gap: 5,
-	minHeight: 32,
-	alignItems: "center",
-	justifyContent: 'flex-end',
-	padding: 3,
-	backgroundColor:"rgb(0 0 0 / 50%)",
-	color: layoutSo.state.theme.palette.actionsGroup.fg,
-}

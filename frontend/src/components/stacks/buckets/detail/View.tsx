@@ -37,10 +37,8 @@ const BucketDetailView: FunctionComponent<Props> = ({
 	// RENDER
 	const inRead = bucketSa.editState == EDIT_STATE.READ
 	const isKVEntriesSelect = bucketSa.linked?.state.type == DOC_TYPE.KVENTRIES
-	const variant = bucketSa.colorVar
 
-	return <FrameworkCard
-		variantBg={variant}
+	return <FrameworkCard variantBg
 		store={bucketSo}
 		actionsRender={<ActionsCmp store={bucketSo} />}
 		iconizedRender={

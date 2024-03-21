@@ -24,7 +24,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 310,
-		colorVar: COLOR_VAR.YELLOW,
+		colorVar: COLOR_VAR.MAGENTA,
 		//#endregion
 	},
 

@@ -26,7 +26,7 @@ const setup = {
 		revisionSelected: <number>null,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.YELLOW,
+		colorVar: COLOR_VAR.MAGENTA,
 		width: 420,
 		//#endregion
 	},

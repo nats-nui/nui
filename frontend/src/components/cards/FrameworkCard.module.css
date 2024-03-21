@@ -1,0 +1,32 @@
+.root {
+	position: relative;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	transition: opacity 300ms;
+}
+.iconized {
+	align-items: center;
+}
+.linked {
+	padding-left: 8px;
+}
+.drag {
+	opacity: .5;
+}
+
+
+
+.actions {
+	align-self: stretch;
+	justify-content: center;
+}
+
+.children {
+	flex: 1;
+	overflow-y: auto;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+}
