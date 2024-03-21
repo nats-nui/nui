@@ -34,12 +34,10 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 	const handleHistorySelect = (index: number) => kventrySo.revisionSelect(kventrySa.kventry.history[index]?.revision)
 
 	// RENDER
-	const variant = kventrySa.colorVar
 	const history = kventrySa.kventry.history?.sort((h1, h2) => h2.revision - h1.revision)
 	const historySelected = kventrySo.getKVSelectIndex()
 
-	return <FrameworkCard
-		variantBg={variant}
+	return <FrameworkCard variantBg
 		store={kventrySo}
 		actionsRender={<ActionsCmp store={kventrySo} />}
 	>

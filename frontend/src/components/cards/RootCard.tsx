@@ -119,15 +119,3 @@ const cssDesk: React.CSSProperties = {
 	display: "flex",
 	position: "relative",
 }
-
-// const cssLoading: React.CSSProperties = {
-// 	position: 'absolute',
-// 	height: 'calc(100% - 48px)',
-// 	width: '100%',
-// 	backgroundColor: 'rgba(0, 0, 0, 0.6)',
-// 	zIndex: '1',
-// 	display: 'flex', flexDirection: "column",
-// 	alignItems: 'center',
-// 	justifyContent: 'center',
-// 	bottom: '0px',
-// }

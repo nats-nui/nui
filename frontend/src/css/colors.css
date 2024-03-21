@@ -1,12 +1,18 @@
 :root {
 	--var-0: rgba(0,0,0,.4);
+	/* CONNECTIONS */
 	--var-1: #BBFB35;
+	/* MESSAGES */
 	--var-2: #10F3F3;
-	--var-3: #C220FA;
+	/* BUCKETS KVENTRY */
+	--var-3: #6affab;
+	--var-3-l1: #b0ffd2;
+	/* STREAMS */
 	--var-4: #EBFB35;
 	--var-4-l1: #f9ffb3;
-	--var-5: #F51DDF;
-	--var-5-l1: #f374e6;
+	/* CONSUMER */
+	--var-5: #f374e6;
+	--var-5-l1: #F51DDF;
 
 
 
@@ -18,6 +24,12 @@
 	--bg-2: #2e2e2e;
 }
 
+
+
+
+/* 
+#6affab
+#69c9ff */
 
 .color-text {
 	color: var(--text-bg);
@@ -58,6 +70,9 @@
 }
 .var3 .color-bg {
 	background: var(--var-3);
+}
+.var3 .color-bg-l1 {
+	background: var(--var-3-l1);
 }
 
 .var4 .color-fg {

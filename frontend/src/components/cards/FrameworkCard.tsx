@@ -1,13 +1,13 @@
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { FunctionComponent } from "react"
-import Header from "./Header"
-import ActionGroup from "../buttons/ActionGroup"
-import layoutSo from "@/stores/layout"
-import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
-import IconButton from "../buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
+import { ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_ANIM } from "@/types"
+import { FunctionComponent } from "react"
+import ActionGroup from "../buttons/ActionGroup"
+import IconButton from "../buttons/IconButton"
 import ErrorBoundary from "./ErrorBoundary"
+import cls from "./FrameworkCard.module.css"
+import Header from "./Header"
 
 
 
@@ -15,7 +15,7 @@ interface Props {
 	store: ViewStore
 	style?: React.CSSProperties
 	styleBody?: React.CSSProperties
-	variantBg?: number
+	variantBg?: boolean
 	actionsRender?: React.ReactNode
 	iconizedRender?: React.ReactNode
 	children: React.ReactNode
@@ -26,7 +26,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	store,
 	style,
 	styleBody,
-	variantBg = 0,
+	variantBg,
 	actionsRender,
 	iconizedRender,
 	children,
@@ -39,17 +39,16 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	const inRoot = !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
+	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`
 
-	return <div 
-		style={{ ...cssRoot(variantBg, inDrag, isIconized, inRoot), ...style }} 
-	>
+	return <div className={clsRoot} style={style} >
 
 		<Header store={store} />
 
 		<ErrorBoundary>
 
 			{isIconized ? <>
-				<ActionGroup style={cssActions}>
+				<ActionGroup className={cls.actions}>
 					<IconButton
 						onClick={handleClose}
 					><CloseIcon /></IconButton>
@@ -60,42 +59,14 @@ const FrameworkCard: FunctionComponent<Props> = ({
 					{actionsRender}
 				</ActionGroup>
 
-				<div style={{ ...cssChildren, ...styleBody }}>
+				<div className={cls.children} style={styleBody}>
 					{children}
 				</div>
 			</>}
 
 		</ErrorBoundary>
-		
+
 	</div>
 }
 
 export default FrameworkCard
-
-const cssRoot = (variant: number, inDrag: boolean, isIconized: boolean, inRoot: boolean): React.CSSProperties => ({
-	position: "relative",
-	flex: 1,
-	display: "flex",
-	flexDirection: "column",
-	height: "100%",
-	alignItems: isIconized ? "center" : null,
-	paddingLeft: inRoot ? null : 8,
-
-	backgroundColor: layoutSo.state.theme.palette.var[variant]?.bg,
-	color: layoutSo.state.theme.palette.var[variant]?.fg,
-
-	transition: `opacity ${ANIM_TIME_CSS}ms`,
-	opacity: inDrag ? .5 : null,
-})
-
-const cssActions: React.CSSProperties = {
-	alignSelf: 'stretch',
-	justifyContent: 'center',
-}
-
-const cssChildren: React.CSSProperties = {
-	flex: 1,
-	overflowY: "auto",
-	padding: 10,
-	display: "flex", flexDirection: "column",
-}
