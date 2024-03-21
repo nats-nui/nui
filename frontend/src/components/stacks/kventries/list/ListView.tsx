@@ -12,6 +12,7 @@ import { FunctionComponent, useEffect } from "react"
 import FindInput from "@/components/input/FindInput"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import OptionsCmp from "@/components/options/OptionsCmp"
+import { dateShow } from "@/utils/time"
 
 
 
@@ -76,7 +77,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 				{ label: "REVISION", getValue: b => b.revision },
 				{
 					label: "LAST",
-					getShow: i => dayjs(i.lastUpdate).format("DD/MM/YYYY HH:mm"),
+					getShow: i => dateShow(i.lastUpdate),
 					getValue: b => dayjs(b.lastUpdate).valueOf()
 				},
 				//{ label: "OPERATION", getValue: b => b.operation },

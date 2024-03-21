@@ -1,6 +1,7 @@
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import { StreamStore } from "@/stores/stacks/streams/detail"
+import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent } from "react"
@@ -27,8 +28,8 @@ const ShowForm: FunctionComponent<Props> = ({
 	if (!streamSa.stream?.config || !streamSa.stream?.state) return null
 	const config = streamSa.stream.config
 	const state = streamSa.stream.state
-	const firstTs = dayjs(state.firstTs).format("DD/MM/YYYY HH:mm")
-	const lastTs = dayjs(state.lastTs).format("DD/MM/YYYY HH:mm")
+	const firstTs = dateShow(state.firstTs)
+	const lastTs = dateShow(state.lastTs)
 
 	return <Form>
 

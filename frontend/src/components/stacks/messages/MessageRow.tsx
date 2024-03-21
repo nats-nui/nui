@@ -11,6 +11,7 @@ import { MSG_FORMAT } from "@/utils/editor"
 import dayjs from "dayjs"
 import { FunctionComponent, useMemo, useState } from "react"
 import cls from "./MessageRow.module.css"
+import { dateShow } from "@/utils/time"
 
 
 interface Props {
@@ -52,7 +53,7 @@ const MessageRow: FunctionComponent<Props> = ({
 	// RENDER
 	if (!message) return null
 	const time = useMemo(
-		() => message.receivedAt ? dayjs(message.receivedAt).format("YYYY-MM-DD HH:mm:ss") : null,
+		() => message.receivedAt ? dateShow(message.receivedAt) : null,
 		[message.receivedAt]
 	)
 	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2
