@@ -6,7 +6,7 @@ import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CloseIcon from "@/icons/CloseIcon"
-import { Message } from "@/types/Message"
+import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
 import { dateShow } from "@/utils/time"
 import { FunctionComponent, useMemo } from "react"
@@ -50,6 +50,17 @@ const MessageRow: FunctionComponent<Props> = ({
 	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2
 	const clsRoot = `${cls.root} ${clsBg}`
 
+
+	if (message.seqNum == MESSAGE_TYPE.SUBJECT_CHANGE) {
+		return <div className={`color-bg ${cls.sbj_root}`}>
+			<div className="bars-alert-bg" style={{ height: 10 }} />
+			<div className={cls.sbj_title}>{message.subject}</div>
+			<div className={cls.sbj_list}>{message.payload}</div>
+			<div className={cls.footer}>{time}</div>
+			<div className="bars-alert-bg" style={{ height: 10 }} />
+		</div>
+	}
+
 	return (
 		<div className={`hover-container ${clsRoot}`}
 			onClick={handleClick}
@@ -60,8 +71,8 @@ const MessageRow: FunctionComponent<Props> = ({
 						{message.subject}
 					</span>
 				</div>
-				<div className={`hover-show ${cls.boxActions} ${clsBg}`}>
-					<CopyButton value={message.subject} label="COPY SUBJECT"/>
+				<div className={`hover-show ${cls.box_actions} ${clsBg}`}>
+					<CopyButton value={message.subject} label="COPY SUBJECT" />
 					<CopyButton value={message.payload} />
 					{!!onDelete && (
 						<TooltipWrapCmp content="DELETE">

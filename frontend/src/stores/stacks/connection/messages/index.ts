@@ -6,7 +6,7 @@ import { buildMessageDetail, buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
-import { Message } from "@/types/Message"
+import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { MessageSendState } from "../messageSend"
 import { ViewState } from "../../viewBase"
@@ -45,10 +45,12 @@ const setup = {
 		},
 		getSocketServiceId: (_: void, store?: MessagesStore) => `msg::${store.state.uuid}`,
 		getFiltered: (_: void, store?: MessagesStore) => {
-			const text = store.state.textSearch?.toLocaleLowerCase()
-			if (!text || text.trim().length == 0) return store.state.messages
-			return store.state.messages.filter(h =>
-				h.payload.toLowerCase().includes(text) || h.subject.toLowerCase().includes(text)
+			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
+			if (!text || text.length == 0) return store.state.messages
+			return store.state.messages.filter(message =>
+				message.seqNum == MESSAGE_TYPE.SUBJECT_CHANGE
+				|| message.payload.toLowerCase().includes(text)
+				|| message.subject.toLowerCase().includes(text)
 			)
 		},
 
@@ -84,7 +86,7 @@ const setup = {
 
 
 		connect(_: void, store?: MessagesStore) {
-console.log("CONNECT")
+			console.log("CONNECT")
 			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
 			ss.onOpen = () => {
 				store.sendSubscriptions()
@@ -96,14 +98,13 @@ console.log("CONNECT")
 			}
 		},
 		disconnect(_: void, store?: MessagesStore) {
-console.log("DISCONNECT")			
+			console.log("DISCONNECT")
 			socketPool.destroy(store.getSocketServiceId())
 		},
 
 		/** aggiungo un messaggio di questa CARD */
 		addMessage(msg: PayloadMessage, store?: MessagesStore) {
 			const message: Message = {
-				//seqNum: createUUID(),
 				subject: msg.subject,
 				payload: msg.payload as string,
 				receivedAt: Date.now(),
@@ -118,13 +119,21 @@ console.log("DISCONNECT")
 			if (store.state.lastSubjects && store.state.lastSubjects.length == subjects.length && subjects.every(s => store.state.lastSubjects.includes(s))) return
 			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjects)
 			store.state.lastSubjects = subjects
+
+			const msgChangeSubj: Message = {
+				seqNum: MESSAGE_TYPE.SUBJECT_CHANGE,
+				subject: "LISTENING ON SUBJECTS",
+				payload: subjects.join(", "),
+				receivedAt: Date.now(),
+			}
+			store.setMessages([...store.state.messages, msgChangeSubj])
 		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
-			docsSo.addLink({ 
-				view: buildMessageDetail(message, store.state.format), 
-				parent: store, 
-				anim: true, 
+			docsSo.addLink({
+				view: buildMessageDetail(message, store.state.format),
+				parent: store,
+				anim: true,
 			})
 		},
 		/** apertura CARD MESSAGE-SEND */
@@ -152,10 +161,10 @@ console.log("DISCONNECT")
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 	},
 
-	onListenerChange: (store: MessagesStore, type:LISTENER_CHANGE ) => {
-		if ( store._listeners.size == 1 && type== LISTENER_CHANGE.ADD) {
+	onListenerChange: (store: MessagesStore, type: LISTENER_CHANGE) => {
+		if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
 			store.connect()
-		} else if (store._listeners.size == 0 ) {
+		} else if (store._listeners.size == 0) {
 			store.disconnect()
 		}
 	}
