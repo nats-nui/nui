@@ -17,9 +17,9 @@ const setup = {
 	state: {
 		/** dialog SUBSCRIPTION aperta/chiusa */
 		subOpen: false,
-		/** connection caricata nella CARD */
+		/** connection cache per l'edit */
 		connection: <Connection>null,
-		
+
 		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
@@ -39,14 +39,16 @@ const setup = {
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connection: state.connection,
-				editState: state.editState,
 			}
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: CnnDetailStore): CnnListStore => docSo.find({
-			type: DOC_TYPE.CONNECTIONS,
-		} as Partial<CnnListState>) as CnnListStore,
+		getConnection: (_: void, store?: CnnDetailStore) => {
+			if (store.state.editState == EDIT_STATE.READ) {
+				return cnnSo.getById(store.state.connection.id)
+			}
+			return store.state.connection
+		},
 	},
 
 	actions: {
@@ -56,17 +58,16 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnDetailState
 			state.connection = data.connection
-			state.editState = data.editState
 		},
-		onCreate: (_: void, store?: ViewStore) => { 
+		onCreate: (_: void, store?: ViewStore) => {
 			const cnnStore = store as CnnDetailStore
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
-			if ( options == DOC_TYPE.MESSAGES ) {
+			if (options == DOC_TYPE.MESSAGES) {
 				cnnStore.openMessages()
-			} else if ( options == DOC_TYPE.STREAMS ) {
+			} else if (options == DOC_TYPE.STREAMS) {
 				cnnStore.openStreams()
-			} else if ( options == DOC_TYPE.BUCKETS ) {
+			} else if (options == DOC_TYPE.BUCKETS) {
 				cnnStore.openBuckets()
 			}
 			store.state.docAniDisabled = false
@@ -76,8 +77,7 @@ const setup = {
 		/** ripristino la CONNECTION visualizzata da quella contenuta nelle CONNECTIONS */
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
-			store.setConnection(cnn)
-			store.setEditState(EDIT_STATE.READ)
+			store.setConnection({ ...cnn })
 		},
 
 		/** apertura della CARD MESSAGES */
@@ -86,13 +86,12 @@ const setup = {
 		},
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
-			docSo.addLink({  view: buildStreams(store.state.connection?.id),  parent: store,  anim: true  })
+			docSo.addLink({ view: buildStreams(store.state.connection?.id), parent: store, anim: true })
 		},
 		/** apertura della CARD BUCKETS */
 		openBuckets(_: void, store?: CnnDetailStore) {
 			docSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
 		},
-
 	},
 
 	mutators: {

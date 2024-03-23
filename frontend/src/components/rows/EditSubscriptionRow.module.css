@@ -1,0 +1,12 @@
+.root {
+	display: flex;
+	align-items: start;
+}
+
+.input {
+	flex: 1;
+}
+
+.disabled {
+	opacity: .5;
+}

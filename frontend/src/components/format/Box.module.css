@@ -1,0 +1,14 @@
+.root {
+	display: flex; 
+	flex: 1;
+	align-items: center; 
+	position: relative;
+	gap: 5px;
+}
+
+.enter {
+	display: none;
+	position: absolute;
+	top: 2px; 
+	right: 1px;
+}

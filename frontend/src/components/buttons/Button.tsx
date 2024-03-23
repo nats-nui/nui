@@ -1,12 +1,14 @@
-import layoutSo from "@/stores/layout"
 import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useState } from "react"
+import cls from "./Button.module.css"
 
 
 
 interface Props {
 	select?: boolean
 	children?: React.ReactNode
+
+	className?:string
 	style?: React.CSSProperties
 
 	disabled?: boolean
@@ -16,6 +18,8 @@ interface Props {
 const Button: FunctionComponent<Props> = ({
 	select,
 	children,
+
+	className,
 	style,
 
 	disabled,
@@ -35,14 +39,10 @@ const Button: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const styRoot: React.CSSProperties = {
-		...cssRoot,
-		
-		...(disabled ? cssDisabled : {}),
-		...style,
-	}
+	const clsRoot = `${(mouseOver || select) ? "color-bg color-text" : ""} ${cls.root} ${disabled?cls.disabled:""} ${className}`
+
 	return (
-		<div style={styRoot} className={(mouseOver || select) ? "color-bg color-text" : null}
+		<div style={style} className={clsRoot}
 			onClick={handleClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}

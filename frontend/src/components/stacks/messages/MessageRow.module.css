@@ -15,10 +15,12 @@
 	position: relative;
 	display: flex;
 	align-items: start;
-	font-size: 10px;
+	font-size: 12px;
+	font-weight: 400;
 }
 
 .subject {
+	font-weight: 600;
 	flex: 1;
 	overflow-wrap: anywhere;
 }

@@ -61,7 +61,6 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				subscriptions: state.subscriptions,
-				history: state.messages,
 				textSearch: state.textSearch,
 				format: state.format,
 			}
@@ -78,7 +77,6 @@ const setup = {
 			const state = store.state as MessagesState
 			state.connectionId = data.connectionId
 			state.subscriptions = data.subscriptions
-			state.messages = data.messages
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},

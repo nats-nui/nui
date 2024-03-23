@@ -1,5 +1,6 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
+import OptionsCmp from "@/components/options/OptionsCmp"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
@@ -9,8 +10,6 @@ import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
-import MenuButton from "../../buttons/MenuButton"
-import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -33,7 +32,7 @@ const CnnListView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		cnnSo.fetch()
+		cnnSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -43,14 +42,6 @@ const CnnListView: FunctionComponent<Props> = ({
 		cnnSo.delete(selected)
 		cnnListSo.select(null)
 	}
-	// const handleMessages = (e: React.MouseEvent, cnn: Connection) => {
-	// 	e.stopPropagation()
-	// 	cnnListSo.openMessages(cnn.id)
-	// }
-	// const handleStreams = (e: React.MouseEvent, cnn: Connection) => {
-	// 	e.stopPropagation()
-	// 	cnnListSo.openStreams(cnn.id)
-	// }
 
 	// RENDER
 	const connnections = cnnSa.all
@@ -88,24 +79,12 @@ const CnnListView: FunctionComponent<Props> = ({
 				icon={<div style={cssLed(cnn.status ?? CNN_STATUS.UNDEFINED)} />}
 				selected={isSelected(cnn)}
 				onClick={() => handleSelect(cnn)}
-			// testRender={<>
-			// 	<Button label="Str" onClick={(e) => handleStreams(e, cnn)} />
-			// 	<Button label="Msg" onClick={(e) => handleMessages(e, cnn)} />
-			// 	<Button label="Stt" />
-			// </>}
 			/>
 		))}
 	</FrameworkCard>
 }
 
 export default CnnListView
-
-const cssIconized: React.CSSProperties = {
-	marginTop: 25,
-	display: "flex",
-	flexDirection: "column",
-	gap: 10,
-}
 
 const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 	width: 10, height: 10,

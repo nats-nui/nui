@@ -49,7 +49,7 @@ const setup = {
 		},
 		//#endregion
 
-		/** apro la CARD del dettaglio */
+		/** apro/chiudo la CARD del dettaglio */
 		select(cnnId: string, store?: CnnListStore) {
 			const connection = cnnSo.getById(cnnId)
 			const oldId = store.state.select

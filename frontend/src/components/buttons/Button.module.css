@@ -1,0 +1,13 @@
+
+.root {
+	cursor: pointer;
+	border-radius: 5px;
+	padding: 5px 6px;
+	font-size: 10px; 
+	font-weight: 800;
+	transition: background-color 300ms, color 200ms;
+}
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}

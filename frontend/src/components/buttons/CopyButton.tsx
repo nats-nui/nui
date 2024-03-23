@@ -9,6 +9,7 @@ import cls from "./CopyButton.module.css"
 interface Props {
 	value?: string | (() => string)
 	absolute?: boolean
+	label?:string
 	className?: string
 	style?: React.CSSProperties
 }
@@ -16,6 +17,7 @@ interface Props {
 const CopyButton: FunctionComponent<Props> = ({
 	value,
 	absolute,
+	label = "COPY",
 	className,
 	style,
 }) => {
@@ -37,7 +39,7 @@ const CopyButton: FunctionComponent<Props> = ({
 		<TooltipWrapCmp
 			className={`${absolute ? `${cls.absolute} hover-show` : ""} ${className}`}
 			style={style}
-			content="COPY"
+			content={label}
 		>
 			<IconButton onClick={handleClipboardClick}>
 				<CopyIcon />

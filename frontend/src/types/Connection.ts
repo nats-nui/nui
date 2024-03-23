@@ -21,6 +21,8 @@ export interface Auth {
 export interface Subscription {
 	subject: string
 	disabled?: boolean
+	favorite?: boolean
+
 }
 
 export enum AUTH_MODE {
