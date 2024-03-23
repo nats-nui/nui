@@ -111,8 +111,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 					<List<string>
 						style={{ maxHeight: 200, overflowY: "auto" }}
-						//items={subjects}
-						items={["primo", "secondo",]}
+						items={subjects}
 						RenderRow={({ item }) => <Box>
 							<IconToggle
 								check={filter.subjects.indexOf(item) != -1}
