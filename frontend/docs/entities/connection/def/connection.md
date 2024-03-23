@@ -66,7 +66,6 @@ Una volta stabilita la connessione con NUI è possibile cambiarli
 ```typescript
 Subscription {
 	subject: string
-	disabled?: boolean
 }
 ```
 
