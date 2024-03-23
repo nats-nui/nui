@@ -5,7 +5,7 @@ export enum COLOR_VAR {
 	DEFAULT = 0,
 	GREEN,
 	CYAN,
-	MAGENTA,
+	MINT,
 	YELLOW,
 	FUCHSIA,
 }

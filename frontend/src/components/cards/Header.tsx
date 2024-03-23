@@ -8,7 +8,7 @@ import mouseSo from "@/stores/mouse"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useState } from "react"
+import React, { FunctionComponent, useMemo, useState } from "react"
 import TooltipWrapCmp from "../TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
@@ -62,23 +62,25 @@ const Header: FunctionComponent<Props> = ({
 		docSo.focus(store)
 	}
 	const handleToggleIconize = () => {
-		if (!isIconized) docSo.pinned(store); else docSo.pinnedDelete(store)
+		if (!isPinned) docSo.pinned(store); else docSo.pinnedDelete(store)
 	}
 
 	// RENDER
 	if (!store) return null
+	const [title, subTitle, isAnchored, isPinned ] = useMemo(()=>[
+		store.getTitle(),
+		store.getSubTitle(),
+		docSo.isAnchored(store),
+		docSo.isPinned(store.state.uuid),
+	],[store.state])
 	const isDraggable = store.state.draggable
 	const haveLinkDetachable = store.state.linked?.state.draggable
-	const title = store.getTitle()
-	const subTitle = store.getSubTitle()
 	const inRoot = !store.state.parent
-	const isAnchored = docSo.isAnchored(store)
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
-	const isIconized = docSo.isPinned(store.state.uuid)
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showDetachable = !inRoot && enter
 	const showBttClose = !store.state.unclosable
-	const showBttIconize = inRoot && enter && store.state.pinnable
+	const showBttPin = inRoot && enter && store.state.pinnable
 	const tooltip = isCompact
 		? <div>
 			<div className="lbl-header-title">{title}</div>
@@ -122,7 +124,7 @@ const Header: FunctionComponent<Props> = ({
 
 				<div style={cssButtons}>
 					<div style={{ display: "flex" }}>
-						{showBttIconize && (
+						{showBttPin && (
 							<IconButton
 								onClick={handleToggleIconize}
 							><IconizedIcon /></IconButton>

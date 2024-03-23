@@ -32,6 +32,11 @@ const setup = {
 		},
 		//#endregion
 
+		async fetchIfVoid(_: void, store?: ConnectionStore) {
+			if (!!store.state.all) return
+			await store.fetch()
+		},
+
 		async delete(id: string, store?: ConnectionStore) {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
@@ -72,5 +77,6 @@ export interface ConnectionStore extends StoreCore<ConnectionState>, LoadBaseSto
 }
 
 const cnnSetup = mixStores(loadBaseSetup, setup)
-const store = createStore(cnnSetup) as ConnectionStore
-export default store
+const cnnSo = createStore(cnnSetup) as ConnectionStore
+
+export default cnnSo

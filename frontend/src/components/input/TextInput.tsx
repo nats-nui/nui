@@ -1,4 +1,5 @@
 import React, { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
+import cls from "./TextInput.module.css"
 
 
 
@@ -7,6 +8,7 @@ export interface TextInputProps {
 	placeholder?: string
 	autoFocus?: boolean
 	readOnly?: boolean
+	className?: string
 	style?: React.CSSProperties
 	focus?: boolean
 	multiline?: boolean
@@ -23,6 +25,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		placeholder,
 		autoFocus,
 		readOnly,
+		className,
 		style,
 		focus,
 		multiline,
@@ -74,7 +77,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 
 	// RENDER
 	if (readOnly) return (
-		<div className="lbl-input-readonly"
+		<div className={`lbl-input-readonly ${className}`}
 			style={style}
 		>
 			{value ?? ""}
@@ -84,7 +87,8 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	const TagInput = multiline ? "textarea" : "input"
 
 	return <TagInput ref={inputRef as any}
-		style={{ ...cssRoot, ...style }}
+		className={`${cls.root} ${className}`}
+		style={style}
 		placeholder={placeholder}
 		autoFocus={autoFocus}
 		spellCheck="false"
@@ -99,9 +103,5 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 }
 
 export default forwardRef(TextInput)
-
-const cssRoot: React.CSSProperties = {
-	height: "auto",
-}
 
 type HTMLInput = HTMLInputElement | HTMLTextAreaElement

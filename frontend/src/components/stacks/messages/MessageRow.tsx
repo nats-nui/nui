@@ -55,10 +55,13 @@ const MessageRow: FunctionComponent<Props> = ({
 			onClick={handleClick}
 		>
 			<div className={cls.title}>
-				<div style={{ flex: 1 }}>
-					{message.seqNum} <span className={cls.subject}>{message.subject}</span>
+				<div style={{ flex: 1, display: "flex" }}>
+					{message.seqNum} <span className={`${cls.subject} hover-container`}>
+						{message.subject}
+					</span>
 				</div>
 				<div className={`hover-show ${cls.boxActions} ${clsBg}`}>
+					<CopyButton value={message.subject} label="COPY SUBJECT"/>
 					<CopyButton value={message.payload} />
 					{!!onDelete && (
 						<TooltipWrapCmp content="DELETE">

@@ -98,7 +98,7 @@ function ListObjects<T>({
 		<ElementDialog
 			element={elementSource}
 			store={store}
-			//width={150}
+			width={150}
 			title="AUTH"
 			onClose={(e) => {
 				if (ref && ref.current.contains(e.target)) return

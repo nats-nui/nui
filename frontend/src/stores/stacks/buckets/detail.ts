@@ -23,7 +23,7 @@ const setup = {
 		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.MAGENTA,
+		colorVar: COLOR_VAR.MINT,
 		width: 230,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion

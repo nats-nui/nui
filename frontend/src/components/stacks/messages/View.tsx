@@ -1,38 +1,32 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
-import EditList from "@/components/lists/EditList"
-import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
 import DropIcon from "@/icons/DropIcon"
 import cnnSo, { ConnectionState } from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
-import { Subscription } from "@/types"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
-import Dialog from "../../dialogs/Dialog"
 import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
+import SubjectsDialog from "./SubjectsDialog"
 
 
 
 interface Props {
 	store?: MessagesStore
-	style?: React.CSSProperties,
 }
 
 const MessagesView: FunctionComponent<Props> = ({
 	store: msgSo,
-	style,
 }) => {
 
 	// STORE
 	const msgSa = useStore(msgSo) as MessagesState
-	const cnnSa = useStore(cnnSo) as ConnectionState
+	//const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
@@ -53,22 +47,10 @@ const MessagesView: FunctionComponent<Props> = ({
 	}, [msgSo.state.messages])
 
 	// HANDLER
-	//#region  SUBSCRIPTIONS
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
 		if (select) return
 		msgSo.setSubscriptionsOpen(!select)
 	}
-	const handleCloseSubsDialog = () => {
-		msgSo.setSubscriptionsOpen(false)
-	}
-	const handleChangeSubs = (newSubs: Subscription[]) => {
-		msgSo.setSubscriptions(newSubs)
-		debounce("MessagesView:handleChangeSubs", () => {
-			msgSo.sendSubscriptions()
-		}, 2000)
-	}
-	//#endregion
-
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)
@@ -121,20 +103,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 
-		<Dialog
-			title="SUBJECTS"
-			width={200}
-			open={msgSa.subscriptionsOpen}
-			store={msgSo}
-			onClose={handleCloseSubsDialog}
-		>
-			<EditList<Subscription>
-				items={msgSa.subscriptions}
-				onItemsChange={handleChangeSubs}
-				onNewItem={() => ({ subject: "<new>" })}
-				RenderRow={EditSubscriptionRow}
-			/>
-		</Dialog>
+		<SubjectsDialog store={msgSo}/>
 
 		<FormatDialog store={msgSo as any} />
 

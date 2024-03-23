@@ -2,9 +2,11 @@ import { DOC_ANIM, DOC_TYPE } from "@/stores/docs/types"
 import { deepEqual } from "@/utils/object"
 import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
+import { CnnListStore } from "../stacks/connection"
+import { ViewLogStore } from "../stacks/log"
 import { ViewStore } from "../stacks/viewBase"
-import { forEachViews, getById } from "./utils/manage"
 import { buildStore } from "./utils/factory"
+import { forEachViews, getById } from "./utils/manage"
 
 
 
@@ -22,9 +24,9 @@ const setup = {
 		menu: <ViewStore[]>[],
 
 		/** CARD delle CONNECTIONS */
-		connView: <ViewStore>null,
+		connView: <CnnListStore>null,
 		/** CARD dei LOGS */
-		logsView: <ViewStore>null,
+		logsView: <ViewLogStore>null,
 
 		anchored: 0,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
@@ -242,8 +244,6 @@ export interface DocStore extends StoreCore<DocState>, DocGetters, DocActions, D
 	state: DocState
 }
 const docsSo = createStore(setup) as DocStore
-docsSo.state.connView = buildStore({ type: DOC_TYPE.CONNECTIONS })
-docsSo.state.logsView = buildStore({ type: DOC_TYPE.LOGS })
 
 export default docsSo
 

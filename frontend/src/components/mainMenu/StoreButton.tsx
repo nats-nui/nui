@@ -26,6 +26,7 @@ const StoreButton: FunctionComponent<Props> = ({
 	const handleCloseStoreClick = (store: ViewStore) => docSo.pinnedDelete(store)
 
 	// RENDER
+	if (!store) return null
 	const type = store.state.type
 	const cls = `var${store.state.colorVar}`
 	const canDelete = store.state.pinnable

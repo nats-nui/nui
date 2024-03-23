@@ -82,9 +82,9 @@ const AuthForm: FunctionComponent<Props> = ({
 				/></BoxV>
 			</>,
 		}[authEdit.mode]}
-		
+
 		<div style={{ display: "flex", gap: 5 }}>
-			<Button children="CANCEL"
+			<Button children={readOnly ? "CLOSE" : "CANCEL"}
 				onClick={() => onClose(null)}
 			/>
 			{!readOnly && (
@@ -93,8 +93,8 @@ const AuthForm: FunctionComponent<Props> = ({
 				/>
 			)}
 		</div>
-		</Form>
-	
+	</Form>
+
 }
 
 export default AuthForm

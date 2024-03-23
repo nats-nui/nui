@@ -11,7 +11,7 @@ import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, EDIT_STATE, Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import AuthForm from "./AuthForm"
 
 
@@ -63,11 +63,12 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if (cnnDetailSa.connection == null) return null
-	const name = cnnDetailSa.connection.name ?? ""
-	const hosts = cnnDetailSa.connection.hosts ?? []
-	const subscriptions = cnnDetailSa.connection.subscriptions ?? []
-	const auths = cnnDetailSa.connection.auth ?? []
+	const connection = cnnDetailSo.getConnection()
+	const subscriptions = useMemo(() => (connection?.subscriptions ?? []).sort((s1, s2) => s1.subject.localeCompare(s2.subject)), [connection?.subscriptions])
+	if (connection == null) return null
+	const name = connection.name ?? ""
+	const hosts = connection.hosts ?? []
+	const auths = connection.auth ?? []
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
 	return <Form className="var-dialog">
@@ -96,18 +97,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 		</BoxV>
 
 		<div className="lbl-prop-title">ADVANCED</div>
-		<BoxV>
-			<div className="lbl-prop">FAVORITE SUBJECT</div>
-			<EditList<Subscription>
-				items={subscriptions}
-				onItemsChange={handleSubscriptionsChange}
-				onNewItem={() => ({ subject: "" })}
-				RenderRow={EditSubscriptionNoDisableRow}
-				placeholder="ex. house1.room4.*"
-				readOnly={inRead}
-				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
-			/>
-		</BoxV>
 
 		<BoxV>
 			<div className="lbl-prop">AUTH</div>
@@ -134,6 +123,19 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 						onClose={(auth) => { onClose(); handleAuthChange(auth, index) }}
 					/>
 				)}
+			/>
+		</BoxV>
+
+		<BoxV>
+			<div className="lbl-prop">FAVORITE SUBJECT</div>
+			<EditList<Subscription>
+				items={subscriptions}
+				onItemsChange={handleSubscriptionsChange}
+				onNewItem={() => ({ subject: "" })}
+				RenderRow={EditSubscriptionNoDisableRow}
+				placeholder="ex. house1.room4.*"
+				readOnly={inRead}
+				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
 			/>
 		</BoxV>
 

@@ -40,6 +40,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	width,
 	top = null,
 	children,
+	/** se minore di 0 non chiude automaticamente */
 	timeoutClose = 200,
 	onClose,
 }) => {

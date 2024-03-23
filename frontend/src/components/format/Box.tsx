@@ -1,16 +1,19 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
+import cls from "./Box.module.css"
 
 
 
 interface Props {
+	className?: string
 	style?: React.CSSProperties
 	preRender?: React.ReactNode
 	enterRender?: React.ReactNode
-	readOnly?:boolean
+	readOnly?: boolean
 	children?: React.ReactNode
 }
 
 const Box: FunctionComponent<Props> = ({
+	className,
 	style,
 	preRender,
 	enterRender,
@@ -20,22 +23,17 @@ const Box: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOK
-	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-	const handleEnter = () => setEnter(true)
-	const handleLeave = () => setEnter(false)
 
 	// RENDER
 	return (
-		<div
-			style={{ ...cssRoot, ...style }}
-			onMouseEnter={enterRender ? handleEnter : null}
-			onMouseLeave={enterRender ? handleLeave : null}
+		<div className={`hover-container ${cls.root} ${className}`}
+			style={style}
 		>
 			{preRender}
 			{children}
-			{!readOnly && enter && <div style={{ position: "absolute", top: 2, right: 1 }}>
+			{!readOnly && <div className={`hover-show ${cls.enter}`}>
 				{enterRender}
 			</div>}
 		</div>
@@ -44,10 +42,4 @@ const Box: FunctionComponent<Props> = ({
 
 export default Box
 
-const cssRoot:React.CSSProperties = {
-	display: "flex", 
-	flex: 1,
-	alignItems: "center", 
-	position: "relative",
-	gap: 5,
-}
+
