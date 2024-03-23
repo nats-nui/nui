@@ -1,15 +1,13 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
-import DropIcon from "@/icons/DropIcon"
-import cnnSo, { ConnectionState } from "@/stores/connections"
 import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
@@ -61,9 +59,8 @@ const MessagesView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	const messages = useMemo(() => msgSo.getFiltered(), [msgSa.textSearch, msgSa.messages])
 	const formatSel = msgSa.format.toUpperCase()
-	const variant = msgSa.colorVar
-	const history = msgSo.getFiltered()
 
 	return <FrameworkCard
 		store={msgSo}
@@ -88,22 +85,22 @@ const MessagesView: FunctionComponent<Props> = ({
 				onClick={handleSendClick}
 			/>
 		</>}
-		iconizedRender={
-			<div ref={dropRef} style={{ marginTop: 15, visibility: "hidden" }}>
-				<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg} />
-			</div>
-		}
+		// iconizedRender={
+		// 	<div ref={dropRef} style={{ marginTop: 15, visibility: "hidden" }}>
+		// 		<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg} />
+		// 	</div>
+		// }
 	>
 
 		<MessagesList
-			messages={history}
+			messages={messages}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}
 			onClear={handleClear}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 		/>
 
-		<SubjectsDialog store={msgSo}/>
+		<SubjectsDialog store={msgSo} />
 
 		<FormatDialog store={msgSo as any} />
 

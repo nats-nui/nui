@@ -6,8 +6,9 @@ import cnnSo from "@/stores/connections"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
+import IconToggle from "@/components/buttons/IconToggle"
 
 
 
@@ -23,7 +24,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 	const msgSa = useStore(msgSo) as MessagesState
 
 	// HOOKs
-	const [subscriptions, setSubscriptions] = useState([])
+	const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
 
 	useEffect(() => {
 		if (!msgSa.subscriptionsOpen) return
@@ -32,7 +33,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			...sub,
 			favorite: !!cnn.subscriptions.find(s => s.subject == sub.subject)
 		}))
-		setSubscriptions(subs)
+		setSubscriptions(subs.sort((s1, s2) => s1.subject.localeCompare(s2.subject)))
 
 	}, [msgSa.subscriptionsOpen])
 
@@ -54,15 +55,25 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		cnnSo.update({ id: msgSa.connectionId, subscriptions: newSubs })
 	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
-		console.log(newSubs)
 		setSubscriptions(newSubs)
+	}
+	const handleAllDisable = (check: boolean) => {
+		for (const sub of subscriptions) {
+			sub.disabled = !check
+		}
+		setSubscriptions([...subscriptions])
 	}
 
 	// RENDER
+	const allCheck = useMemo(() => subscriptions.every(s => !s.disabled), [subscriptions])
+
 	return <Dialog
 		timeoutClose={-1}
 		title={<div style={{ display: "flex", alignItems: "center" }}>
-			<CheckOnIcon style={{ marginRight: 5 }} />
+			<IconToggle style={{ marginTop: 3, marginRight: 6 }}
+				check={allCheck}
+				onChange={handleAllDisable}
+			/>
 			SUBJECTS
 		</div>}
 		width={200}

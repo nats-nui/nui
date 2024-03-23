@@ -39,13 +39,16 @@ const AlertDialog: FunctionComponent<Props> = ({
 
 		<div className="lbl-prop-title">DANGER</div>
 
-		<div style={cssBGStop}></div>
+		<div className="bars-alert-bg" style={{ height: 50 }} />
 
 		<div className="lbl-dialog-text">
 			{alert.body}
 		</div>
 
-		<div className="var-dialog" style={{display: "flex", gap: 15, marginTop: 10}} >
+		<div
+			className="var-dialog"
+			style={{ display: "flex", gap: 15, marginTop: 10 }}
+		>
 			<Button
 				children={alert.labelOk}
 				onClick={() => handleClose(true)}
@@ -55,19 +58,8 @@ const AlertDialog: FunctionComponent<Props> = ({
 				onClick={() => handleClose(false)}
 			/>
 		</div>
-		
+
 	</Dialog>
 }
 
 export default AlertDialog
-
-const cssBGStop:React.CSSProperties = {
-	height: 50,
-	background: `repeating-linear-gradient(
-		135deg,
-		${"transparent"},
-		${"transparent"} 10px,
-		#000 10px,
-		#000 20px
-	)`,
-}
