@@ -5,7 +5,7 @@ import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
@@ -49,7 +49,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
-	const messages = strMsgSa.messages
+	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])
 
 	return <FrameworkCard
 		store={strMsgSo}
