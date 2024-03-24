@@ -71,6 +71,14 @@ const setup = {
 		//#endregion
 
 		getIndexBySeq: (seq: number, store?: StreamMessagesStore) => store.state.messages.findIndex(m => m.seqNum == seq),
+		getFiltered: (_: void, store?: StreamMessagesStore) => {
+			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
+			if (!text || text.length == 0) return store.state.messages
+			return store.state.messages.filter(message =>
+				message.payload.toLowerCase().includes(text)
+				|| message.subject.toLowerCase().includes(text)
+			)
+		},
 
 	},
 

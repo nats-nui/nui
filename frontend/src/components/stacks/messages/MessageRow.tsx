@@ -66,11 +66,12 @@ const MessageRow: FunctionComponent<Props> = ({
 			onClick={handleClick}
 		>
 			<div className={cls.title}>
-				<div style={{ flex: 1, display: "flex" }}>
-					{message.seqNum} <span className={`${cls.subject} hover-container`}>
+				<span style={{ flex: 1 }}>
+					<span className={cls.seq_num}>{message.seqNum} </span>
+					<span className={`${cls.subject} hover-container`}>
 						{message.subject}
 					</span>
-				</div>
+				</span>
 				<div className={`hover-show ${cls.box_actions} ${clsBg}`}>
 					<CopyButton value={message.subject} label="COPY SUBJECT" />
 					<CopyButton value={message.payload} />
