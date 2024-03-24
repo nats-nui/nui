@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import React, { FunctionComponent } from "react"
 import ListRow from "./ListRow"
 
 
@@ -40,7 +40,6 @@ function List<T>({
 
 	// RENDER
 	if (!items) return null
-
 	return <div style={{ ...cssContainer(height), ...style }}>
 		{items.map((item, index) =>
 			<ListRow key={index}
@@ -67,3 +66,9 @@ const cssContainer = (height: number): React.CSSProperties => ({
 		overflowY: "auto",
 	},
 })
+
+export const ListMemo = React.memo(
+	List,
+	(prev, curr) => prev.items == curr.items && prev.readOnly == curr.readOnly && prev.select == curr.select
+)
+
