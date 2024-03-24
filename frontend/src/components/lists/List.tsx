@@ -30,7 +30,7 @@ function List<T>({
 }: Props<T>) {
 
 	// STORES
-
+console.log("list render")
 	// HOOKS
 
 	// HANDLERS
