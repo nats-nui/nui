@@ -48,8 +48,8 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	const hendleMessageDelete = (message: Message) => strMsgSo.deleteMessage(message)
 
 	// RENDER
+	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])	
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
-	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])
 
 	return <FrameworkCard
 		store={strMsgSo}

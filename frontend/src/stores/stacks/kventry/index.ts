@@ -56,9 +56,8 @@ const setup = {
 
 		/** gli STREAM filtrati e da visualizzare in lista */
 		getFiltered(_: void, store?: KVEntriesStore) {
-			if (!store.state.all) return null
-			const text = store.state.textSearch?.toLocaleLowerCase()
-			if (!text || text.trim().length == 0) return store.state.all
+			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
+			if (!text || text.trim().length == 0 || !store.state.all) return store.state.all
 			return store.state.all.filter(kventry =>
 				kventry.key.toLowerCase().includes(text)
 			)

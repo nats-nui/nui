@@ -73,7 +73,7 @@ const setup = {
 		getIndexBySeq: (seq: number, store?: StreamMessagesStore) => store.state.messages.findIndex(m => m.seqNum == seq),
 		getFiltered: (_: void, store?: StreamMessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
-			if (!text || text.length == 0) return store.state.messages
+			if (!text || text.length == 0 || !store.state.messages) return store.state.messages
 			return store.state.messages.filter(message =>
 				message.payload.toLowerCase().includes(text)
 				|| message.subject.toLowerCase().includes(text)
@@ -175,7 +175,7 @@ const setup = {
 		fetchPrev2: async (_?: void, store?: StreamMessagesStore) => {
 			const seq = store.state.messages[0].seqNum - 1
 			const interval = -store.state.filter.interval
-			if ( interval == 0 || seq <= store.state.stream.state.firstSeq ) return 0
+			if (interval == 0 || seq <= store.state.stream.state.firstSeq) return 0
 			return store.fetchInterval({ seq, interval })
 		},
 		fetchPrev: async (seq?: number, store?: StreamMessagesStore) => {
@@ -224,7 +224,7 @@ const setup = {
 		fetchNext2: async (_?: void, store?: StreamMessagesStore) => {
 			const seq = store.state.messages[store.state.messages.length - 1].seqNum + 1
 			const interval = store.state.filter.interval
-			if ( interval == 0 || seq >= store.state.stream.state.lastSeq ) return 0
+			if (interval == 0 || seq >= store.state.stream.state.lastSeq) return 0
 			return store.fetchInterval({ seq, interval })
 		},
 		fetchNext: async (seq?: number, store?: StreamMessagesStore) => {
@@ -308,9 +308,9 @@ const setup = {
 	mutators: {
 		setMessages: (messages: Message[]) => ({ messages }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
-		setFilter: (filter: StreamMessagesFilter) => { 
+		setFilter: (filter: StreamMessagesFilter) => {
 			globalInterval = filter.interval
-			return {filter} 
+			return { filter }
 		},
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
 	},
