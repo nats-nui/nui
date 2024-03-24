@@ -6,16 +6,12 @@ import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
 import Quote from "@/components/format/Quote"
 import DateTimeInput from "@/components/input/DateTimeInput"
-import FindInput from "@/components/input/FindInput"
 import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
-import List from "@/components/lists/List"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
-import FindIcon from "@/icons/FindIcon"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
 
 
@@ -49,8 +45,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	let subjects = useMemo(()=> Object.keys(strMsgSa.stream?.state?.subjects ?? {}), [strMsgSa.stream?.state?.subjects])
 	if ( !filter ) return null
-	let subjects = Object.keys(strMsgSa.stream?.state?.subjects ?? {})
 	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 200
 
 	return (
@@ -104,7 +100,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					<Quote>
 						<ListMultiWithFilter
 							items={subjects}
-							select={filter.subjects}
+							selects={filter.subjects}
 							onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
 						/>
 					</Quote>

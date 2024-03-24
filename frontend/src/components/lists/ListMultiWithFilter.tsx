@@ -12,13 +12,13 @@ import { FunctionComponent, useMemo, useState } from "react"
 
 interface Props {
 	items: string[],
-	select: string[],
+	selects: string[],
 	onChangeSelects: (items: string[]) => void
 }
 
 const ListMultiWithFilter: FunctionComponent<Props> = ({
 	items,
-	select,
+	selects,
 	onChangeSelects,
 }) => {
 
@@ -30,14 +30,14 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleSubjectChange = (item: string) => {
-		const index = select.indexOf(item)
-		const itemsSelect = [...select]
+		const index = selects.indexOf(item)
+		const itemsSelect = [...selects]
 		if (index != -1) itemsSelect.splice(index, 1); else itemsSelect.push(item)
 		onChangeSelects(itemsSelect)
 	}
 	const handleSearchChange = (value: string) => {
 		setTxtSearch(value)
-		debounce(`text-find-list-multi}`, () => setSearch(value.trim().toLowerCase()), items.length > 1000 ? 200 : 2000)
+		debounce(`text-find-list-multi}`, () => setSearch(value.trim().toLowerCase()), items.length > 1000 ? 2000 : 200)
 	}
 	const handleClear = () => handleSearchChange("")
 	const handleSelectAll = (check: boolean) => {
@@ -54,7 +54,7 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 		return items.filter(s => s.toLowerCase().includes(search))
 	}, [search, items])
 	const haveValue = search?.length > 0
-	const allSelect = select.length == items.length
+	const allSelect = selects.length == items.length
 
 	return <div style={{ display: "flex", flexDirection: "column" }}>
 
@@ -77,9 +77,10 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 		<ListMemo
 			style={{ maxHeight: 400, overflowY: "auto" }}
 			items={itemsShow}
+			select={selects as any}
 			RenderRow={({ item }: { item: string }) => <Box>
 				<IconToggle
-					check={select.indexOf(item) != -1}
+					check={selects.indexOf(item) != -1}
 					onChange={select => handleSubjectChange(item)}
 				/>
 				<div className="lbl-prop">{item}</div>
@@ -90,4 +91,3 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 }
 
 export default ListMultiWithFilter
-
