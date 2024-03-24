@@ -54,9 +54,8 @@ const setup = {
 		},
 		/** filtrati e da visualizzare in lista */
 		getFiltered(_: void, store?: ConsumersStore) {
-			if (!store.state.all) return null
-			const text = store.state.textSearch?.toLocaleLowerCase()
-			if (!text || text.trim().length == 0) return store.state.all
+			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
+			if (!text || text.trim().length == 0 || !store.state.all) return store.state.all
 			return store.state.all.filter(consumer =>
 				consumer.name.toLowerCase().includes(text)
 			)
@@ -75,7 +74,7 @@ const setup = {
 		//#endregion
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConsumersStore>store
-			const consumers = await conApi.index(s.state.connectionId, s.state.streamName, {store})
+			const consumers = await conApi.index(s.state.connectionId, s.state.streamName, { store })
 			s.setAll(consumers)
 		},
 
@@ -83,7 +82,7 @@ const setup = {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
-		
+
 		/** apro la CARD del dettaglio */
 		select(name: string, store?: ConsumersStore) {
 			const nameOld = store.state.select

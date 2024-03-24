@@ -46,7 +46,7 @@ const setup = {
 		getSocketServiceId: (_: void, store?: MessagesStore) => `msg::${store.state.uuid}`,
 		getFiltered: (_: void, store?: MessagesStore) => {
 			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
-			if (!text || text.length == 0) return store.state.messages
+			if (!text || text.length == 0 || !store.state.messages) return store.state.messages
 			return store.state.messages.filter(message =>
 				message.seqNum == MESSAGE_TYPE.SUBJECT_CHANGE
 				|| message.payload.toLowerCase().includes(text)
