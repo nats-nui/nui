@@ -4,14 +4,19 @@ import Dialog from "@/components/dialogs/Dialog"
 import Box from "@/components/format/Box"
 import BoxV from "@/components/format/BoxV"
 import Form from "@/components/format/Form"
+import Quote from "@/components/format/Quote"
 import DateTimeInput from "@/components/input/DateTimeInput"
+import FindInput from "@/components/input/FindInput"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import List from "@/components/lists/List"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
-import { StreamMessagesFilter, StreamMessagesStore } from "@/stores/stacks/streams/messages"
+import FindIcon from "@/icons/FindIcon"
+import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
+import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
+import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
 
 
 
@@ -28,7 +33,6 @@ const FilterDialog: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const [filter, setFilter] = useState<StreamMessagesFilter>(null)
-	const [search, setSearch] = useState<string>(null)
 	useEffect(() => {
 		if (!strMsgSo.state.filtersOpen) return
 		setFilter({ ...strMsgSo.state.filter, subjects: [...strMsgSo.state.filter.subjects] })
@@ -36,11 +40,6 @@ const FilterDialog: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleFilterPropChange = (prop: Partial<StreamMessagesFilter>) => setFilter({ ...filter, ...prop })
-	const handleSubjectChange = (subject: string) => {
-		const index = filter.subjects.indexOf(subject)
-		if (index != -1) filter.subjects.splice(index, 1); else filter.subjects.push(subject)
-		setFilter({ ...filter })
-	}
 	const handleClose = () => {
 		strMsgSo.setFiltersOpen(false)
 	}
@@ -48,20 +47,17 @@ const FilterDialog: FunctionComponent<Props> = ({
 		strMsgSo.setFiltersOpen(false)
 		strMsgSo.filterApply(filter)
 	}
-	const handleSearchChange = (value: string) => {
-		setSearch(value)
-	}
 
 	// RENDER
-	if (!filter) return null
+	if ( !filter ) return null
 	let subjects = Object.keys(strMsgSa.stream?.state?.subjects ?? {})
-	if (search?.length > 0) subjects = subjects.filter(s => s.includes(search))
+	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 200
 
 	return (
 		<Dialog
 			title="FILTERS"
 			store={strMsgSo}
-			width={200}
+			width={width}
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
@@ -105,21 +101,13 @@ const FilterDialog: FunctionComponent<Props> = ({
 
 				<BoxV>
 					<div className="lbl-prop">SUBJECTS</div>
-					<TextInput
-						value={search}
-						onChange={handleSearchChange}
-					/>
-					<List<string>
-						style={{ maxHeight: 200, overflowY: "auto" }}
-						items={subjects}
-						RenderRow={({ item }) => <Box>
-							<IconToggle
-								check={filter.subjects.indexOf(item) != -1}
-								onChange={select => handleSubjectChange(item)}
-							/>
-							<div className="lbl-prop">{item}</div>
-						</Box>}
-					/>
+					<Quote>
+						<ListMultiWithFilter
+							items={subjects}
+							select={filter.subjects}
+							onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
+						/>
+					</Quote>
 				</BoxV>
 
 				<Button children="APPLY" style={{ alignSelf: "start" }}

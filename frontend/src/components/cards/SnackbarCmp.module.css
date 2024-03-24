@@ -45,7 +45,7 @@
 	color: var(--var-1);
 }
 .error .title {
-	color: var(--var-3);
+	color: var(--var-5);
 }
 
 
@@ -64,7 +64,7 @@
 }
 
 .error .icon {
-	color: var(--var-3);
+	color: var(--var-5);
 }
 
 .body {

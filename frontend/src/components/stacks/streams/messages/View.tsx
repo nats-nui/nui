@@ -27,7 +27,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	// HOOKs
 	const [textFind, setTextFind] = useState(strMsgSa.textSearch ?? "")
 	useEffect(() => {
-		strMsgSo.fetch()
+		strMsgSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -39,9 +39,9 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	}
 	const handleLoad = async (bottom: boolean) => {
 		if (bottom) {
-			return await strMsgSo.fetchNext2()
+			return await strMsgSo.fetchNext()
 		} else {
-			return await strMsgSo.fetchPrev2()
+			return await strMsgSo.fetchPrev()
 		}
 	}
 	const hendleMessageClick = (message: Message) => strMsgSo.openMessageDetail(message)

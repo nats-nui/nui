@@ -1,5 +1,5 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService";
-import { StreamMessagesFilter } from "@/stores/stacks/streams/messages";
+import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter";
 import { Message } from "@/types/Message";
 import { StreamConfig, StreamInfo } from "@/types/Stream";
 
@@ -38,7 +38,7 @@ function update(connectionId: string, stream: StreamConfig, opt?: CallOptions): 
 }
 /** MESSAGES */
 async function messages(connectionId: string, streamName: string, filter: StreamMessagesFilter, opt?: CallOptions): Promise<Message[]> {
-	if (!connectionId || !streamName || !filter || filter.startSeq == null || filter.startSeq == null) return
+	if (!connectionId || !streamName || !filter || (!filter.startSeq == null && filter.startTime == null)) return
 
 	let query = !filter.byTime ? `seq_start=${filter.startSeq.toString()}&` : `time_start=${filter.startTime.toString()}&`
 	query += filter.interval != null ? `interval=${filter.interval.toString()}&` : ""

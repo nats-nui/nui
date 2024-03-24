@@ -44,20 +44,18 @@ const ShowForm: FunctionComponent<Props> = ({
 			<div className="lbl-input-readonly">{state.bytes}</div>
 		</BoxV>
 		<BoxV>
-			<div className="lbl-prop">FIRST SEQ.</div>
-			<div className="lbl-input-readonly">{state.firstSeq}</div>
+			<div className="lbl-prop">FIRST SEQUENCE</div>
+			<div className="lbl-input-readonly" style={{ display: "flex"}}>
+				<div style={{flex: 1}}>{state.firstSeq}</div>
+				<div style={{fontFamily: "monospace"}}>{firstTs}</div>
+			</div>
 		</BoxV>
 		<BoxV>
-			<div className="lbl-prop">FIRST DATETIME</div>
-			<div className="lbl-input-readonly">{firstTs}</div>
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">LAST SEQ.</div>
-			<div className="lbl-input-readonly">{state.lastSeq}</div>
-		</BoxV>
-		<BoxV>
-			<div className="lbl-prop">LAST DATETIME</div>
-			<div className="lbl-input-readonly">{lastTs}</div>
+			<div className="lbl-prop">LAST SEQUENCE</div>
+			<div className="lbl-input-readonly" style={{ display: "flex"}}>
+				<div style={{flex: 1}}>{state.lastSeq}</div>
+				<div style={{fontFamily: "monospace"}}>{lastTs}</div>
+			</div>
 		</BoxV>
 		<BoxV>
 			<div className="lbl-prop">DELETED COUNT</div>

@@ -11,6 +11,7 @@
 }
 
 .timestamp {
+	font-family: monospace;
 	align-self: flex-end;
 	font-size: 12px;
 	font-weight: 400;

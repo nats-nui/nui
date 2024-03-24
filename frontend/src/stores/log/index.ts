@@ -19,7 +19,7 @@ const setup = {
 			log.receivedAt = Date.now()
 			if (log.targetId) {
 				const view = docSo.getById(log.targetId)
-				view.setSnackbar({
+				view?.setSnackbar({
 					open: true, 
 					type: log.type,
 					title: log.title,
