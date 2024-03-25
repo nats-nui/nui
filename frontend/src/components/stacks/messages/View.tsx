@@ -1,13 +1,11 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
-import layoutSo from "@/stores/layout"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import MessagesList from "./MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
@@ -28,25 +26,29 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
-	const dropRef = useRef<HTMLDivElement>(null)
-	useEffect(() => {
-		if (!dropRef.current || msgSo.state.size != VIEW_SIZE.COMPACT) return
-		//const idInt = setInterval(() => {
-		const animation = dropRef.current.animate([
-			{ transform: 'translateY(0px)', visibility: "visible" },
-			{ transform: 'translateY(600px)', opacity: 0 }
-		], {
-			duration: 1000,
-			easing: layoutSo.state.theme.transitions[1]
-		});
-		animation.play();
-		//}, 2000)
-		//return () => clearInterval(idInt)
-	}, [msgSo.state.messages])
+	//const dropRef = useRef<HTMLDivElement>(null)
+	// useEffect(() => {
+	// 	if (!dropRef.current || msgSo.state.size != VIEW_SIZE.COMPACT) return
+	// 	//const idInt = setInterval(() => {
+	// 	const animation = dropRef.current.animate([
+	// 		{ transform: 'translateY(0px)', visibility: "visible" },
+	// 		{ transform: 'translateY(600px)', opacity: 0 }
+	// 	], {
+	// 		duration: 1000,
+	// 		easing: layoutSo.state.theme.transitions[1]
+	// 	});
+	// 	animation.play();
+	// 	//}, 2000)
+	// 	//return () => clearInterval(idInt)
+	// }, [msgSo.state.messages])
+
+	useEffect(()=>{
+		if ( !(msgSa.subscriptions?.length > 0) || !msgSa.subscriptions.every( s => s.disabled) ) return
+		msgSo.setSubscriptionsOpen(true)
+	},[])
 
 	// HANDLER
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
-		if (select) return
 		msgSo.setSubscriptionsOpen(!select)
 	}
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)

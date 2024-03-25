@@ -2,7 +2,7 @@ import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages";
-import { Connection, DOC_TYPE, EDIT_STATE } from "@/types";
+import { Connection, DOC_TYPE, EDIT_STATE, Subscription } from "@/types";
 import { VIEW_SIZE } from "../../utils";
 
 
@@ -10,10 +10,15 @@ import { VIEW_SIZE } from "../../utils";
 export function buildConnectionMessages(connectionId: string) {
 	const cnn = cnnSo.getById(connectionId);
 	if (!cnn) { console.error("no param"); return null; }
+	const subscriptions = (cnn?.subscriptions ?? []).map<Subscription>(s => ({
+		...s,
+		disabled: true,
+		favorite: true,
+	}))
 	const cnnMessageStore = buildStore({
 		type: DOC_TYPE.MESSAGES,
 		connectionId: cnn.id,
-		subscriptions: [...(cnn?.subscriptions ?? [])]
+		subscriptions,
 	} as MessagesState) as MessagesStore;
 	return cnnMessageStore;
 }

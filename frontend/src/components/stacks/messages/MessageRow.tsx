@@ -50,14 +50,17 @@ const MessageRow: FunctionComponent<Props> = ({
 	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2
 	const clsRoot = `${cls.root} ${clsBg}`
 
-
-	if (message.seqNum == MESSAGE_TYPE.SUBJECT_CHANGE) {
-		return <div className={`color-bg ${cls.sbj_root}`}>
+	if (!!message.type) {
+		return <div className={`color-bg ${cls.sbj_root}`}
+			style={{ backgroundColor: message.type == MESSAGE_TYPE.WARN ? "var(--var-1)" : null }}
+		>
 			<div className="bars-alert-bg" style={{ height: 10 }} />
 			<div className={cls.sbj_title}>{message.subject}</div>
 			<div className={cls.sbj_list}>{message.payload}</div>
 			<div className={cls.footer}>{time}</div>
-			<div className="bars-alert-bg" style={{ height: 10 }} />
+			{message.type == MESSAGE_TYPE.INFO && (
+				<div className="bars-alert-bg" style={{ height: 10 }} />
+			)}
 		</div>
 	}
 
