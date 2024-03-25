@@ -1,14 +1,13 @@
 import Button from "@/components/buttons/Button"
+import IconToggle from "@/components/buttons/IconToggle"
 import EditList from "@/components/lists/EditList"
 import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
-import CheckOnIcon from "@/icons/CheckOnIcon"
 import cnnSo from "@/stores/connections"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import Dialog from "../../dialogs/Dialog"
-import IconToggle from "@/components/buttons/IconToggle"
 
 
 
@@ -31,11 +30,12 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		const cnn = cnnSo.getById(msgSa.connectionId)
 		const subs = msgSa.subscriptions.map<Subscription>(sub => ({
 			...sub,
-			favorite: !!cnn.subscriptions.find(s => s.subject == sub.subject)
+			favorite: !!cnn.subscriptions.find(s => s.subject == sub.subject),
 		}))
 		setSubscriptions(subs.sort((s1, s2) => s1.subject.localeCompare(s2.subject)))
 
-	}, [msgSa.subscriptionsOpen])
+		return () => { msgSo.setSubscriptionsOpen(false) }
+	}, [msgSa.subscriptionsOpen, msgSa.connectionId])
 
 	// HANDLER
 	const handleCancel = () => {
@@ -84,7 +84,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		<EditList<Subscription>
 			items={subscriptions}
 			onItemsChange={handleChangeSubs}
-			onNewItem={() => ({ subject: "" })}
+			onNewItem={() => ({ subject: "", disabled: false, favorite: true })}
 			fnIsVoid={(item) => !(item?.subject) || item.subject.length == 0}
 			RenderRow={EditSubscriptionRow}
 		/>

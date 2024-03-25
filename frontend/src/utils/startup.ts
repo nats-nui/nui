@@ -7,6 +7,7 @@ import { DOC_TYPE } from "@/types"
 import { ViewLogStore } from "@/stores/stacks/log"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import { delay } from "./time"
 
 
 
@@ -40,34 +41,31 @@ export async function StartSession() {
 	const [log, menuUuids, dockUuids, states] = records
 	logSo.setAll(log ?? [])
 
-	const dockStates:any[] = dockUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
+	const dockStates: any[] = dockUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
 	const dockStores = dockStates.map(state => {
-		const store:ViewStore = buildStore({ type: state.type })
+		const store: ViewStore = buildStore({ type: state.type })
 		store?.setSerialization(state)
 		return store
 	}).filter(s => !!s)
 
-	const menuStates:any[] = menuUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
+	const menuStates: any[] = menuUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
 	const menuStores = menuStates.map(state => {
 		const store = buildStore({ type: state.type })
 		store?.setSerialization(state)
 		return store
 	}).filter(s => !!s)
 
-	docsSo.setAll(dockStores)
-	docsSo.setMenu(menuStores)
-
 	// BUILD SINGLETONE CARDS
 	// docsSo.state.connView = (docsSo.find({ type: DOC_TYPE.CONNECTIONS }) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
 	// docsSo.state.logsView = (docsSo.find({ type: DOC_TYPE.LOGS }) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
 	docsSo.state.connView = (dockStores.find(s => s.state.type == DOC_TYPE.CONNECTIONS) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
-	docsSo.state.logsView = (dockStores.find(s => s.state.type == DOC_TYPE.LOGS ) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
-
-
-
-
-	logSo.add({ body: "STARTUP NUI - load session" })
+	docsSo.state.logsView = (dockStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
 
 	// LOAD ALL CONNECTIONS
 	await cnnSo.fetch()
+
+	docsSo.setAll(dockStores)
+	docsSo.setMenu(menuStores)
+
+	logSo.add({ body: "STARTUP NUI - load session" })
 }

@@ -48,7 +48,7 @@ const setup = {
 			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
 			if (!text || text.length == 0 || !store.state.messages) return store.state.messages
 			return store.state.messages.filter(message =>
-				message.seqNum == MESSAGE_TYPE.SUBJECT_CHANGE
+				!!message.type
 				|| message.payload.toLowerCase().includes(text)
 				|| message.subject.toLowerCase().includes(text)
 			)
@@ -121,8 +121,8 @@ const setup = {
 			store.state.lastSubjects = subjects
 
 			const msgChangeSubj: Message = {
-				seqNum: MESSAGE_TYPE.SUBJECT_CHANGE,
-				subject: "LISTENING ON SUBJECTS",
+				type: subjects.length > 0 ? MESSAGE_TYPE.INFO : MESSAGE_TYPE.WARN,
+				subject: subjects.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
 				payload: subjects.join(", "),
 				receivedAt: Date.now(),
 			}

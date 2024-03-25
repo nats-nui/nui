@@ -1,9 +1,12 @@
 
 export enum MESSAGE_TYPE {
-	SUBJECT_CHANGE = -100
+	NONE = 0,
+	INFO = 1,
+	WARN = 2,
 }
 
 export interface Message {
+	type?: MESSAGE_TYPE
 	seqNum?: number
 	subject: string
 	/** base64 encoded */

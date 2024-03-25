@@ -77,6 +77,7 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 		<ListMemo
 			style={{ maxHeight: 400, overflowY: "auto" }}
 			items={itemsShow}
+			//items={Array.from({length:1000},(_,i)=>`item::${i}`)}
 			select={selects as any}
 			RenderRow={({ item }: { item: string }) => <Box>
 				<IconToggle
