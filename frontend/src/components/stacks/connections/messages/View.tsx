@@ -6,8 +6,8 @@ import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
-import FormatDialog from "../../editor/FormatDialog"
-import MessagesList from "./MessagesList"
+import FormatDialog from "../../../editor/FormatDialog"
+import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
 
 

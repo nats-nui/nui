@@ -7,7 +7,7 @@ import { MessagesState, MessagesStore } from "@/stores/stacks/connection/message
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import Dialog from "../../dialogs/Dialog"
+import Dialog from "../../../dialogs/Dialog"
 
 
 

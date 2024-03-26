@@ -1,4 +1,3 @@
-import { MESSAGE_TYPE } from "@/types/Message"
 import { FunctionComponent } from "react"
 import cls from "./DividerRow.module.css"
 
@@ -10,6 +9,7 @@ export enum DIVIDER_VARIANT {
 
 
 interface Props {
+	icon?: React.ReactNode
 	title?: React.ReactNode
 	children?: React.ReactNode
 	time?: string

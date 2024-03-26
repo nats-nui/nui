@@ -1,5 +1,5 @@
 import CnnDetailView from "@/components/stacks/connections/detail/View"
-import MessagesView from "@/components/stacks/messages/View"
+import MessagesView from "@/components/stacks/connections/messages/View"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { ConsumersStore } from "@/stores/stacks/consumer"
