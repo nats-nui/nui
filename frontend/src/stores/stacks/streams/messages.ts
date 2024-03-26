@@ -9,6 +9,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
+import { LOAD_STATE } from "../utils"
 
 
 
@@ -41,6 +42,7 @@ const setup = {
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
 		//#endregion
+		loadingState: LOAD_STATE.IDLE,
 	},
 
 	getters: {
@@ -137,7 +139,7 @@ const setup = {
 		fetchNext: async (_?: void, store?: StreamMessagesStore) => {
 			const startSeq = store.state.messages[store.state.messages.length - 1].seqNum + 1
 			const interval = store.state.filter.interval
-			if (interval == 0 || startSeq >= store.state.stream.state.lastSeq) return 0
+			if (interval == 0 /*|| startSeq >= store.state.stream.state.lastSeq*/) return 0
 			return store.fetchWithFilter({ startSeq, interval })
 		},
 
@@ -196,6 +198,8 @@ const setup = {
 			return { filter }
 		},
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
+
+		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
 	},
 }
 

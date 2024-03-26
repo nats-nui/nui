@@ -10,6 +10,12 @@ import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
 import AlertDialog from "@/components/dialogs/AlertDialog"
+import DividerRow, { DIVIDER_VARIANT } from "@/components/formatters/divider/DividerRow"
+import ArrowDownIcon from "@/icons/ArrowDownIcon"
+import { LOAD_STATE } from "@/stores/stacks/utils"
+import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
+import ArrowUpIcon from "@/icons/ArrowUpIcon"
+import Divider from "@/components/format/Divider"
 
 
 
@@ -48,8 +54,9 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	const hendleMessageDelete = (message: Message) => strMsgSo.deleteMessage(message)
 
 	// RENDER
-	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])	
+	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
+	const inLoading = strMsgSa.loadingState == LOAD_STATE.LOADING
 
 	return <FrameworkCard
 		store={strMsgSo}
@@ -77,6 +84,8 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 			onMessageClick={hendleMessageClick}
 			onMessageDelete={hendleMessageDelete}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
+			header={<TitleLoading inLoading={inLoading} label="LOAD PREVIOUS ONES" onClick={() => handleLoad(false)} />}
+			footer={<TitleLoading divider={DIVIDER_VARIANT.BORDER_DOWN} inLoading={inLoading} label="LOAD MOST RECENT" onClick={() => handleLoad(true)} />}
 		/>
 
 		<FilterDialog store={strMsgSo} />
@@ -90,3 +99,17 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 
 export default StreamMessagesView
 
+
+const TitleLoading = ({ divider = undefined, inLoading, label, onClick }) => <DividerRow
+	variant={divider}
+	title={
+		<div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
+			{inLoading
+				? <CircularLoadingCmp style={{ width: 14, height: 14 }} />
+				: (divider == DIVIDER_VARIANT.BORDER_DOWN ? <ArrowDownIcon /> : <ArrowUpIcon />)
+			}
+			{label}
+		</div>
+	}
+	onClick={onClick}
+/>

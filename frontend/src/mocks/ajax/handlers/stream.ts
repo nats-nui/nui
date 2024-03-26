@@ -107,7 +107,7 @@ const handlers = [
 		const subjects = params.getAll("subjects")
 		const messages = randomMessages(seqStart, interval)
 		return res(
-			ctx.delay(500),
+			ctx.delay(2000),
 			ctx.status(200),
 			ctx.json(camelToSnake(messages)),
 		)
