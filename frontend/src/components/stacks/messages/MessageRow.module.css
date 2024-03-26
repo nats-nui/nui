@@ -41,20 +41,3 @@
 	right: 0px; 
 	display: none;
 }
-
-
-.sbj_root {
-	color: var(--text-bg);
-	display: flex;
-	flex-direction: column;
-}
-.sbj_title {
-	font-size: 12px;
-    font-weight: 700;
-    text-align: center;
-
-}
-.sbj_list {
-	font-size: 12px;
-	font-weight: 500;
-}

@@ -38,7 +38,10 @@ function update(connectionId: string, stream: StreamConfig, opt?: CallOptions): 
 }
 /** MESSAGES */
 async function messages(connectionId: string, streamName: string, filter: StreamMessagesFilter, opt?: CallOptions): Promise<Message[]> {
-	if (!connectionId || !streamName || !filter || (!filter.startSeq == null && filter.startTime == null)) return
+	if (!connectionId || !streamName || !filter
+		|| (filter.byTime && filter.startTime == null)
+		|| (!filter.byTime && filter.startSeq == null)
+	) return
 
 	let query = !filter.byTime ? `seq_start=${filter.startSeq.toString()}&` : `time_start=${filter.startTime.toString()}&`
 	query += filter.interval != null ? `interval=${filter.interval.toString()}&` : ""

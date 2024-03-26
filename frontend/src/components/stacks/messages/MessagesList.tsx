@@ -9,6 +9,7 @@ import { debounce } from "@/utils/time"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import MessageRow from "./MessageRow"
+import DividerRow, { DIVIDER_VARIANT } from "@/components/formatters/divider/DividerRow"
 
 
 
@@ -104,8 +105,12 @@ const MessagesList: FunctionComponent<Props> = ({
 				/>
 			}
 			components={{
-				Header: !!onLoading ? () => <Button children="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> : null,
-				Footer: !!onLoading ? () => <Button children="LOAD MOST RECENT" onClick={handleLoadEnd} /> : null,
+				Header: !!onLoading 
+					? () => <DividerRow title="LOAD PREVIOUS ONES" onClick={handleLoadStart} /> 
+					: null,
+				Footer: !!onLoading 
+					? () => <DividerRow variant={DIVIDER_VARIANT.BORDER_DOWN} title="LOAD MOST RECENT" onClick={handleLoadEnd} /> 
+					: null,
 			}}
 		/>
 

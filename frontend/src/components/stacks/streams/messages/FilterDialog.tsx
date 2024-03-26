@@ -96,7 +96,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				</BoxV>
 
 				<BoxV>
-					<div className="lbl-prop">SUBJECTS</div>
+					<div className="lbl-prop">SUBJECTS OF THE STREAM</div>
 					<Quote>
 						<ListMultiWithFilter
 							items={subjects}
