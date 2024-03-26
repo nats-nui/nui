@@ -27,6 +27,10 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 	// HOOKs
 	const [txtSearch, setTxtSearch] = useState<string>(null)
 	const [search, setSearch] = useState<string>(null)
+	const itemsShow = useMemo(() => {
+		if (!search || search.length == 0) return items
+		return items.filter(s => s.toLowerCase().includes(search))
+	}, [search, items])
 
 	// HANDLER
 	const handleSubjectChange = (item: string) => {
@@ -49,10 +53,6 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const itemsShow = useMemo(() => {
-		if (!search || search.length == 0) return items
-		return items.filter(s => s.toLowerCase().includes(search))
-	}, [search, items])
 	const haveValue = search?.length > 0
 	const allSelect = selects.length == items.length
 

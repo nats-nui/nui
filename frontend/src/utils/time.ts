@@ -38,6 +38,6 @@ export function delayAnim(): Promise<void> {
 	return new Promise(res => window.requestAnimationFrame(()=>res))
 }
 
-export function dateShow( date: any ): string {
+export function dateShow( date?: any ): string {
 	return dayjs(date).isValid() ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "--"
 }
