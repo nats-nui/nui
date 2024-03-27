@@ -9,6 +9,8 @@ import InfoIcon from "@/icons/InfoIcon"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import WarnIcon from "@/icons/WarnIcon"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
+import TooltipCmp from "../TooltipCmp"
+import TooltipWrapCmp from "../TooltipWrapCmp"
 
 
 
@@ -44,6 +46,7 @@ const SnackbarCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
+	const inRoot = !view.state.parent
 	const clsRootFrame = viewSa.size == VIEW_SIZE.COMPACT ? cls.root_icon : cls.root
 	const clsRoot = `${clsRootFrame} ${open ? cls.open : cls.close} ${hide ? cls.hide : ""} ${cls[type]}`
 	const icon = {
@@ -53,11 +56,13 @@ const SnackbarCmp: FunctionComponent<Props> = ({
 	}[type]
 
 	if (viewSa.size == VIEW_SIZE.COMPACT) {
+		const stl = { marginLeft: !inRoot ? 3: null }
 		return (
-			<div 
-				className={clsRoot}
-				onClick={handleClose}
-			>{icon}</div>
+			<TooltipWrapCmp content={title}>
+				<div className={clsRoot} style={stl} 
+					onClick={handleClose}
+				>{icon}</div>
+			</TooltipWrapCmp>
 		)
 	}
 

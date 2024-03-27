@@ -15,6 +15,8 @@ import historyTest from "./_test"
 
 
 
+const MaxMessagesLength = 20000
+
 const setup = {
 
 	state: {
@@ -109,7 +111,12 @@ const setup = {
 				payload: msg.payload as string,
 				receivedAt: Date.now(),
 			}
-			store.setMessages([...store.state.messages, message])
+
+
+			const i = store.state.messages.length > MaxMessagesLength ? 5000 : 0
+			const msgs = store.state.messages.slice(i)
+			msgs.push(message)
+			store.setMessages(msgs)
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {

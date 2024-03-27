@@ -36,6 +36,9 @@ export async function EndSession() {
 
 export async function StartSession() {
 
+	// altrimenti MSW non funziona
+	if ( import.meta.env.DEV ) await delay(1000)
+
 	// LOAD FROM INDEXED-DB
 	const records = await dbLoad()
 	const [log, menuUuids, dockUuids, states] = records

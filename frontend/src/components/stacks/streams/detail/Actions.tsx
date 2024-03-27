@@ -1,5 +1,6 @@
 import Button from "@/components/buttons/Button"
 import OptionsCmp from "@/components/options/OptionsCmp"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -22,13 +23,13 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleEditClick = async () => {
-		// streamSo.setSnackbar({
-		// 	open:true,
-		// 	title: "pippo",
-		// 	type:MESSAGE_TYPE.INFO,
-		// 	body: "un bel corpo corposo",
-		// })
-		streamSo.setEditState(EDIT_STATE.EDIT)
+		streamSo.setSnackbar({
+			open:true,
+			title: "pippo",
+			type:MESSAGE_TYPE.INFO,
+			body: "un bel corpo corposo",
+		})
+		//streamSo.setEditState(EDIT_STATE.EDIT)
 	}
 	const handleCancelClick = () => streamSo.restore()
 	const handleSaveClick = () => streamSo.save()
