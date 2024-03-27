@@ -1,4 +1,5 @@
 :root {
+
 	--var-0: rgba(0, 0, 0, .4);
 	/* CONNECTIONS */
 	--var-1: #BBFB35;
@@ -15,16 +16,33 @@
 	--var-5-l1: #F51DDF;
 
 
-
 	--text-bg: #393939;
 	--text: #dedede;
 
+
+	--bg-default: #3E3E3E;
 	--bg-disabled: #494949;
+
+
 	--bg-1: #3E3E3E;
 	--bg-2: #2e2e2e;
 }
 
-
+.var0.card-focus{
+	outline: 2px solid var(--bg-default);
+}
+.var1.card-focus {
+	outline: 2px solid var(--var-1);
+}
+.var2.card-focus {
+	outline: 2px solid var(--var-2);
+}
+.var3.card-focus {
+	outline: 2px solid var(--var-3);
+}
+.var4.card-focus {
+	outline: 2px solid var(--var-4);
+}
 
 .color-text {
 	color: var(--text-bg);

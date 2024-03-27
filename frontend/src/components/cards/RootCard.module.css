@@ -1,0 +1,32 @@
+.root {
+	display: flex;
+	height: 100%;
+}
+
+.doc {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	color: var(--text);
+	background-color: var(--bg-default);
+	transition-timing-function: cubic-bezier(0.000, 0.350, 0.225, 1.175);
+	box-shadow: rgba(0, 0, 0, 0.4) 1px 1px 0px 0px;
+	border-radius: 5px;
+	transition: transform 300ms, width 300ms;
+}
+
+.is_linked {
+	border-radius: 0px 5px 5px 0px;
+}
+
+.dialog {
+	position: absolute;
+	height: 100%;
+}
+
+.desk {
+	margin-left: -8px;
+	display: flex;
+	position: relative;
+}

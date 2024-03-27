@@ -4,10 +4,11 @@ import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
 import IconButton from "../buttons/IconButton"
-import classes from "./SnackbarCmp.module.css"
+import cls from "./SnackbarCmp.module.css"
 import InfoIcon from "@/icons/InfoIcon"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import WarnIcon from "@/icons/WarnIcon"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 
@@ -43,24 +44,34 @@ const SnackbarCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const clsRoot = `${classes.root} ${open ? classes.open : classes.close} ${hide ? classes.hide : ""} ${classes[type]}`
+	const clsRootFrame = viewSa.size == VIEW_SIZE.COMPACT ? cls.root_icon : cls.root
+	const clsRoot = `${clsRootFrame} ${open ? cls.open : cls.close} ${hide ? cls.hide : ""} ${cls[type]}`
 	const icon = {
-		[MESSAGE_TYPE.INFO]: <InfoIcon className={classes.icon} />,
-		[MESSAGE_TYPE.WARNING]: <WarnIcon className={classes.icon} />,
-		[MESSAGE_TYPE.ERROR]: <SkullIcon className={classes.icon} />,
+		[MESSAGE_TYPE.INFO]: <InfoIcon className={cls.icon} />,
+		[MESSAGE_TYPE.WARNING]: <WarnIcon className={cls.icon} />,
+		[MESSAGE_TYPE.ERROR]: <SkullIcon className={cls.icon} />,
 	}[type]
+
+	if (viewSa.size == VIEW_SIZE.COMPACT) {
+		return (
+			<div 
+				className={clsRoot}
+				onClick={handleClose}
+			>{icon}</div>
+		)
+	}
 
 	return (
 		<div className={clsRoot}>
-			<div className={classes.header}>
+			<div className={cls.header}>
 				{icon}
-				<div className={classes.title}>{title}</div>
+				<div className={cls.title}>{title}</div>
 				<div style={{ flex: 1 }} />
 				<IconButton onClick={handleClose}>
 					<CloseIcon />
 				</IconButton>
 			</div>
-			<div className={classes.body}>
+			<div className={cls.body}>
 				{body}
 			</div>
 		</div>
