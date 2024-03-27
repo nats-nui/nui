@@ -1,5 +1,5 @@
 
-
+/* CARD HEADER */
 .lbl-header-title {
 	font-size: 16px;
 	font-weight: 800;
@@ -18,6 +18,7 @@
 }
 
 
+
 /** PER ESEMPIO I BOTTONI DELLE CONNECTIONS */
 .lbl-rowelement-title {
 	font-size: 14px;
@@ -30,6 +31,7 @@
 
 
 
+/* DIALOG */
 .lbl-dialog-title {
 	font-size: 16px;
 	font-weight: 800;
@@ -43,6 +45,8 @@
 }
 
 
+
+/* FORM */
 .lbl-prop-title {
 	font-size: 13px;
 	font-weight: 800;
@@ -50,8 +54,8 @@
 	border-top: 1px solid rgb(0 0 0 / 32%);
 	padding: 3px;
 	text-align: center;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 .lbl-prop {
 	font-size: 12px;
@@ -65,7 +69,16 @@
 	overflow-wrap: break-word;
 }
 
+.lbl-empty {
+	border: 1px dashed currentColor;
+	padding: 3px;
+	margin: 5px;
+	font-size: 12px;
+	font-weight: 500;
+	text-align: center;
+}
 
-
-
+.lbl-disabled {
+	opacity: .6;
+}
 

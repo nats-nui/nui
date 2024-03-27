@@ -105,7 +105,7 @@ const MessagesList: FunctionComponent<Props> = ({
 			components={{
 				Header: !!header && (() => header),
 				Footer: !!footer && (() => footer),
-				EmptyPlaceholder: () => <div style={cssVoid}>THE LIST IS VOID</div>,
+				EmptyPlaceholder: () => <div className="lbl-empty color-fg">EMPTY LIST</div>,
 			}}
 		/>
 
@@ -126,13 +126,3 @@ const MessagesList: FunctionComponent<Props> = ({
 }
 
 export default MessagesList
-
-const cssVoid: React.CSSProperties = {
-	border: '1px dashed var(--var-2)',
-	padding: '5px',
-	margin: '5px',
-	fontSize: '12px',
-	fontWeight: '500',
-	textAlign: 'center',
-	color: 'var(--var-2)'
-}

@@ -144,7 +144,12 @@ const EditForm: FunctionComponent<Props> = ({
 				<Quote>
 					<BoxV>
 						<div className="lbl-prop">NAME</div>
-						<ListDialog
+						<TextInput
+							value={config.mirror?.name}
+							onChange={name => handleMirrorPropChange({ name })}
+							readOnly={inRead || !inNew}
+						/>
+						{/* <ListDialog width={200}
 							store={streamSo}
 							select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
 							items={allStreams}
@@ -153,14 +158,7 @@ const EditForm: FunctionComponent<Props> = ({
 							onSelect={index => {
 								handleMirrorPropChange({ name: allStreams[index] })
 							}}
-						/>
-						{/*{ <Options<string>*/}
-						{/*		value={config.mirror?.name ?? ""}*/}
-						{/*		items={["pippo", "pluto", "paperino"]}*/}
-						{/*		RenderRow={({ item }) => item}*/}
-						{/*		readOnly={inRead || !inNew}*/}
-						{/*		onSelect={name => handleMirrorPropChange({ name })}*/}
-						{/*	}*/}
+						/> */}
 					</BoxV>
 					<BoxV>
 						<div className="lbl-prop">START SEQUENCE</div>
