@@ -24,6 +24,7 @@ interface Props<T> {
 	items: T[]
 	readOnly?: boolean
 
+	/** renderizza la riga che appare in lista */
 	RenderLabel?: FunctionComponent<RenderLabelProps<T>>
 	/** renderizza la form che appare nella DIALOG. "onClose" permette di chiudere la DIALOG */
 	RenderForm?: FunctionComponent<RenderFormProps<T>>
@@ -66,18 +67,14 @@ function ListObjects<T>({
 	}
 
 	// RENDER
-	if (!items) return null
+	if (!items) items = []
 	const itemSelect = items[sourceIndex]
 
 	return <>
-		<div
-			//tabIndex={0}
-			ref={ref}
-		//style={{ ...cssRoot(variant, readOnly), ...style }}
-		//onKeyDown={handleKeyDown}
-		//onBlur={handleBlur}
-		>
-			{items?.map((item, index) => (
+		<div style={style} ref={ref}>
+
+			{/* LIST */}
+			{items.length > 0 ? items.map((item, index) =>
 				<Component key={index}
 					selected={index == sourceIndex}
 					onClick={(e) => handleRowClick(index, e)}
@@ -85,14 +82,16 @@ function ListObjects<T>({
 					readOnly={readOnly}
 				>
 					<RenderLabel item={item} index={index} />
-				</Component>)
-			)}
+				</Component>
+			) : readOnly ? <div className="lbl-empty lbl-disabled">EMPTY LIST</div> : null}
 
+			{/* NEW BUTTON */}
 			{!readOnly && (
 				<IconButton style={{ backgroundColor: '#00000010', }}
 					onClick={handleNew}
 				><AddIcon /></IconButton>
 			)}
+
 		</div>
 
 		<ElementDialog
@@ -116,12 +115,3 @@ function ListObjects<T>({
 }
 
 export default ListObjects
-
-const cssContainer = (height: number): React.CSSProperties => ({
-	display: "flex",
-	flexDirection: "column",
-	...height && {
-		height: height,
-		overflowY: "auto",
-	},
-})

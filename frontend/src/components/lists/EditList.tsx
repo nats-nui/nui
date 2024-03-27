@@ -147,6 +147,7 @@ function EditList<T>({
 
 	// RENDER
 	if (!items) items = []
+
 	return (
 		<div
 			tabIndex={0}
@@ -155,8 +156,8 @@ function EditList<T>({
 			onKeyDown={handleKeyDown}
 			onBlur={handleBlur}
 		>
-			{/* LISTA */}
-			{items?.length > 0 ? items.map((item, index) =>
+			{/* LIST */}
+			{items.length > 0 ? items.map((item, index) =>
 				<RenderRow key={index}
 					item={item}
 					placeholder={placeholder}
@@ -165,9 +166,9 @@ function EditList<T>({
 					onChange={(newItem) => handleChangeItem(newItem, index)}
 					onSelect={(e) => handleSelect(index, e)}
 				/>
-			) : readOnly ? <div>empty</div> : null}
+			) : readOnly ? <div className="lbl-empty lbl-disabled">EMPTY LIST</div> : null}
 
-			{/* BOTTONE NEW */}
+			{/* NEW BUTTON */}
 			{!readOnly && onNewItem && (
 				<IconButton style={{ backgroundColor: '#00000010', }}
 					onClick={(e) => handleNewItem(null, e)}

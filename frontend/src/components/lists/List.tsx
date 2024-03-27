@@ -30,7 +30,7 @@ function List<T>({
 }: Props<T>) {
 
 	// STORES
-console.log("list render")
+
 	// HOOKS
 
 	// HANDLERS
@@ -39,7 +39,9 @@ console.log("list render")
 	}
 
 	// RENDER
-	if (!items) return null
+	
+	if (!items) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
+
 	return <div style={{ ...cssContainer(height), ...style }}>
 		{items.map((item, index) =>
 			<ListRow key={index}

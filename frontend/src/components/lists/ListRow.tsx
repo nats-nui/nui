@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 
 
 interface Props<T> {

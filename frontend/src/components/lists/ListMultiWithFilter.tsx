@@ -56,8 +56,11 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 	const haveValue = search?.length > 0
 	const allSelect = selects.length == items.length
 
+	if ( !items || items.length == 0 ) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
+
 	return <div style={{ display: "flex", flexDirection: "column" }}>
 
+		{/* FILTER */}
 		<div style={{ display: "flex", position: "relative", alignItems: "center" }}>
 			<IconToggle style={{ marginLeft: 3, marginRight: 5 }}
 				check={allSelect}
@@ -74,6 +77,7 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 			)}
 		</div>
 
+		{/* LIST */}
 		<ListMemo
 			style={{ maxHeight: 400, overflowY: "auto" }}
 			items={itemsShow}
