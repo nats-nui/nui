@@ -13,6 +13,7 @@ import FindInput from "@/components/input/FindInput"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import { dateShow } from "@/utils/time"
+import VTable from "@/components/table/VTable"
 
 
 
@@ -71,20 +72,25 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<Table
+		<VTable
 			items={kventries}
 			props={[
-				{ label: "REVISION", getValue: b => b.revision },
+				{ 
+					label: "REVISION", 
+					getValue: b => b.revision, 
+					flex: .5 
+				},
 				{
 					label: "LAST",
 					getShow: i => dateShow(i.lastUpdate),
-					getValue: b => dayjs(b.lastUpdate).valueOf()
+					getValue: b => dayjs(b.lastUpdate).valueOf(),
 				},
 				//{ label: "OPERATION", getValue: b => b.operation },
 				{
 					label: "DELETED",
 					getShow: i => i.isDeleted ? "YES" : "NO",
-					getValue: b => b.isDeleted ? 1 : 0
+					getValue: b => b.isDeleted ? 1 : 0,
+					flex: .5,
 				},
 			]}
 			propMain={{ getValue: b => b.key }}

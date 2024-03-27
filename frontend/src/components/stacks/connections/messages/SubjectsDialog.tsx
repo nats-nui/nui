@@ -76,7 +76,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 			SUBJECTS
 		</div>}
-		width={200}
+		width={300}
 		open={msgSa.subscriptionsOpen}
 		store={msgSo}
 		onClose={handleCancel}

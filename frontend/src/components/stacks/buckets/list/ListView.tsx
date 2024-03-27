@@ -4,6 +4,7 @@ import AlertDialog from "@/components/dialogs/AlertDialog"
 import FindInput from "@/components/input/FindInput"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import Table from "@/components/table"
+import VTable from "@/components/table/VTable"
 import docSo from "@/stores/docs"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
@@ -64,7 +65,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<Table
+		<VTable
 			items={buckets}
 			props={[
 				{ label: "VALUES", getValue: b => b.values },
