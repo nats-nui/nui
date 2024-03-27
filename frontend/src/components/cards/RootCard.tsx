@@ -1,10 +1,10 @@
 import docSo from "@/stores/docs"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { ViewStore } from "@/stores/stacks/viewBase"
-import { ANIM_TIME_CSS, DOC_ANIM } from "@/types"
+import { DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import PolymorphicCard from "./PolymorphicCard"
+import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
 
 
@@ -40,36 +40,30 @@ const RootCmpCard: FunctionComponent<Props> = ({
 
 	// styles
 	const styContainerDoc: React.CSSProperties = {
-		...cssDoc,
-		borderRadius: inRoot ? 5 : "0px 5px 5px 0px",
-		transition: `transform 300ms, width ${ANIM_TIME_CSS}ms`,
 		zIndex: deep,
 		width: view.getWidth(),
-		...haveFocus ? { /*boxSizing: "border-box",*/ outline: `2px solid ${layoutSo.state.theme.palette.var[variant].bg}` } : {},
 		...view.getStyAni(),
 	}
+	const clsDoc = `var${variant} ${cls.doc} ${haveFocus ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
 
 	return <div
 		id={view.state.uuid}
-		style={cssRoot(deep)}
+		className={cls.root}
+		style={{ zIndex: deep }}
 	>
 
 		{/* DOC BODY */}
-		<div style={styContainerDoc} className={`var${variant}`}>
+		<div style={styContainerDoc} className={clsDoc}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
-			{/* {!!view.state.loadingMessage && (
-				<div style={cssLoading}>
-					<div>{view.state.loadingMessage}</div>
-				</div>
-			)} */}
 		</div>
 
-		<div style={cssDesk}>
+		<div className={cls.desk}>
 
 			{/* DIALOG */}
-			<div className={`var${variant}`}
-				style={cssDialog(deep - 1)}
+			<div 
+				className={`var${variant} ${cls.dialog}`}
+				style={{ zIndex: deep - 1 }}
 				id={`dialog_${view.state.uuid}`}
 			/>
 
@@ -91,31 +85,26 @@ const RootCard = React.memo(
 )
 export default RootCard
 
-const cssRoot = (deep: number): React.CSSProperties => ({
-	zIndex: deep,
-	display: "flex",
-	height: "100%",
-})
 
-const cssDoc: React.CSSProperties = {
-	position: "relative",
-	display: "flex",
-	flexDirection: "column",
-	overflow: "hidden",
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
-	backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-	transitionTimingFunction: layoutSo.state.theme.transitions[0],
-	boxShadow: layoutSo.state.theme.shadows[0],
-}
+// const cssDoc: React.CSSProperties = {
+// 	position: "relative",
+// 	display: "flex",
+// 	flexDirection: "column",
+// 	overflow: "hidden",
+// 	color: "var(--text)", //layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
+// 	backgroundColor: "var(--bg-default)", //layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
+// 	transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
+// 	boxShadow: 'rgba(0, 0, 0, 0.4) 1px 1px 0px 0px',
+// }
 
-const cssDialog = (deep: number): React.CSSProperties => ({
-	position: "absolute",
-	zIndex: deep,
-	height: "100%",
-})
+// const cssDialog = (deep: number): React.CSSProperties => ({
+// 	position: "absolute",
+// 	zIndex: deep,
+// 	height: "100%",
+// })
 
-const cssDesk: React.CSSProperties = {
-	marginLeft: -8,
-	display: "flex",
-	position: "relative",
-}
+// const cssDesk: React.CSSProperties = {
+// 	marginLeft: -8,
+// 	display: "flex",
+// 	position: "relative",
+// }

@@ -8,17 +8,16 @@ import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import EditStringRow from "@/components/rows/EditStringRow"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
-import SourcesCmp from "./cmp/SourcesCmp"
-import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxNumberCmp from "../../../input/MaxNumberCmp"
+import MaxTimeCmp from "../../../input/MaxTimeCmp"
+import SourcesCmp from "./cmp/SourcesCmp"
 
 
 
@@ -144,12 +143,12 @@ const EditForm: FunctionComponent<Props> = ({
 				<Quote>
 					<BoxV>
 						<div className="lbl-prop">NAME</div>
-						<TextInput
+						{/* <TextInput
 							value={config.mirror?.name}
 							onChange={name => handleMirrorPropChange({ name })}
 							readOnly={inRead || !inNew}
-						/>
-						{/* <ListDialog width={200}
+						/> */}
+						<ListDialog width={200}
 							store={streamSo}
 							select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
 							items={allStreams}
@@ -158,7 +157,7 @@ const EditForm: FunctionComponent<Props> = ({
 							onSelect={index => {
 								handleMirrorPropChange({ name: allStreams[index] })
 							}}
-						/> */}
+						/>
 					</BoxV>
 					<BoxV>
 						<div className="lbl-prop">START SEQUENCE</div>
