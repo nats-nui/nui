@@ -29,6 +29,7 @@ const setup = {
 			const s = <ConnectionStore>store
 			const cnn = await cnnApi.index()
 			s.setAll(cnn)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
 		//#endregion
 
@@ -48,8 +49,9 @@ const setup = {
 		},
 		/** inserisce o aggiorna la CONNECTION passata come paramnetro */
 		update(cnn: Partial<Connection>, store?: ConnectionStore) {
+			if ( !cnn?.id ) return
 			const cnns = [...store.state.all]
-			const index = !cnn.id ? -1 : store.getIndexById(cnn.id)
+			const index = store.getIndexById(cnn.id)
 			if (index == -1) {
 				cnns.push(cnn as Connection)
 			} else {

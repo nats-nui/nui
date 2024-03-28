@@ -4,7 +4,6 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { CnnListState, CnnListStore } from "."
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
@@ -49,6 +48,11 @@ const setup = {
 			}
 			return store.state.connection
 		},
+
+		getMessagesOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.MESSAGES,
+		getStreamsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.STREAMS,
+		getBucketsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.BUCKETS,
+
 	},
 
 	actions: {
@@ -82,15 +86,21 @@ const setup = {
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {
-			docSo.addLink({ view: buildConnectionMessages(store.state.connection?.id), parent: store, anim: true })
+			const isOpen = store.getMessagesOpen()
+			const view = !isOpen ? buildConnectionMessages(store.state.connection?.id) : null
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
-			docSo.addLink({ view: buildStreams(store.state.connection?.id), parent: store, anim: true })
+			const isOpen = store.getStreamsOpen()
+			const view = !isOpen ? buildStreams(store.state.connection?.id) : null
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD BUCKETS */
 		openBuckets(_: void, store?: CnnDetailStore) {
-			docSo.addLink({ view: buildBuckets(store.state.connection?.id), parent: store, anim: true })
+			const isOpen = store.getBucketsOpen()
+			const view = !isOpen ? buildBuckets(store.state.connection?.id) : null
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 	},
 

@@ -1,15 +1,20 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
+import cls from "./TextRow.module.css"
 
 
 
 interface Props {
 	text?: string
+	maxChar?: number
 	error?: boolean
+	style?: React.CSSProperties
 }
 
 const TextRow: FunctionComponent<Props> = ({
 	text,
+	maxChar = 200,
 	error,
+	style,
 }) => {
 
 	// STORE
@@ -19,29 +24,19 @@ const TextRow: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	if ( !text ) return null
+	if (!text) return null
 	// accorcio la stringa se è troppo lunga
-	const render = text.length > 200 
-		? <>{text.substring(0, 200)}{'\u2026'}<span style={cssInfo}>{text.length}</span></> 
+	const render = useMemo(() => text.length > maxChar
+		? <>{text.substring(0, 200)}<span className="color-fg">{'\u2026'}{text.length}</span></>
 		: text
+		, [text]
+	)
 
 	return (
-		<div style={cssBody(error)}>
+		<div className={`${cls.root} ${error ? cls.error : ""}`} style={style}>
 			{render}
 		</div>
 	)
 }
 
 export default TextRow
-
-const cssBody = (error:boolean): React.CSSProperties => ({
-	fontFamily: "monospace",
-	fontSize: 14,
-	overflowWrap: "break-word",
-	wordBreak: "break-all",
-	color: error ? "yellow" : null,
-})
-
-const cssInfo = {
-	opacity: .5,
-}

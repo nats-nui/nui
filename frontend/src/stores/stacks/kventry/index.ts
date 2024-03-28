@@ -66,7 +66,7 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as KVEntriesState
@@ -74,18 +74,19 @@ const setup = {
 			state.bucket = data.bucket
 			state.select = data.select
 		},
-		//#endregion
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <KVEntriesStore>store
-			const kventries = await kventryApi.index(s.state.connectionId, s.state.bucket.bucket, { store })
+			const kventries = await kventryApi.index(s.state.connectionId, s.state.bucket.bucket, { store, manageAbort: true })
 			s.setAll(kventries)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
+		//#endregion
 
 		async fetchIfVoid(_: void, store?: KVEntriesStore) {
 			if (!!store.state.all) return
 			await store.fetch()
 		},
-		
+
 		async create(_: void, store?: KVEntriesStore) {
 			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
 			docSo.addLink({ view, parent: store, anim: true })

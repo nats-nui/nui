@@ -28,7 +28,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		bucketSo.fetch()
+		bucketSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER
@@ -36,7 +36,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inRead = bucketSa.editState == EDIT_STATE.READ
-	const isKVEntriesSelect = bucketSa.linked?.state.type == DOC_TYPE.KVENTRIES
+	const isKVEntriesSelect = bucketSo.getKVEntriesOpen()
 
 	return <FrameworkCard variantBg
 		store={bucketSo}

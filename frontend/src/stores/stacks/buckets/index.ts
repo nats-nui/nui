@@ -63,19 +63,20 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as BucketsState
 			state.connectionId = data.connectionId
 			state.select = data.select
 		},
-		//#endregion
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <BucketsStore>store
-			const buckets = await bucketApi.index(s.state.connectionId, { store })
+			const buckets = await bucketApi.index(s.state.connectionId, { store, manageAbort: true })
 			s.setAll(buckets)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
+		//#endregion
 
 		async fetchIfVoid(_: void, store?: BucketsStore) {
 			if (!!store.state.all) return

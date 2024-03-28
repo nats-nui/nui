@@ -49,6 +49,8 @@ const setup = {
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
+
+		getKVEntriesOpen: (_: void, store?: BucketStore)=> store.state.linked?.state.type == DOC_TYPE.KVENTRIES,
 	},
 
 	actions: {
@@ -79,6 +81,11 @@ const setup = {
 		},
 		//#endregion
 
+		async fetchIfVoid(_: void, store?: BucketsStore) {
+			if (!!store.state.all) return
+			await store.fetch()
+		},
+
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
 			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
@@ -90,7 +97,8 @@ const setup = {
 
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
-			const view = buildKVEntries(store.state.connectionId, store.state.bucket)
+			const isOpen = store.getKVEntriesOpen()
+			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			docSo.addLink({ view, parent: store, anim: true })
 		},
 	},

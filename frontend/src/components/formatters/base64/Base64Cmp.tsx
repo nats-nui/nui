@@ -1,16 +1,18 @@
 import React, { FunctionComponent } from "react"
-import layoutSo from "@/stores/layout"
+import cls from "./Base64Cmp.module.css"
 
 
 
 interface Props {
 	text?: string
 	maxChar?: number
+	style?: React.CSSProperties
 }
 
 const Base64Cmp: FunctionComponent<Props> = ({
 	text,
 	maxChar,
+	style,
 }) => {
 
 	// STORE
@@ -22,14 +24,14 @@ const Base64Cmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!text) return null
 	const isTruncate = maxChar && text.length > maxChar
-	const base64 = btoa(isTruncate ? text.slice(0, maxChar) : text )
+	const base64 = btoa(isTruncate ? text.slice(0, maxChar) : text)
 
 	return (
-		<div style={cssBody}>
+		<div className={cls.root} style={style}>
 			{base64}
 			{isTruncate && <>
-				{'\u2026'}
-				<span style={cssInfo}>
+				<span className="color-fg">
+					{'\u2026'}
 					{text.length}
 				</span>
 			</>}
@@ -38,14 +40,3 @@ const Base64Cmp: FunctionComponent<Props> = ({
 }
 
 export default Base64Cmp
-
-const cssBody: React.CSSProperties = {
-	fontFamily: "monospace",
-	fontSize: 14,
-	overflowWrap: "break-word",
-	wordBreak: "break-all",
-}
-
-const cssInfo: React.CSSProperties = {
-	color: layoutSo.state.theme.palette.default.fg2,
-}

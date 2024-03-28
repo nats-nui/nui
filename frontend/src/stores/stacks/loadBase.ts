@@ -17,10 +17,12 @@ const loadBaseSetup = {
 	},
 
 	actions: {
+		/** esegue un aggiornamento della CARD */
 		fetch: async (_: void, store?: LoadBaseStore) => {
-			// VIRTUAL
+			const linkCard = store.state.linked as LoadBaseStore
+			if (linkCard?.state.loadingMode == LOAD_MODE.PARENT) linkCard.fetch()
 		},
-		fetchAbort:(_: void, store?: LoadBaseStore) => {
+		fetchAbort: (_: void, store?: LoadBaseStore) => {
 			store.state.fetchAbort?.abort()
 		},
 	},

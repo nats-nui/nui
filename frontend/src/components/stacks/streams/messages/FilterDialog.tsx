@@ -91,7 +91,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					<NumberInput
 						style={{ flex: 1 }}
 						value={filter.interval}
-						onChange={(interval: string) => handleFilterPropChange({ interval: +interval })}
+						onChange={(interval: number) => handleFilterPropChange({ interval: interval })}
 					/>
 				</BoxV>
 

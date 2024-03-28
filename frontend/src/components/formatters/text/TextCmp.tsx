@@ -32,9 +32,4 @@ const cssBody: React.CSSProperties = {
 	fontFamily: "monospace",
 	fontSize: 14,
 	overflowWrap: "break-word",
-	//wordBreak: "break-all",
-}
-
-const cssInfo = {
-	opacity: .5,
 }

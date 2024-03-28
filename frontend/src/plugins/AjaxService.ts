@@ -22,7 +22,10 @@ export interface CallOptions {
 	loading?: boolean
 	noError?: boolean
 	store?: ViewStore
+	/** utilizza questo signal per fare l'abort */
 	signal?: AbortSignal
+	/** se true setto nello store l'oggetto per l'abort */
+	manageAbort?: boolean
 }
 
 const httpUrlBuilder = () => {
@@ -79,11 +82,16 @@ export class AjaxService {
 			"Accept": "application/json",
 		}
 
-
 		// SEND REQUEST
 		let response = null
 		try {
-			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.LOADING)
+			const loadStore = <LoadBaseStore>options.store
+			if (options.loading) loadStore?.setLoadingState?.(LOAD_STATE.LOADING)
+			if (options.manageAbort && !!loadStore && !options.signal) {
+				if ( !!loadStore.state.fetchAbort ) loadStore.fetchAbort?.()
+				loadStore.state.fetchAbort = new AbortController()
+				options.signal = loadStore.state.fetchAbort.signal
+			}
 			response = await fetch(
 				`${this.options.baseUrl}${url}`,
 				{

@@ -54,6 +54,9 @@ const setup = {
 			type: DOC_TYPE.STREAMS,
 			connectionId: store.state.connectionId,
 		} as Partial<StreamsState>) as StreamsStore,
+
+		getConsumerOpen: (_: void, store?: StreamStore)=> store.state.linked?.state.type == DOC_TYPE.CONSUMERS,
+		getMessagesOpen: (_: void, store?: StreamStore)=> store.state.linked?.state.type == DOC_TYPE.STREAM_MESSAGES,
 	},
 
 	actions: {
@@ -82,8 +85,9 @@ const setup = {
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamStore>store
 			const name = s.state.stream.config.name
-			const stream = await strApi.get(s.state.connectionId, name, { store })
+			const stream = await strApi.get(s.state.connectionId, name, { store, manageAbort: true })
 			s.setStream(stream)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
 		//#endregion
 
@@ -125,13 +129,15 @@ const setup = {
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
-			const consumerStore = buildConsumers(store.state.connectionId, store.state.stream)
-			docSo.addLink({ view: consumerStore, parent: store, anim: true })
+			const isOpen = store.getConsumerOpen()
+			const view = !isOpen ? buildConsumers(store.state.connectionId, store.state.stream) : null
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
-			const streamMessagesStore = buildStreamMessages(store.state.connectionId, store.state.stream)
-			docSo.addLink({ view: streamMessagesStore, parent: store, anim: true })
+			const isOpen = store.getMessagesOpen()
+			const view = !isOpen ? buildStreamMessages(store.state.connectionId, store.state.stream) : null
+			docSo.addLink({ view, parent: store, anim: true })
 		},
 
 	},

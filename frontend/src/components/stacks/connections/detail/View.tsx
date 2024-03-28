@@ -37,9 +37,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
 
 	// RENDER
-	const isMessageOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.MESSAGES
-	const isStreamsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.STREAMS
-	const isBucketsOpen = cnnDetailSa.linked?.state.type == DOC_TYPE.BUCKETS
+	const isMessageOpen = cnnDetailSo.getMessagesOpen()
+	const isStreamsOpen = cnnDetailSo.getStreamsOpen()
+	const isBucketsOpen = cnnDetailSo.getBucketsOpen()
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
