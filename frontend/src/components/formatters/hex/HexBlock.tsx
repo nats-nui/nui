@@ -1,5 +1,5 @@
-import { FunctionComponent } from "react"
 import layoutSo from "@/stores/layout"
+import { FunctionComponent, useMemo } from "react"
 
 
 
@@ -13,10 +13,14 @@ const HexBlock: FunctionComponent<Props> = ({
 	columns = 8,
 }) => {
 
-	const render = Array.from(block,
-		(value: number, index: number) => <HexCell key={index} value={value} bgType={index % 2} />
-	)
-	if (render.length < columns) render.push(...Array.from({length:columns - render.length}, _ => <HexCell />))
+	const render = useMemo(()=>{
+		const render = Array.from(block,
+			(value: number, index: number) => <HexCell key={index} value={value} bgType={index % 2} />
+		)
+		if (render.length < columns) render.push(...Array.from({length:columns - render.length}, _ => <HexCell />))
+		return render
+	},[block, columns])
+
 	return render
 }
 

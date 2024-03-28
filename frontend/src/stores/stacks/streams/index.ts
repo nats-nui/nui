@@ -78,8 +78,9 @@ const setup = {
 		},
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamsStore>store
-			const streams = await strApi.index(s.state.connectionId, { store })
+			const streams = await strApi.index(s.state.connectionId, { store, manageAbort: true })
 			s.setAll(streams)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
 		//#endregion
 

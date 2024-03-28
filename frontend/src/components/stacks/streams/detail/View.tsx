@@ -38,8 +38,8 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inRead = streamSa.editState == EDIT_STATE.READ
-	const isConsumersSelect = streamSa.linked?.state.type == DOC_TYPE.CONSUMERS
-	const isMessagesSelect = streamSa.linked?.state.type == DOC_TYPE.STREAM_MESSAGES
+	const isConsumersSelect = streamSo.getConsumerOpen()
+	const isMessagesSelect = streamSo.getMessagesOpen()
 
 	return <FrameworkCard variantBg
 		store={streamSo}

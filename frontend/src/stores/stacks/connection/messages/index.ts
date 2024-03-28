@@ -1,17 +1,16 @@
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
+import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
 import { buildMessageDetail, buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { CNN_STATUS, DOC_TYPE, Subscription } from "@/types"
+import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
-import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
-import { MessageSendState } from "../messageSend"
-import { ViewState } from "../../viewBase"
 import { MSG_FORMAT } from "@/utils/editor"
-import historyTest from "./_test"
+import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
+import { ViewState } from "../../viewBase"
+import { MessageSendState } from "../messageSend"
 
 
 
@@ -88,19 +87,16 @@ const setup = {
 
 
 		connect(_: void, store?: MessagesStore) {
-			console.log("CONNECT")
+console.log("CONNECT")
 			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
-			ss.onOpen = () => {
-				store.sendSubscriptions()
-				cnnSo.update({ id: store.state.connectionId, status: CNN_STATUS.CONNECTED })
-			}
+			ss.onOpen = () => store.sendSubscriptions()
 			ss.onMessage = message => store.addMessage(message)
-			ss.onStatus = (payload: PayloadStatus) => {
-				cnnSo.update({ id: store.state.connectionId, status: payload.status })
-			}
+			// ss.onStatus = (payload: PayloadStatus) => {
+			// 	cnnSo.update({ id: store.state.connectionId, status: payload.status })
+			// }
 		},
 		disconnect(_: void, store?: MessagesStore) {
-			console.log("DISCONNECT")
+console.log("DISCONNECT")
 			socketPool.destroy(store.getSocketServiceId())
 		},
 
@@ -111,8 +107,6 @@ const setup = {
 				payload: msg.payload as string,
 				receivedAt: Date.now(),
 			}
-
-
 			const i = store.state.messages.length > MaxMessagesLength ? 5000 : 0
 			const msgs = store.state.messages.slice(i)
 			msgs.push(message)

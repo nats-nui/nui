@@ -70,7 +70,7 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as KVEntryState
@@ -78,6 +78,12 @@ const setup = {
 			state.bucket = data.bucket
 			state.kventry = data.kventry
 			state.editState = data.editState
+		},
+		fetch: async (_: void, store?: LoadBaseStore) => {
+			const s = <KVEntryStore>store
+			const kventry = await kventryApi.get(s.state.connectionId, s.state.bucket.bucket, s.state.kventry.key, { store, manageAbort: true })
+			s.setKVEntry(kventry)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
 		//#endregion
 
@@ -87,14 +93,6 @@ const setup = {
 			if (!!store.state.kventry?.payload || store.state.editState == EDIT_STATE.NEW) return
 			await store.fetch()
 		},
-		fetch: async (_: void, store?: LoadBaseStore) => {
-			const s = <KVEntryStore>store
-			store.state.fetchAbort = new AbortController()
-			const signal = store.state.fetchAbort.signal;
-			const kventry = await kventryApi.get(s.state.connectionId, s.state.bucket.bucket, s.state.kventry.key, { store, signal })
-			s.setKVEntry(kventry)
-		},
-
 
 		/** crea un nuovo KVENTRY */
 		async save(_: void, store?: KVEntryStore) {

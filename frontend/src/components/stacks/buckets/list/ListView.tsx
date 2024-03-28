@@ -29,7 +29,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		bucketsSo.fetch()
+		bucketsSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER

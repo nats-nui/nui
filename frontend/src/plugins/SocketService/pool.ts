@@ -1,7 +1,6 @@
+import docsSo from "@/stores/docs";
 import { debounce } from "@/utils/time";
 import { SocketService } from ".";
-import cnnSo from "@/stores/connections"
-import { CNN_STATUS } from "@/types";
 
 
 
@@ -26,12 +25,16 @@ class SocketPool {
 		return ss
 	}
 
-	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! */
+	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! 
+	 * inoltre controlla che non sia gia' utilizzata da qualcun'altro
+	*/
 	destroy(key: string) {
 		const ss = this.getById(key)
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
-			cnnSo.update({ id: ss.cnnId, status: CNN_STATUS.UNDEFINED })
+			// se lo usa qualcun'altro alllora non lo eliminare
+			const filter = { connectionId: ss.cnnId }
+			if (docsSo.findAll(filter).length > 0 || !!docsSo.findInMenu(filter)) return
 			ss.disconnect()
 			delete this.sockets[key]
 		}, 2000)

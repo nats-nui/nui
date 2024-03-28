@@ -20,7 +20,7 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		consumerSo.fetch()
+		consumerSo.fetchIfVoid()
 	}, [])
 
 	// HANDLER

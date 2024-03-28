@@ -3,6 +3,8 @@ import { Reconnect } from "./reconnect.js";
 import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
 import { MESSAGE_TYPE } from "@/stores/log/utils.js";
 import { optionsDefault } from "./utils.js";
+import cnnSo from "@/stores/connections"
+import { CNN_STATUS } from "@/types/Connection.js";
 
 
 
@@ -83,10 +85,12 @@ export class SocketService {
 			title: "WS-CONNECTIONS",
 			body: `disconnect`
 		})
+		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.UNDEFINED })
 		this.cnnId = null
 		this.reconnect.enabled = false
 		this.reconnect.stop()
 		this.clear()
+		
 	}
 
 	/** 
@@ -124,12 +128,14 @@ export class SocketService {
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		this.onOpen?.()
+		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.CONNECTED })
 	}
 
 	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
 		this.clear()
 		this.reconnect.start()
+		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.RECONNECTING })
 	}
 
 	/** ricevo un messaggio dal BE */
@@ -139,7 +145,9 @@ export class SocketService {
 		let payload: Payload = null
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS:
-				this.onStatus?.(message.payload as PayloadStatus)
+				payload = message.payload as PayloadStatus
+				this.onStatus?.(payload)
+				cnnSo.update({ id: this.cnnId, status: payload.status })
 				break
 			case MSG_TYPE.NATS_MESSAGE:
 				if (!this.onMessage) return

@@ -3,7 +3,6 @@ import Form from "@/components/format/Form"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import dayjs from "dayjs"
 import { FunctionComponent } from "react"
 
 
@@ -20,7 +19,6 @@ const ShowForm: FunctionComponent<Props> = ({
 	const streamSa = useStore(streamSo)
 
 	// HOOKs
-
 
 	// HANDLER
 
@@ -61,7 +59,6 @@ const ShowForm: FunctionComponent<Props> = ({
 			<div className="lbl-prop">DELETED COUNT</div>
 			<div className="lbl-input-readonly">{state.numDeleted}</div>
 		</BoxV>
-
 
 		<div className="lbl-prop-title">CONSUMERS</div>
 

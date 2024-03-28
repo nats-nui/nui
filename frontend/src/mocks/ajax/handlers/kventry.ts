@@ -23,7 +23,7 @@ const kventry = [
         //     ctx.json({ error: "bestiale!!!"}),
         // )
         return res(
-            ctx.delay(1000),
+            ctx.delay(2000),
             ctx.status(200),
             ctx.json(keyValueEntryDetail),
         )

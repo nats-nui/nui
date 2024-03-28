@@ -58,10 +58,14 @@ const MyEditor: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 
 	// RENDER
 	if (format == MSG_FORMAT.BASE64) {
-		return <Base64Cmp text={value} />
+		return <Base64Cmp style={{	flex: 1, overflowY: "auto" }}
+			text={value} 
+		/>
 	}
 	if (format == MSG_FORMAT.HEX) {
-		return <HexTable text={value} />
+		return <HexTable style={{	flex: 1, overflowY: "auto" }}
+			text={value} 
+		/>
 	}
 	return <Editor
 		defaultLanguage="json"

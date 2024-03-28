@@ -63,19 +63,20 @@ const setup = {
 
 		fetch: async (_: void, store?: LoadBaseStore) => {
 			const s = <ConsumerStore>store
-			const consumer = await cnsApi.get(s.state.connectionId, s.state.streamName, s.state.consumer.name, {store})
+			const consumer = await cnsApi.get(s.state.connectionId, s.state.streamName, s.state.consumer.name, { store, manageAbort: true })
 			s.setConsumer(consumer)
+			await loadBaseSetup.actions.fetch(_, store)
 		},
 
 		//#endregion
 
 
-		
+
 		async fetchIfVoid(_: void, store?: ConsumerStore) {
 			if (!!store.state.consumer) return
 			await store.fetch()
 		},
-		
+
 	},
 
 	mutators: {

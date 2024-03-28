@@ -2,13 +2,14 @@ import docSo from "@/stores/docs"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
 import { delay } from "@/utils/time"
-import { StoreCore } from "@priolo/jon"
+import { LISTENER_CHANGE, StoreCore } from "@priolo/jon"
 import { buildStore2 } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { VIEW_SIZE } from "./utils"
 import { LOAD_MODE, LOAD_STATE } from "./utils"
 import { LoadBaseStore } from "./loadBase"
+import { socketPool } from "@/plugins/SocketService/pool"
 
 
 
@@ -186,15 +187,17 @@ const viewSetup = {
 		setAlert: (alert: AlertState) => ({ alert }),
 	},
 
-	// onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
-	// 	if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
-	// 		const cnnId = store.state["connectionId"]
-	// 		if (cnnId) socketPool.create(`global::${cnnId}`, cnnId)
-	// 	} else if (store._listeners.size == 0) {
-	// 		const cnnId = store.state["connectionId"]
-	// 		if (cnnId) socketPool.destroy(`global::${cnnId}`)
-	// 	}
-	// }
+	// [II] da sistemare trovare un modo per avere puntualmente la connection SE la CARD è collegata con una connection
+	onListenerChange: (store: ViewStore, type: LISTENER_CHANGE) => {
+		if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
+			const cnnId = store.state.type == DOC_TYPE.CONNECTION ? store.state["connection"]?.id : store.state["connectionId"]
+			if (cnnId) socketPool.create(`global::${cnnId}`, cnnId)
+		} else if (store._listeners.size == 0) {
+			const cnnId = store.state.type == DOC_TYPE.CONNECTION ? store.state["connection"]?.id : store.state["connectionId"]
+			if (cnnId) socketPool.destroy(`global::${cnnId}`)
+			store["fetchAbort"]?.()
+		}
+	}
 }
 
 export type ViewState = Partial<typeof viewSetup.state>

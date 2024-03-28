@@ -10,6 +10,7 @@ import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
 import { LOAD_STATE } from "../utils"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -42,7 +43,7 @@ const setup = {
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
 		//#endregion
-		loadingState: LOAD_STATE.IDLE,
+
 	},
 
 	getters: {
@@ -77,7 +78,8 @@ const setup = {
 
 	actions: {
 
-		//#region VIEWBASE
+		//#region OVERWRITE
+
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as StreamMessagesState
@@ -87,26 +89,24 @@ const setup = {
 			state.textSearch = data.textSearch
 			state.filter = data.filter
 		},
-		onCreate: (_: void, store?: ViewStore) => {
-			const s = store as StreamMessagesStore
-			s.state.filter.interval = globalInterval
-		},
-		//#endregion
-
 		/** prima carica dei dati da visualizzare */
-		fetch: async (_: void, store?: StreamMessagesStore) => {
+		fetch: async (_: void, loadStore?: LoadBaseStore) => {
+			const store = <StreamMessagesStore>loadStore
 			if (!store.state.stream?.config?.name || !store.state.connectionId || !store.state.stream?.state) {
 				console.error("no params")
-				return null
+				return
 			}
 			store.state.rangeTop = null
+			store.state.filter.interval = globalInterval
+			store.state.filter.startSeq = store.state.stream.state.lastSeq
 			await store.fetchWithFilter({
-				interval: -store.state.filter.interval,
-				startSeq: store.state.stream.state.lastSeq
+				interval: -globalInterval,
+				startSeq: store.state.stream.state.lastSeq,
 			})
-
-						
+			await loadBaseSetup.actions.fetch(_, store)
 		},
+
+		//#endregion
 
 		async fetchIfVoid(_: void, store?: StreamMessagesStore) {
 			if (!!store.state.messages) return
@@ -119,7 +119,15 @@ const setup = {
 			store?: StreamMessagesStore
 		) => {
 			const name = store.state.stream?.config?.name
-			const msgs = await strApi.messages(store.state.connectionId, name, filter, { store }) ?? []
+
+			if (filter.startSeq < store.state.stream.state.firstSeq) return 0
+			if (filter.startSeq + filter.interval < store.state.stream.state.firstSeq) {
+				filter.interval = filter.startSeq -store.state.stream.state.firstSeq +1
+				filter.startSeq = store.state.stream.state.firstSeq
+			}
+			if (filter.interval == 0) return 0
+
+			const msgs = await strApi.messages(store.state.connectionId, name, filter, { store, manageAbort: true }) ?? []
 			let all = store.state.messages ?? []
 			if (filter.interval < 0) {
 				store.setMessages(msgs.concat(all))
@@ -146,15 +154,15 @@ const setup = {
 		filterApply: async (filter: StreamMessagesFilter, store?: StreamMessagesStore) => {
 
 			// controlla se il filtro è cambiato
-			const oldFilter = store.state.filter
-			if (filter.byTime == oldFilter.byTime
-				&& filter.startSeq == oldFilter.startSeq
-				&& filter.startTime == oldFilter.startTime
-				&& filter.subjects.sort().join("").toLowerCase() == oldFilter.subjects.sort().join("").toLowerCase()
-			) {
-				store.setFilter(filter)
-				return
-			}
+			// const oldFilter = store.state.filter
+			// if (filter.byTime == oldFilter.byTime
+			// 	&& filter.startSeq == oldFilter.startSeq
+			// 	&& filter.startTime == oldFilter.startTime
+			// 	&& filter.subjects.sort().join("").toLowerCase() == oldFilter.subjects.sort().join("").toLowerCase()
+			// ) {
+			// 	store.setFilter(filter)
+			// 	return
+			// }
 
 			// normalizzo e setto il filtro
 			if (!filter.interval) filter.interval = 200
@@ -198,18 +206,16 @@ const setup = {
 			return { filter }
 		},
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
-
-		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),
 	},
 }
 
-export type StreamMessagesState = typeof setup.state & ViewState & EditorState
+export type StreamMessagesState = typeof setup.state & ViewState & LoadBaseState & EditorState
 export type StreamMessagesGetters = typeof setup.getters
 export type StreamMessagesActions = typeof setup.actions
 export type StreamMessagesMutators = typeof setup.mutators
-export interface StreamMessagesStore extends ViewStore, EditorStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
+export interface StreamMessagesStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
 	state: StreamMessagesState
 }
-const streamMessagesSetup = mixStores(viewSetup, editorSetup, setup)
+const streamMessagesSetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)
 export default streamMessagesSetup
 

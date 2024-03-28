@@ -5,7 +5,6 @@ import { StoreCore, createStore } from "@priolo/jon"
 import { CnnListStore } from "../stacks/connection"
 import { ViewLogStore } from "../stacks/log"
 import { ViewStore } from "../stacks/viewBase"
-import { buildStore } from "./utils/factory"
 import { forEachViews, getById } from "./utils/manage"
 
 
@@ -57,7 +56,7 @@ const setup = {
 		isPinned(uuid: string, store?: DocStore) {
 			return store.state.menu.some(view => view.state.uuid == uuid)
 		},
-		/** cerca nel DECK solo le CARD senza parent*/
+		/** cerca nel DECK solo le CARD senza parent */
 		find(state: any, store?: DocStore) {
 			return forEachViews(
 				store.state.all,
@@ -74,9 +73,14 @@ const setup = {
 				}
 			)
 			return ret
-		}
-
-
+		},
+		/** cerca nel MENU */
+		findInMenu(state: any, store?: DocStore) {
+			return forEachViews(
+				store.state.menu,
+				(view) => deepEqual(state, view.state) ? view : null
+			)
+		},
 	},
 
 	actions: {
