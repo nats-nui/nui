@@ -19,7 +19,7 @@ const setup = {
 		/** elemento selezionato */
 		select: <string>null,
 		/** all elements */
-		all: <BucketState[]>[],
+		all: <BucketState[]>null,
 		textSearch: <string>null,
 
 		//#region VIEWBASE

@@ -95,5 +95,5 @@ const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
 		[CNN_STATUS.CONNECTED]: "#37d300",
 		[CNN_STATUS.RECONNECTING]: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
 		[CNN_STATUS.DISCONNECTED]: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
-	}[status]
+	}[status],
 })

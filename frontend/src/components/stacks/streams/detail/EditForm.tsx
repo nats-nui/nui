@@ -78,7 +78,7 @@ const EditForm: FunctionComponent<Props> = ({
 	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const allStreams = streamSa.allStreams
 
-	return <Form className="var-dialog">
+	return <Form className="var-dialog" style={{ marginBottom: 25}}>
 
 		<div className="lbl-prop-title">BASE</div>
 
@@ -390,7 +390,6 @@ const EditForm: FunctionComponent<Props> = ({
 			/>
 			<div className="lbl-prop">SEALED</div>
 		</Box>
-
 
 		{/*<BoxV>
 			<div className="lbl-prop">TEMPLATE OWNER</div>
