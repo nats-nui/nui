@@ -1,4 +1,6 @@
 import CloseIcon from "@/icons/CloseIcon"
+import DetachIcon from "@/icons/DetachIcon"
+import docsSo from "@/stores/docs"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
@@ -34,6 +36,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleClose = () => store.onRemoveFromDeck()
+	const handleDetach = () => docsSo.detach(store)
 
 	// RENDER
 	const inRoot = !store.state.parent
@@ -48,10 +51,19 @@ const FrameworkCard: FunctionComponent<Props> = ({
 		<ErrorBoundary>
 
 			{isIconized ? <>
-				<ActionGroup className={cls.actions}>
+				<ActionGroup 
+					//className={cls.actions}
+					className={`${cls.actions} ${cls.hovercontainer}`}
+				>
+
 					<IconButton
 						onClick={handleClose}
 					><CloseIcon /></IconButton>
+
+					<IconButton className={`${cls.btt} color-bg ${cls.hovershow}`}
+						onClick={handleDetach}
+					><DetachIcon /></IconButton>
+
 				</ActionGroup>
 				{iconizedRender}
 			</> : <>

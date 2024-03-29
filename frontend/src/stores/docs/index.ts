@@ -5,7 +5,7 @@ import { StoreCore, createStore } from "@priolo/jon"
 import { CnnListStore } from "../stacks/connection"
 import { ViewLogStore } from "../stacks/log"
 import { ViewStore } from "../stacks/viewBase"
-import { forEachViews, getById } from "./utils/manage"
+import { forEachViews, getById, getRoot } from "./utils/manage"
 
 
 
@@ -191,6 +191,12 @@ const setup = {
 				await store.remove({ view, anim })
 				await store.add({ view, index, anim })
 			}
+		},
+		detach(view: ViewStore, store?: DocStore) {
+			if (!view.state.parent) return
+			const root = getRoot(view) ?? view
+			const rootIndex = store.getIndexByView(root)
+			store.move({ view, index: rootIndex + 1, anim: false })
 		},
 
 

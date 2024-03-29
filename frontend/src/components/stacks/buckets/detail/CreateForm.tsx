@@ -1,8 +1,5 @@
 import IconToggle from "@/components/buttons/IconToggle.tsx"
 import Box from "@/components/format/Box.tsx"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
-import Quote from "@/components/format/Quote.tsx"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList.tsx"
@@ -42,26 +39,26 @@ const CreateForm: FunctionComponent<Props> = ({
 	if (bucketSa.bucketConfig == null) return null
 	const bucket: BucketConfig = bucketSa.bucketConfig
 
-	return <Form>
+	return <div className="lyt-form">
 
 		<div className="lbl-prop-title">BASE</div>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">NAME</div>
 			<TextInput
 				value={bucket.bucket}
 				onChange={bucket => handlePropChange({ bucket })}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">DESCRIPTION</div>
 			<TextInput multiline rows={2}
 				value={bucket.description}
 				onChange={description => handlePropChange({ description })}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">STORAGE</div>
 			<ListDialog width={80}
 				store={bucketSo}
@@ -70,19 +67,19 @@ const CreateForm: FunctionComponent<Props> = ({
 				RenderRow={({ item }) => item.toUpperCase()}
 				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
-		</BoxV>
+		</div>
 
 		<div className="lbl-prop-title">KEY/VALUE STORE SETTINGS</div>
 
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">HISTORY</div>
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.history}
 				onChange={history => handlePropChange({ history })}
 			/>
-		</BoxV>
+		</div>
 
 		<MaxTimeCmp store={bucketSo}
 			label="TTL"
@@ -111,25 +108,25 @@ const CreateForm: FunctionComponent<Props> = ({
 		</Box>
 
 		<div className="lbl-prop-title">PLACEMENT</div>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">NUM REPLICAS</div>
 			<NumberInput
 				style={{ flex: 1 }}
 				value={bucket.replicas}
 				onChange={replicas => handlePropChange({ replicas })}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<div className="lbl-prop">CLUSTER</div>
-			<Quote>
-				<BoxV>
+			<div className="lyt-quote">
+				<div className="lyt-v">
 					<div className="lbl-prop">NAME</div>
 					<TextInput
 						value={bucket.placement?.cluster}
 						onChange={cluster => handlePlacementPropChange({ cluster })}
 					/>
-				</BoxV>
-				<BoxV>
+				</div>
+				<div className="lyt-v">
 					<div className="lbl-prop">TAGS</div>
 					<EditList<string>
 						items={bucket.placement?.tags}
@@ -139,11 +136,11 @@ const CreateForm: FunctionComponent<Props> = ({
 						fnIsVoid={i => !i || i.trim().length == 0}
 						RenderRow={EditStringRow}
 					/>
-				</BoxV>
-			</Quote>
-		</BoxV>
+				</div>
+			</div>
+		</div>
 
-	</Form>
+	</div>
 }
 
 export default CreateForm

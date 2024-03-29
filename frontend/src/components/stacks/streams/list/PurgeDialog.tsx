@@ -2,14 +2,12 @@ import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import Dialog from "@/components/dialogs/Dialog"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
+import { StreamsStore } from "@/stores/stacks/streams/index.ts"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
-import { StreamsStore } from "@/stores/stacks/streams/index.ts";
 
 
 
@@ -66,7 +64,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
             open={streamSa.purgeOpen}
             onClose={handleClose}
         >
-            <Form className="var-dialog">
+            <div className="lyt-form var-dialog">
                 <Box>
                     <IconToggle
                         check={purgeParams.bySeq}
@@ -87,13 +85,13 @@ const PurgeDialog: FunctionComponent<Props> = ({
                     onChange={(number: string) => handlePurgePropChange({ number: parseInt(number) })}
                 />
 
-                <BoxV>
+                <div className="lyt-v">
                     <div className="lbl-prop">SUBJECT</div>
                     <TextInput
                         value={purgeParams.subject}
                         onChange={subject => handlePurgePropChange({ subject })}
                     />
-                </BoxV>
+                </div>
 
                 <div className="lbl-prop-title">DANGER</div>
 
@@ -112,7 +110,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                         onClick={() => handleClose()}
                     />
                 </Box>
-            </Form>
+            </div>
         </Dialog>
     )
 }

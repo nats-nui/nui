@@ -9,6 +9,7 @@ interface Props {
 	style?: React.CSSProperties
 	className?:string
 	onMouseOver?: (enter: boolean) => void
+	onClick?: (e:React.MouseEvent) => void
 	children: React.ReactNode
 }
 
@@ -17,6 +18,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	style,
 	className,
 	onMouseOver,
+	onClick,
 	children
 }) => {
 
@@ -54,6 +56,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 		<div style={style} className={className}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
+			onClick={onClick}
 		>
 			<div id="colorRef" style={{display: "none"}} className="color-fg"/>
 			{children}

@@ -1,9 +1,11 @@
 import AnchorIcon from "@/icons/AnchorIcon"
 import CloseIcon from "@/icons/CloseIcon"
+import CompressHIcon from "@/icons/CompressHIcon"
 import DetachIcon from "@/icons/DetachIcon"
+import ExpandHIcon from "@/icons/ExpandHIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
 import docSo from "@/stores/docs"
-import { forEachParent, findParent, getRoot } from "@/stores/docs/utils/manage"
+import { findParent, getRoot } from "@/stores/docs/utils/manage"
 import mouseSo from "@/stores/mouse"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
@@ -12,8 +14,6 @@ import React, { FunctionComponent, useMemo, useState } from "react"
 import TooltipWrapCmp from "../TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
-import CompressHIcon from "@/icons/CompressHIcon"
-import ExpandHIcon from "@/icons/ExpandHIcon"
 
 
 
@@ -39,12 +39,7 @@ const Header: FunctionComponent<Props> = ({
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
 		mouseSo.startDrag({ srcView: store })
 	}
-	const handleDetach = () => {
-		if (!store.state.parent) return
-		const root = getRoot(store) ?? store
-		const rootIndex = docSo.getIndexByView(root)
-		docSo.move({ view: store, index: rootIndex + 1, anim: false })
-	}
+	const handleDetach = () => docSo.detach(store)
 	const handleLinkDetach = () => {
 		if (!store.state.linked) return
 		const root = getRoot(store) ?? store

@@ -1,7 +1,6 @@
 import Accordion from "@/components/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { FunctionComponent } from "react"
 
@@ -35,7 +34,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	const isEnabled = value != -1
 	const valueShow = value
 
-	return <BoxV>
+	return <div className="lyt-v">
 		<Box>
 			<IconToggle
 				check={isEnabled}
@@ -54,7 +53,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 				/>
 			</Box>
 		</Accordion>
-	</BoxV>
+	</div>
 }
 
 export default MaxNumberCmp

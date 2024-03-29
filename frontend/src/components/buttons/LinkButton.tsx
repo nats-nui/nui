@@ -1,8 +1,6 @@
 import TooltipWrapCmp from "@/components/TooltipWrapCmp"
-import CloseIcon from "@/icons/CloseIcon"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
-import { ANIM_TIME_CSS } from "@/types"
-import React, { FunctionComponent, useState } from "react"
+import React, { FunctionComponent } from "react"
+import cls from "./LinkButton.module.css"
 
 
 
@@ -11,7 +9,6 @@ interface Props {
 	tooltip?: string
 	selected?: boolean
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
-	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 /**
@@ -22,61 +19,25 @@ const LinkButton: FunctionComponent<Props> = ({
 	tooltip,
 	selected,
 	onClick,
-	onClose,
 }) => {
 
 	// STORE
-	const [enter, setEnter] = useState(false)
 
 	// HOOKs
 
 	// HANDLER
 
 	// RENDER
-	const showCloseBtt = enter && !!onClose
+	const clsRoot = `${cls.root} ${selected ? cls.selected : ""}`
 
 	return (
-		<TooltipWrapCmp
-			content={<div>
-				<div style={{ fontWeight: 700 }}>{tooltip}</div>
-			</div>}
-			onMouseOver={enter => setEnter(enter)}
+		<TooltipWrapCmp content={tooltip}
+			className={clsRoot}
+			onClick={onClick}
 		>
-			{showCloseBtt && <div style={cssBttCancel}
-				onClick={onClose}
-			><CloseIcon /></div>}
-
-			<div style={cssRow(selected)}
-				onClick={onClick}
-			>
-				{icon}
-			</div>
+			{icon}
 		</TooltipWrapCmp>
 	)
 }
 
 export default LinkButton
-
-const cssRow = (select: boolean): React.CSSProperties => ({
-	...select && {
-		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
-		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-	},
-
-	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
-	display: "flex", alignItems: 'center', justifyContent: 'center',
-	cursor: "pointer",
-	borderRadius: "5px 0px 0px 5px",
-	width: 30, height: 30,
-	padding: "3px 4px 3px 0px",
-	marginRight: '-4px',
-})
-
-const cssBttCancel: React.CSSProperties = {
-	cursor: "pointer",
-	display: "flex", alignItems: "center", justifyContent: 'center',
-	position: "absolute", right: -7, top: -5,
-	borderRadius: "50%",
-	width: 16, height: 16,
-	backgroundColor: "black",
-}

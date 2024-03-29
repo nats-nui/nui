@@ -1,12 +1,11 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
-import BoxV from "@/components/format/BoxV"
 import LinkButton from "@/components/buttons/LinkButton"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import ConsumersIcon from "@/icons/cards/ConsumersIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import docSo from "@/stores/docs"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
@@ -45,7 +44,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 		store={streamSo}
 		actionsRender={<ActionsCmp store={streamSo} />}
 		iconizedRender={
-			<BoxV style={{ marginTop: 10 }}>
+			<div className="lyt-v lyt-v-btts">
 				<LinkButton
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
@@ -58,7 +57,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 					selected={isConsumersSelect}
 					onClick={handleConsumersClick}
 				/>
-			</BoxV>
+			</div>
 		}
 	>
 		{inRead ? <>

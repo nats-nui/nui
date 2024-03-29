@@ -1,6 +1,5 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
-import BoxV from "@/components/format/BoxV"
 import LinkButton from "@/components/buttons/LinkButton"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -8,7 +7,7 @@ import StreamsIcon from "@/icons/cards/StreamsIcon"
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
@@ -47,7 +46,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		store={cnnDetailSo}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={
-			<BoxV style={{ marginTop: 10 }}>
+			<div className="lyt-v lyt-v-btts">
 				<LinkButton
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
@@ -66,7 +65,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					selected={isBucketsOpen}
 					onClick={handleBucketsClick}
 				/>
-			</BoxV>
+			</div>
 		}
 	>
 		{inRead &&

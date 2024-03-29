@@ -1,6 +1,4 @@
 import MyEditor from "@/components/editor"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
@@ -32,16 +30,16 @@ const DetailForm: FunctionComponent<Props> = ({
 	const inRead = kventrySa.editState == EDIT_STATE.READ
 	const inEdit = kventrySa.editState == EDIT_STATE.EDIT
 
-	return <Form style={{ height: "100%" }}>
+	return <div className="lyt-form" style={{ height: "100%" }}>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">KEY</div>
 			<TextInput autoFocus
 				value={kventry.key ?? ""}
 				onChange={handleKeyChange}
 				readOnly={inRead || inEdit}
 			/>
-		</BoxV>
+		</div>
 
 		<MyEditor
 			ref={ref => kventrySo.state.editorRef = ref}
@@ -51,7 +49,7 @@ const DetailForm: FunctionComponent<Props> = ({
 			readOnly={inRead}
 		/>
 
-	</Form>
+	</div>
 }
 
 export default DetailForm

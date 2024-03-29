@@ -19,6 +19,7 @@
 
 
 .actions {
+	position: relative;
 	align-self: stretch;
 	justify-content: center;
 }
@@ -29,4 +30,23 @@
 	padding: 10px;
 	display: flex;
 	flex-direction: column;
+}
+
+
+
+
+
+.btt {
+	position:absolute;
+	color: var(--var-0);
+	border-radius: 50%;
+	
+	transition: top 300ms ease-out, opacity 200ms linear;
+	top: 0px;
+	opacity: 0;
+}
+
+.hovercontainer:hover .hovershow{
+	top: -9px;
+	opacity: 1;
 }

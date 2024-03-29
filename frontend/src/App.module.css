@@ -5,7 +5,7 @@
 
 	color: var(--text);
 
-	background-image: url(src/assets/bg4.jpg);
+	background-image: url(./assets/bg4.jpg);
 	background-color: rgba(0, 0, 0, 0.8);
 	background-blend-mode: darken;
 }
@@ -16,19 +16,29 @@
 	overflow-x: auto;
 }
 
-.fixed {
-	z-index: 1;
+.visible {
+	flex: 1;
 	display: flex;
-	position: sticky;
-	left: 0px;
-	right: 0px;
-	background-color: #636363;
-	padding: 10px 25px 10px 0px;
+	overflow-x: auto;
+	padding: 10px 0px 10px 0px;
 }
 
-.visible {
-	z-index: 0;
+
+
+
+.fix {
 	display: flex;
-	flex: 1;
-	padding: 10px 0px 10px 0px;
+	background-color: var(--text-bg);
+	padding: 10px 20px 10px 10px;
+}
+
+.fix_label {
+	writing-mode: vertical-lr;
+    font-size: 14px;
+    border-left: 1px solid var(--var-1);
+    border-right: 1px solid var(--var-1);
+    height: 80px;
+    text-align: center;
+    color: var(--var-1);
+	font-weight: 700;
 }

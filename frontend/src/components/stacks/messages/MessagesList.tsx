@@ -1,5 +1,4 @@
 import FloatButton from "@/components/buttons/FloatButton"
-import BoxFloat from "@/components/format/BoxFloat"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ClearIcon from "@/icons/ClearIcon"
 import { Message } from "@/types/Message"
@@ -109,7 +108,7 @@ const MessagesList: FunctionComponent<Props> = ({
 			}}
 		/>
 
-		<BoxFloat>
+		<div className="lyt-float">
 			{showKeepDown &&
 				<FloatButton
 					onClick={handleKeepDownClick}
@@ -120,7 +119,7 @@ const MessagesList: FunctionComponent<Props> = ({
 					onClick={onClear}
 				><ClearIcon /></FloatButton>
 			}
-		</BoxFloat>
+		</div>
 
 	</>)
 }

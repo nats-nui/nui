@@ -15,6 +15,7 @@ import './css/scrollbar.css';
 import './css/animation.css';
 //import './css/button.css';
 import './css/interaction.css';
+import './css/layout.css';
 import './css/monaco.css';
 import "./utils/startup"
 

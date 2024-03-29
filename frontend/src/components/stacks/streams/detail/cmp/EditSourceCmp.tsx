@@ -1,6 +1,4 @@
 import Options from "@/components/Options"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import { Source } from "@/types/Stream"
@@ -33,8 +31,8 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!source) return null
 
-	return <Form className="var-dialog">
-		<BoxV>
+	return <div className="lyt-form var-dialog">
+		<div className="lyt-v">
 			<div className="lbl-prop">NAME</div>
 			<Options<string> height={500}
 				value={source.name}
@@ -43,8 +41,8 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				readOnly={readOnly}
 				onSelect={handleNameChange}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<div className="lbl-prop">START SEQUENCE</div>
 			<NumberInput
 				value={source.optStartSeq}
@@ -52,8 +50,8 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				// variant={variant}
 				readOnly={readOnly}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<div className="lbl-prop">FILTER SUBJECT</div>
 			<TextInput
 				value={source.filterSubject}
@@ -61,8 +59,8 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				// variant={variant}
 				readOnly={readOnly}
 			/>
-		</BoxV>
-	</Form>
+		</div>
+	</div>
 }
 
 export default EditSourceCmp

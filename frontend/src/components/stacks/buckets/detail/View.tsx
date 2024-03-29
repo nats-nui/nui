@@ -1,11 +1,10 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
-import BoxV from "@/components/format/BoxV"
 import LinkButton from "@/components/buttons/LinkButton"
+import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
@@ -42,14 +41,14 @@ const BucketDetailView: FunctionComponent<Props> = ({
 		store={bucketSo}
 		actionsRender={<ActionsCmp store={bucketSo} />}
 		iconizedRender={
-			<BoxV style={{ marginTop: 10 }}>
+			<div className="lyt-v lyt-v-btts">
 				<LinkButton
 					icon={<KvEntriesIcon />}
 					tooltip="KVENTRIES"
 					selected={isKVEntriesSelect}
 					onClick={handleKVEntriesClick}
 				/>
-			</BoxV>
+			</div>
 		}
 	>
 		{inRead ? (<>
