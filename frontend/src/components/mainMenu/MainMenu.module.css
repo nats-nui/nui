@@ -5,6 +5,6 @@
 
 	width: 50px;
 	gap: 10px;
-	background-color: #494949;
+	background-color: var(--bg-disabled);
 	padding: 10px;
 }

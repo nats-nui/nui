@@ -2,7 +2,6 @@ import Accordion from "@/components/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import ListDialog from "@/components/dialogs/ListDialog"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
@@ -50,7 +49,7 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 	const isEnabled = value != -1
 	const valueShow = bytesToValue(value, unit)
 
-	return <BoxV>
+	return <div className="lyt-v">
 		<Box>
 			<IconToggle
 				check={isEnabled}
@@ -77,7 +76,7 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 				/>
 			</Box>
 		</Accordion>
-	</BoxV>
+	</div>
 }
 
 export default MaxBytesCmp

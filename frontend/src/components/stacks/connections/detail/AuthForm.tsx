@@ -1,7 +1,5 @@
 import Options from "@/components/Options"
 import Button from "@/components/buttons/Button"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useState } from "react"
 import TextInput from "../../../input/TextInput"
@@ -33,7 +31,7 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!authEdit) return null
-	return <Form className="var-dialog">
+	return <div className="lyt-form var-dialog">
 		<Options<string>
 			value={authEdit?.mode}
 			items={Object.values(AUTH_MODE)}
@@ -44,42 +42,42 @@ const AuthForm: FunctionComponent<Props> = ({
 		/>
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
-				<BoxV><div className="lbl-prop">USERNAME</div><TextInput
+				<div className="lyt-v"><div className="lbl-prop">USERNAME</div><TextInput
 					value={authEdit.username}
 					onChange={username => handlePropChange({ username })}
 					readOnly={readOnly}
-				/></BoxV>
-				<BoxV><div className="lbl-prop">PASSWORD</div><TextInput
+				/></div>
+				<div className="lyt-v"><div className="lbl-prop">PASSWORD</div><TextInput
 					value={authEdit.password}
 					onChange={password => handlePropChange({ password })}
 					readOnly={readOnly}
-				/></BoxV>
+				/></div>
 			</>,
 			[AUTH_MODE.TOKEN]: (
-				<BoxV><div className="lbl-prop">TOKEN</div><TextInput
+				<div className="lyt-v"><div className="lbl-prop">TOKEN</div><TextInput
 					value={authEdit.token}
 					onChange={token => handlePropChange({ token })}
 					readOnly={readOnly}
-				/></BoxV>
+				/></div>
 			),
 			[AUTH_MODE.JWT]: <>
-				<BoxV><div className="lbl-prop">JWT</div><TextInput
+				<div className="lyt-v"><div className="lbl-prop">JWT</div><TextInput
 					value={authEdit.jwt}
 					onChange={jwt => handlePropChange({ jwt })}
 					readOnly={readOnly}
-				/></BoxV>
-				<BoxV><div className="lbl-prop">NKEY</div><TextInput
+				/></div>
+				<div className="lyt-v"><div className="lbl-prop">NKEY</div><TextInput
 					value={authEdit.nkey}
 					onChange={nkey => handlePropChange({ nkey })}
 					readOnly={readOnly}
-				/></BoxV>
+				/></div>
 			</>,
 			[AUTH_MODE.CREDS_FILE]: <>
-				<BoxV><div className="lbl-prop">CREDS PATH FILE</div><TextInput
+				<div className="lyt-v"><div className="lbl-prop">CREDS PATH FILE</div><TextInput
 					value={authEdit.creds}
 					onChange={creds => handlePropChange({ creds })}
 					readOnly={readOnly}
-				/></BoxV>
+				/></div>
 			</>,
 		}[authEdit.mode]}
 
@@ -93,7 +91,7 @@ const AuthForm: FunctionComponent<Props> = ({
 				/>
 			)}
 		</div>
-	</Form>
+	</div>
 
 }
 

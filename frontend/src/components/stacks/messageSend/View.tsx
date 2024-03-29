@@ -1,21 +1,17 @@
 import Button from "@/components/buttons/Button"
+import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import MyEditor from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import TextInput from "@/components/input/TextInput"
+import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
+import SendIcon from "@/icons/SendIcon"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
+import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import SubjectsDialog from "./SubjectsDialog"
-import BoxFloat from "@/components/format/BoxFloat"
-import FloatButton from "@/components/buttons/FloatButton"
-import ArrowDownIcon from "@/icons/ArrowDownIcon"
-import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
-import { LOAD_STATE } from "@/stores/stacks/utils"
-import SendIcon from "@/icons/SendIcon"
 
 
 
@@ -64,8 +60,8 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<Form style={{ height: "100%" }}>
-			<BoxV>
+		<div className="lyt-form" style={{ height: "100%" }}>
+			<div className="lyt-v">
 				<div className="lbl-prop cliccable"
 					onClick={handleSubsClick}
 				>SUBJECT</div>
@@ -73,7 +69,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 					value={sendSa.subject}
 					onChange={handleSubjectChange}
 				/>
-			</BoxV>
+			</div>
 			<MyEditor
 				ref={ref => sendSa.editorRef = ref}
 				format={sendSa.format}
@@ -82,7 +78,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 				onChange={handleValueChange}
 			/>
 
-			<BoxFloat>
+			<div className="lyt-float">
 				<FloatButton style={{ position: "relative" }}
 					onClick={handleSend}
 					disabled={!canSend}
@@ -92,8 +88,8 @@ const MessageSendView: FunctionComponent<Props> = ({
 						: <SendIcon />
 					}
 				</FloatButton>
-			</BoxFloat>
-		</Form>
+			</div>
+		</div>
 
 		<SubjectsDialog store={sendSo} />
 		<FormatDialog store={sendSo} />

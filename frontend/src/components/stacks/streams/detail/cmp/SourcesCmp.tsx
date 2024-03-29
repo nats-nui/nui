@@ -1,5 +1,4 @@
 import ElementDialog from "@/components/dialogs/ElementDialog"
-import Quote from "@/components/format/Quote"
 import EditList, { LIST_ACTIONS } from "@/components/lists/EditList"
 import EditItemRow from "@/components/rows/EditItemRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
@@ -74,7 +73,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	const allStreams = streamSa.allStreams
 
 	return <>
-		<Quote>
+		<div className="lyt-quote">
 			<EditList<Source> ref={listRef} keepSelectOnBlur toggleSelect
 				items={sources}
 				select={souceIndex}
@@ -85,7 +84,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
 				fnIsVoid={item => !item.name || item.name.trim().length == 0}
 			/>
-		</Quote>
+		</div>
 		<ElementDialog
 			title="SOURCE"
 			element={elementSource}

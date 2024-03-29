@@ -2,7 +2,6 @@ import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import MyEditor from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
-import Form from "@/components/format/Form"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
@@ -36,7 +35,7 @@ const MessageView: FunctionComponent<Props> = ({
 			<FormatAction store={msgSo} />
 		</>}
 	>
-		<Form className={cls.form}>
+		<div className={`lyt-form ${cls.form}`}>
 			<div className="hover-container">
 				<CopyButton absolute value={msgSa.message.subject} />
 				<span className="lbl-prop">SUBJECT: </span>
@@ -52,7 +51,7 @@ const MessageView: FunctionComponent<Props> = ({
 			/>
 
 			<div className={cls.timestamp}>{timestamp}</div>
-		</Form>
+		</div>
 
 		<FormatDialog store={msgSo} />
 

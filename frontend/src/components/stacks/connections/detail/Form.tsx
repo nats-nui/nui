@@ -1,7 +1,5 @@
 import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import ListObjects from "@/components/lists/ListObjects"
@@ -71,19 +69,19 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const auths = connection.auth ?? []
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-	return <Form className="var-dialog">
+	return <div className="lyt-form var-dialog">
 
 		<div className="lbl-prop-title">BASE</div>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">NAME</div>
 			<TextInput
 				value={name}
 				onChange={handleChangeName}
 				readOnly={inRead}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">HOST</div>
 			<EditList<string>
 				items={hosts}
@@ -94,11 +92,11 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				readOnly={inRead}
 				fnIsVoid={h => !h || h.trim().length == 0}
 			/>
-		</BoxV>
+		</div>
 
 		<div className="lbl-prop-title">ADVANCED</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">AUTH</div>
 			<ListObjects<Auth>
 				store={cnnDetailSo}
@@ -124,9 +122,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 					/>
 				)}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">FAVORITE SUBJECT</div>
 			<EditList<Subscription>
 				items={subscriptions}
@@ -137,9 +135,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				readOnly={inRead}
 				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
 			/>
-		</BoxV>
+		</div>
 
-	</Form>
+	</div>
 }
 
 export default ConnectionDetailForm

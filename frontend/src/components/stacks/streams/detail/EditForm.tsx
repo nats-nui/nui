@@ -1,9 +1,6 @@
 import Accordion from "@/components/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
-import Quote from "@/components/format/Quote"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
@@ -78,29 +75,29 @@ const EditForm: FunctionComponent<Props> = ({
 	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const allStreams = streamSa.allStreams
 
-	return <Form className="var-dialog" style={{ marginBottom: 25}}>
+	return <div className="lyt-form var-dialog" style={{ marginBottom: 25 }}>
 
 		<div className="lbl-prop-title">BASE</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">NAME</div>
 			<TextInput
 				value={config.name}
 				onChange={name => handlePropChange({ name })}
 				readOnly={inRead || !inNew}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">DESCRIPTION</div>
 			<TextInput multiline rows={2}
 				value={config.description}
 				onChange={description => handlePropChange({ description })}
 				readOnly={inRead}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">STORAGE</div>
 			<ListDialog width={80}
 				store={streamSo}
@@ -110,9 +107,9 @@ const EditForm: FunctionComponent<Props> = ({
 				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">SUBJECTS</div>
 			<EditList<string>
 				items={config.subjects}
@@ -123,14 +120,14 @@ const EditForm: FunctionComponent<Props> = ({
 				fnIsVoid={i => !i || i.trim().length == 0}
 				RenderRow={EditStringRow}
 			/>
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">SOURCES</div>
 			<SourcesCmp store={streamSo} />
-		</BoxV>
+		</div>
 
-		<BoxV>
+		<div className="lyt-v">
 			<Box>
 				<IconToggle
 					check={!!config.mirror}
@@ -140,8 +137,8 @@ const EditForm: FunctionComponent<Props> = ({
 				<div className="lbl-prop">MIRROR</div>
 			</Box>
 			<Accordion open={!!config.mirror}>
-				<Quote>
-					<BoxV>
+				<div className="lyt-quote">
+					<div className="lyt-v">
 						<div className="lbl-prop">NAME</div>
 						{/* <TextInput
 							value={config.mirror?.name}
@@ -158,8 +155,8 @@ const EditForm: FunctionComponent<Props> = ({
 								handleMirrorPropChange({ name: allStreams[index] })
 							}}
 						/>
-					</BoxV>
-					<BoxV>
+					</div>
+					<div className="lyt-v">
 						<div className="lbl-prop">START SEQUENCE</div>
 						<NumberInput
 							style={{ flex: 1 }}
@@ -167,21 +164,21 @@ const EditForm: FunctionComponent<Props> = ({
 							onChange={optStartSeq => handleMirrorPropChange({ optStartSeq })}
 							readOnly={inRead || !inNew}
 						/>
-					</BoxV>
-					<BoxV>
+					</div>
+					<div className="lyt-v">
 						<div className="lbl-prop">FILTER SUBJECT</div>
 						<TextInput
 							value={config.mirror?.filterSubject}
 							onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
 							readOnly={inRead || !inNew}
 						/>
-					</BoxV>
-				</Quote>
+					</div>
+				</div>
 			</Accordion>
-		</BoxV>
+		</div>
 
 		<div className="lbl-prop-title">RETENTION</div>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">POLICY</div>
 			<ListDialog width={100}
 				store={streamSo}
@@ -191,8 +188,8 @@ const EditForm: FunctionComponent<Props> = ({
 				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<div className="lbl-prop">DISCARD</div>
 			<ListDialog width={80}
 				store={streamSo}
@@ -204,7 +201,7 @@ const EditForm: FunctionComponent<Props> = ({
 					handlePropChange({ discard: Object.values(DISCARD)[index] })
 				}}
 			/>
-		</BoxV>
+		</div>
 		<Box>
 			<IconToggle
 				check={config.allowRollupHdrs}
@@ -271,7 +268,7 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 		<div className="lbl-prop-title">PLACEMENT</div>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">NUM REPLICAS</div>
 			<NumberInput
 				style={{ flex: 1 }}
@@ -279,19 +276,19 @@ const EditForm: FunctionComponent<Props> = ({
 				onChange={numReplicas => handlePropChange({ numReplicas })}
 				readOnly={inRead}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<div className="lbl-prop">CLUSTER</div>
-			<Quote>
-				<BoxV>
+			<div className="lyt-quote">
+				<div className="lyt-v">
 					<div className="lbl-prop">NAME</div>
 					<TextInput
 						value={config.placement?.cluster}
 						onChange={cluster => handlePlacementPropChange({ cluster })}
 						readOnly={inRead}
 					/>
-				</BoxV>
-				<BoxV>
+				</div>
+				<div className="lyt-v">
 					<div className="lbl-prop">TAGS</div>
 					<EditList<string>
 						items={config.placement?.tags}
@@ -302,9 +299,9 @@ const EditForm: FunctionComponent<Props> = ({
 						fnIsVoid={i => !i || i.trim().length == 0}
 						RenderRow={EditStringRow}
 					/>
-				</BoxV>
-			</Quote>
-		</BoxV>
+				</div>
+			</div>
+		</div>
 
 
 		<div className="lbl-prop-title">PUBLISH</div>
@@ -316,7 +313,7 @@ const EditForm: FunctionComponent<Props> = ({
 			/>
 			<div className="lbl-prop">ALLOW NO ACK ON PUBLISH</div>
 		</Box>
-		<BoxV>
+		<div className="lyt-v">
 			<div className="lbl-prop">DUPLICATE WINDOW</div>
 			<NumberInput
 				style={{ flex: 1 }}
@@ -324,8 +321,8 @@ const EditForm: FunctionComponent<Props> = ({
 				onChange={duplicateWindow => handlePropChange({ duplicateWindow })}
 				readOnly={inRead}
 			/>
-		</BoxV>
-		<BoxV>
+		</div>
+		<div className="lyt-v">
 			<Box>
 				<IconToggle
 					check={!!config.republish}
@@ -351,23 +348,23 @@ const EditForm: FunctionComponent<Props> = ({
 				<div className="lbl-prop">REPUBLISH</div>
 			</Box>
 			<Accordion open={!!config.republish}>
-				<Quote>
-					<BoxV>
+				<div className="lyt-quote">
+					<div className="lyt-v">
 						<div className="lbl-prop">SOURCE</div>
 						<TextInput
 							value={config.republish?.src}
 							onChange={src => handleRepublishPropChange({ src })}
 							readOnly={inRead}
 						/>
-					</BoxV>
-					<BoxV>
+					</div>
+					<div className="lyt-v">
 						<div className="lbl-prop">DESTINATION</div>
 						<TextInput
 							value={config.republish?.dest}
 							onChange={dest => handleRepublishPropChange({ dest })}
 							readOnly={inRead}
 						/>
-					</BoxV>
+					</div>
 					<Box>
 						<IconToggle
 							check={config.republish?.headersOnly}
@@ -376,9 +373,9 @@ const EditForm: FunctionComponent<Props> = ({
 						/>
 						<div className="lbl-prop">HEADERS ONLY</div>
 					</Box>
-				</Quote>
+				</div>
 			</Accordion>
-		</BoxV>
+		</div>
 
 		<div className="lbl-prop-title">SEAL</div>
 
@@ -391,16 +388,16 @@ const EditForm: FunctionComponent<Props> = ({
 			<div className="lbl-prop">SEALED</div>
 		</Box>
 
-		{/*<BoxV>
+		{/*<div className="lyt-v">
 			<div className="lbl-prop">TEMPLATE OWNER</div>
 			<TextInput
 				value={config.templateOwner}
 				onChange={templateOwner => handlePropChange({templateOwner})}
 				readOnly={inRead}
 			/>
-		</BoxV>*/}
+		</div>*/}
 
-	</Form>
+	</div>
 }
 
 export default EditForm

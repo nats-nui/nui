@@ -2,9 +2,6 @@ import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import Dialog from "@/components/dialogs/Dialog"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
-import Form from "@/components/format/Form"
-import Quote from "@/components/format/Quote"
 import DateTimeInput from "@/components/input/DateTimeInput"
 import NumberInput from "@/components/input/NumberInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
@@ -57,7 +54,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
-			<Form className="var-dialog">
+			<div className="lyt-form var-dialog">
 				<Box>
 					<IconToggle
 						check={!filter.byTime}
@@ -86,30 +83,30 @@ const FilterDialog: FunctionComponent<Props> = ({
 					onChange={(startTime: string) => handleFilterPropChange({ startTime: +startTime })}
 				/>
 
-				<BoxV>
+				<div className="lyt-v">
 					<div className="lbl-prop">INTERVAL</div>
 					<NumberInput
 						style={{ flex: 1 }}
 						numValue={filter.interval}
 						onChange={(interval: number) => handleFilterPropChange({ interval: interval })}
 					/>
-				</BoxV>
+				</div>
 
-				<BoxV>
+				<div className="lyt-v">
 					<div className="lbl-prop">SUBJECTS OF THE STREAM</div>
-					<Quote>
+					<div className="lyt-quote">
 						<ListMultiWithFilter
 							items={subjects}
 							selects={filter.subjects}
 							onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
 						/>
-					</Quote>
-				</BoxV>
+					</div>
+				</div>
 
 				<Button children="APPLY" style={{ alignSelf: "start" }}
 					onClick={handleApply}
 				/>
-			</Form>
+			</div>
 		</Dialog>
 	)
 }

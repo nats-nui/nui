@@ -10,6 +10,7 @@ import { VIEW_SIZE } from "./utils"
 import { LOAD_MODE, LOAD_STATE } from "./utils"
 import { LoadBaseStore } from "./loadBase"
 import { socketPool } from "@/plugins/SocketService/pool"
+import { getRoot } from "../docs/utils/manage"
 
 
 
@@ -177,6 +178,7 @@ const viewSetup = {
 				})
 			})
 		},
+
 	},
 
 	mutators: {

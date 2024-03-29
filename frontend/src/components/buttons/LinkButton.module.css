@@ -1,0 +1,16 @@
+.root {
+	transition: background-color 300ms, color 300ms;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border-radius: 5px 0px 0px 5px; 
+	height: 30px;
+	padding: 3px 4px 3px 0px;
+	margin-left: 4px;
+}
+
+.selected {
+	color: var(--text);
+	background-color: var(--bg-default);
+}

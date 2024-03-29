@@ -2,7 +2,6 @@ import Accordion from "@/components/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import ListDialog from "@/components/dialogs/ListDialog"
 import Box from "@/components/format/Box"
-import BoxV from "@/components/format/BoxV"
 import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
@@ -55,7 +54,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const isEnabled = value != desiredDefault
 	const valueShow = nsToValue(value, unit)
 
-	return <BoxV>
+	return <div className="lyt-v">
 		<Box>
 			<IconToggle
 				check={isEnabled}
@@ -82,7 +81,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 				/>
 			</Box>
 		</Accordion>
-	</BoxV>
+	</div>
 }
 
 export default MaxTimeCmp
