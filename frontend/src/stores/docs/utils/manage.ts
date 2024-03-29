@@ -36,6 +36,18 @@ export function getById(views: ViewStore[], id: string): ViewStore {
 	})
 }
 
+/**
+ * cicla i parent se c'e' un return si ferma e restituisce
+ */
+export function findParent<T>(view: ViewStore, callback: (view: ViewStore) => T): T {
+	let parent = view?.state.parent
+	while (parent != null) {
+		const ret = callback(parent)
+		if ( ret != null && ret !== false ) return ret
+		parent = parent.state.parent
+	}
+	return null
+}
 /** 
  * cicla tutti i parent di "view" 
  */

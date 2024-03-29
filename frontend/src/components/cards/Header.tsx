@@ -3,7 +3,7 @@ import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
 import docSo from "@/stores/docs"
-import { getRoot } from "@/stores/docs/utils/manage"
+import { forEachParent, findParent, getRoot } from "@/stores/docs/utils/manage"
 import mouseSo from "@/stores/mouse"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
@@ -12,6 +12,8 @@ import React, { FunctionComponent, useMemo, useState } from "react"
 import TooltipWrapCmp from "../TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
+import CompressHIcon from "@/icons/CompressHIcon"
+import ExpandHIcon from "@/icons/ExpandHIcon"
 
 
 
@@ -64,24 +66,37 @@ const Header: FunctionComponent<Props> = ({
 	const handleToggleIconize = () => {
 		if (!isPinned) docSo.pinned(store); else docSo.pinnedDelete(store)
 	}
+	const handleComprime = () => {
+		findParent(store, (view) => view.setSize(VIEW_SIZE.COMPACT))
+	}
+	const handleExpand = () => {
+		findParent(store, (view) => view.setSize(VIEW_SIZE.NORMAL))
+	}
 
 	// RENDER
-	if (!store) return null
-	const [title, subTitle, isAnchored, isPinned ] = useMemo(()=>[
+	//if (!store) return null
+
+	const [title, subTitle, isAnchored, isPinned] = useMemo(() => [
 		store.getTitle(),
 		store.getSubTitle(),
 		docSo.isAnchored(store),
 		docSo.isPinned(store.state.uuid),
-	],[store.state])
+	], [store.state])
+
 	const isDraggable = store.state.draggable
 	const haveLinkDetachable = store.state.linked?.state.draggable
 	const inRoot = !store.state.parent
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
+	const allCompact = !findParent(store, view => view.state.size != VIEW_SIZE.COMPACT)
+
 	const showBttAnchor = inRoot && (enter || isAnchored)
 	const showDetachable = !inRoot && enter
 	const showBttClose = !store.state.unclosable
 	const showBttPin = inRoot && enter && store.state.pinnable
-	const tooltip = isCompact
+	const showBttExpand = allCompact && !inRoot && enter
+	const showBttComprime = !allCompact && !inRoot && enter
+
+	const tooltipContent = isCompact
 		? <div>
 			<div className="lbl-header-title">{title}</div>
 			<div className="lbl-header-subtitle">{subTitle}</div>
@@ -100,7 +115,7 @@ const Header: FunctionComponent<Props> = ({
 				<div onClick={handleSizeClick} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
-					<TooltipWrapCmp content={tooltip} >
+					<TooltipWrapCmp content={tooltipContent} >
 						<CardIcon
 							type={store.state.type}
 						/>
@@ -124,6 +139,16 @@ const Header: FunctionComponent<Props> = ({
 
 				<div style={cssButtons}>
 					<div style={{ display: "flex" }}>
+						{showBttExpand && (
+							<IconButton
+								onClick={handleExpand}
+							><ExpandHIcon /></IconButton>
+						)}
+						{showBttComprime && (
+							<IconButton
+								onClick={handleComprime}
+							><CompressHIcon /></IconButton>
+						)}
 						{showBttPin && (
 							<IconButton
 								onClick={handleToggleIconize}
@@ -151,6 +176,7 @@ const Header: FunctionComponent<Props> = ({
 				</div>
 
 			</>}
+
 		</div>
 	)
 }
