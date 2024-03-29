@@ -1,13 +1,13 @@
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
 
 body {
   font-family: 'Inter Variable', sans-serif;
   background: #000;
   margin: 0;
   padding: 0;
-  height: 100%;
-}
-
-html {
   height: 100%;
 }
 
