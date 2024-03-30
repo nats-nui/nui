@@ -23,22 +23,3 @@
 	padding: 10px 0px 10px 0px;
 }
 
-
-
-
-.fix {
-	display: flex;
-	background-color: var(--text-bg);
-	padding: 10px 20px 10px 10px;
-}
-
-.fix_label {
-	writing-mode: vertical-lr;
-    font-size: 14px;
-    border-left: 1px solid var(--var-1);
-    border-right: 1px solid var(--var-1);
-    height: 80px;
-    text-align: center;
-    color: var(--var-1);
-	font-weight: 700;
-}

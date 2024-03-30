@@ -1,0 +1,37 @@
+
+.root {
+	display: flex;
+	background-color: var(--text-bg);
+	padding: 10px 20px 10px 10px;
+}
+
+.btt {
+	color: var(--text-bg);
+	background-color: var(--var-1);
+}
+
+
+
+.handle {
+	cursor: col-resize;
+	display: flex; 
+	flex-direction: column;
+	gap: 10px;
+}
+
+.handle_label {
+	user-select: none;
+	writing-mode: vertical-lr;
+    font-size: 14px;
+    border-left: 1px solid var(--var-1);
+    border-right: 1px solid var(--var-1);
+    height: 80px;
+    text-align: center;
+    color: var(--var-1);
+	font-weight: 700;
+}
+
+.handle_container {
+	display: flex;
+	overflow-x: auto;
+}
