@@ -8,6 +8,9 @@ import CardCmp from "./components/cards/CardCmp"
 import CompressHIcon from "./icons/CompressHIcon"
 import ExpandHIcon from "./icons/ExpandHIcon"
 import { delay } from "./utils/time"
+import CompressAllIcon from "./icons/CompressAllIcon"
+import { forEachViews } from "./stores/docs/utils/manage"
+import { VIEW_SIZE } from "./stores/stacks/utils"
 
 
 
@@ -45,11 +48,15 @@ const DrawerCmp: FunctionComponent = () => {
 		document.addEventListener('mousemove', mouseMove);
 		document.addEventListener('mouseup', mouseUp);
 	}
-	const hanldeOpen = async (e:React.MouseEvent) => {
-		setWidth(width > 0 ? 0 : lastWidth.current)
+	const hanldeToggle = async (e: React.MouseEvent) => {
+		const w = lastWidth.current < 20 ? 500 : lastWidth.current
+		setWidth(width > 0 ? 0 : w)
 		setAnimation(true)
 		await delay(400)
 		setAnimation(false)
+	}
+	const handleCompressAll = (e: React.MouseEvent) => {
+		forEachViews(storesAnchored, view => view.setSize(VIEW_SIZE.COMPACT))
 	}
 
 	// RENDER
@@ -61,9 +68,14 @@ const DrawerCmp: FunctionComponent = () => {
 				onMouseDown={handleDown}
 			>
 				<IconButton className={cls.btt}
-					onClick={hanldeOpen}
+					onClick={hanldeToggle}
 				>
 					{width > 0 ? <ExpandHIcon /> : <CompressHIcon />}
+				</IconButton>
+				<IconButton className={cls.btt}
+					onClick={handleCompressAll}
+				>
+					<CompressAllIcon />
 				</IconButton>
 				<div className="bars-alert-bg-1" style={{ flex: 1 }} />
 				<div className={cls.handle_label}>DRAWER</div>
@@ -89,7 +101,7 @@ const DrawerCmp: FunctionComponent = () => {
 
 export default DrawerCmp
 
-const cssFixed = (width: number, animation:boolean): React.CSSProperties => ({
+const cssFixed = (width: number, animation: boolean): React.CSSProperties => ({
 	width,
-	transition: animation ? "width 300ms": null,
+	transition: animation ? "width 300ms" : null,
 })
