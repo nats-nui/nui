@@ -51,18 +51,20 @@ const FrameworkCard: FunctionComponent<Props> = ({
 		<ErrorBoundary>
 
 			{isIconized ? <>
-				<ActionGroup 
+				<ActionGroup
 					//className={cls.actions}
 					className={`${cls.actions} ${cls.hovercontainer}`}
 				>
-
 					<IconButton
 						onClick={handleClose}
 					><CloseIcon /></IconButton>
 
-					<IconButton className={`${cls.btt} color-bg ${cls.hovershow}`}
-						onClick={handleDetach}
-					><DetachIcon /></IconButton>
+					{!inRoot && (
+						<IconButton 
+							className={`${cls.btt} color-bg ${cls.hovershow}`}
+							onClick={handleDetach}
+						><DetachIcon /></IconButton>
+					)}
 
 				</ActionGroup>
 				{iconizedRender}
