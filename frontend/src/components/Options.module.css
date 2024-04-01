@@ -7,3 +7,9 @@
 	font-size: 12px;
 	font-weight: 600;
 }
+
+.divider {
+	width: 100%; 
+	border-bottom: 2px dashed rgb(0 0 0 / 35%); 
+	margin-top: 5px;
+}

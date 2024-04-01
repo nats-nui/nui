@@ -65,8 +65,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 				</Box>
 				<NumberInput
 					style={{ flex: 1 }}
-					numValue={filter.startSeq}
-					onChange={startSeq => handleFilterPropChange({ startSeq: +startSeq })}
+					value={filter.startSeq}
+					onChange={(startSeq:number) => handleFilterPropChange({ startSeq })}
 				/>
 
 				<Box>
@@ -87,8 +87,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 					<div className="lbl-prop">INTERVAL</div>
 					<NumberInput
 						style={{ flex: 1 }}
-						numValue={filter.interval}
-						onChange={(interval: number) => handleFilterPropChange({ interval: interval })}
+						value={filter.interval}
+						onChange={(interval: number) => handleFilterPropChange({ interval })}
 					/>
 				</div>
 

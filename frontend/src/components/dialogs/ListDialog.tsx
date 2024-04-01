@@ -9,7 +9,7 @@ import ElementDialog from "./ElementDialog"
 
 
 /** un COMPONENT che se premuto apre una DIALOG con una LIST */
-interface Props extends DialogProps  {
+interface Props extends DialogProps {
 	items: string[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<string>>
 	readOnly?: boolean
@@ -26,7 +26,6 @@ const ListDialog: FunctionComponent<Props> = ({
 	style,
 	readOnly,
 	onSelect,
-	
 	...props
 }) => {
 
@@ -37,32 +36,36 @@ const ListDialog: FunctionComponent<Props> = ({
 	// HANDLER
 	const [element, setElement] = useState<HTMLElement>(null)
 	const handleDialogOpen = (e) => setElement(!!element ? null : e.target)
-	const handleSelect = (index:number ) => {
+	const handleSelect = (index: number) => {
 		setElement(null)
 		onSelect(index)
 	}
 
 	// RENDER
-	if ( !items ) return null
-	const value = RenderRow({item: items[select]})
+	if (!items) return null
+	const value = RenderRow({ item: items[select] })
 
 	return <>
 		<Component
 			onClick={handleDialogOpen}
 			//readOnly={readOnly}
-			enterRender={<ArrowRightIcon style={{opacity: 0.5}}/>}
+			enterRender={<ArrowRightIcon style={{ opacity: 0.5 }} />}
 		>{value}</Component>
 
-		<ElementDialog 
+		<ElementDialog
 			{...props}
 			title={null}
-			element={element}	
+			element={element}
 			onClose={() => setElement(null)}
 		>
 			<List<string>
 				select={select}
 				items={items}
-				RenderRow={RenderRow}
+				RenderRow={
+					(props) => <div style={{ padding: "3px 5px" }}>
+						<RenderRow {...props} />
+					</div>
+				}
 				onSelect={handleSelect}
 				readOnly={readOnly}
 			/>

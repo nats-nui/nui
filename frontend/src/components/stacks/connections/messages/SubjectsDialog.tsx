@@ -115,8 +115,6 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		<List<MessageStat>
 			className={cls.list}
 			items={stats}
-
-			//select={optionSelIndex}
 			onSelect={handleStatsSelect}
 			RenderRow={MessageStatRow}
 		/>

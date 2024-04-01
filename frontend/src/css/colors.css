@@ -67,6 +67,10 @@
 	background-color: var(--var-0);
 }
 
+.var0 .color-ot {
+	outline-color: var(--var-0);
+}
+
 .var0 .color-text {
 	color: rgba(255, 255, 255, .85);
 }
@@ -79,12 +83,20 @@
 	background-color: var(--var-1);
 }
 
+.var1 .color-ot {
+	outline-color: var(--var-1);
+}
+
 .var2 .color-fg {
 	color: var(--var-2);
 }
 
 .var2 .color-bg {
 	background-color: var(--var-2);
+}
+
+.var2 .color-ot {
+	outline-color: var(--var-2);
 }
 
 .var3 .color-fg {
@@ -99,6 +111,10 @@
 	background-color: var(--var-3-l1);
 }
 
+.var3 .color-ot {
+	outline-color: var(--var-3);
+}
+
 .var4 .color-fg {
 	color: var(--var-4);
 }
@@ -111,6 +127,10 @@
 	background-color: var(--var-4-l1);
 }
 
+.var4 .color-ot {
+	outline-color: var(--var-4);
+}
+
 .var5 .color-fg {
 	color: var(--var-5);
 }
@@ -121,6 +141,10 @@
 
 .var5 .color-bg-l1 {
 	background-color: var(--var-5-l1);
+}
+
+.var5 .color-ot {
+	outline-color: var(--var-5);
 }
 
 

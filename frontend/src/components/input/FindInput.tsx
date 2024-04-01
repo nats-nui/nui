@@ -1,9 +1,9 @@
-import FindIcon from "@/icons/FindIcon"
-import layoutSo from "@/stores/layout"
-import React, { FunctionComponent } from "react"
-import TextInput from "./TextInput"
-import IconButton from "../buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
+import FindIcon from "@/icons/FindIcon"
+import React, { FunctionComponent } from "react"
+import IconButton from "../buttons/IconButton"
+import cls from "./FindInput.module.css"
+import TextInput from "./TextInput"
 
 
 
@@ -30,11 +30,17 @@ const FindInput: FunctionComponent<Props> = ({
 	const haveValue = value?.length > 0
 
 	return (
-		<div style={{ ...cssRoot, ...style }}>
-			<TextInput style={cssInput}
+		<div
+			className={`${cls.root} ${haveValue ? "color-ot" : ""}`}
+			style={style}
+		>
+			<TextInput
+				placeholder="search..."
+				className={cls.input}
 				value={value}
 				onChange={handleChange}
 			/>
+
 			{haveValue ? (
 				<IconButton
 					onClick={handleClear}
@@ -44,23 +50,9 @@ const FindInput: FunctionComponent<Props> = ({
 			) : (
 				<FindIcon />
 			)}
+
 		</div>
 	)
 }
 
 export default FindInput
-
-const cssRoot: React.CSSProperties = {
-	flex: 1,
-	backgroundColor: layoutSo.state.theme.palette.default.bg,
-	display: "flex",
-	alignItems: "center",
-	padding: '5px 7px',
-	minHeight: 18,
-}
-const cssInput: React.CSSProperties = {
-	flex: 1,
-	padding: 0,
-	border: 'none',
-	width: "100%",
-}

@@ -25,9 +25,7 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handlePropChange = (maxConsumers: number) => {
-		onChange?.(maxConsumers)
-	}
+	const handlePropChange = (maxConsumers: number) => onChange?.(maxConsumers)
 	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
 
 	// RENDER
