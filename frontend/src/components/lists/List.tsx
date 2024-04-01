@@ -17,8 +17,10 @@ interface Props<T> {
 	select?: number
 	onSelect?: (index: number, e: React.MouseEvent<HTMLElement>) => void
 	style?: React.CSSProperties
+	className?: string
 }
 
+/** lista generica non editabile */
 function List<T>({
 	items,
 	RenderRow = ({ item }) => item.toString(),
@@ -27,6 +29,7 @@ function List<T>({
 	select,
 	onSelect,
 	style = {},
+	className,
 }: Props<T>) {
 
 	// STORES
@@ -39,10 +42,12 @@ function List<T>({
 	}
 
 	// RENDER
-	
 	if (!items) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
 
-	return <div style={{ ...cssContainer(height), ...style }}>
+	return <div 
+		className={className}
+		style={{ ...cssContainer(height), ...style }}
+	>
 		{items.map((item, index) =>
 			<ListRow key={index}
 				onClick={(e) => handleSelect(index, e)}
@@ -61,8 +66,6 @@ function List<T>({
 export default List
 
 const cssContainer = (height: number): React.CSSProperties => ({
-	// display: "flex",
-	// flexDirection: "column",
 	...height && {
 		height: height,
 		overflowY: "auto",

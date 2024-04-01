@@ -1,3 +1,5 @@
+import cls from "./ListRow.module.css"
+
 
 
 interface Props<T> {
@@ -8,6 +10,7 @@ interface Props<T> {
 	onClick?: (e: React.MouseEvent<HTMLElement>) => void
 }
 
+/** un WRAP della riga che gestisce la selezione */
 function ListRow<T>({
 	children,
 	style,
@@ -23,9 +26,11 @@ function ListRow<T>({
 	// HANDLERS
 
 	// RENDER
+	const clsRoot = `${cls.root} ${!readOnly ? "cliccable" : ""} ${isSelect ? cls.select : ""}`
+
 	return <div
-		style={{ ...cssRoot(readOnly, isSelect), ...style }}
-		className={!readOnly ? "cliccable" : null}
+		className={clsRoot}
+		style={style}
 		onClick={!readOnly ? onClick : null}
 	>
 		{children}
@@ -33,20 +38,3 @@ function ListRow<T>({
 }
 
 export default ListRow
-
-const cssRoot = (readOnly: boolean, select: boolean): React.CSSProperties => ({
-	display: "flex",
-	borderRadius: 3,
-	cursor: !readOnly ? "pointer" : null,
-	...select ? {
-		//border: "1px solid rgb(0 0 0 / 15%)",
-		backgroundColor: 'rgba(0,0,0,.2)',
-		//color: "#FFF"
-	} : {
-	},
-	fontSize: 12,
-	fontWeight: 600,
-	padding: "4px 3px",
-	minHeight: 14,
-	wordBreak: "break-all",
-})

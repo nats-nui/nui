@@ -24,7 +24,9 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleNameChange = (name: string) => onChange?.({ ...source, name })
-	const handleSequenceChange = (startSequence: string) => onChange?.({ ...source, optStartSeq: parseInt(startSequence) })
+	const handleSequenceChange = (optStartSeq: number) => {
+		onChange?.({ ...source, optStartSeq })
+	}
 	//const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
 
@@ -47,7 +49,6 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			<NumberInput
 				value={source.optStartSeq}
 				onChange={handleSequenceChange}
-				// variant={variant}
 				readOnly={readOnly}
 			/>
 		</div>
@@ -56,7 +57,6 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			<TextInput
 				value={source.filterSubject}
 				onChange={handleFilterSubjectChange}
-				// variant={variant}
 				readOnly={readOnly}
 			/>
 		</div>

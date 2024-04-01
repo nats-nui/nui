@@ -1,0 +1,12 @@
+.root {
+	display: flex;
+	border-radius: 3px;	
+	font-size: 12px;
+	font-weight: 600;
+	min-height: 14px;
+	word-break: break-all;
+}
+
+.select {
+	background-color: rgba(0,0,0,.2);
+}

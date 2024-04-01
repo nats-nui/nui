@@ -11,10 +11,17 @@ import { MSG_FORMAT } from "@/utils/editor"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../../viewBase"
 import { MessageSendState } from "../messageSend"
+import dayjs from "dayjs"
 
 
 
 const MaxMessagesLength = 20000
+
+export type MessageStat = {
+	subject: string,
+	counter: number,
+	last: number,
+}
 
 const setup = {
 
@@ -25,6 +32,8 @@ const setup = {
 		lastSubjects: <string[]>null,
 		/** tutti i messaggi ricevuti */
 		messages: <Message[]>[],
+		/** contatore SUBJECTS ricevuti */
+		stats: <{ [subjects: string]: MessageStat }>{},
 		//messages: <Message[]>historyTest,
 		/** testo per la ricerca */
 		textSearch: <string>null,
@@ -87,7 +96,7 @@ const setup = {
 
 
 		connect(_: void, store?: MessagesStore) {
-console.log("CONNECT")
+			console.log("CONNECT")
 			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
 			ss.onOpen = () => store.sendSubscriptions()
 			ss.onMessage = message => store.addMessage(message)
@@ -96,7 +105,7 @@ console.log("CONNECT")
 			// }
 		},
 		disconnect(_: void, store?: MessagesStore) {
-console.log("DISCONNECT")
+			console.log("DISCONNECT")
 			socketPool.destroy(store.getSocketServiceId())
 		},
 
@@ -111,6 +120,14 @@ console.log("DISCONNECT")
 			const msgs = store.state.messages.slice(i)
 			msgs.push(message)
 			store.setMessages(msgs)
+
+			let sbjCounter = store.state.stats[msg.subject]
+			if (!sbjCounter) {
+				sbjCounter = { subject: msg.subject, counter: 0, last: 0 }
+				store.state.stats[msg.subject] = sbjCounter
+			}
+			sbjCounter.counter++;
+			sbjCounter.last = dayjs().valueOf()
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
@@ -160,6 +177,7 @@ console.log("DISCONNECT")
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setFormat: (format: MSG_FORMAT) => ({ format }),
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
+		setStats: (stats: { [subjects: string]: MessageStat }) => ({ stats }),
 	},
 
 	onListenerChange: (store: MessagesStore, type: LISTENER_CHANGE) => {
