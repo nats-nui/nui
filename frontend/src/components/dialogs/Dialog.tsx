@@ -5,6 +5,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import IconButton from "../buttons/IconButton"
+import cls from "./Dialog.module.css"
 
 
 
@@ -18,6 +19,7 @@ export interface DialogProps {
 
 	/** larghezza della DIALOG */
 	width?: number | string
+	fullHeight?: boolean
 	/** spazio da lasciare in alto */
 	top?: number
 
@@ -38,6 +40,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	open,
 	title,
 	width,
+	fullHeight,
 	top = null,
 	children,
 	/** se minore di 0 non chiude automaticamente */
@@ -113,15 +116,15 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 	// RENDER
 	if (!refDialog) return null
-	const variant = state.colorVar
+	const clsRoot = `color-bg color-text ${cls.root} ${fullHeight ? cls.full_height : ""}`
 
 	return createPortal(
-		<div className="color-bg color-text"
+		<div className={clsRoot}
 			ref={(node) => setRef(node)}
-			style={cssRoot(variant, width, y)}
+			style={cssRoot(width, y)}
 		>
 			{title != null ? (
-				<div style={cssTitle}>
+				<div className={cls.title}>
 					<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
 						{title}
 					</div>
@@ -133,7 +136,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 				<div style={{ height: 12 }} />
 			)}
 
-			<div style={cssBody}>
+			<div className={cls.body}>
 				{children}
 			</div>
 
@@ -144,32 +147,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 export default Dialog
 
-const cssRoot = (variant: number, width: number | string, top: number): React.CSSProperties => ({
-	display: "flex",
-	flexDirection: "column",
-	flex: 1,
+const cssRoot = (width: number | string, top: number): React.CSSProperties => ({
 	width,
 	marginTop: top,
-	//padding: "15px 15px 15px 25px",
-	padding: "3px 15px 15px 25px",
-
-	//overflow: "hidden",
-	borderRadius: '0px 10px 10px 0px',
-	boxShadow: 'rgba(0, 0, 0, 0.3) 3px 3px 2px 1px',
-	//boxShadow: 'rgba(0, 0, 0, 0.4) 1px 1px 0px 0px',
-
-	maxHeight: `calc( 100% - 18px )`,
-
 })
-
-const cssTitle: React.CSSProperties = {
-	display: "flex",
-	marginBottom: 10,
-	alignItems: "center",
-}
-
-const cssBody: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "column",
-	overflowY: 'auto',
-}

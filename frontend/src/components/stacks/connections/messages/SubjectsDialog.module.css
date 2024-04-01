@@ -1,0 +1,21 @@
+.list {
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.row {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.row_sbj {
+	background-color: rgba(0, 0, 0, .2);
+	padding: 3px 5px;
+	font-weight: 700;
+	border-radius: 5px;
+}
+
+.row_counter {}
+
+.row_time {}

@@ -75,7 +75,7 @@ const HystoryRow: FunctionComponent<RenderRowBaseProps<KVEntry>> = ({
 	}[item.operation] ?? "--"
 	const time = dateShow(item.lastUpdate)
 
-	return <div style={{ whiteSpace: 'pre' }}>
+	return <div style={{ whiteSpace: 'pre', margin: "4px 5px 5px 5px" }}>
 		<span style={{ fontSize: 13, fontWeight: 800 }}>{item.revision} </span>
 		<span style={{ backgroundColor: "rgba(0,0,0,.5)", fontSize: 10, color: "#FFF", borderRadius: 3, padding: "3px 4px" }}>{operation}</span>
 		<span style={{ fontWeight: 400 }}> {time}</span>
