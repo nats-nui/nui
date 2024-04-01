@@ -42,9 +42,9 @@ function List<T>({
 	}
 
 	// RENDER
-	if (!items) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
+	if (!items || items.length == 0) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
 
-	return <div 
+	return <div
 		className={className}
 		style={{ ...cssContainer(height), ...style }}
 	>

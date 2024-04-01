@@ -24,9 +24,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleNameChange = (name: string) => onChange?.({ ...source, name })
-	const handleSequenceChange = (optStartSeq: number) => {
-		onChange?.({ ...source, optStartSeq })
-	}
+	const handleSequenceChange = (optStartSeq: number) => onChange?.({ ...source, optStartSeq })
 	//const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
 

@@ -82,7 +82,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                 <NumberInput
                     style={{ flex: 1 }}
                     value={purgeParams.number}
-                    onChange={(number: string) => handlePurgePropChange({ number: parseInt(number) })}
+                    onChange={(number: number) => handlePurgePropChange({ number })}
                 />
 
                 <div className="lyt-v">

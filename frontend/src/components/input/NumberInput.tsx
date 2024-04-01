@@ -8,28 +8,28 @@ interface Props extends TextInputProps {
 	max?: number
 	decimals?: number
 	onChange?: (newValue: string | number) => void
-	numValue?: number
+	value?: number
 }
 
 const NumberInput: FunctionComponent<Props> = ({
 	decimals,
 	min,
 	max,
-	numValue,
+	value,
 	...props
 }) => {
 
 	// STORE
-	const [txtValue, setTxtValue] = useState<string>(() => numValue?.toString() ?? "")
+	const [txtValue, setTxtValue] = useState<string>(() => value?.toString() ?? "")
 
 	// HOOK
 	useEffect(() => {
-		if (numValue == null) {
+		if (value == null) {
 			setTxtValue("")
-		} else if (!Number.isNaN(numValue)) {
-			setTxtValue(numValue.toString())
+		} else if (!Number.isNaN(value)) {
+			setTxtValue(value.toString())
 		}
-	}, [numValue])
+	}, [value])
 
 	// HANDLER
 	const handleChange = (newValue: string) => {
@@ -38,7 +38,7 @@ const NumberInput: FunctionComponent<Props> = ({
 		const value = Number.parseFloat(newValue)
 		if (!Number.isNaN(value)) {
 			props.onChange?.(value)
-			if (value != numValue) return
+			if (value != value) return
 		}
 		setTxtValue(newValue)
 

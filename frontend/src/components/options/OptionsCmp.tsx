@@ -20,6 +20,7 @@ interface OptionSelect {
 	polling: number
 	mode: LOAD_MODE
 }
+
 const options: OptionSelect[] = [
 	{ label: "MANUAL", polling: 0, mode: LOAD_MODE.MANUAL },
 	{ label: "PARENT", polling: 0, mode: LOAD_MODE.PARENT },

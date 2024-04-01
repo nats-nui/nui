@@ -37,7 +37,10 @@ const MessageView: FunctionComponent<Props> = ({
 	>
 		<div className={`lyt-form ${cls.form}`}>
 			<div className="hover-container">
-				<CopyButton absolute value={msgSa.message.subject} />
+				<CopyButton absolute 
+					value={msgSa.message.subject} 
+					style={{backgroundColor: "var(--bg-default)" }}
+				/>
 				<span className="lbl-prop">SUBJECT: </span>
 				<span className="lbl-input-readonly">
 					{msgSa.message.subject}

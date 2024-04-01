@@ -90,7 +90,6 @@ function Options<T>({
 					value={find}
 					onChange={handleFindChange}
 					onKeyDown={handleFindKeyDown}
-
 				/>
 			)}
 
@@ -106,9 +105,9 @@ function Options<T>({
 					onSelect={handleSelect}
 				/>
 			</Accordion>
-			{open &&
-				<div style={{ width: "100%", borderBottom: "2px dashed rgb(0 0 0 / 35%)", marginTop: 5, }} />
-			}
+			
+			{open && <div className={cls.divider} />}
+
 		</div>
 	)
 }

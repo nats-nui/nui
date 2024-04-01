@@ -1,0 +1,18 @@
+.root {
+	flex: 1;
+	background-color: var(--bg-default);
+	display: flex;
+	align-items: center;
+	padding: 5px 7px;
+	min-height: 18px;
+	border-radius: 5px;
+	outline: 1px solid transparent;
+}
+
+.input {
+	flex: 1;
+	padding: 0px;
+	border: none;
+	width: 100%;
+}
+

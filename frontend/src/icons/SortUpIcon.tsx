@@ -8,7 +8,7 @@ const SortUpIcon = (props) => (
 		fill="none" stroke="currentColor"
 		{...props} 
 	>
-		<path d="M3 4H11M3 7H8M3 10H5" stroke-width="2"/>
+		<path d="M3 4H11M3 7H8M3 10H5" strokeWidth="2"/>
 	</svg>
 )
 
