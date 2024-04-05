@@ -31,8 +31,10 @@ const TitleAccordion: FunctionComponent<Props> = ({
 			style={{ alignItems: "center", display: "flex", justifyContent: "center", cursor: "pointer" }}
 			onClick={handleClick}
 		>
-			{title}
-			{open ? <ArrowDownIcon /> : <ArrowUpIcon />}
+			<div className={cls.title_text}>{title}</div>
+			<div className={cls.title_icon}>
+				{open ? <ArrowDownIcon /> : <ArrowUpIcon />}
+			</div>
 		</div>
 
 		<Accordion open={open}>
