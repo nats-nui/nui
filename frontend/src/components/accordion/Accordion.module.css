@@ -1,0 +1,18 @@
+.root {
+	display: flex; 
+	flex-direction: column;
+	transition: min-height 300ms, height 300ms;
+}
+
+.root_title {
+	display: flex;
+	flex-direction: column;
+}
+
+.title {
+	align-items: center;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+	gap: 5px;
+}

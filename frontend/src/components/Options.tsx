@@ -1,6 +1,6 @@
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import Accordion from "./Accordion"
+import Accordion from "./accordion/Accordion"
 import cls from "./Options.module.css"
 import Component from "./format/Component"
 import TextInput from "./input/TextInput"

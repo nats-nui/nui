@@ -61,11 +61,7 @@ const ListDialog: FunctionComponent<Props> = ({
 			<List<string>
 				select={select}
 				items={items}
-				RenderRow={
-					(props) => <div style={{ padding: "3px 5px" }}>
-						<RenderRow {...props} />
-					</div>
-				}
+				RenderRow={RenderRow}
 				onSelect={handleSelect}
 				readOnly={readOnly}
 			/>

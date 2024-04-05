@@ -11,6 +11,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import Dialog from "../../../dialogs/Dialog"
 import cls from "./SubjectsDialog.module.css"
 import dayjs from "dayjs"
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 
 
 
@@ -108,16 +109,25 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			RenderRow={EditSubscriptionRow}
 		/>
 
-		<div className="lbl-prop-title" style={{ marginTop: 5 }}>STATS</div>
+		<TitleAccordion title="STATS">
+			<List<MessageStat>
+				className={cls.list}
+				items={stats}
+				onSelect={handleStatsSelect}
+				RenderRow={MessageStatRow}
+			/>
+		</TitleAccordion>
+
+		{/* <div className="lbl-prop-title" style={{ marginTop: 5 }}>STATS</div> */}
 
 		{/* <div className="lyt-v" style={{ marginTop: 5 }}>
 			<div className="lbl-prop">STATS</div> */}
-		<List<MessageStat>
+		{/* <List<MessageStat>
 			className={cls.list}
 			items={stats}
 			onSelect={handleStatsSelect}
 			RenderRow={MessageStatRow}
-		/>
+		/> */}
 		{/* </div> */}
 
 		<div className="var-dialog" style={{ display: "flex", gap: 15, marginTop: 10 }} >
