@@ -30,7 +30,6 @@ const ShowForm: FunctionComponent<Props> = ({
 
 		<div className="lyt-v">
 			<div className="lbl-prop">NAME</div>
-
 			<div className="lbl-input-readonly">{consumer.name ?? "-"}</div>
 		</div>
 

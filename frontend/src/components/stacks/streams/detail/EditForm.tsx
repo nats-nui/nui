@@ -1,4 +1,4 @@
-import Accordion from "@/components/Accordion"
+import Accordion from "@/components/accordion/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"

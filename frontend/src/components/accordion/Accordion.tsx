@@ -1,5 +1,6 @@
 import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import cls from "./Accordion.module.css"
 
 
 
@@ -30,8 +31,8 @@ const Accordion: FunctionComponent<Props> = ({
 	const currentHeight = !open ? 0 : height ?? heightLoc ?? "auto"
 
 	return (
-		<div 
-			ref={ref}
+		<div ref={ref}
+			className={cls.root}
 			style={cssRoot(currentHeight, height == null)}
 		>
 			{children}
@@ -42,10 +43,7 @@ const Accordion: FunctionComponent<Props> = ({
 export default Accordion
 
 const cssRoot = (height: number | string, noScroll: boolean): React.CSSProperties => ({
-	display: "flex", flexDirection: "column",
-	//overflowY: "hidden",
 	overflowY: noScroll ? "hidden" : "auto",
-	transition: `min-height ${ANIM_TIME_CSS}ms, height ${ANIM_TIME_CSS}ms`,
 	minHeight: height,
 	height: height,
 })
