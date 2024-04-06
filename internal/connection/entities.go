@@ -4,7 +4,7 @@ type Connection struct {
 	Id            string         `json:"id" `
 	Name          string         `json:"name" `
 	Hosts         []string       `json:"hosts" `
-	Subscriptions []Subscription `json:"subscriptions" `
+	Subscriptions []Subscription `clover:"subscriptions" json:"subscriptions"`
 	Auth          []Auth         `json:"auth" `
 }
 

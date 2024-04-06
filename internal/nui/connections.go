@@ -35,7 +35,12 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 422)
 	}
 	if c.Params("id") != "" {
+		connToUpdate, err := a.nui.ConnRepo.GetById(c.Params("id"))
+		if err != nil {
+			return a.logAndFiberError(c, err, 404)
+		}
 		conn.Id = c.Params("id")
+		conn.Subscriptions = connToUpdate.Subscriptions
 	}
 	conn, err = a.nui.ConnRepo.Save(conn)
 	if err != nil {

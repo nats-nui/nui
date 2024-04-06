@@ -18,8 +18,7 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 
 	newConn := `{
 		"name": "c1",
-		"hosts": ["host1", "host2"],
-		"subscriptions": [{"subject": "sub1"}, {"subject": "sub2"}]
+		"hosts": ["host1", "host2"]
 	}`
 
 	e.POST("/api/connection").
@@ -35,15 +34,12 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	a.Value(0).Object().Value("name").IsEqual("c1")
 	a.Value(0).Object().Value("hosts").Array().Value(0).String().IsEqual("host1")
 	a.Value(0).Object().Value("hosts").Array().Value(1).String().IsEqual("host2")
-	a.Value(0).Object().Value("subscriptions").Array().Value(0).Object().Value("subject").String().IsEqual("sub1")
-	a.Value(0).Object().Value("subscriptions").Array().Value(1).Object().Value("subject").String().IsEqual("sub2")
 
 	id := a.Value(0).Object().Value("id").String().Raw()
 
 	updatedConn := `{
 		"name": "c1_updated",
-		"hosts": ["host2", "host3"],
-		"subscriptions": [{"subject": "sub1_updated"}, {"subject": "sub2_updated"}]
+		"hosts": ["host2", "host3"]
 	}`
 
 	e.POST("/api/connection/" + id).
@@ -57,7 +53,30 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	a.Length().IsEqual(1)
 	a.Value(0).Object().Value("name").IsEqual("c1_updated")
 	a.Value(0).Object().Value("hosts").Array().Value(0).String().IsEqual("host2")
-	a.Value(0).Object().Value("subscriptions").Array().Value(0).Object().Value("subject").String().IsEqual("sub1_updated")
+}
+
+func (s *NuiTestSuite) TestMessagesSubscriptionRest() {
+	e := s.e
+	connId := s.defaultConn()
+	a := e.GET("/api/connection/" + connId + "/messages/subscription").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Array()
+	a.Length().IsEqual(0)
+
+	// create a subscription list
+	e.POST("/api/connection/" + connId + "/messages/subscription").
+		WithBytes([]byte(`[{"subject": "sub1"}, {"subject": "sub2"}]`)).
+		Expect().
+		Status(http.StatusOK)
+
+	// get the subscription list with new ones
+	a = e.GET("/api/connection/" + connId + "/messages/subscription").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Array()
+	a.Length().IsEqual(2)
+	a.Value(0).Object().Value("subject").String().IsEqual("sub1")
 }
 
 func (s *NuiTestSuite) TestStreamRest() {
@@ -373,7 +392,7 @@ func (s *NuiTestSuite) TestRequestResponseRest() {
 	time.Sleep(10 * time.Millisecond)
 
 	// send request and read response via nui rest
-	s.e.POST("/api/connection/" + connId + "/request").
+	s.e.POST("/api/connection/" + connId + "/messages/request").
 		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
 		Expect().Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
 
@@ -394,7 +413,7 @@ func (s *NuiTestSuite) TestPubSubWs() {
 	time.Sleep(10 * time.Millisecond)
 
 	// publish on sub1 via rest
-	s.e.POST("/api/connection/" + connId + "/publish").
+	s.e.POST("/api/connection/" + connId + "/messages/publish").
 		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk="}`)).
 		Expect().Status(http.StatusOK)
 
