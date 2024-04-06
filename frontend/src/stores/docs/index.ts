@@ -222,7 +222,7 @@ const setup = {
 
 
 
-		/** fissa una CARD al lato sinistro */
+		/** fissa una CARD al MENU */
 		async pinned(view: ViewStore, store?: DocStore) {
 			if (!view) return
 			store.setMenu([...store.state.menu, view])

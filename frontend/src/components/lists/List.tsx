@@ -43,6 +43,7 @@ function List<T>({
 
 	// RENDER
 	if (!items || items.length == 0) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
+	const isSelect = (index:number) => typeof select == "number" && select == index
 
 	return <div
 		className={className}
@@ -52,11 +53,11 @@ function List<T>({
 			<ListRow key={index}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
-				isSelect={select == index}
+				isSelect={isSelect(index)}
 			>
 				<RenderRow
 					item={item}
-					isSelect={index == select}
+					isSelect={isSelect(index)}
 				/>
 			</ListRow>
 		)}

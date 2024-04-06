@@ -10,6 +10,7 @@ import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 
 
 
@@ -42,9 +43,9 @@ const FilterDialog: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	let subjects = useMemo(()=> Object.keys(strMsgSa.stream?.state?.subjects ?? {}), [strMsgSa.stream?.state?.subjects])
-	if ( !filter ) return null
-	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 200
+	let subjects = useMemo(() => Object.keys(strMsgSa.stream?.state?.subjects ?? {}), [strMsgSa.stream?.state?.subjects])
+	if (!filter) return null
+	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 220
 
 	return (
 		<Dialog
@@ -66,7 +67,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<NumberInput
 					style={{ flex: 1 }}
 					value={filter.startSeq}
-					onChange={(startSeq:number) => handleFilterPropChange({ startSeq })}
+					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
 				/>
 
 				<Box>
@@ -92,7 +93,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 				</div>
 
-				<div className="lyt-v">
+				{/* <div className="lyt-v">
 					<div className="lbl-prop">SUBJECTS OF THE STREAM</div>
 					<div className="lyt-quote">
 						<ListMultiWithFilter
@@ -101,7 +102,15 @@ const FilterDialog: FunctionComponent<Props> = ({
 							onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
 						/>
 					</div>
-				</div>
+				</div> */}
+
+				<TitleAccordion title="SUBJECTS OF THE STREAM">
+					<ListMultiWithFilter
+						items={subjects}
+						selects={filter.subjects}
+						onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
+					/>
+				</TitleAccordion>
 
 				<Button children="APPLY" style={{ alignSelf: "start" }}
 					onClick={handleApply}
