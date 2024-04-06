@@ -56,12 +56,12 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 	const haveValue = search?.length > 0
 	const allSelect = selects.length == items.length
 
-	if ( !items || items.length == 0 ) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
+	if (!items || items.length == 0) return <div className="lbl-empty lbl-disabled">EMPTY LIST</div>
 
 	return <div style={{ display: "flex", flexDirection: "column" }}>
 
 		{/* FILTER */}
-		<div style={{ display: "flex", position: "relative", alignItems: "center" }}>
+		<div style={{ display: "flex", position: "relative", alignItems: "center", margin: 3 }}>
 			<IconToggle style={{ marginLeft: 3, marginRight: 5 }}
 				check={allSelect}
 				onChange={handleSelectAll}
@@ -83,13 +83,16 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 			items={itemsShow}
 			//items={Array.from({length:1000},(_,i)=>`item::${i}`)}
 			select={selects as any}
-			RenderRow={({ item }: { item: string }) => <Box>
+			RenderRow={({ item }: { item: string }) => <div style={{ padding: '4px 6px',
+			display: 'flex',
+			alignItems: 'center',
+			gap: '4px'}}>
 				<IconToggle
 					check={selects.indexOf(item) != -1}
 					onChange={select => handleSubjectChange(item)}
 				/>
 				<div className="lbl-prop">{item}</div>
-			</Box>}
+			</div>}
 		/>
 
 	</div>
