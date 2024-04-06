@@ -119,17 +119,22 @@ const setup = {
 			store?: StreamMessagesStore
 		) => {
 			const name = store.state.stream?.config?.name
+			let pre = filter.interval < 0
 
 			if (filter.startSeq < store.state.stream.state.firstSeq) return 0
 			if (filter.startSeq + filter.interval < store.state.stream.state.firstSeq) {
-				filter.interval = filter.startSeq -store.state.stream.state.firstSeq +1
+				filter.interval = filter.startSeq - store.state.stream.state.firstSeq + 1
 				filter.startSeq = store.state.stream.state.firstSeq
+				pre = true
 			}
 			if (filter.interval == 0) return 0
 
+			// FETCH
 			const msgs = await strApi.messages(store.state.connectionId, name, filter, { store, manageAbort: true }) ?? []
+
+			// ADD
 			let all = store.state.messages ?? []
-			if (filter.interval < 0) {
+			if (pre) {
 				store.setMessages(msgs.concat(all))
 			} else {
 				store.setMessages(all.concat(msgs))

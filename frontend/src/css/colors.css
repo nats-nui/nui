@@ -28,18 +28,22 @@
 	--bg-2: #2e2e2e;
 }
 
-.var0.card-focus{
+.var0.card-focus {
 	outline: 2px solid var(--bg-default);
 }
+
 .var1.card-focus {
 	outline: 2px solid var(--var-1);
 }
+
 .var2.card-focus {
 	outline: 2px solid var(--var-2);
 }
+
 .var3.card-focus {
 	outline: 2px solid var(--var-3);
 }
+
 .var4.card-focus {
 	outline: 2px solid var(--var-4);
 }
@@ -51,9 +55,13 @@
 .bars-alert-bg {
 	background: repeating-linear-gradient(135deg, transparent, transparent 10px, #000 10px, #000 20px)
 }
+
 .bars-alert-bg-1 {
 	background: repeating-linear-gradient(135deg, transparent, transparent 10px, var(--var-1) 10px, var(--var-1) 20px)
 }
+
+
+/* --- */
 
 .var0 .color-fg {
 	color: var(--var-0);
@@ -75,6 +83,12 @@
 	color: rgba(255, 255, 255, .85);
 }
 
+.var0 .color-br {
+	border-color: var(--var-0);
+}
+
+/* --- */
+
 .var1 .color-fg {
 	color: var(--var-1);
 }
@@ -87,6 +101,12 @@
 	outline-color: var(--var-1);
 }
 
+.var1 .color-br {
+	border-color: var(--var-1);
+}
+
+/* --- */
+
 .var2 .color-fg {
 	color: var(--var-2);
 }
@@ -98,6 +118,12 @@
 .var2 .color-ot {
 	outline-color: var(--var-2);
 }
+
+.var2 .color-br {
+	border-color: var(--var-2);
+}
+
+/* --- */
 
 .var3 .color-fg {
 	color: var(--var-3);
@@ -115,6 +141,12 @@
 	outline-color: var(--var-3);
 }
 
+.var3 .color-br {
+	border-color: var(--var-3);
+}
+
+/* --- */
+
 .var4 .color-fg {
 	color: var(--var-4);
 }
@@ -131,6 +163,12 @@
 	outline-color: var(--var-4);
 }
 
+.var4 .color-br {
+	border-color: var(--var-4);
+}
+
+/* --- */
+
 .var5 .color-fg {
 	color: var(--var-5);
 }
@@ -145,6 +183,10 @@
 
 .var5 .color-ot {
 	outline-color: var(--var-5);
+}
+
+.var5 .color-br {
+	border-color: var(--var-5);
 }
 
 
