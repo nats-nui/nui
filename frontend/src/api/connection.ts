@@ -34,7 +34,7 @@ function publish(cnnId:string, subject:string, payload:string, opt?: CallOptions
 		subject,
 		payload : btoa(payload)
 	}
-	return ajax.post(`connection/${cnnId}/publish`, data, opt)
+	return ajax.post(`connection/${cnnId}/messages/publish`, data, opt)
 }
 
 const api = {
