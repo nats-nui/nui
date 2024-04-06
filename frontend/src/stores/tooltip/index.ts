@@ -3,9 +3,10 @@ import { StoreCore, createStore } from "@priolo/jon"
 
 
 export interface TooltipContent {
-	content?: React.ReactNode
+	content: React.ReactNode
 	targetRect: DOMRect
 	color?: string
+	//ref?: any
 }
 
 const setup = {

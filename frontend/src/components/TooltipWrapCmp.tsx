@@ -26,7 +26,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	const tooltipSa = useStore(tooltipSo)
 
 	// HOOKS
-	useEffect(() => handleLeave, [])
+	//useEffect(() => handleLeave, [])
 
 	// HANDLERS
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -41,10 +41,13 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 			content,
 			targetRect: rect,
 			color,
+			//ref: elem
 		})
 		onMouseOver?.(true)
 	}
-	const handleLeave = () => {
+	const handleLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+		//const elem = e.target as HTMLElement
+		//if ( tooltipSa.content.ref != elem ) return
 		tooltipSo.close()
 		onMouseOver?.(false)
 	}
