@@ -1,26 +1,25 @@
+import IconButton from "@/components/buttons/IconButton"
+import CompressAllIcon from "@/icons/CompressAllIcon"
+import CompressHIcon from "@/icons/CompressHIcon"
+import ExpandHIcon from "@/icons/ExpandHIcon"
+import { CardsState, drawerCardsSo } from "@/stores/docs/cards"
+import { forEachViews } from "@/stores/docs/utils/manage"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import { delay } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
-import cls from "./DrawerCmp.module.css"
-import IconButton from "./components/buttons/IconButton"
-import CardCmp from "./components/cards/CardCmp"
-import CompressAllIcon from "./icons/CompressAllIcon"
-import CompressHIcon from "./icons/CompressHIcon"
-import ExpandHIcon from "./icons/ExpandHIcon"
-import { CardsState, drawerCardsSo } from "./stores/docs/cards"
-import { forEachViews } from "./stores/docs/utils/manage"
-import { VIEW_SIZE } from "./stores/stacks/utils"
-import { delay } from "./utils/time"
+import CardsGroup from "./CardsGroups"
+import cls from "./DrawerGroup.module.css"
 
 
 
-const DrawerCmp: FunctionComponent = () => {
+const DrawerGroup: FunctionComponent = () => {
 
 	// STORES
 	const drawerCardsSa: CardsState = useStore(drawerCardsSo)
 
 	// HOOKS
-	const storesAnchored = drawerCardsSa.all
 	const [width, setWidth] = useState(0)
 	const [animation, setAnimation] = useState(false)
 	const isDown = useRef(false)
@@ -56,10 +55,12 @@ const DrawerCmp: FunctionComponent = () => {
 		setAnimation(false)
 	}
 	const handleCompressAll = (e: React.MouseEvent) => {
-		forEachViews(storesAnchored, view => view.setSize(VIEW_SIZE.COMPACT))
+		forEachViews(cards, view => view.setSize(VIEW_SIZE.COMPACT))
 	}
 
 	// RENDER
+	const cards = drawerCardsSa.all
+
 	return (
 		<div className={cls.root} >
 
@@ -86,11 +87,7 @@ const DrawerCmp: FunctionComponent = () => {
 				className={cls.handle_container}
 				style={cssFixed(width, animation)}
 			>
-				{storesAnchored.map((store: ViewStore) =>
-					<CardCmp key={store.state.uuid}
-						store={store}
-					/>
-				)}
+				<CardsGroup storesGroup={cards} />
 			</div>
 
 			{/* <DropArea index={-1} /> */}
@@ -99,7 +96,7 @@ const DrawerCmp: FunctionComponent = () => {
 	)
 }
 
-export default DrawerCmp
+export default DrawerGroup
 
 const cssFixed = (width: number, animation: boolean): React.CSSProperties => ({
 	width,

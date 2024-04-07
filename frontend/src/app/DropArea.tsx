@@ -1,9 +1,9 @@
-import layoutSo from "@/stores/layout"
 import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
 import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
+import cls from "./DropArea.module.css"
 
 
 
@@ -11,12 +11,14 @@ interface Props {
 	index?: number
 	isLast?: boolean
 	viewSo?: ViewStore
+	style?: React.CSSProperties
 }
 
 const DropArea: FunctionComponent<Props> = ({
 	index,
 	isLast,
 	viewSo,
+	style,
 }) => {
 
 	// STORES
@@ -45,37 +47,17 @@ const DropArea: FunctionComponent<Props> = ({
 	const dragOver = mouseSa.drag?.index == index
 	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
 	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
-	
-	return <div style={cssRoot(dragOver, inExit, isLast)} draggable={false}
+	const clsRoot = `${cls.root} ${dragOver ? cls.in_dragover : ""} ${inExit ? cls.in_exit : ""} ${isLast ? cls.is_last : ""} var${variant}`
+	const clsLine = `${cls.line} ${dragOver ? "color-bg" : ""}`
+
+	return <div draggable={false}
+		className={clsRoot}
+		style={style}
 		onMouseOver={handleMouseOver}
 		onMouseLeave={handleMouseLeave}
 	>
-		<div style={cssLine(dragOver, variant)} />
+		<div className={clsLine} />
 	</div>
 }
 
 export default DropArea
-
-const cssRoot = (dragOver: boolean, inExit: boolean, isLast: boolean): React.CSSProperties => ({
-	display: "flex",
-	width: inExit ? 0 : dragOver ? 40 : 25,
-	...isLast ? {
-		flex: 1,
-		marginLeft: 15,
-		justifyContent: 'flex-start',
-	} : {
-		justifyContent: 'center',
-	},
-	//backgroundColor: "green",
-	transition: 'width 200ms ease-in-out',
-})
-
-
-const cssLine = (dragOver: boolean, variant: number): React.CSSProperties => ({
-	transition: 'background-color 300ms',
-	backgroundColor: dragOver ? layoutSo.state.theme.palette.var[variant].bg : "transparent",
-	//backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	width: 5,
-	borderRadius: 3,
-	marginLeft: 6,
-})
