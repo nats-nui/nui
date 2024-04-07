@@ -3,8 +3,8 @@ import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import MenuButton from "../buttons/MenuButton"
-import CardIcon from "../cards/CardIcon"
+import MenuButton from "../../components/buttons/MenuButton"
+import CardIcon from "../../components/cards/CardIcon"
 
 
 
