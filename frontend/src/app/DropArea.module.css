@@ -1,0 +1,28 @@
+.root {
+	display: flex;
+	width: 25px;
+	justify-content: center;
+	transition: width 200ms ease-in-out;
+}
+
+.in_exit {
+	width: 0px;
+}
+
+.in_dragover {
+	width: 40px;
+}
+
+.is_last {
+	flex: 1;
+	margin-left: 15px;
+	justify-content: flex-start;
+}
+
+.line {
+	transition: background-color 300ms;
+	background-color: transparent;
+	width: 5px;
+	border-radius: 3px;
+	margin-left: 6px;
+}

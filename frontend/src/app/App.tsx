@@ -1,11 +1,11 @@
 //import srcBg from "@/assets/bg4.jpg"
 import { FunctionComponent } from "react"
 import cls from "./App.module.css"
-import Deck from "./Deck"
-import DrawerCmp from "./DrawerCmp"
-import DragCmp from "./components/DragCmp"
-import TooltipCmp from "./components/TooltipCmp"
-import MainMenu from "./components/mainMenu/MainMenu"
+import DeckGroup from "./DeckGroup"
+import DrawerGroup from "./DrawerGroup"
+import DragCmp from "@/components/DragCmp"
+import TooltipCmp from "@/components/TooltipCmp"
+import MainMenu from "@/app/mainMenu/MainMenu"
 
 
 
@@ -24,8 +24,8 @@ const App: FunctionComponent = () => {
 			<MainMenu />
 
 			<div className={cls.content}>
-				<Deck />
-				<DrawerCmp />
+				<DeckGroup />
+				<DrawerGroup />
 			</div>
 
 			<DragCmp />
