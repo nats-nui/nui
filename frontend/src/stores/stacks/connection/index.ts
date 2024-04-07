@@ -1,5 +1,4 @@
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -56,20 +55,20 @@ const setup = {
     		const newId = (cnnId && oldId !== cnnId) ? cnnId : null
     		const view = newId ? buildConnection(connection) : null
     		store.setSelect(newId)
-    		docsSo.addLink({ view, parent: store, anim: !oldId || !newId })
+    		store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
 		},
 
 		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: CnnListStore) {
 			const view = buildConnectionNew()
-			docsSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
 
 
 
 		openStreams(connectionId: string, store?: CnnListStore) {
-			docsSo.addLink({
+			store.state.group.addLink({
 				view: buildStreams(connectionId),
 				parent: store,
 				anim: true
@@ -77,7 +76,7 @@ const setup = {
 		},
 
 		openMessages(connectionId: string, store?: CnnListStore) {
-			docsSo.addLink({
+			store.state.group.addLink({
 				view: buildConnectionMessages(connectionId),
 				parent: store,
 				anim: true

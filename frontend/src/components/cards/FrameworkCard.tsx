@@ -1,6 +1,5 @@
 import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
-import docsSo from "@/stores/docs"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
@@ -36,7 +35,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleClose = () => store.onRemoveFromDeck()
-	const handleDetach = () => docsSo.detach(store)
+	const handleDetach = () => store.state.group.detach(store)
 
 	// RENDER
 	const inRoot = !store.state.parent

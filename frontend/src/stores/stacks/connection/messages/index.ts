@@ -1,7 +1,6 @@
 import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
 import { buildMessageDetail, buildStore } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
@@ -9,9 +8,9 @@ import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
+import dayjs from "dayjs"
 import { ViewState } from "../../viewBase"
 import { MessageSendState } from "../messageSend"
-import dayjs from "dayjs"
 
 
 
@@ -148,7 +147,7 @@ const setup = {
 		},
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
-			docsSo.addLink({
+			store.state.group.addLink({
 				view: buildMessageDetail(message, store.state.format),
 				parent: store,
 				anim: true,
@@ -162,7 +161,7 @@ const setup = {
 				type: DOC_TYPE.MESSAGE_SEND,
 				connectionId: cnn.id,
 			} as MessageSendState)
-			docsSo.addLink({
+			store.state.group.addLink({
 				view: msgSendStore,
 				parent: store,
 				anim: true,

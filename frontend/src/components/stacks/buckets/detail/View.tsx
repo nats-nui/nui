@@ -2,7 +2,6 @@ import LinkButton from "@/components/buttons/LinkButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
-import docSo from "@/stores/docs"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -23,7 +22,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const bucketSa = useStore(bucketSo)
-	useStore(docSo)
+	useStore(bucketSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

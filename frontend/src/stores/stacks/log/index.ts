@@ -1,4 +1,3 @@
-import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import { Log } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
@@ -37,7 +36,7 @@ const setup = {
 		//#endregion
 
 		select (log:Log, store?:ViewLogStore ) {
-			docsSo.focus(docsSo.getById(log.targetId))
+			store.state.group.focus(store.state.group.getById(log.targetId))
 		},
 	},
 

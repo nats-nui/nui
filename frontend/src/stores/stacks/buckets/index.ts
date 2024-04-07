@@ -1,12 +1,11 @@
 import bucketApi from "@/api/buckets"
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildBucket, buildBucketNew } from "./utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildBucket, buildBucketNew } from "./utils/factory"
 
 
 
@@ -85,7 +84,7 @@ const setup = {
 		/** apro la CARD per creare un nuovo elemento */
 		create(_: void, store?: BucketsStore) {
 			const view = buildBucketNew(store.state.connectionId)
-			docsSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
 		async delete(_: void, store?: BucketsStore) {
@@ -114,7 +113,7 @@ const setup = {
 			const nameNew = (name && nameOld !== name) ? name : null
 			const view = nameNew ? buildBucket(store.state.connectionId, store.getByName(nameNew)) : null
 			store.setSelect(nameNew)
-			docsSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
+			store.state.group.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 	},
 

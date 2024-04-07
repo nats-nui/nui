@@ -2,7 +2,6 @@ import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -28,7 +27,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	// STORE
 	const cnnListSa = useStore(cnnListSo)
 	const cnnSa = useStore(cnnSo)
-	const docSa = useStore(docSo)
+	useStore(cnnListSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

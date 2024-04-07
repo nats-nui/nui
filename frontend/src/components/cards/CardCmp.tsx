@@ -1,8 +1,8 @@
-import docSo from "@/stores/docs"
+import { drawerCardsSo } from "@/stores/docs/cards"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent } from "react"
-import RootCard from "./RootCard"
 import DropArea from "../DropArea"
+import RootCard from "./RootCard"
 
 
 
@@ -21,10 +21,10 @@ const CardCmp: FunctionComponent<Props> = ({
 	// HANDLERS
 
 	// RENDER
-	const index = docSo.getIndexByView(store)
-	const length = docSo.state.all.length
+	const index = store.state.group.getIndexByView(store)
+	const length = store.state.group.state.all.length
 	const isLast = index == length - 1
-	const isAnchored = index < docSo.state.anchored
+	const isAnchored = store.state.group == drawerCardsSo
 
 	return (
 		<div style={cssCol(length, index)}>

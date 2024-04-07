@@ -3,7 +3,7 @@ export enum DOC_TYPE {
 	EMPTY = "empty",
 	CONNECTIONS = "connectons",
 	CONNECTION = "connecton",
-	
+
 	MESSAGES = "messages",
 	MESSAGE = "message",
 	MESSAGE_SEND = "message_send",
@@ -14,7 +14,7 @@ export enum DOC_TYPE {
 
 	CONSUMERS = "consumers",
 	CONSUMER = "consumer",
-	
+
 	BUCKETS = "buckets",
 	BUCKET = "bucket",
 	KVENTRIES = "kventries",
@@ -24,11 +24,11 @@ export enum DOC_TYPE {
 }
 
 export enum DOC_ANIM {
-	SHOW="show",
-	EXIT="exit",
-	DRAGGING="dragging",
-	EXITING="exiting",
-	SHOWING="showing",
+	SHOW = "show",
+	EXIT = "exit",
+	DRAGGING = "dragging",
+	EXITING = "exiting",
+	SHOWING = "showing",
 }
 
 export enum EDIT_STATE {

@@ -1,6 +1,6 @@
-import docSo from "@/stores/docs"
 import { StoreCore, createStore } from "@priolo/jon"
-import { MESSAGE_TYPE, Log } from "./utils"
+import { deckCardsSo, drawerCardsSo } from "../docs/cards"
+import { Log, MESSAGE_TYPE } from "./utils"
 
 
 
@@ -18,7 +18,8 @@ const setup = {
 			if (!log.type) log.type = MESSAGE_TYPE.INFO
 			log.receivedAt = Date.now()
 			if (log.targetId) {
-				const view = docSo.getById(log.targetId)
+				// [II] TODO
+				const view = deckCardsSo.getById(log.targetId) || drawerCardsSo.getById(log.targetId) 
 				view?.setSnackbar({
 					open: true, 
 					type: log.type,

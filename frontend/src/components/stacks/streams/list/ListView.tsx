@@ -2,16 +2,15 @@ import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import FindInput from "@/components/input/FindInput"
+import OptionsCmp from "@/components/options/OptionsCmp"
+import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx"
 import Table from "@/components/table"
-import docSo from "@/stores/docs"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx";
-import OptionsCmp from "@/components/options/OptionsCmp"
 
 
 
@@ -25,7 +24,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const streamsSa = useStore(streamsSo)
-	const docSa = useStore(docSo)
+	useStore(streamsSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

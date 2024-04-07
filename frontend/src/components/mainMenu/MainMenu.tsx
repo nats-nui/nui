@@ -5,6 +5,7 @@ import React, { FunctionComponent } from "react"
 import Button from "../buttons/Button"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
+import { menuCardsSo } from "@/stores/docs/cards"
 
 
 
@@ -17,14 +18,14 @@ const MainMenu: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const docSa = useStore(docSo)
+	const menuCardsSa = useStore(menuCardsSo)
 
 	// HOOKS
 
 	// HANDLERS
 
 	// RENDER
-	const views = docSa.menu
+	const views = menuCardsSa.all
 
 	return <div style={style} className={cls.root}>
 		<StoreButton

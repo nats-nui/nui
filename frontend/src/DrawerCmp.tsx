@@ -1,26 +1,26 @@
-import docSo, { DocState } from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useMemo, useRef, useState } from "react"
+import { FunctionComponent, useRef, useState } from "react"
 import cls from "./DrawerCmp.module.css"
 import IconButton from "./components/buttons/IconButton"
 import CardCmp from "./components/cards/CardCmp"
+import CompressAllIcon from "./icons/CompressAllIcon"
 import CompressHIcon from "./icons/CompressHIcon"
 import ExpandHIcon from "./icons/ExpandHIcon"
-import { delay } from "./utils/time"
-import CompressAllIcon from "./icons/CompressAllIcon"
+import { CardsState, drawerCardsSo } from "./stores/docs/cards"
 import { forEachViews } from "./stores/docs/utils/manage"
 import { VIEW_SIZE } from "./stores/stacks/utils"
+import { delay } from "./utils/time"
 
 
 
 const DrawerCmp: FunctionComponent = () => {
 
 	// STORES
-	const docSa: DocState = useStore(docSo)
+	const drawerCardsSa: CardsState = useStore(drawerCardsSo)
 
 	// HOOKS
-	const storesAnchored = useMemo(() => docSo.getAnchored(), [docSa.all, docSa.anchored])
+	const storesAnchored = drawerCardsSa.all
 	const [width, setWidth] = useState(0)
 	const [animation, setAnimation] = useState(false)
 	const isDown = useRef(false)

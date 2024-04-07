@@ -1,10 +1,10 @@
-import docSo from "@/stores/docs"
+import { deckCardsSo, menuCardsSo } from "@/stores/docs/cards"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import MenuButton from "../buttons/MenuButton"
 import CardIcon from "../cards/CardIcon"
-import { DOC_TYPE } from "@/types"
 
 
 
@@ -22,8 +22,8 @@ const StoreButton: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleOpenStoreClick = (view: ViewStore) => docSo.add({ view, anim: true })
-	const handleCloseStoreClick = (store: ViewStore) => docSo.pinnedDelete(store)
+	const handleOpenStoreClick = (view: ViewStore) => deckCardsSo.add({ view, anim: true })
+	const handleCloseStoreClick = (view: ViewStore) => menuCardsSo.remove({ view })
 
 	// RENDER
 	if (!store) return null
