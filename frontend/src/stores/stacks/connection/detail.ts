@@ -63,7 +63,7 @@ const setup = {
 			const state = store.state as CnnDetailState
 			state.connection = data.connection
 		},
-		onCreate: (_: void, store?: ViewStore) => {
+		onLinked: (_: void, store?: ViewStore) => {
 			const cnnStore = store as CnnDetailStore
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
@@ -88,19 +88,19 @@ const setup = {
 		openMessages(_: void, store?: CnnDetailStore) {
 			const isOpen = store.getMessagesOpen()
 			const view = !isOpen ? buildConnectionMessages(store.state.connection?.id) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
 			const isOpen = store.getStreamsOpen()
 			const view = !isOpen ? buildStreams(store.state.connection?.id) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD BUCKETS */
 		openBuckets(_: void, store?: CnnDetailStore) {
 			const isOpen = store.getBucketsOpen()
 			const view = !isOpen ? buildBuckets(store.state.connection?.id) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 	},
 

@@ -3,7 +3,6 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import ConsumersIcon from "@/icons/cards/ConsumersIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
-import docSo from "@/stores/docs"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -24,7 +23,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const streamSa = useStore(streamSo)
-	const docSa = useStore(docSo)
+	useStore(streamSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

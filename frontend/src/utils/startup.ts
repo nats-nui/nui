@@ -8,6 +8,8 @@ import { ViewLogStore } from "@/stores/stacks/log"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { delay } from "./time"
+import { deckCardsSo, drawerCardsSo, menuCardsSo } from "@/stores/docs/cards"
+import { Log } from "@/stores/log/utils"
 
 
 
@@ -18,57 +20,57 @@ window.onerror = (message, url, line, col, error) => {
 }
 
 export async function EndSession() {
-	const dockViews = docsSo.state.all
-	const menuViews = docsSo.state.menu
-	const dockStates = dockViews.map(store => store.getSerialization())
-	const menuStates = menuViews
-		.filter(viewMenu => !docsSo.getById(viewMenu.state.uuid))
-		.map(store => store.getSerialization())
-	const menuUuids: string[] = menuViews.map((view) => view.state.uuid)
-	const dockUuids: string[] = dockViews.map((view) => view.state.uuid)
+	const deckStates = deckCardsSo.state.all.map(store => store.getSerialization())
+	const menuStates = menuCardsSo.state.all.map(store => store.getSerialization())
+	const drawerStates = drawerCardsSo.state.all.map(store => store.getSerialization())
 	await dbSave([
 		logSo.state.all ?? [],
-		menuUuids,
-		dockUuids,
-		[...dockStates, ...menuStates],
+		deckStates,
+		menuStates,
+		drawerStates,
 	])
 }
 
 export async function StartSession() {
 
 	// altrimenti MSW non funziona
-	if ( import.meta.env.DEV ) await delay(1000)
+	if (import.meta.env.DEV) await delay(1000)
 
 	// LOAD FROM INDEXED-DB
 	const records = await dbLoad()
-	const [log, menuUuids, dockUuids, states] = records
+	const [log, deckStates, menuStates, drawerStates] = records as [Log[], any[], any[], any[]]
+
 	logSo.setAll(log ?? [])
 
-	const dockStates: any[] = dockUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
-	const dockStores = dockStates.map(state => {
-		const store: ViewStore = buildStore({ type: state.type })
+	// CREAZIONE delle CARDS
+	const deckStores = deckStates?.map(state => {
+		const store: ViewStore = buildStore({ type: state.type, group: deckCardsSo })
 		store?.setSerialization(state)
 		return store
-	}).filter(s => !!s)
+	}).filter(s => !!s) ?? []
 
-	const menuStates: any[] = menuUuids?.map(uuid => states.find(s => s.uuid == uuid)).filter(s => !!s) ?? []
-	const menuStores = menuStates.map(state => {
-		const store = buildStore({ type: state.type })
+	const menuStores = menuStates?.map(state => {
+		const store = buildStore({ type: state.type, group: menuCardsSo })
 		store?.setSerialization(state)
 		return store
-	}).filter(s => !!s)
+	}).filter(s => !!s) ?? []
+
+	const drawerStores = drawerStates?.map(state => {
+		const store = buildStore({ type: state.type, group: drawerCardsSo })
+		store?.setSerialization(state)
+		return store
+	}).filter(s => !!s) ?? []
 
 	// BUILD SINGLETONE CARDS
-	// docsSo.state.connView = (docsSo.find({ type: DOC_TYPE.CONNECTIONS }) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
-	// docsSo.state.logsView = (docsSo.find({ type: DOC_TYPE.LOGS }) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
-	docsSo.state.connView = (dockStores.find(s => s.state.type == DOC_TYPE.CONNECTIONS) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
-	docsSo.state.logsView = (dockStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
+	docsSo.state.connView = (deckStores.find(s => s.state.type == DOC_TYPE.CONNECTIONS) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
+	docsSo.state.logsView = (deckStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
 
 	// LOAD ALL CONNECTIONS
 	await cnnSo.fetch()
 
-	docsSo.setAll(dockStores)
-	docsSo.setMenu(menuStores)
+	deckCardsSo.setAll(deckStores)
+	menuCardsSo.setAll(menuStores)
+	drawerCardsSo.setAll(drawerStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })
 }

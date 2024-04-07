@@ -1,6 +1,5 @@
 import Button from "@/components/buttons/Button"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -17,7 +16,7 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	useStore(docSo)
+	useStore(cnnDetailSo.state.group)
 	const cnnDetailSa = useStore(cnnDetailSo)
 	const cnnSa = useStore(cnnSo)
 

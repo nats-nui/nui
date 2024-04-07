@@ -1,12 +1,11 @@
 import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildConsumer } from "./utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildConsumer } from "./utils/factory"
 
 
 
@@ -94,7 +93,7 @@ const setup = {
 				store.getByName(nameNew)
 			) : null
 			store.setSelect(nameNew)
-			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
+			store.state.group.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 	},
 

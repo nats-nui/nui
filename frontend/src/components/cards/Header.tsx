@@ -4,7 +4,7 @@ import CompressHIcon from "@/icons/CompressHIcon"
 import DetachIcon from "@/icons/DetachIcon"
 import ExpandHIcon from "@/icons/ExpandHIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
-import docSo from "@/stores/docs"
+import { drawerCardsSo, menuCardsSo } from "@/stores/docs/cards"
 import { findParent, getRoot } from "@/stores/docs/utils/manage"
 import mouseSo from "@/stores/mouse"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
@@ -27,7 +27,8 @@ const Header: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const docSa = useStore(docSo)
+	const docSo = store.state.group
+	useStore(docSo)
 
 	// HOOK
 	const [enter, setEnter] = useState(false)
@@ -52,14 +53,24 @@ const Header: FunctionComponent<Props> = ({
 		)
 	}
 	const handleAnchor = () => {
-		if (!isAnchored) docSo.anchor(store); else docSo.unanchor(store)
+		if (!inDrawer) {
+			store.state.group.remove({ view: store })
+			drawerCardsSo.add({ view: store })
+		} else {
+			//docSo.unanchor(store)
+		}
 	}
 	const handleFocus = () => {
 		//e.stopPropagation()
 		docSo.focus(store)
 	}
 	const handleToggleIconize = () => {
-		if (!isPinned) docSo.pinned(store); else docSo.pinnedDelete(store)
+		if (!inMenu) {
+			//store.state.group.remove({ view: store })
+			menuCardsSo.add({ view: store })
+		} else {
+			menuCardsSo.remove({ view: store })
+		}
 	}
 	const handleComprime = () => {
 		findParent(store, (view) => view.setSize(VIEW_SIZE.COMPACT))
@@ -70,12 +81,11 @@ const Header: FunctionComponent<Props> = ({
 
 	// RENDER
 	//if (!store) return null
-
-	const [title, subTitle, isAnchored, isPinned] = useMemo(() => [
+	const inDrawer = store.state.group == drawerCardsSo
+	const inMenu = store.state.group == menuCardsSo
+	const [title, subTitle] = useMemo(() => [
 		store.getTitle(),
 		store.getSubTitle(),
-		docSo.isAnchored(store),
-		docSo.isPinned(store.state.uuid),
 	], [store.state])
 
 	const isDraggable = store.state.draggable
@@ -84,7 +94,7 @@ const Header: FunctionComponent<Props> = ({
 	const isCompact = store.state.size == VIEW_SIZE.COMPACT
 	const allCompact = !findParent(store, view => view.state.size != VIEW_SIZE.COMPACT)
 
-	const showBttAnchor = inRoot && (enter || isAnchored)
+	const showBttAnchor = inRoot && (enter || inDrawer)
 	const showDetachable = !inRoot && enter
 	const showBttClose = !store.state.unclosable
 	const showBttPin = inRoot && enter && store.state.pinnable

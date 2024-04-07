@@ -1,6 +1,5 @@
 import strApi from "@/api/streams"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
@@ -91,7 +90,7 @@ const setup = {
 		/** open CREATION CARD */
 		create(_: void, store?: StreamsStore) {
 			const view = buildStreamNew(store.state.connectionId, store.getAllStreamName())
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
 		/** elimina lo sTREAM selezionato "state.select" */
@@ -106,8 +105,8 @@ const setup = {
 			store.setAll(store.state.all.filter(s => s.config.name != name))
 			store.setSelect(null)
 			// cerco eventuali CARD di questo stream e lo chiudo
-			const cardStreams = docSo.findAll({ type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
-			cardStreams.forEach(view => docSo.remove({ view, anim: true }))
+			const cardStreams = store.state.group.findAll({ type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
+			cardStreams.forEach(view => store.state.group.remove({ view, anim: true }))
 		},
 
 		update(stream: StreamInfo, store?: StreamsStore) {
@@ -131,12 +130,12 @@ const setup = {
 				? buildStream(store.state.connectionId, store.getByName(nameNew), store.getAllStreamName())
 				: null
 			store.setSelect(nameNew)
-			docSo.addLink({ view, parent: store, anim: !nameOld || !nameNew })
+			store.state.group.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
 
 		/** apertura della CARD CONSUMERS */
 		openConsumers(streamName: string, store?: StreamsStore) {
-			docSo.addLink({
+			store.state.group.addLink({
 				view: buildConsumers(store.state.connectionId, store.getByName(streamName)),
 				parent: store,
 				anim: true
@@ -145,7 +144,7 @@ const setup = {
 
 		/** apertura della CARD MESSAGES */
 		openMessages(streamName: string, store?: StreamsStore) {
-			docSo.addLink({
+			store.state.group.addLink({
 				view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)),
 				parent: store,
 				anim: true

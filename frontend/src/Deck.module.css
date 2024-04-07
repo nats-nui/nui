@@ -1,0 +1,6 @@
+.root {
+	flex: 1;
+	display: flex;
+	overflow-x: auto;
+	padding: 10px 0px 10px 0px;
+}

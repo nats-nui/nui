@@ -2,7 +2,6 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInput from "@/components/input/FindInput"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import Table from "@/components/table"
-import docSo from "@/stores/docs"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"
 import { useStore } from "@priolo/jon"
@@ -20,7 +19,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const consumersSa = useStore(consumersSo)
-	const docSa = useStore(docSo)
+	useStore(consumersSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

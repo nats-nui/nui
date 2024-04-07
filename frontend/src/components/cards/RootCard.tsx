@@ -1,4 +1,3 @@
-import docSo from "@/stores/docs"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -22,7 +21,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view)
-	const docSa = useStore(docSo)
+	useStore(view.state.group)
 
 	// HOOKS
 	useEffect(() => {
@@ -35,7 +34,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
-	const haveFocus = docSa.focus == view
+	const haveFocus = false//docSa.focus == view
 	const variant = view.state.colorVar
 
 	// styles

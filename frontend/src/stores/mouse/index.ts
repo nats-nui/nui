@@ -1,4 +1,3 @@
-import docSo from "@/stores/docs"
 import { StoreCore, createStore } from "@priolo/jon"
 import { DOC_ANIM } from "../docs/types"
 import { DragDoc, Position } from "./utils"
@@ -33,12 +32,8 @@ const setup = {
 			const { srcView, index } = store.state.drag
 			srcView.docAnim(DOC_ANIM.SHOW)
 			store.setDrag(null)
-
-			if (index == -1) {
-				docSo.anchor(srcView)
-			} else {
-				docSo.move({ view: srcView, index, anim: true })
-			}
+			// [II] TODO
+			srcView.state.group.move({ view: srcView, index, anim: true })
 		}
 	},
 

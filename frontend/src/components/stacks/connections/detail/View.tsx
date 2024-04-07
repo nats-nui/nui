@@ -5,7 +5,6 @@ import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -24,7 +23,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	useStore(docSo)
+	useStore(cnnDetailSo.state.group)
 	const cnnDetailSa = useStore(cnnDetailSo)
 	const cnnSa = useStore(cnnSo)
 

@@ -1,16 +1,14 @@
-import docSo from "@/stores/docs"
+import { socketPool } from "@/plugins/SocketService/pool"
 import layoutSo from "@/stores/layout"
 import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
 import { delay } from "@/utils/time"
 import { LISTENER_CHANGE, StoreCore } from "@priolo/jon"
-import { buildStore2 } from "../docs/utils/factory"
+import { CardsStore } from "../docs/cards"
+import { buildStore } from "../docs/utils/factory"
 import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
-import { VIEW_SIZE } from "./utils"
-import { LOAD_MODE, LOAD_STATE } from "./utils"
 import { LoadBaseStore } from "./loadBase"
-import { socketPool } from "@/plugins/SocketService/pool"
-import { getRoot } from "../docs/utils/manage"
+import { VIEW_SIZE } from "./utils"
 
 
 
@@ -45,6 +43,8 @@ const viewSetup = {
 		parent: <ViewStore>null,
 		/** la sua VIEW LINKED */
 		linked: <ViewStore>null,
+		/** il GROUP dove è visualizzata questa CARD */
+		group: <CardsStore>null,
 
 		snackbar: <SnackbarState>{
 			open: false,
@@ -102,10 +102,10 @@ const viewSetup = {
 
 	actions: {
 		//#region OVERRIDABLE
-		onCreate: (_: void, store?: ViewStore) => {
+		onLinked: (_: void, store?: ViewStore) => {
 		},
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
-			docSo.remove({ view: store, anim: true });
+			store.state.group.remove({ view: store, anim: true });
 			(store as LoadBaseStore).fetchAbort?.()
 		},
 		setSerialization: (state: any, store?: ViewStore) => {
@@ -115,22 +115,27 @@ const viewSetup = {
 			const linkedState = state.linked
 			delete state.linked
 			if (linkedState) {
-				const linkedStore = buildStore2({ type: linkedState.type })
+				const linkedStore = buildStore({ type: linkedState.type })
 				linkedStore.setSerialization(linkedState)
 				store.setLinked(linkedStore)
-				linkedStore.onCreate()
+				linkedStore.onLinked()
 			}
 		},
 		//#endregion
 
 		setLinked: (view: ViewStore, store?: ViewStore) => {
+			// lo setto a NULL
 			if (!view) {
+				// c'era un precedente
 				if (!!store.state.linked) {
 					store.state.linked.state.parent = null
+					store.state.linked.state.group = null
 				}
 				store.state.linked = null
+			// setto effettivamente un LINKED
 			} else {
 				view.state.parent = store
+				view.state.group = store.state.group
 				store.state.linked = view
 			}
 			return store

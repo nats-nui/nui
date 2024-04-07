@@ -1,13 +1,12 @@
 import kventryApi from "@/api/kventries"
 import cnnSo from "@/stores/connections"
-import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import { ViewState, ViewStore, default as viewSetup } from "@/stores/stacks/viewBase"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 
 
 
@@ -89,7 +88,7 @@ const setup = {
 
 		async create(_: void, store?: KVEntriesStore) {
 			const view = buildKVEntryNew(store.state.connectionId, store.state.bucket)
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
 		async delete(_: void, store?: KVEntriesStore) {
@@ -122,7 +121,7 @@ const setup = {
 			const newKey = (key && oldkey !== key) ? key : null
 			const view = newKey ? buildKVEntry(store.state.connectionId, store.state.bucket, store.getByName(key)) : null
 			store.setSelect(newKey)
-			docSo.addLink({ view, parent: store, anim: !oldkey || !newKey })
+			store.state.group.addLink({ view, parent: store, anim: !oldkey || !newKey })
 		},
 	},
 
