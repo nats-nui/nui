@@ -1,19 +1,17 @@
-import FrameworkCard from "@/components/cards/FrameworkCard"
 import Button from "@/components/buttons/Button"
-import Table from "@/components/table"
-import docSo from "@/stores/docs"
+import FrameworkCard from "@/components/cards/FrameworkCard"
+import AlertDialog from "@/components/dialogs/AlertDialog"
+import FindInput from "@/components/input/FindInput"
+import OptionsCmp from "@/components/options/OptionsCmp"
+import VTable from "@/components/table/VTable"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { KVEntry } from "@/types/KVEntry"
+import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
-import FindInput from "@/components/input/FindInput"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import OptionsCmp from "@/components/options/OptionsCmp"
-import { dateShow } from "@/utils/time"
-import VTable from "@/components/table/VTable"
 
 
 
@@ -27,7 +25,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const kventriesSa = useStore(kventriesSo)
-	const docSa = useStore(docSo)
+	useStore(kventriesSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

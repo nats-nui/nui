@@ -4,7 +4,6 @@ import { useStore } from "@priolo/jon"
 import { DragEvent, FunctionComponent } from "react"
 import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
-import docSo from "@/stores/docs"
 
 
 

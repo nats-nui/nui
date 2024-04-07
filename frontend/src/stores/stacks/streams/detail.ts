@@ -50,7 +50,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: StreamStore): StreamsStore => docSo.find({
+		getParentList: (_: void, store?: StreamStore): StreamsStore => store.state.group.find({
 			type: DOC_TYPE.STREAMS,
 			connectionId: store.state.connectionId,
 		} as Partial<StreamsState>) as StreamsStore,
@@ -70,8 +70,9 @@ const setup = {
 			state.allStreams = data.allStreams
 			state.editState = data.editState
 		},
-		onCreate: (_: void, store?: ViewStore) => {
+		onLinked: (_: void, store?: ViewStore) => {
 			const cnnStore = store as StreamStore
+			// se per questo TYPE c'era un LINK preferienziale aprto lo apre
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
 			if (options == DOC_TYPE.CONSUMERS) {
@@ -131,13 +132,13 @@ const setup = {
 		openConsumers(_: void, store?: StreamStore) {
 			const isOpen = store.getConsumerOpen()
 			const view = !isOpen ? buildConsumers(store.state.connectionId, store.state.stream) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
 			const isOpen = store.getMessagesOpen()
 			const view = !isOpen ? buildStreamMessages(store.state.connectionId, store.state.stream) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 
 	},

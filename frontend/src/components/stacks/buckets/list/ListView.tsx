@@ -3,9 +3,7 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import FindInput from "@/components/input/FindInput"
 import OptionsCmp from "@/components/options/OptionsCmp"
-import Table from "@/components/table"
 import VTable from "@/components/table/VTable"
-import docSo from "@/stores/docs"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE } from "@/types"
@@ -25,7 +23,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 
 	// STORE
 	const bucketsSa = useStore(bucketsSo)
-	const docSa = useStore(docSo)
+	useStore(bucketsSo.state.group)
 
 	// HOOKs
 	useEffect(() => {

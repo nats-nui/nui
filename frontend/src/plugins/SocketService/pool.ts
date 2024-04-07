@@ -1,4 +1,4 @@
-import docsSo from "@/stores/docs";
+import { deckCardsSo, drawerCardsSo, menuCardsSo } from "@/stores/docs/cards";
 import { debounce } from "@/utils/time";
 import { SocketService } from ".";
 
@@ -34,7 +34,11 @@ class SocketPool {
 		debounce(`ss::destroy::${key}`, () => {
 			// se lo usa qualcun'altro alllora non lo eliminare
 			const filter = { connectionId: ss.cnnId }
-			if (docsSo.findAll(filter).length > 0 || !!docsSo.findInMenu(filter)) return
+			// [II] TODO
+			if (deckCardsSo.findAll(filter).length > 0
+				|| menuCardsSo.findAll(filter).length > 0 
+				|| drawerCardsSo.findAll(filter).length > 0
+			) return
 			ss.disconnect()
 			delete this.sockets[key]
 		}, 2000)

@@ -1,5 +1,4 @@
 import cnsApi from "@/api/consumers"
-import docSo from "@/stores/docs"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
@@ -42,7 +41,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => docSo.find({
+		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => store.state.group.find({
 			type: DOC_TYPE.CONSUMERS,
 			connectionId: store.state.connectionId,
 			streamName: store.state.streamName,

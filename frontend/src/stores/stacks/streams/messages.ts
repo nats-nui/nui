@@ -1,5 +1,4 @@
 import strApi from "@/api/streams"
-import docsSo from "@/stores/docs"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
@@ -7,10 +6,9 @@ import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
-import { LOAD_STATE } from "../utils"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -158,17 +156,6 @@ const setup = {
 
 		filterApply: async (filter: StreamMessagesFilter, store?: StreamMessagesStore) => {
 
-			// controlla se il filtro è cambiato
-			// const oldFilter = store.state.filter
-			// if (filter.byTime == oldFilter.byTime
-			// 	&& filter.startSeq == oldFilter.startSeq
-			// 	&& filter.startTime == oldFilter.startTime
-			// 	&& filter.subjects.sort().join("").toLowerCase() == oldFilter.subjects.sort().join("").toLowerCase()
-			// ) {
-			// 	store.setFilter(filter)
-			// 	return
-			// }
-
 			// normalizzo e setto il filtro
 			if (!filter.interval) filter.interval = 200
 			if (filter.startSeq == null && !filter.byTime) {
@@ -184,7 +171,7 @@ const setup = {
 
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: StreamMessagesStore) {
-			docsSo.addLink({
+			store.state.group.addLink({
 				view: buildMessageDetail(message, store.state.format),
 				parent: store,
 				anim: true,

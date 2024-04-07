@@ -7,8 +7,8 @@ import { BucketConfig, BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
-import { VIEW_SIZE } from "../utils"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { VIEW_SIZE } from "../utils"
 
 
 
@@ -45,7 +45,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: BucketStore): BucketsStore => docSo.find({
+		getParentList: (_: void, store?: BucketStore): BucketsStore => store.state.group.find({
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
@@ -63,7 +63,7 @@ const setup = {
 			state.bucket = data.bucket
 			state.editState = data.editState
 		},
-		onCreate: (_: void, store?: ViewStore) => {
+		onLinked: (_: void, store?: ViewStore) => {
 			const cnnStore = store as BucketStore
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
@@ -99,7 +99,7 @@ const setup = {
 		openKVEntries(_: void, store?: BucketStore) {
 			const isOpen = store.getKVEntriesOpen()
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
-			docSo.addLink({ view, parent: store, anim: true })
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 	},
 
