@@ -1,4 +1,4 @@
-import { deckCardsSo, drawerCardsSo, menuCardsSo } from "@/stores/docs/cards";
+import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards";
 import { debounce } from "@/utils/time";
 import { SocketService } from ".";
 
@@ -36,7 +36,7 @@ class SocketPool {
 			const filter = { connectionId: ss.cnnId }
 			// [II] TODO
 			if (deckCardsSo.findAll(filter).length > 0
-				|| menuCardsSo.findAll(filter).length > 0 
+				//|| menuCardsSo.findAll(filter).length > 0 
 				|| drawerCardsSo.findAll(filter).length > 0
 			) return
 			ss.disconnect()

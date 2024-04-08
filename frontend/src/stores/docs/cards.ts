@@ -65,7 +65,7 @@ const setup = {
 		) {
 			// se c'e' gia' setto solo il focus
 			if (forEachViews(store.state.all, (v) => v.state.uuid == view.state.uuid)) {
-				store.setFocus(view)
+				store.focus(view)
 				return
 			}
 			view.state.parent = null
@@ -145,10 +145,11 @@ const setup = {
 
 		/** sposta una view in un indice preciso dello STACK */
 		async move(
-			{ view, index, groupDest, anim = false }: { view: ViewStore, index: number, groupDest?: CardsStore, anim?: boolean },
+			{ view, index, groupDest, anim = false }: { view: ViewStore, index?: number, groupDest?: CardsStore, anim?: boolean },
 			store?: CardsStore
 		) {
-			if (view == null || index == null) return
+			if (view == null) return
+			if (index == null) index = 0
 			if (!groupDest) groupDest = store
 			const sameGroup = groupDest == store
 
@@ -195,5 +196,4 @@ export interface CardsStore extends StoreCore<CardsState>, CardsGetters, CardsAc
 }
 
 export const deckCardsSo = createStore(setup) as CardsStore
-export const menuCardsSo = createStore(setup) as CardsStore
 export const drawerCardsSo = createStore(setup) as CardsStore

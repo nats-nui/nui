@@ -1,15 +1,16 @@
+import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
+import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
+import { menuSo } from "@/stores/docs/links"
 import { buildStore } from "@/stores/docs/utils/factory"
 import logSo from "@/stores/log"
-import { dbLoad, dbSave } from "@/utils/db"
-import cnnSo from "@/stores/connections"
-import { DOC_TYPE } from "@/types"
-import { ViewLogStore } from "@/stores/stacks/log"
-import { CnnListStore } from "@/stores/stacks/connection"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { delay } from "./time"
-import { deckCardsSo, drawerCardsSo, menuCardsSo } from "@/stores/docs/cards"
 import { Log } from "@/stores/log/utils"
+import { CnnListStore } from "@/stores/stacks/connection"
+import { ViewLogStore } from "@/stores/stacks/log"
+import { ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
+import { dbLoad, dbSave } from "@/utils/db"
+import { delay } from "./time"
 
 
 
@@ -21,7 +22,7 @@ window.onerror = (message, url, line, col, error) => {
 
 export async function EndSession() {
 	const deckStates = deckCardsSo.state.all.map(store => store.getSerialization())
-	const menuStates = menuCardsSo.state.all.map(store => store.getSerialization())
+	const menuStates = menuSo.state.all.map(store => store.getSerialization())
 	const drawerStates = drawerCardsSo.state.all.map(store => store.getSerialization())
 	await dbSave([
 		logSo.state.all ?? [],
@@ -49,11 +50,11 @@ export async function StartSession() {
 		return store
 	}).filter(s => !!s) ?? []
 
-	const menuStores = menuStates?.map(state => {
-		const store = buildStore({ type: state.type, group: menuCardsSo })
-		store?.setSerialization(state)
-		return store
-	}).filter(s => !!s) ?? []
+	const menuStores = [] //menuStates?.map(state => {
+	// 	const store = buildStore({ type: state.type, group: menuCardsSo })
+	// 	store?.setSerialization(state)
+	// 	return store
+	// }).filter(s => !!s) ?? []
 
 	const drawerStores = drawerStates?.map(state => {
 		const store = buildStore({ type: state.type, group: drawerCardsSo })
@@ -70,7 +71,7 @@ export async function StartSession() {
 	await cnnSo.fetch()
 
 	deckCardsSo.setAll(deckStores)
-	menuCardsSo.setAll(menuStores)
+	menuSo.setAll(menuStores)
 	drawerCardsSo.setAll(drawerStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })

@@ -7,7 +7,7 @@ export interface DragDoc {
 	/** indice del DOC da cui è partito il DRAG */
 	srcView?: ViewStore
 	/** CARDS-GROUP DESTINAZIONE */
-	groupDest:CardsStore
+	groupDest?:CardsStore
 	/** indice DESTINAZIONE della posizione nella "root" */
 	index?: number
 }
