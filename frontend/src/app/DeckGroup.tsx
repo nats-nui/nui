@@ -1,10 +1,8 @@
-//import srcBg from "@/assets/bg4.jpg"
-import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import cls from "./DeckGroup.module.css"
-import CardsGroup from "./CardsGroups"
 import { CardsState, deckCardsSo } from "../stores/docs/cards"
+import CardsGroup from "./CardsGroups"
+import cls from "./DeckGroup.module.css"
 
 
 
@@ -21,7 +19,7 @@ const DeckGroup: FunctionComponent = () => {
 	// RENDER
 	return (
 		<div className={cls.root}>
-			<CardsGroup storesGroup={cards} />
+			<CardsGroup cardsStore={deckCardsSo}/>
 		</div>
 	)
 }

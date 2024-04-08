@@ -1,16 +1,17 @@
-import { ViewStore } from "@/stores/stacks/viewBase"
+import { CardsStore } from "@/stores/docs/cards"
 import { FunctionComponent } from "react"
-import DropArea from "./DropArea"
 import RootCard from "../components/cards/RootCard"
+import DropArea from "./DropArea"
 
 
 
 interface Props {
-	storesGroup?: ViewStore[]
+	cardsStore?: CardsStore
 }
 
+/** componente generico per raggruppare delle CARDS */
 const CardsGroup: FunctionComponent<Props> = ({
-	storesGroup,
+	cardsStore,
 }) => {
 
 	// STORES
@@ -20,19 +21,25 @@ const CardsGroup: FunctionComponent<Props> = ({
 	// HANDLERS
 
 	// RENDER
+	const cards = cardsStore.state.all
+
 	return <>
-		{storesGroup.map((store, index) => (
+		{cards.map((store, index) => (
 			<div key={store.state.uuid}
-				style={cssCol(storesGroup.length - index)}
+				style={cssCol(cards.length - index)}
 			>
 				<DropArea
+					groupDest={cardsStore}
 					index={index}
 					viewSo={store}
 				/>
 				<RootCard view={store} />
 			</div>
 		))}
-		<DropArea index={storesGroup.length} isLast />
+		<DropArea isLast 
+			groupDest={cardsStore}
+			index={cards.length} 
+		/>
 	</>
 }
 

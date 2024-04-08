@@ -28,7 +28,7 @@ const setup = {
 		getIndexByView(view: ViewStore, store?: CardsStore) {
 			return store.state.all.findIndex(v => v == view)
 		},
-		
+
 		/** cerca nel DECK solo le CARD senza parent */
 		find(state: any, store?: CardsStore) {
 			return forEachViews(
@@ -47,7 +47,7 @@ const setup = {
 			)
 			return ret
 		},
-		
+
 	},
 
 	actions: {
@@ -144,24 +144,33 @@ const setup = {
 		},
 
 		/** sposta una view in un indice preciso dello STACK */
-		async move({ view, index, anim = false }: { view: ViewStore, index: number, anim?: boolean }, store?: CardsStore) {
+		async move(
+			{ view, index, groupDest, anim = false }: { view: ViewStore, index: number, groupDest?: CardsStore, anim?: boolean },
+			store?: CardsStore
+		) {
 			if (view == null || index == null) return
+			if (!groupDest) groupDest = store
+			const sameGroup = groupDest == store
+
 			// se è direttamente in ROOT...
 			if (view.state.parent == null) {
 				const srcIndex = store.state.all.indexOf(view)
-				if (srcIndex == index || srcIndex + 1 == index) return
+				if (sameGroup && (srcIndex == index || srcIndex + 1 == index)) return
 				await store.remove({ view, anim })
 				if (srcIndex > index) {
-					await store.add({ view, index, anim })
+					await groupDest.add({ view, index, anim })
 				} else {
-					await store.add({ view, index: index - 1, anim })
+					await groupDest.add({ view, index: index - 1, anim })
 				}
+
 				// altrimenti la cancello e la ricreo in ROOT
 			} else {
 				await store.remove({ view, anim })
-				await store.add({ view, index, anim })
+				await groupDest.add({ view, index, anim })
 			}
 		},
+
+		/** stacca la CARD dal suo PARENT e la mette nella ROOT */
 		detach(view: ViewStore, store?: CardsStore) {
 			if (!view.state.parent) return
 			const root = getRoot(view) ?? view

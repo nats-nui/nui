@@ -62,6 +62,7 @@ export async function StartSession() {
 	}).filter(s => !!s) ?? []
 
 	// BUILD SINGLETONE CARDS
+	// [II] bisogna cercare su tutte le CARD in menu deck e drawer
 	docsSo.state.connView = (deckStores.find(s => s.state.type == DOC_TYPE.CONNECTIONS) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
 	docsSo.state.logsView = (deckStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
 

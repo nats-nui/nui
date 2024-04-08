@@ -1,3 +1,4 @@
+import { CardsStore } from "../docs/cards"
 import { ViewStore } from "../stacks/viewBase"
 
 
@@ -5,7 +6,9 @@ import { ViewStore } from "../stacks/viewBase"
 export interface DragDoc {
 	/** indice del DOC da cui è partito il DRAG */
 	srcView?: ViewStore
-	/** in alternativa indica l'indice della posizione nella "root" */
+	/** CARDS-GROUP DESTINAZIONE */
+	groupDest:CardsStore
+	/** indice DESTINAZIONE della posizione nella "root" */
 	index?: number
 }
 
