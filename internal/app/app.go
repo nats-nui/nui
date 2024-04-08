@@ -11,6 +11,7 @@ import (
 // App struct
 type App struct {
 	ctx        context.Context
+	version    string
 	target     Target
 	l          logging.Slogger
 	dbPath     string
@@ -44,6 +45,7 @@ func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 
 	a.l.Info("Starting nui app...")
+	a.l.Info("Version: " + a.version)
 	a.l.Info("database path: " + a.dbPath)
 
 	nuiSvc, err := nui.Setup(a.dbPath, a.l)

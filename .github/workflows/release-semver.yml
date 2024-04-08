@@ -50,6 +50,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: VERSION=${GITHUB_REF#refs/tags/}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   release-app:
@@ -81,11 +82,13 @@ jobs:
         with:
           submodules: recursive
       - name: Build wails
-        uses: dAppServer/wails-build-action@v2.2
+        uses: ./.github/actions/wails-build-action
         id: build
         with:
+          version: ${GITHUB_REF#refs/tags/}
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
+          wails-build-webview2: embed
           package: false
           go-version: '1.21'
           nsis: ${{ matrix.build.nsis }}
