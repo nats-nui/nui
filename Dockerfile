@@ -1,7 +1,7 @@
 
 ## be build
-ARG VERSION
 FROM golang:1.21 AS build_be
+ARG VERSION
 WORKDIR /src
 COPY . .
 RUN  go build -ldflags "-X main.Version=$VERSION" -o /cmd/nui-web ./cmd/server/main.go

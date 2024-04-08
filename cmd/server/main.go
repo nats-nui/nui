@@ -26,7 +26,7 @@ func main() {
 	}
 
 	logger.Info("Starting up...")
-	logger.Info("Version" + Version)
+	logger.Info("Version: " + Version)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	webApp, err := app.NewApp(
