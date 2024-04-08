@@ -50,7 +50,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: VERSION=${GITHUB_REF#refs/tags/}
+          build-args: VERSION=${{github.ref_name}}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   release-app:
@@ -85,7 +85,7 @@ jobs:
         uses: ./.github/actions/wails-build-action.yml
         id: build
         with:
-          version: ${GITHUB_REF#refs/tags/}
+          version: ${{github.ref_name}}
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           wails-build-webview2: embed
