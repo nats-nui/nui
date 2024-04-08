@@ -3,6 +3,8 @@ import { DOC_ANIM } from "../docs/types"
 import { DragDoc, Position } from "./utils"
 
 
+
+/** gestisce il DRAG&DROP */
 const setup = {
 
 	state: {
@@ -14,6 +16,7 @@ const setup = {
 	},
 
 	actions: {
+
 		startDrag(drag: DragDoc, store?: MouseStore) {
 			function fnMouseMove(e: any) {
 				store.setPosition({ x: e.pageX, y: e.pageY })
@@ -28,12 +31,12 @@ const setup = {
 			store.setDrag(drag)
 			drag.srcView.docAnim(DOC_ANIM.DRAGGING)
 		},
+
 		stopDrag(_: void, store?: MouseStore) {
-			const { srcView, index } = store.state.drag
+			const { srcView, index, groupDest } = store.state.drag
 			srcView.docAnim(DOC_ANIM.SHOW)
 			store.setDrag(null)
-			// [II] TODO
-			srcView.state.group.move({ view: srcView, index, anim: true })
+			srcView.state.group.move({ view: srcView, index, groupDest, anim: true })
 		}
 	},
 

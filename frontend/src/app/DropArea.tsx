@@ -4,10 +4,12 @@ import { DragEvent, FunctionComponent } from "react"
 import { ViewState, ViewStore } from "../stores/stacks/viewBase"
 import { DOC_ANIM } from "../types"
 import cls from "./DropArea.module.css"
+import { CardsStore } from "@/stores/docs/cards"
 
 
 
 interface Props {
+	groupDest: CardsStore
 	index?: number
 	isLast?: boolean
 	viewSo?: ViewStore
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const DropArea: FunctionComponent<Props> = ({
+	groupDest,
 	index,
 	isLast,
 	viewSo,
@@ -33,6 +36,7 @@ const DropArea: FunctionComponent<Props> = ({
 		mouseSo.setDrag({
 			...mouseSa.drag,
 			index,
+			groupDest,
 		})
 	}
 	const handleMouseLeave = () => {
@@ -40,11 +44,12 @@ const DropArea: FunctionComponent<Props> = ({
 		mouseSo.setDrag({
 			...mouseSa.drag,
 			index: null,
+			groupDest: null,
 		})
 	}
 
 	// RENDER
-	const dragOver = mouseSa.drag?.index == index
+	const dragOver = mouseSa.drag?.index == index && mouseSa.drag?.groupDest == groupDest
 	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
 	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
 	const clsRoot = `${cls.root} ${dragOver ? cls.in_dragover : ""} ${inExit ? cls.in_exit : ""} ${isLast ? cls.is_last : ""} var${variant}`

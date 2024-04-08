@@ -5,7 +5,6 @@ import ExpandHIcon from "@/icons/ExpandHIcon"
 import { CardsState, drawerCardsSo } from "@/stores/docs/cards"
 import { forEachViews } from "@/stores/docs/utils/manage"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
-import { ViewStore } from "@/stores/stacks/viewBase"
 import { delay } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
@@ -87,7 +86,7 @@ const DrawerGroup: FunctionComponent = () => {
 				className={cls.handle_container}
 				style={cssFixed(width, animation)}
 			>
-				<CardsGroup storesGroup={cards} />
+				<CardsGroup cardsStore={drawerCardsSo}/>
 			</div>
 
 			{/* <DropArea index={-1} /> */}
