@@ -11,6 +11,8 @@ import (
 	"syscall"
 )
 
+var Version string
+
 func main() {
 
 	logLevel := flag.String("log-level", "info", "log level")
@@ -24,6 +26,7 @@ func main() {
 	}
 
 	logger.Info("Starting up...")
+	logger.Info("Version" + Version)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	webApp, err := app.NewApp(

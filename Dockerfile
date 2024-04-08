@@ -1,9 +1,10 @@
 
 ## be build
+ARG VERSION
 FROM golang:1.21 AS build_be
 WORKDIR /src
 COPY . .
-RUN  go build -o /cmd/nui-web ./cmd/server/main.go
+RUN  go build -ldflags "-X main.Version=$VERSION" -o /cmd/nui-web ./cmd/server/main.go
 
 ## frontend build
 FROM node:18 AS build_fe
