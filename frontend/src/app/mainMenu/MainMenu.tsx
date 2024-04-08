@@ -1,11 +1,11 @@
 import docSo from "@/stores/docs"
+import { menuSo } from "@/stores/docs/links"
 import { EndSession, StartSession } from "@/utils/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import Button from "../../components/buttons/Button"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
-import { menuCardsSo } from "@/stores/docs/cards"
 
 
 
@@ -18,18 +18,18 @@ const MainMenu: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const menuCardsSa = useStore(menuCardsSo)
+	const menuSa = useStore(menuSo)
 
 	// HOOKS
 
 	// HANDLERS
 
 	// RENDER
-	const views = menuCardsSa.all
+	const views = menuSa.all
 
 	return <div style={style} className={cls.root}>
 		<StoreButton
-			store={docSo.state.connView }
+			store={docSo.state.connView}
 		/>
 		{views.map((view) => (
 			<StoreButton key={view.state.uuid} store={view} />
@@ -44,7 +44,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		</>}
 		{/* *** DEBUG *** */}
 
-		<StoreButton 
+		<StoreButton
 			store={docSo.state.logsView}
 		/>
 	</div>

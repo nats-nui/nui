@@ -1,4 +1,5 @@
-import { deckCardsSo, menuCardsSo } from "@/stores/docs/cards"
+import { deckCardsSo } from "@/stores/docs/cards"
+import { menuSo } from "@/stores/docs/links"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -23,7 +24,7 @@ const StoreButton: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleOpenStoreClick = (view: ViewStore) => deckCardsSo.add({ view, anim: true })
-	const handleCloseStoreClick = (view: ViewStore) => menuCardsSo.remove({ view })
+	const handleDeleteButtonClick = (view: ViewStore) => menuSo.remove(view)
 
 	// RENDER
 	if (!store) return null
@@ -38,7 +39,7 @@ const StoreButton: FunctionComponent<Props> = ({
 			subtitle={store.getSubTitle()}
 			label={label}
 			onClick={() => handleOpenStoreClick(store)}
-			onClose={canDelete ? () => handleCloseStoreClick(store) : null}
+			onClose={canDelete ? () => handleDeleteButtonClick(store) : null}
 		>
 			<CardIcon type={type} style={{ width: 20 }} className="color-fg" />
 		</MenuButton>

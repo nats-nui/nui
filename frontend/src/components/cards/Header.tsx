@@ -4,7 +4,8 @@ import CompressHIcon from "@/icons/CompressHIcon"
 import DetachIcon from "@/icons/DetachIcon"
 import ExpandHIcon from "@/icons/ExpandHIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
-import { drawerCardsSo, menuCardsSo } from "@/stores/docs/cards"
+import { drawerCardsSo } from "@/stores/docs/cards"
+import { menuSo } from "@/stores/docs/links"
 import { findParent, getRoot } from "@/stores/docs/utils/manage"
 import mouseSo from "@/stores/mouse"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
@@ -52,10 +53,9 @@ const Header: FunctionComponent<Props> = ({
 			store.state.size == VIEW_SIZE.NORMAL ? VIEW_SIZE.COMPACT : VIEW_SIZE.NORMAL
 		)
 	}
-	const handleAnchor = () => {
+	const handleMoveInDrawer = () => {
 		if (!inDrawer) {
-			store.state.group.remove({ view: store })
-			drawerCardsSo.add({ view: store })
+			store.state.group.move({ view: store, groupDest: drawerCardsSo })
 		} else {
 			//docSo.unanchor(store)
 		}
@@ -67,10 +67,11 @@ const Header: FunctionComponent<Props> = ({
 	const handleToggleIconize = () => {
 		if (!inMenu) {
 			//store.state.group.remove({ view: store })
-			menuCardsSo.add({ view: store })
-		} else {
-			menuCardsSo.remove({ view: store })
-		}
+			menuSo.add({ view: store })
+		} 
+		// else {
+		// 	menuCardsSo.remove({ view: store })
+		// }
 	}
 	const handleComprime = () => {
 		findParent(store, (view) => view.setSize(VIEW_SIZE.COMPACT))
@@ -82,7 +83,7 @@ const Header: FunctionComponent<Props> = ({
 	// RENDER
 	//if (!store) return null
 	const inDrawer = store.state.group == drawerCardsSo
-	const inMenu = store.state.group == menuCardsSo
+	const inMenu = menuSo.find(store)
 	const [title, subTitle] = useMemo(() => [
 		store.getTitle(),
 		store.getSubTitle(),
@@ -161,7 +162,7 @@ const Header: FunctionComponent<Props> = ({
 						)}
 						{showBttAnchor && (
 							<IconButton
-								onClick={handleAnchor}
+								onClick={handleMoveInDrawer}
 							><AnchorIcon /></IconButton>
 						)}
 						{showDetachable && (
