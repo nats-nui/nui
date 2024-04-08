@@ -56,7 +56,6 @@ export class AjaxService {
 		return await this.send(url, METHOD.POST, data, options)
 	}
 	async get(url: string, data?: any, options?: CallOptions) {
-		//console.log(`target: ${import.meta.env.VITE_TARGET}`)
 		return await this.send(url, METHOD.GET, data, options)
 	}
 	async patch(url: string, data?: any, options?: CallOptions) {

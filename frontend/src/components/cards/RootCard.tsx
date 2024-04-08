@@ -21,8 +21,8 @@ const RootCmpCard: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view)
-	useStore(view.state.group)
-
+	//useStore(view.state.group)
+	
 	// HOOKS
 	useEffect(() => {
 		window.requestAnimationFrame(() => view.docAnim(DOC_ANIM.SHOWING));
@@ -34,7 +34,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
-	const haveFocus = false//docSa.focus == view
+	//const haveFocus = view.state.group.state.focus == view
 	const variant = view.state.colorVar
 
 	// styles
@@ -43,7 +43,7 @@ const RootCmpCard: FunctionComponent<Props> = ({
 		width: view.getWidth(),
 		...view.getStyAni(),
 	}
-	const clsDoc = `var${variant} ${cls.doc} ${haveFocus ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
+	const clsDoc = `var${variant} ${cls.doc} ${/*haveFocus*/false ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
 
 	return <div
 		id={view.state.uuid}
@@ -78,32 +78,12 @@ const RootCmpCard: FunctionComponent<Props> = ({
 	</div>
 }
 
-const RootCard = React.memo(
-	RootCmpCard,
-	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
-)
+// const RootCard = React.memo(
+// 	RootCmpCard,
+// 	//(prev, curr) => prev.view?.state == curr.view?.state && prev.deep == curr.deep
+// 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
+// )
+
+const RootCard = RootCmpCard
+
 export default RootCard
-
-
-// const cssDoc: React.CSSProperties = {
-// 	position: "relative",
-// 	display: "flex",
-// 	flexDirection: "column",
-// 	overflow: "hidden",
-// 	color: "var(--text)", //layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
-// 	backgroundColor: "var(--bg-default)", //layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
-// 	transitionTimingFunction: "cubic-bezier(0.000, 0.350, 0.225, 1.175)",
-// 	boxShadow: 'rgba(0, 0, 0, 0.4) 1px 1px 0px 0px',
-// }
-
-// const cssDialog = (deep: number): React.CSSProperties => ({
-// 	position: "absolute",
-// 	zIndex: deep,
-// 	height: "100%",
-// })
-
-// const cssDesk: React.CSSProperties = {
-// 	marginLeft: -8,
-// 	display: "flex",
-// 	position: "relative",
-// }
