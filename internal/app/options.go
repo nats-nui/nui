@@ -6,6 +6,12 @@ import (
 
 type AppOption func(a *App)
 
+func WithVersion(v string) AppOption {
+	return func(a *App) {
+		a.version = v
+	}
+}
+
 func WithLogger(l logging.Slogger) AppOption {
 	return func(a *App) {
 		a.l = l

@@ -22,6 +22,8 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
+var Version string
+
 func main() {
 
 	logLevel := *flag.String("log-level", "info", "log level")
@@ -52,6 +54,7 @@ func main() {
 	// Create an instance of the app structure
 	desktopApp, err := app.NewApp(
 		app.WithTarget(app.TargetDesktop),
+		app.WithVersion(Version),
 		app.WithDb(dbPath),
 		app.WithLogger(logger),
 	)

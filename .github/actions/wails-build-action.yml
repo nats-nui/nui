@@ -1,0 +1,251 @@
+name: "Wails Build Action"
+description: "Creates a wails binary"
+branding:
+  icon: 'box'
+  color: 'purple'
+inputs:
+  build:
+    description: "Platform to build for"
+    required: false
+    default: "true"
+  version:
+    description: "Version of the app"
+    required: false
+  sign:
+    description: "Sign the build"
+    required: false
+    default: "false"
+  package:
+    description: "Uploads workflow & uploads tag builds to a release"
+    required: false
+    default: "true"
+  nsis:
+    description: "Build a Windows Installer"
+    required: false
+    default: "true"
+  build-name:
+    description: "The name of the binary file"
+    required: true
+  build-platform:
+    description: "Platform to build for"
+    required: false
+    default: "darwin/universal"
+  wails-version:
+    description: "Wails version to use"
+    required: false
+    default: "latest"
+  wails-build-webview2:
+    description: "Webview2 installer method [download,embed,browser,error]"
+    required: false
+    default: "download"
+  go-version:
+    description: "Version of Go to use"
+    required: false
+    default: "^1.18"
+  node-version:
+    description: "Node js version"
+    required: false
+    default: "16.x"
+  deno-build:
+    description: "This gets run into bash, use the full command"
+    required: false
+    default: ""
+  app-working-directory:
+    description: "This gets run into bash, use the full command"
+    required: false
+    default: "."
+  deno-working-directory:
+    description: "This gets run into bash, use the full command"
+    required: false
+    default: "."
+  deno-version:
+    description: "Deno version to use"
+    required: false
+    default: "v1.20.x"
+  sign-macos-app-id:
+    description: "MacOS Application Certificate id"
+    required: false
+    default: ''
+  sign-macos-apple-password:
+    description: "MacOS Apple password"
+    required: false
+    default: ''
+  sign-macos-app-cert:
+    description: "MacOS Application Certificate"
+    required: false
+    default: ''
+  sign-macos-app-cert-password:
+    description: "MacOS Application Certificate Password"
+    required: false
+    default: ''
+  sign-macos-installer-id:
+    description: "MacOS Installer Certificate id"
+    required: false
+    default: ''
+  sign-macos-installer-cert:
+    description: "MacOS Installer Certificate"
+    required: false
+    default: ''
+  sign-macos-installer-cert-password:
+    description: "MacOS Installer Certificate Password"
+    required: false
+    default: ''
+  sign-windows-cert:
+    description: "Windows Signing Certificate"
+    required: false
+    default: ''
+  sign-windows-cert-password:
+    description: "Windows Signing Certificate Password"
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    # Setup and configure GoLang
+    - name: Setup GoLang
+      uses: actions/setup-go@v4
+      with:
+        check-latest: true
+        go-version: ${{inputs.go-version}}
+    - run: go version
+      shell: bash
+    # Setup and configure NodeJS
+    - name: Setup NodeJS
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{inputs.node-version}}
+    # (Optional) Setup and configure Deno
+    - name: Setup Deno
+      uses: denoland/setup-deno@v1
+      if: inputs.deno-build != ''
+      with:
+        deno-version: ${{inputs.deno-version}}
+    - name: Run Deno Command
+      if: inputs.deno-build != ''
+      shell: bash
+      working-directory: ${{inputs.deno-working-directory}}
+      run: ${{inputs.deno-build}}
+    # install wails
+    - name: Install Wails
+      if: inputs.build == 'true'
+      run: go install github.com/wailsapp/wails/v2/cmd/wails@${{inputs.wails-version}}
+      shell: bash
+    - name: Install Linux Wails deps
+      if: inputs.build == 'true' && runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+      shell: bash
+    - name: Install macOS Wails deps
+      if: runner.os == 'macOS'
+      run: brew install mitchellh/gon/gon
+      shell: bash
+    # Building step
+    - name: Build App
+      if: inputs.build == 'true' && runner.os == 'macOS'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags "-X main.Version=${{inputs.version}}"
+      shell: bash
+    - name: Build App
+      if: inputs.build == 'true' &&  runner.os == 'Linux'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags  "-X main.Version=${{inputs.version}}"
+      shell: bash
+    - name: Build Windows App
+      if: inputs.build == 'true' && runner.os == 'Windows' && inputs.nsis == 'false'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags "-X main.Version=${{inputs.version}}"
+      shell: bash
+    - name: Build Windows App + Installer
+      if: inputs.build == 'true' && runner.os == 'Windows' && inputs.nsis == 'true'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -nsis -o ${{inputs.build-name}} --ldflags "-X main.Version=${{inputs.version}}"
+      shell: bash
+    - name: Add macOS perms
+      if: inputs.build == 'true' && runner.os == 'macOS'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: chmod +x build/bin/*/Contents/MacOS/*
+      shell: bash
+    - name: Add Linux perms
+      if: inputs.build == 'true' && runner.os  == 'Linux'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: chmod +x build/bin/*
+      shell: bash
+    # Package and Sign MacOS
+    - name: Import Code-Signing Certificates for macOS
+      if: runner.os == 'macOS' && inputs.sign != 'false' && startsWith(github.ref, 'refs/tags/')
+      uses: Apple-Actions/import-codesign-certs@v1
+      with:
+        keychain-password: ${{ inputs.sign-macos-apple-password }}
+        p12-file-base64: ${{ inputs.sign-macos-app-cert }}
+        p12-password: ${{ inputs.sign-macos-app-cert-password }}
+    - name: Import Code-Signing Certificates for macOS Installer
+      if: runner.os == 'macOS' && inputs.sign != 'false' && startsWith(github.ref, 'refs/tags/')
+      uses: Apple-Actions/import-codesign-certs@v1
+      with:
+        keychain-password: ${{ inputs.sign-macos-apple-password }}
+        p12-file-base64: ${{ inputs.sign-macos-installer-cert }}
+        p12-password: ${{ inputs.sign-macos-installer-cert-password }}
+        create-keychain: false
+    - name: Sign our macOS binary
+      if: runner.os == 'macOS' && inputs.sign != 'false' && startsWith(github.ref, 'refs/tags/')
+      shell: bash
+      working-directory: ${{ inputs.app-working-directory }}
+      env:
+        APPLE_PASSWORD: ${{ inputs.sign-macos-apple-password }}
+      run: |
+        echo "Signing Package"
+        gon -log-level=info ./build/darwin/gon-sign.json
+    - name: Build .app zip file
+      if: runner.os == 'macOS'
+      working-directory: ${{ inputs.app-working-directory }}
+      shell: bash
+      run: |
+        ditto -c -k ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.app ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.app.zip
+    - name: Building Installer
+      if: runner.os == 'macOS' && inputs.sign != 'false' && inputs.sign-macos-installer-id != '' && startsWith(github.ref, 'refs/tags/')
+      shell: bash
+      working-directory: ${{ inputs.app-working-directory }}
+      run: |
+        productbuild --sign '${{inputs.sign-macos-installer-id}}' --component ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.app ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.pkg
+    - name: Building Installer
+      if: runner.os == 'macOS' && inputs.sign-macos-installer-id == '' && startsWith(github.ref, 'refs/tags/')
+      shell: bash
+      working-directory: ${{ inputs.app-working-directory }}
+      run: |
+        productbuild --component ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.app ${{ inputs.app-working-directory }}/build/bin/${{inputs.build-name}}.pkg
+    - name: Notarising Installer and zip
+      if: runner.os == 'macOS' && inputs.sign != 'false' && startsWith(github.ref, 'refs/tags/')
+      shell: bash
+      working-directory: ${{ inputs.app-working-directory }}
+      env:
+        APPLE_PASSWORD: ${{ inputs.sign-macos-apple-password }}
+      run: |
+        gon -log-level=info ${{ inputs.app-working-directory }}/build/darwin/gon-notarize.json
+    # Windows signing
+    - name: Sign Windows binaries
+      shell: powershell
+      if: runner.os == 'Windows' && inputs.sign != 'false' && inputs.sign-windows-cert != ''
+      working-directory: ${{ inputs.app-working-directory }}
+      run: |
+        echo "Creating certificate file"
+        New-Item -ItemType directory -Path certificate
+        Set-Content -Path certificate\certificate.txt -Value '${{ inputs.sign-windows-cert }}'
+        certutil -decode certificate\certificate.txt certificate\certificate.pfx
+        echo "Signing our binaries"
+        & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ inputs.sign-windows-cert-password }}' .\build\bin\${{inputs.build-name}}.exe
+        echo "Signing Installer" & 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.17763.0/x86/signtool.exe' sign /fd sha256 /tr http://ts.ssl.com /f certificate\certificate.pfx /p '${{ inputs.sign-windows-cert-password }}' .\build\bin\${{inputs.build-name}}-amd64-installer.exe
+
+    # Upload build assets
+    - uses: actions/upload-artifact@v3
+      if: inputs.package == 'true'
+      with:
+        name: Wails Build ${{runner.os}} ${{inputs.build-name}}
+        path: |
+          */bin/
+          *\bin\*
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: inputs.package == 'true' && startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          */bin/*
