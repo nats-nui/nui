@@ -82,7 +82,7 @@ jobs:
         with:
           submodules: recursive
       - name: Build wails
-        uses: ./.github/actions/wails-build-action.yml
+        uses: ./.github/actions/wails-build-action
         id: build
         with:
           version: ${{github.ref_name}}
