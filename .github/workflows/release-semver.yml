@@ -77,12 +77,12 @@ jobs:
 
     runs-on: ${{ matrix.build.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Build wails
-        uses: ./.github/actions/wails-build-action
+        uses: ./.github/actions/wails-build-action.yml
         id: build
         with:
           version: ${GITHUB_REF#refs/tags/}
