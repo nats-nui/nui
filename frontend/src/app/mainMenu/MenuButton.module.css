@@ -2,9 +2,10 @@
 	display: flex; 
 	flex-direction: column;
 	align-items: center;
+	gap: 2px;
 }
 
-.circle {
+.box {
 	display: flex; 
 	align-items: center; 
 	justify-content: center;
@@ -39,11 +40,20 @@
 
 .label {
 	width: 100%;
-	font-size: 12px;
+	font-size: 10px;
 	font-weight: 500;
+	opacity: 0.5;
 
 	text-align: center;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+}
+
+.tooltip_title {
+	font-weight: 900;
+}
+
+.tooltip_sub {
+	font-weight: 400;
 }

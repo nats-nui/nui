@@ -40,10 +40,10 @@ const MenuButton: FunctionComponent<Props> = ({
 	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
 		<div className={clsRoot}>
-			<TooltipWrapCmp className={cls.circle}
+			<TooltipWrapCmp className={cls.box}
 				content={<div>
-					<div style={{ fontWeight: 700 }}>{title}</div>
-					<div>{subtitle}</div>
+					<div className={cls.tootlip_title}>{title}</div>
+					<div className={cls.tootlip_sub}>{subtitle}</div>
 				</div>}
 				onMouseOver={enter => setEnter(enter)}
 			>
