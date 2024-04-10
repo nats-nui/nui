@@ -7,7 +7,7 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
-import TooltipWrapCmp from "../TooltipWrapCmp"
+import TooltipWrapCmp from "../tooltip/TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import cls from "./SnackbarCmp.module.css"
 

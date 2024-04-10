@@ -1,4 +1,4 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import CopyButton from "@/components/buttons/CopyButton"
 import IconButton from "@/components/buttons/IconButton"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"

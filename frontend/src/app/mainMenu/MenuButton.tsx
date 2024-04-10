@@ -1,4 +1,4 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import CloseIcon from "@/icons/CloseIcon"
 import React, { FunctionComponent, useState } from "react"
 import cls from "./MenuButton.module.css"

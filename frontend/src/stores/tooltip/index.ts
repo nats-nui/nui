@@ -6,7 +6,7 @@ export interface TooltipContent {
 	content: React.ReactNode
 	targetRect: DOMRect
 	color?: string
-	//ref?: any
+	id?: string
 }
 
 const setup = {

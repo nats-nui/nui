@@ -1,20 +1,22 @@
 import tooltipSo from "@/stores/tooltip"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect, useId } from "react"
 
 
 
 interface Props {
 	content?: React.ReactNode
+	disabled?: boolean
 	style?: React.CSSProperties
-	className?:string
+	className?: string
 	onMouseOver?: (enter: boolean) => void
-	onClick?: (e:React.MouseEvent) => void
+	onClick?: (e: React.MouseEvent) => void
 	children: React.ReactNode
 }
 
 const TooltipWrapCmp: FunctionComponent<Props> = ({
 	content,
+	disabled,
 	style,
 	className,
 	onMouseOver,
@@ -26,10 +28,19 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	const tooltipSa = useStore(tooltipSo)
 
 	// HOOKS
-	//useEffect(() => handleLeave, [])
+	const id = useId()
+	useEffect(() => {
+		if ( disabled ) handleLeave()
+		return () => {
+			if (tooltipSa.content?.id != id) return
+			handleLeave()
+		}
+	}, [disabled])
+
 
 	// HANDLERS
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+		if ( disabled ) return
 		const elem = e.target as HTMLElement
 
 		const colorRef = e.currentTarget.querySelector('#colorRef')
@@ -37,17 +48,17 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 		var color = stili.getPropertyValue('color');
 
 		const rect = elem.getBoundingClientRect()
+
 		tooltipSo.open({
 			content,
 			targetRect: rect,
 			color,
-			//ref: elem
+			id,
 		})
 		onMouseOver?.(true)
 	}
-	const handleLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-		//const elem = e.target as HTMLElement
-		//if ( tooltipSa.content.ref != elem ) return
+	const handleLeave = (e?: React.MouseEvent<HTMLDivElement>) => {
+
 		tooltipSo.close()
 		onMouseOver?.(false)
 	}
@@ -61,7 +72,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 			onMouseLeave={handleLeave}
 			onClick={onClick}
 		>
-			<div id="colorRef" style={{display: "none"}} className="color-fg"/>
+			<div id="colorRef" style={{ display: "none" }} className="color-fg" />
 			{children}
 		</div>
 	)
