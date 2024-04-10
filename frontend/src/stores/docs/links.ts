@@ -1,15 +1,12 @@
-import { DOC_ANIM } from "@/stores/docs/types"
 import { deepEqual } from "@/utils/object"
-import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
-import docsSo from "./index"
-import { forEachViews, getById, getRoot } from "./utils/manage"
+import { forEachViews, getById } from "./utils/manage"
 
 
 
 /**
- * gestisce un array di VIEWs
+ * gestisce un array di LINKs di VIEWs
  */
 const setup = {
 

@@ -17,7 +17,7 @@ import './css/animation.css';
 import './css/interaction.css';
 import './css/layout.css';
 import './css/monaco.css';
-import "./utils/startup"
+import "./utils/session/startup.ts"
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>
