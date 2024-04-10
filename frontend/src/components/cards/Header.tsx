@@ -133,7 +133,6 @@ const Header: FunctionComponent<Props> = ({
 
 				<div style={cssTitle(store.state.size)}>
 					<div className="lbl-header-title cliccable"
-						style={{ marginTop: 3 }}
 						onClick={handleFocus}
 					>{title}</div>
 					{subTitle && (
