@@ -12,7 +12,7 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useMemo, useState } from "react"
-import TooltipWrapCmp from "../TooltipWrapCmp"
+import TooltipWrapCmp from "../tooltip/TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
 
@@ -68,7 +68,7 @@ const Header: FunctionComponent<Props> = ({
 		if (!inMenu) {
 			//store.state.group.remove({ view: store })
 			menuSo.add({ view: store })
-		} 
+		}
 		// else {
 		// 	menuCardsSo.remove({ view: store })
 		// }
@@ -102,12 +102,15 @@ const Header: FunctionComponent<Props> = ({
 	const showBttExpand = allCompact && !inRoot && enter
 	const showBttComprime = !allCompact && !inRoot && enter
 
-	const tooltipContent = isCompact
-		? <div>
-			<div className="lbl-header-title">{title}</div>
-			<div className="lbl-header-subtitle">{subTitle}</div>
-		</div>
-		: null
+	// const tooltipContent = isCompact
+	// 	? <div>
+	// 		<div className="lbl-header-title">{title}</div>
+	// 		<div className="lbl-header-subtitle">{subTitle}</div>
+	// 	</div>
+	// 	: null
+
+
+
 
 	return (
 		<div style={cssRoot(store.state.size)}
@@ -121,7 +124,13 @@ const Header: FunctionComponent<Props> = ({
 				<div onClick={handleSizeClick} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
-					<TooltipWrapCmp content={tooltipContent} >
+					<TooltipWrapCmp
+						disabled={!isCompact}
+						content={<div>
+							<div className="lbl-header-title">{title}</div>
+							<div className="lbl-header-subtitle">{subTitle}</div>
+						</div>}
+					>
 						<CardIcon
 							type={store.state.type}
 						/>

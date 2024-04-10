@@ -1,4 +1,4 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import IconButton from "@/components/buttons/IconButton"
 import CopyIcon from "@/icons/CopyIcon"
 import { FunctionComponent } from "react"
