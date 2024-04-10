@@ -14,7 +14,7 @@ interface Props {
 }
 
 /** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
-const RootCmpCard: FunctionComponent<Props> = ({
+const RootCard: FunctionComponent<Props> = ({
 	view,
 	deep = 100,
 }) => {
@@ -84,6 +84,11 @@ const RootCmpCard: FunctionComponent<Props> = ({
 // 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
 // )
 
-const RootCard = RootCmpCard
+// const RootCardMemo = React.memo(
+// 	RootCmpCard,
+// 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
+// )
+
+// const RootCard = RootCmpCard
 
 export default RootCard
