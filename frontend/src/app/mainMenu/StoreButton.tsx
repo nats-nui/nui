@@ -4,7 +4,7 @@ import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import MenuButton from "../../components/buttons/MenuButton"
+import MenuButton from "./MenuButton"
 import CardIcon from "../../components/cards/CardIcon"
 
 
