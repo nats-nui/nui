@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/internal/app"
+	"github.com/nats-nui/nui/internal/version"
 	"github.com/nats-nui/nui/pkg/logging"
 	"os"
 	"os/signal"
@@ -14,6 +15,8 @@ import (
 var Version string
 
 func main() {
+
+	version.Set(Version)
 
 	logLevel := flag.String("log-level", "info", "log level")
 	logOutput := flag.String("log-output", "", "log output")
@@ -26,11 +29,11 @@ func main() {
 	}
 
 	logger.Info("Starting up...")
-	logger.Info("Version: " + Version)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	webApp, err := app.NewApp(
 		app.WithTarget(app.TargetWeb),
+		app.WithVersion(Version),
 		app.WithDb(*dbPath),
 		app.WithLogger(logger),
 	)
