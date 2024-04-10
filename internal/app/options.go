@@ -28,6 +28,7 @@ func WithTarget(t Target) AppOption {
 		a.target = t
 	}
 }
+
 func WithMemoryDb() AppOption {
 	return func(a *App) {
 		a.dbPath = ":memory:"
