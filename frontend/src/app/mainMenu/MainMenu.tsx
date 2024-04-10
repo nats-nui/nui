@@ -40,7 +40,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		<div style={{ flex: 1 }} />
 
 		{/* *** DEBUG *** */}
-		{process.env.NODE_ENV === 'development' && <>
+		{false && process.env.NODE_ENV === 'development' && <>
 			<Button children="SAVE" onClick={() => SaveSession()} />
 			<Button children="LOAD" onClick={() => LoadSession()} />
 			<Button children="RESET" onClick={() => ClearSession()} />
