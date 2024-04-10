@@ -124,7 +124,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			/>
 		</div>
 
-		<div className="lyt-v">
+		{/* <div className="lyt-v">
 			<div className="lbl-prop">FAVORITE SUBJECT</div>
 			<EditList<Subscription>
 				items={subscriptions}
@@ -135,7 +135,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				readOnly={inRead}
 				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
 			/>
-		</div>
+		</div> */}
 
 	</div>
 }

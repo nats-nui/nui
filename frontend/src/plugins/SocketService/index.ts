@@ -90,7 +90,6 @@ export class SocketService {
 		this.reconnect.enabled = false
 		this.reconnect.stop()
 		this.clear()
-		
 	}
 
 	/** 
