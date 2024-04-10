@@ -11,12 +11,7 @@ import { ViewLogStore } from "../stacks/log"
 const setup = {
 
 	state: {
-		
-		/** CARD delle CONNECTIONS */
-		connView: <CnnListStore>null,
-		/** CARD dei LOGS */
-		logsView: <ViewLogStore>null,
-
+		fixedViews: <[CnnListStore?, ViewLogStore?]>null,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 	},
 
@@ -24,14 +19,10 @@ const setup = {
 	},
 
 	actions: {
-		// focus(view: ViewStore, store?: DocStore) {
-		// 	const elm = document.getElementById(view?.state?.uuid)
-		// 	elm?.scrollIntoView({ behavior: "smooth", inline: "center" })
-		// 	store.setFocus(view)
-		// },
 	},
 
 	mutators: {
+		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore]) => ({ fixedViews }),
 	},
 }
 
