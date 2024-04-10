@@ -1,4 +1,4 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import React, { FunctionComponent } from "react"
 import cls from "./LinkButton.module.css"
 

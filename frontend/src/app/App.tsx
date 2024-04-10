@@ -4,7 +4,7 @@ import cls from "./App.module.css"
 import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
 import DragCmp from "@/components/DragCmp"
-import TooltipCmp from "@/components/TooltipCmp"
+import TooltipCmp from "@/components/tooltip/TooltipCmp"
 import MainMenu from "@/app/mainMenu/MainMenu"
 
 

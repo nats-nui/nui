@@ -1,4 +1,4 @@
-import TooltipWrapCmp from "@/components/TooltipWrapCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
 import FormatIcon from "@/icons/FormatIcon"
