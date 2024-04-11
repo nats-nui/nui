@@ -1,17 +1,17 @@
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import EditList from "@/components/lists/EditList"
 import List, { RenderRowBaseProps } from "@/components/lists/List"
 import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
-import cnnSo from "@/stores/connections"
 import { MessageStat, MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
+import dayjs from "dayjs"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import Dialog from "../../../dialogs/Dialog"
 import cls from "./SubjectsDialog.module.css"
-import dayjs from "dayjs"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
+import FindInput from "@/components/input/FindInput"
 
 
 
@@ -28,16 +28,12 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+	const [filter, setFilter] = useState<string>("")
 
 	useEffect(() => {
 		if (!msgSa.subscriptionsOpen) return
-		const cnn = cnnSo.getById(msgSa.connectionId)
-		const subs = msgSa.subscriptions.map<Subscription>(sub => ({
-			...sub,
-			favorite: !!cnn.subscriptions.find(s => s.subject == sub.subject),
-		}))
+		const subs = msgSa.subscriptions ?? []
 		setSubscriptions(subs.sort((s1, s2) => s1.subject.localeCompare(s2.subject)))
-
 		return () => { msgSo.setSubscriptionsOpen(false) }
 	}, [msgSa.subscriptionsOpen, msgSa.connectionId])
 
@@ -49,14 +45,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		msgSo.setSubscriptionsOpen(false)
 		msgSo.setSubscriptions(subscriptions)
 		msgSo.sendSubscriptions()
-		const cnn = cnnSo.getById(msgSa.connectionId)
-		const newSubs = subscriptions.reduce((acc, sub) => {
-			const index = acc.findIndex(s => s.subject == sub.subject)
-			if (index != -1 && !sub.favorite) acc.splice(index, 1)
-			if (index == -1 && sub.favorite) acc.push(sub)
-			return acc
-		}, [...cnn.subscriptions])
-		cnnSo.update({ id: msgSa.connectionId, subscriptions: newSubs })
+		msgSo.updateSubscriptions()
 	}
 	const handleChangeSubs = (newSubs: Subscription[]) => {
 		setSubscriptions(newSubs)
@@ -83,11 +72,14 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 
 	// RENDER
 	const allCheck = useMemo(() => subscriptions.every(s => !s.disabled), [subscriptions])
-	//const stats = Object.values(msgSa.stats).sort((s1, s2) => s1.subject.localeCompare(s2.subject))
-	const stats = Object.values(msgSa.stats).sort((s1, s2) => s2.counter - s1.counter)
+	const stats = useMemo(() => {
+		const txt = filter.toLowerCase().trim()
+		return Object.values(msgSa.stats)
+			.filter(m => txt.length == 0 || m.subject.includes(txt))
+			.sort((s1, s2) => s2.counter - s1.counter)
+	}, [filter, msgSa])
 
 	return <Dialog
-
 		timeoutClose={-1}
 		title={<div style={{ display: "flex", alignItems: "center" }}>
 			<IconToggle style={{ marginTop: 3, marginRight: 6 }}
@@ -110,6 +102,11 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		/>
 
 		<TitleAccordion title="STATS">
+			<FindInput 
+				style={{backgroundColor: "transparent", marginBottom: 5, flex: 0}}
+				value={filter} 
+				onChange={text => setFilter(text)} 
+			/>
 			<List<MessageStat>
 				className={cls.list}
 				items={stats}
@@ -117,18 +114,6 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 				RenderRow={MessageStatRow}
 			/>
 		</TitleAccordion>
-
-		{/* <div className="lbl-prop-title" style={{ marginTop: 5 }}>STATS</div> */}
-
-		{/* <div className="lyt-v" style={{ marginTop: 5 }}>
-			<div className="lbl-prop">STATS</div> */}
-		{/* <List<MessageStat>
-			className={cls.list}
-			items={stats}
-			onSelect={handleStatsSelect}
-			RenderRow={MessageStatRow}
-		/> */}
-		{/* </div> */}
 
 		<div className="var-dialog" style={{ display: "flex", gap: 15, marginTop: 10 }} >
 			<Button children="CANCEL" onClick={handleCancel} />

@@ -1,8 +1,9 @@
 import Options from "@/components/Options"
 import Button from "@/components/buttons/Button"
 import { AUTH_MODE, Auth } from "@/types"
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import TextInput from "../../../input/TextInput"
+import StringUpRow from "@/components/rows/StringUpRow"
 
 
 
@@ -28,14 +29,15 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: Partial<Auth>) => setAuthEdit({ ...authEdit, ...prop })
+	const authItems = useMemo(() => Object.values(AUTH_MODE).map(a => a/*.toUpperCase()*/), [AUTH_MODE])
 
 	// RENDER
 	if (!authEdit) return null
 	return <div className="lyt-form var-dialog">
 		<Options<string>
-			value={authEdit?.mode}
-			items={Object.values(AUTH_MODE)}
-			RenderRow={({ item }) => item}
+			value={authEdit?.mode?.toUpperCase()}
+			items={authItems}
+			RenderRow={StringUpRow}
 			readOnly={readOnly}
 			//height={100}
 			onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}

@@ -23,6 +23,7 @@ interface Props<T> {
 	store: ViewStore
 	items: T[]
 	readOnly?: boolean
+	width?: number
 
 	/** renderizza la riga che appare in lista */
 	RenderLabel?: FunctionComponent<RenderLabelProps<T>>
@@ -37,6 +38,7 @@ function ListObjects<T>({
 	store,
 	items,
 	readOnly,
+	width = 150,
 
 	RenderLabel,
 	RenderForm,
@@ -97,7 +99,7 @@ function ListObjects<T>({
 		<ElementDialog
 			element={elementSource}
 			store={store}
-			width={150}
+			width={width}
 			title="AUTH"
 			onClose={(e) => {
 				if (ref && ref.current.contains(e.target)) return

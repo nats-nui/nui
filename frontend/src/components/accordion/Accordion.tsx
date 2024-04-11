@@ -1,5 +1,5 @@
 import { ANIM_TIME_CSS } from "@/types"
-import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from "react"
 import cls from "./Accordion.module.css"
 
 
@@ -20,20 +20,35 @@ const Accordion: FunctionComponent<Props> = ({
 
 	// HOOK
 	const ref = useRef<HTMLDivElement>(null)
-	const [heightLoc, setHeightLoc] = useState<number>(null)
-	useEffect(()=>{
-		setTimeout(()=>setHeightLoc(ref.current?.scrollHeight ?? 0), 200)
-	},[])
+	useLayoutEffect(() => {
+		if (open) {
+			ref.current.style.height = null
+		} else {
+			ref.current.style.height = "0px"
+		}
+	}, [])
+	useEffect(() => {
+		if (open) {
+			ref.current.style.height = `${ref.current?.scrollHeight}px`
+			setTimeout(() => ref.current.style.height = "", 300)
+		} else {
+			if (ref.current.style.height == "0px") return
+			if (ref.current.style.height == "") {
+				ref.current.style.height = `${ref.current?.scrollHeight}px`
+				requestAnimationFrame(()=>ref.current.style.height = `0px`)
+			}
+		}
+	}, [open])
+
 
 	// HANDLER
 
 	// RENDER
-	const currentHeight = !open ? 0 : height ?? heightLoc ?? "auto"
 
 	return (
 		<div ref={ref}
 			className={cls.root}
-			style={cssRoot(currentHeight, height == null)}
+			style={cssRoot(height == null)}
 		>
 			{children}
 		</div>
@@ -42,8 +57,6 @@ const Accordion: FunctionComponent<Props> = ({
 
 export default Accordion
 
-const cssRoot = (height: number | string, noScroll: boolean): React.CSSProperties => ({
+const cssRoot = (noScroll: boolean): React.CSSProperties => ({
 	overflowY: noScroll ? "hidden" : "auto",
-	minHeight: height,
-	height: height,
 })

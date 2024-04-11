@@ -140,7 +140,7 @@ const OptionsCmp: FunctionComponent<Props> = ({
 				items={options}
 				select={optionSelIndex}
 				onSelect={handleOptionsChange}
-				RenderRow={({ item }) => item.label}
+				RenderRow={({ item }) => <div className="list-row">{item.label}</div>}
 			/>
 		</Dialog>
 

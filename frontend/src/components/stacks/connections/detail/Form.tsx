@@ -4,12 +4,11 @@ import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import ListObjects from "@/components/lists/ListObjects"
 import EditStringRow from "@/components/rows/EditStringRow"
-import { EditSubscriptionNoDisableRow } from "@/components/rows/EditSubscriptionRow"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Auth, EDIT_STATE, Subscription } from "@/types"
+import { Auth, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useMemo } from "react"
+import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
 
 
@@ -37,12 +36,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const handleHostsChange = (hosts: string[]) => {
 		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
 	}
-	const handleSubscriptionsChange = (subscriptions: Subscription[]) => {
-		cnnDetailSo.setConnection({ ...cnnDetailSa.connection, subscriptions })
-	}
-
-
-
 	const handleAuthChange = (auth: Auth, index: number) => {
 		if (!auth) return
 		const cnnAuth = cnnDetailSa.connection.auth
@@ -62,7 +55,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	const connection = cnnDetailSo.getConnection()
-	const subscriptions = useMemo(() => (connection?.subscriptions ?? []).sort((s1, s2) => s1.subject.localeCompare(s2.subject)), [connection?.subscriptions])
 	if (connection == null) return null
 	const name = connection.name ?? ""
 	const hosts = connection.hosts ?? []
@@ -102,6 +94,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				store={cnnDetailSo}
 				items={auths}
 				readOnly={inRead}
+				width={170}
 				RenderLabel={({ item: auth, index }) => (
 					<Box>
 						<IconToggle
@@ -110,7 +103,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 							readOnly={inRead}
 							trueIcon={<CheckRadioOnIcon />}
 						/>
-						{auth?.mode}
+						{auth?.mode?.toUpperCase()}
 					</Box>
 				)}
 				onDelete={handleAuthDelete}
@@ -123,19 +116,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				)}
 			/>
 		</div>
-
-		{/* <div className="lyt-v">
-			<div className="lbl-prop">FAVORITE SUBJECT</div>
-			<EditList<Subscription>
-				items={subscriptions}
-				onItemsChange={handleSubscriptionsChange}
-				onNewItem={() => ({ subject: "" })}
-				RenderRow={EditSubscriptionNoDisableRow}
-				placeholder="ex. house1.room4.*"
-				readOnly={inRead}
-				fnIsVoid={c => !c.subject || c.subject.trim().length == 0}
-			/>
-		</div> */}
 
 	</div>
 }

@@ -12,6 +12,7 @@ import { FunctionComponent } from "react"
 import ListDialog from "../../../dialogs/ListDialog"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
+import StringUpRow from "@/components/rows/StringUpRow"
 
 
 
@@ -64,7 +65,7 @@ const CreateForm: FunctionComponent<Props> = ({
 				store={bucketSo}
 				select={Object.values(STORAGE).indexOf(bucket.storage ?? STORAGE.FILE)}
 				items={Object.values(STORAGE)}
-				RenderRow={({ item }) => item.toUpperCase()}
+				RenderRow={StringUpRow}
 				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
 		</div>

@@ -5,12 +5,13 @@ import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
+import StringUpRow from "../rows/StringUpRow"
 
 
 
 enum TIME {
-	NS = "nano sec.",
-	MS = "milli sec.",
+	NS = "nano s.",
+	MS = "milli s.",
 	SECONDS = "seconds",
 	MINUTES = "minutes",
 	HOURS = "hours",
@@ -75,7 +76,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 					store={store}
 					select={Object.values(TIME).indexOf(unit ?? TIME.SECONDS)}
 					items={Object.values(TIME)}
-					RenderRow={({ item }) => item.toUpperCase()}
+					RenderRow={StringUpRow}
 					readOnly={readOnly}
 					onSelect={handleUnitChange}
 				/>

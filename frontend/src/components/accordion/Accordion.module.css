@@ -1,7 +1,7 @@
 .root {
 	display: flex; 
 	flex-direction: column;
-	transition: min-height 300ms, height 300ms;
+	transition: height 300ms;
 }
 
 .root_title {
