@@ -65,20 +65,7 @@ const handlers = [
 			ctx.status(200),
 		)
 	}),
-
-	/** PUBLISH
-	 * pubblica un messaggio in una CONNECTION
-	 */
-	rest.post('/api/connection/:id/messages/publish', async (req, res, ctx) => {
-		const id = req.params.id
-		const { subject, payload } = await req.json()
-		if (!id || !subject || !payload) return res(ctx.status(500))
-		return res(
-			ctx.delay(1000),
-			ctx.status(200),
-		)
-	}),
-
+	
 ]
 
 export default handlers

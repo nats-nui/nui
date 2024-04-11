@@ -11,6 +11,7 @@ import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
 import { ViewState } from "../../viewBase"
 import { MessageSendState } from "../messageSend"
+import messagesApi from "@/api/messages"
 
 
 
@@ -25,19 +26,23 @@ export type MessageStat = {
 const setup = {
 
 	state: {
+		/** CONNECTION d riferimento */
 		connectionId: <string>null,
-		/** SUBS sui quali rimanere in ascolto */
-		subscriptions: <Subscription[]>[],
-		lastSubjects: <string[]>null,
+
+		/** SUBSCRIPTION sui quali rimanere in ascolto */
+		subscriptions: <Subscription[]>null,
+		/** DIALOG SUBSCRIPTION aperta */
+		subscriptionsOpen: false,
+
 		/** tutti i messaggi ricevuti */
 		messages: <Message[]>[],
+		//messages: <Message[]>historyTest,
+
 		/** contatore SUBJECTS ricevuti */
 		stats: <{ [subjects: string]: MessageStat }>{},
-		//messages: <Message[]>historyTest,
+
 		/** testo per la ricerca */
 		textSearch: <string>null,
-		/** DIALOG SUBS aperta */
-		subscriptionsOpen: false,
 
 		/* per la dialog di FORMAT */
 		format: MSG_FORMAT.JSON,
@@ -81,6 +86,18 @@ const setup = {
 	},
 
 	actions: {
+
+		async fetch(_: void, store?: MessagesStore) {
+			const subscriptions = await messagesApi.subscriptionIndex(
+				store.state.connectionId,
+				{ store, manageAbort: true }
+			)
+			subscriptions.forEach(s => s.favorite = s.disabled = true)
+			store.setSubscriptions(subscriptions)
+		},
+		async fetchIfVoid(_: void, store?: MessagesStore) {
+			if (store.state.subscriptions == null) await store.fetch()
+		},
 
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
@@ -130,21 +147,30 @@ const setup = {
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
-			const subjects = store.state.subscriptions
+
+			// invio il cambio di subs al web-socket
+			const subjWS = store.state.subscriptions
 				?.filter(s => !!s?.subject && !s.disabled)
 				.map(s => s.subject) ?? []
-			if (store.state.lastSubjects && store.state.lastSubjects.length == subjects.length && subjects.every(s => store.state.lastSubjects.includes(s))) return
-			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjects)
-			store.state.lastSubjects = subjects
+			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjWS)
 
+			// messaggio in lista di cambio subs
 			const msgChangeSubj: Message = {
-				type: subjects.length > 0 ? MESSAGE_TYPE.INFO : MESSAGE_TYPE.WARN,
-				subject: subjects.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
-				payload: subjects.join(", "),
+				type: subjWS.length > 0 ? MESSAGE_TYPE.INFO : MESSAGE_TYPE.WARN,
+				subject: subjWS.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
+				payload: subjWS.join(", "),
 				receivedAt: Date.now(),
 			}
 			store.setMessages([...store.state.messages, msgChangeSubj])
 		},
+		/** invio al REST nel caso ci siano nuovi preferiti */
+		updateSubscriptions: (_: void, store?: MessagesStore) => {
+			const subjRest = store.state.subscriptions
+				?.filter(s => !!s?.subject && s.favorite)
+				.map(s => ({ subject: s.subject })) ?? []
+			messagesApi.subscriptionUpdate(store.state.connectionId, subjRest)
+		},
+
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
 			store.state.group.addLink({

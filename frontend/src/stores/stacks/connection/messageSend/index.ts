@@ -1,4 +1,4 @@
-import cnnApi from "@/api/connection"
+import messagesApi from "@/api/messages"
 import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
@@ -64,7 +64,7 @@ const setup = {
 
 		publish: async (_: void, store?: MessageSendStore) => {
 			try {
-				await cnnApi.publish(
+				await messagesApi.publish(
 					store.state.connectionId,
 					store.state.subject,
 					store.state.text,

@@ -37,7 +37,6 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			<Options<string> height={500}
 				value={source.name}
 				items={allStream}
-				RenderRow={({ item }) => item}
 				readOnly={readOnly}
 				onSelect={handleNameChange}
 			/>

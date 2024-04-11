@@ -116,8 +116,12 @@ export class SocketService {
 			type: MSG_TYPE.SUB_REQUEST,
 			payload: { subjects },
 		}
-		const msgStr = JSON.stringify(msg)
-		this.send(msgStr)
+		try {
+			const msgStr = JSON.stringify(msg)
+			this.send(msgStr)
+		} catch ( err ) {
+			logSo.addError(err)
+		}
 	}
 
 	//#region SOCKET EVENT

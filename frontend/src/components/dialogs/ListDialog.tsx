@@ -21,7 +21,7 @@ interface Props extends DialogProps {
 
 const ListDialog: FunctionComponent<Props> = ({
 	items,
-	RenderRow,
+	RenderRow = ({ item }) => <div className="list-row">{item?.toString() ?? ""}</div>,
 	select,
 	style,
 	readOnly,
@@ -46,9 +46,8 @@ const ListDialog: FunctionComponent<Props> = ({
 	const value = RenderRow({ item: items[select] })
 
 	return <>
-		<Component
+		<Component style={{ padding: 0}}
 			onClick={handleDialogOpen}
-			//readOnly={readOnly}
 			enterRender={<ArrowRightIcon style={{ opacity: 0.5 }} />}
 		>{value}</Component>
 

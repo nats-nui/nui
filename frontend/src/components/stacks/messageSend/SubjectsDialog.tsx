@@ -52,7 +52,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		<List<Subscription> style={cssList}
 			items={subs}
 			select={select}
-			RenderRow={({ item }) => item.subject}
+			RenderRow={({ item }) => <div className="list-row">{item.subject}</div>}
 			onSelect={handleSubSelectChange}
 		/>
 	</Dialog>

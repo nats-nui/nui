@@ -15,6 +15,7 @@ import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxNumberCmp from "../../../input/MaxNumberCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import SourcesCmp from "./cmp/SourcesCmp"
+import StringUpRow from "@/components/rows/StringUpRow"
 
 
 
@@ -103,7 +104,7 @@ const EditForm: FunctionComponent<Props> = ({
 				store={streamSo}
 				select={Object.values(STORAGE).indexOf(config.storage ?? STORAGE.FILE)}
 				items={Object.values(STORAGE)}
-				RenderRow={({ item }) => item.toUpperCase()}
+				RenderRow={StringUpRow}
 				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ storage: Object.values(STORAGE)[index] })}
 			/>
@@ -149,7 +150,6 @@ const EditForm: FunctionComponent<Props> = ({
 							store={streamSo}
 							select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
 							items={allStreams}
-							RenderRow={({ item }) => item}
 							readOnly={inRead || !inNew}
 							onSelect={index => {
 								handleMirrorPropChange({ name: allStreams[index] })
@@ -184,7 +184,7 @@ const EditForm: FunctionComponent<Props> = ({
 				store={streamSo}
 				select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
 				items={Object.values(RETENTION)}
-				RenderRow={({ item }) => item.toUpperCase()}
+				RenderRow={StringUpRow}
 				readOnly={inRead || !inNew}
 				onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
 			/>
@@ -195,7 +195,7 @@ const EditForm: FunctionComponent<Props> = ({
 				store={streamSo}
 				select={Object.values(DISCARD).indexOf(config.discard ?? DISCARD.OLD)}
 				items={Object.values(DISCARD)}
-				RenderRow={({ item }) => item.toUpperCase()}
+				RenderRow={StringUpRow}
 				readOnly={inRead}
 				onSelect={index => {
 					handlePropChange({ discard: Object.values(DISCARD)[index] })
