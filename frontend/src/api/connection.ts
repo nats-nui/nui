@@ -25,22 +25,9 @@ function remove(id: string, opt?: CallOptions): Promise<void> {
 	return ajax.delete(`connection/${id}`, null, opt)
 }
 
-
-/** PUBLISH
- * permette di pubblicare un messaggio
- */
-function publish(cnnId:string, subject:string, payload:string, opt?: CallOptions) {
-	const data = {
-		subject,
-		payload : btoa(payload)
-	}
-	return ajax.post(`connection/${cnnId}/messages/publish`, data, opt)
-}
-
 const api = {
 	index,
 	remove,
 	save,
-	publish,
 }
 export default api

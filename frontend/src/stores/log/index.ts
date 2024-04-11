@@ -19,9 +19,9 @@ const setup = {
 			log.receivedAt = Date.now()
 			if (log.targetId) {
 				// [II] TODO
-				const view = deckCardsSo.getById(log.targetId) || drawerCardsSo.getById(log.targetId) 
+				const view = deckCardsSo.getById(log.targetId) || drawerCardsSo.getById(log.targetId)
 				view?.setSnackbar({
-					open: true, 
+					open: true,
 					type: log.type,
 					title: log.title,
 					body: log.body,
@@ -30,14 +30,15 @@ const setup = {
 			store.setAll([...store.state.all, log])
 		},
 		addError(error: Error, store?: LogStore) {
-			if ( !error ) return
+			if (!error) return
 			store.add({
 				type: MESSAGE_TYPE.ERROR,
 				title: error.message,
 				body: error.stack,
 			})
+			console.error(error)
 		},
-		clear(_:void, store?:LogStore) {
+		clear(_: void, store?: LogStore) {
 			store.setAll([])
 		}
 	},

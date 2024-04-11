@@ -22,30 +22,17 @@ const MessagesView: FunctionComponent<Props> = ({
 
 	// STORE
 	const msgSa = useStore(msgSo) as MessagesState
-	//const cnnSa = useStore(cnnSo) as ConnectionState
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
-	//const dropRef = useRef<HTMLDivElement>(null)
-	// useEffect(() => {
-	// 	if (!dropRef.current || msgSo.state.size != VIEW_SIZE.COMPACT) return
-	// 	//const idInt = setInterval(() => {
-	// 	const animation = dropRef.current.animate([
-	// 		{ transform: 'translateY(0px)', visibility: "visible" },
-	// 		{ transform: 'translateY(600px)', opacity: 0 }
-	// 	], {
-	// 		duration: 1000,
-	// 		easing: layoutSo.state.theme.transitions[1]
-	// 	});
-	// 	animation.play();
-	// 	//}, 2000)
-	// 	//return () => clearInterval(idInt)
-	// }, [msgSo.state.messages])
-
+	useEffect(() => {
+		msgSo.fetchIfVoid()
+	}, [])
 	useEffect(()=>{
-		if ( !(msgSa.subscriptions?.length > 0) || !msgSa.subscriptions.every( s => s.disabled) ) return
-		msgSo.setSubscriptionsOpen(true)
-	},[])
+		if (msgSa.linked == null && msgSa.subscriptions?.length > 0 && msgSa.subscriptions.every(s => s.disabled)) {
+			msgSo.setSubscriptionsOpen(true)
+		}
+	},[msgSa.subscriptions])
 
 	// HANDLER
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
@@ -87,11 +74,6 @@ const MessagesView: FunctionComponent<Props> = ({
 				onClick={handleSendClick}
 			/>
 		</>}
-		// iconizedRender={
-		// 	<div ref={dropRef} style={{ marginTop: 15, visibility: "hidden" }}>
-		// 		<DropIcon fill={layoutSo.state.theme.palette.var[variant].bg} />
-		// 	</div>
-		// }
 	>
 
 		<MessagesList

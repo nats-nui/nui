@@ -23,7 +23,7 @@ interface Props<T> {
 /** lista generica non editabile */
 function List<T>({
 	items,
-	RenderRow = ({ item }) => <div style={{ padding: "3px 5px" }}>{item.toString()}</div>,
+	RenderRow = ({ item }) => <div className="list-row">{item?.toString() ?? ""}</div>,
 	readOnly,
 	height,
 	select,

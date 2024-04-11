@@ -5,6 +5,7 @@ import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
+import StringUpRow from "../rows/StringUpRow"
 
 
 
@@ -70,7 +71,7 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 					store={store}
 					select={Object.values(BYTE).indexOf(unit ?? BYTE.BYTES)}
 					items={Object.values(BYTE)}
-					RenderRow={({ item }) => item.toUpperCase()}
+					RenderRow={StringUpRow}
 					readOnly={readOnly}
 					onSelect={handleUnitChange}
 				/>

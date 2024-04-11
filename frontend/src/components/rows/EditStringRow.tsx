@@ -1,9 +1,9 @@
 import IconButton from "@/components/buttons/IconButton"
 import CloseIcon from "@/icons/CloseIcon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
+import Box from "../format/Box"
 import TextInput from "../input/TextInput"
 import { RenderRowBaseProps } from "../lists/EditList"
-import Box from "../format/Box"
 
 
 
