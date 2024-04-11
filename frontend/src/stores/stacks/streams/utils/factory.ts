@@ -72,7 +72,7 @@ export function buildNewStreamConfig(): StreamConfig {
 		retention: RETENTION.LIMIT,
 
 		// LIMIT
-		maxAge: -1,
+		maxAge: 0,
 		maxBytes: -1,
 		maxConsumers: -1,
 		maxMsgSize: -1,

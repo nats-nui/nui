@@ -233,6 +233,7 @@ const EditForm: FunctionComponent<Props> = ({
 			readOnly={inRead || !inNew}
 			label="MAX AGE"
 			value={config.maxAge}
+			desiredDefault={0}
 			onChange={maxAge => streamSo.setStreamConfig({ ...streamSa.stream.config, maxAge })}
 		/>
 		<MaxBytesCmp store={streamSo}
