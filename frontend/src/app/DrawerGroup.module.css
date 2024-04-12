@@ -3,6 +3,9 @@
 	display: flex;
 	background-color: var(--text-bg);
 	padding: 10px 0px 10px 10px;
+
+	box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px;
+	z-index: 2;
 }
 
 .btt {

@@ -64,10 +64,12 @@ const setup = {
 			store?: CardsStore
 		) {
 			// se c'e' gia' setto solo il focus
-			if (forEachViews(store.state.all, (v) => v.state.uuid == view.state.uuid)) {
-				store.focus(view)
+			const finded = getById([...deckCardsSo.state.all, ...drawerCardsSo.state.all], view.state.uuid)
+			if (finded) {
+				finded.state.group?.focus(finded)
 				return
 			}
+
 			view.state.parent = null
 			//view.state.group = store
 			forEachViews([view], (v) => { v.state.group = store })

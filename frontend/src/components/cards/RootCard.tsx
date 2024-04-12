@@ -1,10 +1,11 @@
-import { ViewStore } from "@/stores/stacks/viewBase"
+import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
-import { useStore } from "@priolo/jon"
+import { useStore, useStoreNext } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import PolymorphicCard from "./PolymorphicCard"
 import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
+import { CardsState } from "@/stores/docs/cards"
 
 
 
@@ -21,7 +22,7 @@ const RootCard: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view)
-	//useStore(view.state.group)
+	useStoreNext(view.state.group,  (state:CardsState, stateOld:CardsState) => state.focus != stateOld.focus)
 	
 	// HOOKS
 	useEffect(() => {
@@ -34,7 +35,7 @@ const RootCard: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const haveLinked = !!view.state.linked
-	//const haveFocus = view.state.group.state.focus == view
+	const haveFocus = view.state.group.state.focus == view
 	const variant = view.state.colorVar
 
 	// styles
@@ -43,7 +44,7 @@ const RootCard: FunctionComponent<Props> = ({
 		width: view.getWidth(),
 		...view.getStyAni(),
 	}
-	const clsDoc = `var${variant} ${cls.doc} ${/*haveFocus*/false ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
+	const clsDoc = `var${variant} ${cls.doc} ${haveFocus ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
 
 	return <div
 		id={view.state.uuid}

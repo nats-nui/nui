@@ -1,7 +1,8 @@
-import { CardsStore } from "@/stores/docs/cards"
+import { CardsState, CardsStore } from "@/stores/docs/cards"
 import { FunctionComponent } from "react"
 import RootCard from "../components/cards/RootCard"
 import DropArea from "./DropArea"
+import { useStore } from "@priolo/jon"
 
 
 
@@ -15,13 +16,14 @@ const CardsGroup: FunctionComponent<Props> = ({
 }) => {
 
 	// STORES
+	const deckCardsSa: CardsState = useStore(cardsStore)
 
 	// HOOKS
 
 	// HANDLERS
 
 	// RENDER
-	const cards = cardsStore.state.all
+	const cards = deckCardsSa.all
 
 	return <>
 		{cards.map((store, index) => (
