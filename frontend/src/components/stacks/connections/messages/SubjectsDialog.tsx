@@ -75,9 +75,9 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 	const stats = useMemo(() => {
 		const txt = filter.toLowerCase().trim()
 		return Object.values(msgSa.stats)
-			.filter(m => txt.length == 0 || m.subject.includes(txt))
+			.filter(m => txt.length == 0 || m.subject?.toLowerCase().includes(txt))
 			.sort((s1, s2) => s2.counter - s1.counter)
-	}, [filter, msgSa])
+	}, [filter, msgSa.stats, msgSa.messages])
 
 	return <Dialog
 		timeoutClose={-1}
@@ -101,11 +101,19 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			RenderRow={EditSubscriptionRow}
 		/>
 
+		<div className="cmp-h" style={{ margin: "10px 0px" }}>
+			<IconToggle
+				check={msgSa.noSysMessages}
+				onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
+			/>
+			<div className="lbl-prop">DISCARDS SYSTEM MESSAGES</div>
+		</div>
+
 		<TitleAccordion title="STATS">
-			<FindInput 
-				style={{backgroundColor: "transparent", marginBottom: 5, flex: 0}}
-				value={filter} 
-				onChange={text => setFilter(text)} 
+			<FindInput
+				style={{ backgroundColor: "transparent", marginBottom: 5, flex: 0 }}
+				value={filter}
+				onChange={text => setFilter(text)}
 			/>
 			<List<MessageStat>
 				className={cls.list}
