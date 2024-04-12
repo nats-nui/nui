@@ -32,12 +32,12 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTION",
-		getSubTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).state.connection?.name ?? "--",
+		getSubTitle: (_: void, store?: ViewStore) => (store as CnnDetailStore).getConnection()?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnDetailState
 			return {
 				...viewSetup.getters.getSerialization(null, store),
-				connection: state.connection,
+				connection: { id: state.connection?.id },
 			}
 		},
 		//#endregion

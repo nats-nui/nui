@@ -3,19 +3,20 @@ import docsSo from "@/stores/docs"
 import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { buildStore } from "@/stores/docs/utils/factory"
+import { forEachViews } from "@/stores/docs/utils/manage"
 import logSo from "@/stores/log"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { ViewLogStore } from "@/stores/stacks/log"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
-import { loadLocalStorage, saveLocalStorage } from "./storage"
 import { delay } from "../time"
+import { loadLocalStorage, saveLocalStorage } from "./storage"
 import { Session } from "./types"
 
 
 
 window.addEventListener("load", async (event) => LoadSession())
-//window.addEventListener("beforeunload", async (event) => SaveSession())
+window.addEventListener("beforeunload", async (event) => SaveSession())
 window.onerror = (message, url, line, col, error) => {
 	logSo.addError(error)
 }
@@ -23,8 +24,13 @@ window.onerror = (message, url, line, col, error) => {
 export async function SaveSession() {
 	const deckStates = deckCardsSo.state.all.map(store => store.getSerialization())
 	const drawerStates = drawerCardsSo.state.all.map(store => store.getSerialization())
+	const allViews = [...deckCardsSo.state.all, ...drawerCardsSo.state.all]
+	const menuStates = menuSo.state.all.reduce((acc, store) => {
+		if (forEachViews(allViews, (v) => v.state.uuid == store.state.uuid)) return acc
+		return [...acc, store.getSerialization()]
+	}, [])
 	const session: Session = {
-		allStates: [...deckStates, ...drawerStates],
+		allStates: [...deckStates, ...drawerStates, ...menuStates],
 		deckUuids: deckStates.map(s => s.uuid),
 		drawerUuids: drawerStates.map(s => s.uuid),
 		menuUuids: menuSo.state.all.map(store => store.state.uuid),
@@ -39,8 +45,8 @@ export async function LoadSession() {
 	if (import.meta.env.DEV) await delay(1000)
 
 	const session = loadLocalStorage()
-	const { deckStores, drawerStores } = buildCards(session)
-	const allStores = [...deckStores, ...drawerStores]
+	const { deckStores, drawerStores, menuStores } = buildCards(session)
+	const allStores = [...deckStores, ...drawerStores, ...menuStores]
 
 	// BUILD SINGLETONE CARDS
 	buildFixedCards(allStores)
@@ -49,8 +55,8 @@ export async function LoadSession() {
 	await cnnSo.fetch()
 
 	deckCardsSo.setAll(deckStores)
-	//menuSo.setAll(menuStores)
 	drawerCardsSo.setAll(drawerStores)
+	menuSo.setAll(menuStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })
 }
@@ -64,24 +70,38 @@ export function ClearSession() {
 }
 
 function buildCards(session: Session) {
+
+	// LOGS
 	logSo.setAll(session.logs ?? [])
 
-	// CREAZIONE delle CARDS
-	const deckStates = session.deckUuids.map(uuid => session.allStates.find(s => s.uuid == uuid))
+	// DECK
+	const deckStates = session.deckUuids?.map(uuid => session.allStates.find(s => s.uuid == uuid))
 	const deckStores = deckStates?.map(state => {
 		const store: ViewStore = buildStore({ type: state.type, group: deckCardsSo })
 		store?.setSerialization(state)
 		return store
 	}).filter(s => !!s) ?? []
 
-	const drawerStates = session.drawerUuids.map(uuid => session.allStates.find(s => s.uuid == uuid))
+	// DRAWER
+	const drawerStates = session.drawerUuids?.map(uuid => session.allStates.find(s => s.uuid == uuid))
 	const drawerStores = drawerStates?.map(state => {
 		const store: ViewStore = buildStore({ type: state.type, group: drawerCardsSo })
 		store?.setSerialization(state)
 		return store
 	}).filter(s => !!s) ?? []
 
-	return { deckStores, drawerStores }
+	// MENU
+	const menuStores = session.menuUuids?.map(uuid => {
+		let store: ViewStore = forEachViews([...deckStores, ...drawerStores], (v) => v.state.uuid == uuid ? v : null)
+		if (!store) {
+			const state = session.allStates.find(s => s.uuid == uuid)
+			store = state ? buildStore({ type: state.type }) : null
+			store?.setSerialization(state)
+		}
+		return store
+	}).filter(s => !!s) ?? []
+
+	return { deckStores, drawerStores, menuStores }
 }
 
 function buildFixedCards(allStores: ViewStore[]) {

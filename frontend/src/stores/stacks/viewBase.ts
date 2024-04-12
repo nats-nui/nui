@@ -9,6 +9,7 @@ import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
 import { LoadBaseStore } from "./loadBase"
 import { VIEW_SIZE } from "./utils"
+import { forEachViews } from "../docs/utils/manage"
 
 
 
@@ -129,13 +130,16 @@ const viewSetup = {
 				// c'era un precedente
 				if (!!store.state.linked) {
 					store.state.linked.state.parent = null
-					store.state.linked.state.group = null
+					//[II] da cambiare con 
+					forEachViews([store.state.linked], (v) => { v.state.group = null })
+					//store.state.linked.state.group = null
 				}
 				store.state.linked = null
 			// setto effettivamente un LINKED
 			} else {
 				view.state.parent = store
-				view.state.group = store.state.group
+				// [II] view.state.group = store.state.group
+				forEachViews([view], (v) => { v.state.group = store.state.group })
 				store.state.linked = view
 			}
 			return store

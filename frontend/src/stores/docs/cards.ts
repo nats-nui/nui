@@ -69,7 +69,8 @@ const setup = {
 				return
 			}
 			view.state.parent = null
-			view.state.group = store
+			//view.state.group = store
+			forEachViews([view], (v) => { v.state.group = store })
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
 
@@ -132,7 +133,8 @@ const setup = {
 				index = views.findIndex(v => v == view)
 				if (index != -1) views.splice(index, 1)
 				view.state.parent = null
-				view.state.group = null
+				forEachViews([view], (v) => { v.state.group = null })
+				// [II] view.state.group = null
 
 				// LINKED
 			} else {
