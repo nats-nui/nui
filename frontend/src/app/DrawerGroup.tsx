@@ -2,11 +2,10 @@ import IconButton from "@/components/buttons/IconButton"
 import CompressAllIcon from "@/icons/CompressAllIcon"
 import CompressHIcon from "@/icons/CompressHIcon"
 import ExpandHIcon from "@/icons/ExpandHIcon"
-import { CardsState, drawerCardsSo } from "@/stores/docs/cards"
+import { drawerCardsSo } from "@/stores/docs/cards"
 import { forEachViews } from "@/stores/docs/utils/manage"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { delay } from "@/utils/time"
-import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import CardsGroup from "./CardsGroups"
 import cls from "./DrawerGroup.module.css"
@@ -16,7 +15,6 @@ import cls from "./DrawerGroup.module.css"
 const DrawerGroup: FunctionComponent = () => {
 
 	// STORES
-	const drawerCardsSa: CardsState = useStore(drawerCardsSo)
 
 	// HOOKS
 	const [width, setWidth] = useState(0)
@@ -54,12 +52,10 @@ const DrawerGroup: FunctionComponent = () => {
 		setAnimation(false)
 	}
 	const handleCompressAll = (e: React.MouseEvent) => {
-		forEachViews(cards, view => view.setSize(VIEW_SIZE.COMPACT))
+		forEachViews(drawerCardsSo.state.all, view => view.setSize(VIEW_SIZE.COMPACT))
 	}
 
 	// RENDER
-	const cards = drawerCardsSa.all
-
 	return (
 		<div className={cls.root} >
 

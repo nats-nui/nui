@@ -66,7 +66,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				selected={isMessagesSelect}
 				onClick={handleMessagesClick}
 			/>
-			<RowButton style={{ marginBottom: 15 }}
+			<RowButton style={{ marginBottom: 12 }}
 				icon={<ConsumersIcon />}
 				label="CONSUMERS"
 				selected={isConsumersSelect}

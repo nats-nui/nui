@@ -20,22 +20,22 @@ const Accordion: FunctionComponent<Props> = ({
 
 	// HOOK
 	const ref = useRef<HTMLDivElement>(null)
+
+	//  appena componente è istanziato. decide l'altezza
+	useLayoutEffect(() => {
+		ref.current.style.height = open ? "" : "0px"
+	}, [])
+
 	useLayoutEffect(() => {
 		if (open) {
-			ref.current.style.height = null
-		} else {
-			ref.current.style.height = "0px"
-		}
-	}, [])
-	useEffect(() => {
-		if (open) {
+			if (ref.current.style.height == "") return
 			ref.current.style.height = `${ref.current?.scrollHeight}px`
 			setTimeout(() => ref.current.style.height = "", 300)
 		} else {
 			if (ref.current.style.height == "0px") return
 			if (ref.current.style.height == "") {
 				ref.current.style.height = `${ref.current?.scrollHeight}px`
-				requestAnimationFrame(()=>ref.current.style.height = `0px`)
+				requestAnimationFrame(() => ref.current.style.height = `0px`)
 			}
 		}
 	}, [open])

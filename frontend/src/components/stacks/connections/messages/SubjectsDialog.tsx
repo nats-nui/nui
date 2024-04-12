@@ -88,7 +88,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 			SUBJECTS
 		</div>}
-		width={300}
+		width={250}
 		open={msgSa.subscriptionsOpen}
 		store={msgSo}
 		onClose={handleCancel}
@@ -115,7 +115,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 		</TitleAccordion>
 
-		<div className="var-dialog" style={{ display: "flex", gap: 15, marginTop: 10 }} >
+		<div className="var-dialog" style={{ display: "flex", gap: 5, marginTop: 10 }} >
 			<Button children="CANCEL" onClick={handleCancel} />
 			<Button children="OK" onClick={handleOk} />
 			<div style={{ flex: 1 }} />

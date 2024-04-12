@@ -67,28 +67,26 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			</div>
 		}
 	>
-		{inRead &&
-			<div style={{ marginBottom: 20 }}>
-				<RowButton
-					icon={<MessagesIcon />}
-					label="MESSAGES"
-					selected={isMessageOpen}
-					onClick={handleMessagesClick}
-				/>
-				<RowButton
-					icon={<StreamsIcon />}
-					label="STREAMS"
-					selected={isStreamsOpen}
-					onClick={handleStreamsClick}
-				/>
-				<RowButton
-					icon={<BucketsIcon />}
-					label="BUCKETS"
-					selected={isBucketsOpen}
-					onClick={handleBucketsClick}
-				/>
-			</div>
-		}
+		{inRead && <>
+			<RowButton
+				icon={<MessagesIcon />}
+				label="MESSAGES"
+				selected={isMessageOpen}
+				onClick={handleMessagesClick}
+			/>
+			<RowButton
+				icon={<StreamsIcon />}
+				label="STREAMS"
+				selected={isStreamsOpen}
+				onClick={handleStreamsClick}
+			/>
+			<RowButton style={{ marginBottom: 12 }}
+				icon={<BucketsIcon />}
+				label="BUCKETS"
+				selected={isBucketsOpen}
+				onClick={handleBucketsClick}
+			/>
+		</>}
 
 		<ConnectionDetailForm
 			cnnDetailSo={cnnDetailSo}

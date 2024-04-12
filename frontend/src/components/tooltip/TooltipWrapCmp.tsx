@@ -1,6 +1,6 @@
 import tooltipSo from "@/stores/tooltip"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useId } from "react"
+import { FunctionComponent, useEffect, useId, useLayoutEffect } from "react"
 
 
 
@@ -32,7 +32,7 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	useEffect(() => {
 		if ( disabled ) handleLeave()
 		return () => {
-			if (tooltipSa.content?.id != id) return
+			if (tooltipSo.state.content?.id != id) return
 			handleLeave()
 		}
 	}, [disabled])
@@ -58,7 +58,6 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 		onMouseOver?.(true)
 	}
 	const handleLeave = (e?: React.MouseEvent<HTMLDivElement>) => {
-
 		tooltipSo.close()
 		onMouseOver?.(false)
 	}
