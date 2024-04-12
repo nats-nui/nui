@@ -1,10 +1,10 @@
 import Accordion from "@/components/accordion/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
-import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import EditStringRow from "@/components/rows/EditStringRow"
+import StringUpRow from "@/components/rows/StringUpRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE, StreamConfig } from "@/types/Stream"
@@ -15,7 +15,6 @@ import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxNumberCmp from "../../../input/MaxNumberCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import SourcesCmp from "./cmp/SourcesCmp"
-import StringUpRow from "@/components/rows/StringUpRow"
 
 
 
@@ -129,14 +128,14 @@ const EditForm: FunctionComponent<Props> = ({
 		</div>
 
 		<div className="lyt-v">
-			<Box>
+			<div className="cmp-h">
 				<IconToggle
 					check={!!config.mirror}
 					onChange={handleMirrorCheck}
 					readOnly={inRead || !inNew}
 				/>
 				<div className="lbl-prop">MIRROR</div>
-			</Box>
+			</div>
 			<Accordion open={!!config.mirror}>
 				<div className="lyt-quote">
 					<div className="lyt-v">
@@ -202,30 +201,30 @@ const EditForm: FunctionComponent<Props> = ({
 				}}
 			/>
 		</div>
-		<Box>
+		<div className="cmp-h">
 			<IconToggle
 				check={config.allowRollupHdrs}
 				onChange={allowRollupHdrs => handlePropChange({ allowRollupHdrs })}
 				readOnly={inRead}
 			/>
 			<div className="lbl-prop">ALLOW ROLL UP HDRS</div>
-		</Box>
-		<Box>
+		</div>
+		<div className="cmp-h">
 			<IconToggle
 				check={config.denyDelete}
 				onChange={denyDelete => handlePropChange({ denyDelete })}
 				readOnly={inRead || !inNew}
 			/>
 			<div className="lbl-prop">DENY DELETE</div>
-		</Box>
-		<Box>
+		</div>
+		<div className="cmp-h">
 			<IconToggle
 				check={config.denyPurge}
 				onChange={denyPurge => handlePropChange({ denyPurge })}
 				readOnly={inRead || !inNew}
 			/>
 			<div className="lbl-prop">DENY PURGE</div>
-		</Box>
+		</div>
 
 
 		<div className="lbl-prop-title">LIMIT</div>
@@ -306,14 +305,14 @@ const EditForm: FunctionComponent<Props> = ({
 
 
 		<div className="lbl-prop-title">PUBLISH</div>
-		<Box>
+		<div className="cmp-h">
 			<IconToggle
 				check={config.noAck}
 				onChange={noAck => handlePropChange({ noAck })}
 				readOnly={inRead}
 			/>
 			<div className="lbl-prop">ALLOW NO ACK ON PUBLISH</div>
-		</Box>
+		</div>
 		<div className="lyt-v">
 			<div className="lbl-prop">DUPLICATE WINDOW</div>
 			<NumberInput
@@ -324,7 +323,7 @@ const EditForm: FunctionComponent<Props> = ({
 			/>
 		</div>
 		<div className="lyt-v">
-			<Box>
+			<div className="cmp-h">
 				<IconToggle
 					check={!!config.republish}
 					onChange={check => {
@@ -347,7 +346,7 @@ const EditForm: FunctionComponent<Props> = ({
 					readOnly={inRead}
 				/>
 				<div className="lbl-prop">REPUBLISH</div>
-			</Box>
+			</div>
 			<Accordion open={!!config.republish}>
 				<div className="lyt-quote">
 					<div className="lyt-v">
@@ -366,28 +365,28 @@ const EditForm: FunctionComponent<Props> = ({
 							readOnly={inRead}
 						/>
 					</div>
-					<Box>
+					<div className="cmp-h">
 						<IconToggle
 							check={config.republish?.headersOnly}
 							onChange={headersOnly => handleRepublishPropChange({ headersOnly })}
 							readOnly={inRead}
 						/>
 						<div className="lbl-prop">HEADERS ONLY</div>
-					</Box>
+					</div>
 				</div>
 			</Accordion>
 		</div>
 
 		<div className="lbl-prop-title">SEAL</div>
 
-		<Box>
+		<div className="cmp-h">
 			<IconToggle
 				check={config.sealed}
 				onChange={sealed => handlePropChange({ sealed })}
 				readOnly={inRead}
 			/>
 			<div className="lbl-prop">SEALED</div>
-		</Box>
+		</div>
 
 		{/*<div className="lyt-v">
 			<div className="lbl-prop">TEMPLATE OWNER</div>

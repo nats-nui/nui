@@ -1,6 +1,5 @@
 import Accordion from "@/components/accordion/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
-import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import { FunctionComponent } from "react"
 
@@ -33,23 +32,23 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	const valueShow = value
 
 	return <div className="lyt-v">
-		<Box>
+		<div className="cmp-h">
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
 				readOnly={readOnly}
 			/>
 			<div className="lbl-prop">{label}</div>
-		</Box>
+		</div>
 		<Accordion open={isEnabled}>
-			<Box style={{ minHeight: 22 }}>
+			<div className="cmp-h" style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={valueShow}
 					onChange={handlePropChange}
 					readOnly={readOnly}
 				/>
-			</Box>
+			</div>
 		</Accordion>
 	</div>
 }

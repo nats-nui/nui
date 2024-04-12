@@ -1,7 +1,6 @@
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import Dialog from "@/components/dialogs/Dialog"
-import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
@@ -65,7 +64,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
             onClose={handleClose}
         >
             <div className="lyt-form var-dialog">
-                <Box>
+                <div className="cmp-h">
                     <IconToggle
                         check={purgeParams.bySeq}
                         onChange={select => handlePurgePropChange({ bySeq: select, byKeep: false })}
@@ -78,7 +77,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                         trueIcon={<CheckRadioOnIcon />}
                     />
                     <div className="lbl-prop">KEEP</div>
-                </Box>
+                </div>
                 <NumberInput
                     style={{ flex: 1 }}
                     value={purgeParams.number}
@@ -100,7 +99,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                     Are you sure you want to purge the STREAM?
                 </div>
 
-                <Box style={{ display: "flex", gap: 15, marginTop: 10 }}>
+                <div className="cmp-h" style={{ display: "flex", gap: 15, marginTop: 10 }}>
                     <Button
                         children="PURGE"
                         onClick={() => handleApply()}
@@ -109,7 +108,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                         children="CANCEL"
                         onClick={() => handleClose()}
                     />
-                </Box>
+                </div>
             </div>
         </Dialog>
     )
