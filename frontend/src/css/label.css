@@ -47,6 +47,7 @@
 
 
 /* FORM */
+/* titolo colonna di proprietà */
 .lbl-prop-title {
 	font-size: 13px;
 	font-weight: 800;
@@ -57,11 +58,12 @@
 	margin-top: 3px;
 	margin-bottom: 3px;
 }
+/* label proprietà */
 .lbl-prop {
 	font-size: 12px;
 	font-weight: 700;
 }
-
+/* valore in sola lettura */
 .lbl-input-readonly {
 	font-size: 12px;
     font-weight: 500;
@@ -69,6 +71,7 @@
 	overflow-wrap: break-word;
 }
 
+/* lista vuota */
 .lbl-empty {
 	border: 1px dashed currentColor;
 	padding: 3px;
@@ -78,12 +81,22 @@
 	text-align: center;
 }
 
+/* elemento disabilitato */
 .lbl-disabled {
 	opacity: .6;
 }
 
+/* componente orizzontale */
+.cmp-h {
+	display: flex; 
+	flex: 1;
+	align-items: center; 
+	position: relative;
+	gap: 5px;
+}
 
 
+/* righa di una lista in sola lettura */
 .list-row {
 	padding: 3px 5px;
 }

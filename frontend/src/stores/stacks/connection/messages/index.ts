@@ -37,6 +37,7 @@ const setup = {
 		/** tutti i messaggi ricevuti */
 		messages: <Message[]>[],
 		//messages: <Message[]>historyTest,
+		noSysMessages: true,
 
 		/** contatore SUBJECTS ricevuti */
 		stats: <{ [subjects: string]: MessageStat }>{},
@@ -127,6 +128,10 @@ const setup = {
 
 		/** aggiungo un messaggio di questa CARD */
 		addMessage(msg: PayloadMessage, store?: MessagesStore) {
+
+			// eventualmente scarta i messaggi di sistema
+			if (store.state.noSysMessages && (msg.subject.startsWith("_INBOX") || msg.subject.startsWith("$"))) return
+
 			const message: Message = {
 				subject: msg.subject,
 				payload: msg.payload as string,
@@ -198,6 +203,7 @@ const setup = {
 	mutators: {
 		setSubscriptions: (subscriptions: Subscription[]) => ({ subscriptions }),
 		setMessages: (messages: Message[]) => ({ messages }),
+		setNoSysMessages: (noSysMessages: boolean) => ({ noSysMessages }),
 		setSubscriptionsOpen: (subscriptionsOpen: boolean) => ({ subscriptionsOpen }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setFormat: (format: MSG_FORMAT) => ({ format }),
