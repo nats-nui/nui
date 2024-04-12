@@ -1,7 +1,6 @@
 import Accordion from "@/components/accordion/Accordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import ListDialog from "@/components/dialogs/ListDialog"
-import Box from "@/components/format/Box"
 import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
@@ -56,16 +55,16 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const valueShow = nsToValue(value, unit)
 
 	return <div className="lyt-v">
-		<Box>
+		<div className="cmp-h">
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
 				readOnly={readOnly}
 			/>
 			<div className="lbl-prop">{label}</div>
-		</Box>
+		</div>
 		<Accordion open={isEnabled}>
-			<Box style={{ minHeight: 22 }}>
+			<div className="cmp-h" style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 1.5 }}
 					value={valueShow}
@@ -80,7 +79,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 					readOnly={readOnly}
 					onSelect={handleUnitChange}
 				/>
-			</Box>
+			</div>
 		</Accordion>
 	</div>
 }

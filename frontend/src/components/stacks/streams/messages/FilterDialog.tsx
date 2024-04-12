@@ -1,7 +1,7 @@
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
 import Dialog from "@/components/dialogs/Dialog"
-import Box from "@/components/format/Box"
 import DateTimeInput from "@/components/input/DateTimeInput"
 import NumberInput from "@/components/input/NumberInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
@@ -10,7 +10,6 @@ import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
 
 
 
@@ -56,28 +55,28 @@ const FilterDialog: FunctionComponent<Props> = ({
 			onClose={handleClose}
 		>
 			<div className="lyt-form var-dialog">
-				<Box>
+				<div className="cmp-h">
 					<IconToggle
 						check={!filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: false })}
 						trueIcon={<CheckRadioOnIcon />}
 					/>
 					<div className="lbl-prop">SEQUENCE START</div>
-				</Box>
+				</div>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={filter.startSeq}
 					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
 				/>
 
-				<Box>
+				<div className="cmp-h">
 					<IconToggle
 						check={filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: true })}
 						trueIcon={<CheckRadioOnIcon />}
 					/>
 					<div className="lbl-prop">TIME START</div>
-				</Box>
+				</div>
 				<DateTimeInput
 					style={{ flex: 1 }}
 					value={filter.startTime}

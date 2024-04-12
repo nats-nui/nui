@@ -1,6 +1,5 @@
 import IconButton from "@/components/buttons/IconButton"
 import IconToggle from "@/components/buttons/IconToggle"
-import Box from "@/components/format/Box"
 import TextInput from "@/components/input/TextInput"
 import { ListMemo } from "@/components/lists/List"
 import CloseIcon from "@/icons/CloseIcon"

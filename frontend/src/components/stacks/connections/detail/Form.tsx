@@ -1,5 +1,4 @@
 import IconToggle from "@/components/buttons/IconToggle"
-import Box from "@/components/format/Box"
 import TextInput from "@/components/input/TextInput"
 import EditList from "@/components/lists/EditList"
 import ListObjects from "@/components/lists/ListObjects"
@@ -96,7 +95,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				readOnly={inRead}
 				width={170}
 				RenderLabel={({ item: auth, index }) => (
-					<Box>
+					<div className="cmp-h">
 						<IconToggle
 							check={auth.active}
 							onChange={(check, e) => handleActivate(check, index, e)}
@@ -104,7 +103,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 							trueIcon={<CheckRadioOnIcon />}
 						/>
 						{auth?.mode?.toUpperCase()}
-					</Box>
+					</div>
 				)}
 				onDelete={handleAuthDelete}
 				RenderForm={({ item, index, onClose }) => (
