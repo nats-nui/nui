@@ -6,6 +6,7 @@ import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { findInRoot } from "@/stores/docs/utils/manage"
 
 
 
@@ -41,7 +42,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => store.state.group.find({
+		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.CONSUMERS,
 			connectionId: store.state.connectionId,
 			streamName: store.state.streamName,

@@ -28,26 +28,6 @@ const setup = {
 		getIndexByView(view: ViewStore, store?: CardsStore) {
 			return store.state.all.findIndex(v => v == view)
 		},
-
-		/** cerca nel DECK solo le CARD senza parent */
-		find(state: any, store?: CardsStore) {
-			return forEachViews(
-				store.state.all,
-				(view) => deepEqual(state, view.state) ? view : null
-			)
-		},
-		/** cerca nel DECK su tutte le CARD (anche i children) */
-		findAll(state: any, store?: CardsStore) {
-			const ret: ViewStore[] = []
-			forEachViews(
-				store.state.all,
-				(view) => {
-					if (deepEqual(state, view.state)) ret.push(view)
-				}
-			)
-			return ret
-		},
-
 	},
 
 	actions: {

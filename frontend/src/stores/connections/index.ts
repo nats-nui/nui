@@ -2,6 +2,7 @@ import cnnApi from "@/api/connection"
 import { Connection } from "@/types/Connection"
 import { StoreCore, createStore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
+import { socketPool } from "@/plugins/SocketService/pool"
 
 
 
@@ -45,6 +46,11 @@ const setup = {
 		async save(cnn: Connection, store?: ConnectionStore) {
 			const cnnSaved = await cnnApi.save(cnn)
 			store.update(cnnSaved)
+
+			const key = `global::${cnnSaved.id}`
+			socketPool.destroyForce(key)
+			socketPool.create(key, cnnSaved.id)
+			
 			return cnnSaved
 		},
 		/** inserisce o aggiorna la CONNECTION passata come paramnetro */

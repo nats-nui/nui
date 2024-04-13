@@ -1,4 +1,5 @@
 import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards";
+import { findAll } from "@/stores/docs/utils/manage";
 import { debounce } from "@/utils/time";
 import { SocketService } from ".";
 
@@ -33,15 +34,18 @@ class SocketPool {
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
 			// se lo usa qualcun'altro alllora non lo eliminare
-			const filter = { connectionId: ss.cnnId }
-			// [II] TODO
-			if (deckCardsSo.findAll(filter).length > 0
-				//|| menuCardsSo.findAll(filter).length > 0 
-				|| drawerCardsSo.findAll(filter).length > 0
-			) return
-			ss.disconnect()
-			delete this.sockets[key]
+			if (findAll([...deckCardsSo.state.all, ...drawerCardsSo.state.all], { connectionId: ss.cnnId }).length > 0) return
+			this.destroyForce(key)
 		}, 2000)
+	}
+	/** forza la chiusura, utile per quando c'e' una modifica */
+	destroyForce(key: string) {
+		if (!key) return
+		const ss = this.getById(key)
+		if (!ss) return
+		debounce(`ss::destroy::${key}`)
+		ss.disconnect()
+		delete this.sockets[key]
 	}
 }
 

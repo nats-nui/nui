@@ -1,5 +1,6 @@
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
+import { findInRoot } from "@/stores/docs/utils/manage"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -7,9 +8,9 @@ import { StreamConfig, StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { StreamsState, StreamsStore } from "."
 import { buildConsumers } from "../consumer/utils/factory"
-import { buildStreamMessages } from "./utils/factory"
-import { VIEW_SIZE } from "../utils"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { VIEW_SIZE } from "../utils"
+import { buildStreamMessages } from "./utils/factory"
 
 
 
@@ -50,13 +51,14 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: StreamStore): StreamsStore => store.state.group.find({
+		// [II] TODO
+		getParentList: (_: void, store?: StreamStore): StreamsStore => findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.STREAMS,
 			connectionId: store.state.connectionId,
 		} as Partial<StreamsState>) as StreamsStore,
 
-		getConsumerOpen: (_: void, store?: StreamStore)=> store.state.linked?.state.type == DOC_TYPE.CONSUMERS,
-		getMessagesOpen: (_: void, store?: StreamStore)=> store.state.linked?.state.type == DOC_TYPE.STREAM_MESSAGES,
+		getConsumerOpen: (_: void, store?: StreamStore) => store.state.linked?.state.type == DOC_TYPE.CONSUMERS,
+		getMessagesOpen: (_: void, store?: StreamStore) => store.state.linked?.state.type == DOC_TYPE.STREAM_MESSAGES,
 	},
 
 	actions: {

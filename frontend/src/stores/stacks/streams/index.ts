@@ -8,6 +8,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { buildConsumers } from "../consumer/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
+import { findAll } from "@/stores/docs/utils/manage"
 
 
 
@@ -105,7 +106,8 @@ const setup = {
 			store.setAll(store.state.all.filter(s => s.config.name != name))
 			store.setSelect(null)
 			// cerco eventuali CARD di questo stream e lo chiudo
-			const cardStreams = store.state.group.findAll({ type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
+			// [II] TODO
+			const cardStreams = findAll(store.state.group.state.all, { type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
 			cardStreams.forEach(view => store.state.group.remove({ view, anim: true }))
 		},
 

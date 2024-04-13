@@ -9,6 +9,7 @@ import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
+import { findInRoot } from "@/stores/docs/utils/manage"
 
 
 
@@ -45,12 +46,12 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: BucketStore): BucketsStore => store.state.group.find({
+		getParentList: (_: void, store?: BucketStore): BucketsStore => findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
 
-		getKVEntriesOpen: (_: void, store?: BucketStore)=> store.state.linked?.state.type == DOC_TYPE.KVENTRIES,
+		getKVEntriesOpen: (_: void, store?: BucketStore) => store.state.linked?.state.type == DOC_TYPE.KVENTRIES,
 	},
 
 	actions: {

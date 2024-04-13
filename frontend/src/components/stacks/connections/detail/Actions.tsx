@@ -1,6 +1,7 @@
 import Button from "@/components/buttons/Button"
 import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
+import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { EDIT_STATE } from "@/types"
@@ -35,7 +36,8 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 	}
 	const handleSaveClick = async () => {
 		cnnDetailSo.setDisabled(true)
-		const cnnNew = await cnnSo.save(cnnDetailSa.connection)
+		const cnnNew = await cnnSo.save(cnnDetailSa.connection);
+		(cnnDetailSa.parent as CnnListStore)?.setSelect(cnnNew.id)		
 		cnnDetailSo.setDisabled(false)
 		cnnDetailSo.setConnection(cnnNew)
 		cnnDetailSo.setEditState(EDIT_STATE.READ)
