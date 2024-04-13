@@ -13,6 +13,7 @@ export interface TextInputProps {
 	focus?: boolean
 	multiline?: boolean
 	rows?: number
+	type?: string
 	onChange?: (newValue: string) => void
 	onFocus?: (e: React.FocusEvent<HTMLInput>) => void
 	onBlur?: (e: React.FocusEvent<HTMLInput>) => void
@@ -30,6 +31,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		focus,
 		multiline,
 		rows = 1,
+		type,
 		onChange,
 		onFocus,
 		onBlur,
@@ -62,9 +64,9 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		return () => inputRef.current?.removeEventListener('input', multilineUpdate)
 	}, [multiline])
 
-	useEffect(()=>{
+	useEffect(() => {
 		multilineUpdate()
-	},[readOnly])
+	}, [readOnly])
 
 	useImperativeHandle(ref, () => inputRef.current, [inputRef.current])
 
@@ -76,13 +78,16 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	}
 
 	// RENDER
-	if (readOnly) return (
-		<div className={`lbl-input-readonly ${className}`}
-			style={style}
-		>
-			{value ?? ""}
-		</div>
-	)
+	if (readOnly) {
+		if ( type == "password" ) value = "***"
+		return (
+			<div className={`lbl-input-readonly ${className}`}
+				style={style}
+			>
+				{value ?? ""}
+			</div>
+		)
+	}
 
 	const TagInput = multiline ? "textarea" : "input"
 
@@ -99,6 +104,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 		onBlur={onBlur}
 		onKeyDown={onKeyDown}
 		rows={rows}
+		type={type}
 	/>
 }
 

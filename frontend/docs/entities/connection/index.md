@@ -1,20 +1,22 @@
 
 ## INDEX
 
-
 ### URL
+
 ```
 GET /api/connection
 ```
 
 
 ### BODY
-null
+
+`null`
 
 
 ### RESPONSE
+
 ```typescript
 connection[]
 ```
-[CONNECTION](./def/connection.md)
 
+[CONNECTION](./def/connection.md)

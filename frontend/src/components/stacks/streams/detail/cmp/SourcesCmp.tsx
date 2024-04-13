@@ -73,18 +73,16 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	const allStreams = streamSa.allStreams
 
 	return <>
-		<div className="lyt-quote">
-			<EditList<Source> ref={listRef} keepSelectOnBlur toggleSelect
-				items={sources}
-				select={souceIndex}
-				readOnly={inRead}
-				onItemsChange={handleSourcesChange}
-				onSelectChange={handleSelectChange}
-				onNewItem={handleNewSource}
-				RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
-				fnIsVoid={item => !item.name || item.name.trim().length == 0}
-			/>
-		</div>
+		<EditList<Source> ref={listRef} keepSelectOnBlur toggleSelect
+			items={sources}
+			select={souceIndex}
+			readOnly={inRead}
+			onItemsChange={handleSourcesChange}
+			onSelectChange={handleSelectChange}
+			onNewItem={handleNewSource}
+			RenderRow={(props) => <EditItemRow {...props} item={props.item?.name} />}
+			fnIsVoid={item => !item.name || item.name.trim().length == 0}
+		/>
 		<ElementDialog
 			title="SOURCE"
 			element={elementSource}

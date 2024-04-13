@@ -123,6 +123,8 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 		</TitleAccordion>
 
+		<div className="dvd-footer" />
+
 		<div className="var-dialog" style={{ display: "flex", gap: 5, marginTop: 10 }} >
 			<Button children="CANCEL" onClick={handleCancel} />
 			<Button children="OK" onClick={handleOk} />

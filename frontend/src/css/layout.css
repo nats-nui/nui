@@ -9,6 +9,7 @@
 	margin-top: 10px;;
 }
 
+/* FLOAT BUTTONS */
 .lyt-float {
 	position: absolute;
 	bottom: 20px; 
@@ -17,6 +18,7 @@
 	gap: 5px;
 }
 
+/* FORM */
 .lyt-form {
 	position: relative;
 	display: flex;
@@ -24,6 +26,7 @@
 	gap: 5px;
 }
  
+/* QUOTE */
 .lyt-quote {
 	display: flex;
 	flex-direction: column;
@@ -31,4 +34,18 @@
 	border-left: 2px solid rgba(0, 0, 0, 0.4);
 	padding-left: 5px;
 	margin-top: 3px;
+}
+
+/* CMPONENTS: TOGGLE */
+.cmp-h {
+	display: flex; 
+	flex: 1;
+	align-items: center; 
+	position: relative;
+	gap: 5px;
+}
+
+/* righa di una lista in sola lettura */
+.list-row {
+	padding: 3px 5px;
 }

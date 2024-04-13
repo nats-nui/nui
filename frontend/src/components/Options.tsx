@@ -16,6 +16,7 @@ interface Props {
 	readOnly?: boolean
 	height?: number
 	style?: React.CSSProperties
+	className?: string
 	onSelect?: (value: string) => void
 }
 
@@ -26,6 +27,7 @@ function Options<T>({
 	readOnly = false,
 	height,
 	style,
+	className,
 	onSelect,
 }: Props) {
 
@@ -70,13 +72,13 @@ function Options<T>({
 	const label = value?.toString() ?? "--"
 
 	if (readOnly) return (
-		<div className={cls.label}>
+		<div className={`${cls.label} ${className}`}>
 			{label}
 		</div>
 	)
 
 	return (
-		<div className={cls.root} style={style}>
+		<div className={`${cls.root} ${className}`} style={style}>
 
 			{!open ? (
 				<Component

@@ -1,6 +1,7 @@
 import IconButton from "@/components/buttons/IconButton"
 import AddIcon from "@/icons/AddIcon"
 import { FunctionComponent, LegacyRef, forwardRef, useEffect, useState } from "react"
+import cls from "./EditList.module.css"
 
 
 
@@ -77,7 +78,7 @@ function EditList<T>({
 		if (index == -1 && keepSelectOnBlur) clearVoid()
 		onSelectChange?.(index, e)
 	}
-	useEffect (()=>{
+	useEffect(() => {
 		if (indexSelect == -1 && keepSelectOnBlur) clearVoid()
 	}, [indexSelect])
 
@@ -137,22 +138,22 @@ function EditList<T>({
 
 	const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
 		const isChild = e.currentTarget.contains(e.relatedTarget)
-		if( isChild ) return
+		if (isChild) return
 		if (!keepSelectOnBlur) {
 			setIndexSelect(-1)
 			clearVoid()
-		} 
-		
+		}
+
 	}
 
 	// RENDER
 	if (!items) items = []
 
 	return (
-		<div
+		<div className={cls.root}
 			tabIndex={0}
 			ref={ref}
-			style={{ ...cssRoot, ...style }}
+			style={style}
 			onKeyDown={handleKeyDown}
 			onBlur={handleBlur}
 		>
@@ -170,7 +171,7 @@ function EditList<T>({
 
 			{/* NEW BUTTON */}
 			{!readOnly && onNewItem && (
-				<IconButton style={{ backgroundColor: '#00000010', }}
+				<IconButton className={cls.btt_new}
 					onClick={(e) => handleNewItem(null, e)}
 				><AddIcon /></IconButton>
 			)}
@@ -179,14 +180,3 @@ function EditList<T>({
 }
 
 export default forwardRef(EditList) as <T>(props: Props<T>, ref: LegacyRef<HTMLDivElement>) => JSX.Element
-
-const cssRoot: React.CSSProperties = {
-	// display: "flex",
-	// flexDirection: "column",
-	borderRadius: 5,
-}
-
-const cssButton: React.CSSProperties = {
-	backgroundColor: '#00000010',
-	borderRadius: 3,
-}
