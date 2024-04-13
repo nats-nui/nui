@@ -111,6 +111,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 				</TitleAccordion>
 
+				<div className="dvd-footer" />
+
 				<Button children="APPLY" style={{ alignSelf: "start" }}
 					onClick={handleApply}
 				/>

@@ -86,17 +86,8 @@
 	opacity: .6;
 }
 
-/* componente orizzontale */
-.cmp-h {
-	display: flex; 
-	flex: 1;
-	align-items: center; 
-	position: relative;
-	gap: 5px;
-}
 
-
-/* righa di una lista in sola lettura */
-.list-row {
-	padding: 3px 5px;
-}
+.dvd-footer {
+	border-top: 1px dashed rgba(0, 0, 0, 0.25);
+    margin: 5px 0 5px 0;
+} 

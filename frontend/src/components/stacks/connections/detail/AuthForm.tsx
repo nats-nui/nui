@@ -4,6 +4,7 @@ import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import TextInput from "../../../input/TextInput"
 import StringUpRow from "@/components/rows/StringUpRow"
+import PasswordInput from "@/components/input/PasswordInput"
 
 
 
@@ -29,19 +30,21 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: Partial<Auth>) => setAuthEdit({ ...authEdit, ...prop })
-	const authItems = useMemo(() => Object.values(AUTH_MODE).map(a => a/*.toUpperCase()*/), [AUTH_MODE])
+	const authItems = Object.values(AUTH_MODE)
 
 	// RENDER
 	if (!authEdit) return null
 	return <div className="lyt-form var-dialog">
-		<Options<string>
+
+		<Options<string> style={{ marginBottom: 8 }}
+			className={readOnly ? "lbl-prop-title" : ""}
 			value={authEdit?.mode?.toUpperCase()}
 			items={authItems}
 			RenderRow={StringUpRow}
 			readOnly={readOnly}
-			//height={100}
 			onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
 		/>
+
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
 				<div className="lyt-v"><div className="lbl-prop">USERNAME</div><TextInput
@@ -49,7 +52,7 @@ const AuthForm: FunctionComponent<Props> = ({
 					onChange={username => handlePropChange({ username })}
 					readOnly={readOnly}
 				/></div>
-				<div className="lyt-v"><div className="lbl-prop">PASSWORD</div><TextInput
+				<div className="lyt-v"><div className="lbl-prop">PASSWORD</div><PasswordInput
 					value={authEdit.password}
 					onChange={password => handlePropChange({ password })}
 					readOnly={readOnly}
@@ -82,6 +85,8 @@ const AuthForm: FunctionComponent<Props> = ({
 				/></div>
 			</>,
 		}[authEdit.mode]}
+
+		<div className="dvd-footer" />
 
 		<div style={{ display: "flex", gap: 5 }}>
 			<Button children={readOnly ? "CLOSE" : "CANCEL"}
