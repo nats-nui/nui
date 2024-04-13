@@ -63,26 +63,29 @@ const PurgeDialog: FunctionComponent<Props> = ({
             open={streamSa.purgeOpen}
             onClose={handleClose}
         >
-            <div className="lyt-form var-dialog">
-                <div className="cmp-h">
-                    <IconToggle
-                        check={purgeParams.bySeq}
-                        onChange={select => handlePurgePropChange({ bySeq: select, byKeep: false })}
-                        trueIcon={<CheckRadioOnIcon />}
+            <div className="lyt-form">
+
+                <div className="lyt-v" style={{ gap: 3 }}>
+                    <div className="cmp-h">
+                        <IconToggle
+                            check={purgeParams.bySeq}
+                            onChange={select => handlePurgePropChange({ bySeq: select, byKeep: false })}
+                            trueIcon={<CheckRadioOnIcon />}
+                        />
+                        <div className="lbl-prop">SEQUENCE</div>
+                        <IconToggle
+                            check={purgeParams.byKeep}
+                            onChange={select => handlePurgePropChange({ byKeep: select, bySeq: false })}
+                            trueIcon={<CheckRadioOnIcon />}
+                        />
+                        <div className="lbl-prop">KEEP</div>
+                    </div>
+                    <NumberInput
+                        style={{ flex: 1 }}
+                        value={purgeParams.number}
+                        onChange={(number: number) => handlePurgePropChange({ number })}
                     />
-                    <div className="lbl-prop">SEQUENCE</div>
-                    <IconToggle
-                        check={purgeParams.byKeep}
-                        onChange={select => handlePurgePropChange({ byKeep: select, bySeq: false })}
-                        trueIcon={<CheckRadioOnIcon />}
-                    />
-                    <div className="lbl-prop">KEEP</div>
                 </div>
-                <NumberInput
-                    style={{ flex: 1 }}
-                    value={purgeParams.number}
-                    onChange={(number: number) => handlePurgePropChange({ number })}
-                />
 
                 <div className="lyt-v">
                     <div className="lbl-prop">SUBJECT</div>
@@ -92,24 +95,33 @@ const PurgeDialog: FunctionComponent<Props> = ({
                     />
                 </div>
 
-                <div className="lbl-prop-title">DANGER</div>
-
-                <div className="lbl-dialog-text">
-                    This action is irreversible.
-                    Are you sure you want to purge the STREAM?
-                </div>
-
-                <div className="cmp-h" style={{ display: "flex", gap: 15, marginTop: 10 }}>
-                    <Button
-                        children="PURGE"
-                        onClick={() => handleApply()}
-                    />
-                    <Button
-                        children="CANCEL"
-                        onClick={() => handleClose()}
-                    />
-                </div>
             </div>
+
+            <div className="lbl-prop-title" style={{ marginTop: 10 }}>
+                DANGER
+            </div>
+
+            <div className="lbl-dialog-text">
+                This action is irreversible.
+                Are you sure you want to purge the STREAM?
+            </div>
+
+            <div className="bars-alert-bg" style={{ height: 25 }} />
+
+            <div
+                className="var-dialog"
+                style={{ display: "flex", gap: 15, marginTop: 5 }}
+            >
+                <Button
+                    children="PURGE"
+                    onClick={() => handleApply()}
+                />
+                <Button
+                    children="CANCEL"
+                    onClick={() => handleClose()}
+                />
+            </div>
+
         </Dialog>
     )
 }
