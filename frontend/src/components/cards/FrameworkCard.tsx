@@ -42,6 +42,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`
+	const clsChildren = `${cls.children} ${store.state.disabled ? cls.disabled : ""}`
 
 	return <div className={clsRoot} style={style} >
 
@@ -59,7 +60,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 					><CloseIcon /></IconButton>
 
 					{!inRoot && (
-						<IconButton 
+						<IconButton
 							className={`${cls.btt} color-bg ${cls.hovershow}`}
 							onClick={handleDetach}
 						><DetachIcon /></IconButton>
@@ -72,7 +73,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 					{actionsRender}
 				</ActionGroup>
 
-				<div className={cls.children} style={styleBody}>
+				<div className={clsChildren} style={styleBody}>
 					{children}
 				</div>
 			</>}

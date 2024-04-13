@@ -30,8 +30,12 @@
 	padding: 10px;
 	display: flex;
 	flex-direction: column;
+	transition: opacity 300ms;
 }
-
+.disabled {
+	pointer-events: none;
+	opacity: .5;
+} 
 
 
 

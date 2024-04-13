@@ -86,9 +86,7 @@ const AuthForm: FunctionComponent<Props> = ({
 			</>,
 		}[authEdit.mode]}
 
-		<div className="dvd-footer" />
-
-		<div style={{ display: "flex", gap: 5 }}>
+		<div className="cmp-footer">
 			<Button children={readOnly ? "CLOSE" : "CANCEL"}
 				onClick={() => onClose(null)}
 			/>

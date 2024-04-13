@@ -22,6 +22,8 @@ export interface DialogProps {
 	fullHeight?: boolean
 	/** spazio da lasciare in alto */
 	top?: number
+	style?: React.CSSProperties
+	className?: string
 
 	/** un timeout in ms chiude la dialog se si clicca fuori
 	 * se == -1 non chiude */
@@ -42,6 +44,9 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	width,
 	fullHeight,
 	top = null,
+	style,
+	className,
+
 	children,
 	/** se minore di 0 non chiude automaticamente */
 	timeoutClose = 200,
@@ -136,7 +141,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 				<div style={{ height: 12 }} />
 			)}
 
-			<div className={cls.body}>
+			<div className={`${cls.body} ${className}`} style={style}>
 				{children}
 			</div>
 

@@ -30,6 +30,8 @@ const viewSetup = {
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
 		sizeForce: false,
+		/** indica che la card è temporaneamente disabilitata */
+		disabled: false,
 
 		/** il width "normale" */
 		width: 300,
@@ -192,6 +194,7 @@ const viewSetup = {
 
 	mutators: {
 		setSize: (size: VIEW_SIZE) => ({ size }),
+		setDisabled: (disabled: boolean) => ({ disabled }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
 
 		setSnackbar: (snackbar: SnackbarState) => ({ snackbar }),

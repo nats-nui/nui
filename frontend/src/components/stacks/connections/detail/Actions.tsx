@@ -1,9 +1,11 @@
 import Button from "@/components/buttons/Button"
+import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { LOAD_STATE } from "@/stores/stacks/utils"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
 
 
 
@@ -32,10 +34,19 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 		cnnDetailSo.setEditState(EDIT_STATE.READ)
 	}
 	const handleSaveClick = async () => {
+		cnnDetailSo.setDisabled(true)
 		const cnnNew = await cnnSo.save(cnnDetailSa.connection)
+		cnnDetailSo.setDisabled(false)
 		cnnDetailSo.setConnection(cnnNew)
 		cnnDetailSo.setEditState(EDIT_STATE.READ)
 	}
+
+
+	// LOADING
+	if (cnnDetailSa.disabled) {
+		return <CircularLoadingCmp style={{ width: 25, height: 25, color: "rgba(0,0,0,.5)" }} />
+	}
+
 
 	// RENDER
 	if (cnnDetailSa.editState == EDIT_STATE.NEW) {
