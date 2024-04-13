@@ -1,3 +1,4 @@
+import { deepEqual } from "@/utils/object";
 import { ViewStore } from "../../stacks/viewBase";
 
 
@@ -35,6 +36,27 @@ export function getById(views: ViewStore[], id: string): ViewStore {
 		}
 	})
 }
+
+/** cerca su tutte le CARD (anche i children) */
+export function findAll(views: ViewStore[], state: any) {
+	const ret: ViewStore[] = []
+	forEachViews(
+		views,
+		(view) => {
+			if (deepEqual(state, view.state)) ret.push(view)
+		}
+	)
+	return ret
+}
+
+/** cerca nel DECK solo le CARD senza parent */
+export function findInRoot(views: ViewStore[], state: any) {
+	return forEachViews(
+		views,
+		(view) => deepEqual(state, view.state) ? view : null
+	)
+}
+
 
 /**
  * cicla i parent se c'e' un return si ferma e restituisce
@@ -76,3 +98,4 @@ export function getRoot(view: ViewStore): ViewStore {
 	forEachParent(view, (p) => parent = p)
 	return parent
 }
+

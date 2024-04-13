@@ -1,4 +1,5 @@
 import kventryApi from "@/api/kventries"
+import { findInRoot } from "@/stores/docs/utils/manage"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -49,7 +50,9 @@ const setup = {
 
 		getEditorText: (_: void, store?: ViewStore) => (<KVEntryStore>store).getKVSelect()?.payload ?? "",
 
-		getParentList: (_: void, store?: KVEntryStore): KVEntriesStore => store.state.group.find({
+
+		// [II] TODO
+		getParentList: (_: void, store?: KVEntryStore): KVEntriesStore => findInRoot(store.state.group.state.all,{
 			type: DOC_TYPE.KVENTRIES,
 			connectionId: store.state.connectionId,
 			bucket: { bucket: store.state.bucket.bucket }
