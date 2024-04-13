@@ -36,11 +36,10 @@ const AlertDialog: FunctionComponent<Props> = ({
 		store={store}
 		onClose={() => handleClose(false)}
 	>
-		<div className="bars-alert-bg" style={{ height: 25 }} />
 
 		<div className="lbl-prop-title">DANGER</div>
 
-		<div className="lbl-dialog-text" style={{ marginBottom: 5 }}>
+		<div className="lbl-dialog-text">
 			{alert.body}
 		</div>
 
@@ -48,7 +47,7 @@ const AlertDialog: FunctionComponent<Props> = ({
 
 		<div
 			className="var-dialog"
-			style={{ display: "flex", gap: 15, marginTop: 10 }}
+			style={{ display: "flex", gap: 15, marginTop: 5 }}
 		>
 			<Button
 				children={alert.labelOk}
