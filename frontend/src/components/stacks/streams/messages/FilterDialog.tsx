@@ -111,11 +111,10 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 				</TitleAccordion>
 
-				<div className="dvd-footer" />
-
-				<Button children="APPLY" style={{ alignSelf: "start" }}
-					onClick={handleApply}
-				/>
+				<div className="cmp-footer">
+					<Button children="APPLY" onClick={handleApply} />
+				</div>
+				
 			</div>
 		</Dialog>
 	)

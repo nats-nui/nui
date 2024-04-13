@@ -26,6 +26,7 @@ const handlers = [
 		connections.push(newCnn)
 
 		return res(
+			ctx.delay(3000),
 			ctx.status(201),
 			ctx.json(newCnn),
 		)
@@ -45,6 +46,7 @@ const handlers = [
 		connections[index] = { ...connections[index], ...newCnn }
 
 		return res(
+			ctx.delay(3000),
 			ctx.status(200),
 			ctx.json(connections[index]),
 		)

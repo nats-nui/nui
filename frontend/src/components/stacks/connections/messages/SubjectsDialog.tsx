@@ -80,6 +80,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 	}, [filter, msgSa.stats, msgSa.messages])
 
 	return <Dialog
+		style={{ gap: 5 }}
 		timeoutClose={-1}
 		title={<div style={{ display: "flex", alignItems: "center" }}>
 			<IconToggle style={{ marginTop: 3, marginRight: 6 }}
@@ -101,7 +102,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			RenderRow={EditSubscriptionRow}
 		/>
 
-		<div className="cmp-h" style={{ margin: "10px 0px" }}>
+		<div className="cmp-h" style={{ margin: "15px 0px" }}>
 			<IconToggle
 				check={msgSa.noSysMessages}
 				onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
@@ -111,7 +112,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="STATS">
 			<FindInput
-				style={{ backgroundColor: "transparent", marginBottom: 5, flex: 0 }}
+				style={{ backgroundColor: "transparent", margin: "5px 0px", flex: 0 }}
 				value={filter}
 				onChange={text => setFilter(text)}
 			/>
@@ -123,9 +124,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 		</TitleAccordion>
 
-		<div className="dvd-footer" />
-
-		<div className="var-dialog" style={{ display: "flex", gap: 5, marginTop: 10 }} >
+		<div className="var-dialog cmp-footer">
 			<Button children="CANCEL" onClick={handleCancel} />
 			<Button children="OK" onClick={handleOk} />
 			<div style={{ flex: 1 }} />
