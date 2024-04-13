@@ -2,6 +2,7 @@ import { DOC_TYPE } from "@/stores/docs/types"
 import { StoreCore, createStore } from "@priolo/jon"
 import { CnnListStore } from "../stacks/connection"
 import { ViewLogStore } from "../stacks/log"
+import { AboutStore } from "../stacks/about"
 
 
 
@@ -11,7 +12,7 @@ import { ViewLogStore } from "../stacks/log"
 const setup = {
 
 	state: {
-		fixedViews: <[CnnListStore?, ViewLogStore?]>null,
+		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 	},
 
@@ -22,7 +23,7 @@ const setup = {
 	},
 
 	mutators: {
-		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore]) => ({ fixedViews }),
+		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore, AboutStore]) => ({ fixedViews }),
 	},
 }
 

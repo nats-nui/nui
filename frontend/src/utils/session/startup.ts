@@ -12,6 +12,7 @@ import { DOC_TYPE } from "@/types"
 import { delay } from "../time"
 import { loadLocalStorage, saveLocalStorage } from "./storage"
 import { Session } from "./types"
+import { AboutStore } from "@/stores/stacks/about"
 
 
 
@@ -107,5 +108,6 @@ function buildCards(session: Session) {
 function buildFixedCards(allStores: ViewStore[]) {
 	const fixedCnn = (allStores.find(s => s.state.type == DOC_TYPE.CONNECTIONS) ?? buildStore({ type: DOC_TYPE.CONNECTIONS })) as CnnListStore
 	const fixedLogs = (allStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
-	docsSo.setFixedViews([fixedCnn, fixedLogs])
+	const fixedAbout = (allStores.find(s => s.state.type == DOC_TYPE.ABOUT) ?? buildStore({ type: DOC_TYPE.ABOUT })) as AboutStore
+	docsSo.setFixedViews([fixedCnn, fixedLogs, fixedAbout])
 }

@@ -1,4 +1,5 @@
 import LogIcon from "@/icons/LogIcon"
+import NuiIcon from "@/icons/NUIIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import ConnectionIcon from "@/icons/cards/ConnectionIcon"
@@ -31,39 +32,41 @@ const CardIcon: FunctionComponent<Props> = ({
 	switch (type) {
 
 		case DOC_TYPE.CONNECTIONS:
-			return <ConnectionsIcon className={className} style={style}/>
+			return <ConnectionsIcon className={className} style={style} />
 		case DOC_TYPE.CONNECTION:
-			return <ConnectionIcon className={className} style={style}/>
+			return <ConnectionIcon className={className} style={style} />
 		case DOC_TYPE.MESSAGES:
-			return <MessagesIcon className={className} style={style}/>
+			return <MessagesIcon className={className} style={style} />
 		case DOC_TYPE.MESSAGE:
-			return <MessageIcon className={className} style={style}/>
+			return <MessageIcon className={className} style={style} />
 		case DOC_TYPE.MESSAGE_SEND:
 
 		case DOC_TYPE.STREAMS:
-			return <StreamsIcon className={className} style={style}/>
+			return <StreamsIcon className={className} style={style} />
 		case DOC_TYPE.STREAM:
-			return <StreamIcon className={className} style={style}/>
+			return <StreamIcon className={className} style={style} />
 		case DOC_TYPE.STREAM_MESSAGES:
-			return <MessagesIcon className={className} style={style}/>
+			return <MessagesIcon className={className} style={style} />
 
 		case DOC_TYPE.CONSUMERS:
-			return <ConsumersIcon className={className} style={style}/>
+			return <ConsumersIcon className={className} style={style} />
 		case DOC_TYPE.CONSUMER:
-			return <ConsumerIcon className={className} style={style}/>
+			return <ConsumerIcon className={className} style={style} />
 
 		case DOC_TYPE.BUCKETS:
-			return <BucketsIcon className={className} style={style}/>
+			return <BucketsIcon className={className} style={style} />
 		case DOC_TYPE.BUCKET:
-			return <BucketIcon className={className} style={style}/>
+			return <BucketIcon className={className} style={style} />
 		case DOC_TYPE.KVENTRIES:
-			return <KvEntriesIcon className={className} style={style}/>
+			return <KvEntriesIcon className={className} style={style} />
 		case DOC_TYPE.KVENTRY:
-			return <KvEntryIcon className={className} style={style}/>
+			return <KvEntryIcon className={className} style={style} />
 
 		case DOC_TYPE.LOGS:
-			return <LogIcon className={className} style={style}/>
-			
+			return <LogIcon className={className} style={style} />
+		case DOC_TYPE.ABOUT:
+			return <NuiIcon className={className} style={style} />
+
 		default:
 			return null
 	}
