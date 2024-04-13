@@ -48,6 +48,9 @@ const MainMenu: FunctionComponent<Props> = ({
 		{/* *** DEBUG *** */}
 
 		<StoreButton
+			store={docSo.state.fixedViews[2]}
+		/>
+		<StoreButton
 			store={docSo.state.fixedViews[1]}
 		/>
 	</div>

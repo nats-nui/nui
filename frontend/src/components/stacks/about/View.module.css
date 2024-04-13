@@ -1,0 +1,10 @@
+.root {
+	align-self: center;
+	width: 70px;
+	height: 70px;
+	margin-top: 15px;
+
+	background-image: url(../../../assets/Logo.svg);
+	background-repeat: no-repeat;
+	background-size: contain;
+}

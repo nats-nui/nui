@@ -18,6 +18,7 @@ import bucketSetup from "@/stores/stacks/buckets/detail";
 import kventriesSetup from "@/stores/stacks/kventry";
 import kventrySetup from "@/stores/stacks/kventry/detail";
 import bucketsSetup from "@/stores/stacks/buckets";
+import aboutSetup from "@/stores/stacks/about";
 
 
 
@@ -58,6 +59,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.CONSUMER]: consumerSetup,
 
 		[DOC_TYPE.LOGS]: logsSetup,
+		[DOC_TYPE.ABOUT]: aboutSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

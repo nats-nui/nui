@@ -31,7 +31,11 @@ const StoreButton: FunctionComponent<Props> = ({
 	const type = store.state.type
 	const cls = `var${store.state.colorVar}`
 	const canDelete = store.state.pinnable
-	const label = { [DOC_TYPE.CONNECTIONS]: "ALL", [DOC_TYPE.LOGS]: "LOGS" }[type] ?? null
+	const label = { 
+		[DOC_TYPE.CONNECTIONS]: "ALL", 
+		[DOC_TYPE.LOGS]: "LOGS",
+		[DOC_TYPE.ABOUT]: "ABOUT",
+	}[type] ?? null
 
 	return (
 		<MenuButton className={cls}

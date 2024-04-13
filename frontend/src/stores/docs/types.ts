@@ -21,6 +21,7 @@ export enum DOC_TYPE {
 	KVENTRY = "kventry",
 
 	LOGS = "logs",
+	ABOUT = "about",
 }
 
 export enum DOC_ANIM {

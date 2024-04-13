@@ -17,6 +17,7 @@ import CnnListView from "../stacks/connections/ListView"
 import ConsumersListView from "../stacks/consumers/ListView"
 import ConsumerDetailView from "../stacks/consumers/detail/View"
 import LogsView from "../stacks/mainLogs/View"
+import AboutView from "../stacks/about/View"
 import MessageView from "../stacks/message/View"
 import MessageSendView from "../stacks/messageSend/View"
 import StreamsListView from "../stacks/streams/list/ListView"
@@ -31,6 +32,7 @@ import KVEntryListView from "../stacks/kventries/list/ListView"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import KvEntryDetailView from "../stacks/kventries/detail/View"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
+import { AboutStore } from "@/stores/stacks/about"
 
 
 
@@ -79,6 +81,9 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 
 			case DOC_TYPE.LOGS:
 				return <LogsView store={view as ViewLogStore} />
+			case DOC_TYPE.ABOUT:
+				return <AboutView store={view as AboutStore} />
+
 			default:
 				return null
 		}
