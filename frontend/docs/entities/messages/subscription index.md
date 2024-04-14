@@ -4,7 +4,7 @@
 ### URL
 
 ```
-GET /api/:connection_id/messages/subscription
+GET /api/connection/:connection_id/messages/subscription
 ```
 
 - `connection-id`

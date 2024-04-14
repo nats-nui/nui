@@ -4,7 +4,7 @@
 ### URL
 
 ```
-POST /api/:connection_id/messages/subscription
+POST /api/connection/:connection_id/messages/subscription
 ```
 
 - `connection-id`
