@@ -17,6 +17,25 @@ type BucketState struct {
 	Compressed   bool          `json:"compressed"`
 }
 
+type BucketConfig struct {
+	Bucket       string                    `json:"bucket"`
+	Description  string                    `json:"description"`
+	MaxValueSize int32                     `json:"max_value_size"`
+	History      uint8                     `json:"history"`
+	TTL          time.Duration             `json:"ttl"`
+	MaxBytes     int64                     `json:"max_bytes"`
+	Storage      jetstream.StorageType     `json:"storage"`
+	Replicas     int                       `json:"replicas"`
+	Placement    *jetstream.Placement      `json:"placement"`
+	RePublish    *jetstream.RePublish      `json:"re_publish"`
+	Mirror       *jetstream.StreamSource   `json:"mirror"`
+	Sources      []*jetstream.StreamSource `json:"sources"`
+
+	// Enable underlying stream compression.
+	// NOTE: Compression is supported for nats-server 2.10.0+
+	Compression bool `json:"compression"`
+}
+
 func NewBucketState(kvs jetstream.KeyValueStatus) BucketState {
 	return BucketState{
 		Bucket:       kvs.Bucket(),
@@ -92,11 +111,12 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	bucketConfig := jetstream.KeyValueConfig{}
+	bucketConfig := BucketConfig{}
 	if err := c.BodyParser(&bucketConfig); err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	kv, err := js.CreateKeyValue(c.Context(), bucketConfig)
+	jestreamConfig := a.parseBucketConfig(bucketConfig)
+	kv, err := js.CreateKeyValue(c.Context(), jestreamConfig)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -245,4 +265,22 @@ func (a *App) handlePurgeKey(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	return c.SendStatus(204)
+}
+
+func (a *App) parseBucketConfig(bc BucketConfig) jetstream.KeyValueConfig {
+	return jetstream.KeyValueConfig{
+		Bucket:       bc.Bucket,
+		Description:  bc.Description,
+		MaxValueSize: bc.MaxValueSize,
+		History:      bc.History,
+		TTL:          bc.TTL,
+		MaxBytes:     bc.MaxBytes,
+		Storage:      bc.Storage,
+		Replicas:     bc.Replicas,
+		Placement:    bc.Placement,
+		RePublish:    bc.RePublish,
+		Mirror:       bc.Mirror,
+		Sources:      bc.Sources,
+		Compression:  bc.Compression,
+	}
 }
