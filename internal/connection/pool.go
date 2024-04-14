@@ -117,6 +117,8 @@ func appendAuthOption(connection *Connection, options []nats.Option) []nats.Opti
 		return append(options, nats.UserInfo(activeAuth.Username, activeAuth.Password))
 	case AuthModeJwt:
 		return append(options, nats.UserJWTAndSeed(activeAuth.Jwt, activeAuth.NKeySeed))
+	case AuthModeJwtBearer:
+		return append(options, nats.UserJWT(func() (string, error) { return activeAuth.Jwt, nil }, func([]byte) ([]byte, error) { return []byte{}, nil }))
 	case AuthModeCredsFile:
 		return append(options, nats.UserCredentials(activeAuth.Creds))
 	}

@@ -34,7 +34,7 @@ Auth {
 	password?: string
 	token?: string
 	jwt?: string
-	nkey?: string
+	n_key_seed?: string
 	creds?: string
     active: boolean 
 }
@@ -50,8 +50,10 @@ AUTH_MODE {
 	USER_PASSWORD = "auth_user_password",
 	// use jwt and nkey fields
 	JWT = "auth_jwt",
+    // use a jwt token as bearer
+    BEARER_JWT = "auth_jwt_bearer",
 	// use creds field (local path to a file)
-	CREDS_FILE = "auth_creds_file",
+	CREDS_FILE = "auth_creds_file"
 }
 ```
 
