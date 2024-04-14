@@ -1,5 +1,5 @@
 import LogIcon from "@/icons/LogIcon"
-import NuiIcon from "@/icons/NUIIcon"
+import NuiIcon from "@/icons/NuiIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import ConnectionIcon from "@/icons/cards/ConnectionIcon"
