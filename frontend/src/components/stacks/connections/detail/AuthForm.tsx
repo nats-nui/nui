@@ -24,7 +24,7 @@ const AuthForm: FunctionComponent<Props> = ({
 	const [authEdit, setAuthEdit] = useState<Auth>(auth)
 	useEffect(() => {
 		setAuthEdit(auth ?? {
-			mode: AUTH_MODE.TOKEN, creds: "", jwt: "", nkey: "", password: "", token: "", username: ""
+			mode: AUTH_MODE.TOKEN, creds: "", jwt: "", n_key_seed: "", password: "", token: "", username: ""
 		})
 	}, [auth])
 
@@ -72,8 +72,15 @@ const AuthForm: FunctionComponent<Props> = ({
 					readOnly={readOnly}
 				/></div>
 				<div className="lyt-v"><div className="lbl-prop">NKEY</div><TextInput
-					value={authEdit.nkey}
-					onChange={nkey => handlePropChange({ nkey })}
+					value={authEdit.n_key_seed}
+					onChange={n_key_seed => handlePropChange({ n_key_seed })}
+					readOnly={readOnly}
+				/></div>
+			</>,
+			[AUTH_MODE.BEARER_JWT]: <>
+				<div className="lyt-v"><div className="lbl-prop">BEARER JWT</div><TextInput
+					value={authEdit.jwt}
+					onChange={jwt => handlePropChange({ jwt })}
 					readOnly={readOnly}
 				/></div>
 			</>,
