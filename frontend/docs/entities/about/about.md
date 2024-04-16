@@ -11,8 +11,8 @@ GET /api/about
 ### RESPONSE
 ```typescript
 {
-    currentVersion: string;
-    latestVersion: string;
-    shouldUpdate: string;
+    current_version: string;
+    latest_version: string;
+    should_update: string;
 }
 ```

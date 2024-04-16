@@ -73,16 +73,16 @@ const DrawerGroup: FunctionComponent = () => {
 				>
 					<CompressAllIcon />
 				</IconButton>
-				<div className="bars-alert-bg-1" style={{ flex: 1 }} />
-				<div className={cls.handle_label}>DRAWER</div>
-				<div className="bars-alert-bg-1" style={{ flex: 1 }} />
+				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1 }} />
+				<div className={cls.handle_label} draggable={false}>DRAWER</div>
+				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1 }} />
 			</div>
 
 			<div
 				className={cls.handle_container}
 				style={cssFixed(width, animation)}
 			>
-				<CardsGroup cardsStore={drawerCardsSo}/>
+				<CardsGroup cardsStore={drawerCardsSo} />
 			</div>
 
 			{/* <DropArea index={-1} /> */}

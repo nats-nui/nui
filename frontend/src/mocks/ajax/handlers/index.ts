@@ -4,6 +4,7 @@ import stream from "./stream"
 import consumer from "./consumer"
 import kventry from "./kventry"
 import bucket from "./bucket"
+import about from "./about"
 
 
 export const handlers = [
@@ -13,4 +14,5 @@ export const handlers = [
 	...consumer,
 	...kventry,
 	...bucket,
+	...about,
 ]
