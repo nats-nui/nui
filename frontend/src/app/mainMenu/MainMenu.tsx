@@ -7,6 +7,7 @@ import Button from "../../components/buttons/Button"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
 import docsSo from "@/stores/docs"
+import AboutButton from "./AboutButton"
 
 
 interface Props {
@@ -30,11 +31,16 @@ const MainMenu: FunctionComponent<Props> = ({
 	const views = menuSa.all
 
 	return <div style={style} className={cls.root}>
+
 		<StoreButton
+			label="ALL"
 			store={docSo.state.fixedViews[0]}
 		/>
+
 		{views.map((view) => (
-			<StoreButton key={view.state.uuid} store={view} />
+			<StoreButton key={view.state.uuid} 
+				store={view} 
+			/>
 		))}
 
 		<div style={{ flex: 1 }} />
@@ -46,14 +52,14 @@ const MainMenu: FunctionComponent<Props> = ({
 			<Button children="RESET" onClick={() => ClearSession()} />
 		</>}
 		{/* *** DEBUG *** */}
-
 		
 		<StoreButton
+			label="LOG"
 			store={docSo.state.fixedViews[1]}
 		/>
-		<StoreButton
-			store={docSo.state.fixedViews[2]}
-		/>
+
+		<AboutButton />
+
 	</div>
 }
 

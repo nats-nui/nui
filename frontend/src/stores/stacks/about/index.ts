@@ -17,6 +17,7 @@ const setup = {
 		width: 150,
 		colorVar: COLOR_VAR.CYAN,
 		pinnable: false,
+		
 		//#endregion
 	},
 

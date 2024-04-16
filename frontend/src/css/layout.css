@@ -36,7 +36,7 @@
 	margin-top: 3px;
 }
 
-/* CMPONENTS: TOGGLE */
+/* HORIZONTAL COMPONENTS: TOGGLE */
 .cmp-h {
 	display: flex; 
 	flex: 1;
@@ -58,3 +58,4 @@
 	padding-top: 10px;
     margin-top: 10px;
 }
+

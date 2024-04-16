@@ -27,7 +27,7 @@ const AboutView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleUpdate = (e) => {
-		console.log("UPDATE")
+		window.open("https://natsnui.app/downloads/")
 	}
 
 	// RENDER
@@ -38,14 +38,26 @@ const AboutView: FunctionComponent<Props> = ({
 	>
 		<div className={cls.logo} />
 
-		<div>CURRENT</div>
-		<div>{current}</div>
-		<div>LAST</div>
-		<div>{latest}</div>
+		<div className="lyt-form">
 
-		<Button
-			onClick={handleUpdate}
-		>UPDATE</Button>
+			<div className="lyt-v">
+				<div className="lbl-prop">CURRENT</div>
+				<div className="lbl-input-readonly">{current}</div>
+			</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">LAST</div>
+				<div className="lbl-input-readonly">{latest}</div>
+			</div>
+
+			<div className={cls.divider} />
+			{/* <div className="bars-alert-bg-1" style={{ height: 20 }} /> */}
+
+			<Button className={cls.btt}
+				onClick={handleUpdate}
+			>UPDATE</Button>
+
+		</div>
 
 	</FrameworkCard>
 }

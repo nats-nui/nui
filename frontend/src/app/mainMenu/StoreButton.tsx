@@ -1,19 +1,22 @@
 import { deckCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { ViewStore } from "@/stores/stacks/viewBase"
-import { DOC_TYPE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import MenuButton from "./MenuButton"
 import CardIcon from "../../components/cards/CardIcon"
+import MenuButton from "./MenuButton"
 
 
 
 interface Props {
+	label?: string
+	badge?: React.ReactNode
 	store?: ViewStore
 }
 
 const StoreButton: FunctionComponent<Props> = ({
+	label,
+	badge,
 	store,
 }) => {
 
@@ -31,17 +34,13 @@ const StoreButton: FunctionComponent<Props> = ({
 	const type = store.state.type
 	const cls = `var${store.state.colorVar}`
 	const canDelete = store.state.pinnable
-	const label = { 
-		[DOC_TYPE.CONNECTIONS]: "ALL", 
-		[DOC_TYPE.LOGS]: "LOGS",
-		[DOC_TYPE.ABOUT]: "ABOUT",
-	}[type] ?? null
+	if ( !label ) label = store.getSubTitle()
 
 	return (
 		<MenuButton className={cls}
 			title={store.getTitle()}
-			subtitle={store.getSubTitle()}
-			label={label}
+			subtitle={label}
+			badge={badge}
 			onClick={() => handleOpenStoreClick(store)}
 			onClose={canDelete ? () => handleDeleteButtonClick(store) : null}
 		>

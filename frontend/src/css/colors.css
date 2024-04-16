@@ -28,6 +28,8 @@
 	--bg-2: #2e2e2e;
 }
 
+/* #region CARD FOCUS */
+
 .var0.card-focus {
 	outline: 2px solid var(--bg-default);
 }
@@ -48,18 +50,15 @@
 	outline: 2px solid var(--var-4);
 }
 
+/* #endregion */
+
+
+
+/* #region VARS COLORS  */
+
 .color-text {
 	color: var(--text-bg);
 }
-
-.bars-alert-bg {
-	background: repeating-linear-gradient(135deg, transparent, transparent 10px, #000 10px, #000 20px)
-}
-
-.bars-alert-bg-1 {
-	background: repeating-linear-gradient(135deg, transparent, transparent 10px, var(--var-1) 10px, var(--var-1) 20px)
-}
-
 
 /* --- */
 
@@ -189,7 +188,20 @@
 	border-color: var(--var-5);
 }
 
+/* #endregion */
 
+
+
+.bars-alert-bg {
+	background: repeating-linear-gradient(135deg, transparent, transparent 10px, #000 10px, #000 20px)
+}
+.bars-alert-bg-c {
+	background: repeating-linear-gradient(135deg, transparent, transparent 10px, currentColor 10px, currentColor 20px)
+}
+
+.bars-alert-bg-1 {
+	background: repeating-linear-gradient(135deg, transparent, transparent 10px, var(--var-1) 10px, var(--var-1) 20px)
+}
 
 
 /** 
