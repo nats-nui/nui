@@ -24,20 +24,6 @@
 	font-weight: 700;
 }
 
-.cancel {
-	cursor: pointer;
-	display: flex; 
-	align-items: center; 
-	justify-content: center;
-	position: absolute; 
-	right: -7px; 
-	top: -5px;
-	border-radius: 50%;
-	width: 18px; 
-	height: 18px;
-	background-color: rgb(49, 49, 49);
-}
-
 .label {
 	width: 100%;
 	font-size: 10px;
@@ -56,4 +42,23 @@
 
 .tooltip_sub {
 	font-weight: 600;
+}
+
+.badge {
+	display: flex; 
+	align-items: center; 
+	justify-content: center;
+	position: absolute; 
+	left: -8px; 
+	top: -8px;
+	border-radius: 50%;
+	width: 18px; 
+	height: 18px;
+	font-size: 10px;
+	box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 2px 0px;
+}
+
+.cancel {
+	cursor: pointer;
+	background-color: rgb(49, 49, 49);
 }

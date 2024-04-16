@@ -8,8 +8,8 @@ import cls from "./MenuButton.module.css"
 interface Props {
 	title: string
 	subtitle?: string
-	label?: string
 	children?: React.ReactNode
+	badge?: React.ReactNode
 	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -21,8 +21,8 @@ interface Props {
 const MenuButton: FunctionComponent<Props> = ({
 	title,
 	subtitle,
-	label,
 	children,
+	badge,
 	className,
 	onClick,
 	onClose,
@@ -47,9 +47,15 @@ const MenuButton: FunctionComponent<Props> = ({
 				</div>}
 				onMouseOver={enter => setEnter(enter)}
 			>
-				{showCloseBtt && <div className={cls.cancel}
+				{/* BADGE BUTTON CANCEL */}
+				{showCloseBtt && <div className={`${cls.badge} ${cls.cancel}`}
 					onClick={onClose}
 				><CloseIcon /></div>}
+
+				{/* BADGE */}
+				{badge && <div className={`color-bg color-text ${cls.badge}`}
+					onClick={onClose}
+				>{badge}</div>}
 
 				<div onClick={onClick}>
 					{children}
@@ -57,7 +63,7 @@ const MenuButton: FunctionComponent<Props> = ({
 			</TooltipWrapCmp>
 
 			<div className={cls.label}>
-				{label ?? subtitle}
+				{subtitle}
 			</div>
 		</div>
 	)
