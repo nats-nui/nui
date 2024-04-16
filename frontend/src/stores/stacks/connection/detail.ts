@@ -6,7 +6,7 @@ import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
-import { LOAD_STATE, VIEW_SIZE } from "../utils"
+import { VIEW_SIZE } from "../utils"
 import { buildConnectionMessages } from "./utils/factory"
 
 

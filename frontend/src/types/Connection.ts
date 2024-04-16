@@ -13,7 +13,7 @@ export interface Auth {
 	password?: string
 	token?: string
 	jwt?: string
-	n_key_seed?: string
+	nKeySeed?: string
 	creds?: string
 	active?: boolean
 }
