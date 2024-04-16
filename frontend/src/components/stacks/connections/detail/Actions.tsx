@@ -3,10 +3,9 @@ import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { LOAD_STATE } from "@/stores/stacks/utils"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 
 
 
