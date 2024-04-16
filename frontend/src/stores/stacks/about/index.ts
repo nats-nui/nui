@@ -2,12 +2,17 @@ import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../viewBase"
+import aboutApi from "@/api/about"
+import { About } from "@/types/About"
 
 
 
 const setup = {
 
 	state: {
+
+		about: <About>null,
+
 		//#region VIEWBASE
 		width: 150,
 		colorVar: COLOR_VAR.CYAN,
@@ -29,14 +34,26 @@ const setup = {
 	},
 
 	actions: {
+
 		//#region VIEWBASE
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 		},
 		//#endregion
+
+		async fetch(_: void, store?: AboutStore) {
+			const about = await aboutApi.get({ store })
+			store.setAbout(about)
+		},
+
+		async fetchIfVoid(_: void, store?: AboutStore) {
+			if (!!store.state.about) return
+			await store.fetch()
+		},
 	},
 
 	mutators: {
+		setAbout: (about: About) => ({ about }),
 	},
 }
 
