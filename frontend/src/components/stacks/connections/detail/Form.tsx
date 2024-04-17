@@ -77,11 +77,12 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 			<EditList<string>
 				items={hosts}
 				onItemsChange={handleHostsChange}
-				placeholder="ex. demo.nats.io"
-				onNewItem={() => ""}
-				RenderRow={EditStringRow}
 				readOnly={inRead}
+				placeholder="ex. demo.nats.io"
+				
+				onNewItem={() => ""}
 				fnIsVoid={h => !h || h.trim().length == 0}
+				RenderRow={EditStringRow}
 			/>
 		</div>
 

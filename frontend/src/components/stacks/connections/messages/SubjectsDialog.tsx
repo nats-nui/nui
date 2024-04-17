@@ -1,6 +1,7 @@
 import TitleAccordion from "@/components/accordion/TitleAccordion"
 import Button from "@/components/buttons/Button"
 import IconToggle from "@/components/buttons/IconToggle"
+import FindInput from "@/components/input/FindInput"
 import EditList from "@/components/lists/EditList"
 import List, { RenderRowBaseProps } from "@/components/lists/List"
 import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
@@ -11,7 +12,6 @@ import dayjs from "dayjs"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import Dialog from "../../../dialogs/Dialog"
 import cls from "./SubjectsDialog.module.css"
-import FindInput from "@/components/input/FindInput"
 
 
 
@@ -78,10 +78,9 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			.filter(m => txt.length == 0 || m.subject?.toLowerCase().includes(txt))
 			.sort((s1, s2) => s2.counter - s1.counter)
 	}, [filter, msgSa.stats, msgSa.messages])
+	const noStats = !stats || stats.length == 0
 
 	return <Dialog
-		style={{ gap: 5 }}
-		timeoutClose={-1}
 		title={<div style={{ display: "flex", alignItems: "center" }}>
 			<IconToggle style={{ marginTop: 3, marginRight: 6 }}
 				check={allCheck}
@@ -89,48 +88,55 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			/>
 			SUBJECTS
 		</div>}
+		store={msgSo}
+
+		timeoutClose={-1}
 		width={250}
 		open={msgSa.subscriptionsOpen}
-		store={msgSo}
 		onClose={handleCancel}
 	>
-		<EditList<Subscription>
-			items={subscriptions}
-			onItemsChange={handleChangeSubs}
-			onNewItem={() => ({ subject: "", disabled: false, favorite: true })}
-			fnIsVoid={(item) => !(item?.subject) || item.subject.length == 0}
-			RenderRow={EditSubscriptionRow}
-		/>
+		<div className="lyt-form var-dialog">
 
-		<div className="cmp-h" style={{ margin: "15px 0px" }}>
-			<IconToggle
-				check={msgSa.noSysMessages}
-				onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
+			<EditList<Subscription>
+				items={subscriptions}
+				onItemsChange={handleChangeSubs}
+				onNewItem={() => ({ subject: "", disabled: false, favorite: true })}
+				fnIsVoid={(item) => !(item?.subject) || item.subject.length == 0}
+				RenderRow={EditSubscriptionRow}
 			/>
-			<div className="lbl-prop">DISCARDS SYSTEM MESSAGES</div>
+
+			<TitleAccordion title="STATS">
+				{!noStats &&
+					<FindInput
+						style={{ margin: "5px 0px", flex: 0 }}
+						value={filter}
+						onChange={text => setFilter(text)}
+					/>
+				}
+				<List<MessageStat>
+					className={cls.list}
+					items={stats}
+					onSelect={handleStatsSelect}
+					RenderRow={MessageStatRow}
+				/>
+			</TitleAccordion>
+
+			<div className="cmp-h" style={{ marginTop: 10 }}>
+				<IconToggle
+					check={msgSa.noSysMessages}
+					onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
+				/>
+				<div className="lbl-prop">DISCARDS SYSTEM MESSAGES</div>
+			</div>
+
+			<div className="var-dialog cmp-footer">
+				<Button children="OK" onClick={handleOk} />
+				<Button children="CANCEL" onClick={handleCancel} />
+				<div style={{ flex: 1 }} />
+				<Button children="CLEAR STATS" onClick={handleClearStats} />
+			</div>
+
 		</div>
-
-		<TitleAccordion title="STATS">
-			<FindInput
-				style={{ backgroundColor: "transparent", margin: "5px 0px", flex: 0 }}
-				value={filter}
-				onChange={text => setFilter(text)}
-			/>
-			<List<MessageStat>
-				className={cls.list}
-				items={stats}
-				onSelect={handleStatsSelect}
-				RenderRow={MessageStatRow}
-			/>
-		</TitleAccordion>
-
-		<div className="var-dialog cmp-footer">
-			<Button children="CANCEL" onClick={handleCancel} />
-			<Button children="OK" onClick={handleOk} />
-			<div style={{ flex: 1 }} />
-			<Button children="CLEAR STATS" onClick={handleClearStats} />
-		</div>
-
 	</Dialog>
 }
 

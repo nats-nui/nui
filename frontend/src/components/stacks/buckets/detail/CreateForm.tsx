@@ -132,6 +132,7 @@ const CreateForm: FunctionComponent<Props> = ({
 						items={bucket.placement?.tags}
 						onItemsChange={tags => handlePlacementPropChange({ tags })}
 						placeholder="ex. client or java"
+						
 						onNewItem={() => ""}
 						fnIsVoid={i => !i || i.trim().length == 0}
 						RenderRow={EditStringRow}

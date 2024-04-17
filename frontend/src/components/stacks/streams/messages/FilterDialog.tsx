@@ -10,6 +10,9 @@ import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
+import EditList from "@/components/lists/EditList"
+import EditStringRow from "@/components/rows/EditStringRow"
+import cls from "./FllterDialog.module.css"
 
 
 
@@ -32,36 +35,71 @@ const FilterDialog: FunctionComponent<Props> = ({
 	}, [strMsgSo.state.filtersOpen])
 
 	// HANDLER
-	const handleFilterPropChange = (prop: Partial<StreamMessagesFilter>) => setFilter({ ...filter, ...prop })
+	const handleFilterPropChange = (prop: Partial<StreamMessagesFilter>) => {
+		setFilter({ ...filter, ...prop })
+	}
 	const handleClose = () => {
 		strMsgSo.setFiltersOpen(false)
 	}
 	const handleApply = () => {
 		strMsgSo.setFiltersOpen(false)
-		strMsgSo.filterApply(filter)
+		strMsgSo.filterApply({ ...filter })
+	}
+	const handleCancel = () => {
+		strMsgSo.setFiltersOpen(false)
+	}
+	const handleChangeSubjectsCustom = (newSubjectsCustom: string[]) => {
+		strMsgSo.setSubjectsCustom(newSubjectsCustom)
+	}
+	const hadleFirstSeqClick = () => {
+		const first = strMsgSa.stream.state?.firstSeq
+		if (first == null) return
+		setFilter({ ...filter, startSeq: first })
+	}
+	const hadleLastSeqClick = () => {
+		const last = strMsgSa.stream.state?.lastSeq
+		if (last == null) return
+		setFilter({ ...filter, startSeq: last })
 	}
 
 	// RENDER
-	let subjects = useMemo(() => Object.keys(strMsgSa.stream?.state?.subjects ?? {}), [strMsgSa.stream?.state?.subjects])
+	const [subjects, counters] = useMemo(() => [
+		Object.keys(strMsgSa.stream?.state?.subjects ?? {}),
+		Object.values(strMsgSa.stream?.state?.subjects ?? {})
+	], [strMsgSa.stream?.state?.subjects])
+
 	if (!filter) return null
-	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 220
+
+	const width = subjects.length > 15 && subjects[13].length > 49 ? 400 : 250
+	const firstSeq = strMsgSa.stream.state?.firstSeq ?? 0
+	const lastSeq = strMsgSa.stream.state?.lastSeq ?? 0
 
 	return (
 		<Dialog
 			title="FILTERS"
 			store={strMsgSo}
+
+			timeoutClose={-1}
 			width={width}
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
 			<div className="lyt-form var-dialog">
+
 				<div className="cmp-h">
 					<IconToggle
 						check={!filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: false })}
 						trueIcon={<CheckRadioOnIcon />}
 					/>
-					<div className="lbl-prop">SEQUENCE START</div>
+					<div className="lbl-prop">START</div>
+					<div style={{ flex: 1 }} />
+					<div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+						[<Button onClick={hadleFirstSeqClick}>{firstSeq}</Button>
+						:
+						<Button onClick={hadleLastSeqClick}>{lastSeq}</Button>
+						]
+					</div>
 				</div>
 				<NumberInput
 					style={{ flex: 1 }}
@@ -92,29 +130,35 @@ const FilterDialog: FunctionComponent<Props> = ({
 					/>
 				</div>
 
-				{/* <div className="lyt-v">
-					<div className="lbl-prop">SUBJECTS OF THE STREAM</div>
-					<div className="lyt-quote">
-						<ListMultiWithFilter
-							items={subjects}
-							selects={filter.subjects}
-							onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
-						/>
-					</div>
-				</div> */}
-
 				<TitleAccordion title="SUBJECTS OF THE STREAM">
 					<ListMultiWithFilter
 						items={subjects}
 						selects={filter.subjects}
 						onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
+						renderRow={(item, index) => <div className={cls.sbj_row}>
+							<div className="lbl-prop">{item}</div>
+							<div className={cls.sbj_row_counter}>{counters[index]}</div>
+						</div>}
+					/>
+				</TitleAccordion>
+
+				<TitleAccordion title="CUSTOM SUBJECTS">
+					<EditList<string>
+						items={strMsgSa.subjectsCustom}
+						onItemsChange={handleChangeSubjectsCustom}
+
+						placeholder="ex. place01.* or sensors.>"
+						onNewItem={() => ""}
+						fnIsVoid={i => !i || i.trim().length == 0}
+						RenderRow={EditStringRow}
 					/>
 				</TitleAccordion>
 
 				<div className="cmp-footer">
-					<Button children="APPLY" onClick={handleApply} />
+					<Button children="OK" onClick={handleApply} />
+					<Button children="CANCEL" onClick={handleCancel} />
 				</div>
-				
+
 			</div>
 		</Dialog>
 	)

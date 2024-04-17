@@ -2,7 +2,7 @@ import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import DividerRow, { DIVIDER_VARIANT } from "@/components/formatters/divider/DividerRow"
-import FindInput from "@/components/input/FindInput"
+import FindInputHeader from "@/components/input/FindInputHeader"
 import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
@@ -60,7 +60,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={strMsgSo}
 		actionsRender={<>
-			<FindInput
+			<FindInputHeader
 				value={textFind}
 				onChange={handleSearchChange}
 			/>

@@ -116,6 +116,7 @@ const EditForm: FunctionComponent<Props> = ({
 				onItemsChange={subjects => handlePropChange({ subjects })}
 				placeholder="ex. orders.* or telemetry.>"
 				readOnly={inRead}
+				
 				onNewItem={() => ""}
 				fnIsVoid={i => !i || i.trim().length == 0}
 				RenderRow={EditStringRow}

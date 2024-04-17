@@ -2,7 +2,7 @@ import CloseIcon from "@/icons/CloseIcon"
 import FindIcon from "@/icons/FindIcon"
 import React, { FunctionComponent } from "react"
 import IconButton from "../buttons/IconButton"
-import cls from "./FindInput.module.css"
+import cls from "./FindInputHeader.module.css"
 import TextInput from "./TextInput"
 
 
@@ -11,14 +11,12 @@ interface Props {
 	value?: string
 	onChange?: (newValue: string) => void
 	style?: React.CSSProperties
-	className?: string
 }
 
-const FindInput: FunctionComponent<Props> = ({
+const FindInputHeader: FunctionComponent<Props> = ({
 	value,
 	onChange,
 	style,
-	className = "",
 }) => {
 	// STORE
 
@@ -30,11 +28,10 @@ const FindInput: FunctionComponent<Props> = ({
 
 	// RENDER
 	const haveValue = value?.length > 0
-	const clsRoot = `${cls.root} ${className}`
 
 	return (
 		<div
-			className={clsRoot}
+			className={`${cls.root} ${haveValue ? "color-br" : ""}`}
 			style={style}
 		>
 			<TextInput
@@ -58,4 +55,4 @@ const FindInput: FunctionComponent<Props> = ({
 	)
 }
 
-export default FindInput
+export default FindInputHeader

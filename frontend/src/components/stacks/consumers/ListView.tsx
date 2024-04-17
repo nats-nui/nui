@@ -1,5 +1,5 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import FindInput from "@/components/input/FindInput"
+import FindInputHeader from "@/components/input/FindInputHeader"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import Table from "@/components/table"
 import { ConsumersStore } from "@/stores/stacks/consumer"
@@ -40,7 +40,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
 				store={consumersSo}
 			/>
-			<FindInput
+			<FindInputHeader
 				value={consumersSa.textSearch}
 				onChange={text => consumersSo.setTextSearch(text)}
 			/>

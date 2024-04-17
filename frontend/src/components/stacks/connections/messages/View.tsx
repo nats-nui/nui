@@ -1,6 +1,6 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import FindInput from "@/components/input/FindInput"
+import FindInputHeader from "@/components/input/FindInputHeader"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
@@ -54,7 +54,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={msgSo}
 		actionsRender={<>
-			<FindInput
+			<FindInputHeader
 				value={textFind}
 				onChange={handleSearchChange}
 			/>
