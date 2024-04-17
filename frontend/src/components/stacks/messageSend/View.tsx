@@ -61,6 +61,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 		</>}
 	>
 		<div className="lyt-form" style={{ height: "100%" }}>
+			
 			<div className="lyt-v">
 				<div className="lbl-prop cliccable"
 					onClick={handleSubsClick}

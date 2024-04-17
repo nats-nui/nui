@@ -24,8 +24,8 @@ const ThemeDefault: Theme = {
 			{ bg: "#BBFB35", fg: "#393939" },
 			// cyan
 			{ bg: "#10F3F3", fg: "#393939" },
-			// magenta
-			{ bg: "#C220FA", fg: "#393939" },
+			// mint
+			{ bg: "#6affab", fg: "#393939" },
 			// yellow
 			{ bg: "#ebfb35", fg: "#393939", bg2: "#f9ffb3" },
 			// fuchsia

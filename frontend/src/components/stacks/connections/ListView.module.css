@@ -1,0 +1,21 @@
+.row {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+}
+
+.undefined {
+	background-color: grey;
+}
+
+.connected {
+	background-color: #37d300;
+}
+
+.reconnecting {
+	background-color: var(--var-4);
+}
+
+.disconnected {
+	background-color: var(--var-5);
+}

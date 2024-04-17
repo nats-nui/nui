@@ -9,6 +9,7 @@ import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import ElementRow from "../../rows/ElementRow"
+import cls from "./ListView.module.css"
 
 
 
@@ -38,18 +39,19 @@ const CnnListView: FunctionComponent<Props> = ({
 	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn.id)
 	const handleNew = () => cnnListSo.create()
 	const handleDelete = () => {
-		cnnSo.delete(selected)
+		cnnSo.delete(selectId)
 		cnnListSo.select(null)
 	}
 
 	// RENDER
 	const connnections = cnnSa.all
 	if (!connnections) return null
-	const selected = cnnListSa.select
-	const isSelected = (cnn: Connection) => cnn.id == cnnListSa.select
+	
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
 	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
+	const selectId = (cnnListSa.linked  as CnnDetailStore)?.state?.connection?.id
+	const isSelected = (cnn: Connection) => cnn.id == selectId
 
 	return <FrameworkCard
 		store={cnnListSo}
@@ -60,7 +62,7 @@ const CnnListView: FunctionComponent<Props> = ({
 				storeView={cnnListSo}
 			/>
 			<div style={{ flex: 1 }} />
-			{!!selected && <Button
+			{!!selectId && <Button
 				children="DELETE"
 				onClick={handleDelete}
 			/>}
@@ -75,7 +77,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			<ElementRow key={cnn.id}
 				title={getTitle(cnn)}
 				subtitle={getSubtitle(cnn)}
-				icon={<div style={cssLed(cnn.status ?? CNN_STATUS.UNDEFINED)} />}
+				icon={<div className={`${cls[cnn.status ?? CNN_STATUS.UNDEFINED]} ${cls.row}`} />}
 				selected={isSelected(cnn)}
 				onClick={() => handleSelect(cnn)}
 			/>
@@ -84,15 +86,3 @@ const CnnListView: FunctionComponent<Props> = ({
 }
 
 export default CnnListView
-
-const cssLed = (status: CNN_STATUS): React.CSSProperties => ({
-	width: 10, height: 10,
-	//border: "2px solid black",
-	borderRadius: "50%",
-	backgroundColor: {
-		[CNN_STATUS.UNDEFINED]: "grey",
-		[CNN_STATUS.CONNECTED]: "#37d300",
-		[CNN_STATUS.RECONNECTING]: layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
-		[CNN_STATUS.DISCONNECTED]: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
-	}[status],
-})
