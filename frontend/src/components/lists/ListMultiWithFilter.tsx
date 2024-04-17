@@ -1,11 +1,8 @@
-import IconButton from "@/components/buttons/IconButton"
 import IconToggle from "@/components/buttons/IconToggle"
-import TextInput from "@/components/input/TextInput"
-import { ListMemo } from "@/components/lists/List"
-import CloseIcon from "@/icons/CloseIcon"
-import FindIcon from "@/icons/FindIcon"
+import List from "@/components/lists/List"
 import { debounce } from "@/utils/time"
 import { FunctionComponent, useMemo, useState } from "react"
+import FindInput from "../input/FindInput"
 
 
 
@@ -13,12 +10,14 @@ interface Props {
 	items: string[],
 	selects: string[],
 	onChangeSelects: (items: string[]) => void
+	renderRow?: (item: string, index: number) => React.ReactNode
 }
 
 const ListMultiWithFilter: FunctionComponent<Props> = ({
 	items,
 	selects,
 	onChangeSelects,
+	renderRow = (item) => item
 }) => {
 
 	// STORE
@@ -42,7 +41,6 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 		setTxtSearch(value)
 		debounce(`text-find-list-multi}`, () => setSearch(value.trim().toLowerCase()), items.length > 1000 ? 2000 : 200)
 	}
-	const handleClear = () => handleSearchChange("")
 	const handleSelectAll = (check: boolean) => {
 		if (!check) {
 			onChangeSelects([])
@@ -65,32 +63,33 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 				check={allSelect}
 				onChange={handleSelectAll}
 			/>
-			<TextInput style={{ flex: 1, marginRight: 5 }}
+			<FindInput
 				value={txtSearch}
 				onChange={handleSearchChange}
 			/>
-			{haveValue ? (
-				<IconButton onClick={handleClear}><CloseIcon /></IconButton>
-			) : (
-				<FindIcon />
-			)}
 		</div>
 
 		{/* LIST */}
-		<ListMemo
+		<List
 			style={{ maxHeight: 400, overflowY: "auto" }}
 			items={itemsShow}
 			//items={Array.from({length:1000},(_,i)=>`item::${i}`)}
 			select={selects as any}
-			RenderRow={({ item }: { item: string }) => <div style={{ padding: '4px 6px',
-			display: 'flex',
-			alignItems: 'center',
-			gap: '4px'}}>
+
+			// RenderRow={({item}) => <div style={{ padding: '4px 6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+			// 	<IconToggle
+			// 		check={selects.indexOf(item) != -1}
+			// 		onChange={select => handleSubjectChange(item)}
+			// 	/>
+			// 	<div className="lbl-prop">{item}</div>
+			// </div>}
+
+			RenderRow2={(item, index) => <div style={{ padding: '4px 6px', display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
 				<IconToggle
 					check={selects.indexOf(item) != -1}
 					onChange={select => handleSubjectChange(item)}
 				/>
-				<div className="lbl-prop">{item}</div>
+				{renderRow(item, index)}
 			</div>}
 		/>
 
@@ -98,3 +97,21 @@ const ListMultiWithFilter: FunctionComponent<Props> = ({
 }
 
 export default ListMultiWithFilter
+
+
+
+// interface PropRow {
+// 	item: string
+// }
+
+// const Row: FunctionComponent<PropRow> = ({
+// 	item,
+// }) => {
+// 	return <div style={{ padding: '4px 6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+// 		<IconToggle
+// 			check={selects.indexOf(item) != -1}
+// 			onChange={select => handleSubjectChange(item)}
+// 		/>
+// 		<div className="lbl-prop">{item}</div>
+// 	</div>
+// }

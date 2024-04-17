@@ -45,7 +45,9 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 
 	let query = !filter.byTime ? `seq_start=${filter.startSeq.toString()}&` : `time_start=${filter.startTime.toString()}&`
 	query += filter.interval != null ? `interval=${filter.interval.toString()}&` : ""
-	query += (!!filter.subjects && filter.subjects.length > 0) ? filter.subjects.map(s => `subjects=${s}&`).join("") : ""
+	query += (!!filter.subjects && filter.subjects.length > 0) 
+		? `subjects=${filter.subjects.join(",")}` 
+		: ""
 
 	const messages: Message[] = await ajax.get(`connection/${connectionId}/stream/${streamName}/messages?${query}`, null, opt)
 	return messages.map(m => {

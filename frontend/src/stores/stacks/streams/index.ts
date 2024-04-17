@@ -79,6 +79,7 @@ const setup = {
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamsStore>store
 			const streams = await strApi.index(s.state.connectionId, { store, manageAbort: true })
+			streams
 			s.setAll(streams)
 			await loadBaseSetup.actions.fetch(_, store)
 		},
@@ -136,22 +137,22 @@ const setup = {
 		},
 
 		/** apertura della CARD CONSUMERS */
-		openConsumers(streamName: string, store?: StreamsStore) {
-			store.state.group.addLink({
-				view: buildConsumers(store.state.connectionId, store.getByName(streamName)),
-				parent: store,
-				anim: true
-			})
-		},
+		// openConsumers(streamName: string, store?: StreamsStore) {
+		// 	store.state.group.addLink({
+		// 		view: buildConsumers(store.state.connectionId, store.getByName(streamName)),
+		// 		parent: store,
+		// 		anim: true
+		// 	})
+		// },
 
 		/** apertura della CARD MESSAGES */
-		openMessages(streamName: string, store?: StreamsStore) {
-			store.state.group.addLink({
-				view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)),
-				parent: store,
-				anim: true
-			})
-		},
+		// openMessages(streamName: string, store?: StreamsStore) {
+		// 	store.state.group.addLink({
+		// 		view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)),
+		// 		parent: store,
+		// 		anim: true
+		// 	})
+		// },
 	},
 
 	mutators: {

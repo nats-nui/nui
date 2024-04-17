@@ -1,7 +1,7 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
-import FindInput from "@/components/input/FindInput"
+import FindInputHeader from "@/components/input/FindInputHeader"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import VTable from "@/components/table/VTable"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
@@ -51,7 +51,7 @@ const KVEntryListView: FunctionComponent<Props> = ({
 				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
 				store={kventriesSo}  
 			/>
-			<FindInput
+			<FindInputHeader
 				value={kventriesSa.textSearch}
 				onChange={text => kventriesSo.setTextSearch(text)}
 			/>

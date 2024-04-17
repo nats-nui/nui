@@ -1,7 +1,7 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertDialog from "@/components/dialogs/AlertDialog"
-import FindInput from "@/components/input/FindInput"
+import FindInputHeader from "@/components/input/FindInputHeader"
 import OptionsCmp from "@/components/options/OptionsCmp"
 import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx"
 import Table from "@/components/table"
@@ -49,7 +49,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
 				store={streamsSo}
 			/>
-			<FindInput
+			<FindInputHeader
 				value={streamsSa.textSearch}
 				onChange={text => streamsSo.setTextSearch(text)}
 			/>

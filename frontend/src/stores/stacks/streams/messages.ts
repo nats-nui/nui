@@ -29,6 +29,7 @@ const setup = {
 			startSeq: null,
 			startTime: null,
 		},
+		subjectsCustom: <string[]>[],
 		/** DIALOG FILTER aperta */
 		filtersOpen: false,
 
@@ -163,8 +164,11 @@ const setup = {
 			}
 			store.setFilter(filter)
 
+			const filterToSend = {...filter}
+			filterToSend.subjects = [...filter.subjects, ...store.state.subjectsCustom]
+
 			// chiedo al BE 
-			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filter, { store })
+			const msgs = await strApi.messages(store.state.connectionId, store.state.stream.config.name, filterToSend, { store })
 			store.state.rangeTop = filter.startSeq ?? msgs?.[0]?.seqNum
 			store.setMessages(msgs)
 		},
@@ -197,6 +201,7 @@ const setup = {
 			globalInterval = filter.interval
 			return { filter }
 		},
+		setSubjectsCustom: (subjectsCustom: string[]) => ({ subjectsCustom }),
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
 	},
 }

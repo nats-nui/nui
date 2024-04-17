@@ -72,18 +72,18 @@ const setup = {
 			state.allStreams = data.allStreams
 			state.editState = data.editState
 		},
-		onLinked: (_: void, store?: ViewStore) => {
-			const cnnStore = store as StreamStore
-			// se per questo TYPE c'era un LINK preferienziale aprto lo apre
-			const options = docSo.state.cardOptions[store.state.type]
-			store.state.docAniDisabled = true
-			if (options == DOC_TYPE.CONSUMERS) {
-				cnnStore.openConsumers()
-			} else if (options == DOC_TYPE.STREAM_MESSAGES) {
-				cnnStore.openMessages()
-			}
-			store.state.docAniDisabled = false
-		},
+		// onLinked: (_: void, store?: ViewStore) => {
+		// 	const cnnStore = store as StreamStore
+		// 	// se per questo TYPE c'era un LINK preferienziale aprto lo apre
+		// 	const options = docSo.state.cardOptions[store.state.type]
+		// 	store.state.docAniDisabled = true
+		// 	if (options == DOC_TYPE.CONSUMERS) {
+		// 		cnnStore.openConsumers()
+		// 	} else if (options == DOC_TYPE.STREAM_MESSAGES) {
+		// 		cnnStore.openMessages()
+		// 	}
+		// 	store.state.docAniDisabled = false
+		// },
 
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamStore>store
@@ -102,6 +102,16 @@ const setup = {
 			if (!store.state.allStreams) {
 				await store.fetchAllStreams()
 			}
+
+
+			const options = docSo.state.cardOptions[store.state.type]
+			store.state.docAniDisabled = true
+			if (options == DOC_TYPE.CONSUMERS) {
+				store.openConsumers()
+			} else if (options == DOC_TYPE.STREAM_MESSAGES) {
+				store.openMessages()
+			}
+			store.state.docAniDisabled = false
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
 			const parent = store.getParentList()

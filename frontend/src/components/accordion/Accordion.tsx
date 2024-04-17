@@ -1,5 +1,4 @@
-import { ANIM_TIME_CSS } from "@/types"
-import React, { FunctionComponent, useEffect, useLayoutEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useLayoutEffect, useRef } from "react"
 import cls from "./Accordion.module.css"
 
 

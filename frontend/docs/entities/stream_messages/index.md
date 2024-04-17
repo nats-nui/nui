@@ -25,7 +25,8 @@ message sequence number to start from
 numebr of messages to retrieve (to allow pagination)
  
 - `subjects`  
-filter messages by subject (only stream subject are allowed)
+filter messages by subject.  
+concatenated into a single string divided with ","
 
 
 ### BODY
