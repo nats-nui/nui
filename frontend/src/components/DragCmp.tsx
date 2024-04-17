@@ -1,9 +1,9 @@
 import mouseSo, { MouseState } from "@/stores/mouse"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
-import { ANIM_TIME } from "../types"
 import { Position } from "../stores/mouse/utils"
-import layoutSo from "@/stores/layout"
+import { ANIM_TIME } from "../types"
+import cls from "./DragCmp.module.css"
 
 
 
@@ -28,31 +28,19 @@ const DragCmp: FunctionComponent = () => {
 	// RENDER
 	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
 	const pos = mouseSa.position
+	const clsRoot = `var${variant} color-bg color-text ${cls.root} ${inShow ? cls.show : ""} ${hide ? cls.hide : ""}`
 
-	return <div style={cssRoot(variant, pos, inShow, hide)}>
+	return <div
+		className={clsRoot}
+		style={cssRoot(pos)}
+	>
 		{mouseSa.drag?.srcView?.getTitle() ?? "???"}
 	</div>
 }
 
 export default DragCmp
 
-const cssRoot = (variant:number, pos:Position, inShow:boolean, hide:boolean ):React.CSSProperties => ({
-	pointerEvents: "none",
-	position: 'absolute',
-	zIndex: 99999,
-	transition: 'opacity 1s',
-	fontSize: 14,
-	fontWeight: 700,
-	padding: "3px 8px",
-	borderRadius: 10,
-
-	backgroundColor: layoutSo.state.theme.palette.var[variant].bg,
-	color: layoutSo.state.theme.palette.var[variant].fg,
-	boxShadow: layoutSo.state.theme.shadows[0],
-
-	transform: "translate(-50%, -30px)",
+const cssRoot = (pos: Position): React.CSSProperties => ({
 	left: pos?.x,
 	top: pos?.y,
-	opacity: inShow ? 1 : 0,
-	visibility: hide ? "hidden" : null
 })

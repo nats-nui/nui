@@ -1,11 +1,11 @@
-import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { CardsState } from "@/stores/docs/cards"
+import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
 import { useStore, useStoreNext } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import PolymorphicCard from "./PolymorphicCard"
 import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
-import { CardsState } from "@/stores/docs/cards"
 
 
 
@@ -78,18 +78,5 @@ const RootCard: FunctionComponent<Props> = ({
 		</div>
 	</div>
 }
-
-// const RootCard = React.memo(
-// 	RootCmpCard,
-// 	//(prev, curr) => prev.view?.state == curr.view?.state && prev.deep == curr.deep
-// 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
-// )
-
-// const RootCardMemo = React.memo(
-// 	RootCmpCard,
-// 	(prev, curr) => prev.view == curr.view && prev.deep == curr.deep
-// )
-
-// const RootCard = RootCmpCard
 
 export default RootCard

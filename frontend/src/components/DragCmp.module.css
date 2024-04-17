@@ -1,0 +1,23 @@
+.root {
+	pointer-events: none;
+	position: absolute;
+	z-index: 99999;
+	transition: opacity 1s;
+	font-size: 14px;
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 10px;
+
+	transform: translate(-50%, -30px);
+
+	opacity: 0;
+	box-shadow: rgba(0, 0, 0, 0.4) 1px 1px 0px 0px;
+}
+
+.show {
+	opacity: 1;
+}
+
+.hide {
+	visibility: hidden;
+}

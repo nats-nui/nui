@@ -25,6 +25,7 @@ const ShowForm: FunctionComponent<Props> = ({
 	if (!bucket) return null
 
 	return <div className="lyt-form">
+		
 		<div className="lbl-prop-title">BUCKET</div>
 
 		<div className="lyt-v">

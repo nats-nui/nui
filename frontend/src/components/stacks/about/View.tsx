@@ -51,7 +51,6 @@ const AboutView: FunctionComponent<Props> = ({
 			</div>
 
 			<div className={cls.divider} />
-			{/* <div className="bars-alert-bg-1" style={{ height: 20 }} /> */}
 
 			<Button className={cls.btt}
 				onClick={handleUpdate}
