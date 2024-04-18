@@ -267,9 +267,10 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 			return a.logAndFiberError(c, err, 500)
 		}
 		msgs = append(msgs, ws.NatsMsg{
-			Subject: msg.Subject(),
-			SeqNum:  metadata.Sequence.Stream,
-			Payload: msg.Data(),
+			Subject:    msg.Subject(),
+			SeqNum:     metadata.Sequence.Stream,
+			ReceivedAt: metadata.Timestamp,
+			Payload:    msg.Data(),
 		})
 	}
 	_ = stream.DeleteConsumer(c.Context(), config.Name)
