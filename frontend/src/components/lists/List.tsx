@@ -11,7 +11,7 @@ export interface RenderRowBaseProps<T> {
 interface Props<T> {
 	items: T[]
 	RenderRow?: FunctionComponent<RenderRowBaseProps<T>>
-	RenderRow2?: (item: T, index:number) => React.ReactNode
+	RenderRow2?: (item: T, index: number) => React.ReactNode
 	readOnly?: boolean
 	height?: number
 	/** indice selezionato */
@@ -51,20 +51,28 @@ function List<T>({
 		className={className}
 		style={{ ...cssContainer(height), ...style }}
 	>
-		{items.map((item, index) =>
-			<ListRow key={index}
+		{items.map((item, index) => {
+
+			if (RenderRow2) {
+				const row = RenderRow2(item, index)
+				if ( !row ) return null
+				return <ListRow key={index}
+					onClick={(e) => handleSelect(index, e)}
+					readOnly={readOnly}
+					isSelect={isSelect(index)}
+				>{row}</ListRow>
+			}
+
+			// [II] DA ELIMINARE
+			return <ListRow key={index}
 				onClick={(e) => handleSelect(index, e)}
 				readOnly={readOnly}
 				isSelect={isSelect(index)}
 			>
-				{RenderRow2 ? RenderRow2(item, index) : (
-					<RenderRow
-						item={item}
-						isSelect={isSelect(index)}
-					/>
-				)}
-
+				<RenderRow item={item} isSelect={isSelect(index)} />
 			</ListRow>
+
+		}
 		)}
 	</div>
 }
@@ -80,6 +88,6 @@ const cssContainer = (height: number): React.CSSProperties => ({
 
 export const ListMemo = React.memo(
 	List,
-	(prev, curr) => prev.items == curr.items && prev.readOnly == curr.readOnly && prev.select == curr.select && prev.RenderRow2 == curr.RenderRow2 
+	(prev, curr) => prev.items == curr.items && prev.readOnly == curr.readOnly && prev.select == curr.select && prev.RenderRow2 == curr.RenderRow2
 )
 

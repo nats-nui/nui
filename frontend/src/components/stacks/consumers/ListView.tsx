@@ -1,6 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInputHeader from "@/components/input/FindInputHeader"
-import OptionsCmp from "@/components/options/OptionsCmp"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 import Table from "@/components/table"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"

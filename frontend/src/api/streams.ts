@@ -2,6 +2,7 @@ import ajax, { CallOptions } from "@/plugins/AjaxService";
 import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter";
 import { Message } from "@/types/Message";
 import { StreamConfig, StreamInfo } from "@/types/Stream";
+import { snakeToCamel } from "@/utils/object";
 
 
 
@@ -12,7 +13,12 @@ function index(connectionId: string, opt?: CallOptions): Promise<StreamInfo[]> {
 
 /** GET */
 function get(connectionId: string, streamName: string, opt?: CallOptions): Promise<StreamInfo> {
-	return ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
+	lkòdlòsljdlò
+	opt.noCamel = true
+	const res:StreamInfo = ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
+	const resCamel = snakeToCamel(res)
+	resCamel.
+	return 
 }
 
 /** DELETE */
@@ -36,7 +42,10 @@ function update(connectionId: string, stream: StreamConfig, opt?: CallOptions): 
 	if (!connectionId || !stream) return
 	return ajax.post(`connection/${connectionId}/stream/${stream.name}`, stream, opt)
 }
-/** MESSAGES */
+
+/** MESSAGES 
+ * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/stream_messages/index.md
+*/
 async function messages(connectionId: string, streamName: string, filter: StreamMessagesFilter, opt?: CallOptions): Promise<Message[]> {
 	if (!connectionId || !streamName || !filter
 		|| (filter.byTime && filter.startTime == null)

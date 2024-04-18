@@ -8,9 +8,9 @@ const connections:Connection[] = [
 		name: "conn 1",
 		hosts: ["localhost:3000"],
 		subscriptions: [
-			{ "subject": "pippo" },
-			{ "subject": "pluto" },
-			{ "subject": "paperino" },
+			{ "subject": "camelCase" },
+			{ "subject": "snake_case" },
+			{ "subject": "kebab-case" },
 		],
 		auth: [
 			{ mode: AUTH_MODE.CREDS_FILE, creds: "myfle.cred" }

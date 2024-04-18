@@ -1,16 +1,21 @@
 :root {
 
 	--var-0: rgba(0, 0, 0, .4);
+
 	/* CONNECTIONS */
 	--var-1: #BBFB35;
+
 	/* MESSAGES */
 	--var-2: #10F3F3;
 	/* BUCKETS KVENTRY */
+
 	--var-3: #6affab;
 	--var-3-l1: #b0ffd2;
+
 	/* STREAMS */
 	--var-4: #EBFB35;
 	--var-4-l1: #f9ffb3;
+
 	/* CONSUMER */
 	--var-5: #f374e6;
 	--var-5-l1: #F51DDF;

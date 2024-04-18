@@ -145,16 +145,19 @@ const setup = {
 			const startSeq = store.state.messages[0].seqNum - 1
 			const interval = -store.state.filter.interval
 			if (interval == 0 || startSeq <= store.state.stream.state.firstSeq) return 0
-			return store.fetchWithFilter({ startSeq, interval })
+			const subjects = [...store.state.filter.subjects, ...store.state.subjectsCustom]
+			return store.fetchWithFilter({ startSeq, interval, subjects })
 		},
 
 		fetchNext: async (_?: void, store?: StreamMessagesStore) => {
 			const startSeq = store.state.messages[store.state.messages.length - 1].seqNum + 1
 			const interval = store.state.filter.interval
 			if (interval == 0 /*|| startSeq >= store.state.stream.state.lastSeq*/) return 0
-			return store.fetchWithFilter({ startSeq, interval })
+			const subjects = [...store.state.filter.subjects, ...store.state.subjectsCustom]
+			return store.fetchWithFilter({ startSeq, interval, subjects })
 		},
 
+		/** applico il filtro ricaricando completamente tutti i messages */
 		filterApply: async (filter: StreamMessagesFilter, store?: StreamMessagesStore) => {
 
 			// normalizzo e setto il filtro

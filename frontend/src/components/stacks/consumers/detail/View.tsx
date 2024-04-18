@@ -3,7 +3,7 @@ import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ShowForm from "./ShowForm"
-import OptionsCmp from "@/components/options/OptionsCmp"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 
 
 
