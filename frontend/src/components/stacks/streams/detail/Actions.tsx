@@ -1,5 +1,5 @@
 import Button from "@/components/buttons/Button"
-import OptionsCmp from "@/components/options/OptionsCmp"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"

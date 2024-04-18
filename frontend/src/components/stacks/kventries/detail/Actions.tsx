@@ -1,6 +1,6 @@
 import Button from "@/components/buttons/Button"
 import IconButton from "@/components/buttons/IconButton"
-import OptionsCmp from "@/components/options/OptionsCmp"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 import FormatAction from "@/components/editor/FormatAction"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"

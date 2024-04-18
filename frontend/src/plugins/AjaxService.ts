@@ -26,6 +26,8 @@ export interface CallOptions {
 	signal?: AbortSignal
 	/** se true setto nello store l'oggetto per l'abort */
 	manageAbort?: boolean
+	/** non restituire trasformato in camelCase */
+	noCamel?: boolean
 }
 
 const httpUrlBuilder = () => {
@@ -119,7 +121,8 @@ export class AjaxService {
 		let ret = null
 		let jsonError: string = null
 		try {
-			ret = snakeToCamel(await response.json())
+			const raw = await response.json()
+			ret = options.noCamel ? raw : snakeToCamel(raw)
 		} catch (e) {
 			jsonError = e.toString()
 		}

@@ -1,6 +1,6 @@
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
-import TimerCmp, { TIMER_STATE } from "@/components/options/TimerCmp"
+import TimerCmp, { TIMER_STATE } from "@/components/loaders/TimerCmp"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import CloseIcon from "@/icons/CloseIcon"
@@ -12,6 +12,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo, useState } from "react"
 import IconButton from "../buttons/IconButton"
 import { ViewStore } from "@/stores/stacks/viewBase"
+import cls from "./OptionsCmp.module.css"
 
 
 
@@ -20,6 +21,8 @@ interface OptionSelect {
 	polling: number
 	mode: LOAD_MODE
 }
+
+
 
 const options: OptionSelect[] = [
 	{ label: "MANUAL", polling: 0, mode: LOAD_MODE.MANUAL },
@@ -49,7 +52,7 @@ const OptionsCmp: FunctionComponent<Props> = ({
 	storeView = storeView ?? store
 	const storeSa = useStore(store)
 	if (storeView != store) useStore(storeView)
-	
+
 	// HOOKs
 	const [dialogOpen, setDialogOpen] = useState(false)
 	const [optionSelIndex, setOptionSelIndex] = useState(0)
@@ -88,15 +91,16 @@ const OptionsCmp: FunctionComponent<Props> = ({
 		}[storeSa.loadingMode] ?? TIMER_STATE.STOP
 	}, [storeSa.loadingMode, storeSa.loadingState])
 	const timeout = storeSa.pollingTime
+	const haveParent = !!storeSa.parent
 	const inError = storeSa.loadingState == LOAD_STATE.ERROR
 	const inLoading = storeSa.loadingState == LOAD_STATE.LOADING
 	const inParentMode = storeSa.loadingMode == LOAD_MODE.PARENT
-
 	const color = inError ? "red" : (style.backgroundColor as string ?? "rgba(0,0,0,.4)")
 
 	return <>
 
-		<div style={{ ...cssRoot, ...style, backgroundColor: null, color }}
+		<div style={{ ...style, backgroundColor: null, color }}
+			className={`${cls.root}`}
 			onMouseEnter={() => setMouseEnter(true)}
 			onMouseLeave={() => setMouseEnter(false)}
 		>
@@ -107,13 +111,13 @@ const OptionsCmp: FunctionComponent<Props> = ({
 				onTimeout={handleTimeout}
 			/>
 
-			<div style={cssAcc(mouseEnter)} className="color-fg">
+			<div className={`${cls.btt} ${cls.btt_hover} color-fg`}>
 				<IconButton
 					onClick={() => setDialogOpen(true)}
 				><ArrowRightIcon /></IconButton>
 			</div>
 
-			<div style={cssIconContainer} className={`ani-color ${mouseEnter ? "color-fg" : ""}`}
+			<div className={`${cls.circle} ani-color ${mouseEnter ? "color-fg" : ""}`}
 				onClick={handleCircleClick}
 			>
 				{inLoading ? (
@@ -140,7 +144,10 @@ const OptionsCmp: FunctionComponent<Props> = ({
 				items={options}
 				select={optionSelIndex}
 				onSelect={handleOptionsChange}
-				RenderRow={({ item }) => <div className="list-row">{item.label}</div>}
+				RenderRow2={(item) => item.mode == LOAD_MODE.PARENT && !haveParent
+					? null
+					: <div className={`list-row ${item.mode == LOAD_MODE.PARENT ? cls.divider : ""}`}>{item.label}</div>
+				}
 			/>
 		</Dialog>
 
@@ -148,25 +155,3 @@ const OptionsCmp: FunctionComponent<Props> = ({
 }
 
 export default OptionsCmp
-
-const cssRoot: React.CSSProperties = {
-	display: "flex",
-	cursor: "pointer",
-	position: "relative",
-	color: "rgba(0,0,0,.4)",
-	alignItems: "center",
-}
-
-const cssIconContainer: React.CSSProperties = {
-	width: 24,
-	height: 24,
-	position: "absolute",
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-}
-
-const cssAcc = (mouseEnter: boolean): React.CSSProperties => ({
-	width: mouseEnter ? 20 : 0,
-	transition: `width 400ms`,
-})

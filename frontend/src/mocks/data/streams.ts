@@ -37,7 +37,7 @@ const streams: any[] = [
             "deleted": null,
             "num_deleted": 40673,
             "num_subjects": 1,
-            "subjects": { "pippo": 3, "pluto": 4, "paperino": 5 },
+            "subjects": { "camelCase": 3, "snake_case": 4, "kebab-case": 5 },
         }
     },
     {

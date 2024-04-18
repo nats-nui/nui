@@ -1,5 +1,5 @@
 import Button from "@/components/buttons/Button"
-import CircularLoadingCmp from "@/components/options/CircularLoadingCmp"
+import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"

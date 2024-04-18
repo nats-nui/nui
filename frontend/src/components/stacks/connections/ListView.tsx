@@ -1,6 +1,6 @@
 import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import OptionsCmp from "@/components/options/OptionsCmp"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 import cnnSo from "@/stores/connections"
 import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { CnnListStore } from "@/stores/stacks/connection"

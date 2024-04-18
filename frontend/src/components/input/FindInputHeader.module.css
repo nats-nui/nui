@@ -6,7 +6,7 @@
 	padding: 1px 2px;
 	min-height: 18px;
 	border-radius: 5px;
-	border: 2px solid var(--bg-default);
+	border: 2px solid transparent;
 }
 
 .input {
