@@ -1,5 +1,7 @@
 package ws
 
+import "time"
+
 const (
 	subReqType           = "subscriptions_req"
 	natsMsgType          = "nats_msg"
@@ -29,9 +31,10 @@ func NewWsMessage(p Payload) *Response {
 }
 
 type NatsMsg struct {
-	Subject string `json:"subject"`
-	Payload []byte `json:"payload"`
-	SeqNum  uint64 `json:"seq_num"`
+	Subject    string    `json:"subject"`
+	Payload    []byte    `json:"payload"`
+	SeqNum     uint64    `json:"seq_num"`
+	ReceivedAt time.Time `json:"received_at"`
 }
 
 func (s NatsMsg) GetType() string {

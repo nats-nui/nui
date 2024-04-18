@@ -207,6 +207,11 @@ func (s *NuiTestSuite) TestStreamMessagesIndex() {
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(15)
 
+	// check that messages are ordered by sequence number
+	r.Value(0).Object().Value("payload").NotEqual("0001-01-01T00:00:00Z")
+	r.Value(0).Object().Value("seq_num").NotEqual("0001-01-01T00:00:00Z")
+	r.Value(1).Object().Value("received_at").NotEqual("0001-01-01T00:00:00Z")
+
 	// filter by interval
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
 		WithQueryString("interval=-5").
@@ -419,7 +424,12 @@ func (s *NuiTestSuite) TestPubSubWs() {
 
 	// both ws receive the connected event and the message published
 	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
-	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
+	r := ws.WithReadTimeout(500 * time.Millisecond).Expect().JSON().Object().Value("payload").Object()
+	r.Value("subject").String().IsEqual("sub1")
+	r.Value("payload").String().IsEqual("aGk=")
+	// received at is 0-value in core nats message
+	r.Value("received_at").IsEqual("0001-01-01T00:00:00Z")
+
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
 }
