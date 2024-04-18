@@ -12,13 +12,12 @@ function index(connectionId: string, opt?: CallOptions): Promise<StreamInfo[]> {
 }
 
 /** GET */
-function get(connectionId: string, streamName: string, opt?: CallOptions): Promise<StreamInfo> {
-	lkòdlòsljdlò
+async function get(connectionId: string, streamName: string, opt?: CallOptions): Promise<StreamInfo> {
 	opt.noCamel = true
-	const res:StreamInfo = ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
-	const resCamel = snakeToCamel(res)
-	resCamel.
-	return 
+	const resSnake = await ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
+	const resCamel: StreamInfo = snakeToCamel(resSnake)
+	resCamel.state.subjects = resSnake.state.subjects
+	return resCamel
 }
 
 /** DELETE */
