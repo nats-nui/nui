@@ -8,7 +8,7 @@
 }
 
 .draggable {
-	cursor: move;
+	cursor: grab;
 }
 
 .hover-hide {
