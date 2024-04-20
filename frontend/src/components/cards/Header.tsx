@@ -15,6 +15,7 @@ import React, { FunctionComponent, useMemo, useState } from "react"
 import TooltipWrapCmp from "../tooltip/TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
+import cls from "./Header.module.css"
 
 
 
@@ -81,7 +82,6 @@ const Header: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	//if (!store) return null
 	const inDrawer = store.state.group == drawerCardsSo
 	const inMenu = menuSo.find(store)
 	const [title, subTitle] = useMemo(() => [
@@ -102,18 +102,11 @@ const Header: FunctionComponent<Props> = ({
 	const showBttExpand = allCompact && !inRoot && enter
 	const showBttComprime = !allCompact && !inRoot && enter
 
-	// const tooltipContent = isCompact
-	// 	? <div>
-	// 		<div className="lbl-header-title">{title}</div>
-	// 		<div className="lbl-header-subtitle">{subTitle}</div>
-	// 	</div>
-	// 	: null
-
-
-
+	const clsTitle = `${cls.title} ${store.state.size == VIEW_SIZE.COMPACT ? cls.compact : ""}`
+	const clsRoot = `${cls.root} ${store.state.size == VIEW_SIZE.COMPACT ? cls.compact : ""}`
 
 	return (
-		<div style={cssRoot(store.state.size)}
+		<div className={clsRoot}
 			draggable={isDraggable}
 			onDragStart={handleDragStart}
 			onMouseEnter={() => setEnter(true)}
@@ -140,8 +133,8 @@ const Header: FunctionComponent<Props> = ({
 
 			{!isCompact && <>
 
-				<div style={cssTitle(store.state.size)}>
-					<div className="lbl-header-title cliccable"
+				<div className={clsTitle}>
+					<div className="lbl-header-title draggable"
 						onClick={handleFocus}
 					>{title}</div>
 					{subTitle && (
@@ -151,7 +144,7 @@ const Header: FunctionComponent<Props> = ({
 					)}
 				</div>
 
-				<div style={cssButtons}>
+				<div className={cls.buttons}>
 					<div style={{ display: "flex" }}>
 						{showBttExpand && (
 							<IconButton
@@ -196,35 +189,3 @@ const Header: FunctionComponent<Props> = ({
 }
 
 export default Header
-
-const cssRoot = (size: VIEW_SIZE): React.CSSProperties => ({
-	display: "flex",
-	height: 41,
-	flexDirection: size != VIEW_SIZE.COMPACT ? null : "column",
-	alignItems: "flex-start",
-})
-
-const cssTitle = (size: VIEW_SIZE): React.CSSProperties => {
-	if (size == VIEW_SIZE.COMPACT) {
-		return {
-			display: "flex", flex: 1,
-			writingMode: "vertical-lr",
-			flexDirection: "column-reverse",
-			alignSelf: "center",
-		}
-	} else {
-		return {
-			display: "flex", flex: 1,
-			flexDirection: "column",
-			width: 0,
-		}
-	}
-}
-
-const cssButtons: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "column",
-	alignItems: 'flex-end',
-	marginTop: 5,
-	marginRight: 5,
-}
