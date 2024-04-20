@@ -191,7 +191,6 @@ const setup = {
 				title: "MESSAGE DELETE",
 				body: "This action is irreversible.\nAre you sure you want to delete the MESSAGE?",
 			})) return
-
 			await strApi.messageRemove(store.state.connectionId, store.state.stream.config.name, message.seqNum, { store })
 			store.setMessages(store.state.messages.filter(m => m.seqNum != message.seqNum))
 		},

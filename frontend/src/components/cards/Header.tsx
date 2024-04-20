@@ -4,7 +4,7 @@ import CompressHIcon from "@/icons/CompressHIcon"
 import DetachIcon from "@/icons/DetachIcon"
 import ExpandHIcon from "@/icons/ExpandHIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
-import { drawerCardsSo } from "@/stores/docs/cards"
+import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { findParent, getRoot } from "@/stores/docs/utils/manage"
 import mouseSo from "@/stores/mouse"
@@ -58,7 +58,7 @@ const Header: FunctionComponent<Props> = ({
 		if (!inDrawer) {
 			store.state.group.move({ view: store, groupDest: drawerCardsSo })
 		} else {
-			//docSo.unanchor(store)
+			store.state.group.move({ view: store, groupDest: deckCardsSo})
 		}
 	}
 	const handleFocus = () => {

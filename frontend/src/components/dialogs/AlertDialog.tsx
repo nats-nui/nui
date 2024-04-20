@@ -43,11 +43,11 @@ const AlertDialog: FunctionComponent<Props> = ({
 			{alert.body}
 		</div>
 
-		<div className="bars-alert-bg" style={{ height: 25 }} />
+		<div className="bars-alert-bg" style={{ height: 20 }} />
 
 		<div
 			className="var-dialog"
-			style={{ display: "flex", gap: 15, marginTop: 5 }}
+			style={{ display: "flex", gap: 15, marginTop: 10 }}
 		>
 			<Button
 				children={alert.labelOk}

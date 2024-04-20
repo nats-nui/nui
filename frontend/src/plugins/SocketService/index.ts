@@ -85,7 +85,7 @@ export class SocketService {
 			title: "WS-CONNECTIONS",
 			body: `disconnect`
 		})
-		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.UNDEFINED })
+		changeConnectionStatus(this.cnnId, CNN_STATUS.UNDEFINED)
 		this.cnnId = null
 		this.reconnect.enabled = false
 		this.reconnect.stop()
@@ -119,7 +119,7 @@ export class SocketService {
 		try {
 			const msgStr = JSON.stringify(msg)
 			this.send(msgStr)
-		} catch ( err ) {
+		} catch (err) {
 			logSo.addError(err)
 		}
 	}
@@ -131,14 +131,14 @@ export class SocketService {
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		this.onOpen?.()
-		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.CONNECTED })
+		changeConnectionStatus(this.cnnId, CNN_STATUS.CONNECTED)
 	}
 
 	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
 		this.clear()
 		this.reconnect.start()
-		cnnSo.update({ id: this.cnnId, status: CNN_STATUS.RECONNECTING })
+		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
 
 	/** ricevo un messaggio dal BE */
@@ -150,7 +150,7 @@ export class SocketService {
 			case MSG_TYPE.CNN_STATUS:
 				payload = message.payload as PayloadStatus
 				this.onStatus?.(payload)
-				cnnSo.update({ id: this.cnnId, status: payload.status })
+				changeConnectionStatus(this.cnnId, payload.status)
 				break
 			case MSG_TYPE.NATS_MESSAGE:
 				if (!this.onMessage) return
@@ -184,3 +184,8 @@ export class SocketService {
 }
 
 
+function changeConnectionStatus(cnnId: string, status: CNN_STATUS) {
+	const cnn = cnnSo.getById(cnnId)
+	if (!cnn || cnn.status == status) return
+	cnnSo.update({ id: cnnId, status })
+}

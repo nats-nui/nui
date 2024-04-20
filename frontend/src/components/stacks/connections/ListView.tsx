@@ -11,6 +11,7 @@ import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
 import connections from "@/mocks/data/connections"
+import AlertDialog from "@/components/dialogs/AlertDialog"
 
 
 
@@ -39,13 +40,19 @@ const CnnListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn.id)
 	const handleNew = () => cnnListSo.create()
-	const handleDelete = () => {
+	const handleDelete = async () => {
+		if (!await cnnListSo.alertOpen({
+			title: "MESSAGE DELETE",
+			body: "This action is irreversible.\nAre you sure you want to delete the MESSAGE?",
+		})) return
 		cnnSo.delete(selectId)
 		cnnListSo.select(null)
 	}
 
 	// RENDER
-	const connnections = useMemo(() => cnnSa.all.sort((c1, c2) => c1.name.localeCompare(c2.name)), [cnnSa.all])
+	const connnections = useMemo(() => {
+		return cnnSo.state.all.sort((c1, c2) => c1.name.localeCompare(c2.name))
+	}, [cnnSa.all])
 	if (!connnections) return null
 
 	const getTitle = (cnn: Connection) => cnn.name
@@ -83,6 +90,9 @@ const CnnListView: FunctionComponent<Props> = ({
 				onClick={() => handleSelect(cnn)}
 			/>
 		))}
+
+		<AlertDialog store={cnnListSo} />
+
 	</FrameworkCard>
 }
 
