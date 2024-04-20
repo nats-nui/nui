@@ -3,6 +3,7 @@ import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter";
 import { Message } from "@/types/Message";
 import { StreamConfig, StreamInfo } from "@/types/Stream";
 import { snakeToCamel } from "@/utils/object";
+import dayjs from "dayjs";
 
 
 
@@ -51,7 +52,14 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 		|| (!filter.byTime && filter.startSeq == null)
 	) return
 
-	let query = !filter.byTime ? `seq_start=${filter.startSeq.toString()}&` : `time_start=${filter.startTime.toString()}&`
+	let query = ""
+	if ( filter.byTime ) {
+		const dateTime = dayjs(filter.startTime)
+		if ( !dateTime.isValid()) return
+		query = `start_time=${dateTime.toISOString()}&`
+	} else {
+		query = `seq_start=${filter.startSeq.toString()}&`
+	}
 	query += filter.interval != null ? `interval=${filter.interval.toString()}&` : ""
 	query += (!!filter.subjects && filter.subjects.length > 0) 
 		? `subjects=${filter.subjects.join(",")}` 
