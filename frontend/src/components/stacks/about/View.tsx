@@ -50,7 +50,7 @@ const AboutView: FunctionComponent<Props> = ({
 				<div className="lbl-input-readonly">{latest}</div>
 			</div>
 
-			{aboutSa.about.shouldUpdate && <>
+			{aboutSa.about?.shouldUpdate && <>
 				<div className={cls.divider} />
 				<Button className={cls.btt}
 					onClick={handleUpdate}
