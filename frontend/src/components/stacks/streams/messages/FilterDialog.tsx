@@ -107,7 +107,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
 				/>
 
-				{/* <div className="cmp-h">
+				<div className="cmp-h">
 					<IconToggle
 						check={filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: true })}
@@ -118,8 +118,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<DateTimeInput
 					style={{ flex: 1 }}
 					value={filter.startTime}
-					onChange={(startTime: string) => handleFilterPropChange({ startTime: startTime })}
-				/> */}
+					onChange={(startTime: string) => handleFilterPropChange({ startTime })}
+				/>
 
 				<div className="lyt-v">
 					<div className="lbl-prop">INTERVAL</div>

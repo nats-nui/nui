@@ -1,3 +1,4 @@
+import { DateString } from "@/types/global"
 
 export interface StreamMessagesFilter {
 	/** SUBJECTS selezionati da filtrare */
@@ -6,6 +7,6 @@ export interface StreamMessagesFilter {
 	interval?: number
 	/** sequenza iniziale */
 	startSeq?: number
-	startTime?: number | string
+	startTime?: DateString
 	byTime?: boolean
 }
