@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/suite"
@@ -300,6 +301,24 @@ func (s *NuiTestSuite) TestStreamMessagesIndexWithNegativeInterval() {
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Value(0).Object().Value("seq_num").IsEqual(3)
 
+}
+
+func (s *NuiTestSuite) TestStreamMessagesWithStartTime() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledStream("stream", "sub1")
+	time.Sleep(2 * time.Second)
+	now := time.Now().UTC()
+	s.js.Publish(context.Background(), "sub1", []byte("msg1"))
+	s.js.Publish(context.Background(), "sub1", []byte("msg2"))
+
+	// get messages from now
+	r := e.GET("/api/connection/" + connId + "/stream/stream/messages").
+		WithQueryString("start_time=" + now.Format(time.RFC3339)).
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(2)
+	r.Value(0).Object().Value("payload").String().IsEqual("bXNnMQ==")
+	r.Value(1).Object().Value("payload").String().IsEqual("bXNnMg==")
 }
 
 func (s *NuiTestSuite) TestStreamMessagesDelete() {
