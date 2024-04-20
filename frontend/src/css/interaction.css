@@ -7,6 +7,9 @@
 	cursor: pointer;
 }
 
+.draggable {
+	cursor: move;
+}
 
 .hover-hide {
 	display: none;
