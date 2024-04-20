@@ -10,7 +10,7 @@ const setup = {
 
 	state: {
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
+		colorVar: COLOR_VAR.GENERIC,
 		pinnable: false,
 		//#endregion
 	},

@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react"
+import cls from "./ElementRow.module.css"
 
 
 
@@ -31,12 +32,13 @@ const ElementRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!title) return null
+	const clsRoot = `${cls.root} ${selected ? "color-bg color-text" : ""}`
 
-	return <div style={cssRow} className={selected ? "color-bg color-text" : null}
+	return <div className={clsRoot}
 		onClick={onClick}
 	>
 		{icon}
-		<div style={cssLabels}>
+		<div className={cls.label}>
 			<div className="lbl-rowelement-title">
 				{title}
 			</div>
@@ -49,17 +51,3 @@ const ElementRow: FunctionComponent<Props> = ({
 }
 
 export default ElementRow
-
-const cssRow: React.CSSProperties = {
-	display: "flex", alignItems: "center",
-	cursor: "pointer",
-	margin: "3px -10px 0px -5px",
-	borderRadius: "5px 0px 0px 5px",
-	padding: '4px 0px 4px 8px',
-}
-
-const cssLabels: React.CSSProperties = {
-	display: "flex",
-	flexDirection: "column",
-	marginLeft: '7px',
-}

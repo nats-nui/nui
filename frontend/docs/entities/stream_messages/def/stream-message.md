@@ -13,7 +13,7 @@ interface StreamMessage {
     payload: string,        // base64 encoded
 
     size?: number           // NON USATO
-    received_at?: number    // NON USATO
+    received_at?: number 
 }
 
 ```

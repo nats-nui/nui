@@ -1,0 +1,14 @@
+.root {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	margin: 3px -10px 0px -5px;
+	border-radius: 5px 0px 0px 5px;
+	padding: 4px 0px 4px 8px;
+}
+
+.label {
+	display: flex;
+	flex-direction: column;
+	margin-left: 7px;
+}

@@ -20,6 +20,9 @@
 	--var-5: #f374e6;
 	--var-5-l1: #F51DDF;
 
+	/* GENERIC */
+	--var-6: white;
+
 
 	--text-bg: #393939;
 	--text: #dedede;
@@ -53,6 +56,14 @@
 
 .var4.card-focus {
 	outline: 2px solid var(--var-4);
+}
+
+.var5.card-focus {
+	outline: 2px solid var(--var-5);
+}
+
+.var6.card-focus {
+	outline: 2px solid var(--var-6);
 }
 
 /* #endregion */

@@ -7,9 +7,10 @@ import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect } from "react"
+import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
+import connections from "@/mocks/data/connections"
 
 
 
@@ -44,13 +45,13 @@ const CnnListView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const connnections = cnnSa.all
+	const connnections = useMemo(() => cnnSa.all.sort((c1, c2) => c1.name.localeCompare(c2.name)), [cnnSa.all])
 	if (!connnections) return null
-	
+
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
 	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
-	const selectId = (cnnListSa.linked  as CnnDetailStore)?.state?.connection?.id
+	const selectId = (cnnListSa.linked as CnnDetailStore)?.state?.connection?.id
 	const isSelected = (cnn: Connection) => cnn.id == selectId
 
 	return <FrameworkCard

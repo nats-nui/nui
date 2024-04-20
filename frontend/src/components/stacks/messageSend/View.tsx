@@ -79,7 +79,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 				onChange={handleValueChange}
 			/>
 
-			<div className="lyt-float">
+			<div className="lyt-float" style={{ zIndex: 1}}>
 				<FloatButton style={{ position: "relative" }}
 					onClick={handleSend}
 					disabled={!canSend}

@@ -15,7 +15,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 150,
-		colorVar: COLOR_VAR.CYAN,
+		colorVar: COLOR_VAR.GENERIC,
 		pinnable: false,
 		
 		//#endregion

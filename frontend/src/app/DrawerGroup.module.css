@@ -40,3 +40,12 @@
 	padding-bottom: 10px;
 	overflow-x: auto;
 }
+
+.size {
+	font-size: 10px;
+    font-weight: 600;
+    border: 2px solid #bdfe4f;
+    text-align: center;
+    padding: 1px 0px;
+    color: #beff61;
+}

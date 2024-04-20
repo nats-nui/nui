@@ -6,6 +6,6 @@ export interface StreamMessagesFilter {
 	interval?: number
 	/** sequenza iniziale */
 	startSeq?: number
-	startTime?: number
+	startTime?: number | string
 	byTime?: boolean
 }

@@ -43,9 +43,10 @@ server -> client
 ```typescript
 {
 	"type": "connection_status"
-  	"status": string // connected - reconnecting - disconnected
+  	"status": "connected" |	"reconnecting" | "disconnected",
 }
 ```
+
 
 #### ERROR MESSAGE
 client -> server  

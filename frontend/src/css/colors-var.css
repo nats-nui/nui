@@ -108,12 +108,25 @@
 	background-color: var(--var-5-l1);
 }
 
-
 .var5 .color-br {
 	border-color: var(--var-5);
 }
 
+/* --- */
 
+.var6 .color-fg {
+	color: var(--var-6);
+}
+
+.var6.color-bg, .var6 .color-bg {
+	background-color: var(--var-6);
+}
+
+.var6 .color-br {
+	border-color: var(--var-6);
+}
+
+/* --- */
 
 
 

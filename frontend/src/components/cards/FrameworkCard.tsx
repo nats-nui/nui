@@ -16,6 +16,7 @@ interface Props {
 	store: ViewStore
 	style?: React.CSSProperties
 	styleBody?: React.CSSProperties
+	/** la variante colora il bg */
 	variantBg?: boolean
 	actionsRender?: React.ReactNode
 	iconizedRender?: React.ReactNode
