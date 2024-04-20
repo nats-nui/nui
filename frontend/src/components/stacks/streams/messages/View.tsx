@@ -36,7 +36,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleFilterClick = () => strMsgSo.setFiltersOpen(true)
+	const handleFilterClick = (e: React.MouseEvent, select: boolean) => strMsgSo.setFiltersOpen(!select)
 	const handleFormatsClick = () => strMsgSo.setFormatsOpen(true)
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)

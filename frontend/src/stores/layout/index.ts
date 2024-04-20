@@ -8,6 +8,7 @@ export enum COLOR_VAR {
 	MINT,
 	YELLOW,
 	FUCHSIA,
+	GENERIC,
 }
 
 const ThemeDefault: Theme = {
@@ -30,6 +31,8 @@ const ThemeDefault: Theme = {
 			{ bg: "#ebfb35", fg: "#393939", bg2: "#f9ffb3" },
 			// fuchsia
 			{ bg: "#F51DDF", fg: "#393939", bg2: "#f374e6" },
+			// generic
+			{ bg: "#FFFFFF", fg: "#393939", bg2: "#f374e6" },
 
 		],
 		default: {

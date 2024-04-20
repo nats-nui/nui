@@ -35,9 +35,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	},[msgSa.subscriptions])
 
 	// HANDLER
-	const handleClickSubs = (e: React.MouseEvent, select: boolean) => {
-		msgSo.setSubscriptionsOpen(!select)
-	}
+	const handleClickSubs = (e: React.MouseEvent, select: boolean) => msgSo.setSubscriptionsOpen(!select)
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
 	const handleSendClick = () => msgSo.openMessageSend()
 	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)

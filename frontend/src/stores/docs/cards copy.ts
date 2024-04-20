@@ -45,7 +45,7 @@ const setup = {
 			// se c'e' gia' setto solo il focus
 			const finded = getById([...deckCardsSo.state.all, ...drawerCardsSo.state.all], view.state.uuid)
 			if (finded) {
-				if ( finded.state.group == drawerCardsSo ) drawerCardsSo.setWidth(500)
+				//if ( finded.state.group == drawerCardsSo ) drawerCardsSo.
 				finded.state.group?.focus(finded)
 				return
 			}
@@ -183,10 +183,10 @@ export const deckCardsSo = createStore(setup) as CardsStore
 
 const setupDrawer ={
 	state: {
-		width: 0,
+		open: false,
 	},
 	mutators: {
-		setWidth: (width: number) => ({ width }),
+		setOpen: (open: boolean) => ({ open }),
 	},
 }
 export type DrawerState = typeof setupDrawer.state & CardsState

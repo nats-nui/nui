@@ -108,7 +108,7 @@ const MessagesList: FunctionComponent<Props> = ({
 			}}
 		/>
 
-		<div className="lyt-float">
+		<div className="lyt-float" style={{ bottom: 30 }}>
 			{showKeepDown &&
 				<FloatButton
 					onClick={handleKeepDownClick}
