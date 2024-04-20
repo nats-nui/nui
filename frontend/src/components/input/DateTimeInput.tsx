@@ -19,7 +19,7 @@ const DateTimeInput: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleBlur = () => {
 		const v = dayjs(props.value)
-		props.onChange(v.isValid() ? v.format("YYYY-MM-DD hh:mm:ss") : "")
+		props.onChange(v.isValid() ? v.format("YYYY-MM-DD HH:mm:ss") : "")
 	}
 
 	// RENDER
