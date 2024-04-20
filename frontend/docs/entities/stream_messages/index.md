@@ -19,11 +19,12 @@ name of the STREAM to retrieve messages from
 ### QUERY
 
 - `seq_start`  
-message sequence number to start from
- 
+message sequence number to fetch from
+- `start_time`
+datetime (in RCF3339) to fetch from. it takes precendence over the `seq_start` parameter 
 - `interval`  
-numebr of messages to retrieve (to allow pagination)
- 
+number of messages to retrieve (to allow pagination). if the fetch is by seq_number, 
+also negative interval are permitted
 - `subjects`  
 filter messages by subject.  
 concatenated into a single string divided with ","

@@ -9,6 +9,7 @@ import (
 	"github.com/nats-nui/nui/internal/ws"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func (a *App) handleIndexStreams(c *fiber.Ctx) error {
@@ -220,51 +221,74 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 	if err != nil {
 		interval = 25
 	}
-	querySeq, err := strconv.Atoi(c.Query("seq_start"))
-	if err != nil {
-		info, err := stream.Info(c.Context())
-		if err != nil {
-			return a.logAndFiberError(c, err, 500)
-		}
-		if interval > 0 {
-			querySeq = int(info.State.FirstSeq)
-		} else {
-			querySeq = int(info.State.LastSeq)
-		}
-	}
 	// batch is the absolute value of the interval
 	batch := interval
 	if batch < 0 {
 		batch = -batch
 	}
 
-	seekFromSeq, msgCount, err := findSeekSeq(c.Context(), stream, config, querySeq, interval)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
-	}
+	var msgCount int
 	msgs := make([]ws.NatsMsg, 0, batch)
-	if msgCount == 0 {
-		return c.JSON(msgs)
+
+	timeStr := c.Query("start_time")
+	if timeStr != "" {
+		config.DeliverPolicy = jetstream.DeliverByStartTimePolicy
+		t, err := time.Parse(time.RFC3339, timeStr)
+		if err != nil {
+			return a.logAndFiberError(c, err, 422)
+		}
+		config.OptStartTime = &t
+		msgCount = batch
+	} else {
+		querySeq, err := strconv.Atoi(c.Query("seq_start"))
+		if err != nil {
+			info, err := stream.Info(c.Context())
+			if err != nil {
+				return a.logAndFiberError(c, err, 500)
+			}
+			if interval > 0 {
+				querySeq = int(info.State.FirstSeq)
+			} else {
+				querySeq = int(info.State.LastSeq)
+			}
+		}
+		var seekFromSeq uint64
+		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, config, querySeq, interval)
+		if err != nil {
+			return a.logAndFiberError(c, err, 500)
+		}
+		if msgCount == 0 {
+			return c.JSON(msgs)
+		}
+		config.OptStartSeq = seekFromSeq
 	}
-	config.OptStartSeq = seekFromSeq
+
+	msgs, err = a.fetchMessages(c, err, stream, config, batch, msgs, msgCount)
+	if err != nil {
+		return err
+	}
+	return c.JSON(msgs)
+}
+
+func (a *App) fetchMessages(c *fiber.Ctx, err error, stream jetstream.Stream, config jetstream.ConsumerConfig, batch int, msgs []ws.NatsMsg, msgCount int) ([]ws.NatsMsg, error) {
 	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
 	if err != nil {
-		return a.logAndFiberError(c, err, 500)
+		return nil, a.logAndFiberError(c, err, 500)
 	}
 	msgBatch, err := consumer.FetchNoWait(batch)
 	if err != nil {
-		return a.logAndFiberError(c, err, 500)
+		return nil, a.logAndFiberError(c, err, 500)
 	}
 	for msg := range msgBatch.Messages() {
 		if len(msgs) == msgCount {
 			break
 		}
 		if msgBatch.Error() != nil {
-			return c.Status(500).JSON(msgBatch.Error().Error())
+			return nil, c.Status(500).JSON(msgBatch.Error().Error())
 		}
 		metadata, err := msg.Metadata()
 		if err != nil {
-			return a.logAndFiberError(c, err, 500)
+			return nil, a.logAndFiberError(c, err, 500)
 		}
 		msgs = append(msgs, ws.NatsMsg{
 			Subject:    msg.Subject(),
@@ -274,7 +298,7 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 		})
 	}
 	_ = stream.DeleteConsumer(c.Context(), config.Name)
-	return c.JSON(msgs)
+	return msgs, nil
 }
 
 func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
