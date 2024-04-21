@@ -6,10 +6,11 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import TooltipWrapCmp from "../tooltip/TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import cls from "./SnackbarCmp.module.css"
+import SuccessIcon from "@/icons/SuccessIcon"
 
 
 
@@ -48,17 +49,18 @@ const SnackbarCmp: FunctionComponent<Props> = ({
 	const inRoot = !view.state.parent
 	const clsRootFrame = viewSa.size == VIEW_SIZE.COMPACT ? cls.root_icon : cls.root
 	const clsRoot = `${clsRootFrame} ${open ? cls.open : cls.close} ${hide ? cls.hide : ""} ${cls[type]}`
-	const icon = {
+	const icon = useMemo(() => ({
 		[MESSAGE_TYPE.INFO]: <InfoIcon className={cls.icon} />,
+		[MESSAGE_TYPE.SUCCESS]: <SuccessIcon className={cls.icon} />,
 		[MESSAGE_TYPE.WARNING]: <WarnIcon className={cls.icon} />,
 		[MESSAGE_TYPE.ERROR]: <SkullIcon className={cls.icon} />,
-	}[type]
+	}[type]), [type])
 
 	if (viewSa.size == VIEW_SIZE.COMPACT) {
-		const stl = { marginLeft: !inRoot ? 3: null }
+		const stl = { marginLeft: !inRoot ? 3 : null }
 		return (
 			<TooltipWrapCmp content={title}>
-				<div className={clsRoot} style={stl} 
+				<div className={clsRoot} style={stl}
 					onClick={handleClose}
 				>{icon}</div>
 			</TooltipWrapCmp>

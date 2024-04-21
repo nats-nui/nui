@@ -10,6 +10,7 @@ import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
 import { findInRoot } from "@/stores/docs/utils/manage"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -94,6 +95,11 @@ const setup = {
 			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)
 			store.setEditState(EDIT_STATE.READ)
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "SAVED",
+				body: "you have it on the DUCKETS list",
+			})
 		},
 
 		/** apertura della CARD KVENTRY */

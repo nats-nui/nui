@@ -43,9 +43,9 @@ const setup = {
 			store?: CardsStore
 		) {
 			// se c'e' gia' setto solo il focus
-			const finded = getById([...deckCardsSo.state.all, ...drawerCardsSo.state.all], view.state.uuid)
+			const finded = getById(GetAllCards(), view.state.uuid)
 			if (finded) {
-				if ( finded.state.group == drawerCardsSo ) drawerCardsSo.setWidth(500)
+				if (finded.state.group == drawerCardsSo) drawerCardsSo.setWidth(500)
 				finded.state.group?.focus(finded)
 				return
 			}
@@ -181,7 +181,7 @@ export interface CardsStore extends StoreCore<CardsState>, CardsGetters, CardsAc
 
 export const deckCardsSo = createStore(setup) as CardsStore
 
-const setupDrawer ={
+const setupDrawer = {
 	state: {
 		width: 0,
 	},
@@ -194,3 +194,5 @@ type DrawerMutators = typeof setupDrawer.mutators
 export interface DrawerStore extends CardsStore, StoreCore<DrawerState>, DrawerMutators { state: DrawerState }
 
 export const drawerCardsSo = createStore(mixStores(setup, setupDrawer)) as DrawerStore
+
+export const GetAllCards = () => [...deckCardsSo.state.all, ...drawerCardsSo.state.all]

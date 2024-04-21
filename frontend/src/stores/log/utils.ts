@@ -4,6 +4,7 @@ import { Uuid } from "@/types/global"
 
 export enum MESSAGE_TYPE {
 	INFO = "info",
+	SUCCESS = "success",
 	WARNING = "warn",
 	ERROR = "error",
 }

@@ -6,6 +6,10 @@ import { BucketState } from "@/types/Bucket"
 import { StoreCore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildBucket, buildBucketNew } from "./utils/factory"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { findAll } from "@/stores/docs/utils/manage"
+import { GetAllCards } from "@/stores/docs/cards"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -97,6 +101,16 @@ const setup = {
 			await bucketApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(b => b.bucket != name))
 			store.setSelect(null)
+
+			// cerco eventuali CARD di questo stream e lo chiudo
+			const cardStreams = findAll(GetAllCards(), { type: DOC_TYPE.BUCKET, connectionId: store.state.connectionId })
+			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "DELETED",
+				body: "it is gone forever",
+			})
 		},
 
 

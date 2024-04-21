@@ -28,6 +28,7 @@ function forEachView<T>(view: ViewStore, callback: (view: ViewStore) => T): T {
 
 /** 
  * restituisce una VIEW tramite l'id cercando nei "child" in un array di VIEW 
+ * in pratica è un findAll specializzato sull'id
  */
 export function getById(views: ViewStore[], id: string): ViewStore {
 	return forEachViews(views, (view) => {

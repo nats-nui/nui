@@ -9,6 +9,7 @@ import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -167,7 +168,7 @@ const setup = {
 			}
 			store.setFilter(filter)
 
-			const filterToSend = {...filter}
+			const filterToSend = { ...filter }
 			filterToSend.subjects = [...filter.subjects, ...store.state.subjectsCustom]
 
 			// chiedo al BE 
@@ -193,6 +194,11 @@ const setup = {
 			})) return
 			await strApi.messageRemove(store.state.connectionId, store.state.stream.config.name, message.seqNum, { store })
 			store.setMessages(store.state.messages.filter(m => m.seqNum != message.seqNum))
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "DELETED",
+				body: "it is gone forever",
+			})
 		},
 	},
 
