@@ -31,8 +31,8 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleConsumersClick = () => streamSo.openConsumers()
-	const handleMessagesClick = () => streamSo.openMessages()
+	const handleConsumersClick = () => streamSo.toggleConsumer()
+	const handleMessagesClick = () => streamSo.toggleMessages()
 
 	// RENDER
 	const inRead = streamSa.editState == EDIT_STATE.READ

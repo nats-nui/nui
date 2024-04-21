@@ -70,10 +70,10 @@
 
 
 .bars-alert-bg {
-	background: repeating-linear-gradient(135deg, transparent, transparent 10px, #000 10px, #000 20px)
+	background: repeating-linear-gradient(135deg, transparent, transparent 7px, #000 7px, #000 15px)
 }
 .bars-alert-bg-c {
-	background: repeating-linear-gradient(135deg, transparent, transparent 10px, currentColor 10px, currentColor 20px)
+	background: repeating-linear-gradient(135deg, transparent, transparent 7px, currentColor 7px, currentColor 15px)
 }
 
 .bars-alert-bg-1 {
