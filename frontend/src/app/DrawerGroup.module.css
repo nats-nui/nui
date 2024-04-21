@@ -3,9 +3,7 @@
 	display: flex;
 
 	background-color: var(--text-bg);
-	padding: 10px;
-
-	box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px;
+	/* box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px; */
 	z-index: 2;
 }
 
@@ -17,7 +15,8 @@
 	cursor: col-resize;
 	display: flex; 
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
+	margin: 10px;
 }
 
 .btt {
@@ -40,10 +39,10 @@
 .size {
 	font-size: 10px;
     font-weight: 600;
-    border: 2px solid #bdfe4f;
+    border: 2px solid var(--var-1);
     text-align: center;
     padding: 1px 0px;
-    color: #beff61;
+    color: var(--var-1);
 }
 
 
