@@ -1,11 +1,12 @@
 
 .root {
 	display: flex;
+	flex-direction: column;
+	gap: 10px;
 
 	background-color: var(--text-bg);
-	padding: 10px;
 
-	box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px;
+	/* box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px; */
 	z-index: 2;
 }
 
@@ -14,10 +15,10 @@
 /** HANDLE **/
 
 .handle {
-	cursor: col-resize;
+	cursor: row-resize;
 	display: flex; 
-	flex-direction: column;
-	gap: 10px;
+	margin: 10px;
+	gap: 8px;
 }
 
 .btt {
@@ -27,11 +28,9 @@
 
 .handle_label {
 	user-select: none;
-	writing-mode: vertical-lr;
     font-size: 14px;
-    border-left: 1px solid var(--var-1);
-    border-right: 1px solid var(--var-1);
-    height: 80px;
+    border-top: 1px solid var(--var-1);
+    border-bottom: 1px solid var(--var-1);
     text-align: center;
     color: var(--var-1);
 	font-weight: 700;
@@ -43,6 +42,7 @@
     border: 2px solid #bdfe4f;
     text-align: center;
     padding: 1px 0px;
+	min-width: 18px;
     color: #beff61;
 }
 
@@ -56,5 +56,6 @@
 }
 
 .animate {
-	transition: width 300ms ease-in-out;
+	transition: height 300ms ease-in-out;
 }
+

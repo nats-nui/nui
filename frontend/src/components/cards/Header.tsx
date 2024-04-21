@@ -1,8 +1,8 @@
 import AnchorIcon from "@/icons/AnchorIcon"
 import CloseIcon from "@/icons/CloseIcon"
-import CompressHIcon from "@/icons/CompressHIcon"
+import DirectionLeftIcon from "@/icons/DirectionLeftIcon"
 import DetachIcon from "@/icons/DetachIcon"
-import ExpandHIcon from "@/icons/ExpandHIcon"
+import DirectionRightIcon from "@/icons/DirectionRightIcon"
 import IconizedIcon from "@/icons/IconizeIcon"
 import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
@@ -149,12 +149,12 @@ const Header: FunctionComponent<Props> = ({
 						{showBttExpand && (
 							<IconButton
 								onClick={handleExpand}
-							><ExpandHIcon /></IconButton>
+							><DirectionRightIcon /></IconButton>
 						)}
 						{showBttComprime && (
 							<IconButton
 								onClick={handleComprime}
-							><CompressHIcon /></IconButton>
+							><DirectionLeftIcon /></IconButton>
 						)}
 						{showBttPin && (
 							<IconButton

@@ -6,26 +6,32 @@ import DrawerGroup from "./DrawerGroup"
 import DragCmp from "@/components/DragCmp"
 import TooltipCmp from "@/components/tooltip/TooltipCmp"
 import MainMenu from "@/app/mainMenu/MainMenu"
+import DrawerDownGroup from "./DrawerDownGroup"
+import docsSo, { DRAWER_POSITION } from "@/stores/docs"
+import { useStore } from "@priolo/jon"
 
 
 
 const App: FunctionComponent = () => {
 
 	// STORES
-	
+	const docsSa = useStore(docsSo)
+
 	// HOOKS
 
 	// HANDLERS
 
 	// RENDER
+	const clsContent = `${cls.content} ${cls[docsSa.drawerPosition]}`
+
 	return (
 		<div className={cls.root}>
 
 			<MainMenu />
 
-			<div className={cls.content}>
+			<div className={clsContent}>
 				<DeckGroup />
-				<DrawerGroup />
+				{docsSa.drawerPosition == DRAWER_POSITION.BOTTOM ? <DrawerDownGroup /> : <DrawerGroup />}
 			</div>
 
 			<DragCmp />

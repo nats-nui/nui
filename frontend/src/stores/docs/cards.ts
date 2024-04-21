@@ -184,6 +184,14 @@ export const deckCardsSo = createStore(setup) as CardsStore
 const setupDrawer = {
 	state: {
 		width: 0,
+		/** indica che deve attivare l'animazione */
+		animation: false,
+		/** indica se c'e' il DRAG */
+		isDown: false,
+		/**  */
+		startX: 0,
+		startWidth: 0,
+		lastWidth: 500,
 	},
 	mutators: {
 		setWidth: (width: number) => ({ width }),
