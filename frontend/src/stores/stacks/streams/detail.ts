@@ -73,18 +73,6 @@ const setup = {
 			state.allStreams = data.allStreams
 			state.editState = data.editState
 		},
-		// onLinked: (_: void, store?: ViewStore) => {
-		// 	const cnnStore = store as StreamStore
-		// 	// se per questo TYPE c'era un LINK preferienziale aprto lo apre
-		// 	const options = docSo.state.cardOptions[store.state.type]
-		// 	store.state.docAniDisabled = true
-		// 	if (options == DOC_TYPE.CONSUMERS) {
-		// 		cnnStore.openConsumers()
-		// 	} else if (options == DOC_TYPE.STREAM_MESSAGES) {
-		// 		cnnStore.openMessages()
-		// 	}
-		// 	store.state.docAniDisabled = false
-		// },
 
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <StreamStore>store
@@ -97,14 +85,14 @@ const setup = {
 
 		/** load all ENTITY */
 		async fetchIfVoid(_: void, store?: StreamStore) {
+			// eventualmente aggiorno i dati
 			if (store.state.editState != EDIT_STATE.NEW && (!store.state.stream?.state || !store.state.stream.state.subjects)) {
 				await store.fetch()
 			}
 			if (!store.state.allStreams) {
 				await store.fetchAllStreams()
 			}
-
-
+			// riprstino link precedente
 			const options = docSo.state.cardOptions[store.state.type]
 			store.state.docAniDisabled = true
 			if (options == DOC_TYPE.CONSUMERS) {
@@ -146,17 +134,31 @@ const setup = {
 
 
 
+		
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
-			const isOpen = store.getConsumerOpen()
-			const view = !isOpen ? buildConsumers(store.state.connectionId, store.state.stream) : null
+			const view = buildConsumers(store.state.connectionId, store.state.stream)
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
+		
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
-			const isOpen = store.getMessagesOpen()
-			const view = !isOpen ? buildStreamMessages(store.state.connectionId, store.state.stream) : null
+			const view = buildStreamMessages(store.state.connectionId, store.state.stream)
 			store.state.group.addLink({ view, parent: store, anim: true })
+		},
+		toggleConsumer(_: void, store?: StreamStore) {
+			if (store.getConsumerOpen()) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+			} else {
+				store.openConsumers()
+			}
+		},
+		toggleMessages(_: void, store?: StreamStore) {
+			if (store.getMessagesOpen()) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+			} else {
+				store.openMessages()
+			}
 		},
 
 	},
