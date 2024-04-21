@@ -1,10 +1,8 @@
 import Dialog from "@/components/dialogs/Dialog"
 import List from "@/components/lists/List"
-import cnnSo from "@/stores/connections"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
-import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 
 
 
@@ -23,20 +21,18 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleSubSelectChange = (index: number) => {
-		sendSo.setSubject(subs[index].subject)
+		sendSo.setSubject(sendSa.subjects[index])
 		sendSo.setSubsOpen(false)
 	}
-	// const handleSubChange = (value: string) => {
-	// 	sendSo.setSubject(value)
-	// }
 	const handleSubsClose = () => {
 		sendSo.setSubsOpen(false)
 	}
 
 	// RENDER
-	const cnn = cnnSo.getById(sendSa.connectionId)
-	const subs = cnn?.subscriptions ?? []
-	const select = subs.findIndex(s => s.subject == sendSa.subject)
+	const select = useMemo(
+		() => sendSa.subjects.findIndex(s => s == sendSa.subject),
+		[sendSa.subjects, sendSa.subject]
+	)
 
 	return <Dialog
 		open={sendSa.subsOpen}
@@ -45,21 +41,12 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		store={sendSo}
 		onClose={handleSubsClose}
 	>
-		{/* <TextInput style={{ marginBottom: 10 }}
-			value={sendSa.subject}
-			onChange={handleSubChange}
-		/> */}
-		<List<Subscription> style={cssList}
-			items={subs}
+		<List<string> style={{ flex: 1 }}
+			items={sendSa.subjects}
 			select={select}
-			RenderRow={({ item }) => <div className="list-row">{item.subject}</div>}
 			onSelect={handleSubSelectChange}
 		/>
 	</Dialog>
 }
 
 export default SubjectsDialog
-
-const cssList: React.CSSProperties = {
-	flex: 1,
-}

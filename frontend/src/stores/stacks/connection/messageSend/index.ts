@@ -15,6 +15,7 @@ const setup = {
 		connectionId: <string>null,
 		text: <string>null,
 		subject: <string>null,
+		subjects: <string[]>[],
 		subsOpen: false,
 
 		loadingState: LOAD_STATE.IDLE,
@@ -41,6 +42,7 @@ const setup = {
 				connectionId: state.connectionId,
 				text: state.text,
 				subject: state.subject,
+				subjects : state.subjects,
 			}
 		},
 		//#endregion
@@ -59,6 +61,7 @@ const setup = {
 			state.connectionId = data.connectionId
 			state.text = data.text
 			state.subject = data.subject
+			state.subjects = data.subjects
 		},
 		//#endregion
 
