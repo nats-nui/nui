@@ -51,7 +51,7 @@
 
 .handle_container {
 	display: flex;
-	padding-bottom: 10px;
+	/* padding-bottom: 10px; */
 	overflow-x: auto;
 }
 
