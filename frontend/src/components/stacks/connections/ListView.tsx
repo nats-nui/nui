@@ -12,6 +12,7 @@ import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
 import connections from "@/mocks/data/connections"
 import AlertDialog from "@/components/dialogs/AlertDialog"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -43,10 +44,16 @@ const CnnListView: FunctionComponent<Props> = ({
 	const handleDelete = async () => {
 		if (!await cnnListSo.alertOpen({
 			title: "MESSAGE DELETE",
-			body: "This action is irreversible.\nAre you sure you want to delete the MESSAGE?",
+			body: "This action is irreversible.\nAre you sure you want to delete the CONNECTION?",
 		})) return
-		cnnSo.delete(selectId)
 		cnnListSo.select(null)
+		await cnnSo.delete(selectId)
+		cnnListSo.setSnackbar({ open: true,
+			type: MESSAGE_TYPE.SUCCESS,
+			title: "DELETED",
+			body: "it is gone forever",
+			timeout: 5000,
+		})
 	}
 
 	// RENDER

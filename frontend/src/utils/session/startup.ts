@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import docsSo from "@/stores/docs"
-import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
+import { GetAllCards, deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { buildStore } from "@/stores/docs/utils/factory"
 import { forEachViews } from "@/stores/docs/utils/manage"
@@ -25,9 +25,8 @@ window.onerror = (message, url, line, col, error) => {
 export async function SaveSession() {
 	const deckStates = deckCardsSo.state.all.map(store => store.getSerialization())
 	const drawerStates = drawerCardsSo.state.all.map(store => store.getSerialization())
-	const allViews = [...deckCardsSo.state.all, ...drawerCardsSo.state.all]
 	const menuStates = menuSo.state.all.reduce((acc, store) => {
-		if (forEachViews(allViews, (v) => v.state.uuid == store.state.uuid)) return acc
+		if (forEachViews(GetAllCards(), (v) => v.state.uuid == store.state.uuid)) return acc
 		return [...acc, store.getSerialization()]
 	}, [])
 	const session: Session = {

@@ -11,6 +11,7 @@ import { buildConsumers } from "../consumer/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
 import { buildStreamMessages } from "./utils/factory"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -131,6 +132,11 @@ const setup = {
 			store.getParentList()?.update(streamSaved)
 			store.getParentList()?.setSelect(streamSaved.config.name)
 			store.setEditState(EDIT_STATE.READ)
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "SAVED",
+				body: "you can find it in the STREAMS list",
+			})
 		},
 		/** reset ENTITY */
 		restore: (_: void, store?: StreamStore) => {

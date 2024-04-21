@@ -1,6 +1,7 @@
 import Button from "@/components/buttons/Button"
 import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
@@ -40,6 +41,12 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 		cnnDetailSo.setDisabled(false)
 		cnnDetailSo.setConnection(cnnNew)
 		cnnDetailSo.setEditState(EDIT_STATE.READ)
+		cnnDetailSo.setSnackbar({ open: true,
+			type: MESSAGE_TYPE.SUCCESS,
+			title: "SAVED",
+			body: "If the dot is green you are online",
+			timeout: 5000,
+		})
 	}
 
 

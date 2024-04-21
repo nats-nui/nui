@@ -9,6 +9,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -110,6 +111,12 @@ const setup = {
 			store.getParentList()?.fetch()
 			store.getParentList()?.setSelect(kventry.key)
 			store.setEditState(EDIT_STATE.READ)
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "SAVED",
+				body: "you have it on the KVENTRY list",
+			})
 		},
 		/** reset EBTITY */
 		restore: (_: void, store?: KVEntryStore) => {

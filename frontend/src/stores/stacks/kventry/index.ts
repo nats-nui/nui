@@ -7,6 +7,10 @@ import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { findAll } from "@/stores/docs/utils/manage"
+import { GetAllCards } from "@/stores/docs/cards"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -101,6 +105,16 @@ const setup = {
 			await kventryApi.remove(store.state.connectionId, store.state.bucket.bucket, key, { store })
 			store.setAll(store.state.all.filter(entry => entry.key != key))
 			store.setSelect(null)
+
+			// cerco eventuali CARD di questo stream e lo chiudo
+			const cardStreams = findAll(GetAllCards(), { type: DOC_TYPE.KVENTRY, bucket: { bucket: store.state.bucket.bucket } })
+			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "DELETED",
+				body: "it is gone forever",
+			})
 		},
 
 		async purge(_: void, store?: KVEntriesStore) {
@@ -113,6 +127,12 @@ const setup = {
 			await kventryApi.purge(store.state.connectionId, store.state.bucket.bucket, key, { store })
 			store.setAll(store.state.all.filter(entry => entry.key != key))
 			store.setSelect(null)
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "PURGED",
+				body: "you will never see those ENTRY again",
+			})
 		},
 
 		/** apro la CARD del dettaglio */

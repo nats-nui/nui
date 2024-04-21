@@ -22,17 +22,9 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEditClick = async () => {
-		// streamSo.setSnackbar({
-		// 	open:true,
-		// 	title: "pippo",
-		// 	type:MESSAGE_TYPE.INFO,
-		// 	body: "un bel corpo corposo",
-		// })
-		streamSo.setEditState(EDIT_STATE.EDIT)
-	}
+	const handleEditClick = async () => streamSo.setEditState(EDIT_STATE.EDIT)
 	const handleCancelClick = () => streamSo.restore()
-	const handleSaveClick = () => streamSo.save()
+	const handleSaveClick = async () => streamSo.save()
 
 	// RENDER
 	if (streamSa.stream == null) return null

@@ -9,6 +9,8 @@ import { buildConsumers } from "../consumer/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildStream, buildStreamMessages, buildStreamNew } from "./utils/factory"
 import { findAll } from "@/stores/docs/utils/manage"
+import { GetAllCards } from "@/stores/docs/cards"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -106,10 +108,16 @@ const setup = {
 			await strApi.remove(store.state.connectionId, name, { store })
 			store.setAll(store.state.all.filter(s => s.config.name != name))
 			store.setSelect(null)
+
 			// cerco eventuali CARD di questo stream e lo chiudo
-			// [II] TODO
-			const cardStreams = findAll(store.state.group.state.all, { type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
-			cardStreams.forEach(view => store.state.group.remove({ view, anim: true }))
+			const cardStreams = findAll(GetAllCards(), { type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
+			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "DELETED",
+				body: "it is gone forever",
+			})
 		},
 
 		update(stream: StreamInfo, store?: StreamsStore) {
@@ -123,6 +131,11 @@ const setup = {
 			const name = store.state.select
 			if (!name) return
 			await strApi.purge(store.state.connectionId, name, seq, keep, subject, { store })
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "PURGED",
+				body: "you will never see those STREAM again",
+			})
 		},
 
 		/** visualizzo dettaglio di uno STREAM */
