@@ -12,6 +12,7 @@ import dayjs from "dayjs"
 import { ViewState } from "../../viewBase"
 import { MessageSendState } from "../messageSend"
 import messagesApi from "@/api/messages"
+import { buildConnectionMessageSend } from "../utils/factory"
 
 
 
@@ -188,12 +189,11 @@ const setup = {
 		openMessageSend(_: void, store?: MessagesStore) {
 			const cnn = store.getConnection()
 			if (!cnn) return
-			const msgSendStore = buildStore({
-				type: DOC_TYPE.MESSAGE_SEND,
-				connectionId: cnn.id,
-			} as MessageSendState)
 			store.state.group.addLink({
-				view: msgSendStore,
+				view: buildConnectionMessageSend(
+					cnn.id, 
+					store.state.subscriptions.map(s => s.subject)
+				),
 				parent: store,
 				anim: true,
 			})

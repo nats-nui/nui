@@ -4,6 +4,7 @@ import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detai
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages";
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types";
 import { VIEW_SIZE } from "../../utils";
+import { MessageSendState, MessageSendStore } from "../messageSend";
 
 
 
@@ -40,4 +41,13 @@ export function buildConnection(connection: Connection) {
 		connection
 	} as CnnDetailState) as CnnDetailStore;
 	return cnnStore;
+}
+
+export function buildConnectionMessageSend(connectionId: string, subjects: string[] = []) {
+	const sendStore = buildStore({
+		type: DOC_TYPE.MESSAGE_SEND,
+		connectionId: connectionId,
+		subjects,
+	} as MessageSendState) as MessageSendStore
+	return sendStore;
 }
