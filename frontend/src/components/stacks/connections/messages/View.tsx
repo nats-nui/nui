@@ -9,6 +9,7 @@ import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
+import { DOC_TYPE } from "@/types"
 
 
 
@@ -21,6 +22,7 @@ const MessagesView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
+	useStore(msgSo.state.group)
 	const msgSa = useStore(msgSo) as MessagesState
 
 	// HOOKs
@@ -28,16 +30,23 @@ const MessagesView: FunctionComponent<Props> = ({
 	useEffect(() => {
 		msgSo.fetchIfVoid()
 	}, [])
-	useEffect(()=>{
+	useEffect(() => {
 		if (msgSa.linked == null && msgSa.subscriptions?.length > 0 && msgSa.subscriptions.every(s => s.disabled)) {
 			msgSo.setSubscriptionsOpen(true)
 		}
-	},[msgSa.subscriptions])
+	}, [msgSa.subscriptions])
 
 	// HANDLER
 	const handleClickSubs = (e: React.MouseEvent, select: boolean) => msgSo.setSubscriptionsOpen(!select)
 	const handleFormatsClick = () => msgSo.setFormatsOpen(true)
-	const handleSendClick = () => msgSo.openMessageSend()
+	const handleSendClick = () => {
+		if (isSendSelect) {
+			msgSo.state.group.addLink({ view: null, parent: msgSo, anim: true })
+		} else {
+			msgSo.setSubscriptionsOpen(false)
+			msgSo.openMessageSend()
+		}
+	}
 	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)
 	const handleClear = () => msgSo.setMessages([])
 	const handleSearchChange = (value: string) => {
@@ -48,6 +57,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	// RENDER
 	const messages = useMemo(() => msgSo.getFiltered(), [msgSa.textSearch, msgSa.messages])
 	const formatSel = msgSa.format.toUpperCase()
+	const isSendSelect = msgSa.linked?.state.type == DOC_TYPE.MESSAGE_SEND
 
 	return <FrameworkCard
 		store={msgSo}
@@ -68,6 +78,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 			/>
 			<Button
+				select={isSendSelect}
 				children="SEND"
 				onClick={handleSendClick}
 			/>

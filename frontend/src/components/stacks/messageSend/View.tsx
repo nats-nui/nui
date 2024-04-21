@@ -67,6 +67,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 					onClick={handleSubsClick}
 				>SUBJECT</div>
 				<TextInput autoFocus
+					placeholder="Click SUBJECT button or write here e.g. orders.>"
 					value={sendSa.subject}
 					onChange={handleSubjectChange}
 				/>
