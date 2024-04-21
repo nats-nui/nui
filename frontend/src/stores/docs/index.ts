@@ -6,6 +6,11 @@ import { AboutStore } from "../stacks/about"
 
 
 
+export enum DRAWER_POSITION {
+	RIGHT="right",
+	BOTTOM="bottom",
+}
+
 /**
  * Gestisce la lista di DOCS presenti
  */
@@ -14,6 +19,7 @@ const setup = {
 	state: {
 		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
+		drawerPosition: DRAWER_POSITION.RIGHT,
 	},
 
 	getters: {
@@ -24,6 +30,7 @@ const setup = {
 
 	mutators: {
 		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore, AboutStore]) => ({ fixedViews }),
+		setDrawerPosition: (drawerPosition: DRAWER_POSITION) => ({ drawerPosition }),
 	},
 }
 

@@ -15,3 +15,11 @@
 	display: flex;
 	overflow-x: auto;
 }
+
+.content.right {
+	flex-direction: row;
+}
+
+.content.bottom {
+	flex-direction: column;
+}

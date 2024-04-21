@@ -1,4 +1,4 @@
-const ExpandHIcon = (props) => (
+const DirectionRightIcon = (props) => (
 	<svg 
 		xmlns="http://www.w3.org/2000/svg" 
 		width="14" height="14" viewBox="0 0 14 14"
@@ -9,4 +9,4 @@ const ExpandHIcon = (props) => (
 	</svg>
 )
 
-export default ExpandHIcon
+export default DirectionRightIcon

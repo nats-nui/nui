@@ -9,13 +9,15 @@ import { delay } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import CardsGroup from "./CardsGroups"
-import cls from "./DrawerGroup.module.css"
+import cls from "./DrawerDownGroup.module.css"
+import DirectionUpIcon from "@/icons/DirectionUpIcon"
+import DirectionDownIcon from "@/icons/DirectionDownIcon"
+import MenuRightIcon from "@/icons/MenuRightIcon"
 import docsSo, { DRAWER_POSITION } from "@/stores/docs"
-import MenuBottomIcon from "@/icons/MenuBottomIcon"
 
 
 
-const DrawerGroup: FunctionComponent = () => {
+const DrawerDownGroup: FunctionComponent = () => {
 
 	// STORES
 	const drawerSa = useStore(drawerSo)
@@ -25,11 +27,11 @@ const DrawerGroup: FunctionComponent = () => {
 	// HANDLERS
 	const handleDown = (e: React.MouseEvent) => {
 		drawerSa.isDown = true
-		drawerSa.startX = e.clientX;
+		drawerSa.startX = e.clientY;
 		drawerSa.startWidth = drawerSa.width;
 		const mouseMove = (ev: MouseEvent) => {
 			if (!drawerSa.isDown) return
-			const currentX = ev.clientX;
+			const currentX = ev.clientY;
 			const diffX = drawerSa.startX - currentX;
 			drawerSa.lastWidth = drawerSa.startWidth + diffX
 			drawerSo.setWidth(drawerSa.lastWidth)
@@ -53,10 +55,11 @@ const DrawerGroup: FunctionComponent = () => {
 	const handleCompressAll = (e: React.MouseEvent) => {
 		forEachViews(drawerSo.state.all, view => view.setSize(VIEW_SIZE.COMPACT))
 	}
-	const handleMenuBottom = (e: React.MouseEvent) => {
-		docsSo.setDrawerPosition(DRAWER_POSITION.BOTTOM)
+	const handleMenuRight = (e: React.MouseEvent) => {
+		docsSo.setDrawerPosition(DRAWER_POSITION.RIGHT)
 	}
 
+	
 
 	// RENDER
 	const size = drawerSa.all?.length ?? 0
@@ -64,6 +67,7 @@ const DrawerGroup: FunctionComponent = () => {
 	return (
 		<div className={cls.root} >
 
+			{/* HANDLE */}
 			<div className={cls.handle}
 				draggable={false}
 				onMouseDown={handleDown}
@@ -71,7 +75,7 @@ const DrawerGroup: FunctionComponent = () => {
 				<IconButton className={cls.btt}
 					onClick={handleToggle}
 				>
-					{drawerSa.width > 0 ? <DirectionRightIcon /> : <DirectionLeftIcon />}
+					{drawerSa.width > 0 ? <DirectionDownIcon/> : <DirectionUpIcon/>}
 				</IconButton>
 
 				<IconButton className={cls.btt}
@@ -81,25 +85,24 @@ const DrawerGroup: FunctionComponent = () => {
 				</IconButton>
 
 				<IconButton className={cls.btt}
-					onClick={handleMenuBottom}
+					onClick={handleMenuRight}
 				>
-					<MenuBottomIcon/>
+					<MenuRightIcon />
 				</IconButton>
 
 				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 				<div className={cls.handle_label} draggable={false}>DRAWER</div>
 				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 
-				
-
 				<div className={cls.size}>
 					{size}
 				</div>
 			</div>
 
+			{/* CARDS */}
 			<div
 				className={`${cls.handle_container} ${drawerSa.animation ? cls.animate : ""}`}
-				style={{ width: drawerSa.width }}
+				style={{ height: drawerSa.width }}
 			>
 				<CardsGroup cardsStore={drawerSo} />
 			</div>
@@ -108,4 +111,4 @@ const DrawerGroup: FunctionComponent = () => {
 	)
 }
 
-export default DrawerGroup
+export default DrawerDownGroup
