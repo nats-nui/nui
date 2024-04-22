@@ -76,7 +76,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		const txt = filter.toLowerCase().trim()
 		return Object.values(msgSa.stats)
 			.filter(m => txt.length == 0 || m.subject?.toLowerCase().includes(txt))
-			.sort((s1, s2) => s2.counter - s1.counter)
+			.sort((s1, s2) => s1.subject.localeCompare(s2.subject))
 	}, [filter, msgSa.stats, msgSa.messages])
 	const noStats = !stats || stats.length == 0
 
