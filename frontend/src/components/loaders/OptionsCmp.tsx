@@ -27,6 +27,7 @@ interface OptionSelect {
 const options: OptionSelect[] = [
 	{ label: "MANUAL", polling: 0, mode: LOAD_MODE.MANUAL },
 	{ label: "PARENT", polling: 0, mode: LOAD_MODE.PARENT },
+	{ label: "1 SECOND", polling: 1000, mode: LOAD_MODE.POLLING },
 	{ label: "5 SECONDS", polling: 5000, mode: LOAD_MODE.POLLING },
 	{ label: "10 SECONDS", polling: 10000, mode: LOAD_MODE.POLLING },
 	{ label: "1 MINUTE", polling: 1000 * 60, mode: LOAD_MODE.POLLING },

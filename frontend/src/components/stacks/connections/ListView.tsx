@@ -58,7 +58,7 @@ const CnnListView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const connnections = useMemo(() => {
-		return cnnSo.state.all.sort((c1, c2) => c1.name.localeCompare(c2.name))
+		return cnnSo.state.all?.sort((c1, c2) => c1.name?.localeCompare(c2.name))
 	}, [cnnSa.all])
 	if (!connnections) return null
 
