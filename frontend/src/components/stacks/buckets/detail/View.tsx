@@ -51,7 +51,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 		}
 	>
 		{inRead ? (<>
-			<RowButton
+			<RowButton style={{ marginBottom: 13 }}
 				icon={<KvEntriesIcon />}
 				label="KVENTRIES"
 				selected={isKVEntriesSelect}

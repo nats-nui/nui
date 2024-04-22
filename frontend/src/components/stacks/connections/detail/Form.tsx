@@ -9,6 +9,7 @@ import { Auth, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 
 
 
@@ -62,60 +63,61 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 	return <div className="lyt-form var-dialog">
 
-		<div className="lbl-prop-title">BASE</div>
-		<div className="lyt-v">
-			<div className="lbl-prop">NAME</div>
-			<TextInput
-				value={name}
-				onChange={handleChangeName}
-				readOnly={inRead}
-			/>
-		</div>
+		<TitleAccordion title="BASE">
+			<div className="lyt-v">
+				<div className="lbl-prop">NAME</div>
+				<TextInput
+					value={name}
+					onChange={handleChangeName}
+					readOnly={inRead}
+				/>
+			</div>
+			<div className="lyt-v">
+				<div className="lbl-prop">HOST</div>
+				<EditList<string>
+					items={hosts}
+					onItemsChange={handleHostsChange}
+					readOnly={inRead}
+					placeholder="ex. demo.nats.io"
 
-		<div className="lyt-v">
-			<div className="lbl-prop">HOST</div>
-			<EditList<string>
-				items={hosts}
-				onItemsChange={handleHostsChange}
-				readOnly={inRead}
-				placeholder="ex. demo.nats.io"
-				
-				onNewItem={() => ""}
-				fnIsVoid={h => !h || h.trim().length == 0}
-				RenderRow={EditStringRow}
-			/>
-		</div>
+					onNewItem={() => ""}
+					fnIsVoid={h => !h || h.trim().length == 0}
+					RenderRow={EditStringRow}
+				/>
+			</div>
+		</TitleAccordion>
 
-		<div className="lbl-prop-title">ADVANCED</div>
 
-		<div className="lyt-v">
-			<div className="lbl-prop">AUTH</div>
-			<ListObjects<Auth>
-				store={cnnDetailSo}
-				items={auths}
-				readOnly={inRead}
-				width={170}
-				RenderLabel={({ item: auth, index }) => (
-					<div className="cmp-h">
-						<IconToggle
-							check={auth.active}
-							onChange={(check, e) => handleActivate(check, index, e)}
+		<TitleAccordion title="ADVANCED">
+			<div className="lyt-v">
+				<div className="lbl-prop">AUTH</div>
+				<ListObjects<Auth>
+					store={cnnDetailSo}
+					items={auths}
+					readOnly={inRead}
+					width={170}
+					RenderLabel={({ item: auth, index }) => (
+						<div className="cmp-h">
+							<IconToggle
+								check={auth.active}
+								onChange={(check, e) => handleActivate(check, index, e)}
+								readOnly={inRead}
+								trueIcon={<CheckRadioOnIcon />}
+							/>
+							{auth?.mode?.toUpperCase()}
+						</div>
+					)}
+					onDelete={handleAuthDelete}
+					RenderForm={({ item, index, onClose }) => (
+						<AuthForm
+							auth={item}
 							readOnly={inRead}
-							trueIcon={<CheckRadioOnIcon />}
+							onClose={(auth) => { onClose(); handleAuthChange(auth, index) }}
 						/>
-						{auth?.mode?.toUpperCase()}
-					</div>
-				)}
-				onDelete={handleAuthDelete}
-				RenderForm={({ item, index, onClose }) => (
-					<AuthForm
-						auth={item}
-						readOnly={inRead}
-						onClose={(auth) => { onClose(); handleAuthChange(auth, index) }}
-					/>
-				)}
-			/>
-		</div>
+					)}
+				/>
+			</div>
+		</TitleAccordion>
 
 	</div>
 }
