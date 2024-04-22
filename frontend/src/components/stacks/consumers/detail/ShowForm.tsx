@@ -27,7 +27,7 @@ const ShowForm: FunctionComponent<Props> = ({
 
 	return <div className="lyt-form">
 
-		<TitleAccordion title="CONSUMER">
+		<TitleAccordion title="BASE">
 
 			<div className="lyt-v">
 				<div className="lbl-prop">NAME</div>

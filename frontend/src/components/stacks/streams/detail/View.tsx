@@ -59,23 +59,24 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			</div>
 		}
 	>
-		{inRead ? <>
+		{inRead && <>
 			<RowButton
 				icon={<MessagesIcon />}
 				label="MESSAGES"
 				selected={isMessagesSelect}
 				onClick={handleMessagesClick}
 			/>
-			<RowButton style={{ marginBottom: 12 }}
+			<RowButton style={{ marginBottom: 13 }}
 				icon={<ConsumersIcon />}
 				label="CONSUMERS"
 				selected={isConsumersSelect}
 				onClick={handleConsumersClick}
 			/>
-			<ShowForm store={streamSo} />
-		</> : (
-			<EditForm store={streamSo} />
-		)}
+			
+		</>}
+
+		<EditForm store={streamSo} />
+
 	</FrameworkCard>
 }
 

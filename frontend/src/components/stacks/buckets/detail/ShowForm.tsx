@@ -1,3 +1,4 @@
+import TitleAccordion from "@/components/accordion/TitleAccordion"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -25,55 +26,64 @@ const ShowForm: FunctionComponent<Props> = ({
 	if (!bucket) return null
 
 	return <div className="lyt-form">
-		
-		<div className="lbl-prop-title">BUCKET</div>
 
-		<div className="lyt-v">
-			<div className="lbl-prop">NAME</div>
-			<div className="lbl-input-readonly">
-				{bucket.bucket}
-			</div>
-		</div>
+		<TitleAccordion title="BASE">
 
-		<div className="lyt-v">
-			<div className="lbl-prop">VALUES COUNT</div>
-			<div className="lbl-input-readonly">
-				{bucket.values}
+			<div className="lyt-v">
+				<div className="lbl-prop">NAME</div>
+				<div className="lbl-input-readonly">
+					{bucket.bucket}
+				</div>
 			</div>
-		</div>
 
-		<div className="lyt-v">
-			<div className="lbl-prop">BYTES COUNT</div>
-			<div className="lbl-input-readonly">
-				{bucket.bytes}
+			<div className="lyt-v">
+				<div className="lbl-prop">VALUES COUNT</div>
+				<div className="lbl-input-readonly">
+					{bucket.values}
+				</div>
 			</div>
-		</div>
 
-		<div className="lbl-prop-title">CONFIG</div>
-		<div className="lyt-v">
-			<div className="lbl-prop">HISTORY</div>
-			<div className="lbl-input-readonly">
-				{bucket.history}
+			<div className="lyt-v">
+				<div className="lbl-prop">BYTES COUNT</div>
+				<div className="lbl-input-readonly">
+					{bucket.bytes}
+				</div>
 			</div>
-		</div>
-		<div className="lyt-v">
-			<div className="lbl-prop">TTL</div>
-			<div className="lbl-input-readonly">
-				{bucket.ttl}
+
+		</TitleAccordion>
+
+
+		<TitleAccordion title="CONFIG">
+
+			<div className="lyt-v">
+				<div className="lbl-prop">HISTORY</div>
+				<div className="lbl-input-readonly">
+					{bucket.history}
+				</div>
 			</div>
-		</div>
-		<div className="lyt-v">
-			<div className="lbl-prop">BACKING STORE</div>
-			<div className="lbl-input-readonly">
-				{bucket.backingStore}
+
+			<div className="lyt-v">
+				<div className="lbl-prop">TTL</div>
+				<div className="lbl-input-readonly">
+					{bucket.ttl}
+				</div>
 			</div>
-		</div>
-		<div className="lyt-v">
-			<div className="lbl-prop">COMPRESSION</div>
-			<div className="lbl-input-readonly">
-				{bucket.compressed ? "YES" : "NO"}
+
+			<div className="lyt-v">
+				<div className="lbl-prop">BACKING STORE</div>
+				<div className="lbl-input-readonly">
+					{bucket.backingStore}
+				</div>
 			</div>
-		</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">COMPRESSION</div>
+				<div className="lbl-input-readonly">
+					{bucket.compressed ? "YES" : "NO"}
+				</div>
+			</div>
+
+		</TitleAccordion>
 
 	</div>
 }

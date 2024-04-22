@@ -9,17 +9,19 @@ import cls from "./Accordion.module.css"
 interface Props {
 	title?: string
 	children?: React.ReactNode
+	initOpen?: boolean
 }
 
 const TitleAccordion: FunctionComponent<Props> = ({
 	title,
 	children,
+	initOpen = true,
 }) => {
 
 	// STORE
 
 	// HOOK
-	const [open, setOpen] = useState(true)
+	const [open, setOpen] = useState(initOpen)
 
 	// HANDLER
 	const handleClick = () => setOpen(!open)
