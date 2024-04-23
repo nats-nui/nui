@@ -3,6 +3,10 @@
 	height: 100%;
 }
 
+.animation {
+	overflow-x: hidden;
+}
+
 .doc {
 	position: relative;
 	display: flex;
