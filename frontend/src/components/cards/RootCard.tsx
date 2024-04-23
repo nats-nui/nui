@@ -22,8 +22,8 @@ const RootCard: FunctionComponent<Props> = ({
 
 	// STORES
 	const viewSa = useStore(view)
-	useStoreNext(view.state.group,  (state:CardsState, stateOld:CardsState) => state.focus != stateOld.focus)
-	
+	useStoreNext(view.state.group, (state: CardsState, stateOld: CardsState) => state.focus != stateOld.focus)
+
 	// HOOKS
 	useEffect(() => {
 		window.requestAnimationFrame(() => view.docAnim(DOC_ANIM.SHOWING));
@@ -34,6 +34,7 @@ const RootCard: FunctionComponent<Props> = ({
 	// RENDER
 	if (!view) return null
 	const inRoot = !view.state.parent
+	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING
 	const haveLinked = !!view.state.linked
 	const haveFocus = view.state.group.state.focus == view
 	const variant = view.state.colorVar
@@ -45,10 +46,11 @@ const RootCard: FunctionComponent<Props> = ({
 		...view.getStyAni(),
 	}
 	const clsDoc = `var${variant} ${cls.doc} ${haveFocus ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
+	const clsRoot = `${cls.root} ${inAnimation ? cls.animation : ""}`
 
 	return <div
 		id={view.state.uuid}
-		className={cls.root}
+		className={clsRoot}
 		style={{ zIndex: deep }}
 	>
 
@@ -61,7 +63,7 @@ const RootCard: FunctionComponent<Props> = ({
 		<div className={cls.desk}>
 
 			{/* DIALOG */}
-			<div 
+			<div
 				className={`var${variant} ${cls.dialog}`}
 				style={{ zIndex: deep - 1 }}
 				id={`dialog_${view.state.uuid}`}
