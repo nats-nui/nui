@@ -29,8 +29,10 @@ export async function SaveSession() {
 		if (forEachViews(GetAllCards(), (v) => v.state.uuid == store.state.uuid)) return acc
 		return [...acc, store.getSerialization()]
 	}, [])
+	const docsState = docsSo.getSerialization()
 	const session: Session = {
 		allStates: [...deckStates, ...drawerStates, ...menuStates],
+		docsState,
 		deckUuids: deckStates.map(s => s.uuid),
 		drawerUuids: drawerStates.map(s => s.uuid),
 		menuUuids: menuSo.state.all.map(store => store.state.uuid),
@@ -45,6 +47,7 @@ export async function LoadSession() {
 	if (import.meta.env.DEV) await delay(1000)
 
 	const session = loadLocalStorage()
+	docsSo.setSerialization(session.docsState)
 	const { deckStores, drawerStores, menuStores } = buildCards(session)
 	const allStores = [...deckStores, ...drawerStores, ...menuStores]
 
