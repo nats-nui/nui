@@ -105,7 +105,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 				RenderRow={EditSubscriptionRow}
 			/>
 
-			<TitleAccordion title="STATS">
+			<TitleAccordion title="STATS" initOpen={false}>
 				{!noStats &&
 					<FindInput
 						style={{ margin: "5px 0px", flex: 0 }}

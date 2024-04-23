@@ -3,13 +3,13 @@ import { Subscription } from "@/types";
 
 const subscriptions: Subscription[] = [
 	{
-		subject: "pippo",
+		subject: "goofy",
 	},
 	{
-		subject: "pluto",
+		subject: "fido",
 	},
 	{
-		subject: "paperino",
+		subject: "daffy.>",
 	},
 ]
 

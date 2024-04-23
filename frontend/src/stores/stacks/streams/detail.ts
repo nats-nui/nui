@@ -85,6 +85,7 @@ const setup = {
 
 		/** load all ENTITY */
 		async fetchIfVoid(_: void, store?: StreamStore) {
+
 			// eventualmente aggiorno i dati
 			if (store.state.editState != EDIT_STATE.NEW && (!store.state.stream?.state || !store.state.stream.state.subjects)) {
 				await store.fetch()
@@ -92,15 +93,19 @@ const setup = {
 			if (!store.state.allStreams) {
 				await store.fetchAllStreams()
 			}
+
 			// riprstino link precedente
-			const options = docSo.state.cardOptions[store.state.type]
-			store.state.docAniDisabled = true
-			if (options == DOC_TYPE.CONSUMERS) {
-				store.openConsumers()
-			} else if (options == DOC_TYPE.STREAM_MESSAGES) {
-				store.openMessages()
+			// qua e non su "onLinked" per essere sicuro di avere i dati
+			if (!store.state.linked) {
+				const options = docSo.state.cardOptions[store.state.type]
+				store.state.docAniDisabled = true
+				if (options == DOC_TYPE.CONSUMERS) {
+					store.openConsumers()
+				} else if (options == DOC_TYPE.STREAM_MESSAGES) {
+					store.openMessages()
+				}
+				store.state.docAniDisabled = false
 			}
-			store.state.docAniDisabled = false
 		},
 		async fetchAllStreams(_: void, store?: StreamStore) {
 			const parent = store.getParentList()
@@ -134,13 +139,13 @@ const setup = {
 
 
 
-		
+
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
 			const view = buildConsumers(store.state.connectionId, store.state.stream)
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
-		
+
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
 			const view = buildStreamMessages(store.state.connectionId, store.state.stream)

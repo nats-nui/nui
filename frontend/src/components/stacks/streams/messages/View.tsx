@@ -15,6 +15,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
+import OptionsCmp from "@/components/loaders/OptionsCmp"
 
 
 
@@ -60,6 +61,10 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	return <FrameworkCard
 		store={strMsgSo}
 		actionsRender={<>
+			<OptionsCmp
+				style={{ marginLeft: 5 }}
+				store={strMsgSo}
+			/>
 			<FindInputHeader
 				value={textFind}
 				onChange={handleSearchChange}

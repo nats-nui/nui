@@ -23,9 +23,17 @@ const setup = {
 	},
 
 	getters: {
+		getSerialization: (_: void, store?: DocStore) => {
+			return {
+				drawerPosition: store.state.drawerPosition,
+			}
+		}
 	},
 
 	actions: {
+		setSerialization: (state: any, store?: DocStore) => {
+			store.state.drawerPosition = state.drawerPosition
+		},
 	},
 
 	mutators: {

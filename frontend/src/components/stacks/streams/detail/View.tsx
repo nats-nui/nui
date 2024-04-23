@@ -9,7 +9,6 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
 import EditForm from "./EditForm"
-import ShowForm from "./ShowForm"
 
 
 

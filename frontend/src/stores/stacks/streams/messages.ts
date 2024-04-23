@@ -89,8 +89,13 @@ const setup = {
 			state.textSearch = data.textSearch
 			state.filter = data.filter
 		},
-		/** prima carica dei dati da visualizzare */
+		/** chiamato dallo store parent "LoaderBase" */
 		fetch: async (_: void, loadStore?: LoadBaseStore) => {
+			const store = <StreamMessagesStore>loadStore
+			store.fetchNext()
+		},
+		/** il primo caricamento dei dati da visualizzare */
+		fetchInit: async (_: void, loadStore?: LoadBaseStore) => {
 			const store = <StreamMessagesStore>loadStore
 			if (!store.state.stream?.config?.name || !store.state.connectionId || !store.state.stream?.state) {
 				console.error("no params")
@@ -110,7 +115,7 @@ const setup = {
 
 		async fetchIfVoid(_: void, store?: StreamMessagesStore) {
 			if (!!store.state.messages) return
-			await store.fetch()
+			await store.fetchInit()
 		},
 
 		/** effettua una richiesta indicando un filtro */
