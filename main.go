@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/desktop/mapping"
 	"github.com/nats-nui/nui/internal/app"
+	"github.com/nats-nui/nui/internal/version"
 	"github.com/nats-nui/nui/pkg/logging"
 	"github.com/nats-nui/nui/pkg/ospaths"
 	"github.com/wailsapp/wails/v2"
@@ -25,6 +26,8 @@ var icon []byte
 var Version string
 
 func main() {
+
+	version.Set(Version)
 
 	logLevel := *flag.String("log-level", "info", "log level")
 	logsOutput := *flag.String("log-output", "", "log output")
