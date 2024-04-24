@@ -39,10 +39,10 @@ const ElementRow: FunctionComponent<Props> = ({
 	>
 		{icon}
 		<div className={cls.label}>
-			<div className="lbl-rowelement-title">
+			<div className={cls.title}>
 				{title}
 			</div>
-			<div className="lbl-rowelement-subtitle" style={{ display: "flex" }}>
+			<div className={cls.subtitle}>
 				<div>{subtitle}</div>
 				{testRender}
 			</div>

@@ -66,7 +66,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 		<TitleAccordion title="BASE">
 			<div className="lyt-v">
 				<div className="lbl-prop">NAME</div>
-				<TextInput
+				<TextInput autoFocus
 					value={name}
 					onChange={handleChangeName}
 					readOnly={inRead}

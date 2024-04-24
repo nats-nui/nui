@@ -39,7 +39,10 @@ const TitleAccordion: FunctionComponent<Props> = ({
 			</div>
 		</div>
 
-		<Accordion open={open}>
+		<Accordion 
+			open={open} 
+			className={cls.title_accordion}
+		>
 			{children}
 		</Accordion>
 
