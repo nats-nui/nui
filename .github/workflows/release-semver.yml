@@ -85,7 +85,7 @@ jobs:
         uses: ./.github/actions/wails-build-action
         id: build
         with:
-          version: ${{ github.event.release.tag_name }}
+          app-version: v0.1.4-r1
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
           wails-build-webview2: embed
