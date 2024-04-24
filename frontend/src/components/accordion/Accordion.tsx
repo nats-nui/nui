@@ -5,14 +5,20 @@ import cls from "./Accordion.module.css"
 
 interface Props {
 	open?: boolean
-	height?: number
 	children?: React.ReactNode
+	
+	height?: number
+	style?: React.CSSProperties
+	className?: string
 }
 
 const Accordion: FunctionComponent<Props> = ({
 	open,
-	height,
 	children,
+
+	height,
+	style,
+	className = "",
 }) => {
 
 	// STORE
@@ -43,11 +49,11 @@ const Accordion: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-
+	const clsRoot = `${cls.root} ${height == null ? "" : cls.scroll} ${className}`
 	return (
 		<div ref={ref}
-			className={cls.root}
-			style={cssRoot(height == null)}
+			style={style}
+			className={clsRoot}
 		>
 			{children}
 		</div>
@@ -55,7 +61,3 @@ const Accordion: FunctionComponent<Props> = ({
 }
 
 export default Accordion
-
-const cssRoot = (noScroll: boolean): React.CSSProperties => ({
-	overflowY: noScroll ? "hidden" : "auto",
-})

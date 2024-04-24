@@ -12,3 +12,15 @@
 	flex-direction: column;
 	margin-left: 7px;
 }
+
+.label .title {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.label .subtitle {
+	display: flex;
+	font-size: 12px;
+	font-weight: 400;
+	opacity: 0.9;
+}

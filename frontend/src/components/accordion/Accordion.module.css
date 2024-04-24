@@ -2,7 +2,14 @@
 	display: flex; 
 	flex-direction: column;
 	transition: height 300ms;
+	overflow-y: hidden;
 }
+
+.scroll {
+	overflow-y: "auto"
+}
+
+/* ACCORDION with title */
 
 .root_title {
 	display: flex;
@@ -14,7 +21,6 @@
     display: flex;
     justify-content: center;
     cursor: pointer;
-	gap: 5px;
 }
 
 .title_text {
@@ -25,4 +31,8 @@
 .title_icon {
 	display: flex;
 	opacity: .5;
+}
+
+.title_accordion {
+	gap: 5px;
 }
