@@ -5,6 +5,8 @@ import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import TextInput from "../../../input/TextInput"
 import StringUpRow from "@/components/rows/StringUpRow"
 import PasswordInput from "@/components/input/PasswordInput"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -36,14 +38,20 @@ const AuthForm: FunctionComponent<Props> = ({
 	if (!authEdit) return null
 	return <div className="lyt-form var-dialog">
 
-		<Options<string> style={{ marginBottom: 8 }}
-			className={readOnly ? "lbl-prop-title" : ""}
-			value={authEdit?.mode?.toUpperCase()}
-			items={authItems}
-			RenderRow={StringUpRow}
-			readOnly={readOnly}
-			onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
-		/>
+		<div className="lbl-info-container">
+			<Options<string> style={{ marginBottom: 8 }}
+				className={readOnly ? "lbl-prop-title" : ""}
+				value={authEdit?.mode?.toUpperCase()}
+				items={authItems}
+				RenderRow={StringUpRow}
+				readOnly={readOnly}
+				onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
+			/>
+			<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+				style={{ top: readOnly ? 7 : 3, backgroundColor: "var(--var-1)" }}
+				content="una bella spiegazione completa"
+			/>
+		</div>
 
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
@@ -59,11 +67,19 @@ const AuthForm: FunctionComponent<Props> = ({
 				/></div>
 			</>,
 			[AUTH_MODE.TOKEN]: (
-				<div className="lyt-v"><div className="lbl-prop">TOKEN</div><TextInput
-					value={authEdit.token}
-					onChange={token => handlePropChange({ token })}
-					readOnly={readOnly}
-				/></div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">
+						TOKEN
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?" 
+							content="una bella spiegazione completa" 
+						/>
+					</div>
+					<TextInput
+						value={authEdit.token}
+						onChange={token => handlePropChange({ token })}
+						readOnly={readOnly}
+					/>
+				</div>
 			),
 			[AUTH_MODE.JWT]: <>
 				<div className="lyt-v"><div className="lbl-prop">JWT</div><TextInput
@@ -85,23 +101,31 @@ const AuthForm: FunctionComponent<Props> = ({
 				/></div>
 			</>,
 			[AUTH_MODE.CREDS_FILE]: <>
-				<div className="lyt-v"><div className="lbl-prop">CREDS PATH FILE</div><TextInput
-					value={authEdit.creds}
-					onChange={creds => handlePropChange({ creds })}
-					readOnly={readOnly}
-				/></div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">
+						CREDS PATH FILE
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?" 
+							content="una bella spiegazione completa" 
+						/>
+					</div>
+					<TextInput
+						value={authEdit.creds}
+						onChange={creds => handlePropChange({ creds })}
+						readOnly={readOnly}
+					/>
+				</div>
 			</>,
 		}[authEdit.mode]}
 
 		<div className="cmp-footer">
-			<Button children={readOnly ? "CLOSE" : "CANCEL"}
-				onClick={() => onClose(null)}
-			/>
 			{!readOnly && (
 				<Button children="SAVE"
 					onClick={() => onClose(authEdit)}
 				/>
 			)}
+			<Button children={readOnly ? "CLOSE" : "CANCEL"}
+				onClick={() => onClose(null)}
+			/>
 		</div>
 	</div>
 

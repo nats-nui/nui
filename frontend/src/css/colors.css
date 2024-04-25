@@ -36,38 +36,6 @@
 	--bg-2: #2e2e2e;
 }
 
-/* #region CARD FOCUS */
-
-.var0.card-focus {
-	outline: 2px solid var(--bg-default);
-}
-
-.var1.card-focus {
-	outline: 2px solid var(--var-1);
-}
-
-.var2.card-focus {
-	outline: 2px solid var(--var-2);
-}
-
-.var3.card-focus {
-	outline: 2px solid var(--var-3);
-}
-
-.var4.card-focus {
-	outline: 2px solid var(--var-4);
-}
-
-.var5.card-focus {
-	outline: 2px solid var(--var-5);
-}
-
-.var6.card-focus {
-	outline: 2px solid var(--var-6);
-}
-
-/* #endregion */
-
 
 .bars-alert-bg {
 	background: repeating-linear-gradient(135deg, transparent, transparent 7px, #000 7px, #000 15px)
