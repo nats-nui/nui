@@ -168,6 +168,9 @@ const viewSetup = {
 			} else if (docAnim == DOC_ANIM.SHOWING) {
 				animTime = ANIM_TIME
 				nextAnim = DOC_ANIM.SHOW
+			} else if (docAnim == DOC_ANIM.SIZING) {
+				animTime = ANIM_TIME
+				nextAnim = DOC_ANIM.SHOW
 			}
 
 			if (animTime > 0) {
@@ -193,7 +196,11 @@ const viewSetup = {
 	},
 
 	mutators: {
-		setSize: (size: VIEW_SIZE) => ({ size }),
+		setSize: (size: VIEW_SIZE, store?: ViewStore ) => {
+			store.docAnim(DOC_ANIM.SIZING)
+			return { size }
+		},
+		setWidth: (width: number) => ({ width }),
 		setDisabled: (disabled: boolean) => ({ disabled }),
 		setDocAnim: (docAnim: DOC_ANIM) => ({ docAnim }),
 
