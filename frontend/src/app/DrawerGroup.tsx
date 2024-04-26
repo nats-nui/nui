@@ -12,66 +12,70 @@ import CardsGroup from "./CardsGroups"
 import cls from "./DrawerGroup.module.css"
 import docsSo, { DRAWER_POSITION } from "@/stores/docs"
 import MenuBottomIcon from "@/icons/MenuBottomIcon"
+import MenuRightIcon from "@/icons/MenuRightIcon"
+import ResizerCmp, { RESIZER_DIRECTION } from "@/components/cards/ResizerCmp"
+import DirectionUpIcon from "@/icons/DirectionUpIcon"
+import DirectionDownIcon from "@/icons/DirectionDownIcon"
 
 
 
-const DrawerGroup: FunctionComponent = () => {
+
+interface Props {
+}
+
+const DrawerGroup: FunctionComponent<Props> = ({
+
+}) => {
 
 	// STORES
 	const drawerSa = useStore(drawerSo)
+	const docsSa = useStore(docsSo)
+	const inRight = docsSa.drawerPosition == DRAWER_POSITION.RIGHT
 
 	// HOOKS
 
 	// HANDLERS
-	const handleDown = (e: React.MouseEvent) => {
-		drawerSa.isDown = true
-		drawerSa.startX = e.clientX;
-		drawerSa.startWidth = drawerSa.width;
-		const mouseMove = (ev: MouseEvent) => {
-			if (!drawerSa.isDown) return
-			const currentX = ev.clientX;
-			const diffX = drawerSa.startX - currentX;
-			drawerSa.lastWidth = drawerSa.startWidth + diffX
-			drawerSo.setWidth(drawerSa.lastWidth)
-		}
-		const mouseUp = (ev: MouseEvent) => {
-			drawerSa.isDown = false
-			document.removeEventListener('mousemove', mouseMove);
-			document.removeEventListener('mouseup', mouseUp);
-		}
-		document.addEventListener('mousemove', mouseMove);
-		document.addEventListener('mouseup', mouseUp);
-	}
 	const handleToggle = async (e: React.MouseEvent) => {
-		const w = drawerSa.lastWidth < 20 ? 500 : drawerSa.lastWidth
-
+		e.stopPropagation()
+		const w = drawerSo.state.lastWidth < 20 ? 500 : drawerSo.state.lastWidth
 		drawerSo.state.animation = true
-		drawerSo.setWidth(drawerSa.width > 0 ? 0 : w)
+		drawerSo.setWidth(drawerSo.state.width > 0 ? 0 : w)
 		await delay(400)
 		drawerSo.state.animation = false
 	}
 	const handleCompressAll = (e: React.MouseEvent) => {
+		e.stopPropagation()
 		forEachViews(drawerSo.state.all, view => view.setSize(VIEW_SIZE.COMPACT))
 	}
-	const handleMenuBottom = (e: React.MouseEvent) => {
-		docsSo.setDrawerPosition(DRAWER_POSITION.BOTTOM)
+	const handleMenuPosition = (e: React.MouseEvent) => {
+		e.stopPropagation()
+		docsSo.setDrawerPosition(inRight ? DRAWER_POSITION.BOTTOM : DRAWER_POSITION.RIGHT)
 	}
-
+	const handleDragMove = (pos: number, diff: number) => {
+		drawerSo.setWidth(pos + diff); drawerSo.state.lastWidth = pos + diff;
+	}
 
 	// RENDER
 	const size = drawerSa.all?.length ?? 0
+	const clsRoot = `${cls.root} ${cls[docsSa.drawerPosition]}`
+	const styleContainer = inRight ? { width: drawerSa.width } : { height: drawerSa.width }
 
 	return (
-		<div className={cls.root} >
+		<div className={clsRoot} >
 
-			<div className={cls.handle}
-				draggable={false}
-				onMouseDown={handleDown}
+			<ResizerCmp
+				direction={inRight ? RESIZER_DIRECTION.HORIZONTAL : RESIZER_DIRECTION.VERTICAL}
+				className={cls.handle}
+				onStart={(pos: number) => drawerSo.state.width}
+				onMove={handleDragMove}
 			>
 				<IconButton className={cls.btt}
 					onClick={handleToggle}
 				>
-					{drawerSa.width > 0 ? <DirectionRightIcon /> : <DirectionLeftIcon />}
+					{drawerSa.width > 0
+						? (inRight ? <DirectionRightIcon /> : <DirectionDownIcon />)
+						: (inRight ? <DirectionLeftIcon /> : <DirectionUpIcon />)
+					}
 				</IconButton>
 
 				<IconButton className={cls.btt}
@@ -81,25 +85,24 @@ const DrawerGroup: FunctionComponent = () => {
 				</IconButton>
 
 				<IconButton className={cls.btt}
-					onClick={handleMenuBottom}
+					onClick={handleMenuPosition}
 				>
-					<MenuBottomIcon/>
+					{inRight ? <MenuBottomIcon /> : <MenuRightIcon />}
 				</IconButton>
 
 				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 				<div className={cls.handle_label} draggable={false}>DRAWER</div>
 				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 
-				
-
 				<div className={cls.size}>
 					{size}
 				</div>
-			</div>
+
+			</ResizerCmp>
 
 			<div
 				className={`${cls.handle_container} ${drawerSa.animation ? cls.animate : ""}`}
-				style={{ width: drawerSa.width }}
+				style={styleContainer}
 			>
 				<CardsGroup cardsStore={drawerSo} />
 			</div>

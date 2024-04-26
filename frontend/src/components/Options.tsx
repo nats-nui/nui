@@ -72,7 +72,10 @@ function Options<T>({
 	const label = value?.toString() ?? "--"
 
 	if (readOnly) return (
-		<div className={`${cls.label} ${className}`}>
+		<div 
+			className={`${cls.label} ${className}`} 
+			style={style}
+		>
 			{label}
 		</div>
 	)

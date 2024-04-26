@@ -1,9 +1,10 @@
 .root {
 	display: flex;
 	height: 100%;
+	position: "relative";
 }
 
-.animation {
+.root.animation {
 	overflow-x: hidden;
 }
 
@@ -11,13 +12,27 @@
 	position: relative;
 	display: flex;
 	flex-direction: column;
+
 	overflow: hidden;
+
 	color: var(--text);
 	background-color: var(--bg-default);
-	transition-timing-function: cubic-bezier(0.000, 0.350, 0.225, 1.175);
 	box-shadow: rgba(0, 0, 0, 0.4) 1px 1px 0px 0px;
 	border-radius: 5px;
+}
+
+.animation .doc {
 	transition: transform 300ms, width 300ms;
+	transition-timing-function: cubic-bezier(0.000, 0.350, 0.225, 1.175);
+}
+
+.resizer {
+	display: flex;
+	width: 5px;
+	user-select: none;
+	cursor: col-resize;
+	margin-right: -5px;
+	z-index: 999;
 }
 
 .is_linked {
@@ -33,4 +48,33 @@
 	margin-left: -8px;
 	display: flex;
 	position: relative;
+}
+
+
+:global(.var0).focus {
+	outline: 2px solid var(--bg-default);
+}
+
+:global(.var1).focus {
+	outline: 2px solid var(--var-1);
+}
+
+:global(.var2).focus {
+	outline: 2px solid var(--var-2);
+}
+
+:global(.var3).focus {
+	outline: 2px solid var(--var-3);
+}
+
+:global(.var4).focus {
+	outline: 2px solid var(--var-4);
+}
+
+:global(.var5).focus {
+	outline: 2px solid var(--var-5);
+}
+
+:global(.var6).focus {
+	outline: 2px solid var(--var-6);
 }
