@@ -67,6 +67,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
 	const selectId = (cnnListSa.linked as CnnDetailStore)?.state?.connection?.id
 	const isSelected = (cnn: Connection) => cnn.id == selectId
+	const isVoid = connections.length == 0
 
 	return <FrameworkCard
 		store={cnnListSo}
@@ -88,7 +89,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		{connnections.map(cnn => (
+		{!isVoid ? connnections.map(cnn => (
 			<ElementRow key={cnn.id}
 				title={getTitle(cnn)}
 				subtitle={getSubtitle(cnn)}
@@ -96,7 +97,9 @@ const CnnListView: FunctionComponent<Props> = ({
 				selected={isSelected(cnn)}
 				onClick={() => handleSelect(cnn)}
 			/>
-		))}
+		)):(
+			<div className="lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
+		)}
 
 		<AlertDialog store={cnnListSo} />
 

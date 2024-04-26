@@ -3,10 +3,11 @@
 	display: flex;
 
 	background-color: var(--text-bg);
-	/* box-shadow: rgba(0, 0, 0, 0.25) -2px 0px 1px 0px; */
 	z-index: 2;
 }
-
+.bottom.root {
+	flex-direction: column;
+}
 
 
 /** HANDLE **/
@@ -17,6 +18,10 @@
 	flex-direction: column;
 	gap: 8px;
 	margin: 10px;
+}
+.bottom .handle {
+	cursor: row-resize;
+	flex-direction: row;
 }
 
 .btt {
@@ -35,6 +40,14 @@
     color: var(--var-1);
 	font-weight: 700;
 }
+.bottom .handle_label {
+	writing-mode: unset;
+	border-left: unset;
+    border-right: unset;
+	border-top: 1px solid var(--var-1);
+    border-bottom: 1px solid var(--var-1);
+    height: unset;
+}
 
 .size {
 	font-size: 10px;
@@ -44,7 +57,9 @@
     padding: 1px 0px;
     color: var(--var-1);
 }
-
+.bottom .size {
+	min-width: 18px;
+}
 
 /** CARDS **/
 
@@ -53,7 +68,10 @@
 	padding: 10px 0px;
 	overflow-x: auto;
 }
+.bottom .handle_container {
+	padding: unset;
+}
 
 .animate {
-	transition: width 300ms ease-in-out;
+	transition: width 300ms ease-in-out, height 300ms ease-in-out;
 }

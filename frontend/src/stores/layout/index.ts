@@ -91,7 +91,7 @@ export type LayoutMutators = typeof setup.mutators
 export interface LayoutStore extends StoreCore<LayoutState>, LayoutGetters, LayoutActions, LayoutMutators {
 	state: LayoutState
 }
-const store = createStore(setup) as LayoutStore
-export default store
+const layoutSo = createStore(setup) as LayoutStore
+export default layoutSo
 
 

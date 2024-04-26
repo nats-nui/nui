@@ -6,6 +6,9 @@ import React, { FunctionComponent, useEffect } from "react"
 import PolymorphicCard from "./PolymorphicCard"
 import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
+import ResizerCmp from "./ResizerCmp"
+import CornerDragIcon from "@/icons/CornerDragIcon"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 
@@ -30,23 +33,26 @@ const RootCard: FunctionComponent<Props> = ({
 	}, [view])
 
 	// HANDLER
+	const handleDragMove = (pos: number, diff: number) => view.setWidth(pos - diff)
 
 	// RENDER
 	if (!view) return null
 	const inRoot = !view.state.parent
-	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING
+	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING || viewSa.docAnim == DOC_ANIM.SIZING
+	const isCompact = viewSa.size == VIEW_SIZE.COMPACT
 	const haveLinked = !!view.state.linked
 	const haveFocus = view.state.group.state.focus == view
 	const variant = view.state.colorVar
 
 	// styles
+	const clsAnimation = inAnimation ? cls.animation : ""
+	const clsRoot = `${cls.root} ${clsAnimation}`
+	const clsDoc = `var${variant} ${haveFocus ? cls.focus : ""} ${cls.doc} ${!inRoot ? cls.is_linked : ""}`
 	const styContainerDoc: React.CSSProperties = {
 		zIndex: deep,
 		width: view.getWidth(),
 		...view.getStyAni(),
 	}
-	const clsDoc = `var${variant} ${cls.doc} ${haveFocus ? "card-focus" : ""} ${!inRoot ? cls.is_linked : ""}`
-	const clsRoot = `${cls.root} ${inAnimation ? cls.animation : ""}`
 
 	return <div
 		id={view.state.uuid}
@@ -58,7 +64,14 @@ const RootCard: FunctionComponent<Props> = ({
 		<div style={styContainerDoc} className={clsDoc}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
+
 		</div>
+
+		{!isCompact && <ResizerCmp
+			className={cls.resizer}
+			onStart={(pos: number) => view.state.width}
+			onMove={handleDragMove}
+		/>}
 
 		<div className={cls.desk}>
 

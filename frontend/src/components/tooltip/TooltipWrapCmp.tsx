@@ -1,12 +1,15 @@
+import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import tooltipSo from "@/stores/tooltip"
+import { Color } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useId, useLayoutEffect } from "react"
+import { FunctionComponent, useEffect, useId } from "react"
 
 
 
 interface Props {
 	content?: React.ReactNode
 	disabled?: boolean
+	colorVar?: COLOR_VAR
 	style?: React.CSSProperties
 	className?: string
 	onMouseOver?: (enter: boolean) => void
@@ -17,6 +20,7 @@ interface Props {
 const TooltipWrapCmp: FunctionComponent<Props> = ({
 	content,
 	disabled,
+	colorVar,
 	style,
 	className,
 	onMouseOver,
@@ -41,14 +45,17 @@ const TooltipWrapCmp: FunctionComponent<Props> = ({
 	// HANDLERS
 	const handleEnter = (e: React.MouseEvent<HTMLDivElement>) => {
 		if ( disabled ) return
+
 		const elem = e.target as HTMLElement
 
-		const colorRef = e.currentTarget.querySelector('#colorRef')
-		var stili = window.getComputedStyle(colorRef);
-		var color = stili.getPropertyValue('color');
-
+		let color = layoutSo.state.theme.palette.var[colorVar]?.bg
+		if ( !color ) {
+			const colorRef = e.currentTarget.querySelector('#colorRef')
+			const style = window.getComputedStyle(colorRef)
+			color = style.getPropertyValue('color') as Color
+		}
+		
 		const rect = elem.getBoundingClientRect()
-
 		tooltipSo.open({
 			content,
 			targetRect: rect,
