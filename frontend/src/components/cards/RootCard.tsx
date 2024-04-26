@@ -6,8 +6,9 @@ import React, { FunctionComponent, useEffect } from "react"
 import PolymorphicCard from "./PolymorphicCard"
 import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
-import DraggableCmp from "./DraggableCmp"
+import ResizerCmp from "./ResizerCmp"
 import CornerDragIcon from "@/icons/CornerDragIcon"
+import { VIEW_SIZE } from "@/stores/stacks/utils"
 
 
 
@@ -38,6 +39,7 @@ const RootCard: FunctionComponent<Props> = ({
 	if (!view) return null
 	const inRoot = !view.state.parent
 	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING || viewSa.docAnim == DOC_ANIM.SIZING
+	const isCompact = viewSa.size == VIEW_SIZE.COMPACT
 	const haveLinked = !!view.state.linked
 	const haveFocus = view.state.group.state.focus == view
 	const variant = view.state.colorVar
@@ -51,7 +53,6 @@ const RootCard: FunctionComponent<Props> = ({
 		width: view.getWidth(),
 		...view.getStyAni(),
 	}
-	console.log(view.state.docAnim)
 
 	return <div
 		id={view.state.uuid}
@@ -63,12 +64,14 @@ const RootCard: FunctionComponent<Props> = ({
 		<div style={styContainerDoc} className={clsDoc}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
-			<DraggableCmp
-				className={cls.draggable}
-				onStart={(pos: number) => view.state.width}
-				onMove={handleDragMove}
-			><CornerDragIcon /></DraggableCmp>
+
 		</div>
+
+		{!isCompact && <ResizerCmp
+			className={cls.resizer}
+			onStart={(pos: number) => view.state.width}
+			onMove={handleDragMove}
+		/>}
 
 		<div className={cls.desk}>
 

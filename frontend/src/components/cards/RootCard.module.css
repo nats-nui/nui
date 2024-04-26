@@ -1,6 +1,7 @@
 .root {
 	display: flex;
 	height: 100%;
+	position: "relative";
 }
 
 .root.animation {
@@ -21,24 +22,17 @@
 }
 
 .animation .doc {
-	transition-timing-function: cubic-bezier(0.000, 0.350, 0.225, 1.175);
 	transition: transform 300ms, width 300ms;
+	transition-timing-function: cubic-bezier(0.000, 0.350, 0.225, 1.175);
 }
 
-.draggable {
-	display: none;
-	/* display: flex; */
-	position: absolute;
-	right: 0px;
-	bottom: 0px;
-	width: 15px;
-	height: 15px;
+.resizer {
+	display: flex;
+	width: 5px;
 	user-select: none;
 	cursor: col-resize;
-}
-
-.doc:hover .draggable {
-	display: flex;
+	margin-right: -5px;
+	z-index: 999;
 }
 
 .is_linked {

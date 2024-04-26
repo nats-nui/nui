@@ -4,6 +4,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStreams } from "../streams/utils/factory"
 import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
+import { CnnDetailStore } from "./detail"
 
 
 
@@ -13,8 +14,6 @@ import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./
 const setup = {
 
 	state: {
-		select: <string>null,
-
 		//#region VIEWBASE
 		width: 220,
 		colorVar: COLOR_VAR.GREEN,
@@ -31,7 +30,6 @@ const setup = {
 			const state = store.state as CnnListState
 			return {
 				...viewSetup.getters.getSerialization(null, store),
-				select: state.select,
 			}
 		},
 		//#endregion
@@ -44,14 +42,13 @@ const setup = {
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnListState
-			state.select = data.select
 		},
 		//#endregion
 
 		/** apro/chiudo la CARD del dettaglio */
 		select(cnnId: string, store?: CnnListStore) {
 			const connection = cnnSo.getById(cnnId)
-			const oldId = store.state.select
+			const oldId = (store.state.linked as CnnDetailStore)?.state.connection?.id
     		const newId = (cnnId && oldId !== cnnId) ? cnnId : null
     		const view = newId ? buildConnection(connection) : null
     		store.setSelect(newId)
