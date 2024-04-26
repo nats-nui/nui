@@ -13,7 +13,7 @@ import cls from "./DrawerGroup.module.css"
 import docsSo, { DRAWER_POSITION } from "@/stores/docs"
 import MenuBottomIcon from "@/icons/MenuBottomIcon"
 import MenuRightIcon from "@/icons/MenuRightIcon"
-import DraggableCmp, { DRAG_DIRECTION } from "@/components/cards/DraggableCmp"
+import ResizerCmp, { RESIZER_DIRECTION } from "@/components/cards/ResizerCmp"
 import DirectionUpIcon from "@/icons/DirectionUpIcon"
 import DirectionDownIcon from "@/icons/DirectionDownIcon"
 
@@ -63,8 +63,8 @@ const DrawerGroup: FunctionComponent<Props> = ({
 	return (
 		<div className={clsRoot} >
 
-			<DraggableCmp
-				direction={inRight ? DRAG_DIRECTION.HORIZONTAL : DRAG_DIRECTION.VERTICAL}
+			<ResizerCmp
+				direction={inRight ? RESIZER_DIRECTION.HORIZONTAL : RESIZER_DIRECTION.VERTICAL}
 				className={cls.handle}
 				onStart={(pos: number) => drawerSo.state.width}
 				onMove={handleDragMove}
@@ -98,7 +98,7 @@ const DrawerGroup: FunctionComponent<Props> = ({
 					{size}
 				</div>
 
-			</DraggableCmp>
+			</ResizerCmp>
 
 			<div
 				className={`${cls.handle_container} ${drawerSa.animation ? cls.animate : ""}`}

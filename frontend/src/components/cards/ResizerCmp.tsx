@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react"
 
-export enum DRAG_DIRECTION {
+export enum RESIZER_DIRECTION {
 	HORIZONTAL = "horizontal",
 	VERTICAL = "vertical",
 }
@@ -9,18 +9,18 @@ interface Props {
 	children?: React.ReactNode
 	className?: string
 	style?: React.CSSProperties
-	direction?: DRAG_DIRECTION
+	direction?: RESIZER_DIRECTION
 	onStart?: (pos: number) => number
 	onMove?: (pos: number, diff?: number) => void
 	onStop?: () => void
 }
 
 /** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
-const DraggableCmp: FunctionComponent<Props> = ({
+const ResizerCmp: FunctionComponent<Props> = ({
 	children,
 	className,
 	style,
-	direction = DRAG_DIRECTION.HORIZONTAL,
+	direction = RESIZER_DIRECTION.HORIZONTAL,
 	onStart,
 	onMove,
 	onStop,
@@ -32,10 +32,10 @@ const DraggableCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleDown = (e: React.MouseEvent) => {
-		const startX = direction == DRAG_DIRECTION.HORIZONTAL ? e.clientX : e.clientY
+		const startX = direction == RESIZER_DIRECTION.HORIZONTAL ? e.clientX : e.clientY
 		const startWidth = onStart?.(startX)
 		const mouseMove = (ev: MouseEvent) => {
-			const currentX = direction == DRAG_DIRECTION.HORIZONTAL ? ev.clientX : ev.clientY
+			const currentX = direction == RESIZER_DIRECTION.HORIZONTAL ? ev.clientX : ev.clientY
 			const diffX = startX - currentX
 			onMove?.(startWidth, diffX)
 		}
@@ -58,4 +58,4 @@ const DraggableCmp: FunctionComponent<Props> = ({
 	/>
 }
 
-export default DraggableCmp
+export default ResizerCmp
