@@ -74,23 +74,23 @@ const Form: FunctionComponent<Props> = ({
 
 		{inRead && (
 			<TitleAccordion title="STATS">
-				
-				<div style={{ display: "flex", justifyContent: "space-between", textAlign: "center" }}>
-					<div className="lyt-v">
+
+				<div className="lyt-h-props">
+
+					<div className="item">
 						<div className="lbl-prop">COUNT</div>
 						<div className="lbl-readonly">{state.messages}</div>
 					</div>
 					<div className="lbl-divider-v" />
-					<div className="lyt-v">
+					<div className="item">
 						<div className="lbl-prop">BYTES</div>
 						<div className="lbl-readonly">{state.bytes}</div>
 					</div>
 					<div className="lbl-divider-v" />
-					<div className="lyt-v">
+					<div className="item">
 						<div className="lbl-prop">DELETED</div>
 						<div className="lbl-readonly">{state.numDeleted}</div>
 					</div>
-					<div className="lbl-divider-v" />
 				</div>
 
 				<div className="lyt-v">
