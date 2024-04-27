@@ -64,11 +64,15 @@
 	font-weight: 700;
 }
 /* valore in sola lettura */
-.lbl-input-readonly {
+.lbl-readonly {
 	font-size: 12px;
     font-weight: 500;
     padding: 0px 0px 4px 0px;
 	overflow-wrap: break-word;
+}
+
+.lbl-center {
+	text-align: center;
 }
 
 /* lista vuota */
@@ -86,7 +90,9 @@
 	opacity: .6;
 }
 
-
+.lbl-divider-v {
+	border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
 
 
 .lbl-info-container {

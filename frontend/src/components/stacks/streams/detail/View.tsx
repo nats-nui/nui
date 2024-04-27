@@ -8,7 +8,7 @@ import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import ActionsCmp from "./Actions"
-import EditForm from "./EditForm"
+import Form from "./Form"
 
 
 
@@ -74,7 +74,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			
 		</>}
 
-		<EditForm store={streamSo} />
+		<Form store={streamSo} />
 
 	</FrameworkCard>
 }

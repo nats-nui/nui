@@ -16,6 +16,7 @@ import MaxNumberCmp from "../../../input/MaxNumberCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import SourcesCmp from "./cmp/SourcesCmp"
 import TitleAccordion from "@/components/accordion/TitleAccordion"
+import { dateShow } from "@/utils/time"
 
 
 
@@ -23,7 +24,7 @@ interface Props {
 	store?: StreamStore
 }
 
-const EditForm: FunctionComponent<Props> = ({
+const Form: FunctionComponent<Props> = ({
 	store: streamSo,
 }) => {
 
@@ -49,34 +50,73 @@ const EditForm: FunctionComponent<Props> = ({
 		config.placement = { ...config.placement, ...prop }
 		streamSo.setStreamConfig(config)
 	}
-
-
 	const handleMirrorCheck = (check: boolean) => {
-		if (check) {
-			if (!config.mirror) {
-				handlePropChange({
-					mirror: {
-						name: "",
-						optStartSeq: 0,
-						filterSubject: "",
-					}
-				})
-			}
-		} else {
-			if (config.mirror) {
-				handlePropChange({ mirror: null })
-			}
+		if (check && !config.mirror) {
+			handlePropChange({ mirror: { name: "", optStartSeq: 0, filterSubject: "" } })
+			return
+		}
+		if (!check && config.mirror) {
+			handlePropChange({ mirror: null })
 		}
 	}
 
 	// RENDER
 	if (streamSa.stream?.config == null) return null
-	const config: StreamConfig = streamSa.stream.config
+	const config = streamSa.stream.config
+	const state = streamSa.stream.state
+	const firstTs = dateShow(state.firstTs)
+	const lastTs = dateShow(state.lastTs)
 	const inRead = streamSa.editState == EDIT_STATE.READ
 	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const allStreams = streamSa.allStreams
 
 	return <div className="lyt-form var-dialog" style={{ marginBottom: 25 }}>
+
+		{inRead && (
+			<TitleAccordion title="STATS">
+				
+				<div style={{ display: "flex", justifyContent: "space-between", textAlign: "center" }}>
+					<div className="lyt-v">
+						<div className="lbl-prop">COUNT</div>
+						<div className="lbl-readonly">{state.messages}</div>
+					</div>
+					<div className="lbl-divider-v" />
+					<div className="lyt-v">
+						<div className="lbl-prop">BYTES</div>
+						<div className="lbl-readonly">{state.bytes}</div>
+					</div>
+					<div className="lbl-divider-v" />
+					<div className="lyt-v">
+						<div className="lbl-prop">DELETED</div>
+						<div className="lbl-readonly">{state.numDeleted}</div>
+					</div>
+					<div className="lbl-divider-v" />
+				</div>
+
+				<div className="lyt-v">
+					<div className="lbl-prop">FIRST SEQUENCE</div>
+					<div className="lbl-readonly" style={{ display: "flex" }}>
+						<div style={{ flex: 1 }}>{state.firstSeq}</div>
+						<div style={{ fontFamily: "monospace" }}>{firstTs}</div>
+					</div>
+				</div>
+
+				<div className="lyt-v">
+					<div className="lbl-prop">LAST SEQUENCE</div>
+					<div className="lbl-readonly" style={{ display: "flex" }}>
+						<div style={{ flex: 1 }}>{state.lastSeq}</div>
+						<div style={{ fontFamily: "monospace" }}>{lastTs}</div>
+					</div>
+				</div>
+
+				<div className="lyt-v">
+					<div className="lbl-prop">CONSUMER COUNT</div>
+					<div className="lbl-readonly">{state.consumerCount}</div>
+				</div>
+
+			</TitleAccordion>
+		)}
+
 
 		<TitleAccordion title="BASE">
 
@@ -180,7 +220,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</TitleAccordion>
 
 
-		<TitleAccordion title="RETENTION">
+		<TitleAccordion title="RETENTION" open={!inRead}>
 			<div className="lyt-v">
 				<div className="lbl-prop">POLICY</div>
 				<ListDialog width={100}
@@ -232,7 +272,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</TitleAccordion>
 
 
-		<TitleAccordion title="LIMIT">
+		<TitleAccordion title="LIMIT" open={!inRead}>
 			<MaxTimeCmp store={streamSo}
 				readOnly={inRead || !inNew}
 				label="MAX AGE"
@@ -273,7 +313,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</TitleAccordion>
 
 
-		<TitleAccordion title="PLACEMENT">
+		<TitleAccordion title="PLACEMENT" open={!inRead}>
 			<div className="lyt-v">
 				<div className="lbl-prop">NUM REPLICAS</div>
 				<NumberInput
@@ -311,7 +351,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</TitleAccordion>
 
 
-		<TitleAccordion title="PUBLISH">
+		<TitleAccordion title="PUBLISH" open={!inRead}>
 			<div className="cmp-h">
 				<IconToggle
 					check={config.noAck}
@@ -386,7 +426,7 @@ const EditForm: FunctionComponent<Props> = ({
 		</TitleAccordion>
 
 
-		<TitleAccordion title="SEAL">
+		<TitleAccordion title="SEAL" open={!inRead}>
 			<div className="cmp-h">
 				<IconToggle
 					check={config.sealed}
@@ -409,5 +449,5 @@ const EditForm: FunctionComponent<Props> = ({
 	</div>
 }
 
-export default EditForm
+export default Form
 

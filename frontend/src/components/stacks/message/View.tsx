@@ -42,7 +42,7 @@ const MessageView: FunctionComponent<Props> = ({
 					style={{backgroundColor: "var(--bg-default)" }}
 				/>
 				<span className="lbl-prop">SUBJECT: </span>
-				<span className="lbl-input-readonly">
+				<span className="lbl-readonly">
 					{msgSa.message.subject}
 				</span>
 			</div>

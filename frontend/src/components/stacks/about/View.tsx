@@ -42,12 +42,12 @@ const AboutView: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="lbl-prop">CURRENT</div>
-				<div className="lbl-input-readonly">{current}</div>
+				<div className="lbl-readonly">{current}</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">LAST</div>
-				<div className="lbl-input-readonly">{latest}</div>
+				<div className="lbl-readonly">{latest}</div>
 			</div>
 
 			{aboutSa.about?.shouldUpdate && <>

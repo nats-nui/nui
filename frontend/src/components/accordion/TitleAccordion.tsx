@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react"
+import React, { FunctionComponent, useEffect, useState } from "react"
 import Accordion from "./Accordion"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
@@ -9,19 +9,23 @@ import cls from "./Accordion.module.css"
 interface Props {
 	title?: string
 	children?: React.ReactNode
-	initOpen?: boolean
+	open?: boolean
 }
 
 const TitleAccordion: FunctionComponent<Props> = ({
 	title,
 	children,
-	initOpen = true,
+	open: openExt,
 }) => {
 
 	// STORE
 
 	// HOOK
-	const [open, setOpen] = useState(initOpen)
+	const [open, setOpen] = useState(openExt ?? true)
+	useEffect(() => {
+		if (openExt == null) return
+		setOpen(openExt)
+	}, [openExt])
 
 	// HANDLER
 	const handleClick = () => setOpen(!open)
@@ -39,8 +43,8 @@ const TitleAccordion: FunctionComponent<Props> = ({
 			</div>
 		</div>
 
-		<Accordion 
-			open={open} 
+		<Accordion
+			open={open}
 			className={cls.title_accordion}
 		>
 			{children}
