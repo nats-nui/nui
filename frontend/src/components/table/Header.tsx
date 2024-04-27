@@ -1,8 +1,11 @@
 import SortDownIcon from "@/icons/SortDownIcon"
-import { CSSProperties, FunctionComponent, useState } from "react"
+import SortUpIcon from "@/icons/SortUpIcon"
+import { FunctionComponent, useState } from "react"
 import { ItemProp } from "."
 import IconButton from "../buttons/IconButton"
-import SortUpIcon from "@/icons/SortUpIcon"
+import cls from "./Header.module.css"
+
+
 
 export enum ORDER_TYPE {
 	NOTHING,
@@ -11,6 +14,7 @@ export enum ORDER_TYPE {
 }
 
 interface Props {
+	singleRow?: boolean
 	props: ItemProp[]
 	order?: ItemProp
 	orderType?: ORDER_TYPE
@@ -44,12 +48,14 @@ const Header: FunctionComponent<Props> = ({
 
 	return (
 		<thead >
-			<tr style={cssHead}>
+			<tr className={cls.row}>
 				{props.map((prop, index) => (
-					<th style={cssHeadCell} key={index}
+
+					<th key={index}
+						className={`${cls.cell} ${prop.isMain ? cls.main : ""}`}
 						onMouseLeave={() => setOverProp(null)}
 					>
-						<div style={{ display: "flex", alignItems: "center", justifyContent: 'flex-end' }}
+						<div className={cls.cellContainer}
 							onMouseEnter={() => setOverProp(prop)}
 						>
 							{prop == overProp || prop == order ? (
@@ -70,6 +76,7 @@ const Header: FunctionComponent<Props> = ({
 							<div>{prop.label}</div>
 						</div>
 					</th>
+
 				))}
 			</tr>
 		</thead>
@@ -77,23 +84,3 @@ const Header: FunctionComponent<Props> = ({
 }
 
 export default Header
-
-const cssHead: CSSProperties = {
-	fontSize: 10,
-	fontWeight: 600,
-	height: 28,
-	position: 'sticky',
-	top: 0,
-	backgroundColor: "#5b5b5b",
-	zIndex: 1,
-	boxShadow: 'rgba(0, 0, 0, 0.5) 0px 2px 2px 0px',
-}
-
-const cssHeadCell: CSSProperties = {
-	textAlign: "right",
-	borderRight: '2px solid #3e3e3e',
-	borderTop: '2px solid #3e3e3e',
-	padding: "3px 5px",
-}
-
-

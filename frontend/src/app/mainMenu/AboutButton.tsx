@@ -1,5 +1,5 @@
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
-import docSo from "@/stores/docs"
+import docSo, { FIXED_CARD } from "@/stores/docs"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import StoreButton from "./StoreButton"
@@ -13,7 +13,7 @@ const AboutButton: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const store = docSo.state.fixedViews[2]
+	const store = docSo.state.fixedViews[FIXED_CARD.ABOUT]
 	const state = useStore(store)
 
 	// HOOKs

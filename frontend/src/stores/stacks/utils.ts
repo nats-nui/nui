@@ -1,7 +1,6 @@
 export enum VIEW_SIZE {
 	NORMAL,
 	COMPACT,
-	MAXIMIZED,
 	ICONIZED,
 }
 

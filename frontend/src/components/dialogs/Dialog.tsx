@@ -2,10 +2,11 @@ import CloseIcon from "@/icons/CloseIcon"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useMemo, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import IconButton from "../buttons/IconButton"
 import cls from "./Dialog.module.css"
+import docsSo from "@/stores/docs"
 
 
 
@@ -58,11 +59,18 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 	// HOOKs
 	const [ref, setRef] = useState<HTMLDivElement>(null)
+	const [pointRef, setPointRef] = useState<HTMLDivElement>(null)
 	const refDialog = useMemo(() => {
-		if (!open) return null
+		if (!open || !pointRef) return null
+
+		// guarda che devo fare per evitare che si aprano due dialog in zen
+		const zenElm = document.getElementById(`zen-container`)
+		const inZen = zenElm?.contains(pointRef) ?? false
+		if ( docsSo.state.zenCard== store && !inZen) return null
+
 		const elm = document.getElementById(`dialog_${state.uuid}`)
 		return elm
-	}, [open])
+	}, [open, pointRef])
 
 	// pensare ad un modo per cui se cambiano le dimensioni della dialog
 	// questa si riposiziona
@@ -93,7 +101,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 				}
 			}
 		}
-		if (open) {
+		if (open && !!ref) {
 			if (timeoutClose < 0) return
 			document.addEventListener('mousedown', handleClick)
 			//setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
@@ -120,34 +128,39 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	// HANDLER
 
 	// RENDER
-	if (!refDialog) return null
+	//if (!refDialog) return null
 	const clsRoot = `color-bg color-text ${cls.root} ${fullHeight ? cls.full_height : ""}`
 
-	return createPortal(
-		<div className={clsRoot}
-			ref={(node) => setRef(node)}
-			style={cssRoot(width, y)}
-		>
-			{title != null ? (
-				<div className={cls.title}>
-					<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
-						{title}
+	return <>
+
+		<div ref={(node) => setPointRef(node)} style={{ display: "none" }} />
+
+		{refDialog && createPortal(
+			<div className={clsRoot}
+				ref={(node) => setRef(node)}
+				style={cssRoot(width, y)}
+			>
+				{title != null ? (
+					<div className={cls.title}>
+						<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
+							{title}
+						</div>
+						<IconButton onClick={(e) => onClose(e)}>
+							<CloseIcon />
+						</IconButton>
 					</div>
-					<IconButton onClick={(e) => onClose(e)}>
-						<CloseIcon />
-					</IconButton>
+				) : (
+					<div style={{ height: 12 }} />
+				)}
+
+				<div className={`${cls.body} ${className}`} style={style}>
+					{children}
 				</div>
-			) : (
-				<div style={{ height: 12 }} />
-			)}
 
-			<div className={`${cls.body} ${className}`} style={style}>
-				{children}
-			</div>
-
-		</div>,
-		refDialog
-	)
+			</div>,
+			refDialog
+		)}
+	</>
 }
 
 export default Dialog

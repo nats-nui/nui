@@ -8,6 +8,7 @@ import { FunctionComponent } from "react"
 import cls from "./App.module.css"
 import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
+import ZenCard from "./ZenCard"
 
 
 
@@ -25,6 +26,8 @@ const App: FunctionComponent = () => {
 
 	return (
 		<div className={cls.root}>
+
+			<ZenCard />
 
 			<MainMenu />
 

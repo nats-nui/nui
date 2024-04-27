@@ -10,24 +10,30 @@ export interface ItemProp {
 	getValue?: (item: any) => any
 	getShow?: (item: any) => string
 
-	notOrderable?: boolean
+	isMain?: boolean
 }
 
 interface Props {
+	/** le prop da visualizzare nelle colonne */
 	props: ItemProp[]
-	propMain?: ItemProp
+	/** i dati */
 	items?: any[]
+	/** l'id selezionato */
 	selectId?: string
+	/** stessa riga per propMain e props */
+	singleRow?: boolean
+	/** evento cambio selezione */
 	onSelectChange?: (item: any) => void
+	/** callback per determinare un id di un item */
 	getId?: (item: any) => string
 	style?: React.CSSProperties
 }
 
 const Table: FunctionComponent<Props> = ({
 	props,
-	propMain,
 	items = [],
 	selectId,
+	singleRow,
 	onSelectChange,
 	getId = (item) => item.toString(),
 	style,
@@ -38,6 +44,8 @@ const Table: FunctionComponent<Props> = ({
 	const [typeOrder, setTypeOrder] = useState<ORDER_TYPE>(ORDER_TYPE.ASC)
 
 	// HOOKs
+	const propMain = useMemo(() => props.find(p => p.isMain), [props])
+	const propToShow = useMemo(() => singleRow ? props : props.filter(p => !p.isMain), [props, singleRow])
 	const itemsSort: any[] = useMemo(() => {
 		if (!propOrder || typeOrder == ORDER_TYPE.NOTHING) {
 			return items.sort((i1, i2) => {
@@ -71,7 +79,7 @@ const Table: FunctionComponent<Props> = ({
 	return <table className={cls.root} style={style}>
 
 		<Header
-			props={props}
+			props={propToShow}
 			order={propOrder}
 			orderType={typeOrder}
 			onOrderChange={handleOrderChange}
@@ -83,14 +91,21 @@ const Table: FunctionComponent<Props> = ({
 				const selected = isSelected(item)
 				const mainText = getValueString(item, propMain)
 
+				const clsSelected = selected ? `color-bg color-text ${cls.selected}` : ""
+				const clsRow = `${cls.row} ${clsSelected} hover-container`
+				const clsCell = `${cls.cell}`
+				const clsCellMain = `${clsCell} ${cls.main}`
+
 				return <React.Fragment key={id}>
 
-					{!!propMain && (
+					{!!propMain && !singleRow && (
 						<tr
-							style={cssRowMain(selected)} className={`hover-container ${selected ? "color-bg-l1 color-text" : ""}`}
+							className={clsRow}
 							onClick={() => handleSelect(item)}
 						>
-							<td colSpan={colspan} style={{ padding: "5px 2px", overflowWrap: 'anywhere' }}>
+							<td colSpan={colspan}
+								className={clsCellMain}
+							>
 								{mainText}
 							</td>
 							<CopyButton absolute value={mainText} />
@@ -98,11 +113,13 @@ const Table: FunctionComponent<Props> = ({
 					)}
 
 					<tr
-						style={cssRow(selected)} className={selected ? "color-bg color-text" : null}
+						className={clsRow}
 						onClick={() => handleSelect(item)}
 					>
-						{props.map((prop, index) => (
-							<td key={index} style={cssRowCellNumber}>
+						{propToShow.map((prop, index) => !(!singleRow && prop.isMain) && (
+							<td key={index}
+								className={prop.isMain ? clsCellMain : clsCell}
+							>
 								{getValueString(item, prop)}
 							</td>
 						))}
@@ -116,49 +133,3 @@ const Table: FunctionComponent<Props> = ({
 
 export default Table
 
-
-
-const cssTable: CSSProperties = {
-
-}
-
-const cssRowMain = (select: boolean): CSSProperties => ({
-	position: "relative",
-	cursor: "pointer",
-	fontSize: '12px',
-	//fontWeight: '600',
-	//backgroundColor: '#bfbfbf',
-	//color: 'black',
-	...select ? {
-		opacity: 1,
-		fontWeight: '600',
-	} : {
-		opacity: 0.8,
-	},
-})
-
-const cssRow = (select: boolean): CSSProperties => ({
-	cursor: "pointer",
-	backgroundColor: !select ? "rgba(0, 0, 0, 0.5)" : null,
-})
-
-const cssRowCell: CSSProperties = {
-	fontSize: 12,
-	fontWeight: 600,
-	borderRight: '2px solid rgba(255,255,255,.2)',
-	padding: "3px 5px",
-}
-const cssRowCellNumber: CSSProperties = {
-	...cssRowCell,
-	fontFamily: "monospace",
-	fontSize: 12,
-	fontWeight: 600,
-	textAlign: "right",
-}
-const cssRowCellString: CSSProperties = {
-	...cssRowCell,
-	overflow: "hidden",
-	whiteSpace: "nowrap",
-	textOverflow: "ellipsis",
-	maxWidth: 0,
-}

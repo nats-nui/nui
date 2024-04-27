@@ -3,12 +3,20 @@ import { StoreCore, createStore } from "@priolo/jon"
 import { CnnListStore } from "../stacks/connection"
 import { ViewLogStore } from "../stacks/log"
 import { AboutStore } from "../stacks/about"
+import { ViewStore } from "../stacks/viewBase"
+import { delay, delayAnim } from "@/utils/time"
 
 
 
 export enum DRAWER_POSITION {
-	RIGHT="right",
-	BOTTOM="bottom",
+	RIGHT = "right",
+	BOTTOM = "bottom",
+}
+
+export enum FIXED_CARD {
+	CONNECTIONS = 0,
+	LOGS = 1,
+	ABOUT = 2,
 }
 
 /**
@@ -18,6 +26,8 @@ const setup = {
 
 	state: {
 		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
+		zenCard: <ViewStore>null,
+		zenOpen: false,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 		drawerPosition: DRAWER_POSITION.RIGHT,
 	},
@@ -34,10 +44,25 @@ const setup = {
 		setSerialization: (state: any, store?: DocStore) => {
 			store.state.drawerPosition = state.drawerPosition
 		},
+		zenOpen: async (card: ViewStore, store?: DocStore) => {
+			if ( !card ) return
+			store.setZenCard(card)
+			await delayAnim()
+			store.setZenOpen(true)
+		},
+		zenClose: async (_: void, store?: DocStore) => {
+			store.setZenOpen(false)
+			await delay(300)
+			store.state.zenCard._update()
+			store.setZenCard(null)
+
+		}
 	},
 
 	mutators: {
 		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore, AboutStore]) => ({ fixedViews }),
+		setZenCard: (zenCard: ViewStore) => ({ zenCard }),
+		setZenOpen: (zenOpen: boolean) => ({ zenOpen }),
 		setDrawerPosition: (drawerPosition: DRAWER_POSITION) => ({ drawerPosition }),
 	},
 }

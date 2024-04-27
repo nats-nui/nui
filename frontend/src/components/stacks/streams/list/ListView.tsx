@@ -72,15 +72,16 @@ const StreamsListView: FunctionComponent<Props> = ({
 		<Table
 			items={streams}
 			props={[
+				{ label: "NAME", getValue: s => s.config.name, isMain: true },
 				{ label: "SIZE", getValue: s => s.state.messages },
 				{ label: "FIRST", getValue: s => s.state.firstSeq },
 				{ label: "LAST", getValue: s => s.state.lastSeq },
 				{ label: "BYTES", getValue: s => s.state.bytes },
 			]}
-			propMain={{ getValue: s => s.config.name }}
 			selectId={nameSelected}
 			onSelectChange={handleSelect}
 			getId={item => item.config.name}
+			singleRow={streamsSo.getWidth() > 430}
 		/>
 
 		<PurgeDialog store={streamsSo} />

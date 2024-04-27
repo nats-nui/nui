@@ -35,7 +35,7 @@ export function delay(millisec: number): Promise<void> {
 }
 
 export function delayAnim(): Promise<void> {
-	return new Promise(res => window.requestAnimationFrame(()=>res))
+	return new Promise(res => window.requestAnimationFrame(()=>res()))
 }
 
 export function dateShow( date?: any ): string {

@@ -27,6 +27,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 310,
+		widthMax: 800,
 		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},

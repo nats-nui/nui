@@ -1,0 +1,30 @@
+.root {
+	display: flex;
+	position: absolute;
+	justify-content: center;
+
+	height: 100%;
+	width: 100%;
+
+	z-index: var(--z-zen);
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(5px);
+
+	opacity: 0;
+	transition: opacity 300ms ease-in-out;
+}
+
+.root.open {
+	opacity: 1;
+}
+
+.container {
+	height: auto;
+	padding: 20px;
+	transform: scale(0.9);
+	transition: transform 300ms ease-out;
+}
+.open .container {
+	transform: scale(1);
+}
+
