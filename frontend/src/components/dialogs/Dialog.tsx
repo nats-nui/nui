@@ -1,12 +1,12 @@
 import CloseIcon from "@/icons/CloseIcon"
+import docsSo from "@/stores/docs"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react"
+import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import { createPortal } from "react-dom"
 import IconButton from "../buttons/IconButton"
 import cls from "./Dialog.module.css"
-import docsSo from "@/stores/docs"
 
 
 
