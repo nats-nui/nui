@@ -31,21 +31,21 @@ const ShowForm: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="lbl-prop">NAME</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.bucket}
 				</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">VALUES COUNT</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.values}
 				</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">BYTES COUNT</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.bytes}
 				</div>
 			</div>
@@ -57,28 +57,28 @@ const ShowForm: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="lbl-prop">HISTORY</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.history}
 				</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">TTL</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.ttl}
 				</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">BACKING STORE</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.backingStore}
 				</div>
 			</div>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">COMPRESSION</div>
-				<div className="lbl-input-readonly">
+				<div className="lbl-readonly">
 					{bucket.compressed ? "YES" : "NO"}
 				</div>
 			</div>
