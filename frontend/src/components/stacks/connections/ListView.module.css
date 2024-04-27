@@ -1,21 +1,24 @@
-.row {
-	width: 10px;
-	height: 10px;
+.icon {
 	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px;
+	color: black;
 }
 
-.undefined {
+.icon.undefined {
 	background-color: grey;
 }
 
-.connected {
+.icon.connected {
 	background-color: #37d300;
 }
 
-.reconnecting {
+.icon.reconnecting {
 	background-color: var(--var-4);
 }
 
-.disconnected {
+.icon.disconnected {
 	background-color: var(--var-5);
 }
