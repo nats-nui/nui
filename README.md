@@ -32,8 +32,8 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 
 ---
 # Get Started 🚀
-- Try the [Live Demo]().
-- [Download]() Desktop app or deploy with Docker.
+- Try the [Live Demo](https://natsnui.app/demo/).
+- [Download](https://natsnui.app/downloads/) Desktop app or deploy with Docker.
 
 
 ---
