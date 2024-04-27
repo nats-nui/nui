@@ -49,15 +49,16 @@ const ConsumersListView: FunctionComponent<Props> = ({
 		<Table
 			items={consumers}
 			props={[
+				{ label: "NAME", getValue: (item: StreamConsumer) => item.name, isMain: true },
 				{ label: "ACK", getValue: item => item.numAckPending },
 				{ label: "REDELIVERED", getValue: item => item.numRedelivered },
 				{ label: "WAITING", getValue: item => item.numWaiting },
 				{ label: "PENDING", getValue: item => item.numPending },
 			]}
-			propMain={{ getValue: (item: StreamConsumer) => item.name }}
 			selectId={selected}
 			onSelectChange={handleSelect}
 			getId={(consumer: StreamConsumer) => consumer.name}
+			singleRow={consumersSo.getWidth() > 430}
 		/>
 	</FrameworkCard>
 }

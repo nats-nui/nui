@@ -1,7 +1,6 @@
 .root {
 	display: flex;
 	height: 100%;
-	position: "relative";
 }
 
 .root.animation {
@@ -32,7 +31,7 @@
 	user-select: none;
 	cursor: col-resize;
 	margin-right: -5px;
-	z-index: 999;
+	z-index: var(--z-resizer);
 }
 
 .is_linked {

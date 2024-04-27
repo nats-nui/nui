@@ -16,6 +16,7 @@ import TooltipWrapCmp from "../tooltip/TooltipWrapCmp"
 import IconButton from "../buttons/IconButton"
 import CardIcon from "./CardIcon"
 import cls from "./Header.module.css"
+import docsSo from "@/stores/docs"
 
 
 
@@ -36,7 +37,13 @@ const Header: FunctionComponent<Props> = ({
 	const [enter, setEnter] = useState(false)
 
 	// HANDLER
-	const handleClose = () => store.onRemoveFromDeck()
+	const handleClose = () => {
+		if (inZen) {
+			docsSo.zenClose()
+		} else {
+			store.onRemoveFromDeck()
+		}
+	}
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
@@ -58,7 +65,7 @@ const Header: FunctionComponent<Props> = ({
 		if (!inDrawer) {
 			store.state.group.move({ view: store, groupDest: drawerCardsSo })
 		} else {
-			store.state.group.move({ view: store, groupDest: deckCardsSo})
+			store.state.group.move({ view: store, groupDest: deckCardsSo })
 		}
 	}
 	const handleFocus = () => {
@@ -80,27 +87,31 @@ const Header: FunctionComponent<Props> = ({
 	const handleExpand = () => {
 		findParent(store, (view) => view.setSize(VIEW_SIZE.NORMAL))
 	}
+	const handleDClick = () => {
+		if (inZen) return
+		docsSo.zenOpen(store)
+	}
 
 	// RENDER
-	const inDrawer = store.state.group == drawerCardsSo
-	const inMenu = menuSo.find(store)
+	const inZen = docsSo.state.zenCard == store
+	const inDrawer = !inZen && store.state.group == drawerCardsSo
+	const inMenu = !inZen && menuSo.find(store)
 	const [title, subTitle] = useMemo(() => [
 		store.getTitle(),
 		store.getSubTitle(),
 	], [store.state])
-
-	const isDraggable = store.state.draggable
+	const isDraggable = !inZen && store.state.draggable
 	const haveLinkDetachable = store.state.linked?.state.draggable
-	const inRoot = !store.state.parent
-	const isCompact = store.state.size == VIEW_SIZE.COMPACT
-	const allCompact = !findParent(store, view => view.state.size != VIEW_SIZE.COMPACT)
+	const inRoot = inZen || !store.state.parent
+	const isCompact = !inZen && store.state.size == VIEW_SIZE.COMPACT
+	const allCompact = !inZen && !findParent(store, view => view.state.size != VIEW_SIZE.COMPACT)
 
-	const showBttAnchor = inRoot && (enter || inDrawer)
-	const showDetachable = !inRoot && enter
+	const showBttAnchor = !inZen && inRoot && (enter || inDrawer)
+	const showDetachable = !inZen && !inRoot && enter
 	const showBttClose = !store.state.unclosable
-	const showBttPin = inRoot && enter && store.state.pinnable
-	const showBttExpand = allCompact && !inRoot && enter
-	const showBttComprime = !allCompact && !inRoot && enter
+	const showBttPin = !inZen && inRoot && enter && store.state.pinnable
+	const showBttExpand = !inZen && allCompact && !inRoot && enter
+	const showBttComprime = !inZen && !allCompact && !inRoot && enter
 
 	const clsTitle = `${cls.title} ${store.state.size == VIEW_SIZE.COMPACT ? cls.compact : ""}`
 	const clsRoot = `${cls.root} ${store.state.size == VIEW_SIZE.COMPACT ? cls.compact : ""}`
@@ -108,13 +119,13 @@ const Header: FunctionComponent<Props> = ({
 	return (
 		<div className={clsRoot}
 			draggable={isDraggable}
-			onDragStart={handleDragStart}
+			onDragStart={!inZen ? handleDragStart : undefined}
 			onMouseEnter={() => setEnter(true)}
 			onMouseLeave={() => setEnter(false)}
 		>
 
 			{!!store.state.type && (
-				<div onClick={handleSizeClick} className="cliccable"
+				<div onClick={!inZen ? handleSizeClick : undefined} className="cliccable"
 					style={{ margin: 8, alignSelf: "center" }}
 				>
 					<TooltipWrapCmp
@@ -133,9 +144,11 @@ const Header: FunctionComponent<Props> = ({
 
 			{!isCompact && <>
 
-				<div className={clsTitle}>
+				<div className={clsTitle}
+					onDoubleClick={handleDClick}
+				>
 					<div className="lbl-header-title draggable"
-						onClick={handleFocus}
+						onClick={!inZen ? handleFocus : undefined}
 					>{title}</div>
 					{subTitle && (
 						<div className="lbl-header-subtitle">

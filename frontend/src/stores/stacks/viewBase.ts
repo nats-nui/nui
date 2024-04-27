@@ -10,6 +10,7 @@ import { MESSAGE_TYPE } from "../log/utils"
 import { LoadBaseStore } from "./loadBase"
 import { VIEW_SIZE } from "./utils"
 import { forEachViews } from "../docs/utils/manage"
+import docsSo from "../docs"
 
 
 
@@ -35,6 +36,8 @@ const viewSetup = {
 
 		/** il width "normale" */
 		width: 300,
+		widthMin: 40,
+		widthMax: 600,
 		/** colore caratteristico della  VIEW */
 		colorVar: COLOR_VAR.DEFAULT,
 		/** il corrente stato di animazione */
@@ -88,7 +91,11 @@ const viewSetup = {
 
 		//#region OVERRIDABLE
 		/** restituisce il width effettivo */
-		getWidth: (_: void, store?: ViewStore) => store.state.size == VIEW_SIZE.COMPACT ? 40 : store.state.size == VIEW_SIZE.NORMAL ? store.state.width : 600,
+		getWidth: (_: void, store?: ViewStore) => {
+			if ( docsSo.state.zenCard == store ) return store.state.widthMax
+			if ( store.state.size == VIEW_SIZE.COMPACT ) return store.state.widthMin
+			return store.state.width
+		},
 		getTitle: (_: void, store?: ViewStore): string => null,
 		getSubTitle: (_: void, store?: ViewStore): string => null,
 		getSerialization: (_: void, store?: ViewStore) => {

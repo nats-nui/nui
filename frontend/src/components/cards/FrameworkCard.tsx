@@ -9,6 +9,7 @@ import IconButton from "../buttons/IconButton"
 import ErrorBoundary from "./ErrorBoundary"
 import cls from "./FrameworkCard.module.css"
 import Header from "./Header"
+import docsSo from "@/stores/docs"
 
 
 
@@ -39,7 +40,8 @@ const FrameworkCard: FunctionComponent<Props> = ({
 	const handleDetach = () => store.state.group.detach(store)
 
 	// RENDER
-	const inRoot = !store.state.parent
+	const inZen = docsSo.state.zenCard == store
+	const inRoot = inZen || !store.state.parent
 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
 	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`

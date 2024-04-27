@@ -14,6 +14,7 @@ const setup = {
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
 		width: 420,
+		widthMax: 1000,
 		//#endregion
 	},
 
