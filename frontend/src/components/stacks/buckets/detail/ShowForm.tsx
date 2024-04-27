@@ -29,6 +29,22 @@ const ShowForm: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="BASE">
 
+			<div className="lyt-h-props">
+				<div className="item">
+					<div className="lbl-prop">VALUES</div>
+					<div className="lbl-readonly">
+						{bucket.values}
+					</div>
+				</div>
+				<div className="lbl-divider-v" />
+				<div className="item">
+					<div className="lbl-prop">BYTES</div>
+					<div className="lbl-readonly">
+						{bucket.bytes}
+					</div>
+				</div>
+			</div>
+
 			<div className="lyt-v">
 				<div className="lbl-prop">NAME</div>
 				<div className="lbl-readonly">
@@ -36,36 +52,26 @@ const ShowForm: FunctionComponent<Props> = ({
 				</div>
 			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">VALUES COUNT</div>
-				<div className="lbl-readonly">
-					{bucket.values}
-				</div>
-			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">BYTES COUNT</div>
-				<div className="lbl-readonly">
-					{bucket.bytes}
-				</div>
-			</div>
 
 		</TitleAccordion>
 
 
 		<TitleAccordion title="CONFIG">
 
-			<div className="lyt-v">
-				<div className="lbl-prop">HISTORY</div>
-				<div className="lbl-readonly">
-					{bucket.history}
+			<div className="lyt-h-props">
+				<div className="item">
+					<div className="lbl-prop">HISTORY</div>
+					<div className="lbl-readonly">
+						{bucket.history}
+					</div>
 				</div>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">TTL</div>
-				<div className="lbl-readonly">
-					{bucket.ttl}
+				<div className="lbl-divider-v" />
+				<div className="item">
+					<div className="lbl-prop">TTL</div>
+					<div className="lbl-readonly">
+						{bucket.ttl}
+					</div>
 				</div>
 			</div>
 
