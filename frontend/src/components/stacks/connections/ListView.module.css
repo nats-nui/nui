@@ -4,7 +4,7 @@
 	align-items: center;
 	justify-content: center;
 	padding: 2px;
-	color: black;
+	color: #FFF;
 }
 
 .icon.undefined {
@@ -17,6 +17,7 @@
 
 .icon.reconnecting {
 	background-color: var(--var-4);
+	color: #000;
 }
 
 .icon.disconnected {
