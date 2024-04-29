@@ -7,6 +7,12 @@
 #### Free and Open Source NATS management GUI. 
 Easily manage your NATS core, streams and buckets, both from Desktop App or Web interface!
 
+<p align="center">
+  <img width=650px src="https://github.com/nats-nui/nui/assets/22039194/9a0221e4-b63c-4964-ad89-1fd6d9d54424" alt="NATS WebUI Logo"/> 
+</p>
+
+
+
 ### Features :factory:
 
 - Core NATS Pub/Sub: view and send NATS messages
