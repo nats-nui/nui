@@ -39,6 +39,7 @@ const RootCard: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleDragMove = (pos: number, diff: number) => view.setWidth(pos - diff)
+	const handleDetach = () => view.state.group.detach(view.state.linked)
 
 	// RENDER
 	if (!view) return null
@@ -75,13 +76,14 @@ const RootCard: FunctionComponent<Props> = ({
 		<div style={styContainerDoc} className={clsDoc}>
 			<PolymorphicCard view={view} />
 			<SnackbarCmp view={view} />
-
 		</div>
 
 		{isResizable && <ResizerCmp
 			className={cls.resizer}
 			onStart={(pos: number) => view.state.width}
 			onMove={handleDragMove}
+			onDClick={handleDetach}
+			
 		/>}
 
 		<div className={cls.desk}>

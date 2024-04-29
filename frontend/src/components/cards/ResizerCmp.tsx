@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from "react"
 
+
+
 export enum RESIZER_DIRECTION {
 	HORIZONTAL = "horizontal",
 	VERTICAL = "vertical",
@@ -13,6 +15,7 @@ interface Props {
 	onStart?: (pos: number) => number
 	onMove?: (pos: number, diff?: number) => void
 	onStop?: () => void
+	onDClick?: ()=>void
 }
 
 /** Il contenitore CARD. Gestisce il drag e posizionamento del DECK */
@@ -24,6 +27,7 @@ const ResizerCmp: FunctionComponent<Props> = ({
 	onStart,
 	onMove,
 	onStop,
+	onDClick,
 }) => {
 
 	// STORES
@@ -55,6 +59,7 @@ const ResizerCmp: FunctionComponent<Props> = ({
 		children={children}
 		draggable={false}
 		onMouseDown={handleDown}
+		onDoubleClick={onDClick}
 	/>
 }
 
