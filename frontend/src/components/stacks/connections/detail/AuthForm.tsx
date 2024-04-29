@@ -47,20 +47,20 @@ const AuthForm: FunctionComponent<Props> = ({
 				readOnly={readOnly}
 				onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
 			/>
-			<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+			{/* <TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 				style={{ top: readOnly ? 7 : 3, backgroundColor: "var(--var-1)" }}
 				content="una bella spiegazione completa"
-			/>
+			/> */}
 		</div>
 
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
-				<div className="lyt-v"><div className="lbl-prop">USERNAME</div><TextInput
+				<div className="lyt-form"><div className="lbl-prop">USERNAME</div><TextInput
 					value={authEdit.username}
 					onChange={username => handlePropChange({ username })}
 					readOnly={readOnly}
 				/></div>
-				<div className="lyt-v"><div className="lbl-prop">PASSWORD</div><PasswordInput
+				<div className="lyt-form"><div className="lbl-prop">PASSWORD</div><PasswordInput
 					value={authEdit.password}
 					onChange={password => handlePropChange({ password })}
 					readOnly={readOnly}
@@ -68,10 +68,9 @@ const AuthForm: FunctionComponent<Props> = ({
 			</>,
 			[AUTH_MODE.TOKEN]: (
 				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">
-						TOKEN
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?" 
-							content="una bella spiegazione completa" 
+					<div className="lbl-prop lbl-info-container">TOKEN
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+							content="Client token string specified in authorization config of the server"
 						/>
 					</div>
 					<TextInput
@@ -82,30 +81,50 @@ const AuthForm: FunctionComponent<Props> = ({
 				</div>
 			),
 			[AUTH_MODE.JWT]: <>
-				<div className="lyt-v"><div className="lbl-prop">JWT</div><TextInput
-					value={authEdit.jwt}
-					onChange={jwt => handlePropChange({ jwt })}
-					readOnly={readOnly}
-				/></div>
-				<div className="lyt-v"><div className="lbl-prop">NKEY</div><TextInput
-					value={authEdit.nKeySeed}
-					onChange={nKeySeed => handlePropChange({ nKeySeed })}
-					readOnly={readOnly}
-				/></div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">JWT
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+							content="NATS user JWT string to couple with private NKEY"
+						/>
+					</div>
+					<TextInput
+						value={authEdit.jwt}
+						onChange={jwt => handlePropChange({ jwt })}
+						readOnly={readOnly}
+					/>
+				</div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">NKEY
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+							content="Private user NKEY seed"
+						/>
+					</div>
+					<TextInput
+						value={authEdit.nKeySeed}
+						onChange={nKeySeed => handlePropChange({ nKeySeed })}
+						readOnly={readOnly}
+					/>
+				</div>
 			</>,
 			[AUTH_MODE.BEARER_JWT]: <>
-				<div className="lyt-v"><div className="lbl-prop">BEARER JWT</div><TextInput
-					value={authEdit.jwt}
-					onChange={jwt => handlePropChange({ jwt })}
-					readOnly={readOnly}
-				/></div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">BEARER JWT
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+							content="NATS user JWT as bearer token (with no nuance)"
+						/>
+					</div>
+					<TextInput
+						value={authEdit.jwt}
+						onChange={jwt => handlePropChange({ jwt })}
+						readOnly={readOnly}
+					/>
+				</div>
 			</>,
 			[AUTH_MODE.CREDS_FILE]: <>
 				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">
-						CREDS PATH FILE
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?" 
-							content="una bella spiegazione completa" 
+					<div className="lbl-prop lbl-info-container">CREDS PATH FILE
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+							content="Local path of NATS .creds file containing JWT and NKEY seed"
 						/>
 					</div>
 					<TextInput
