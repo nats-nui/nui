@@ -12,6 +12,7 @@ import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
 import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
+import { MessageStore } from "../../message"
 
 
 
@@ -178,11 +179,9 @@ const setup = {
 
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
-			store.state.group.addLink({
-				view: buildMessageDetail(message, store.state.format),
-				parent: store,
-				anim: true,
-			})
+			const msgOld = (store.state.linked as MessageStore)?.state.message
+			const view = msgOld == message ? null : buildMessageDetail(message, store.state.format)
+			store.state.group.addLink({ view, parent: store, anim: !msgOld || !view })
 		},
 		/** apertura CARD MESSAGE-SEND */
 		openMessageSend(_: void, store?: MessagesStore) {

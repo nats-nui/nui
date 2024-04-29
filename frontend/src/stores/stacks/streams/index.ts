@@ -147,24 +147,6 @@ const setup = {
 			store.setSelect(nameNew)
 			store.state.group.addLink({ view, parent: store, anim: !nameOld || !nameNew })
 		},
-
-		/** apertura della CARD CONSUMERS */
-		// openConsumers(streamName: string, store?: StreamsStore) {
-		// 	store.state.group.addLink({
-		// 		view: buildConsumers(store.state.connectionId, store.getByName(streamName)),
-		// 		parent: store,
-		// 		anim: true
-		// 	})
-		// },
-
-		/** apertura della CARD MESSAGES */
-		// openMessages(streamName: string, store?: StreamsStore) {
-		// 	store.state.group.addLink({
-		// 		view: buildStreamMessages(store.state.connectionId, store.getByName(streamName)),
-		// 		parent: store,
-		// 		anim: true
-		// 	})
-		// },
 	},
 
 	mutators: {
