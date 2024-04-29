@@ -54,7 +54,7 @@ make dev-web
 ```
 starts the application in web mode, using the `db` dir as persistent data directory
 
-####
+#### desktop app
 ```
 make dev
 ```
