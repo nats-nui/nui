@@ -21,3 +21,4 @@ COPY --from=build_be /cmd/nui-web /cmd/nui-web
 COPY --from=build_fe /frontend/dist /frontend/dist
 EXPOSE 31311/tcp
 ENTRYPOINT ["/cmd/nui-web"]
+CMD ["--db-path=/db"]
