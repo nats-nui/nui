@@ -26,7 +26,7 @@ const StoreButton: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleOpenStoreClick = (view: ViewStore) => {deckCardsSo.add({ view, anim: true })}
+	const handleOpenStoreClick = (view: ViewStore) => deckCardsSo.add({ view, anim: true })
 	const handleDeleteButtonClick = (view: ViewStore) => menuSo.remove(view)
 
 	// RENDER

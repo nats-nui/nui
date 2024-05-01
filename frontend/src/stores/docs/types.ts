@@ -22,6 +22,8 @@ export enum DOC_TYPE {
 
 	LOGS = "logs",
 	ABOUT = "about",
+
+	TEXT_EDITOR = "text_editor",
 }
 
 export enum DOC_ANIM {

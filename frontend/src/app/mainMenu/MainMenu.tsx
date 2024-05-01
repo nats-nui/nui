@@ -1,13 +1,15 @@
-import docSo, { FIXED_CARD } from "@/stores/docs"
+import docsSo, { FIXED_CARD } from "@/stores/docs"
 import { menuSo } from "@/stores/docs/links"
-import { ClearSession, SaveSession, LoadSession } from "@/utils/session/startup"
+import { ClearSession, LoadSession, SaveSession } from "@/utils/session/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import Button from "../../components/buttons/Button"
+import AboutButton from "./AboutButton"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
-import docsSo from "@/stores/docs"
-import AboutButton from "./AboutButton"
+import { deckCardsSo } from "@/stores/docs/cards"
+import { buildTextEditor } from "@/stores/stacks/editor/factory"
+
 
 
 interface Props {
@@ -25,21 +27,25 @@ const MainMenu: FunctionComponent<Props> = ({
 	// HOOKS
 
 	// HANDLERS
+	const handleOpenEditor = () => {
+		const view = buildTextEditor("ciao!")
+		deckCardsSo.add({ view, anim: true })
+	}
 
 	// RENDER
-	if ( !docSo.state?.fixedViews ) return null
+	if (!docsSo.state?.fixedViews) return null
 	const views = menuSa.all
 
 	return <div style={style} className={cls.root}>
 
 		<StoreButton
 			label="ALL"
-			store={docSo.state.fixedViews[FIXED_CARD.CONNECTIONS]}
+			store={docsSo.state.fixedViews[FIXED_CARD.CONNECTIONS]}
 		/>
 
 		{views.map((view) => (
-			<StoreButton key={view.state.uuid} 
-				store={view} 
+			<StoreButton key={view.state.uuid}
+				store={view}
 			/>
 		))}
 
@@ -50,12 +56,13 @@ const MainMenu: FunctionComponent<Props> = ({
 			<Button children="SAVE" onClick={() => SaveSession()} />
 			<Button children="LOAD" onClick={() => LoadSession()} />
 			<Button children="RESET" onClick={() => ClearSession()} />
+			<Button children="EDITOR" onClick={() => handleOpenEditor()} />
 		</>}
 		{/* *** DEBUG *** */}
-		
+
 		<StoreButton
 			label="LOG"
-			store={docSo.state.fixedViews[FIXED_CARD.LOGS]}
+			store={docsSo.state.fixedViews[FIXED_CARD.LOGS]}
 		/>
 
 		<AboutButton />
