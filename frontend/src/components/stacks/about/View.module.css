@@ -10,6 +10,16 @@
 	background-size: contain;
 }
 
+.github_btt {
+	cursor: pointer;
+	display: flex;
+    align-items: center;
+    gap: 5px;
+    align-self: center;
+    font-size: 12px;
+}
+
+
 .divider {
 	border-top: 1px dashed #ffffff59;
     margin: 10px 0px 10px;
