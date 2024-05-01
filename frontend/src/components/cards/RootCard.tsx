@@ -48,6 +48,7 @@ const RootCard: FunctionComponent<Props> = ({
 	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING || viewSa.docAnim == DOC_ANIM.SIZING
 	const isCompact = !inZen && viewSa.size == VIEW_SIZE.COMPACT
 	const isResizable = !isCompact && !inZen
+	const isDetachable = !inZen && !!viewSa.parent
 	const haveLinked = !inZen && !!view.state.linked
 	const haveFocus = !inZen && view.state.group.state.focus == view
 	const variant = view.state.colorVar
@@ -78,13 +79,19 @@ const RootCard: FunctionComponent<Props> = ({
 			<SnackbarCmp view={view} />
 		</div>
 
-		{isResizable && <ResizerCmp
-			className={cls.resizer}
-			onStart={(pos: number) => view.state.width}
-			onMove={handleDragMove}
-			onDClick={handleDetach}
-			
-		/>}
+		{isResizable
+			? <ResizerCmp
+				className={cls.resizer}
+				onStart={(pos: number) => view.state.width}
+				onMove={handleDragMove}
+				onDClick={handleDetach}
+			/>
+			: isDetachable && (
+				<div className={cls.resizer} style={{ cursor: "col-resize" }}
+					onDoubleClick={handleDetach}
+				/>
+			)
+		}
 
 		<div className={cls.desk}>
 

@@ -8,6 +8,7 @@ interface Props {
 	icon?: React.ReactNode
 	label?: string
 	selected?: boolean
+	renderEnd?: React.ReactElement
 	onClick?: (e: React.MouseEvent) => void
 	style?: React.CSSProperties
 }
@@ -16,6 +17,7 @@ const RowButton: FunctionComponent<Props> = ({
 	icon,
 	label,
 	selected,
+	renderEnd,
 	onClick,
 	style,
 }) => {
@@ -38,6 +40,7 @@ const RowButton: FunctionComponent<Props> = ({
 		>
 			{icon}
 			<div style={cssLabel}>{label}</div>
+			{renderEnd}
 		</div>
 	)
 }
@@ -49,7 +52,6 @@ const cssRoot = (select: boolean): React.CSSProperties => ({
 		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
 		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
 	},
-
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
 	padding: "5px 8px",
@@ -61,5 +63,6 @@ const cssRoot = (select: boolean): React.CSSProperties => ({
 })
 const cssLabel: React.CSSProperties = {
 	...layoutSo.state.theme.texts.rowButton,
+	flex: 1,
 	marginLeft: 5,
 }
