@@ -29,7 +29,7 @@
 	display: flex;
 	width: 5px;
 	user-select: none;
-	cursor: col-resize;
+	cursor: w-resize;
 	margin-right: -5px;
 	z-index: var(--z-resizer);
 }
