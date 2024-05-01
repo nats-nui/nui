@@ -10,6 +10,10 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
+import IconButton from "@/components/buttons/IconButton"
+import SendIcon from "@/icons/SendIcon"
+import TooltipCmp from "@/components/tooltip/TooltipCmp"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 
 
 
@@ -32,6 +36,10 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
+	const handleSendClick = (e:React.MouseEvent) => {
+		e.stopPropagation()
+		cnnDetailSo.openMessageSend()
+	}
 
 	// RENDER
 	const isMessageOpen = cnnDetailSo.getMessagesOpen()
@@ -72,7 +80,14 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				label="MESSAGES"
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
+				renderEnd={<TooltipWrapCmp content="Send a message">
+					<IconButton
+						onClick={handleSendClick}
+					><SendIcon /></IconButton>
+				</TooltipWrapCmp>
+				}
 			/>
+
 			<RowButton
 				icon={<StreamsIcon />}
 				label="STREAMS"

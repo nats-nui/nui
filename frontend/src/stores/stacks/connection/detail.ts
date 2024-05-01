@@ -7,7 +7,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
-import { buildConnectionMessages } from "./utils/factory"
+import { buildConnectionMessageSend, buildConnectionMessages } from "./utils/factory"
 
 
 
@@ -101,6 +101,20 @@ const setup = {
 			const isOpen = store.getBucketsOpen()
 			const view = !isOpen ? buildBuckets(store.state.connection?.id) : null
 			store.state.group.addLink({ view, parent: store, anim: true })
+		},
+		/** apertura CARD MESSAGE-SEND */
+		openMessageSend(_: void, store?: CnnDetailStore) {
+			const cnn = store.getConnection()
+			if (!cnn) return
+			const subscriptions = store.state.connection?.subscriptions?.map(s => s.subject)
+			store.state.group.addLink({
+				view: buildConnectionMessageSend(
+					cnn.id, 
+					subscriptions,
+				),
+				parent: store,
+				anim: true,
+			})
 		},
 	},
 
