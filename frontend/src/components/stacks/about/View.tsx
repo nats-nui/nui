@@ -4,6 +4,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import cls from "./View.module.css"
 import Button from "@/components/buttons/Button"
+import GitHubIcon from "@/icons/GitHubIcon"
 
 
 
@@ -26,9 +27,8 @@ const AboutView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleUpdate = (e) => {
-		window.open("https://natsnui.app/downloads/")
-	}
+	const handleUpdateClick = () => window.open("https://natsnui.app/downloads/")
+	const handleGitHubClick = () => window.open("https://github.com/nats-nui/nui")
 
 	// RENDER
 	const current = aboutSa.about?.currentVersion ?? "--"
@@ -39,6 +39,14 @@ const AboutView: FunctionComponent<Props> = ({
 		<div className={cls.logo} />
 
 		<div className="lyt-form">
+
+			<div className={cls.github_btt}
+				onClick={handleGitHubClick}
+			>
+				<GitHubIcon/>GitHub
+			</div>
+
+			<div className={cls.divider} />
 
 			<div className="lyt-v">
 				<div className="lbl-prop">CURRENT</div>
@@ -53,7 +61,7 @@ const AboutView: FunctionComponent<Props> = ({
 			{aboutSa.about?.shouldUpdate && <>
 				<div className={cls.divider} />
 				<Button className={cls.btt}
-					onClick={handleUpdate}
+					onClick={handleUpdateClick}
 				>UPDATE</Button>
 			</>}
 
