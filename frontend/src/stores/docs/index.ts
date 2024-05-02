@@ -5,6 +5,7 @@ import { ViewLogStore } from "../stacks/log"
 import { AboutStore } from "../stacks/about"
 import { ViewStore } from "../stacks/viewBase"
 import { delay, delayAnim } from "@/utils/time"
+import { HelpStore } from "../stacks/help"
 
 
 
@@ -17,6 +18,7 @@ export enum FIXED_CARD {
 	CONNECTIONS = 0,
 	LOGS = 1,
 	ABOUT = 2,
+	HELP = 3,
 }
 
 /**
@@ -25,7 +27,7 @@ export enum FIXED_CARD {
 const setup = {
 
 	state: {
-		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
+		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?, HelpStore?]>null,
 		zenCard: <ViewStore>null,
 		zenOpen: false,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
@@ -60,7 +62,7 @@ const setup = {
 	},
 
 	mutators: {
-		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore, AboutStore]) => ({ fixedViews }),
+		setFixedViews: (fixedViews: [CnnListStore, ViewLogStore, AboutStore, HelpStore]) => ({ fixedViews }),
 		setZenCard: (zenCard: ViewStore) => ({ zenCard }),
 		setZenOpen: (zenOpen: boolean) => ({ zenOpen }),
 		setDrawerPosition: (drawerPosition: DRAWER_POSITION) => ({ drawerPosition }),
