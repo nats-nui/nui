@@ -52,7 +52,12 @@ const MainMenu: FunctionComponent<Props> = ({
 			<Button children="RESET" onClick={() => ClearSession()} />
 		</>}
 		{/* *** DEBUG *** */}
-		
+
+		<StoreButton
+			label="HELP"
+			store={docSo.state.fixedViews[FIXED_CARD.HELP]}
+		/>
+
 		<StoreButton
 			label="LOG"
 			store={docSo.state.fixedViews[FIXED_CARD.LOGS]}
