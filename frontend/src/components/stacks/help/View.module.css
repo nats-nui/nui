@@ -1,0 +1,37 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.row {
+	display: flex;
+	flex-direction: column;
+}
+
+.labelRow {
+	cursor: pointer;
+	display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+	margin-bottom: 5px;
+}
+
+.icon {
+	color: #f90016;
+}
+
+.label {
+	flex: 1;
+}
+
+.divider {
+	border-top: 1px dashed #ffffff59;
+    margin: 10px 0px 10px;
+}
+
+.btt {
+	align-self: center;
+}

@@ -1,40 +1,42 @@
 import CnnDetailView from "@/components/stacks/connections/detail/View"
 import MessagesView from "@/components/stacks/connections/messages/View"
-import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { AboutStore } from "@/stores/stacks/about"
+import { BucketsStore } from "@/stores/stacks/buckets"
+import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { CnnListStore } from "@/stores/stacks/connection"
+import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { MessageSendStore } from "@/stores/stacks/connection/messageSend"
+import { MessagesStore } from "@/stores/stacks/connection/messages"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
+import { TextEditorStore } from "@/stores/stacks/editor"
+import { HelpStore } from "@/stores/stacks/help"
+import { KVEntriesStore } from "@/stores/stacks/kventry"
+import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { ViewLogStore } from "@/stores/stacks/log"
 import { MessageStore } from "@/stores/stacks/message"
-import { MessagesStore } from "@/stores/stacks/connection/messages"
-import { MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
+import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
+import AboutView from "../stacks/about/View"
+import BucketDetailView from "../stacks/buckets/detail/View"
+import BucketsListView from "../stacks/buckets/list/ListView"
 import CnnListView from "../stacks/connections/ListView"
 import ConsumersListView from "../stacks/consumers/ListView"
 import ConsumerDetailView from "../stacks/consumers/detail/View"
-import LogsView from "../stacks/mainLogs/View"
-import AboutView from "../stacks/about/View"
 import TextEditorView from "../stacks/editor/View"
+import HelpView from "../stacks/help/View"
+import KvEntryDetailView from "../stacks/kventries/detail/View"
+import KVEntryListView from "../stacks/kventries/list/ListView"
+import LogsView from "../stacks/mainLogs/View"
 import MessageView from "../stacks/message/View"
 import MessageSendView from "../stacks/messageSend/View"
-import StreamsListView from "../stacks/streams/list/ListView"
 import StreamDetailView from "../stacks/streams/detail/View"
+import StreamsListView from "../stacks/streams/list/ListView"
 import StreamMessagesView from "../stacks/streams/messages/View"
-import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
-import BucketsListView from "../stacks/buckets/list/ListView"
-import BucketDetailView from "../stacks/buckets/detail/View"
-import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { BucketsStore } from "@/stores/stacks/buckets"
-import KVEntryListView from "../stacks/kventries/list/ListView"
-import { KVEntriesStore } from "@/stores/stacks/kventry"
-import KvEntryDetailView from "../stacks/kventries/detail/View"
-import { KVEntryStore } from "@/stores/stacks/kventry/detail"
-import { AboutStore } from "@/stores/stacks/about"
-import { TextEditorStore } from "@/stores/stacks/editor"
 
 
 
@@ -87,6 +89,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <AboutView store={view as AboutStore} />
 			case DOC_TYPE.TEXT_EDITOR:
 				return <TextEditorView store={view as TextEditorStore} />
+			case DOC_TYPE.HELP:
+				return <HelpView store={view as HelpStore} />
 
 			default:
 				return null

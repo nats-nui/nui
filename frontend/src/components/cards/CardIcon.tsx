@@ -1,3 +1,4 @@
+import HelpIcon from "@/icons/HelpIcon"
 import LogIcon from "@/icons/LogIcon"
 import NuiIcon from "@/icons/NuiIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
@@ -68,6 +69,8 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <NuiIcon className={className} style={style} />
 		case DOC_TYPE.TEXT_EDITOR:
 			return <NuiIcon className={className} style={style} />
+		case DOC_TYPE.HELP:
+			return <HelpIcon className={className} style={style} />
 
 		default:
 			return null
