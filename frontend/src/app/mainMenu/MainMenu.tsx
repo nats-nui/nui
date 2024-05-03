@@ -1,14 +1,16 @@
+import HelpIcon from "@/icons/HelpIcon"
 import docsSo, { FIXED_CARD } from "@/stores/docs"
+import { deckCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
+import { buildTextEditor } from "@/stores/stacks/editor/factory"
 import { ClearSession, LoadSession, SaveSession } from "@/utils/session/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import Button from "../../components/buttons/Button"
 import AboutButton from "./AboutButton"
 import cls from "./MainMenu.module.css"
+import MenuButton from "./MenuButton"
 import StoreButton from "./StoreButton"
-import { deckCardsSo } from "@/stores/docs/cards"
-import { buildTextEditor } from "@/stores/stacks/editor/factory"
 
 
 
@@ -31,6 +33,7 @@ const MainMenu: FunctionComponent<Props> = ({
 		const view = buildTextEditor("ciao!")
 		deckCardsSo.add({ view, anim: true })
 	}
+	const handleHelp = () => window.open("https://natsnui.app/help/")
 
 	// RENDER
 	if (!docsSo.state?.fixedViews) return null
@@ -59,6 +62,19 @@ const MainMenu: FunctionComponent<Props> = ({
 			<Button children="EDITOR" onClick={() => handleOpenEditor()} />
 		</>}
 		{/* *** DEBUG *** */}
+
+		{/* <StoreButton
+			label="HELP"
+			store={docSo.state.fixedViews[FIXED_CARD.HELP]}
+		/> */}
+
+		<MenuButton 
+			title={"HELP"}
+			subtitle={"https://natsnui.app/help/"}
+			onClick={handleHelp}
+		>
+			<HelpIcon style={{ width: 20 }} className="color-fg" />
+		</MenuButton>
 
 		<StoreButton
 			label="LOG"

@@ -1,6 +1,9 @@
+import IconButton from "@/components/buttons/IconButton"
 import LinkButton from "@/components/buttons/LinkButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
+import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
+import SendIcon from "@/icons/SendIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
@@ -10,10 +13,6 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
-import IconButton from "@/components/buttons/IconButton"
-import SendIcon from "@/icons/SendIcon"
-import TooltipCmp from "@/components/tooltip/TooltipCmp"
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 
 
 
@@ -36,7 +35,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
-	const handleSendClick = (e:React.MouseEvent) => {
+	const handleSendClick = (e: React.MouseEvent) => {
 		e.stopPropagation()
 		cnnDetailSo.openMessageSend()
 	}
@@ -48,6 +47,10 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
+	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" style={{ padding: 5}}>
+		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
+	</TooltipWrapCmp>
+
 	return <FrameworkCard variantBg
 		store={cnnDetailSo}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
@@ -58,6 +61,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					tooltip="MESSAGES"
 					selected={isMessageOpen}
 					onClick={handleMessagesClick}
+					renderExtra={ButtonSend}
 				/>
 				<LinkButton
 					icon={<StreamsIcon />}
@@ -80,12 +84,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				label="MESSAGES"
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
-				renderEnd={<TooltipWrapCmp content="Send a message">
-					<IconButton
-						onClick={handleSendClick}
-					><SendIcon /></IconButton>
-				</TooltipWrapCmp>
-				}
+				renderEnd={ButtonSend}
 			/>
 
 			<RowButton

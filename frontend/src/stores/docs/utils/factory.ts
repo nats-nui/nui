@@ -1,25 +1,26 @@
-import servicesSetup from "@/stores/stacks/connection/detail";
-import cnnSetup from "@/stores/stacks/connection";
-import messageSetup, { MessageState } from "@/stores/stacks/message";
-import messagesSetup from "@/stores/stacks/connection/messages";
-import messageSendSetup from "@/stores/stacks/connection/messageSend";
-import streamsSetup from "@/stores/stacks/streams";
-import streamSetup from "@/stores/stacks/streams/detail";
-import logsSetup from "@/stores/stacks/log";
-import { DOC_TYPE } from "@/types";
-import { createStore } from "@priolo/jon";
-import { ViewState, ViewStore } from "../../stacks/viewBase";
-import consumerSetup from "@/stores/stacks/consumer/detail";
-import consumersSetup from "@/stores/stacks/consumer";
-import streamMessagesSetup from "@/stores/stacks/streams/messages";
-import { Message } from "@/types/Message";
-import { MSG_FORMAT } from "@/utils/editor";
+import aboutSetup from "@/stores/stacks/about";
+import bucketsSetup from "@/stores/stacks/buckets";
 import bucketSetup from "@/stores/stacks/buckets/detail";
+import cnnSetup from "@/stores/stacks/connection";
+import servicesSetup from "@/stores/stacks/connection/detail";
+import messageSendSetup from "@/stores/stacks/connection/messageSend";
+import messagesSetup from "@/stores/stacks/connection/messages";
+import consumersSetup from "@/stores/stacks/consumer";
+import consumerSetup from "@/stores/stacks/consumer/detail";
+import txtEditorSetup from "@/stores/stacks/editor";
+import helpSetup from "@/stores/stacks/help";
 import kventriesSetup from "@/stores/stacks/kventry";
 import kventrySetup from "@/stores/stacks/kventry/detail";
-import bucketsSetup from "@/stores/stacks/buckets";
-import aboutSetup from "@/stores/stacks/about";
-import txtEditorSetup from "@/stores/stacks/editor";
+import logsSetup from "@/stores/stacks/log";
+import messageSetup, { MessageState } from "@/stores/stacks/message";
+import streamsSetup from "@/stores/stacks/streams";
+import streamSetup from "@/stores/stacks/streams/detail";
+import streamMessagesSetup from "@/stores/stacks/streams/messages";
+import { DOC_TYPE } from "@/types";
+import { Message } from "@/types/Message";
+import { MSG_FORMAT } from "@/utils/editor";
+import { createStore } from "@priolo/jon";
+import { ViewState, ViewStore } from "../../stacks/viewBase";
 
 
 
@@ -63,6 +64,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.ABOUT]: aboutSetup,
 
 		[DOC_TYPE.TEXT_EDITOR]: txtEditorSetup,
+		[DOC_TYPE.HELP]: helpSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

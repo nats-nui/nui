@@ -48,8 +48,8 @@ const RootCard: FunctionComponent<Props> = ({
 	const inAnimation = viewSa.docAnim == DOC_ANIM.EXITING || viewSa.docAnim == DOC_ANIM.SHOWING || viewSa.docAnim == DOC_ANIM.SIZING
 	const isCompact = !inZen && viewSa.size == VIEW_SIZE.COMPACT
 	const isResizable = !isCompact && !inZen
-	const isDetachable = !inZen && !!viewSa.parent
 	const haveLinked = !inZen && !!view.state.linked
+	//const haveDetachable = !inZen && !!viewSa.parent
 	const haveFocus = !inZen && view.state.group.state.focus == view
 	const variant = view.state.colorVar
 
@@ -86,7 +86,7 @@ const RootCard: FunctionComponent<Props> = ({
 				onMove={handleDragMove}
 				onDClick={handleDetach}
 			/>
-			: isDetachable && (
+			: haveLinked && (
 				<div className={cls.resizer} style={{ cursor: "col-resize" }}
 					onDoubleClick={handleDetach}
 				/>
