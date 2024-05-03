@@ -8,6 +8,8 @@ import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
 import docsSo from "@/stores/docs"
 import AboutButton from "./AboutButton"
+import MenuButton from "./MenuButton"
+import HelpIcon from "@/icons/HelpIcon"
 
 
 
@@ -26,9 +28,10 @@ const MainMenu: FunctionComponent<Props> = ({
 	// HOOKS
 
 	// HANDLERS
+	const handleHelp = () => window.open("https://natsnui.app/help/")
 
 	// RENDER
-	if ( !docSo.state?.fixedViews ) return null
+	if (!docSo.state?.fixedViews) return null
 	const views = menuSa.all
 
 	return <div style={style} className={cls.root}>
@@ -39,8 +42,8 @@ const MainMenu: FunctionComponent<Props> = ({
 		/>
 
 		{views.map((view) => (
-			<StoreButton key={view.state.uuid} 
-				store={view} 
+			<StoreButton key={view.state.uuid}
+				store={view}
 			/>
 		))}
 
@@ -58,6 +61,14 @@ const MainMenu: FunctionComponent<Props> = ({
 			label="HELP"
 			store={docSo.state.fixedViews[FIXED_CARD.HELP]}
 		/> */}
+
+		<MenuButton 
+			title={"HELP"}
+			subtitle={"https://natsnui.app/help/"}
+			onClick={handleHelp}
+		>
+			<HelpIcon style={{ width: 20 }} className="color-fg" />
+		</MenuButton>
 
 		<StoreButton
 			label="LOG"
