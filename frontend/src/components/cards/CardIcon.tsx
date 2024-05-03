@@ -1,4 +1,4 @@
-import HelpIcon from "@/icons/HElpIcon"
+import HelpIcon from "@/icons/HelpIcon"
 import LogIcon from "@/icons/LogIcon"
 import NuiIcon from "@/icons/NuiIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
