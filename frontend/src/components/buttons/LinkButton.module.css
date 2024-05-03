@@ -1,4 +1,5 @@
 .root {
+	position: relative;
 	transition: background-color 300ms, color 300ms;
 	display: flex;
 	align-items: center;
@@ -13,4 +14,20 @@
 .selected {
 	color: var(--text);
 	background-color: var(--bg-default);
+}
+
+.extra {
+	position: absolute;
+	left: 80%;
+	border-radius: 5px;
+	box-shadow: rgba(0, 0, 0, 0.25) 2px 2px 1px 0px;
+
+	transition: opacity 300ms, transform 300ms ease-in-out;
+	opacity: 0;
+	transform: translate(-10px, 0px);
+}
+
+.root:hover .extra {
+	opacity: 1;
+	transform: translate(0px, 0px);
 }

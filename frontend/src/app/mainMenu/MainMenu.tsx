@@ -10,6 +10,7 @@ import docsSo from "@/stores/docs"
 import AboutButton from "./AboutButton"
 
 
+
 interface Props {
 	style?: React.CSSProperties
 }
@@ -53,10 +54,10 @@ const MainMenu: FunctionComponent<Props> = ({
 		</>}
 		{/* *** DEBUG *** */}
 
-		<StoreButton
+		{/* <StoreButton
 			label="HELP"
 			store={docSo.state.fixedViews[FIXED_CARD.HELP]}
-		/>
+		/> */}
 
 		<StoreButton
 			label="LOG"

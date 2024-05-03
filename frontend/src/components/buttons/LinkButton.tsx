@@ -8,6 +8,7 @@ interface Props {
 	icon: React.ReactNode
 	tooltip?: string
 	selected?: boolean
+	renderExtra?: React.ReactNode
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
@@ -18,6 +19,7 @@ const LinkButton: FunctionComponent<Props> = ({
 	icon,
 	tooltip,
 	selected,
+	renderExtra,
 	onClick,
 }) => {
 
@@ -28,7 +30,9 @@ const LinkButton: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	const clsRoot = `${cls.root} ${selected ? cls.selected : ""}`
+	const clsSelect = selected ? cls.selected : ""
+	const clsRoot = `${cls.root} ${clsSelect}`
+	const clsExtra = `${selected ? cls.selected : "color-bg color-text"} ${cls.extra}`
 
 	return (
 		<TooltipWrapCmp content={tooltip}
@@ -36,6 +40,7 @@ const LinkButton: FunctionComponent<Props> = ({
 			onClick={onClick}
 		>
 			{icon}
+			{renderExtra && <div className={clsExtra}>{renderExtra}</div>}
 		</TooltipWrapCmp>
 	)
 }
