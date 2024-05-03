@@ -72,15 +72,14 @@ const YTRow: FunctionComponent<YTRowProps> = ({
 			<YouTubeIcon className={cls.icon} />
 			<div className={cls.label}>{title}</div>
 		</div>
-		<iframe
-			width="278"
-			height="152"
+		{/* <iframe
+			style={{ width: "100%" }}
 			src={src}
 			title={title}
 			frameBorder="0"
 			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 			referrerPolicy="strict-origin-when-cross-origin"
 			allowFullScreen
-		></iframe>
+		></iframe> */}
 	</div>
 }

@@ -5,6 +5,7 @@
 	flex-direction: column;
 	height: 100%;
 	transition: opacity 300ms;
+	border-radius: 5px;
 }
 .iconized {
 	align-items: center;
