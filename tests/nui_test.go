@@ -416,7 +416,7 @@ func (s *NuiTestSuite) TestRequestResponseRest() {
 	time.Sleep(10 * time.Millisecond)
 
 	// send request and read response via nui rest
-	r := s.e.POST("/api/connection/" + connId + "/messages/request").
+	r := s.e.POST("/api/connection/" + connId + "/request").
 		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
 		Expect()
 	r.Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
