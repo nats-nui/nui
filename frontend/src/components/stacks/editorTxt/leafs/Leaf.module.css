@@ -1,0 +1,12 @@
+.root {
+    font-weight: 200;
+}
+
+.root.bold {
+    font-weight: 700;
+}
+
+.root.link {
+    text-decoration: underline;
+    cursor: pointer;
+}

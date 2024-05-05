@@ -1,0 +1,9 @@
+@import '/src/style/_colors';
+
+@mixin base {
+	color: $color-primary;
+	margin: 0px;
+	&.focus {
+		background-color: $color-accent;
+	}
+}
