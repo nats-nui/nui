@@ -30,6 +30,8 @@ export interface DialogProps {
 	 * se == -1 non chiude */
 	timeoutClose?: number
 
+	noCloseOnClickParent?: boolean
+
 	children?: React.ReactNode
 	/** chiamato quando clicco su qualunque altro punto che non sia la DIALOG */
 	onClose?: (e) => void
@@ -51,6 +53,8 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	children,
 	/** se minore di 0 non chiude automaticamente */
 	timeoutClose = 200,
+
+	noCloseOnClickParent,
 	onClose,
 }) => {
 
@@ -66,7 +70,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		// guarda che devo fare per evitare che si aprano due dialog in zen
 		const zenElm = document.getElementById(`zen-container`)
 		const inZen = zenElm?.contains(pointRef) ?? false
-		if ( docsSo.state.zenCard== store && !inZen) return null
+		if (docsSo.state.zenCard == store && !inZen) return null
 
 		const elm = document.getElementById(`dialog_${state.uuid}`)
 		return elm
@@ -89,19 +93,26 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 	/** EVENT CLICK */
 	useEffect(() => {
-		// se clicco fuori dalla dialog allora la chiude
+		// click fuori dalla dialog eventualmente chiude
 		const handleClick = (e: MouseEvent) => {
-			if (timeoutClose < 0) return
-			// se è aperto e il "refDialog" contiene proprio questa dialog allora chiudi
-			if (open == true && ref && !ref.contains(e.target as any)) {
-				if (timeoutClose > 0) {
-					setTimeout(() => onClose?.(e), timeoutClose)
-				} else {
-					onClose?.(e)
-				}
+			// se non serve controllare
+			if (!open || !ref || !e.target) return
+			// se ho cliccato sulla stessa dialog:
+			if (ref.contains(e.target as any)) return
+			// se non si deve chiudere sul click sul parent:
+			if (noCloseOnClickParent) {
+				const parentElm = document.getElementById(state.uuid)
+				if ((e.target as Element).id != `dialog_${state.uuid}` && parentElm.contains(e.target as any)) return
+			}
+			// ... allora chudi!
+			if (timeoutClose > 0) {
+				setTimeout(() => onClose?.(e), timeoutClose)
+			} else {
+				onClose?.(e)
 			}
 		}
 		if (open && !!ref) {
+			// se minore di 0 non chiudere automaticamente
 			if (timeoutClose < 0) return
 			document.addEventListener('mousedown', handleClick)
 			//setTimeout(() => document.addEventListener('mousedown', handleClick), 100)
@@ -136,7 +147,7 @@ const Dialog: FunctionComponent<DialogProps> = ({
 		<div ref={(node) => setPointRef(node)} style={{ display: "none" }} />
 
 		{refDialog && createPortal(
-			<div className={clsRoot}
+			<div className={clsRoot} 
 				ref={(node) => setRef(node)}
 				style={cssRoot(width, y)}
 			>
