@@ -1,0 +1,28 @@
+
+.root {
+}
+
+.root.focus {
+	background-color: red;
+}
+
+.image {
+	width: 100%;
+	height: auto;
+}
+.image.focus {
+	border: 3px solid red;
+	box-sizing: border-box;
+}
+
+.placeholder {
+	width: 100%;
+	height: auto;
+	background-color: bisque;
+	cursor: pointer;
+}
+
+.description {
+	font-size: 10px;
+	text-align: center;
+}
