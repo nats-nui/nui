@@ -23,7 +23,7 @@ const setup = {
 
 	getters: {
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => "ABOUT",
+		getTitle: (_: void, store?: ViewStore) => "HELP",
 		getSubTitle: (_: void, store?: ViewStore) => "App NUI",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as AboutState

@@ -75,11 +75,10 @@ const FilterDialog: FunctionComponent<Props> = ({
 	const lastSeq = strMsgSa.stream.state?.lastSeq ?? 0
 
 	return (
-		<Dialog
+		<Dialog noCloseOnClickParent
 			title="FILTERS"
 			store={strMsgSo}
 
-			timeoutClose={-1}
 			width={width}
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}

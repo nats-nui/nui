@@ -18,7 +18,6 @@ export enum FIXED_CARD {
 	CONNECTIONS = 0,
 	LOGS = 1,
 	ABOUT = 2,
-	HELP = 3,
 }
 
 /**
@@ -27,7 +26,7 @@ export enum FIXED_CARD {
 const setup = {
 
 	state: {
-		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?, HelpStore?]>null,
+		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
 		zenCard: <ViewStore>null,
 		zenOpen: false,
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},

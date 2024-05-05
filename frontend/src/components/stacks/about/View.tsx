@@ -5,6 +5,7 @@ import React, { FunctionComponent, useEffect } from "react"
 import cls from "./View.module.css"
 import Button from "@/components/buttons/Button"
 import GitHubIcon from "@/icons/GitHubIcon"
+import HelpIcon from "@/icons/HelpIcon"
 
 
 
@@ -29,6 +30,7 @@ const AboutView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleUpdateClick = () => window.open("https://natsnui.app/downloads/")
 	const handleGitHubClick = () => window.open("https://github.com/nats-nui/nui")
+	const handleHelpClick = () => window.open("https://natsnui.app/help/")
 
 	// RENDER
 	const current = aboutSa.about?.currentVersion ?? "--"
@@ -40,10 +42,14 @@ const AboutView: FunctionComponent<Props> = ({
 
 		<div className="lyt-form">
 
-			<div className={cls.github_btt}
-				onClick={handleGitHubClick}
-			>
-				<GitHubIcon/>GitHub
+			<div className={cls.linkContainer}>
+				<div className={cls.link}
+					onClick={handleGitHubClick}
+				><GitHubIcon />GitHub</div>
+
+				<div className={cls.link}
+					onClick={handleHelpClick}
+				><HelpIcon style={{ width: 16, height: 16 }} />Help</div>
 			</div>
 
 			<div className={cls.divider} />

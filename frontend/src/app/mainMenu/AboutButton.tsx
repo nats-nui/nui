@@ -26,7 +26,7 @@ const AboutButton: FunctionComponent<Props> = ({
 
 	return (
 		<StoreButton
-			label="ABOUT"
+			label="HELP"
 			store={store}
 			badge={icon}
 		/>
