@@ -100,7 +100,8 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	reply := &struct {
+		Subject string `json:"subject"`
 		Payload []byte `json:"payload"`
-	}{Payload: msg.Data}
+	}{Payload: msg.Data, Subject: msg.Subject}
 	return c.JSON(reply)
 }
