@@ -30,6 +30,7 @@
     "react-dom": "^18.2.0",
     "react-virtuoso": "^4.7.1",
     "slate": "^0.103.0",
+    "slate-history": "^0.100.0",
     "slate-react": "^0.102.0",
     "ws": "^8.14.2"
   },

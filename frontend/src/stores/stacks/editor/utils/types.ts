@@ -1,5 +1,4 @@
-import { BaseElement, BaseText, Node, Text } from "slate"
-
+import { BaseElement, BaseText } from "slate"
 
 
 /**
@@ -29,8 +28,11 @@ export type ElementType = {
 } & BaseElement
 
 export type TextType = {
-	link?: string,
-	bold?: boolean,
+	url?: string
+	link?: boolean
+	bold?: boolean
+	italic?:boolean
+	code?:boolean
 } & BaseText
 
 export type NodeType = Node & ElementType & TextType
