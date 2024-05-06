@@ -1,7 +1,7 @@
 import { TextType } from "@/stores/stacks/editor/utils/types";
 import { FunctionComponent } from "react";
 import { RenderLeafProps } from "slate-react";
-import cls from "./Leaf.module.css";
+import cls from "./BiblioLeaf.module.css";
 
 
 
@@ -11,7 +11,12 @@ const BiblioLeaf: FunctionComponent<RenderLeafProps> = ({
 	children,
 }) => {
 	const leafBib = leaf as TextType
-	const cnRoot = `${cls.root} ${leafBib.bold ? cls.bold : ""} ${leafBib.link ? cls.link : ""}`
+	const clsBold = leafBib.bold ? cls.bold : ""
+	const clsItalic = leafBib.italic? cls.italic : ""
+	const clsCode = leafBib.code ? cls.code : ""
+	const clsLink = leafBib.link ? cls.link : ""
+	const cnRoot = `${cls.root} ${clsBold} ${clsItalic} ${clsCode} ${clsLink}`
+
 	return <span
 		{...attributes}
 		className={cnRoot}

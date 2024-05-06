@@ -10,8 +10,8 @@ export default function Text({
 }) {
 
 	// HOOKs
-	const selected = useSelected()
-	const focused = useFocused()
+	const selected = false//useSelected()
+	const focused = false//useFocused()
 	 
 
 	// RENDER

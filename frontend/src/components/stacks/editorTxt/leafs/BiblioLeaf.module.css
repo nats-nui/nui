@@ -6,6 +6,14 @@
     font-weight: 700;
 }
 
+.root.italic {
+    
+}
+
+.root.code {
+    
+}
+
 .root.link {
     text-decoration: underline;
     cursor: pointer;

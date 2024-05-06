@@ -10,7 +10,7 @@ import { Path } from "msw"
 import BiblioElement from "./elements/BiblioElement"
 import BiblioLeaf from "./leafs/BiblioLeaf"
 import Dialog from "@/components/dialogs/Dialog"
-import { Editor, Transforms } from "slate"
+import { Editor, Element, Transforms } from "slate"
 
 
 
@@ -64,14 +64,7 @@ const EditorView: FunctionComponent<Props> = ({
 			}
 			case 'c': {
 				event.preventDefault()
-				Transforms.setNodes(
-					state.editor,
-					{ type: BLOCK_TYPE.CHAPTER},
-					{ match: n => Editor.isBlock(state.editor, n) }
-				)
-
-
-				//store.changeSelectTypeAndMerge(BLOCK_TYPE.CHAPTER)
+				store.changeSelectTypeAndMerge(BLOCK_TYPE.CHAPTER)
 				break
 			}
 		}
@@ -82,11 +75,50 @@ const EditorView: FunctionComponent<Props> = ({
 		store.changeSelectText({ bold: !leaf?.bold })
 		ReactEditor.focus(state.editor)
 	}
+	const handleItalic = (e) => {
+		e.preventDefault()
+		const [leaf] = store.getEntryTextSelect()
+		store.changeSelectText({ italic: !leaf?.italic })
+		ReactEditor.focus(state.editor)
+	}
+	const handleCode = (e) => {
+		e.preventDefault()
+		const [leaf] = store.getEntryTextSelect()
+		store.changeSelectText({ code: !leaf?.code })
+		ReactEditor.focus(state.editor)
+	}
+	const handleLink = (e) => {
+		e.preventDefault()
+		const [leaf] = store.getEntryTextSelect()
+		store.changeSelectText({ link: !leaf?.link })
+		ReactEditor.focus(state.editor)
+	}
 	const handleChapter = (e) => {
 		e.preventDefault()
 		store.changeSelectTypeAndMerge(BLOCK_TYPE.CHAPTER)
 		ReactEditor.focus(state.editor)
 	}
+	const handleParagraph = (e) => {
+		e.preventDefault()
+		store.changeSelectTypeAndMerge(BLOCK_TYPE.PARAGRAPH)
+		ReactEditor.focus(state.editor)
+	}
+	const handleText = (e) => {
+		e.preventDefault()
+		store.changeSelectTypeAndMerge(BLOCK_TYPE.TEXT)
+		ReactEditor.focus(state.editor)
+	}
+	const handleBlockCode = (e) => {
+		e.preventDefault()
+		store.changeSelectTypeAndMerge(BLOCK_TYPE.CODE)
+		ReactEditor.focus(state.editor)
+	}
+	const handleImageCode = (e) => {
+		e.preventDefault()
+		store.changeSelectTypeAndMerge(BLOCK_TYPE.IMAGE)
+		ReactEditor.focus(state.editor)
+	}
+
 	// RENDER
 
 	return <FrameworkCard
@@ -98,6 +130,7 @@ const EditorView: FunctionComponent<Props> = ({
 		<Slate
 			editor={state.editor}
 			initialValue={state.editor.children}
+
 		>
 			<Editable
 				renderElement={props => <BiblioElement {...props} />}
@@ -115,12 +148,33 @@ const EditorView: FunctionComponent<Props> = ({
 			open={state.formatOpen}
 			onClose={handleFormatClose}
 		>
-			<button
-				onClick={handleBold}
-			>BOLD</button>
+			<div style={{ display: "flex" }}>
+				<button
+					onClick={handleBold}
+				>B</button>
+				<button
+					onClick={handleItalic}
+				>I</button>
+				<button
+					onClick={handleLink}
+				>L</button>
+			</div>
 			<button
 				onClick={handleChapter}
 			>CHAPTER</button>
+			<button
+				onClick={handleParagraph}
+			>PARAGRAPH</button>
+			<button
+				onClick={handleText}
+			>TEXT</button>
+			<button
+				onClick={handleBlockCode}
+			>CODE</button>
+			<button
+				onClick={handleImageCode}
+			>IMAGE</button>
+
 		</Dialog>
 
 	</FrameworkCard>
@@ -128,9 +182,3 @@ const EditorView: FunctionComponent<Props> = ({
 
 export default EditorView
 
-const initialValue = [
-	{
-		type: 'paragraph',
-		children: [{ text: 'A line of text in a paragraph.' }],
-	},
-]
