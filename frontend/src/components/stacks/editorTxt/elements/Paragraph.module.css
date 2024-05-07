@@ -1,9 +1,10 @@
 
 .root {
-	padding-top: 15px;
-	padding-bottom: 7px;
-
 	font-weight: 700;
 	font-size: 14px;
+	color: blue;
 }
 
+.root.focus {
+	background-color: rgba(0, 0, 0, 0.2);
+}
