@@ -1,4 +1,3 @@
-import RootCard from "@/components/cards/RootCard"
 import docsSo from "@/stores/docs"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef } from "react"
@@ -26,20 +25,15 @@ const ZenCard: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	if (!docsSa.zenCard) return null
 	const clsOpen = docsSa.zenOpen ? cls.open : ""
+	const clsHide = !docsSa.zenCard ? cls.hide : ""
 
 	return (
-
-		<div ref={ref} id="zen-container"
-			className={`${cls.root} ${clsOpen}`}
+		<div ref={ref}
+			className={`${cls.root} ${clsOpen} ${clsHide}`}
 			onClick={handleClose}
 		>
-			<div className={cls.container}>
-				<RootCard
-					view={docsSa.zenCard}
-				/>
-			</div>
+			<div className={cls.container} id="zen-card" />
 		</div>
 	)
 }

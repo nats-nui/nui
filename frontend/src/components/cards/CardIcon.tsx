@@ -66,12 +66,9 @@ const CardIcon: FunctionComponent<Props> = ({
 		case DOC_TYPE.LOGS:
 			return <LogIcon className={className} style={style} />
 		case DOC_TYPE.ABOUT:
-			return <NuiIcon className={className} style={style} />
+			return <div className={className} style={{ fontSize: 16, fontWeight: 700 }}>?</div>
 		case DOC_TYPE.TEXT_EDITOR:
 			return <NuiIcon className={className} style={style} />
-		case DOC_TYPE.HELP:
-			return <HelpIcon className={className} style={style} />
-
 		default:
 			return null
 	}

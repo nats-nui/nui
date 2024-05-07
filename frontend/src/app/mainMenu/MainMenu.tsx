@@ -68,13 +68,13 @@ const MainMenu: FunctionComponent<Props> = ({
 			store={docSo.state.fixedViews[FIXED_CARD.HELP]}
 		/> */}
 
-		<MenuButton 
+		{/* <MenuButton 
 			title={"HELP"}
 			subtitle={"https://natsnui.app/help/"}
 			onClick={handleHelp}
 		>
 			<HelpIcon style={{ width: 20 }} className="color-fg" />
-		</MenuButton>
+		</MenuButton> */}
 
 		<StoreButton
 			label="LOG"
