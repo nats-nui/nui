@@ -1,5 +1,4 @@
 import CloseIcon from "@/icons/CloseIcon"
-import docsSo from "@/stores/docs"
 import { CnnDetailState } from "@/stores/stacks/connection/detail"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
@@ -63,18 +62,10 @@ const Dialog: FunctionComponent<DialogProps> = ({
 
 	// HOOKs
 	const [ref, setRef] = useState<HTMLDivElement>(null)
-	const [pointRef, setPointRef] = useState<HTMLDivElement>(null)
 	const refDialog = useMemo(() => {
-		if (!open || !pointRef) return null
-
-		// guarda che devo fare per evitare che si aprano due dialog in zen
-		const zenElm = document.getElementById(`zen-container`)
-		const inZen = zenElm?.contains(pointRef) ?? false
-		if (docsSo.state.zenCard == store && !inZen) return null
-
-		const elm = document.getElementById(`dialog_${state.uuid}`)
-		return elm
-	}, [open, pointRef])
+		if (!open) return null
+		return document.getElementById(`dialog_${state.uuid}`)
+	}, [open])
 
 	// pensare ad un modo per cui se cambiano le dimensioni della dialog
 	// questa si riposiziona
@@ -139,39 +130,33 @@ const Dialog: FunctionComponent<DialogProps> = ({
 	// HANDLER
 
 	// RENDER
-	//if (!refDialog) return null
 	const clsRoot = `color-bg color-text ${cls.root} ${fullHeight ? cls.full_height : ""}`
 
-	return <>
-
-		<div ref={(node) => setPointRef(node)} style={{ display: "none" }} />
-
-		{refDialog && createPortal(
-			<div className={clsRoot} 
-				ref={(node) => setRef(node)}
-				style={cssRoot(width, y)}
-			>
-				{title != null ? (
-					<div className={cls.title}>
-						<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
-							{title}
-						</div>
-						<IconButton onClick={(e) => onClose(e)}>
-							<CloseIcon />
-						</IconButton>
+	return refDialog && createPortal(
+		<div className={clsRoot}
+			ref={(node) => setRef(node)}
+			style={cssRoot(width, y)}
+		>
+			{title != null ? (
+				<div className={cls.title}>
+					<div className="lbl-dialog-title" style={{ flex: 1, marginRight: 5 }}>
+						{title}
 					</div>
-				) : (
-					<div style={{ height: 12 }} />
-				)}
-
-				<div className={`${cls.body} ${className}`} style={style}>
-					{children}
+					<IconButton onClick={(e) => onClose(e)}>
+						<CloseIcon />
+					</IconButton>
 				</div>
+			) : (
+				<div style={{ height: 12 }} />
+			)}
 
-			</div>,
-			refDialog
-		)}
-	</>
+			<div className={`${cls.body} ${className}`} style={style}>
+				{children}
+			</div>
+
+		</div>,
+		refDialog
+	)
 }
 
 export default Dialog

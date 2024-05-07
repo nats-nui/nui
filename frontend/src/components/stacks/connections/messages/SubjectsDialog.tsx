@@ -80,7 +80,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 	}, [filter, msgSa.stats, msgSa.messages])
 	const noStats = !stats || stats.length == 0
 
-	return <Dialog
+	return <Dialog noCloseOnClickParent
 		title={<div style={{ display: "flex", alignItems: "center" }}>
 			<IconToggle style={{ marginTop: 3, marginRight: 6 }}
 				check={allCheck}
@@ -89,8 +89,6 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 			SUBJECTS
 		</div>}
 		store={msgSo}
-
-		timeoutClose={-1}
 		width={250}
 		open={msgSa.subscriptionsOpen}
 		onClose={handleCancel}

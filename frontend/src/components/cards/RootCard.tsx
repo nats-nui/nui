@@ -4,7 +4,8 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
 import { useStore, useStoreNext } from "@priolo/jon"
-import React, { FunctionComponent, useEffect } from "react"
+import React, { FunctionComponent, useEffect, useMemo } from "react"
+import { createPortal } from "react-dom"
 import PolymorphicCard from "./PolymorphicCard"
 import ResizerCmp from "./ResizerCmp"
 import cls from "./RootCard.module.css"
@@ -36,6 +37,7 @@ const RootCard: FunctionComponent<Props> = ({
 	useEffect(() => {
 		window.requestAnimationFrame(() => view.docAnim(DOC_ANIM.SHOWING));
 	}, [view])
+	const refZen = useMemo(() => document.getElementById(`zen-card`), [])
 
 	// HANDLER
 	const handleDragMove = (pos: number, diff: number) => view.setWidth(pos - diff)
@@ -67,51 +69,64 @@ const RootCard: FunctionComponent<Props> = ({
 		...view.getStyAni(),
 	}
 
-	return <div
-		id={view.state.uuid}
-		className={clsRoot}
-		style={{ zIndex: deep, ...style }}
-	>
+	const card = (
+		<div
+			id={view.state.uuid}
+			className={clsRoot}
+			style={{ zIndex: deep, ...style }}
+		>
 
-		{/* DOC BODY */}
-		<div style={styContainerDoc} className={clsDoc}>
-			<PolymorphicCard view={view} />
-			<SnackbarCmp view={view} />
-		</div>
+			{/* DOC BODY */}
+			<div style={styContainerDoc} className={clsDoc}>
+				<PolymorphicCard view={view} />
+				<SnackbarCmp view={view} />
+			</div>
 
-		{isResizable
-			? <ResizerCmp
-				className={cls.resizer}
-				onStart={(pos: number) => view.state.width}
-				onMove={handleDragMove}
-				onDClick={handleDetach}
-			/>
-			: haveLinked && (
-				<div className={cls.resizer} style={{ cursor: "col-resize" }}
-					onDoubleClick={handleDetach}
+			{isResizable
+				? <ResizerCmp
+					className={cls.resizer}
+					onStart={(pos: number) => view.state.width}
+					onMove={handleDragMove}
+					onDClick={handleDetach}
 				/>
-			)
-		}
+				: haveLinked && (
+					<div className={cls.resizer} style={{ cursor: "col-resize" }}
+						onDoubleClick={handleDetach}
+					/>
+				)
+			}
 
-		<div className={cls.desk}>
+			<div className={cls.desk}>
 
-			{/* DIALOG */}
-			<div
-				className={`var${variant} ${cls.dialog}`}
-				style={{ zIndex: deep - 1 }}
-				id={dialogId}
-			/>
-
-			{/* LINKED */}
-			{!inZen && haveLinked && <div >
-				<RootCard
-					deep={deep - 2}
-					view={view.state.linked}
+				{/* DIALOG */}
+				<div
+					className={`var${variant} ${cls.dialog}`}
+					style={{ zIndex: deep - 1 }}
+					id={dialogId}
 				/>
-			</div>}
 
+				{/* LINKED */}
+				{!inZen && haveLinked && <div >
+					<RootCard
+						deep={deep - 2}
+						view={view.state.linked}
+					/>
+				</div>}
+
+			</div>
 		</div>
-	</div>
+	)
+
+	if (inZen) {
+		return <>
+			<div style={{ width: view.state.width }} />
+			{createPortal(
+				card,
+				refZen
+			)}
+		</>
+	}
+	return card
 }
 
 export default RootCard

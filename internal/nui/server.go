@@ -59,7 +59,7 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id/messages/subscription", a.handleUpdateSubscriptions)
 
 	a.Post("/api/connection/:id/messages/publish", a.handlePublish)
-	a.Post("/api/connection/:id/messages/request", a.handleRequest)
+	a.Post("/api/connection/:id/request", a.handleRequest)
 
 	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
 	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)

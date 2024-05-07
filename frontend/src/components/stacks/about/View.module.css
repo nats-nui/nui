@@ -10,12 +10,19 @@
 	background-size: contain;
 }
 
-.github_btt {
+
+.linkContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-self: center;
+}
+
+.link {
 	cursor: pointer;
 	display: flex;
     align-items: center;
     gap: 5px;
-    align-self: center;
     font-size: 12px;
 }
 
