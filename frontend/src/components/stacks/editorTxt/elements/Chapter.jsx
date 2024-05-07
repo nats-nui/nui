@@ -10,8 +10,8 @@ export default function Chapter({
 }) {
 
 	// HOOKs
-	const selected = false//useSelected()
-	const focused = false//useFocused()
+	const selected = useSelected()
+	const focused = useFocused()
 
 	// RENDER
 	const cnText = `${styles.root} ${selected && focused ? styles.focus : ''}`

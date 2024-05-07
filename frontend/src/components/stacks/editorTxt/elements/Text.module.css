@@ -5,3 +5,6 @@
 	font-size: 14px;
 }
 
+.root.focus {
+	background-color: rgba(0, 0, 0, 0.2);
+}

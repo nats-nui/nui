@@ -3,7 +3,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState } from "../editorBase"
 import { withReact } from "slate-react"
-import { Editor, Element, Path, Range, Text,  Transforms,  createEditor } from "slate"
+import { Editor, Element, Node, Path, Range, Text,  Transforms,  createEditor } from "slate"
 import { BLOCK_TYPE, ElementType, NodeType, TextType } from "./utils/types"
 import { withHistory } from 'slate-history'
 
