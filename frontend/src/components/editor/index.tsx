@@ -15,6 +15,8 @@ interface Props {
 	readOnly?: boolean
 	/** formatta automaticamente all'avvio e su cambio FORMAT */
 	autoFormat?: boolean
+	className?: string
+
 	onChange?: (value: string) => void
 }
 
@@ -22,11 +24,12 @@ export interface EditorRefProps {
 	format?: () => void
 }
 
-const MyEditor: ForwardRefRenderFunction<EditorRefProps, Props> = ({
+const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	format,
 	value,
 	readOnly,
 	autoFormat,
+	className,
 	onChange,
 }, ref) => {
 
@@ -41,7 +44,7 @@ const MyEditor: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	// HOOKs
 	const editorRef = useRef<editor.IStandaloneCodeEditor>(null)
 	useEffect(() => {
-		if ( !editorRef.current ) return
+		if (!editorRef.current) return
 		editorRef.current.updateOptions({
 			readOnly
 		})
@@ -58,24 +61,28 @@ const MyEditor: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 
 	// RENDER
 	if (format == MSG_FORMAT.BASE64) {
-		return <Base64Cmp style={{	flex: 1, overflowY: "auto" }}
-			text={value} 
+		return <Base64Cmp style={{ flex: 1, overflowY: "auto" }}
+			text={value}
 		/>
 	}
 	if (format == MSG_FORMAT.HEX) {
-		return <HexTable style={{	flex: 1, overflowY: "auto" }}
-			text={value} 
+		return <HexTable style={{ flex: 1, overflowY: "auto" }}
+			text={value}
 		/>
 	}
-	return <Editor
+	return <Editor 
+		className={className}
 		defaultLanguage="json"
 		language={getEditorLanguage(format)}
 		value={value}
 		theme="vs-dark"
 		onMount={handleEditorDidMount}
 		onChange={onChange}
+
 	/>
 }
 
-export default forwardRef(MyEditor)
+const EditorCode = forwardRef(EditorCodeBase)
+
+export default EditorCode
 

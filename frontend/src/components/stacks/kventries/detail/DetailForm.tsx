@@ -1,4 +1,4 @@
-import MyEditor from "@/components/editor"
+import EditorCode from "@/components/editor"
 import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
@@ -41,7 +41,7 @@ const DetailForm: FunctionComponent<Props> = ({
 			/>
 		</div>
 
-		<MyEditor
+		<EditorCode
 			ref={ref => kventrySo.state.editorRef = ref}
 			value={kventrySo.getEditorText()}
 			onChange={handlePayloadChange}

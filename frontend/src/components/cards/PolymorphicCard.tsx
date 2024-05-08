@@ -35,6 +35,8 @@ import KvEntryDetailView from "../stacks/kventries/detail/View"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { AboutStore } from "@/stores/stacks/about"
 import { HelpStore } from "@/stores/stacks/help"
+import SyncView from "../stacks/sync/View"
+import { SyncStore } from "@/stores/stacks/sync"
 
 
 
@@ -87,6 +89,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <AboutView store={view as AboutStore} />
 			case DOC_TYPE.HELP:
 				return <HelpView store={view as HelpStore} />
+			case DOC_TYPE.SYNC:
+				return <SyncView store={view as SyncStore} />
 
 			default:
 				return null

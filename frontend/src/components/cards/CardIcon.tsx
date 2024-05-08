@@ -1,6 +1,7 @@
 import HelpIcon from "@/icons/HelpIcon"
 import LogIcon from "@/icons/LogIcon"
 import NuiIcon from "@/icons/NuiIcon"
+import SyncIcon from "@/icons/SyncIcon"
 import BucketIcon from "@/icons/cards/BucketIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import ConnectionIcon from "@/icons/cards/ConnectionIcon"
@@ -69,6 +70,9 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <div className={className} style={{ fontSize: 16, fontWeight: 700 }}>?</div>
 		// case DOC_TYPE.HELP:
 		// 	return <HelpIcon className={className} style={style} />
+
+		case DOC_TYPE.SYNC:
+			return  <SyncIcon className={className} style={style} />
 
 		default:
 			return null
