@@ -20,6 +20,7 @@ import kventrySetup from "@/stores/stacks/kventry/detail";
 import bucketsSetup from "@/stores/stacks/buckets";
 import aboutSetup from "@/stores/stacks/about";
 import helpSetup from "@/stores/stacks/help";
+import syncSetup from "@/stores/stacks/sync";
 
 
 
@@ -62,6 +63,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.LOGS]: logsSetup,
 		[DOC_TYPE.ABOUT]: aboutSetup,
 		[DOC_TYPE.HELP]: helpSetup,
+
+		[DOC_TYPE.SYNC]: syncSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

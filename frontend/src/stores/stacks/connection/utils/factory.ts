@@ -5,6 +5,7 @@ import { MessagesState, MessagesStore } from "@/stores/stacks/connection/message
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types";
 import { VIEW_SIZE } from "../../utils";
 import { MessageSendState, MessageSendStore } from "../messageSend";
+import { SyncState, SyncStore } from "../../sync";
 
 
 
@@ -14,9 +15,20 @@ export function buildConnectionMessages(connectionId: string) {
 	const cnnMessageStore = buildStore({
 		type: DOC_TYPE.MESSAGES,
 		connectionId: cnn.id,
-	} as MessagesState) as MessagesStore;
+	} as MessagesState) as MessagesStore
 	return cnnMessageStore;
 }
+
+export function buildConnectionSync(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId);
+	if (!cnn) { console.error("no param"); return null; }
+	const cnnSyncStore = buildStore({
+		type: DOC_TYPE.SYNC,
+		connectionId: cnn.id,
+	} as SyncState) as SyncStore
+	return cnnSyncStore
+}
+
 
 export function buildConnectionNew() {
 	const cnnStore = buildStore({

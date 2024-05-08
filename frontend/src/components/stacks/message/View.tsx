@@ -1,6 +1,6 @@
 import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import MyEditor from "@/components/editor"
+import EditorCode from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
@@ -47,7 +47,7 @@ const MessageView: FunctionComponent<Props> = ({
 				</span>
 			</div>
 
-			<MyEditor autoFormat readOnly
+			<EditorCode autoFormat readOnly
 				ref={ref => msgSa.editorRef = ref}
 				format={msgSa.format}
 				value={msgSo.getEditorText()}

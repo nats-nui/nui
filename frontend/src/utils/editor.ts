@@ -7,6 +7,13 @@ export enum MSG_FORMAT {
 	XML = "xml",
 	HTML = "html",
 }
+export enum MSG_FORMAT_EDIT {
+	JSON = "json",
+	TEXT = "text",
+	XML = "xml",
+	HTML = "html",
+}
+
 
 export function toJson(text: string): { json: JSON, success: boolean } {
 	let json = null

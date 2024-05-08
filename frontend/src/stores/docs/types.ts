@@ -23,6 +23,7 @@ export enum DOC_TYPE {
 	LOGS = "logs",
 	ABOUT = "about",
 	HELP = "help",
+	SYNC = "sync",
 }
 
 export enum DOC_ANIM {

@@ -26,9 +26,29 @@ function subscriptionUpdate(cnnId: string, subscriptions: Subscription[], opt?: 
 	return ajax.post(`connection/${cnnId}/messages/subscription`, subscriptions, opt)
 }
 
+/** SYNC
+ * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
+ */
+async function sync(cnnId: string, subject: string, payload: string, timeout: number = 2000, opt?: CallOptions): Promise<SyncResp> {
+	const data = {
+		subject,
+		payload: btoa(payload),
+		timeout
+	}
+	const resp = await ajax.post(`connection/${cnnId}/request`, data, opt) as SyncResp 
+	resp.payload = atob(resp.payload) 
+	return resp
+}
+
+type SyncResp = {
+	subject: string,	// response subject
+	payload: string, 	// base64 encoded response payload
+}
+
 const messagesApi = {
 	publish,
 	subscriptionIndex,
 	subscriptionUpdate,
+	sync,
 }
 export default messagesApi
