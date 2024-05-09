@@ -132,7 +132,7 @@ const EditorView: FunctionComponent<Props> = ({
 			initialValue={state.editor.children}
 
 		>
-			<Editable
+			<Editable className={cls.editor}
 				renderElement={props => <BiblioElement {...props} />}
 				renderLeaf={props => <BiblioLeaf {...props} />}
 				onKeyDown={handleKeyDown}

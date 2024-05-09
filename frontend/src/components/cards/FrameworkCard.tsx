@@ -1,5 +1,6 @@
 import CloseIcon from "@/icons/CloseIcon"
 import DetachIcon from "@/icons/DetachIcon"
+import docsSo from "@/stores/docs"
 import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
@@ -9,7 +10,6 @@ import IconButton from "../buttons/IconButton"
 import ErrorBoundary from "./ErrorBoundary"
 import cls from "./FrameworkCard.module.css"
 import Header from "./Header"
-import docsSo from "@/stores/docs"
 
 
 
