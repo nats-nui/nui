@@ -28,7 +28,7 @@ const setup = {
 
 	getters: {
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => "REQUEST / RELAY",
+		getTitle: (_: void, store?: ViewStore) => "REQUEST / REPLY",
 		getSubTitle: (_: void, store?: ViewStore) => "Send a message synchronously",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as SyncState
