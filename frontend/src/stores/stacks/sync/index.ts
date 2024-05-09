@@ -1,12 +1,15 @@
+import messagesApi from "@/api/messages"
+import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
+import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
-import { ViewState } from "../viewBase"
-import messagesApi from "@/api/messages"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { LOAD_STATE } from "../utils"
+import { ViewState } from "../viewBase"
+import { MessageStore } from "../message"
 
 
 
@@ -28,7 +31,7 @@ const setup = {
 
 	getters: {
 		//#region VIEWBASE
-		getTitle: (_: void, store?: ViewStore) => "REQUEST / RELAY",
+		getTitle: (_: void, store?: ViewStore) => "REQUEST / REPLY",
 		getSubTitle: (_: void, store?: ViewStore) => "Send a message synchronously",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as SyncState
@@ -76,6 +79,13 @@ const setup = {
 					timeout: 2000,
 				})
 			} catch (e) { }
+		},
+
+		/** apertura CARD MESSAGE-DETAIL */
+		openMessageDetail(message: Message, store?: SyncStore) {
+			const msgOld = (store.state.linked as MessageStore)?.state.message
+			const view = msgOld?.payload==message?.payload ? null : buildMessageDetail(message, store.state.format)
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 	},
 

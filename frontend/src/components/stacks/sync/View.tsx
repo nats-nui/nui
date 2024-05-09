@@ -7,12 +7,14 @@ import FormatDialog from "@/components/editor/FormatDialog"
 import TextInput from "@/components/input/TextInput"
 import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import FormatIcon from "@/icons/FormatIcon"
 import SendIcon from "@/icons/SendIcon"
 import { SyncStore } from "@/stores/stacks/sync"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
+import cls from "./View.module.css"
 
 
 
@@ -41,6 +43,13 @@ const SyncView: FunctionComponent<Props> = ({
 		refSender.current?.format()
 		refReceiver.current?.format()
 	}
+	const handleMessageClick = (txt: string) => syncSo.openMessageDetail({
+		payload: txt,
+		subject: syncSo.state.subject,
+		receivedAt: Date.now(),
+	})
+	const handleRequestClick = () => handleMessageClick(syncSo.state.messageSend)
+	const handleResponseClick = () => handleMessageClick(syncSo.state.messageReceived)
 
 	// RENDER
 	const canSend = syncSo.getCanSend()
@@ -73,7 +82,12 @@ const SyncView: FunctionComponent<Props> = ({
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative", gap: 5 }} >
 
 				<div className="lyt-v">
-					<div className="lbl-prop">SUBJECT</div>
+					<div className={cls.response}>
+						<div className="lbl-prop">SUBJECT</div>
+						<IconButton onClick={handleRequestClick}>
+							<ArrowRightIcon />
+						</IconButton>
+					</div>
 					<TextInput autoFocus
 						placeholder="Write here e.g. persons.ivano"
 						value={syncSa.subject}
@@ -93,7 +107,7 @@ const SyncView: FunctionComponent<Props> = ({
 						onClick={handleSend}
 						disabled={!canSend}
 					>
-						{false
+						{inLoading
 							? <CircularLoadingCmp style={{ width: 25, height: 25, color: "rgba(0,0,0,.5)" }} />
 							: <SendIcon />
 						}
@@ -103,15 +117,12 @@ const SyncView: FunctionComponent<Props> = ({
 			</div>
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 5 }}>
-				{/* <ResizerCmp direction={RESIZER_DIRECTION.VERTICAL}
-					className={cls.resizer}
-					onStart={(pos: number) => height}
-					onMove={(pos, diff) => setHeight(pos + diff)}
-				//onDClick={handleDetach}
-				></ResizerCmp> */}
-
-				<div className="lbl-prop">RESPONSE</div>
-
+				<div className={cls.response}>
+					<div className="lbl-prop">RESPONSE</div>
+					<IconButton onClick={handleResponseClick}>
+						<ArrowRightIcon />
+					</IconButton>
+				</div>
 				<EditorCode ref={refReceiver}
 					format={syncSa.format}
 					value={syncSa.messageReceived}
