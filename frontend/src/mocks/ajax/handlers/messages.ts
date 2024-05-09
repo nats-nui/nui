@@ -40,6 +40,24 @@ const handlers = [
 		)
 	}),
 
+
+	/** SYNC MESSAGE 
+	 * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
+	*/
+	rest.post('/api/connection/:cnnId/request', async (req, res, ctx) => {
+		const { cnnId } = req.params
+		const { subject, payload, timeout } = await req.json()
+		const response = {
+			subject,
+			payload,
+		}
+		return res(
+			ctx.status(200),
+			ctx.json(response),
+		)
+	}),
+
+
 ]
 
 export default handlers

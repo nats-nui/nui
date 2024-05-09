@@ -1,7 +1,7 @@
 import Button from "@/components/buttons/Button"
 import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import MyEditor from "@/components/editor"
+import EditorCode from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import TextInput from "@/components/input/TextInput"
 import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
@@ -72,7 +72,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 					onChange={handleSubjectChange}
 				/>
 			</div>
-			<MyEditor
+			<EditorCode
 				ref={ref => sendSa.editorRef = ref}
 				format={sendSa.format}
 				value={sendSo.getEditorText()}

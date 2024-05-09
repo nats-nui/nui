@@ -16,6 +16,7 @@ import messageSetup, { MessageState } from "@/stores/stacks/message";
 import streamsSetup from "@/stores/stacks/streams";
 import streamSetup from "@/stores/stacks/streams/detail";
 import streamMessagesSetup from "@/stores/stacks/streams/messages";
+import syncSetup from "@/stores/stacks/sync";
 import { DOC_TYPE } from "@/types";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/utils/editor";
@@ -65,6 +66,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 
 		[DOC_TYPE.TEXT_EDITOR]: txtEditorSetup,
 		[DOC_TYPE.HELP]: helpSetup,
+
+		[DOC_TYPE.SYNC]: syncSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)

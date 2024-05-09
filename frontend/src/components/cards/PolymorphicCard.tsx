@@ -18,6 +18,7 @@ import { MessageStore } from "@/stores/stacks/message"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
+import { SyncStore } from "@/stores/stacks/sync"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
@@ -37,6 +38,7 @@ import MessageSendView from "../stacks/messageSend/View"
 import StreamDetailView from "../stacks/streams/detail/View"
 import StreamsListView from "../stacks/streams/list/ListView"
 import StreamMessagesView from "../stacks/streams/messages/View"
+import SyncView from "../stacks/sync/View"
 
 
 
@@ -91,6 +93,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <TextEditorView store={view as TextEditorStore} />
 			case DOC_TYPE.HELP:
 				return <HelpView store={view as HelpStore} />
+			case DOC_TYPE.SYNC:
+				return <SyncView store={view as SyncStore} />
 
 			default:
 				return null

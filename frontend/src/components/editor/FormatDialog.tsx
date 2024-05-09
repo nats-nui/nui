@@ -1,7 +1,7 @@
 import { EditorStore } from "@/stores/stacks/editorBase"
-import { MSG_FORMAT } from "@/utils/editor"
+import { MSG_FORMAT, MSG_FORMAT_EDIT } from "@/utils/editor"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import Dialog from "../dialogs/Dialog"
 import List from "../lists/List"
 
@@ -9,10 +9,12 @@ import List from "../lists/List"
 
 interface Props {
 	store?: EditorStore
+	editMode?: boolean
 }
 
 const FormatDialog: FunctionComponent<Props> = ({
 	store,
+	editMode,
 }) => {
 
 	// STORE
@@ -30,8 +32,8 @@ const FormatDialog: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const formats = Object.values(MSG_FORMAT)
-	const indexSelect = formats.indexOf(formatSa.format)
+	const formats = useMemo(() => Object.values(editMode ? MSG_FORMAT_EDIT : MSG_FORMAT), [editMode])
+	const indexSelect = useMemo(() => formats.indexOf(formatSa.format), [formatSa.format])
 
 	return (
 		<Dialog

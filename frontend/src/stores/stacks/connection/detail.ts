@@ -7,7 +7,7 @@ import { StoreCore, mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
-import { buildConnectionMessageSend, buildConnectionMessages } from "./utils/factory"
+import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionSync } from "./utils/factory"
 
 
 
@@ -50,6 +50,7 @@ const setup = {
 		},
 
 		getMessagesOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.MESSAGES,
+		getSyncOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.SYNC,
 		getStreamsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.STREAMS,
 		getBucketsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.BUCKETS,
 
@@ -88,6 +89,11 @@ const setup = {
 		openMessages(_: void, store?: CnnDetailStore) {
 			const isOpen = store.getMessagesOpen()
 			const view = !isOpen ? buildConnectionMessages(store.state.connection?.id) : null
+			store.state.group.addLink({ view, parent: store, anim: true })
+		},
+		openSync(_: void, store?: CnnDetailStore) {
+			const isOpen = store.getSyncOpen()
+			const view = !isOpen ? buildConnectionSync(store.state.connection?.id) : null
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD STREAMS */
