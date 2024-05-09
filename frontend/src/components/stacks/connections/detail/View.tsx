@@ -13,6 +13,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
+import SyncIcon from "@/icons/SyncIcon"
 
 
 
@@ -33,6 +34,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
+	const handleSyncClick = () => cnnDetailSo.openSync()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
 	const handleSendClick = (e: React.MouseEvent) => {
@@ -42,6 +44,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isMessageOpen = cnnDetailSo.getMessagesOpen()
+	const isSyncOpen = cnnDetailSo.getSyncOpen()
 	const isStreamsOpen = cnnDetailSo.getStreamsOpen()
 	const isBucketsOpen = cnnDetailSo.getBucketsOpen()
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
@@ -62,6 +65,12 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					selected={isMessageOpen}
 					onClick={handleMessagesClick}
 					renderExtra={ButtonSend}
+				/>
+				<LinkButton
+					icon={<SyncIcon />}
+					tooltip="REQUEST / RELAY"
+					selected={isSyncOpen}
+					onClick={handleSyncClick}
 				/>
 				<LinkButton
 					icon={<StreamsIcon />}
@@ -86,7 +95,12 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				onClick={handleMessagesClick}
 				renderEnd={ButtonSend}
 			/>
-
+			<RowButton
+				icon={<SyncIcon />}
+				label="REQUEST / RELAY"
+				selected={isSyncOpen}
+				onClick={handleSyncClick}
+			/>
 			<RowButton
 				icon={<StreamsIcon />}
 				label="STREAMS"
