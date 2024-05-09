@@ -68,7 +68,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				/>
 				<LinkButton
 					icon={<SyncIcon />}
-					tooltip="REQUEST / RELAY"
+					tooltip="REQUEST / REPLY"
 					selected={isSyncOpen}
 					onClick={handleSyncClick}
 				/>
@@ -97,7 +97,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			/>
 			<RowButton
 				icon={<SyncIcon />}
-				label="REQUEST / RELAY"
+				label="REQUEST / REPLY"
 				selected={isSyncOpen}
 				onClick={handleSyncClick}
 			/>
