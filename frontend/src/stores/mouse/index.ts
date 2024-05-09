@@ -21,9 +21,10 @@ const setup = {
 			function fnMouseMove(e: any) {
 				store.setPosition({ x: e.pageX, y: e.pageY })
 			}
-			function fnMouseUp() {
+			function fnMouseUp(e: MouseEvent) {
 				document.removeEventListener('mousemove', fnMouseMove)
 				document.removeEventListener('mouseup', fnMouseUp)
+				console.log(e.target)
 				store.stopDrag()
 			}
 			document.addEventListener('mousemove', fnMouseMove);
