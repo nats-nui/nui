@@ -11,6 +11,7 @@ import { LoadBaseStore } from "./loadBase"
 import { VIEW_SIZE } from "./utils"
 import { forEachViews } from "../docs/utils/manage"
 import docsSo from "../docs"
+import { DragDoc } from "../mouse/utils"
 
 
 
@@ -28,6 +29,8 @@ const viewSetup = {
 		unclosable: false,
 		/** indica se è possibile pinnare questa CARD  */
 		pinnable: true,
+		/** si puo' draggare dentro qualcosa */
+		droppable: false,
 		/** indica lo STATO di visualizzaizone */
 		size: VIEW_SIZE.NORMAL,
 		sizeForce: false,
@@ -92,8 +95,8 @@ const viewSetup = {
 		//#region OVERRIDABLE
 		/** restituisce il width effettivo */
 		getWidth: (_: void, store?: ViewStore) => {
-			if ( docsSo.state.zenCard == store ) return store.state.widthMax
-			if ( store.state.size == VIEW_SIZE.COMPACT ) return store.state.widthMin
+			if (docsSo.state.zenCard == store) return store.state.widthMax
+			if (store.state.size == VIEW_SIZE.COMPACT) return store.state.widthMin
 			return store.state.width
 		},
 		getTitle: (_: void, store?: ViewStore): string => null,
@@ -112,12 +115,15 @@ const viewSetup = {
 
 	actions: {
 		//#region OVERRIDABLE
-		onLinked: (_: void, store?: ViewStore) => {
-		},
+		/** quando questa CARD è linked ad un parent */
+		onLinked: (_: void, store?: ViewStore) => { },
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
 			store.state.group.remove({ view: store, anim: true });
 			(store as LoadBaseStore).fetchAbort?.()
 		},
+		/** quando viene droppato un elemento su questa card */
+		onDrop: (data: DragDoc, store?: ViewStore) => {},
+		/** creazione della card dalla serializzazione */
 		setSerialization: (state: any, store?: ViewStore) => {
 			store.state.uuid = state.uuid
 			store.state.size = state.size
@@ -144,7 +150,7 @@ const viewSetup = {
 					//store.state.linked.state.group = null
 				}
 				store.state.linked = null
-			// setto effettivamente un LINKED
+				// setto effettivamente un LINKED
 			} else {
 				view.state.parent = store
 				// [II] view.state.group = store.state.group
@@ -203,7 +209,7 @@ const viewSetup = {
 	},
 
 	mutators: {
-		setSize: (size: VIEW_SIZE, store?: ViewStore ) => {
+		setSize: (size: VIEW_SIZE, store?: ViewStore) => {
 			store.docAnim(DOC_ANIM.SIZING)
 			return { size }
 		},

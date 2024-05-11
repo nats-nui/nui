@@ -1,18 +1,21 @@
 import { COLOR_VAR } from "@/stores/layout"
+import { DragDoc } from "@/stores/mouse/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
-import editorSetup, { EditorState } from "../editorBase"
-import { withReact } from "slate-react"
-import { Editor, Element, Node, Path, Range, Text,  Transforms,  createEditor } from "slate"
-import { BLOCK_TYPE, ElementType, NodeType, TextType } from "./utils/types"
+import { Editor, Element, Node, NodeEntry, Path, Range, Text, Transforms, createEditor } from "slate"
 import { withHistory } from 'slate-history'
+import { withReact } from "slate-react"
+import { EditorState } from "../editorBase"
+import { NODE_TYPES, NodeType, TextType } from "./utils/types"
+import { SugarEditor, withSugar } from "./utils/withSugar"
+
 
 
 const setup = {
 
 	state: () => {
 
-		const editor = withHistory(withReact(createEditor()))
+		const editor: SugarEditor = withSugar(withHistory(withReact(createEditor())))
 		//sovrascivo "insertData". Devo memorizzare la vecchia funzione per poterla richiamare sulla nuova
 		// const { insertData } = editor
 		// editor.insertData = async (data) => {
@@ -26,12 +29,15 @@ const setup = {
 		return {
 			editor,
 			content: <string>null,
+
+			//select: <NodeEntry>null,
 			formatOpen: false,
 
 			//#region VIEWBASE
 			colorVar: COLOR_VAR.CYAN,
 			width: 420,
 			widthMax: 1000,
+			droppable: true,
 			//#endregion
 		}
 	},
@@ -49,6 +55,7 @@ const setup = {
 			}
 		},
 		//#endregion
+
 
 		/**
 		 * Restituisce il primo NODE-ENTRY attualmente SELECTED
@@ -91,6 +98,20 @@ const setup = {
 	actions: {
 
 		//#region VIEWBASE
+		onDrop: (data: DragDoc, store?: ViewStore) => {
+			const editorSo = store as TextEditorStore
+			const editor = editorSo.state.editor
+			if ( !data.srcView ) return 
+
+			const node = {
+				type: NODE_TYPES.CARD,
+				data: data.srcView.getSerialization(),
+				subtitle: data.srcView.getSubTitle(),
+				colorVar: data.srcView.state.colorVar,
+				children: [{ text: data.srcView.getTitle() }],
+			}
+			editor.insertNode(node)
+		},
 		setSerialization: (data: any, store?: ViewStore) => {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as TextEditorState
@@ -106,53 +127,13 @@ const setup = {
 			)
 		},
 
-		/**
-		 * Elimino i BLOCKs selezionati, li unisco in un unico TYPE e li reinserisco
-		 */
-		changeSelectTypeAndMerge: (type, store?: TextEditorStore) => {
-			const { editor } = store.state
-			const selectA = editor.selection.anchor.path[0]
-			const selectB = editor.selection.focus.path[0]
 
-			// se è solo un BLOCK allora lo aggiorna solamente
-			if (selectA == selectB) {
-				const elementUpdate = { type }
-				Transforms.setNodes(
-					editor,
-					elementUpdate,
-					{ match: n => !Editor.isEditor(n) && Element.isElement(n), },
-				)
-				return
-			}
-
-			const span = [[Math.min(selectA, selectB)], [Math.max(selectA, selectB)]]
-			// prendo tutti i TEXT presenti nello SPAN
-			const textsGen = Node.texts(editor, {
-				from: span[0], to: span[1],
-			})
-			// se true prende del NODE solo la proprietà "text" altrimenti tutto
-			const onlyText = type == BLOCK_TYPE.CODE //|| type == BLOCK_TYPE.IMAGE
-			// mergio tutti i TEXT
-			const texts = [...textsGen].map((textEntry, index, array) => {
-				const textNode = textEntry[0]
-				const endline = index < array.length - 1 ? "\n" : ""
-				const text = `${textNode.text}${endline}`
-				return { ...(onlyText ? {} : textNode), text }
-			})
-			// creo il nuovo node
-			const node = { type, children: texts }
-			// rimuovo i vecchi NODE
-			Transforms.removeNodes(editor, { at: span })
-			// inserisco al loro posto il nuovo NODE
-			Transforms.insertNodes(editor, node, {
-				at: span[0], select: true, hanging: true, voids: true, mode: "highest",
-			})
-		},
 
 	},
 
 	mutators: {
 		setFormatOpen: (formatOpen: boolean) => ({ formatOpen }),
+		//setSelect: (select: NodeEntry) => ({ select })
 	},
 }
 
@@ -170,19 +151,34 @@ export default txtEditorSetup
 
 const initialValue = [
 	{
-		type: 'paragraph',
-		children: [{ text: 'A line 1 of text in a paragraph.' }],
+		type: NODE_TYPES.CHAPTER,
+		children: [{ text: "Dibattito sull'essere umano e le sue interazioni col mondo" }],
 	},
 	{
-		type: 'paragraph',
-		children: [{ text: 'A line 2 of text in a paragraph.' }],
+		type: NODE_TYPES.PARAGRAPH,
+		children: [{ text: "Il primo scontro: il conetto dello spurgo" }],
 	},
 	{
-		type: 'paragraph',
-		children: [{ text: 'A line 3 of text in a paragraph.' }],
+		type: NODE_TYPES.TEXT,
+		children: [{ text: "Vorrei sottolineare in questa occasione che l'alalisi è stata condotta su topi e non su veri esseri umani\nMa il concetto è lo stesso dai cioe' c'hanno entrambi la bocca no?" }],
 	},
 	{
-		type: 'paragraph',
-		children: [{ text: 'A line 4 of text in a paragraph.' }],
+		type: NODE_TYPES.PARAGRAPH,
+		children: [{ text: "Raccontiamoci" }],
 	},
+	{
+		type: NODE_TYPES.TEXT,
+		children: [{ text: "In questo capitolo aaaa no è un paragrafo! Ok, in questo \"paragrafo\" mi preme qualcosa da dire ma non la dirò per evitare di attivare quel discorso che ci porterebbe al punto 23." }],
+	},
+	{
+		type: NODE_TYPES.TEXT,
+		children: [{ text: "Questo è un codice di esempio:" }],
+	},
+
+	{
+		type: NODE_TYPES.CODE,
+		children: [{ text: "{ pippo: 45, serafino: 'update' }" }],
+	},
+
 ]
+

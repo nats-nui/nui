@@ -1,9 +1,8 @@
 .root {
-    font-weight: 200;
 }
 
 .root.bold {
-    font-weight: 700;
+    font-weight: 900;
 }
 
 .root.italic {
@@ -16,5 +15,4 @@
 
 .root.link {
     text-decoration: underline;
-    cursor: pointer;
 }

@@ -1,11 +1,11 @@
 
 .root {
-	font-weight: 700;
-	font-size: 16px;
+	font-weight: 800;
+	font-size: 18px;
 	text-align: center;
-	color: red;
+	color: #ebebeb;
 }
 
 .root.focus {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.4);
 }

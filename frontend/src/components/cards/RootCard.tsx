@@ -10,6 +10,7 @@ import PolymorphicCard from "./PolymorphicCard"
 import ResizerCmp from "./ResizerCmp"
 import cls from "./RootCard.module.css"
 import SnackbarCmp from "./SnackbarCmp"
+import mouseSo from "@/stores/mouse"
 
 
 
@@ -42,6 +43,17 @@ const RootCard: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleDragMove = (pos: number, diff: number) => view.setWidth(pos - diff)
 	const handleDetach = () => view.state.group.detach(view.state.linked)
+	const handleMouseOver = (e : React.MouseEvent) => {
+		e.stopPropagation()
+		if (mouseSo.state.drag?.srcView == null || mouseSo.state.drag.srcView == view) return
+		console.log("handleMouseOver ")
+		mouseSo.setDrag({ ...mouseSo.state.drag, index: null, groupDest: null, dstView: view })
+	}
+	const handleMouseLeave = () => {
+		if (mouseSo.state.drag?.srcView == null) return
+		console.log("handleMouseLeave ")
+		mouseSo.setDrag({ ...mouseSo.state.drag, index: null, groupDest: null, dstView: null })
+	}
 
 	// RENDER
 	if (!view) return null
@@ -54,7 +66,6 @@ const RootCard: FunctionComponent<Props> = ({
 	//const haveDetachable = !inZen && !!viewSa.parent
 	const haveFocus = !inZen && view.state.group.state.focus == view
 	const variant = view.state.colorVar
-
 	const dialogId = `dialog_${view.state.uuid}`
 
 	// styles
@@ -70,10 +81,12 @@ const RootCard: FunctionComponent<Props> = ({
 	}
 
 	const card = (
-		<div
+		<div draggable={false}
 			id={view.state.uuid}
 			className={clsRoot}
 			style={{ zIndex: deep, ...style }}
+			onMouseOver={viewSa.droppable ? handleMouseOver : undefined}
+			onMouseLeave={viewSa.droppable ? handleMouseLeave : undefined}
 		>
 
 			{/* DOC BODY */}
