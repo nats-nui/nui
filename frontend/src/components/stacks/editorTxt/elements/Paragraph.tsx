@@ -1,18 +1,21 @@
-import { useFocused, useSelected } from "slate-react"
+import { RenderElementProps, useFocused, useSelected } from "slate-react"
 import styles from "./Paragraph.module.css"
+import { FunctionComponent } from "react"
 
 
-export default function Paragraph({
+
+interface Props extends RenderElementProps {
+} 
+
+const Paragraph: FunctionComponent<Props> = ({
 	attributes, 
 	element,
-	doc,
 	children, 
-}) {
+}) => {
 
 	// HOOKs
 	const selected = useSelected()
 	const focused = useFocused()
-	 
 
 	// RENDER
 	const cnText = `${styles.root} ${selected && focused ? styles.focus : ''}`
@@ -22,3 +25,5 @@ export default function Paragraph({
 		</p>
 	)
 }
+
+export default Paragraph

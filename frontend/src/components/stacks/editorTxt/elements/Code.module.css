@@ -1,9 +1,23 @@
 
 .root {
+	position: relative;
 	font-weight: 200;
 	font-size: 14px;
+	background-color: black;
+	padding: 5px;
+	border-radius: 5px;
 }
 
-.root .container {
-	 /* background-color: black; */
+.root.focus {
+	border-left: 2px solid var(--var-2);
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.btt {
+	display: none;
+	/* display: flex; */
+	position: absolute;
+	right: 10px;
+	top: 4px;
 }

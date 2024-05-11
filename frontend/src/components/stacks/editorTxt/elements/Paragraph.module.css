@@ -1,10 +1,10 @@
 
 .root {
-	font-weight: 700;
-	font-size: 14px;
-	color: blue;
+	font-weight: 600;
+	font-size: 16px;
+	margin-bottom: 7px;;
 }
 
 .root.focus {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.4);
 }

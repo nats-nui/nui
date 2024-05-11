@@ -1,12 +1,15 @@
 import { BaseElement, BaseText } from "slate"
+import { ViewState } from "../../viewBase"
+import { COLOR_VAR } from "@/stores/layout"
 
 
 /**
  * tipi di BLOCK nel documento
  */
-export enum BLOCK_TYPE {
+export enum NODE_TYPES {
 	PARAGRAPH = "paragraph",
 	CHAPTER = "chapter",
+	CARD = "card",
 	TEXT = "text",
 	CODE = "code",
 	IMAGE = "image",
@@ -15,7 +18,7 @@ export enum BLOCK_TYPE {
 /**
  * Tipi di FORMAT del testo
  */
-export enum FORMATS {
+export enum NODE_FORMATS {
 	BOLD = "bold",
 	ITALIC = "italic",
 	STRIKETHROUGH = "strikethrough",
@@ -24,12 +27,22 @@ export enum FORMATS {
 }
 
 export type ElementType = {
-	type?: BLOCK_TYPE,
+	type?: NODE_TYPES,
 } & BaseElement
 
+export type ElementCard = {
+	data: Partial<ViewState>
+	subtitle?: string
+	colorVar?: COLOR_VAR
+} & ElementType
+
+export type ElementImage = {
+	url: string,
+} & ElementType
+
 export type TextType = {
-	url?: string
 	link?: boolean
+	url?: string
 	bold?: boolean
 	italic?:boolean
 	code?:boolean

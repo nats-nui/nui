@@ -1,10 +1,12 @@
 
 .root {
 	 /* font-family: $font-text; */
-	font-weight: 200;
+	font-weight: 400;
 	font-size: 14px;
+	text-align: justify;
+	opacity: .9;
 }
 
 .root.focus {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.4);
 }

@@ -1,3 +1,4 @@
+import { TextEditorStore } from "@/stores/stacks/editor";
 import { TextType } from "@/stores/stacks/editor/utils/types";
 import { FunctionComponent } from "react";
 import { RenderLeafProps } from "slate-react";
@@ -5,7 +6,12 @@ import cls from "./BiblioLeaf.module.css";
 
 
 
-const BiblioLeaf: FunctionComponent<RenderLeafProps> = ({
+interface Props extends RenderLeafProps {
+	store: TextEditorStore
+}
+
+const BiblioLeaf: FunctionComponent<Props> = ({
+	store,
 	attributes,
 	leaf,
 	children,

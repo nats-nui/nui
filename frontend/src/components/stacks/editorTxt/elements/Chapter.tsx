@@ -1,13 +1,17 @@
+import { FunctionComponent } from "react"
 import styles from "./Chapter.module.css"
-import { useFocused, useSelected } from "slate-react"
+import { RenderElementProps, useFocused, useSelected } from "slate-react"
 
 
-export default function Chapter({
+
+interface Props extends RenderElementProps {
+} 
+
+const Chapter: FunctionComponent<Props> = ({
 	attributes, 
 	element,
-	doc,
 	children, 
-}) {
+}) => {
 
 	// HOOKs
 	const selected = useSelected()
@@ -21,3 +25,5 @@ export default function Chapter({
 		</p>
 	)
 }
+
+export default Chapter

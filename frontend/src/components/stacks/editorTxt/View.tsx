@@ -1,16 +1,13 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import { TextEditorState, TextEditorStore } from "@/stores/stacks/editor"
-import { useStore } from "@priolo/jon"
+import { TextEditorStore } from "@/stores/stacks/editor"
+import { NODE_TYPES, NodeType } from "@/stores/stacks/editor/utils/types"
 import { FunctionComponent } from "react"
+import { Editor, Node, Transforms } from "slate"
+import { Editable, Slate } from "slate-react"
+import FormatDialog from "./FormatDialog"
 import cls from "./View.module.css"
-import { Editable, ReactEditor, Slate } from "slate-react"
-import { BLOCK_TYPE } from "@/stores/stacks/editor/utils/types"
-import { NodeType } from "@/stores/stacks/editor/utils/types"
-import { Path } from "msw"
 import BiblioElement from "./elements/BiblioElement"
 import BiblioLeaf from "./leafs/BiblioLeaf"
-import Dialog from "@/components/dialogs/Dialog"
-import { Editor, Element, Transforms } from "slate"
 
 
 
@@ -23,159 +20,96 @@ const EditorView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const state = useStore(store) as TextEditorState
+
 
 	// HOOKs
 
 	// HANDLER
-	const handleFormatClose = () => {
-		store.setFormatOpen(false)
-	}
 	const handleFocus = () => {
 		store.setFormatOpen(true)
 	}
 	const handleBlur = () => {
 		//store.setFormatOpen(false)
 	}
-	const handleKeyDown = event => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
 		// premo il bottone ENTER
 		if (event.key == "Enter") {
-			// prelevo l'ENTRY in corrente selezione, aggiungo un TEXT dopo e lo seleziono
-			const [node, path] = store.getFirstSelectEntry()
-			if (node.type == BLOCK_TYPE.CODE || node.type == BLOCK_TYPE.IMAGE) {
-				event.preventDefault()
-				store.addNode({
-					path,
-					node: { type: "text", children: [{ text: "" }] },
-					options: { select: true }
-				})
-				return
+			const node = editor.node(editor.selection, { depth: 1 })?.[0] as NodeType
+			if (event.ctrlKey || event.altKey || event.shiftKey) {
+				if (node.type == NODE_TYPES.CODE) {
+					event.preventDefault();
+					editor.insertBreak()
+					return
+				} else if (node.type == NODE_TYPES.TEXT) {
+					event.preventDefault();
+					editor.insertText("\n")
+					return
+				}
+			} else {
+				if (node.type == NODE_TYPES.CODE) {
+					event.preventDefault();
+					editor.insertText("\n")
+					return
+				}
 			}
 		}
+
+
+
+		// 	// prelevo l'ENTRY in corrente selezione, aggiungo un TEXT dopo e lo seleziono
+		// 	const [node, path] = store.getFirstSelectEntry()
+		// 	if (node.type == NODE_TYPES.CODE || node.type == NODE_TYPES.IMAGE) {
+		// 		event.preventDefault()
+		// 		store.addNode({
+		// 			path,
+		// 			node: { type: "text", children: [{ text: "" }] },
+		// 			options: { select: true }
+		// 		})
+		// 		return
+		// 	}
+
 		// se non sto premento contemporaneamente CTRL annulla
 		if (!event.ctrlKey) return
 		// altrimenti...
 		switch (event.key) {
 			case 'b': {
 				event.preventDefault()
-				const [leaf] = store.getEntryTextSelect()
-				store.changeSelectText({ bold: !leaf?.bold })
+				const marks = Editor.marks(editor)
+				const isBold = marks ? marks["bold"] === true : false
+				Editor.addMark(editor, 'bold', !isBold)
 				break
 			}
-			case 'c': {
+			case 'i': {
 				event.preventDefault()
-				store.changeSelectTypeAndMerge(BLOCK_TYPE.CHAPTER)
+				const marks = Editor.marks(editor)
+				const isItalic = marks ? marks["italic"] === true : false
+				Editor.addMark(editor, 'italic', !isItalic)
 				break
 			}
 		}
 	}
-	const handleBold = (e) => {
-		e.preventDefault()
-		const [leaf] = store.getEntryTextSelect()
-		store.changeSelectText({ bold: !leaf?.bold })
-		ReactEditor.focus(state.editor)
-	}
-	const handleItalic = (e) => {
-		e.preventDefault()
-		const [leaf] = store.getEntryTextSelect()
-		store.changeSelectText({ italic: !leaf?.italic })
-		ReactEditor.focus(state.editor)
-	}
-	const handleCode = (e) => {
-		e.preventDefault()
-		const [leaf] = store.getEntryTextSelect()
-		store.changeSelectText({ code: !leaf?.code })
-		ReactEditor.focus(state.editor)
-	}
-	const handleLink = (e) => {
-		e.preventDefault()
-		const [leaf] = store.getEntryTextSelect()
-		store.changeSelectText({ link: !leaf?.link })
-		ReactEditor.focus(state.editor)
-	}
-	const handleChapter = (e) => {
-		e.preventDefault()
-		store.changeSelectTypeAndMerge(BLOCK_TYPE.CHAPTER)
-		ReactEditor.focus(state.editor)
-	}
-	const handleParagraph = (e) => {
-		e.preventDefault()
-		store.changeSelectTypeAndMerge(BLOCK_TYPE.PARAGRAPH)
-		ReactEditor.focus(state.editor)
-	}
-	const handleText = (e) => {
-		e.preventDefault()
-		store.changeSelectTypeAndMerge(BLOCK_TYPE.TEXT)
-		ReactEditor.focus(state.editor)
-	}
-	const handleBlockCode = (e) => {
-		e.preventDefault()
-		store.changeSelectTypeAndMerge(BLOCK_TYPE.CODE)
-		ReactEditor.focus(state.editor)
-	}
-	const handleImageCode = (e) => {
-		e.preventDefault()
-		store.changeSelectTypeAndMerge(BLOCK_TYPE.IMAGE)
-		ReactEditor.focus(state.editor)
-	}
 
 	// RENDER
-
+	const editor = store.state.editor
+	console.log("SLATE render")
 	return <FrameworkCard
 		store={store}
-	// actionsRender={<>
-	// 	<FormatAction store={msgSo} />
-	// </>}
 	>
 		<Slate
-			editor={state.editor}
-			initialValue={state.editor.children}
-
+			editor={editor}
+			initialValue={editor.children}
 		>
 			<Editable className={cls.editor}
-				renderElement={props => <BiblioElement {...props} />}
-				renderLeaf={props => <BiblioLeaf {...props} />}
+				spellCheck={false}
+				renderElement={props => <BiblioElement {...props} store={store} />}
+				renderLeaf={props => <BiblioLeaf {...props} store={store} />}
 				onKeyDown={handleKeyDown}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
 			/>
+
+			<FormatDialog store={store} />
 		</Slate>
-
-		<Dialog noCloseOnClickParent
-			store={store}
-			title={"PIPPO"}
-			width={250}
-			open={state.formatOpen}
-			onClose={handleFormatClose}
-		>
-			<div style={{ display: "flex" }}>
-				<button
-					onClick={handleBold}
-				>B</button>
-				<button
-					onClick={handleItalic}
-				>I</button>
-				<button
-					onClick={handleLink}
-				>L</button>
-			</div>
-			<button
-				onClick={handleChapter}
-			>CHAPTER</button>
-			<button
-				onClick={handleParagraph}
-			>PARAGRAPH</button>
-			<button
-				onClick={handleText}
-			>TEXT</button>
-			<button
-				onClick={handleBlockCode}
-			>CODE</button>
-			<button
-				onClick={handleImageCode}
-			>IMAGE</button>
-
-		</Dialog>
 
 	</FrameworkCard>
 }

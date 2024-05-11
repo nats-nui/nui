@@ -34,10 +34,14 @@ const setup = {
 		},
 
 		stopDrag(_: void, store?: MouseStore) {
-			const { srcView, index, groupDest } = store.state.drag
+			const { srcView, dstView, index, groupDest } = store.state.drag
 			srcView.docAnim(DOC_ANIM.SHOW)
+			if ( dstView ) {
+				dstView.onDrop(store.state.drag)
+			} else {
+				srcView.state.group.move({ view: srcView, index, groupDest, anim: true })
+			}
 			store.setDrag(null)
-			srcView.state.group.move({ view: srcView, index, groupDest, anim: true })
 		}
 	},
 
@@ -54,7 +58,7 @@ export type MouseMutators = typeof setup.mutators
 export interface MouseStore extends StoreCore<MouseState>, MouseGetters, MouseActions, MouseMutators {
 	state: MouseState
 }
-const store = createStore(setup) as MouseStore
-export default store
+const mouseSo = createStore(setup) as MouseStore
+export default mouseSo
 
 

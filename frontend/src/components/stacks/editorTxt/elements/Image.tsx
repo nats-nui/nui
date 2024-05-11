@@ -1,20 +1,22 @@
-import styles from "./Image.module.css"
-import { useRef } from 'react';
-import { ReactEditor, useFocused, useSelected } from "slate-react"
-import { Transforms } from "slate";
-import ButtonIcon from "/src/components/app/ButtonIcon";
-import BoldIcon from "/src/imeges/icons/BoldIcon";
-import { urlDataFromFile, urlDataResize } from "/src/store/doc/withImages";
+import { ElementImage } from "@/stores/stacks/editor/utils/types";
 import { useStore } from "@priolo/jon";
-import { getElementStore } from "/src/store/doc";
+import { FunctionComponent, useRef } from 'react';
+import { Transforms } from "slate";
+import { RenderElementProps, useFocused, useSelected } from "slate-react";
+import cls from "./Image.module.css";
+import IconButton from "@/components/buttons/IconButton";
 
 
-export default function ImageCmp({
+
+interface Props extends RenderElementProps {
+	element: ElementImage
+} 
+
+const ImageCmp: FunctionComponent<Props> = ({
 	attributes, 
 	element,
-	doc,
 	children, 
-}) {
+}) =>{
 
 	// HOOKs
 	const store = getElementStore(doc.identity)
@@ -47,17 +49,17 @@ export default function ImageCmp({
 
 	// RENDER
 	if (!docNs) return null
-	const cnImage = `${styles.image} ${selected && focused ? styles.focus : ''}`
-	const cnRoot = `${styles.root} ${selected && focused ? styles.focus : ''}`
+	const cnImage = `${cls.image} ${selected && focused ? cls.focus : ''}`
+	const cnRoot = `${cls.root} ${selected && focused ? cls.focus : ''}`
 	const haveUrl = element.url && element.url.length > 0
 
 	return (
 		<div className={cnRoot} {...attributes}>
 
 			{haveUrl ? (<>
-				<ButtonIcon onClick={handleRemoveImg}>
-					<BoldIcon />
-				</ButtonIcon>
+				<IconButton onClick={handleRemoveImg}>
+					B
+				</IconButton>
 				<img
 					contentEditable={false}
 					className={cnImage}
@@ -67,7 +69,7 @@ export default function ImageCmp({
 			</>) : (<>
 				<div
 					contentEditable={false}
-					className={styles.placeholder}
+					className={cls.placeholder}
 					onClick={handleClickPlaceholder}
 				>CLICCA QUA O DRAGGA IMMAGINE</div>
 				<input
@@ -79,8 +81,10 @@ export default function ImageCmp({
 				/>
 			</>)}
 
-			<div className={styles.description}>{children}</div>
+			<div className={cls.description}>{children}</div>
 
 		</div>
 	)
 }
+
+export default ImageCmp

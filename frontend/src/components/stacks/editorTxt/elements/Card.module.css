@@ -1,0 +1,39 @@
+
+.root {
+	user-select: none;
+	display: flex;
+
+	font-weight: 700;
+	font-size: 14px;
+	
+	background-color: black;
+
+	border-radius: 10px;
+	padding: 5px 10px;
+	align-items: center;
+	gap: 5px;
+	margin: 10px 0px;
+}
+
+.root.focus {
+}
+
+.label {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+.label .title {
+	font-size: 14px;
+	font-weight: 700;
+	opacity: 0.8;
+}
+.label .subtitle {
+	font-size: 12px;
+	font-weight: 500;
+	opacity: 0.8;
+}
+
+.bttClose {
+	display: none;
+}

@@ -8,6 +8,8 @@ export interface DragDoc {
 	srcView?: ViewStore
 	/** CARDS-GROUP DESTINAZIONE */
 	groupDest?:CardsStore
+	/** eventualmente la CARD di destinazione */
+	dstView?: ViewStore
 	/** indice DESTINAZIONE della posizione nella "root" */
 	index?: number
 }
