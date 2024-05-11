@@ -16,6 +16,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 ### Features :factory:
 
 - Core NATS Pub/Sub: view and send NATS messages
+- Request / reply: send requests and easily view related response
 - Multiple format visualization (text, json, hex and much more supported)
 - Streams management: view, create adn tweak stream configs
 - Stream messages: view, filter and operate with stream messages
@@ -34,7 +35,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 
 - Streams backup / restore
 - Advanced stream and KV Stores operations
-- Server info adn metrics
+- Server info and metrics
 
 ---
 # Get Started 🚀
