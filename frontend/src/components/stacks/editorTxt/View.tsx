@@ -101,8 +101,8 @@ const EditorView: FunctionComponent<Props> = ({
 		>
 			<Editable className={cls.editor}
 				spellCheck={false}
-				renderElement={props => <BiblioElement {...props} store={store} />}
-				renderLeaf={props => <BiblioLeaf {...props} store={store} />}
+				renderElement={props => <BiblioElement {...props} />}
+				renderLeaf={props => <BiblioLeaf {...props} />}
 				onKeyDown={handleKeyDown}
 				onFocus={handleFocus}
 				onBlur={handleBlur}

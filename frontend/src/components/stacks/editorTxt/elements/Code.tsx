@@ -5,6 +5,8 @@ import { FunctionComponent } from "react";
 import IconButton from "@/components/buttons/IconButton";
 import ArrowRightIcon from "@/icons/ArrowRightIcon";
 import CopyIcon from "@/icons/CopyIcon";
+import CopyButton from "@/components/buttons/CopyButton";
+import { Node } from "slate";
 
 
 
@@ -18,15 +20,13 @@ const Code: FunctionComponent<Props> = ({
 }) => {
 
 	// HOOKs
-	const monaco = useMonaco()
 	const selected = useSelected()
 	const focused = useFocused()
 
 	// HANDLERS
 	const handleOpen = () => {
 	}
-	const handleCopy = () => {
-	}
+	const handleCopy = () => Node.string(element)
 
 	// RENDER
 	const haveFocus = selected && focused
@@ -36,9 +36,7 @@ const Code: FunctionComponent<Props> = ({
 	return <pre className={cnRoot} {...attributes}>
 		<div className={clsBtt}>
 
-			<IconButton
-				onClick={handleCopy}
-			><CopyIcon /></IconButton>
+			<CopyButton value={handleCopy} />
 
 			<IconButton 
 				onClick={handleOpen}

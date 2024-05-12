@@ -1,16 +1,17 @@
 import { FunctionComponent } from "react"
 import styles from "./Chapter.module.css"
 import { RenderElementProps, useFocused, useSelected } from "slate-react"
+import Drop from "./Drop"
 
 
 
 interface Props extends RenderElementProps {
-} 
+}
 
 const Chapter: FunctionComponent<Props> = ({
-	attributes, 
+	attributes,
 	element,
-	children, 
+	children,
 }) => {
 
 	// HOOKs
@@ -18,12 +19,17 @@ const Chapter: FunctionComponent<Props> = ({
 	const focused = useFocused()
 
 	// RENDER
-	const cnText = `${styles.root} ${selected && focused ? styles.focus : ''}`
-	return (
-		<p className={cnText} {...attributes}>
-			{children}
-		</p>
-	)
+	const cnRoot = `${styles.root} ${selected && focused ? styles.focus : ''}`
+
+	return <Drop
+		attributes={attributes}
+		element={element}
+		className={cnRoot}
+	>
+		{children}
+	</Drop>
 }
+
+// <p className={cnText} {...attributes}>
 
 export default Chapter

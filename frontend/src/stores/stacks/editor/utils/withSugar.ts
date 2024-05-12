@@ -1,11 +1,13 @@
 import { BaseOperation, Editor, Element, Node, Transforms } from "slate"
 import { NODE_TYPES, NodeType } from "./types"
 import { ReactEditor } from "slate-react"
+import { ViewStore } from "../../viewBase"
 
 /**
 
  */
 export const withSugar = (editor: ReactEditor) => {
+
 	//const { onChange/*normalizeNode, isInline, isVoid*/ } = editor
 	const se = editor as SugarEditor
 
@@ -71,5 +73,6 @@ export const withSugar = (editor: ReactEditor) => {
 
 
 export interface SugarEditor extends ReactEditor {
+	view?: ViewStore
 	setTypeOnSelect: (type: NODE_TYPES) => void
 }
