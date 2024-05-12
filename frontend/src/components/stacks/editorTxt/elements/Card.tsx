@@ -13,6 +13,7 @@ import { ReactEditor, RenderElementProps, useFocused, useSelected, useSlate } fr
 import cls from "./Card.module.css"
 import { SugarEditor } from "@/stores/stacks/editor/utils/withSugar"
 import mouseSo from "@/stores/mouse"
+import Drop from "./Drop"
 
 
 
@@ -62,37 +63,37 @@ const Card: FunctionComponent<CardProps> = ({
 	const styColor = `var(--var-${element.colorVar})`
 	const cardType: DOC_TYPE = element.data.type
 
-	return (
-		<div {...attributes} 
-			contentEditable={false}
-			draggable
-			className={clsRoot} 
-			onDragStart={handleDragStart}
-			onClick={handleClick}
-		>
+	return <Drop
+		attributes={attributes}
+		element={element}
+		contentEditable={false}
+		draggable
+		className={clsRoot}
+		onDragStart={handleDragStart}
+		onClick={handleClick}
+	>
 
-			<CardIcon type={cardType} style={{ color: styColor }} />
+		<CardIcon type={cardType} style={{ color: styColor }} />
 
-			<div className={cls.label}>
-				<div className={cls.title}>
-					{children}
-				</div>
-				<div className={cls.subtitle}>
-					{element.subtitle}
-				</div>
+		<div className={cls.label}>
+			<div className={cls.title}>
+				{children}
 			</div>
-
-			<IconButton
-				className={`${cls.bttClose} hover-show`}
-				onClick={handleRemove}
-			><CloseIcon /></IconButton>
-
-			<IconButton
-				onClick={handleOpen}
-			><ArrowRightIcon /></IconButton>
-
+			<div className={cls.subtitle}>
+				{element.subtitle}
+			</div>
 		</div>
-	)
+
+		<IconButton
+			className={`${cls.bttClose} hover-show`}
+			onClick={handleRemove}
+		><CloseIcon /></IconButton>
+
+		<IconButton
+			onClick={handleOpen}
+		><ArrowRightIcon /></IconButton>
+
+	</Drop>
 }
 
 export default Card

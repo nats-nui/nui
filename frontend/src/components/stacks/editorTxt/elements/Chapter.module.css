@@ -1,8 +1,11 @@
 
 .root {
+	margin: 5px 0px;
+
 	font-weight: 800;
 	font-size: 18px;
 	text-align: center;
+
 	color: #ebebeb;
 }
 

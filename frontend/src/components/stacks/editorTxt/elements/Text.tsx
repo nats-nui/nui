@@ -24,12 +24,12 @@ const Text: FunctionComponent<Props> = ({
 
 	// RENDER
 	const clsFocus = selected && focused ? cls.focus : ''
-	const cnText = `${cls.root} ${clsFocus}`
+	const clsRoot = `${cls.root} ${clsFocus}`
 
 	return <Drop
 		attributes={attributes}
 		element={element}
-		className={cnText}
+		className={clsRoot}
 	>
 		{children}
 	</Drop>

@@ -1,10 +1,14 @@
 
 .root {
 	position: relative;
+	padding: 5px;
+	margin: 5px 0px;
+	
 	font-weight: 200;
 	font-size: 14px;
+	font-family: monospace;
+
 	background-color: black;
-	padding: 5px;
 	border-radius: 5px;
 }
 
