@@ -1,6 +1,8 @@
 import { StoreCore, createStore } from "@priolo/jon"
-import { DOC_ANIM } from "../docs/types"
+import { DOC_ANIM, DOC_TYPE } from "../docs/types"
 import { DragDoc, Position } from "./utils"
+import { TextEditorStore } from "../stacks/editor"
+import { NODE_TYPES } from "../stacks/editor/utils/types"
 
 
 
@@ -36,8 +38,24 @@ const setup = {
 		stopDrag(_: void, store?: MouseStore) {
 			const { srcView, dstView, index, groupDest } = store.state.drag
 			srcView.docAnim(DOC_ANIM.SHOW)
-			if ( dstView ) {
+
+			// spostamentro dentro un altra VIEW
+			if (dstView) {
 				dstView.onDrop(store.state.drag)
+				if (dstView.state.type == DOC_TYPE.TEXT_EDITOR && index != null) {
+					const editor = (dstView as TextEditorStore).state.editor
+					const node = {
+						type: NODE_TYPES.CARD,
+						data: srcView.getSerialization(),
+						subtitle: srcView.getSubTitle(),
+						colorVar: srcView.state.colorVar,
+						children: [{ text: srcView.getTitle() }],
+					}
+					editor.insertNode(node, {
+						at: [index+1]
+					})
+				}
+				// spostamento su DROP-AREA
 			} else {
 				srcView.state.group.move({ view: srcView, index, groupDest, anim: true })
 			}

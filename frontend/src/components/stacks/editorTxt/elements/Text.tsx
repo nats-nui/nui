@@ -1,30 +1,38 @@
 import { FunctionComponent } from "react"
 import { RenderElementProps, useFocused, useSelected } from "slate-react"
+import Drop from "./Drop"
 import cls from "./Text.module.css"
 
 
 
 interface Props extends RenderElementProps {
-} 
+}
 
 const Text: FunctionComponent<Props> = ({
-	attributes, 
+	attributes,
 	element,
-	children, 
+	children,
 }) => {
+
+	// STORES
 
 	// HOOKs
 	const selected = useSelected()
 	const focused = useFocused()
-	 
+
+	// HANDLERS
 
 	// RENDER
-	const cnText = `${cls.root} ${selected && focused ? cls.focus : ''}`
-	return ( 
-		<div className={cnText} {...attributes}>
-			{children}
-		</div>
-	)
+	const clsFocus = selected && focused ? cls.focus : ''
+	const cnText = `${cls.root} ${clsFocus}`
+
+	return <Drop
+		attributes={attributes}
+		element={element}
+		className={cnText}
+	>
+		{children}
+	</Drop>
 }
 
 export default Text

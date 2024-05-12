@@ -1,7 +1,7 @@
 import { NODE_TYPES, ElementType } from "@/stores/stacks/editor/utils/types"
 import { FunctionComponent } from "react"
 import { RenderElementProps } from "slate-react"
-import Card from "./Card"
+import Card, { CardProps } from "./Card"
 import Chapter from "./Chapter"
 import Paragraph from "./Paragraph"
 import Text from "./Text"
@@ -11,13 +11,10 @@ import { TextEditorStore } from "@/stores/stacks/editor"
 
 
 interface Props extends RenderElementProps {
-	store: TextEditorStore
 }
 
-const BiblioElement: FunctionComponent<Props> = ({
-	store,
-	...props
-}) => {
+const BiblioElement: FunctionComponent<Props> = (props) => {
+
 	const element = props.element as ElementType
 	switch (element.type) {
 		case NODE_TYPES.CHAPTER:
@@ -25,7 +22,7 @@ const BiblioElement: FunctionComponent<Props> = ({
 		case NODE_TYPES.PARAGRAPH:
 			return <Paragraph {...props} />
 		case NODE_TYPES.CARD:
-			return <Card {...props} />
+			return <Card {...props as CardProps} />
 		// case BLOCK_TYPE.IMAGE:
 		// 	return <Image {...props} />
 		 case NODE_TYPES.CODE:

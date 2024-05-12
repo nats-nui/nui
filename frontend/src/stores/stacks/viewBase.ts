@@ -117,6 +117,9 @@ const viewSetup = {
 		//#region OVERRIDABLE
 		/** quando questa CARD è linked ad un parent */
 		onLinked: (_: void, store?: ViewStore) => { },
+		/** quando è stato eseguita la build di questo store */
+		onCreated: (_: void, store?: ViewStore) => { },
+		
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
 			store.state.group.remove({ view: store, anim: true });
 			(store as LoadBaseStore).fetchAbort?.()

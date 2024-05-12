@@ -9,22 +9,25 @@ import { ElementCard } from "@/stores/stacks/editor/utils/types"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent } from "react"
-import { RenderElementProps, useFocused, useSelected } from "slate-react"
+import { ReactEditor, RenderElementProps, useFocused, useSelected, useSlate } from "slate-react"
 import cls from "./Card.module.css"
+import { SugarEditor } from "@/stores/stacks/editor/utils/withSugar"
+import mouseSo from "@/stores/mouse"
 
 
 
-interface Props extends RenderElementProps {
+export interface CardProps extends RenderElementProps {
 	element: ElementCard
 }
 
-const Card: FunctionComponent<Props> = ({
+const Card: FunctionComponent<CardProps> = ({
 	attributes,
 	element,
 	children,
 }) => {
 
 	// HOOKs
+	const editor = useSlate() as SugarEditor
 	const selected = useSelected()
 	const focused = useFocused()
 
@@ -39,7 +42,18 @@ const Card: FunctionComponent<Props> = ({
 		deckCardsSo.add({ view })
 	}
 	const handleRemove = () => {
-
+		const path = ReactEditor.findPath(editor, element)
+		editor.removeNodes({ at: path })
+	}
+	const handleClick = () => {
+		const path = ReactEditor.findPath(editor, element)
+		editor.select(path)
+	}
+	const handleDragStart: React.DragEventHandler = (e) => {
+		e.preventDefault();
+		const path = ReactEditor.findPath(editor, element)
+		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
+		mouseSo.startDrag({ srcView: editor.view, index: path?.[0] })
 	}
 
 	// RENDER
@@ -49,7 +63,13 @@ const Card: FunctionComponent<Props> = ({
 	const cardType: DOC_TYPE = element.data.type
 
 	return (
-		<div className={clsRoot} {...attributes} contentEditable={false}>
+		<div {...attributes} 
+			contentEditable={false}
+			draggable
+			className={clsRoot} 
+			onDragStart={handleDragStart}
+			onClick={handleClick}
+		>
 
 			<CardIcon type={cardType} style={{ color: styColor }} />
 
