@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, HTMLProps, useState } from "react"
 import { ReactEditor, RenderElementProps, useFocused, useSelected, useSlate } from "slate-react"
 import cls from "./Drop.module.css"
 import mouseSo from "@/stores/mouse"
@@ -7,17 +7,13 @@ import { useStore } from "@priolo/jon"
 
 
 
-interface Props extends RenderElementProps {
-	className?: string
-	style?: React.CSSProperties
-}
 
-const Drop: FunctionComponent<Props> = ({
+const Drop: FunctionComponent<RenderElementProps & HTMLProps<HTMLDivElement>> = ({
 	attributes,
 	element,
 	children,
 	className,
-	style,
+	...props
 }) => {
 
 	// STORES
@@ -53,9 +49,9 @@ const Drop: FunctionComponent<Props> = ({
 
 	return <div {...attributes}
 		className={cnRoot}
-		style={style}
 		onMouseOver={handleMouseOver}
 		onMouseLeave={handleMouseLeave}
+		{...props}
 	>
 		{children}
 	</div>

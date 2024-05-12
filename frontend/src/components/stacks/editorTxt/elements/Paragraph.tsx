@@ -1,16 +1,17 @@
 import { RenderElementProps, useFocused, useSelected } from "slate-react"
 import styles from "./Paragraph.module.css"
 import { FunctionComponent } from "react"
+import Drop from "./Drop"
 
 
 
 interface Props extends RenderElementProps {
-} 
+}
 
 const Paragraph: FunctionComponent<Props> = ({
-	attributes, 
+	attributes,
 	element,
-	children, 
+	children,
 }) => {
 
 	// HOOKs
@@ -18,12 +19,15 @@ const Paragraph: FunctionComponent<Props> = ({
 	const focused = useFocused()
 
 	// RENDER
-	const cnText = `${styles.root} ${selected && focused ? styles.focus : ''}`
-	return ( 
-		<p className={cnText} {...attributes}>
-			{children}
-		</p>
-	)
+	const clsRoot = `${styles.root} ${selected && focused ? styles.focus : ''}`
+
+	return <Drop
+		attributes={attributes}
+		element={element}
+		className={clsRoot}
+	>
+		{children}
+	</Drop>
 }
 
 export default Paragraph

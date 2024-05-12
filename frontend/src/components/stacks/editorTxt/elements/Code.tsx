@@ -7,6 +7,7 @@ import ArrowRightIcon from "@/icons/ArrowRightIcon";
 import CopyIcon from "@/icons/CopyIcon";
 import CopyButton from "@/components/buttons/CopyButton";
 import { Node } from "slate";
+import Drop from "./Drop";
 
 
 
@@ -30,10 +31,14 @@ const Code: FunctionComponent<Props> = ({
 
 	// RENDER
 	const haveFocus = selected && focused
-	const cnRoot = `${cls.root} ${haveFocus ? cls.focus : ''} hover-container`
+	const clsRoot = `${cls.root} ${haveFocus ? cls.focus : ''} hover-container`
 	const clsBtt = `${cls.btt} hover-show`
 
-	return <pre className={cnRoot} {...attributes}>
+	return <Drop 
+		attributes={attributes}
+		element={element}
+		className={clsRoot} 
+	>
 		<div className={clsBtt}>
 
 			<CopyButton value={handleCopy} />
@@ -43,8 +48,8 @@ const Code: FunctionComponent<Props> = ({
 			><ArrowRightIcon /></IconButton>
 
 		</div>
-		<code>{children}</code>
-	</pre>
+		{children}
+	</Drop>
 }
 
 export default Code

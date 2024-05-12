@@ -30,6 +30,4 @@ const Chapter: FunctionComponent<Props> = ({
 	</Drop>
 }
 
-// <p className={cnText} {...attributes}>
-
 export default Chapter
