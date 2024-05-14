@@ -91,7 +91,7 @@ func (a *App) handleCreateStreamConsumer(c *fiber.Ctx) error {
 	return c.JSON(info)
 }
 
-func (a *App) handleUpdateConsumer(c *fiber.Ctx) error {
+func (a *App) handleUpdateStreamConsumer(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -124,7 +124,7 @@ func (a *App) handleUpdateConsumer(c *fiber.Ctx) error {
 	return c.JSON(info)
 }
 
-func (a *App) handleDeleteConsumer(c *fiber.Ctx) error {
+func (a *App) handleDeleteStreamConsumer(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
