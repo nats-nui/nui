@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/suite"
@@ -195,6 +196,44 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	//check consumer by name
 	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/consumer1").
 		Expect().Status(http.StatusOK).JSON().Object().Value("name").IsEqual("consumer1")
+
+	// create a new consumer
+	consumerConfig, _ := json.Marshal(jetstream.ConsumerConfig{
+		Name:          "new_consumer",
+		Durable:       "",
+		Description:   "",
+		DeliverPolicy: 0,
+		OptStartSeq:   0,
+	})
+	e.POST("/api/connection/" + connId + "/stream/stream1/consumer").
+		WithBytes(consumerConfig).Expect().Status(200)
+
+	// get the new consumer
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
+		Expect().Status(200).JSON().Object().Value("name").IsEqual("new_consumer")
+
+	// update the new consumer
+	consumerConfig, _ = json.Marshal(jetstream.ConsumerConfig{
+		Name:          "new_consumer",
+		Durable:       "",
+		Description:   "description",
+		DeliverPolicy: 0,
+		OptStartSeq:   0,
+	})
+	e.POST("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
+		WithBytes(consumerConfig).Expect().Status(200)
+
+	// get the updated consumer
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
+		Expect().Status(200).JSON().Object().Value("config").Object().Value("description").IsEqual("description")
+
+	// delete the new consumer
+	e.DELETE("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
+		Expect().Status(204)
+
+	// check list of consumers
+	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(1)
 
 }
 
