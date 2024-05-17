@@ -23,6 +23,7 @@ type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
 	ObserveConnectionEvents(ctx context.Context) <-chan connection2.ConnStatusChanged
 	Status() nats.Status
+	LastEvent() (string, error)
 }
 
 type IHub interface {
@@ -193,11 +194,13 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 		return err
 	}
 	events := serverConn.ObserveConnectionEvents(ctx)
-	//starting event
-	cm := &ConnectionStatus{Status: Disconnected}
-	if serverConn.Status() == nats.CONNECTED {
-		cm.Status = Connected
+	//time.Sleep(5 * time.Second)
+	firstStatus, firstConnErr := serverConn.LastEvent()
+	errMsg := ""
+	if firstConnErr != nil {
+		errMsg = firstConnErr.Error()
 	}
+	cm := &ConnectionStatus{Status: firstStatus, Error: errMsg}
 	select {
 	case clientMgs <- cm:
 	default:
@@ -208,8 +211,12 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 			if !ok {
 				return nil
 			}
+			if msg.Err != nil {
+				errMsg = msg.Err.Error()
+			}
 			cm := &ConnectionStatus{
 				Status: msg.Status,
+				Error:  errMsg,
 			}
 			clientMgs <- cm
 		}

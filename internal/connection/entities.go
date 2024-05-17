@@ -15,6 +15,7 @@ type Subscription struct {
 const AuthModeNone = "auth_none"
 const AuthModeToken = "auth_token"
 const AuthModeUserPassword = "auth_user_password"
+const AuthModeNKey = "auth_nkey"
 const AuthModeJwt = "auth_jwt"
 const AuthModeJwtBearer = "auth_jwt_bearer"
 const AuthModeCredsFile = "auth_creds_file"

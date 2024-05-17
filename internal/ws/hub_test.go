@@ -38,6 +38,8 @@ type mockConnection struct {
 	Subs            map[string]*mockSubscription
 	StatusChangedCh []chan connection.ConnStatusChanged
 	NatsStatus      nats.Status
+	LastEventData   string
+	LastErrorData   error
 }
 
 func (m *mockConnection) ChanSubscribe(subj string, ch chan *nats.Msg) (*mockSubscription, error) {
@@ -65,6 +67,10 @@ func (m *mockConnection) Status() nats.Status {
 	return m.NatsStatus
 }
 
+func (m *mockConnection) LastEvent() (string, error) {
+	return m.LastEventData, m.LastErrorData
+}
+
 type HubSuite struct {
 	suite.Suite
 	hub  *Hub[*mockSubscription, *mockConnection]
@@ -74,7 +80,7 @@ type HubSuite struct {
 
 func (s *HubSuite) SetupSuite() {
 	s.l = &logging.NullLogger{}
-	s.pool = &mockPool{Conn: &mockConnection{}}
+	s.pool = &mockPool{Conn: &mockConnection{LastEventData: Disconnected}}
 	s.hub = NewHub[*mockSubscription, *mockConnection](s.pool, s.l)
 }
 
@@ -161,9 +167,9 @@ func (s *HubSuite) TestHub_HandleConnectionEvents() {
 		if received1 == nil || received2 == nil || received3 == nil {
 			return
 		}
-		assert.Equal(c, received1.Status, Disconnected)
-		assert.Equal(c, received2.Status, Disconnected)
-		assert.Equal(c, received3.Status, Reconnected)
+		assert.Equal(c, Disconnected, received1.Status)
+		assert.Equal(c, Disconnected, received2.Status)
+		assert.Equal(c, Reconnected, received3.Status)
 	}, 1*time.Second, time.Millisecond*20)
 }
 

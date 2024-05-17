@@ -3,6 +3,7 @@ package connection
 import (
 	"errors"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nkeys"
 	"strings"
 	"sync"
 	"time"
@@ -115,12 +116,36 @@ func appendAuthOption(connection *Connection, options []nats.Option) []nats.Opti
 		return append(options, nats.Token(activeAuth.Token))
 	case AuthModeUserPassword:
 		return append(options, nats.UserInfo(activeAuth.Username, activeAuth.Password))
+	case AuthModeNKey:
+		return append(options, buildNkeyOption(activeAuth))
 	case AuthModeJwt:
 		return append(options, nats.UserJWTAndSeed(activeAuth.Jwt, activeAuth.NKeySeed))
 	case AuthModeJwtBearer:
-		return append(options, nats.UserJWT(func() (string, error) { return activeAuth.Jwt, nil }, func([]byte) ([]byte, error) { return []byte{}, nil }))
+		return append(options, buildJwtBearerOption(activeAuth))
 	case AuthModeCredsFile:
 		return append(options, nats.UserCredentials(activeAuth.Creds))
 	}
 	return options
+}
+
+func buildNkeyOption(activeAuth *Auth) nats.Option {
+	nKeyOption := nats.Nkey(
+		activeAuth.Username,
+		func(b []byte) ([]byte, error) {
+			sk, err := nkeys.FromSeed([]byte(activeAuth.NKeySeed))
+			if err != nil {
+				return nil, err
+			}
+			return sk.Sign(b)
+		},
+	)
+	return nKeyOption
+}
+
+func buildJwtBearerOption(activeAuth *Auth) nats.Option {
+	jwtOption := nats.UserJWT(
+		func() (string, error) { return activeAuth.Jwt, nil },
+		func([]byte) ([]byte, error) { return []byte{}, nil },
+	)
+	return jwtOption
 }

@@ -48,6 +48,8 @@ AUTH_MODE {
 	TOKEN = "auth_token",
 	// use username and password fields
 	USER_PASSWORD = "auth_user_password",
+    // use NKEY public key and seed
+    NKEY = "auth_nkey",
 	// use jwt and nkey fields
 	JWT = "auth_jwt",
     // use a jwt token as bearer

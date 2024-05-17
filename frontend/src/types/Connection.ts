@@ -30,6 +30,8 @@ export enum AUTH_MODE {
 	TOKEN = "auth_token",
 	// use username and password fields
 	USER_PASSWORD = "auth_user_password",
+	//use nkey public key and seed
+	NKEY = "auth_nkey",
 	// use jwt and nkey fields
 	JWT = "auth_jwt",
 	BEARER_JWT = "auth_jwt_bearer",
