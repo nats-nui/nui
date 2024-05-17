@@ -41,7 +41,10 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 
-		<OptionsCmp store={kventrySo} style={{ marginLeft: 5 }} />
+		<OptionsCmp 
+			style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+			store={kventrySo} 
+		/>
 
 		<div style={{ flex: 1 }} />
 
