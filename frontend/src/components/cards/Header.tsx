@@ -47,7 +47,7 @@ const Header: FunctionComponent<Props> = ({
 	const handleDragStart: React.DragEventHandler = (e) => {
 		e.preventDefault();
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
-		mouseSo.startDrag({ srcView: store })
+		mouseSo.startDrag({ source: { view: store } })
 	}
 	const handleDetach = () => docSo.detach(store)
 	const handleLinkDetach = () => {

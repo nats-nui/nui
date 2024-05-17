@@ -81,7 +81,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	if (readOnly) {
 		if ( type == "password" ) value = "***"
 		return (
-			<div className={`lbl-readonly ${className}`}
+			<div className={`lbl-readonly ${className ?? ""}`}
 				style={style}
 			>
 				{value ?? ""}
@@ -92,7 +92,7 @@ const TextInput: ForwardRefRenderFunction<HTMLElement, TextInputProps> = (
 	const TagInput = multiline ? "textarea" : "input"
 
 	return <TagInput ref={inputRef as any}
-		className={`${cls.root} ${className}`}
+		className={`${cls.root} ${className ?? ""}`}
 		style={style}
 		placeholder={placeholder}
 		autoFocus={autoFocus}

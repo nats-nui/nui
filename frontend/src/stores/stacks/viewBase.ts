@@ -119,20 +119,20 @@ const viewSetup = {
 		onLinked: (_: void, store?: ViewStore) => { },
 		/** quando è stato eseguita la build di questo store */
 		onCreated: (_: void, store?: ViewStore) => { },
-		
+
 		onRemoveFromDeck: (_: void, store?: ViewStore) => {
 			store.state.group.remove({ view: store, anim: true });
 			(store as LoadBaseStore).fetchAbort?.()
 		},
 		/** quando viene droppato un elemento su questa card */
-		onDrop: (data: DragDoc, store?: ViewStore) => {},
+		onDrop: (data: DragDoc, store?: ViewStore) => { },
 		/** creazione della card dalla serializzazione */
 		setSerialization: (state: any, store?: ViewStore) => {
 			store.state.uuid = state.uuid
 			store.state.size = state.size
 			// recursion
 			const linkedState = state.linked
-			delete state.linked
+			if (!!state.linked) delete state.linked
 			if (linkedState) {
 				const linkedStore = buildStore({ type: linkedState.type, group: store.state.group })
 				linkedStore.setSerialization(linkedState)
@@ -142,6 +142,7 @@ const viewSetup = {
 		},
 		//#endregion
 
+		// LINKED una CARD a questa. Se c'era gia' una CARD la elimina.
 		setLinked: (view: ViewStore, store?: ViewStore) => {
 			// lo setto a NULL
 			if (!view) {

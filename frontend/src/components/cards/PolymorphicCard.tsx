@@ -39,6 +39,8 @@ import StreamDetailView from "../stacks/streams/detail/View"
 import StreamsListView from "../stacks/streams/list/ListView"
 import StreamMessagesView from "../stacks/streams/messages/View"
 import SyncView from "../stacks/sync/View"
+import { EditorCodeStore } from "@/stores/stacks/editorCode"
+import EditorCodeView from "../stacks/editorCode/View"
 
 
 
@@ -91,6 +93,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <AboutView store={view as AboutStore} />
 			case DOC_TYPE.TEXT_EDITOR:
 				return <TextEditorView store={view as TextEditorStore} />
+			case DOC_TYPE.CODE_EDITOR:
+				return <EditorCodeView store={view as EditorCodeStore} />
 			case DOC_TYPE.HELP:
 				return <HelpView store={view as HelpStore} />
 			case DOC_TYPE.SYNC:

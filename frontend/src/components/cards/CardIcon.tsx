@@ -1,3 +1,4 @@
+import EditorIcon from "@/icons/EditorIcon"
 import HelpIcon from "@/icons/HelpIcon"
 import LogIcon from "@/icons/LogIcon"
 import NuiIcon from "@/icons/NuiIcon"
@@ -69,12 +70,16 @@ const CardIcon: FunctionComponent<Props> = ({
 		case DOC_TYPE.ABOUT:
 			return <div className={className} style={{ fontSize: 16, fontWeight: 700 }}>?</div>
 		case DOC_TYPE.TEXT_EDITOR:
-			return <NuiIcon className={className} style={style} />
+			return <EditorIcon className={className} style={style} />
+		case DOC_TYPE.CODE_EDITOR:
+			return <EditorIcon className={className} style={style} />
+		case DOC_TYPE.MESSAGE:
+			return <MessageIcon className={className} style={style} />
 		// case DOC_TYPE.HELP:
 		// 	return <HelpIcon className={className} style={style} />
 
 		case DOC_TYPE.SYNC:
-			return  <SyncIcon className={className} style={style} />
+			return <SyncIcon className={className} style={style} />
 
 		default:
 			return null

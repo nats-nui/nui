@@ -32,25 +32,23 @@ const DropArea: FunctionComponent<Props> = ({
 
 	// HANDLERS
 	const handleMouseOver = (_: DragEvent<HTMLDivElement>) => {
-		if (mouseSa.drag?.srcView == null) return
+		if (!mouseSa.drag?.source?.view) return
 		mouseSo.setDrag({
-			...mouseSa.drag,
-			index,
-			groupDest,
+			source: { ...mouseSa.drag.source },
+			destination: { group: groupDest, index },
 		})
 	}
 	const handleMouseLeave = () => {
-		if (mouseSa.drag?.srcView == null) return
+		if (!mouseSa.drag?.source?.view) return
 		mouseSo.setDrag({
-			...mouseSa.drag,
-			index: null,
-			groupDest: null,
+			source: { ...mouseSa.drag.source },
+			destination: null,
 		})
 	}
 
 	// RENDER
-	const dragOver = mouseSa.drag?.index == index && mouseSa.drag?.groupDest == groupDest
-	const variant = mouseSa.drag?.srcView?.state.colorVar ?? 0
+	const dragOver = mouseSa.drag?.destination?.index == index && mouseSa.drag?.destination?.group == groupDest
+	const variant = mouseSa.drag?.source?.view?.state?.colorVar ?? 0
 	const inExit = viewSa?.docAnim == DOC_ANIM.EXIT || viewSa?.docAnim == DOC_ANIM.EXITING
 	const clsRoot = `${cls.root} ${dragOver ? cls.in_dragover : ""} ${inExit ? cls.in_exit : ""} ${isLast ? cls.is_last : ""} var${variant}`
 	const clsLine = `${cls.line} ${dragOver ? "color-bg" : ""}`

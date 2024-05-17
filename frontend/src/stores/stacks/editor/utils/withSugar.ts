@@ -1,4 +1,4 @@
-import { BaseOperation, Editor, Element, Node, Transforms } from "slate"
+import { BaseOperation, Editor, Element, Node, Range, Transforms } from "slate"
 import { NODE_TYPES, NodeType } from "./types"
 import { ReactEditor } from "slate-react"
 import { ViewStore } from "../../viewBase"
@@ -22,6 +22,9 @@ export const withSugar = (editor: ReactEditor) => {
 	 * Elimino i BLOCKs selezionati, li unisco in un unico TYPE e li reinserisco
 	 */
 	se.setTypeOnSelect = (type: NODE_TYPES) => {
+		// Non fare nulla se non c'è una selezione o se la selezione è collassata
+		if (!editor.selection || !Range.isCollapsed(editor.selection)) return;
+
 		const selectA = editor.selection.anchor.path[0]
 		const selectB = editor.selection.focus.path[0]
 		const split = type != NODE_TYPES.TEXT
