@@ -70,6 +70,9 @@ func (a *App) registerHandlers() {
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleIndexStreamConsumers)
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleShowStreamConsumer)
+	a.Post("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleCreateStreamConsumer)
+	a.Post("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleUpdateStreamConsumer)
+	a.Delete("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleDeleteStreamConsumer)
 
 	a.Get("/api/connection/:connection_id/stream/:stream_name/messages", a.handleIndexStreamMessages)
 	a.Delete("/api/connection/:connection_id/stream/:stream_name/messages/:seq", a.handleDeleteStreamMessage)

@@ -80,11 +80,35 @@ const AuthForm: FunctionComponent<Props> = ({
 					/>
 				</div>
 			),
+			[AUTH_MODE.NKEY]: <>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">PUBLIC NKEY
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+										content="NATS public NKEY representing the user. It starts with 'U'"
+						/>
+					</div>
+					<TextInput
+						value={authEdit.username}
+						onChange={username => handlePropChange({username})}
+						readOnly={readOnly}
+					/></div>
+				<div className="lyt-form">
+					<div className="lbl-prop lbl-info-container">NKEY SEED
+						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+										content="Private NKEY seed used to sign server challenge. It starts with 'S'"
+						/>
+					</div>
+					<PasswordInput
+						value={authEdit.nKeySeed}
+						onChange={nKeySeed => handlePropChange({nKeySeed})}
+						readOnly={readOnly}
+					/></div>
+			</>,
 			[AUTH_MODE.JWT]: <>
 				<div className="lyt-form">
 					<div className="lbl-prop lbl-info-container">JWT
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-							content="NATS user JWT string to couple with private NKEY"
+										content="User JWT string to couple with private NKEY"
 						/>
 					</div>
 					<TextInput
@@ -94,9 +118,9 @@ const AuthForm: FunctionComponent<Props> = ({
 					/>
 				</div>
 				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">NKEY
+					<div className="lbl-prop lbl-info-container">NKEY SEED
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-							content="Private user NKEY seed"
+							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 						/>
 					</div>
 					<TextInput

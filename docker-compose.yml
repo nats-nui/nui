@@ -5,3 +5,9 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+  nui:
+    image: ghcr.io/nats-nui/nui:edge
+    ports:
+      - "31312:31311"
+    depends_on:
+      - nats

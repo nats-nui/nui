@@ -10,6 +10,10 @@ import (
 
 func TestNatsConn_ObserveConnectionEvents(t *testing.T) {
 	nconn, _ := newMocked()
+
+	status, _ := nconn.LastEvent()
+	assert.Equal(t, "disconnected", status)
+
 	events1 := []string{}
 	events2 := []string{}
 	ch1 := nconn.ObserveConnectionEvents(context.Background())
