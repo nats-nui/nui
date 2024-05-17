@@ -3,6 +3,7 @@ import { DOC_ANIM, DOC_TYPE } from "../docs/types"
 import { DragDoc, Position } from "./utils"
 import { TextEditorStore } from "../stacks/editor"
 import { NODE_TYPES } from "../stacks/editor/utils/types"
+import { Editor, Transforms } from "slate"
 
 
 
@@ -32,33 +33,59 @@ const setup = {
 			document.addEventListener('mousemove', fnMouseMove);
 			document.addEventListener('mouseup', fnMouseUp);
 			store.setDrag(drag)
-			drag.srcView.docAnim(DOC_ANIM.DRAGGING)
+			// se si tratta di uno spostamento di CARD:
+			if (!!drag.source.view && !drag.source.index) drag.source.view.docAnim(DOC_ANIM.DRAGGING)
 		},
 
 		stopDrag(_: void, store?: MouseStore) {
-			const { srcView, dstView, index, groupDest } = store.state.drag
-			srcView.docAnim(DOC_ANIM.SHOW)
+			const { source, destination } = store.state.drag
+			if (!source) return null
+			source.view?.docAnim(DOC_ANIM.SHOW)
 
-			// spostamentro dentro un altra VIEW
-			if (dstView) {
-				dstView.onDrop(store.state.drag)
-				if (dstView.state.type == DOC_TYPE.TEXT_EDITOR && index != null) {
-					const editor = (dstView as TextEditorStore).state.editor
-					const node = {
-						type: NODE_TYPES.CARD,
-						data: srcView.getSerialization(),
-						subtitle: srcView.getSubTitle(),
-						colorVar: srcView.state.colorVar,
-						children: [{ text: srcView.getTitle() }],
+			// spostamentro dentro un altra VIEW e destinazione e sorgente sono diversi
+			if (!!destination?.view
+				&& (source.view != destination.view || source.index != destination.index)
+			) {
+				destination.view.onDrop(store.state.drag)
+				// se la destinazione è un EDITOR...
+				if (destination.view.state.type == DOC_TYPE.TEXT_EDITOR && destination.index != null) {
+					const editor = (destination.view as TextEditorStore).state.editor
+					// se è uno spostamente all'interno della stessa CARD
+					if (source.view == destination.view) {
+						//editor.deselect()
+
+						//const node = editor.node([source.index])
+						//editor.removeNodes({ at:[source.index]})
+						//editor.insertNode(node[0], { at: [0]})
+
+						editor.moveNodes({
+							at: [source.index],
+							to: [destination.index],
+						})
+					} else {
+						const node = {
+							type: NODE_TYPES.CARD,
+							data: source.view.getSerialization(),
+							subtitle: source.view.getSubTitle(),
+							colorVar: source.view.state.colorVar,
+							children: [{ text: source.view.getTitle() }],
+						}
+						editor.insertNode(node, {
+							at: [destination.index + 1]
+						})
 					}
-					editor.insertNode(node, {
-						at: [index+1]
-					})
 				}
+
 				// spostamento su DROP-AREA
-			} else {
-				srcView.state.group.move({ view: srcView, index, groupDest, anim: true })
+			} else if (destination?.index != null && !!destination?.group) {
+				source.view.state.group.move({
+					view: source.view,
+					index: destination.index,
+					groupDest: destination.group,
+					anim: true
+				})
 			}
+
 			store.setDrag(null)
 		}
 	},

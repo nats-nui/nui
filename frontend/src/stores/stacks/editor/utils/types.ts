@@ -48,5 +48,5 @@ export type TextType = {
 	code?:boolean
 } & BaseText
 
-export type NodeType = Node & ElementType & TextType
+export type NodeType = Node & ElementCard & ElementImage & TextType
 

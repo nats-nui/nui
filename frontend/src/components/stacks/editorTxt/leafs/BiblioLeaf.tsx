@@ -28,5 +28,4 @@ const BiblioLeaf: FunctionComponent<Props> = ({
 	</span>
 }
 
-
 export default BiblioLeaf

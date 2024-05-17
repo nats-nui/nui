@@ -4,10 +4,10 @@ import { TextEditorState, TextEditorStore } from "..";
 
 
 
-export function buildTextEditor(content: string) {
+export function buildTextEditor(initValue: string) {
 	const store = buildStore({
 		type: DOC_TYPE.TEXT_EDITOR,
-		content,
+		initValue,
 	} as TextEditorState) as TextEditorStore
 	return store;
 }

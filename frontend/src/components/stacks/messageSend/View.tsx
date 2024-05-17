@@ -46,7 +46,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 		actionsRender={<>
 
 			<FormatAction store={sendSo} />
-			<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
+			<div className="lbl-divider-v2" />
 
 			<Button
 				select={sendSa.subsOpen}

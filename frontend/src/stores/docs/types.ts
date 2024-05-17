@@ -24,6 +24,7 @@ export enum DOC_TYPE {
 	ABOUT = "about",
 
 	TEXT_EDITOR = "text_editor",
+	CODE_EDITOR = "code_editor",
 	HELP = "help",
 	SYNC = "sync",
 }

@@ -5,12 +5,11 @@ import TextInput from "@/components/input/TextInput"
 import ClearIcon from "@/icons/ClearIcon"
 import { TextEditorState, TextEditorStore } from "@/stores/stacks/editor"
 import { NODE_TYPES, NodeType } from "@/stores/stacks/editor/utils/types"
+import { SugarEditor } from "@/stores/stacks/editor/utils/withSugar"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import { Editor } from "slate"
 import { ReactEditor, useSlate } from "slate-react"
 import cls from "./FormatDialog.module.css"
-import { SugarEditor } from "@/stores/stacks/editor/utils/withSugar"
 
 
 
@@ -91,7 +90,7 @@ const FormatDialog: FunctionComponent<Props> = ({
 
 
 	// RENDER
-	const node = editor.node(editor.selection.focus, { depth: 1 })?.[0] as NodeType 
+	const node = editor.selection ? editor.node(editor.selection.focus, { depth: 1 })?.[0] as NodeType : null
 	const type = node?.type
 	const marks = editor.getMarks()
 	const isBold = marks?.["bold"] === true

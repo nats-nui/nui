@@ -1,4 +1,3 @@
-import HelpIcon from "@/icons/HelpIcon"
 import docsSo, { FIXED_CARD } from "@/stores/docs"
 import { deckCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
@@ -9,8 +8,9 @@ import React, { FunctionComponent } from "react"
 import Button from "../../components/buttons/Button"
 import AboutButton from "./AboutButton"
 import cls from "./MainMenu.module.css"
-import MenuButton from "./MenuButton"
 import StoreButton from "./StoreButton"
+import MenuButton from "./MenuButton"
+import EditorIcon from "@/icons/EditorIcon"
 
 
 
@@ -55,12 +55,11 @@ const MainMenu: FunctionComponent<Props> = ({
 		<div style={{ flex: 1 }} />
 
 		{/* *** DEBUG *** */}
-		{process.env.NODE_ENV === 'development' && <>
+		{/* {process.env.NODE_ENV === 'development' && <>
 			<Button children="SAVE" onClick={() => SaveSession()} />
 			<Button children="LOAD" onClick={() => LoadSession()} />
 			<Button children="RESET" onClick={() => ClearSession()} />
-			<Button children="EDITOR" onClick={() => handleOpenEditor()} />
-		</>}
+		</>} */}
 		{/* *** DEBUG *** */}
 
 		{/* <StoreButton
@@ -80,6 +79,14 @@ const MainMenu: FunctionComponent<Props> = ({
 			label="LOG"
 			store={docsSo.state.fixedViews[FIXED_CARD.LOGS]}
 		/>
+
+		<MenuButton 
+			title="A little reminder"
+			subtitle="NOTE"
+			onClick={() => handleOpenEditor()}
+		>
+			<EditorIcon style={{ width: 20 }} className="color-fg" />
+		</MenuButton>
 
 		<AboutButton />
 

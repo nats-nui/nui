@@ -35,12 +35,14 @@ const Card: FunctionComponent<CardProps> = ({
 	// HANDLERS
 	const handleOpen = () => {
 		let view: ViewStore = getById(GetAllCards(), element.data?.uuid)
-		if (!view) {
-			view = buildStore({ type: element.data.type, group: deckCardsSo })
-			view?.setSerialization(element.data)
+		if (!!view) {
+			view.state.group?.focus(view)
+			return
 		}
+		view = buildStore({ type: element.data.type, group: deckCardsSo })
 		if (!view) return
-		deckCardsSo.add({ view })
+		view.setSerialization(element.data)
+		editor.view.state.group.addLink({ view, parent: editor.view, anim: true })
 	}
 	const handleRemove = () => {
 		const path = ReactEditor.findPath(editor, element)
@@ -54,7 +56,7 @@ const Card: FunctionComponent<CardProps> = ({
 		e.preventDefault();
 		const path = ReactEditor.findPath(editor, element)
 		mouseSo.setPosition({ x: e.clientX, y: e.clientY })
-		mouseSo.startDrag({ srcView: editor.view, index: path?.[0] })
+		mouseSo.startDrag({ source: { view: editor.view, index: path?.[0] } })
 	}
 
 	// RENDER

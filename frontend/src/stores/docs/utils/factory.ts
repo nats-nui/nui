@@ -22,6 +22,7 @@ import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/utils/editor";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
+import editCodeSetup from "@/stores/stacks/editorCode";
 
 
 
@@ -65,6 +66,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.ABOUT]: aboutSetup,
 
 		[DOC_TYPE.TEXT_EDITOR]: txtEditorSetup,
+		[DOC_TYPE.CODE_EDITOR]: editCodeSetup,
 		[DOC_TYPE.HELP]: helpSetup,
 
 		[DOC_TYPE.SYNC]: syncSetup,

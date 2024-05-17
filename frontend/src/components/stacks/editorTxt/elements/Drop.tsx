@@ -4,6 +4,7 @@ import cls from "./Drop.module.css"
 import mouseSo from "@/stores/mouse"
 import { SugarEditor } from "@/stores/stacks/editor/utils/withSugar"
 import { useStore } from "@priolo/jon"
+import { NODE_TYPES, NodeType } from "@/stores/stacks/editor/utils/types"
 
 
 
@@ -24,27 +25,24 @@ const Drop: FunctionComponent<RenderElementProps & HTMLProps<HTMLDivElement>> = 
 
 	// HANDLERS
 	const handleMouseOver = (_: React.DragEvent<HTMLDivElement>) => {
-		if (mouseSo.state.drag?.srcView == null) return
+		if (!mouseSo.state.drag?.source?.view) return
 		const path = ReactEditor.findPath(editor, element)
 		mouseSo.setDrag({
-			...mouseSo.state.drag,
-			index: path?.[0],
-			dstView: editor.view,
-			groupDest: null,
+			source: { ...mouseSo.state.drag.source },
+			destination: { view: editor.view, index: path?.[0] },
 		})
 	}
 	const handleMouseLeave = () => {
-		if (mouseSo.state.drag?.srcView == null) return
+		if (!mouseSo.state.drag?.source?.view) return
 		mouseSo.setDrag({
-			...mouseSo.state.drag,
-			index: null,
-			dstView: null,
-			groupDest: null,
+			source: { ...mouseSo.state.drag.source },
+			destination: null,
 		})
 	}
 
+
 	// RENDER
-	const clsDrag = !!mouseSa.drag ? cls.drag : ""
+	const clsDrag = !!mouseSa.drag?.source ? cls.drag : ""
 	const cnRoot = `${clsDrag} ${className}`
 
 	return <div {...attributes}

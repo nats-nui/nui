@@ -1,10 +1,10 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import { TextEditorStore } from "@/stores/stacks/editor"
-import { NODE_TYPES, NodeType } from "@/stores/stacks/editor/utils/types"
+import { biblioOnKeyDown } from "@/stores/stacks/editor/utils/onkeydown"
+import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import { Editor, Node, Transforms } from "slate"
 import { Editable, Slate } from "slate-react"
-import FormatDialog from "./FormatDialog"
+import ActionsCmp from "./Actions"
 import cls from "./View.module.css"
 import BiblioElement from "./elements/BiblioElement"
 import BiblioLeaf from "./leafs/BiblioLeaf"
@@ -20,7 +20,7 @@ const EditorView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-
+	useStore(store)
 
 	// HOOKs
 
@@ -31,84 +31,45 @@ const EditorView: FunctionComponent<Props> = ({
 	const handleBlur = () => {
 		//store.setFormatOpen(false)
 	}
-	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-		// premo il bottone ENTER
-		if (event.key == "Enter") {
-			const node = editor.node(editor.selection, { depth: 1 })?.[0] as NodeType
-			if (event.ctrlKey || event.altKey || event.shiftKey) {
-				if (node.type == NODE_TYPES.CODE) {
-					event.preventDefault();
-					editor.insertBreak()
-					return
-				} else if (node.type == NODE_TYPES.TEXT) {
-					event.preventDefault();
-					editor.insertText("\n")
-					return
-				}
-			} else {
-				if (node.type == NODE_TYPES.CODE) {
-					event.preventDefault();
-					editor.insertText("\n")
-					return
-				}
-			}
-		}
-
-
-
-		// 	// prelevo l'ENTRY in corrente selezione, aggiungo un TEXT dopo e lo seleziono
-		// 	const [node, path] = store.getFirstSelectEntry()
-		// 	if (node.type == NODE_TYPES.CODE || node.type == NODE_TYPES.IMAGE) {
-		// 		event.preventDefault()
-		// 		store.addNode({
-		// 			path,
-		// 			node: { type: "text", children: [{ text: "" }] },
-		// 			options: { select: true }
-		// 		})
-		// 		return
-		// 	}
-
-		// se non sto premento contemporaneamente CTRL annulla
-		if (!event.ctrlKey) return
-		// altrimenti...
-		switch (event.key) {
-			case 'b': {
-				event.preventDefault()
-				const marks = Editor.marks(editor)
-				const isBold = marks ? marks["bold"] === true : false
-				Editor.addMark(editor, 'bold', !isBold)
-				break
-			}
-			case 'i': {
-				event.preventDefault()
-				const marks = Editor.marks(editor)
-				const isItalic = marks ? marks["italic"] === true : false
-				Editor.addMark(editor, 'italic', !isItalic)
-				break
-			}
-		}
+	const handleStartDrag = (e: React.MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
 	}
+
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+		biblioOnKeyDown(event, editor)
+	}
+
+	const handleValueChange = () => store.onValueChange()
 
 	// RENDER
 	const editor = store.state.editor
 	console.log("SLATE render")
 	return <FrameworkCard
 		store={store}
+		//actionsRender={<ActionsCmp store={store} />}
+		iconizedRender={null}
 	>
 		<Slate
 			editor={editor}
 			initialValue={editor.children}
+			onValueChange={handleValueChange}
 		>
-			<Editable className={cls.editor}
+
+			<ActionsCmp store={store} style={{margin: '-10px -10px 5px -10px'}} />
+
+			<Editable 
+				className={cls.editor}
+				style={{ flex: 1, overflowY: "auto"}}
 				spellCheck={false}
 				renderElement={props => <BiblioElement {...props} />}
 				renderLeaf={props => <BiblioLeaf {...props} />}
 				onKeyDown={handleKeyDown}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
+				onDragStart={handleStartDrag}
 			/>
 
-			<FormatDialog store={store} />
 		</Slate>
 
 	</FrameworkCard>
