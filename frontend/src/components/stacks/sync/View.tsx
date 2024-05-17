@@ -98,7 +98,6 @@ const SyncView: FunctionComponent<Props> = ({
 				<EditorCode ref={refSender}
 					format={syncSa.format}
 					value={syncSa.messageSend}
-					//readOnly={!canSend}
 					onChange={handleSendChange}
 				/>
 
