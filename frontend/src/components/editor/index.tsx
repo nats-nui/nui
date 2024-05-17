@@ -70,7 +70,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 			text={value}
 		/>
 	}
-	return <Editor 
+	return <Editor
 		className={className}
 		defaultLanguage="json"
 		language={getEditorLanguage(format)}
@@ -78,7 +78,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		theme="vs-dark"
 		onMount={handleEditorDidMount}
 		onChange={onChange}
-
+		options={{ readOnly: readOnly }}
 	/>
 }
 

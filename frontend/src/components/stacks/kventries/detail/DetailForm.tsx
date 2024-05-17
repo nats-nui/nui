@@ -46,7 +46,7 @@ const DetailForm: FunctionComponent<Props> = ({
 			value={kventrySo.getEditorText()}
 			onChange={handlePayloadChange}
 			format={kventrySa.format}
-			readOnly={inRead}
+			readOnly={inRead}	
 		/>
 
 	</div>

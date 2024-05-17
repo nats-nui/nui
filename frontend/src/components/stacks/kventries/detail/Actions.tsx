@@ -41,20 +41,22 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	if (kventrySa.editState == EDIT_STATE.READ) return <>
 
-		<OptionsCmp 
+		<OptionsCmp
 			style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
-			store={kventrySo} 
+			store={kventrySo}
 		/>
 
 		<div style={{ flex: 1 }} />
 
 		<FormatAction store={kventrySo} />
+
 		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
 
 		<Button
-			children="PUT"
+			children="EDIT"
 			onClick={handleEdit}
 		/>
+
 		<div style={{ display: "flex", alignItems: "center" }}>
 
 			<IconButton style={{ padding: "2px 0px" }}
@@ -71,6 +73,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			><ArrowRightIcon /></IconButton>
 
 		</div>
+
 	</>
 
 
@@ -81,16 +84,16 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	return (<>
 		<FormatAction store={kventrySo} />
 		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
-		<Button
-			children={label}
-			onClick={handleSave}
-		/>
 		{!inNew && (
 			<Button
 				children="CANCEL"
 				onClick={handleCancel}
 			/>
 		)}
+		<Button
+			children={label}
+			onClick={handleSave}
+		/>
 	</>)
 }
 
