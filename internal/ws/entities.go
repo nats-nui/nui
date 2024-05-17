@@ -47,6 +47,7 @@ const Reconnected = "reconnected"
 
 type ConnectionStatus struct {
 	Status string `json:"status"`
+	Error  string `json:"error"`
 }
 
 func (s ConnectionStatus) GetType() string {

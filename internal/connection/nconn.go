@@ -4,13 +4,17 @@ import (
 	"context"
 	"github.com/nats-io/nats.go"
 	"sync"
+	"time"
 )
 
 type NatsConn struct {
 	*nats.Conn
 	connectionEventsSubs []*subscriber
 	subsMutex            sync.Mutex
+	eventHandleMutex     sync.Mutex
 	mockMode             bool
+	lastStatus           string
+	lastError            error
 }
 
 type subscriber struct {
@@ -29,6 +33,10 @@ func (n *NatsConn) ObserveConnectionEvents(ctx context.Context) <-chan ConnStatu
 	return events
 }
 
+func (n *NatsConn) LastEvent() (string, error) {
+	return n.lastStatus, n.lastError
+}
+
 func (n *NatsConn) buildStatusHandlerWithErr(status string) nats.ConnErrHandler {
 	return func(conn *nats.Conn, err error) {
 		n.handleEvent(status, err)
@@ -37,11 +45,19 @@ func (n *NatsConn) buildStatusHandlerWithErr(status string) nats.ConnErrHandler 
 
 func (n *NatsConn) buildStatusHandler(status string) nats.ConnHandler {
 	return func(conn *nats.Conn) {
-		n.handleEvent(status, nil)
+		var err error
+		if n.Conn.Status() != nats.CONNECTED {
+			err = n.Conn.LastError()
+		}
+		n.handleEvent(status, err)
 	}
 }
 
 func (n *NatsConn) handleEvent(status string, err error) {
+	n.eventHandleMutex.Lock()
+	defer n.eventHandleMutex.Unlock()
+	n.lastStatus = status
+	n.lastError = err
 	for _, s := range n.connectionEventsSubs {
 		select {
 		case s.events <- ConnStatusChanged{status, err}:
@@ -92,11 +108,35 @@ func newMocked() (*NatsConn, error) {
 type buildFunc func(string, []nats.Option) (*nats.Conn, error)
 
 func newWithBuilder(hosts string, options []nats.Option, builder buildFunc, mockMode bool) (*NatsConn, error) {
+	nConn := &NatsConn{mockMode: mockMode}
+	nConn.lastStatus = StatusDisconnected
+
+	// NATS when in reconnect mode does not provide any error if first connection fails and no events are emitted.
+	// only the state is set to RECONNECTING. To give the user a reason about the connection failure,
+	// a different probe connection is used to check if the connection is possible.
+	probeConn, err := builder(
+		hosts,
+		append(options, nats.RetryOnFailedConnect(false), nats.MaxReconnects(1), nats.MaxPingsOutstanding(1), nats.PingInterval(1*time.Second)))
+
+	if probeConn != nil {
+		if probeConn.Status() == nats.CONNECTED {
+			nConn.lastStatus = StatusConnected
+		}
+		if err == nil {
+			err = probeConn.LastError()
+		}
+		if !mockMode {
+			probeConn.Close()
+		}
+	}
+	nConn.lastError = err
+
+	// After probing and saving the status and error, the long-term connection is established.
 	natsConn, err := builder(hosts, options)
 	if err != nil {
 		return nil, err
 	}
-	nConn := &NatsConn{Conn: natsConn, mockMode: mockMode}
+	nConn.Conn = natsConn
 
 	natsConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected))
 	natsConn.SetReconnectHandler(nConn.buildStatusHandler(StatusConnected))

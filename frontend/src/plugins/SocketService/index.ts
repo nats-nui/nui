@@ -131,7 +131,7 @@ export class SocketService {
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		this.onOpen?.()
-		changeConnectionStatus(this.cnnId, CNN_STATUS.CONNECTED)
+		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
 
 	handleClose(_: CloseEvent) {
@@ -151,6 +151,13 @@ export class SocketService {
 				payload = message.payload as PayloadStatus
 				this.onStatus?.(payload)
 				changeConnectionStatus(this.cnnId, payload.status)
+				let body = `${payload.status}`
+				if (payload.error) {body += ` - ${payload.error}`}
+				logSo.add({
+					type: MESSAGE_TYPE.INFO,
+					title: "CONNECTION STATUS",
+					body: body
+				})
 				break
 			case MSG_TYPE.NATS_MESSAGE:
 				if (!this.onMessage) return
