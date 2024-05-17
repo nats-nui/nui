@@ -76,7 +76,6 @@ const MessageSendView: FunctionComponent<Props> = ({
 				ref={ref => sendSa.editorRef = ref}
 				format={sendSa.format}
 				value={sendSo.getEditorText()}
-				readOnly={!canSend}
 				onChange={handleValueChange}
 			/>
 
@@ -94,7 +93,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 		</div>
 
 		<SubjectsDialog store={sendSo} />
-		<FormatDialog store={sendSo} />
+		<FormatDialog store={sendSo} editMode />
 
 	</FrameworkCard>
 
