@@ -1,7 +1,11 @@
 import Button from "@/components/buttons/Button"
+import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import FindInputHeader from "@/components/input/FindInputHeader"
+import PauseIcon from "@/icons/PauseIcon"
+import PlayIcon from "@/icons/PlayIcon"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
+import { DOC_TYPE } from "@/types"
 import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
@@ -9,7 +13,6 @@ import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
-import { DOC_TYPE } from "@/types"
 
 
 
@@ -53,6 +56,10 @@ const MessagesView: FunctionComponent<Props> = ({
 		setTextFind(value)
 		debounce(`text-find-${msgSa.uuid}`, () => msgSo.setTextSearch(value), 2000)
 	}
+	const handlePause = () => {
+		msgSo.setPause(!msgSa.pause)
+		msgSo.sendSubscriptions()
+	}
 
 	// RENDER
 	const messages = useMemo(() => msgSo.getFiltered(), [msgSa.textSearch, msgSa.messages])
@@ -91,6 +98,9 @@ const MessagesView: FunctionComponent<Props> = ({
 			onMessageClick={hendleMessageClick}
 			onClear={handleClear}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
+			extraActions={<FloatButton onClick={handlePause}>
+				{msgSa.pause ? <PlayIcon /> : <PauseIcon />}
+			</FloatButton>}
 		/>
 
 		<SubjectsDialog store={msgSo} />

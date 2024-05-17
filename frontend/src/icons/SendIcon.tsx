@@ -5,7 +5,7 @@ const SendIcon = (props) => (
 		fill="none" stroke="currentColor"
 		{...props}
 	>
-		<path d="M13 7L5 3V11L13 7Z" strokeWidth="2" strokeLinejoin="bevel"/>
+		<path d="M12 7L4 3V11L12 7Z" strokeWidth="2" strokeLinejoin="bevel"/>
 	</svg>
 )
 

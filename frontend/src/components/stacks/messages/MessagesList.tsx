@@ -17,6 +17,7 @@ interface Props {
 	onMessageDelete?: (message: Message) => void
 	onClear?: () => void
 	onLoading?: (bottom: boolean) => Promise<number>
+	extraActions?: React.ReactNode
 	style?: React.CSSProperties
 	header?: React.ReactNode
 	footer?: React.ReactNode
@@ -29,6 +30,7 @@ const MessagesList: FunctionComponent<Props> = ({
 	onMessageDelete,
 	onClear,
 	onLoading,
+	extraActions,
 	style,
 	header,
 	footer,
@@ -109,6 +111,7 @@ const MessagesList: FunctionComponent<Props> = ({
 		/>
 
 		<div className="lyt-float" style={{ bottom: 30 }}>
+			{extraActions}
 			{showKeepDown &&
 				<FloatButton
 					onClick={handleKeepDownClick}

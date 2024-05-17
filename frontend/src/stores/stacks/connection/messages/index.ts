@@ -10,9 +10,9 @@ import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
 import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
+import { MessageStore } from "../../message"
 import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
-import { MessageStore } from "../../message"
 
 
 
@@ -49,6 +49,8 @@ const setup = {
 		/* per la dialog di FORMAT */
 		format: MSG_FORMAT.JSON,
 		formatsOpen: false,
+
+		pause: false,
 
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.CYAN,
@@ -153,17 +155,18 @@ const setup = {
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
-
 			// invio il cambio di subs al web-socket
-			const subjWS = store.state.subscriptions
-				?.filter(s => !!s?.subject && !s.disabled)
-				.map(s => s.subject) ?? []
+			const subjWS = store.state.pause
+				? []
+				: store.state.subscriptions
+					?.filter(s => !!s?.subject && !s.disabled)
+					.map(s => s.subject) ?? []
 			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjWS)
 
 			// messaggio in lista di cambio subs
 			const msgChangeSubj: Message = {
 				type: subjWS.length > 0 ? MESSAGE_TYPE.INFO : MESSAGE_TYPE.WARN,
-				subject: subjWS.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
+				subject: store.state.pause ? "IN PAUSE" : subjWS.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
 				payload: subjWS.join(", "),
 				receivedAt: Date.now(),
 			}
@@ -189,7 +192,7 @@ const setup = {
 			if (!cnn) return
 			store.state.group.addLink({
 				view: buildConnectionMessageSend(
-					cnn.id, 
+					cnn.id,
 					store.state.subscriptions.map(s => s.subject)
 				),
 				parent: store,
@@ -207,6 +210,7 @@ const setup = {
 		setFormat: (format: MSG_FORMAT) => ({ format }),
 		setFormatsOpen: (formatsOpen: boolean) => ({ formatsOpen }),
 		setStats: (stats: { [subjects: string]: MessageStat }) => ({ stats }),
+		setPause: (pause: boolean) => ({ pause }),
 	},
 
 	onListenerChange: (store: MessagesStore, type: LISTENER_CHANGE) => {
