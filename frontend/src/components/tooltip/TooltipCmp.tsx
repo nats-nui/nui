@@ -81,6 +81,8 @@ const cssRoot = (pos: TooltipPos, show: boolean = false): React.CSSProperties =>
 	transitionTimingFunction: layoutSo.state.theme.transitions[0],
 	transform: show ? 'translate(0, -5px)' : 'translate(0, 5px)',
 	opacity: show ? 1 : 0,
+
+	whiteSpace: "pre-line",
 })
 
 const cssContent = (color:string): React.CSSProperties => ({
