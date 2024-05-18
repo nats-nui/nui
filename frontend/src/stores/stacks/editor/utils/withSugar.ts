@@ -23,7 +23,7 @@ export const withSugar = (editor: ReactEditor) => {
 	 */
 	se.setTypeOnSelect = (type: NODE_TYPES) => {
 		// Non fare nulla se non c'è una selezione o se la selezione è collassata
-		if (!editor.selection || !Range.isCollapsed(editor.selection)) return;
+		if (!editor.selection) return;
 
 		const selectA = editor.selection.anchor.path[0]
 		const selectB = editor.selection.focus.path[0]

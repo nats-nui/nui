@@ -7,12 +7,15 @@
 	transition: opacity 300ms;
 	border-radius: 5px;
 }
+
 .iconized {
 	align-items: center;
 }
+
 .linked {
 	padding-left: 8px;
 }
+
 .drag {
 	opacity: .5;
 }
@@ -21,9 +24,25 @@
 
 .actions {
 	position: relative;
+	min-height: 32px;
+	padding: 3px;
+
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	justify-content: flex-end;
+
+	background-color: rgb(0 0 0 / 50%);
+	color: var(--text);
+}
+
+.iconized .actions {
 	align-self: stretch;
 	justify-content: center;
+
 }
+
+
 
 .children {
 	flex: 1;
@@ -33,25 +52,26 @@
 	flex-direction: column;
 	transition: opacity 300ms;
 }
+
 .disabled {
 	pointer-events: none;
 	opacity: .5;
-} 
+}
 
 
 
 
 .btt {
-	position:absolute;
+	position: absolute;
 	color: var(--var-0);
 	border-radius: 50%;
-	
+
 	transition: top 300ms ease-out, opacity 200ms linear;
 	top: 0px;
 	opacity: 0;
 }
 
-.hovercontainer:hover .hovershow{
+.hovercontainer:hover .hovershow {
 	top: -9px;
 	opacity: 1;
 }

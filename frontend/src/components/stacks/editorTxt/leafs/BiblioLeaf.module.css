@@ -6,7 +6,7 @@
 }
 
 .root.italic {
-    
+    font-style: italic;
 }
 
 .root.code {
