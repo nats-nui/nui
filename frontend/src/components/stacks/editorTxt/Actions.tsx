@@ -99,8 +99,8 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const isLink = marks?.["link"] === true
 	const urlMark = marks?.["url"] ?? ""
 
-	return (<div 
-		className="btt-actions" 
+	return (<div
+		className="btt-actions"
 		style={style}
 	>
 
@@ -108,6 +108,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			onClick={handleBold}
 		>B</Button>
 		<Button select={isItalic}
+			style={{ fontStyle: "italic" }}
 			onClick={handleItalic}
 		>I</Button>
 		<Button select={isLink}
@@ -116,7 +117,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 		<div className="lbl-divider-v2" />
 
-		<div style={{ display: "flex", flex: 1, justifyContent: 'space-between' }}>
+		<div style={{ display: "flex", flex: 1, gap: 5 }}>
 			{isLink ? <>
 				<TextInput style={{ flex: 1, backgroundColor: "#3f3d3d" }}
 					value={urlMark}

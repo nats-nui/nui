@@ -5,7 +5,6 @@ import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_ANIM } from "@/types"
 import { FunctionComponent } from "react"
-import ActionGroup from "../buttons/ActionGroup"
 import IconButton from "../buttons/IconButton"
 import ErrorBoundary from "./ErrorBoundary"
 import cls from "./FrameworkCard.module.css"
@@ -54,8 +53,7 @@ const FrameworkCard: FunctionComponent<Props> = ({
 		<ErrorBoundary>
 
 			{isIconized ? <>
-				<ActionGroup
-					//className={cls.actions}
+				<div
 					className={`${cls.actions} ${cls.hovercontainer}`}
 				>
 					<IconButton
@@ -69,12 +67,12 @@ const FrameworkCard: FunctionComponent<Props> = ({
 						><DetachIcon /></IconButton>
 					)}
 
-				</ActionGroup>
+				</div>
 				{iconizedRender}
 			</> : <>
-				<ActionGroup>
+				<div className={cls.actions}>
 					{actionsRender}
-				</ActionGroup>
+				</div>
 
 				<div className={clsChildren} style={styleBody}>
 					{children}
