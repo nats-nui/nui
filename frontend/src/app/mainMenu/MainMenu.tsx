@@ -55,11 +55,12 @@ const MainMenu: FunctionComponent<Props> = ({
 		<div style={{ flex: 1 }} />
 
 		{/* *** DEBUG *** */}
-		{/* {process.env.NODE_ENV === 'development' && <>
+		{process.env.NODE_ENV === 'development' && <>
 			<Button children="SAVE" onClick={() => SaveSession()} />
 			<Button children="LOAD" onClick={() => LoadSession()} />
 			<Button children="RESET" onClick={() => ClearSession()} />
-		</>} */}
+			<Button children="EDITOR" onClick={() => handleOpenEditor()} />
+		</>}
 		{/* *** DEBUG *** */}
 
 		{/* <StoreButton
@@ -80,13 +81,13 @@ const MainMenu: FunctionComponent<Props> = ({
 			store={docsSo.state.fixedViews[FIXED_CARD.LOGS]}
 		/>
 
-		<MenuButton 
+		{/* <MenuButton 
 			title="A little reminder"
 			subtitle="NOTE"
 			onClick={() => handleOpenEditor()}
 		>
 			<EditorIcon style={{ width: 20 }} className="color-fg" />
-		</MenuButton>
+		</MenuButton> */}
 
 		<AboutButton />
 
