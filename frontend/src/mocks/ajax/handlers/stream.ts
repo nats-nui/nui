@@ -1,5 +1,5 @@
 import { randomMessages } from '@/mocks/data/utils/stream'
-import { buildNewStreamState } from '@/stores/stacks/streams/utils/factory'
+import { newStreamState } from '@/stores/stacks/streams/utils/factory'
 import { StreamInfo } from '@/types/Stream'
 import { camelToSnake, snakeToCamel } from '@/utils/object'
 import { rest } from 'msw'
@@ -44,7 +44,7 @@ const handlers = [
 		if (!streamConfig_S) return res(ctx.status(500))
 		const streamInfo_C: StreamInfo = {
 			config: snakeToCamel(streamConfig_S),
-			state: buildNewStreamState()
+			state: newStreamState()
 		}
 		const streamInfo_S: any = camelToSnake(streamInfo_C)
 		streams_S.push(streamInfo_S)

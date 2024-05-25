@@ -2,10 +2,14 @@ import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { StreamConsumer } from "@/types/Consumer"
+import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { buildConsumer } from "./utils/factory"
+import { buildConsumer, buildConsumerNew } from "./utils/factory"
+import { findAll } from "../../docs/utils/manage"
+import { GetAllCards } from "../../docs/cards"
+import { DOC_TYPE } from "../../docs/types"
+import { MESSAGE_TYPE } from "../../log/utils"
 
 
 
@@ -82,6 +86,46 @@ const setup = {
 		async fetchIfVoid(_: void, store?: ConsumersStore) {
 			if (!!store.state.all) return
 			await store.fetch()
+		},
+
+		/** open CREATION CARD */
+		create(_: void, store?: ConsumersStore) {
+			const view = buildConsumerNew(store.state.connectionId, store.state.streamName)
+			store.state.group.addLink({ view, parent: store, anim: true })
+			store.setSelect(null)
+		},
+		/** elimina lo sTREAM selezionato "state.select" */
+		async delete(_: void, store?: ConsumersStore) {
+			if (!await store.alertOpen({
+				title: "CONSUMER DELETION",
+				body: "This action is irreversible.\nAre you sure you want to delete the CONSUMER?",
+			})) return
+
+			const consumerName = store.state.select
+			await conApi.remove(store.state.connectionId, store.state.streamName, consumerName, { store })
+			store.setAll(store.state.all.filter(s => s.config.name != consumerName))
+			store.setSelect(null)
+
+			// cerco eventuali CARD di questo stream e lo chiudo
+			const cardStreams = findAll(GetAllCards(), {
+				type: DOC_TYPE.CONSUMER,
+				connectionId: store.state.connectionId,
+				streamName: store.state.streamName
+			})
+			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
+
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "DELETED",
+				body: "it is gone forever",
+			})
+		},
+
+		update(streamConsumer: StreamConsumer, store?: ConsumersStore) {
+			const all = [...store.state.all]
+			const index = store.getIndexByName(streamConsumer?.name)
+			index == -1 ? all.push(streamConsumer) : (all[index] = { ...all[index], ...streamConsumer })
+			store.setAll(all)
 		},
 
 		/** apro la CARD del dettaglio */

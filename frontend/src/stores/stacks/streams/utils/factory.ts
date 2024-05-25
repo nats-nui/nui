@@ -60,7 +60,7 @@ export function buildStreamMessages(connectionId: string, stream: Partial<Stream
 export function buildNewStreamInfo(): StreamInfo {
 	return {
 		config: buildNewStreamConfig(),
-		state: buildNewStreamState(),
+		state: newStreamState(),
 	}
 }
 
@@ -98,7 +98,7 @@ export function buildNewStreamConfig(): StreamConfig {
 	}
 }
 
-export function buildNewStreamState(): StreamEntityState {
+export function newStreamState(): StreamEntityState {
 	return {
 		messages: 0,
 		bytes: 0,
@@ -110,7 +110,7 @@ export function buildNewStreamState(): StreamEntityState {
 	}
 }
 
-export function buildNewSource(): Source {
+export function newSource(): Source {
 	return {
 		name: "",
 		domain: "",
