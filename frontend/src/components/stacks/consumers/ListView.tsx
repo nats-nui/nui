@@ -6,6 +6,9 @@ import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import Button from "../../buttons/Button"
+import { DOC_TYPE, EDIT_STATE } from "../../../types"
+import { ConsumerStore } from "../../../stores/stacks/consumer/detail"
 
 
 
@@ -28,10 +31,12 @@ const ConsumersListView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleSelect = (consumer: StreamConsumer) => consumersSo.select(consumer.name)
+	const handleNew = () => consumersSo.create()
 
 	// RENDER
 	const consumers = consumersSo.getFiltered() ?? []
 	const selected = consumersSa.select
+	const isNewSelect = consumersSa.linked?.state.type == DOC_TYPE.CONSUMER && (consumersSa.linked as ConsumerStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		store={consumersSo}
@@ -43,6 +48,11 @@ const ConsumersListView: FunctionComponent<Props> = ({
 			<FindInputHeader
 				value={consumersSa.textSearch}
 				onChange={text => consumersSo.setTextSearch(text)}
+			/>
+			<Button
+				children="NEW"
+				select={isNewSelect}
+				onClick={handleNew}
 			/>
 		</>}
 	>

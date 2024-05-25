@@ -1,12 +1,13 @@
 import cnsApi from "@/api/consumers"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { DOC_TYPE } from "@/types"
-import { StreamConsumer } from "@/types/Consumer"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { findInRoot } from "@/stores/docs/utils/manage"
+import { MESSAGE_TYPE } from "../../log/utils"
 
 
 
@@ -20,6 +21,8 @@ const setup = {
 		streamName: <string>null,
 		/** il consumer appunto */
 		consumer: <StreamConsumer>null,
+
+		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
 		width: 230,
@@ -77,10 +80,36 @@ const setup = {
 			await store.fetch()
 		},
 
+		/** crea un nuovo CONSUMER-INFO tramite CONSUMER-CONFIG */
+		async save(_: void, store?: ConsumerStore) {
+			let consumerSaved: StreamConsumer = null
+			if (store.state.editState == EDIT_STATE.NEW) {
+				consumerSaved = await cnsApi.create(store.state.connectionId, store.state.streamName, store.state.consumer.config, { store })
+			} else {
+				consumerSaved = await cnsApi.update(store.state.connectionId, store.state.streamName, store.state.consumer.config.name,  store.state.consumer.config, { store })
+			}
+			store.setConsumer(consumerSaved)
+			store.getParentList()?.update(consumerSaved)
+			store.getParentList()?.setSelect(consumerSaved.config.name)
+			store.setEditState(EDIT_STATE.READ)
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "SAVED",
+				body: "you can find it in the CONSUMERS list",
+			})
+		},
+		/** reset ENTITY */
+		restore: (_: void, store?: ConsumerStore) => {
+			store.fetch()
+			store.setEditState(EDIT_STATE.READ)
+		},
+
 	},
 
 	mutators: {
 		setConsumer: (consumer: StreamConsumer) => ({ consumer }),
+		setEditState: (editState: EDIT_STATE) => ({ editState }),
+		setConsumerConfig: (config: ConsumerConfig, store?: ConsumerStore) => ({ consumer: { ...store.state.consumer, config } }),
 	},
 }
 
