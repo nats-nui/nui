@@ -39,6 +39,7 @@ export interface ConsumerConfig {
 	maxDeliver?: number; // The maximum number of times a message will be delivered - Editable
 	backoff?: number[]; // The backoff strategy for redelivery - Editable
 	filterSubject?: string; // The subject to filter on for message delivery - Not editable
+	filterSubjects?: string[]; // The subjects to filter on for message delivery (from version 2.10+) // - Not editable
 	replayPolicy: ReplayPolicy; // The policy for message replay - Not editable
 	rateLimitBps?: number; // The rate limit in bytes per second for message delivery - Editable
 	sampleFreq?: string; // The sampling frequency for metrics - Editable
@@ -55,6 +56,7 @@ export interface ConsumerConfig {
 	inactiveThreshold?: number; // The threshold for marking a consumer as inactive - Editable
 	numReplicas: number; // The number of replicas for the consumer - Not editable
 	memStorage?: boolean; // Whether to use memory storage - Not editable
+	metadata?: { [key:string]: string }; // The metadata for the consumer - Editable
 }
 
 export enum DeliverPolicy {
