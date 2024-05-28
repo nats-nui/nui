@@ -495,6 +495,42 @@ func (s *NuiTestSuite) TestPubSubWs() {
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
 }
 
+func (s *NuiTestSuite) TestHeadersOnSub() {
+	connId := s.defaultConn()
+
+	// open the ws
+	ws := s.ws("/ws/sub", "id="+connId)
+	defer ws.Disconnect()
+
+	// ws subscribe to sub1
+	ws.WriteText(`{"type": "subscriptions_req", "payload": {"subjects": ["sub1"]}}`)
+	time.Sleep(10 * time.Millisecond)
+
+	// create headers
+	headers := nats.Header{
+		"header1": []string{"value1"},
+		"header2": []string{"value2", "value3"},
+	}
+
+	// publish on sub1 via nats client with headers
+	err := s.nc.PublishMsg(&nats.Msg{
+		Subject: "sub1",
+		Data:    []byte("hi"),
+		Header:  headers,
+	})
+	s.NoError(err)
+
+	// ws receive the connected event and the message published
+	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
+	r := ws.WithReadTimeout(500 * time.Millisecond).Expect().JSON().Object().Value("payload").Object()
+	r.Value("subject").String().IsEqual("sub1")
+	r.Value("payload").String().IsEqual("aGk=")
+	r.Value("headers").Object().Value("header1").Array().Value(0).String().IsEqual("value1")
+	r.Value("headers").Object().Value("header2").Array().Value(0).String().IsEqual("value2")
+	r.Value("headers").Object().Value("header2").Array().Value(1).String().IsEqual("value3")
+
+}
+
 func (s *NuiTestSuite) TestConnectionEventsWs() {
 	s.NatsServer.Shutdown()
 	time.Sleep(10 * time.Millisecond)
