@@ -31,10 +31,11 @@ func NewWsMessage(p Payload) *Response {
 }
 
 type NatsMsg struct {
-	Subject    string    `json:"subject"`
-	Payload    []byte    `json:"payload"`
-	SeqNum     uint64    `json:"seq_num"`
-	ReceivedAt time.Time `json:"received_at"`
+	Subject    string              `json:"subject"`
+	Payload    []byte              `json:"payload"`
+	SeqNum     uint64              `json:"seq_num"`
+	ReceivedAt time.Time           `json:"received_at"`
+	Headers    map[string][]string `json:"headers"`
 }
 
 func (s NatsMsg) GetType() string {

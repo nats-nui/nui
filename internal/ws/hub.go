@@ -233,6 +233,7 @@ func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
 			cm := &NatsMsg{
 				Subject: msg.Subject,
 				Payload: msg.Data,
+				Headers: msg.Header,
 			}
 			clientMgs <- cm
 		}
