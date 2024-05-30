@@ -2,8 +2,9 @@ import { EditorRefProps } from "@/components/editor"
 import { MSG_FORMAT } from "@/utils/editor"
 import { StoreCore } from "@priolo/jon"
 import { ViewState, ViewStore } from "./viewBase"
+import docsSo from "../docs"
 
-
+let autoformat:boolean = false
 
 const editorSetup = {
 
@@ -14,11 +15,15 @@ const editorSetup = {
 	},
 
 	getters: {
-		getEditorText: (_:void, store?:ViewStore ):string => "<OVERWRITE>"
+		getEditorText: (_:void, store?:ViewStore ) => "<OVERWRITE>",
+		getAutoFormat: (_:void, store?:ViewStore ) => autoformat
 	},
 
 	actions: {
-		
+		setAutoFormat: (value: boolean, store?:EditorStore ) => {
+			autoformat = value
+			store._update()
+		},
 	},
 
 	mutators: {

@@ -4,7 +4,7 @@ import { getEditorLanguage } from "@/stores/stacks/message/utils"
 import { MSG_FORMAT } from "@/utils/editor"
 import { Editor, Monaco } from "@monaco-editor/react"
 import { editor } from "monaco-editor"
-import { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react"
+import { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
 import { editorOptionsDefault } from "./utils"
 
 
@@ -13,7 +13,7 @@ interface Props {
 	format?: MSG_FORMAT
 	value?: string
 	readOnly?: boolean
-	/** formatta automaticamente all'avvio e su cambio FORMAT */
+	/** formats automatically at startup and on FORMAT change */
 	autoFormat?: boolean
 	className?: string
 
@@ -54,8 +54,8 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
 		editorRef.current = editor
 		editor.updateOptions(editorOptionsDefault)
-		// Formatta automaticamente il JSON all'avvio
-		//if (autoFormat) setTimeout(formatRun, 300)
+		if (autoFormat) formatRun()
+		//if (autoFormat) setTimeout(formatRun, 100)
 	}
 	useImperativeHandle(ref, () => ({ format: formatRun, }), [])
 
