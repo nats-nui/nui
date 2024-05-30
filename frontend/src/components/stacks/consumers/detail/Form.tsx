@@ -2,25 +2,22 @@ import TitleAccordion from "@/components/accordion/TitleAccordion"
 import IconToggle from "@/components/buttons/IconToggle"
 import ListDialog from "@/components/dialogs/ListDialog"
 import DateTimeInput from "@/components/input/DateTimeInput"
+import MaxBytesCmp from "@/components/input/MaxBytesCmp.tsx"
+import MaxNumberCmp from "@/components/input/MaxNumberCmp.tsx"
+import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx"
 import NumberInput from "@/components/input/NumberInput"
 import TextInput from "@/components/input/TextInput"
-import EditList, { RenderRowBaseProps } from "@/components/lists/EditList"
+import EditList from "@/components/lists/EditList"
 import EditNumberRow from "@/components/rows/EditNumberRow"
 import EditStringRow from "@/components/rows/EditStringRow"
 import StringUpRow from "@/components/rows/StringUpRow"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
-import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
+import { DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import Box from "../../../format/Box"
-import IconButton from "../../../buttons/IconButton"
-import CloseIcon from "../../../../icons/CloseIcon"
 import EditMetadataRow from "../../../rows/EditMetadataRow"
-import MaxNumberCmp from "@/components/input/MaxNumberCmp.tsx";
-import MaxBytesCmp from "@/components/input/MaxBytesCmp.tsx";
-import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx";
 
 
 
@@ -53,7 +50,7 @@ const Form: FunctionComponent<Props> = ({
 	const inRead = state.editState == EDIT_STATE.READ
 	const inNew = state.editState == EDIT_STATE.NEW
 
-	return <div className="lyt-form">
+	return <div className="lyt-form var-dialog">
 
 		<TitleAccordion title="BASE">
 
@@ -267,17 +264,18 @@ const Form: FunctionComponent<Props> = ({
 				label="MAX ACK PENDING"
 				value={consumer.config.maxAckPending}
 				desiredDefault={0}
-				initDefault={null}
+				initDefault={1}
 				onChange={maxAckPending => handlePropChange({ maxAckPending })}
 			/>
 
 			<MaxNumberCmp
 				readOnly={inRead}
 				label="SAMPLE FREQ"
-				value={consumer.config.maxAckPending}
+				value={parseInt(consumer.config.sampleFreq?.length > 0 ? consumer.config.sampleFreq : "0")}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={maxAckPending => handlePropChange({ maxAckPending })}
+				min={1} max={100}
+				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq.toString() })}
 			/>
 
 			<div className="lyt-v">
@@ -309,6 +307,7 @@ const Form: FunctionComponent<Props> = ({
 			/>
 
 			<MaxTimeCmp
+				store={store}
 				readOnly={inRead}
 				label="MAX REQUEST EXPIRES"
 				value={consumer.config.maxExpires}
@@ -317,8 +316,8 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxExpires => handlePropChange({ maxExpires })}
 			/>
 
-
 			<MaxBytesCmp
+				store={store}
 				readOnly={inRead}
 				label="MAX BYTES"
 				value={consumer.config.maxBytes}
@@ -390,7 +389,7 @@ const Form: FunctionComponent<Props> = ({
 		</TitleAccordion>*/}
 
 
-		<TitleAccordion title="ADVANCED" style={{marginBottom: 20}}>
+		<TitleAccordion title="ADVANCED" style={{ marginBottom: 20 }}>
 
 			<MaxNumberCmp
 				readOnly={inRead}
@@ -398,7 +397,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.numReplicas}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={numReplicas => handlePropChange({numReplicas})}
+				onChange={numReplicas => handlePropChange({ numReplicas })}
 			/>
 
 			<MaxNumberCmp
@@ -407,13 +406,13 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.inactiveThreshold}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={inactiveThreshold => handlePropChange({inactiveThreshold})}
+				onChange={inactiveThreshold => handlePropChange({ inactiveThreshold })}
 			/>
 
 			<div className="cmp-h">
 				<IconToggle
 					check={consumer.config.memStorage}
-					onChange={memStorage => handlePropChange({memStorage})}
+					onChange={memStorage => handlePropChange({ memStorage })}
 					readOnly={inRead}
 				/>
 				<div className="lbl-prop">MEM STORAGE</div>
