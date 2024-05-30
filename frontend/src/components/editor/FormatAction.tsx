@@ -21,26 +21,32 @@ const FormatAction: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const storeSa = useStore(store)
+	const state = useStore(store)
 
 	// HOOKs
 
 	// HANDLER
 	const handleOpenDialogFormats = () => store.setFormatsOpen(true)
-	const handleFormat = () => storeSa.editorRef.format()
+	const handleFormat = () => {
+		store.setAutoFormat(!autoFormat)
+		// bisogna fare questo perche' l'update mi cambia editorRef che quindi punta ad un ref sbagliato
+		if (!autoFormat) setTimeout(state.editorRef.format, 300)
+	}
 
 	// RENDER
-	const formatLabel = storeSa.format?.toUpperCase() ?? ""
+	const formatLabel = state.format?.toUpperCase() ?? ""
+	const autoFormat = store.getAutoFormat()
 
 	return <>
-		<CopyButton value={()=>store.getEditorText()} />
+		<CopyButton value={() => store.getEditorText()} />
 		<TooltipWrapCmp content="FORMAT">
 			<IconButton effect
+				select={autoFormat}
 				onClick={handleFormat}
 			><FormatIcon /></IconButton>
 		</TooltipWrapCmp>
 		<Button
-			select={storeSa.formatsOpen}
+			select={state.formatsOpen}
 			children={formatLabel}
 			onClick={handleOpenDialogFormats}
 		/>

@@ -29,6 +29,7 @@ const setup = {
 		fixedViews: <[CnnListStore?, ViewLogStore?, AboutStore?]>null,
 		zenCard: <ViewStore>null,
 		zenOpen: false,
+		/** indica quale tipo di CARD era aperta precedentemente  */
 		cardOptions: <{ [type: string]: DOC_TYPE }>{},
 		drawerPosition: DRAWER_POSITION.RIGHT,
 	},
