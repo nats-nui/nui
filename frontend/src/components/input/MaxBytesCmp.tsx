@@ -21,6 +21,8 @@ interface Props {
 	value: number
 	label?: string
 	readOnly?: boolean
+	desiredDefault?: number
+	initDefault?: number
 	onChange?: (valueNew: number) => void
 }
 
@@ -30,6 +32,8 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 	label,
 	readOnly,
 	onChange,
+   	desiredDefault = -1,
+   	initDefault = 0,
 }) => {
 
 	// STORE
@@ -42,11 +46,11 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 		const maxBytes = valueToBytes(valueNew, unit)
 		onChange?.(maxBytes)
 	}
-	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
 	const handleUnitChange = (index: number) => setUnit(Object.values(BYTE)[index])
 
 	// RENDER
-	const isEnabled = value != -1
+	const isEnabled = value != null && value != desiredDefault
 	const valueShow = bytesToValue(value, unit)
 
 	return <div className="lyt-v">
