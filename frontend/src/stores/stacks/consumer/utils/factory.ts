@@ -1,6 +1,6 @@
 import { buildStore } from "@/stores/docs/utils/factory";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
-import { ConsumerConfig, StreamConsumer } from "@/types/Consumer";
+import { AckPolicy, ConsumerConfig, DeliverPolicy, ReplayPolicy, StreamConsumer } from "@/types/Consumer";
 import { StreamInfo } from "@/types/Stream";
 import { ConsumersState, ConsumersStore } from "..";
 import { VIEW_SIZE } from "../../utils";
@@ -45,8 +45,8 @@ export function buildConsumerNew(connectionId: string, streamName: string) {
 
 export function newConsumer(): StreamConsumer {
 	return {
-		streamName: "",
 		name: "",
+		streamName: "",
 		created: null,
 		config: newConsumerConfig(),
 		delivered: null,
@@ -62,32 +62,46 @@ export function newConsumer(): StreamConsumer {
 
 export function newConsumerConfig(): ConsumerConfig {
 	return {
-		durableName: "",
+
+		////// BASIC INFO
 		name: "",
+		durableName: "",
 		description: "",
-		deliverPolicy: null,
+		replayPolicy: ReplayPolicy.ReplayInstantPolicy,
+
+		////// DELIVERY POLICY
+		deliverPolicy: DeliverPolicy.DeliverAllPolicy,
 		optStartSeq: 0,
 		optStartTime: null,
-		ackPolicy: null,
+		filterSubject: "",
+		filterSubjects: [],
+		rateLimitBps: 0,
+
+		////// ACK POLICY
+		ackPolicy: AckPolicy.AckAllPolicy,
 		ackWait: 0,
 		maxDeliver: 0,
-		backoff: [],
-		filterSubject: "",
-		replayPolicy: null,
-		rateLimitBps: 0,
-		sampleFreq: "",
 		maxWaiting: 0,
 		maxAckPending: 0,
-		flowControl: false,
-		idleHeartbeat: 0,
-		headersOnly: false,
+		sampleFreq: "",
+		backoff: [],
+
+		//// PULL OPTIONS
 		maxBatch: 0,
 		maxExpires: 0,
 		maxBytes: 0,
+
+		/// PUSH OPTIONS (legacy)
 		deliverSubject: "",
 		deliverGroup: "",
+		flowControl: false,
+		idleHeartbeat: 0,
+		headersOnly: false,
+
+		/// ADVANCED
 		inactiveThreshold: 0,
 		numReplicas: 0,
 		memStorage: false,
+		metadata: {}
 	}
 }

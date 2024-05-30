@@ -2,14 +2,14 @@ import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
 import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
+import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { buildConsumer, buildConsumerNew } from "./utils/factory"
-import { findAll } from "../../docs/utils/manage"
 import { GetAllCards } from "../../docs/cards"
 import { DOC_TYPE } from "../../docs/types"
+import { findAll } from "../../docs/utils/manage"
 import { MESSAGE_TYPE } from "../../log/utils"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildConsumer, buildConsumerNew } from "./utils/factory"
 
 
 

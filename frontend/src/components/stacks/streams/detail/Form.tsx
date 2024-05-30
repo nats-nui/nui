@@ -76,7 +76,6 @@ const Form: FunctionComponent<Props> = ({
 			<TitleAccordion title="STATS">
 
 				<div className="lyt-h-props">
-
 					<div className="item">
 						<div className="lbl-prop">COUNT</div>
 						<div className="lbl-readonly">{state.messages}</div>

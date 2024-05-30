@@ -27,35 +27,83 @@ export interface StreamConsumer {
 	pushBound?: boolean
 }
 
+
+
 export interface ConsumerConfig {
-	durableName?: string; // The name of the durable subscription - Not editable
+
+	////// BASIC INFO
+
 	name?: string; // The name of the consumer - Not editable
+	durableName?: string; // The name of the durable subscription - Not editable
 	description?: string; // A description for the consumer - Editable
-	deliverPolicy: DeliverPolicy; // The policy for message delivery - Not editable
-	optStartSeq?: number; // The sequence number to start delivering messages from - Not editable
-	optStartTime?: any; // The time to start delivering messages from - Not editable
-	ackPolicy: AckPolicy; // The policy for message acknowledgement - Not editable
-	ackWait?: number; // The time to wait for message acknowledgement - Editable
-	maxDeliver?: number; // The maximum number of times a message will be delivered - Editable
-	backoff?: number[]; // The backoff strategy for redelivery - Editable
-	filterSubject?: string; // The subject to filter on for message delivery - Not editable
+	// default Instant
 	replayPolicy: ReplayPolicy; // The policy for message replay - Not editable
+
+
+	////// DELIVERY POLICY
+
+	// default: All
+	deliverPolicy: DeliverPolicy; // The policy for message delivery - Not editable
+	// only show in "DeliverByStartSequencePolicy", default 0
+	optStartSeq?: number; // The sequence number to start delivering messages from - Not editable
+	// only show in "DeliverByStartTimePolicy" - same format and behaviour as the stream time filter
+	optStartTime?: any; // The time to start delivering messages from - Not editable
+	filterSubjects?: string[]; // Array of subject to filter on for message delivery - Not editable
+	filterSubject?: string; // The subject to filter on for message delivery - Not editable
+	// default: checkbox - default 0  
 	rateLimitBps?: number; // The rate limit in bytes per second for message delivery - Editable
-	sampleFreq?: string; // The sampling frequency for metrics - Editable
+
+
+	////// ACK POLICY
+
+	ackPolicy: AckPolicy; // The policy for message acknowledgement - Not editable
+	// checkbox with time interval (like streams time intervals) - default 0
+	ackWait?: number; // The time to wait for message acknowledgement - Editable
+	// what is the default value?
+	maxDeliver?: number; // The maximum number of times a message will be delivered - Editable
+	// default: checkbox - default 0 
 	maxWaiting?: number; // The maximum number of waiting messages - Editable
+	// default: checkbox - default 0 
 	maxAckPending?: number; // The maximum number of unacknowledged messages - Editable
-	flowControl?: boolean; // Whether flow control is enabled - Editable
-	idleHeartbeat?: number; // The idle heartbeat interval - Editable
-	headersOnly?: boolean; // Whether to deliver only the headers of the message - Editable
+	// default checkbox - 0 (from 0 to 100)
+	sampleFreq?: string; // The sampling frequency for metrics - Editable
+	backoff?: number[]; // The backoff strategy for redelivery - Editable
+
+
+	//// PULL OPTIONS
+
+	// checkbox - default 0
 	maxBatch?: number; // The maximum batch size for message delivery - Editable
+	// checkbox - default 0
 	maxExpires?: number; // The maximum time duration (nanoseconds) a message can exist - Editable
+	// checkbox - default 0
 	maxBytes?: number; // The maximum size of a message in bytes - Editable
+
+
+	/// PUSH OPTIONS (legacy)
+
+	//default ""
 	deliverSubject?: string; // The subject to deliver the messages to - Not editable
+	//default ""
 	deliverGroup?: string; // The group to deliver the messages to - Not editable
+	// what is the default value?
+	flowControl?: boolean; // Whether flow control is enabled - Editable
+	// default 0 - checkbox
+	idleHeartbeat?: number; // The idle heartbeat interval - Editable
+	// what is the default value?
+	headersOnly?: boolean; // Whether to deliver only the headers of the message - Editable
+
+
+	/// ADVANCED
+
 	inactiveThreshold?: number; // The threshold for marking a consumer as inactive - Editable
+	// checkbox - default 0
 	numReplicas: number; // The number of replicas for the consumer - Not editable
+	// checkbox - default off
 	memStorage?: boolean; // Whether to use memory storage - Not editable
+	metadata?: { [key: string]: string } // hash of string -> string to add custom metadata to consumer
 }
+
 
 export enum DeliverPolicy {
 	DeliverAllPolicy = "all",

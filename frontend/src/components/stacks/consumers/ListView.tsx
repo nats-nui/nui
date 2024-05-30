@@ -6,9 +6,10 @@ import { ConsumersStore } from "@/stores/stacks/consumer"
 import { StreamConsumer } from "@/types/Consumer"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import Button from "../../buttons/Button"
-import { DOC_TYPE, EDIT_STATE } from "../../../types"
 import { ConsumerStore } from "../../../stores/stacks/consumer/detail"
+import { DOC_TYPE, EDIT_STATE } from "../../../types"
+import Button from "../../buttons/Button"
+import AlertDialog from "../../dialogs/AlertDialog"
 
 
 
@@ -32,6 +33,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	// HANDLER
 	const handleSelect = (consumer: StreamConsumer) => consumersSo.select(consumer.name)
 	const handleNew = () => consumersSo.create()
+	const handleDelete = () => consumersSo.delete()
 
 	// RENDER
 	const consumers = consumersSo.getFiltered() ?? []
@@ -49,6 +51,11 @@ const ConsumersListView: FunctionComponent<Props> = ({
 				value={consumersSa.textSearch}
 				onChange={text => consumersSo.setTextSearch(text)}
 			/>
+			{!!selected && <Button
+				children="DELETE"
+				onClick={handleDelete}
+			/>}
+			{!!selected && <div> | </div>}
 			<Button
 				children="NEW"
 				select={isNewSelect}
@@ -70,6 +77,9 @@ const ConsumersListView: FunctionComponent<Props> = ({
 			getId={(consumer: StreamConsumer) => consumer.name}
 			singleRow={consumersSo.getWidth() > 430}
 		/>
+
+		<AlertDialog store={consumersSo} />
+
 	</FrameworkCard>
 }
 

@@ -20,7 +20,7 @@ function  create(connectionId: string, streamName:string, consumerConfig: Consum
 
 /** UPDATE */
 function  update(connectionId: string, streamName:string, consumerName:string, consumerConfig: ConsumerConfig, opt?: CallOptions): Promise<StreamConsumer> {
-	return ajax.put(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, consumerConfig, opt)
+	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, consumerConfig, opt)
 }
 
 /** DELETE */

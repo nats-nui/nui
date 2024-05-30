@@ -1,17 +1,23 @@
 import TitleAccordion from "@/components/accordion/TitleAccordion"
+import IconToggle from "@/components/buttons/IconToggle"
+import ListDialog from "@/components/dialogs/ListDialog"
+import DateTimeInput from "@/components/input/DateTimeInput"
+import NumberInput from "@/components/input/NumberInput"
+import TextInput from "@/components/input/TextInput"
+import EditList, { RenderRowBaseProps } from "@/components/lists/EditList"
+import EditNumberRow from "@/components/rows/EditNumberRow"
+import EditStringRow from "@/components/rows/EditStringRow"
+import StringUpRow from "@/components/rows/StringUpRow"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
+import { EDIT_STATE } from "@/types"
+import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import { EDIT_STATE } from "../../../../types"
-import TextInput from "../../../input/TextInput"
-import ListDialog from "../../../dialogs/ListDialog"
-import { AckPolicy, DeliverPolicy, ReplayPolicy } from "../../../../types/Consumer"
-import StringUpRow from "../../../rows/StringUpRow"
-import NumberInput from "../../../input/NumberInput"
-import EditList from "../../../lists/EditList"
-import EditNumberRow from "../../../rows/EditNumberRow"
-import IconToggle from "../../../buttons/IconToggle"
+import Box from "../../../format/Box"
+import IconButton from "../../../buttons/IconButton"
+import CloseIcon from "../../../../icons/CloseIcon"
+import EditMetadataRow from "../../../rows/EditMetadataRow"
 
 
 
@@ -31,7 +37,13 @@ const Form: FunctionComponent<Props> = ({
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => store.setConsumerConfig({ ...state.consumer.config, ...prop })
 	const handleBackoffChange = (backoff: number[]) => store.setConsumerConfig({ ...state.consumer.config, backoff })
-
+	const handleMetadataChange = (tuples: [string, string][]) => {
+		const metadata = tuples.reduce((acc, [key, value]) => {
+			acc[key] = value;
+			return acc;
+		}, {} as { [key: string]: string });
+		store.setConsumerConfig({ ...state.consumer.config, metadata })
+	}
 	// RENDER
 	const consumer = state.consumer
 	if (!consumer?.config) return null
@@ -70,6 +82,18 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
+			<div className="lyt-v">
+				<div className="lbl-prop">REPLAY POLICY</div>
+				<ListDialog width={80}
+					store={store}
+					select={Object.values(ReplayPolicy).indexOf(consumer.config.replayPolicy ?? ReplayPolicy.ReplayInstantPolicy)}
+					items={Object.values(ReplayPolicy)}
+					RenderRow={StringUpRow}
+					readOnly={inRead || !inNew}
+					onSelect={index => handlePropChange({ replayPolicy: Object.values(ReplayPolicy)[index] })}
+				/>
+			</div>
+
 			{inRead && (
 				<div className="lyt-v">
 					<div className="lbl-prop">CREATION DATETIME</div>
@@ -79,26 +103,27 @@ const Form: FunctionComponent<Props> = ({
 
 		</TitleAccordion>
 
+
 		{inRead && <>
 			<TitleAccordion title="MESSAGES">
 
 				<div className="lyt-v">
-					<div className="lbl-prop">WAITING COUNT</div>
+					<div className="lbl-prop">WAITING</div>
 					<div className="lbl-readonly">{consumer.numWaiting ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">PENDING COUNT</div>
+					<div className="lbl-prop">PENDING</div>
 					<div className="lbl-readonly">{consumer.numPending ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">ACKS PENDING COUNT</div>
+					<div className="lbl-prop">ACKS PENDING</div>
 					<div className="lbl-readonly">{consumer.numAckPending ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">REDELIVERED COUNT</div>
+					<div className="lbl-prop">REDELIVERED</div>
 					<div className="lbl-readonly">{consumer.numRedelivered ?? "-"}</div>
 				</div>
 
@@ -143,7 +168,9 @@ const Form: FunctionComponent<Props> = ({
 			</TitleAccordion>
 		</>}
 
-		<TitleAccordion title="CONFIG">
+
+
+		<TitleAccordion title="DELIVERY POLICY">
 
 			<div className="lyt-v">
 				<div className="lbl-prop">DELIVER POLICY</div>
@@ -157,32 +184,63 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
+			{consumer.config.deliverPolicy == DeliverPolicy.DeliverByStartSequencePolicy && (
+				<div className="lyt-v">
+					<div className="lbl-prop">OPT START SEQ</div>
+					<NumberInput
+						value={consumer.config.optStartSeq}
+						onChange={optStartSeq => handlePropChange({ optStartSeq })}
+						readOnly={inRead || !inNew}
+					/>
+				</div>
+			)}
+
+			{consumer.config.deliverPolicy == DeliverPolicy.DeliverByStartTimePolicy && (
+				<div className="lyt-v">
+					<div className="lbl-prop">OPT START TIME</div>
+					<DateTimeInput
+						value={consumer.config.optStartTime}
+						onChange={optStartTime => handlePropChange({ optStartTime })}
+					/>
+				</div>
+			)}
+
 			<div className="lyt-v">
-				<div className="lbl-prop">MAX DELIVER</div>
+				<div className="lbl-prop">FILTER SUBJECTS</div>
+				<EditList<string>
+					items={consumer.config.filterSubjects}
+					onItemsChange={filterSubjects => handlePropChange({ filterSubjects })}
+					placeholder="ex. orders.* or telemetry.>"
+					readOnly={inRead || !inNew}
+					onNewItem={() => ""}
+					fnIsVoid={i => !i || i.trim().length == 0}
+					RenderRow={EditStringRow}
+				/>
+			</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">FILTER SUBJECT</div>
+				<TextInput
+					value={consumer.config.filterSubject}
+					onChange={filterSubject => handlePropChange({ filterSubject })}
+					readOnly={inRead || !inNew}
+				/>
+			</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">RATE LIMIT BPS</div>
 				<NumberInput
-					value={consumer.config.maxDeliver}
-					onChange={maxDeliver => handlePropChange({ maxDeliver })}
+					value={consumer.config.rateLimitBps}
+					onChange={rateLimitBps => handlePropChange({ rateLimitBps })}
 					readOnly={inRead}
 				/>
 			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">OPT START SEQ</div>
-				<NumberInput
-					value={consumer.config.optStartSeq}
-					onChange={optStartSeq => handlePropChange({ optStartSeq })}
-					readOnly={inRead || !inNew}
-				/>
-			</div>
+		</TitleAccordion>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">OPT START TIME</div>
-				<NumberInput
-					value={consumer.config.optStartTime}
-					onChange={optStartTime => handlePropChange({ optStartTime })}
-					readOnly={inRead || !inNew}
-				/>
-			</div>
+
+
+		<TitleAccordion title="ACK POLICY">
 
 			<div className="lyt-v">
 				<div className="lbl-prop">ACK POLICY</div>
@@ -206,6 +264,15 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
+				<div className="lbl-prop">MAX DELIVER</div>
+				<NumberInput
+					value={consumer.config.maxDeliver}
+					onChange={maxDeliver => handlePropChange({ maxDeliver })}
+					readOnly={inRead}
+				/>
+			</div>
+
+			<div className="lyt-v">
 				<div className="lbl-prop">MAX WAITING</div>
 				<NumberInput
 					value={consumer.config.maxWaiting}
@@ -219,6 +286,15 @@ const Form: FunctionComponent<Props> = ({
 				<NumberInput
 					value={consumer.config.maxAckPending}
 					onChange={maxAckPending => handlePropChange({ maxAckPending })}
+					readOnly={inRead}
+				/>
+			</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">SAMPLE FREQ</div>
+				<TextInput
+					value={consumer.config.sampleFreq}
+					onChange={sampleFreq => handlePropChange({ sampleFreq })}
 					readOnly={inRead}
 				/>
 			</div>
@@ -236,68 +312,59 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">FILTER SUBJECT</div>
-				<TextInput
-					value={consumer.config.filterSubject}
-					onChange={filterSubject => handlePropChange({ filterSubject })}
-					readOnly={inRead || !inNew}
-				/>
-			</div>
+		</TitleAccordion>
+
+
+
+		<TitleAccordion title="PULL OPTIONS">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">FILTER SUBJECT</div>
-				<TextInput
-					value={consumer.config.filterSubject}
-					onChange={filterSubject => handlePropChange({ filterSubject })}
-					readOnly={inRead || !inNew}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">REPLAY POLICY</div>
-				<ListDialog width={80}
-					store={store}
-					select={Object.values(ReplayPolicy).indexOf(consumer.config.replayPolicy ?? ReplayPolicy.ReplayInstantPolicy)}
-					items={Object.values(ReplayPolicy)}
-					RenderRow={StringUpRow}
-					readOnly={inRead || !inNew}
-					onSelect={index => handlePropChange({ replayPolicy: Object.values(ReplayPolicy)[index] })}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">RATE LIMIT BPS</div>
+				<div className="lbl-prop">MAX BATCH</div>
 				<NumberInput
-					value={consumer.config.rateLimitBps}
-					onChange={rateLimitBps => handlePropChange({ rateLimitBps })}
+					value={consumer.config.maxBatch}
+					onChange={maxBatch => handlePropChange({ maxBatch })}
 					readOnly={inRead}
 				/>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">SAMPLE FREQ</div>
+				<div className="lbl-prop">MAX EXPIRES</div>
+				<NumberInput
+					value={consumer.config.maxExpires}
+					onChange={maxExpires => handlePropChange({ maxExpires })}
+					readOnly={inRead}
+				/>
+			</div>
+
+			<div className="lyt-v">
+				<div className="lbl-prop">MAX BYTES</div>
+				<NumberInput
+					value={consumer.config.maxBytes}
+					onChange={maxBytes => handlePropChange({ maxBytes })}
+					readOnly={inRead}
+				/>
+			</div>
+
+		</TitleAccordion>
+
+
+
+		<TitleAccordion title="PULL OPTIONS (legacy)">
+
+			<div className="lyt-v">
+				<div className="lbl-prop">DELIVER SUBJECT</div>
 				<TextInput
-					value={consumer.config.sampleFreq}
-					onChange={sampleFreq => handlePropChange({ sampleFreq })}
+					value={consumer.config.deliverSubject}
+					onChange={deliverSubject => handlePropChange({ deliverSubject })}
 					readOnly={inRead}
 				/>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">MAX WAITING</div>
-				<NumberInput
-					value={consumer.config.maxWaiting}
-					onChange={maxWaiting => handlePropChange({ maxWaiting })}
-					readOnly={inRead}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX ACK PENDING</div>
-				<NumberInput
-					value={consumer.config.maxAckPending}
-					onChange={maxAckPending => handlePropChange({ maxAckPending })}
+				<div className="lbl-prop">DELIVER GROUP</div>
+				<TextInput
+					value={consumer.config.deliverGroup}
+					onChange={deliverGroup => handlePropChange({ deliverGroup })}
 					readOnly={inRead}
 				/>
 			</div>
@@ -329,50 +396,11 @@ const Form: FunctionComponent<Props> = ({
 				<div className="lbl-prop">HEADERS ONLY</div>
 			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX BATCH</div>
-				<NumberInput
-					value={consumer.config.maxBatch}
-					onChange={maxBatch => handlePropChange({ maxBatch })}
-					readOnly={inRead}
-				/>
-			</div>
+		</TitleAccordion>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX EXPIRES</div>
-				<NumberInput
-					value={consumer.config.maxExpires}
-					onChange={maxExpires => handlePropChange({ maxExpires })}
-					readOnly={inRead}
-				/>
-			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX BYTES</div>
-				<NumberInput
-					value={consumer.config.maxBytes}
-					onChange={maxBytes => handlePropChange({ maxBytes })}
-					readOnly={inRead}
-				/>
-			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">DELIVER SUBJECT</div>
-				<TextInput
-					value={consumer.config.deliverSubject}
-					onChange={deliverSubject => handlePropChange({ deliverSubject })}
-					readOnly={inRead}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">DELIVER GROUP</div>
-				<TextInput
-					value={consumer.config.deliverGroup}
-					onChange={deliverGroup => handlePropChange({ deliverGroup })}
-					readOnly={inRead}
-				/>
-			</div>
+		<TitleAccordion title="ADVANCED" style={{marginBottom: 20}}>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">INACTIVE THRESHOLD</div>
@@ -401,9 +429,61 @@ const Form: FunctionComponent<Props> = ({
 				<div className="lbl-prop">MEM STORAGE</div>
 			</div>
 
+			<div className="lyt-v">
+				<div className="lbl-prop">METADATA</div>
+				<EditList<[string, string]>
+					items={!!consumer.config.metadata ? Object.entries(consumer.config.metadata) : []}
+					onItemsChange={handleMetadataChange}
+					readOnly={inRead}
+					placeholder="ex. 10"
+					onNewItem={() => ["", ""]}
+					fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
+					RenderRow={EditMetadataRow}
+				/>
+			</div>
+
 		</TitleAccordion>
 
 	</div>
 }
 
 export default Form
+
+
+
+// const MetadataRow: FunctionComponent<RenderRowBaseProps<[string, string]>> = ({
+// 	item,
+// 	isSelect,
+// 	readOnly = false,
+// 	placeholder,
+// 	onChange,
+// 	onSelect,
+// }) => {
+
+
+// 	const handleKeyChange = (key: string) => {
+// 		onChange([key, item?.[1] ?? ""])
+// 	}
+// 	const handleValueChange = (value: string) => {
+// 		onChange([item?.[0] ?? "", value])
+// 	}
+// 	const handleDelete = () => onChange?.(null)
+
+// 	return <Box style={{ display: "flex", alignItems: "center", margin: "3px 0px" }}
+// 		enterRender={!readOnly && 
+// 		<IconButton onClick={handleDelete} >
+// 			<CloseIcon />
+// 		</IconButton>}
+// 	>
+// 		<TextInput style={{ flex: 1}}
+// 		focus={isSelect}
+// 			value={item?.[0] ?? ""} 
+// 			onChange={handleKeyChange} 
+// 		/>
+// 		<div>:</div>
+// 		<TextInput style={{ flex: 2}}
+// 			value={item?.[1] ?? ""} 
+// 			onChange={handleValueChange} 
+// 		/>
+// 	</Box>
+// }

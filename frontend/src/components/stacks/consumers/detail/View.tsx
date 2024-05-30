@@ -2,10 +2,9 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import Form from "./Form"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
 import { EDIT_STATE } from "../../../../types"
 import ActionsCmp from "./Actions"
+import Form from "./Form"
 
 
 
