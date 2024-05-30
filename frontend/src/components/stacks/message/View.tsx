@@ -1,6 +1,6 @@
 import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import EditorCode from "@/components/editor"
+import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
@@ -8,6 +8,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import cls from "./View.module.css"
+
 
 
 interface Props {
@@ -25,9 +26,11 @@ const MessageView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+	const refEditor = (ref:EditorRefProps) => msgSa.editorRef = ref
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
+	const autoFormat = msgSo.getAutoFormat()
 
 	return <FrameworkCard
 		store={msgSo}
@@ -47,8 +50,9 @@ const MessageView: FunctionComponent<Props> = ({
 				</span>
 			</div>
 
-			<EditorCode autoFormat readOnly
-				ref={ref => msgSa.editorRef = ref}
+			<EditorCode readOnly
+				autoFormat={autoFormat}
+				ref={refEditor}
 				format={msgSa.format}
 				value={msgSo.getEditorText()}
 			/>
