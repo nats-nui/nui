@@ -18,6 +18,9 @@ import Box from "../../../format/Box"
 import IconButton from "../../../buttons/IconButton"
 import CloseIcon from "../../../../icons/CloseIcon"
 import EditMetadataRow from "../../../rows/EditMetadataRow"
+import MaxNumberCmp from "@/components/input/MaxNumberCmp.tsx";
+import MaxBytesCmp from "@/components/input/MaxBytesCmp.tsx";
+import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx";
 
 
 
@@ -226,77 +229,56 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">RATE LIMIT BPS</div>
-				<NumberInput
-					value={consumer.config.rateLimitBps}
-					onChange={rateLimitBps => handlePropChange({ rateLimitBps })}
-					readOnly={inRead}
-				/>
-			</div>
-
 		</TitleAccordion>
 
 
 
 		<TitleAccordion title="ACK POLICY">
 
-			<div className="lyt-v">
-				<div className="lbl-prop">ACK POLICY</div>
-				<ListDialog width={80}
-					store={store}
-					select={Object.values(AckPolicy).indexOf(consumer.config.ackPolicy ?? AckPolicy.AckAllPolicy)}
-					items={Object.values(AckPolicy)}
-					RenderRow={StringUpRow}
-					readOnly={inRead || !inNew}
-					onSelect={index => handlePropChange({ ackPolicy: Object.values(AckPolicy)[index] })}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="ACK WAIT"
+				value={consumer.config.ackWait}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={ackWait => handlePropChange({ ackWait })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">ACK WAIT</div>
-				<NumberInput
-					value={consumer.config.ackWait}
-					onChange={ackWait => handlePropChange({ ackWait })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="MAX DELIVER"
+				value={consumer.config.maxDeliver}
+				desiredDefault={-1}
+				initDefault={1}
+				onChange={maxDeliver => handlePropChange({ maxDeliver })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX DELIVER</div>
-				<NumberInput
-					value={consumer.config.maxDeliver}
-					onChange={maxDeliver => handlePropChange({ maxDeliver })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="MAX WAITING"
+				value={consumer.config.maxWaiting}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={maxWaiting => handlePropChange({ maxWaiting })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX WAITING</div>
-				<NumberInput
-					value={consumer.config.maxWaiting}
-					onChange={maxWaiting => handlePropChange({ maxWaiting })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="MAX ACK PENDING"
+				value={consumer.config.maxAckPending}
+				desiredDefault={0}
+				initDefault={null}
+				onChange={maxAckPending => handlePropChange({ maxAckPending })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX ACK PENDING</div>
-				<NumberInput
-					value={consumer.config.maxAckPending}
-					onChange={maxAckPending => handlePropChange({ maxAckPending })}
-					readOnly={inRead}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="lbl-prop">SAMPLE FREQ</div>
-				<TextInput
-					value={consumer.config.sampleFreq}
-					onChange={sampleFreq => handlePropChange({ sampleFreq })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="SAMPLE FREQ"
+				value={consumer.config.maxAckPending}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={maxAckPending => handlePropChange({ maxAckPending })}
+			/>
 
 			<div className="lyt-v">
 				<div className="lbl-prop">BACKOFF</div>
@@ -317,45 +299,46 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="PULL OPTIONS">
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX BATCH</div>
-				<NumberInput
-					value={consumer.config.maxBatch}
-					onChange={maxBatch => handlePropChange({ maxBatch })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="MAX BATCH"
+				value={consumer.config.maxBatch}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={maxBatch => handlePropChange({ maxBatch })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX EXPIRES</div>
-				<NumberInput
-					value={consumer.config.maxExpires}
-					onChange={maxExpires => handlePropChange({ maxExpires })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxTimeCmp
+				readOnly={inRead}
+				label="MAX REQUEST EXPIRES"
+				value={consumer.config.maxExpires}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={maxExpires => handlePropChange({ maxExpires })}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">MAX BYTES</div>
-				<NumberInput
-					value={consumer.config.maxBytes}
-					onChange={maxBytes => handlePropChange({ maxBytes })}
-					readOnly={inRead}
-				/>
-			</div>
+
+			<MaxBytesCmp
+				readOnly={inRead}
+				label="MAX BYTES"
+				value={consumer.config.maxBytes}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={maxBytes => handlePropChange({ maxBytes })}
+			/>
 
 		</TitleAccordion>
 
 
 
-		<TitleAccordion title="PULL OPTIONS (legacy)">
-
+		{/*<TitleAccordion title="PUSH OPTIONS (legacy)">
+			<div className="lbl-prop">Read only section</div>
 			<div className="lyt-v">
 				<div className="lbl-prop">DELIVER SUBJECT</div>
 				<TextInput
 					value={consumer.config.deliverSubject}
 					onChange={deliverSubject => handlePropChange({ deliverSubject })}
-					readOnly={inRead}
+					readOnly={true}
 				/>
 			</div>
 
@@ -364,7 +347,7 @@ const Form: FunctionComponent<Props> = ({
 				<TextInput
 					value={consumer.config.deliverGroup}
 					onChange={deliverGroup => handlePropChange({ deliverGroup })}
-					readOnly={inRead}
+					readOnly={true}
 				/>
 			</div>
 
@@ -372,7 +355,7 @@ const Form: FunctionComponent<Props> = ({
 				<IconToggle
 					check={consumer.config.flowControl}
 					onChange={flowControl => handlePropChange({ flowControl })}
-					readOnly={inRead}
+					readOnly={true}
 				/>
 				<div className="lbl-prop">FLOW CONTROL</div>
 			</div>
@@ -382,7 +365,7 @@ const Form: FunctionComponent<Props> = ({
 				<NumberInput
 					value={consumer.config.idleHeartbeat}
 					onChange={idleHeartbeat => handlePropChange({ idleHeartbeat })}
-					readOnly={inRead}
+					readOnly={true}
 				/>
 			</div>
 
@@ -390,39 +373,47 @@ const Form: FunctionComponent<Props> = ({
 				<IconToggle
 					check={consumer.config.headersOnly}
 					onChange={headersOnly => handlePropChange({ headersOnly })}
-					readOnly={inRead}
+					readOnly={true}
 				/>
 				<div className="lbl-prop">HEADERS ONLY</div>
 			</div>
 
-		</TitleAccordion>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="RATE LIMIT BPS"
+				value={consumer.config.ackWait}
+				desiredDefault={0}
+				initDefault={100}
+				onChange={rateLimitBps => handlePropChange({ rateLimitBps })}
+			/>
 
+		</TitleAccordion>*/}
 
 
 		<TitleAccordion title="ADVANCED" style={{marginBottom: 20}}>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">INACTIVE THRESHOLD</div>
-				<NumberInput
-					value={consumer.config.inactiveThreshold}
-					onChange={inactiveThreshold => handlePropChange({ inactiveThreshold })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="NUM REPLICAS"
+				value={consumer.config.numReplicas}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={numReplicas => handlePropChange({numReplicas})}
+			/>
 
-			<div className="lyt-v">
-				<div className="lbl-prop">NUM REPLICAS</div>
-				<NumberInput
-					value={consumer.config.numReplicas}
-					onChange={numReplicas => handlePropChange({ numReplicas })}
-					readOnly={inRead}
-				/>
-			</div>
+			<MaxNumberCmp
+				readOnly={inRead}
+				label="INACTIVE THRESHOLD"
+				value={consumer.config.inactiveThreshold}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={inactiveThreshold => handlePropChange({inactiveThreshold})}
+			/>
 
 			<div className="cmp-h">
 				<IconToggle
 					check={consumer.config.memStorage}
-					onChange={memStorage => handlePropChange({ memStorage })}
+					onChange={memStorage => handlePropChange({memStorage})}
 					readOnly={inRead}
 				/>
 				<div className="lbl-prop">MEM STORAGE</div>
