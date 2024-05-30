@@ -275,7 +275,7 @@ const Form: FunctionComponent<Props> = ({
 				desiredDefault={0}
 				initDefault={1}
 				min={1} max={100}
-				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq.toString() })}
+				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq == 0 ? "" : sampleFreq.toString() })}
 			/>
 
 			<div className="lyt-v">
