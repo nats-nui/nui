@@ -80,7 +80,7 @@ export function newConsumerConfig(): ConsumerConfig {
 		////// ACK POLICY
 		ackPolicy: AckPolicy.AckAllPolicy,
 		ackWait: 0,
-		maxDeliver: 0,
+		maxDeliver: -1,
 		maxWaiting: 0,
 		maxAckPending: 0,
 		sampleFreq: "",
