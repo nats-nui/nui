@@ -239,7 +239,7 @@ const Form: FunctionComponent<Props> = ({
 							items={Object.values(AckPolicy)}
 							RenderRow={StringUpRow}
 							readOnly={inRead || !inNew}
-							onSelect={index => handlePropChange({deliverPolicy: Object.values(AckPolicy)[index]})}
+							onSelect={index => handlePropChange({ackPolicy: Object.values(AckPolicy)[index]})}
 				/>
 			</div>
 
