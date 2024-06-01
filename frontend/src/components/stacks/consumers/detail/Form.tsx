@@ -13,7 +13,7 @@ import EditStringRow from "@/components/rows/EditStringRow"
 import StringUpRow from "@/components/rows/StringUpRow"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
-import {AckPolicy, DeliverPolicy, ReplayPolicy} from "@/types/Consumer"
+import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -37,6 +37,14 @@ const Form: FunctionComponent<Props> = ({
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => store.setConsumerConfig({ ...state.consumer.config, ...prop })
 	const handleBackoffChange = (backoff: number[]) => store.setConsumerConfig({ ...state.consumer.config, backoff })
+	const handleDeliverPolicyChange = (index: number) => {
+		const deliverPolicy = Object.values(DeliverPolicy)[index]
+		if (deliverPolicy == DeliverPolicy.DeliverAllPolicy) {
+			handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null })
+		} else {
+			handlePropChange({ deliverPolicy })
+		}
+	}
 	const handleMetadataChange = (tuples: [string, string][]) => {
 		const metadata = tuples.reduce((acc, [key, value]) => {
 			acc[key] = value;
@@ -179,7 +187,7 @@ const Form: FunctionComponent<Props> = ({
 					items={Object.values(DeliverPolicy)}
 					RenderRow={StringUpRow}
 					readOnly={inRead || !inNew}
-					onSelect={index => handlePropChange({ deliverPolicy: Object.values(DeliverPolicy)[index] })}
+					onSelect={handleDeliverPolicyChange}
 				/>
 			</div>
 
@@ -234,12 +242,12 @@ const Form: FunctionComponent<Props> = ({
 			<div className="lyt-v">
 				<div className="lbl-prop">ACK POLICY</div>
 				<ListDialog width={150}
-							store={store}
-							select={Object.values(AckPolicy).indexOf(consumer.config.ackPolicy ?? AckPolicy.AckAllPolicy)}
-							items={Object.values(AckPolicy)}
-							RenderRow={StringUpRow}
-							readOnly={inRead || !inNew}
-							onSelect={index => handlePropChange({ackPolicy: Object.values(AckPolicy)[index]})}
+					store={store}
+					select={Object.values(AckPolicy).indexOf(consumer.config.ackPolicy ?? AckPolicy.AckAllPolicy)}
+					items={Object.values(AckPolicy)}
+					RenderRow={StringUpRow}
+					readOnly={inRead || !inNew}
+					onSelect={index => handlePropChange({ ackPolicy: Object.values(AckPolicy)[index] })}
 				/>
 			</div>
 
@@ -249,7 +257,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.ackWait}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={ackWait => handlePropChange({ackWait})}
+				onChange={ackWait => handlePropChange({ ackWait })}
 			/>
 
 			<MaxNumberCmp
@@ -258,7 +266,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.maxDeliver}
 				desiredDefault={-1}
 				initDefault={1}
-				onChange={maxDeliver => handlePropChange({maxDeliver})}
+				onChange={maxDeliver => handlePropChange({ maxDeliver })}
 			/>
 
 			<MaxNumberCmp
@@ -267,7 +275,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.maxWaiting}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={maxWaiting => handlePropChange({maxWaiting})}
+				onChange={maxWaiting => handlePropChange({ maxWaiting })}
 			/>
 
 			<MaxNumberCmp
@@ -276,7 +284,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.maxAckPending}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={maxAckPending => handlePropChange({maxAckPending})}
+				onChange={maxAckPending => handlePropChange({ maxAckPending })}
 			/>
 
 			<MaxNumberCmp
@@ -286,7 +294,7 @@ const Form: FunctionComponent<Props> = ({
 				desiredDefault={0}
 				initDefault={1}
 				min={1} max={100}
-				onChange={sampleFreq => handlePropChange({sampleFreq: sampleFreq == 0 ? "" : sampleFreq.toString()})}
+				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq == 0 ? "" : sampleFreq.toString() })}
 			/>
 
 			<div className="lyt-v">
@@ -313,7 +321,7 @@ const Form: FunctionComponent<Props> = ({
 				value={consumer.config.maxBatch}
 				desiredDefault={0}
 				initDefault={1}
-				onChange={maxBatch => handlePropChange({maxBatch})}
+				onChange={maxBatch => handlePropChange({ maxBatch })}
 			/>
 
 			<MaxTimeCmp
@@ -423,7 +431,7 @@ const Form: FunctionComponent<Props> = ({
 				<IconToggle
 					check={consumer.config.memStorage}
 					onChange={memStorage => handlePropChange({ memStorage })}
-					readOnly={inRead || !inNew }
+					readOnly={inRead || !inNew}
 				/>
 				<div className="lbl-prop">MEM STORAGE</div>
 			</div>
