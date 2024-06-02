@@ -51,7 +51,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const handleUnitChange = (index: number) => setUnit(Object.values(TIME)[index])
 
 	// RENDER
-	const isEnabled = value != desiredDefault
+	const isEnabled = (value != null || initDefault == null) && value !== desiredDefault
 	const valueShow = nsToValue(value, unit)
 
 	return <div className="lyt-v">

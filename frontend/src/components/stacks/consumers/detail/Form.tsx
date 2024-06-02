@@ -39,11 +39,15 @@ const Form: FunctionComponent<Props> = ({
 	const handleBackoffChange = (backoff: number[]) => store.setConsumerConfig({ ...state.consumer.config, backoff })
 	const handleDeliverPolicyChange = (index: number) => {
 		const deliverPolicy = Object.values(DeliverPolicy)[index]
-		if (deliverPolicy == DeliverPolicy.DeliverAllPolicy) {
-			handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null })
-		} else {
-			handlePropChange({ deliverPolicy })
+		if (deliverPolicy == DeliverPolicy.DeliverByStartSequencePolicy) {
+			handlePropChange({ deliverPolicy, optStartTime: null })
+			return
 		}
+		if (deliverPolicy == DeliverPolicy.DeliverByStartTimePolicy) {
+			handlePropChange({ deliverPolicy, optStartSeq: 0 })
+			return
+		}
+		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null})
 	}
 	const handleMetadataChange = (tuples: [string, string][]) => {
 		const metadata = tuples.reduce((acc, [key, value]) => {
