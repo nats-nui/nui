@@ -115,8 +115,8 @@ export enum DeliverPolicy {
 }
 
 export enum AckPolicy {
-	AckExplicitPolicy = "explicit",
 	AckAllPolicy = "all",
+	AckExplicitPolicy = "explicit",
 	AckNonePolicy = "none"
 }
 
