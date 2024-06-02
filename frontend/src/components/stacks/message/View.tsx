@@ -30,7 +30,7 @@ const MessageView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
-	const autoFormat = msgSo.getAutoFormat()
+	const autoFormat = msgSa.autoFormat
 
 	return <FrameworkCard
 		store={msgSo}

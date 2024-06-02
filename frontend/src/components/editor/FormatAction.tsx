@@ -35,7 +35,7 @@ const FormatAction: FunctionComponent<Props> = ({
 
 	// RENDER
 	const formatLabel = state.format?.toUpperCase() ?? ""
-	const autoFormat = store.getAutoFormat()
+	const autoFormat = store.state.autoFormat
 
 	return <>
 		<CopyButton value={() => store.getEditorText()} />
