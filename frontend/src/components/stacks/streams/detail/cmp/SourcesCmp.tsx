@@ -2,7 +2,7 @@ import ElementDialog from "@/components/dialogs/ElementDialog"
 import EditList, { LIST_ACTIONS } from "@/components/lists/EditList"
 import EditItemRow from "@/components/rows/EditItemRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
-import { buildNewSource } from "@/stores/stacks/streams/utils/factory"
+import { newSource } from "@/stores/stacks/streams/utils/factory"
 import { EDIT_STATE } from "@/types"
 import { Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
@@ -62,7 +62,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 
 	const handleNewSource = (index: number) => {
 		if (haveNew()) return null
-		return buildNewSource();
+		return newSource();
 	}
 
 	// RENDER

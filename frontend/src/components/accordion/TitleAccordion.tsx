@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react"
+import React, { CSSProperties, FunctionComponent, useEffect, useState } from "react"
 import Accordion from "./Accordion"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
@@ -10,12 +10,14 @@ interface Props {
 	title?: string
 	children?: React.ReactNode
 	open?: boolean
+	style?: CSSProperties
 }
 
 const TitleAccordion: FunctionComponent<Props> = ({
 	title,
 	children,
 	open: openExt,
+	style,
 }) => {
 
 	// STORE
@@ -31,7 +33,7 @@ const TitleAccordion: FunctionComponent<Props> = ({
 	const handleClick = () => setOpen(!open)
 
 	// RENDER
-	return <div className={cls.root_title}>
+	return <div className={cls.root_title} style={style}>
 
 		<div className={`lbl-prop-title ${cls.title}`}
 			style={{ alignItems: "center", display: "flex", justifyContent: "center", cursor: "pointer" }}

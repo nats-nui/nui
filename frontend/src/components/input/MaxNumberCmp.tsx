@@ -9,6 +9,11 @@ interface Props {
 	value: number
 	label?: string
 	readOnly?: boolean
+	desiredDefault?: number
+	/** value on open */
+	initDefault?: number
+	min?: number
+	max?: number
 	onChange?: (valueNew: number) => void
 }
 
@@ -16,7 +21,11 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	value,
 	label,
 	readOnly,
+	min,
+	max,
 	onChange,
+	desiredDefault = -1,
+	initDefault = 0,
 }) => {
 
 	// STORE
@@ -25,10 +34,10 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (maxConsumers: number) => onChange?.(maxConsumers)
-	const handleEnabledCheck = (check: boolean) => onChange?.(check ? 0 : -1)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
 
 	// RENDER
-	const isEnabled = value != -1
+	const isEnabled = (value != null || initDefault == null) && value !== desiredDefault
 	const valueShow = value
 
 	return <div className="lyt-v">
@@ -47,6 +56,8 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 					value={valueShow}
 					onChange={handlePropChange}
 					readOnly={readOnly}
+					min={min}
+					max={max}
 				/>
 			</div>
 		</Accordion>

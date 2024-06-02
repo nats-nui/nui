@@ -145,10 +145,10 @@ export class SocketService {
 	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
-		let payload: Payload = null
+		
 		switch (type) {
-			case MSG_TYPE.CNN_STATUS:
-				payload = message.payload as PayloadStatus
+			case MSG_TYPE.CNN_STATUS: {
+				const payload = message.payload as PayloadStatus
 				this.onStatus?.(payload)
 				changeConnectionStatus(this.cnnId, payload.status)
 				let body = `${payload.status}`
@@ -159,14 +159,16 @@ export class SocketService {
 					body: body
 				})
 				break
-			case MSG_TYPE.NATS_MESSAGE:
+			}
+			case MSG_TYPE.NATS_MESSAGE: {
 				if (!this.onMessage) return
-				payload = message.payload as PayloadMessage
+				const payload = message.payload as PayloadMessage
 				this.onMessage({
 					subject: payload.subject,
 					payload: atob(payload.payload),
 				})
 				break
+			}
 			case MSG_TYPE.ERROR:
 				const error: string = (message.payload as PayloadError)?.error
 				//this.onError?.(message.payload as PayloadError)
