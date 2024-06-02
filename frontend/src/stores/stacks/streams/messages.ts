@@ -186,8 +186,9 @@ const setup = {
 
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: StreamMessagesStore) {
-			const msgOld = (store.state.linked as MessageStore)?.state.message
-			const view = msgOld?.seqNum == message?.seqNum ? null : buildMessageDetail(message, store.state.format)
+			const storeMsg = (store.state.linked as MessageStore)
+			const msgOld = storeMsg?.state.message
+			const view = msgOld?.seqNum == message?.seqNum ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
 			store.state.group.addLink({ view, parent: store, anim: !msgOld || !view })
 		},
 

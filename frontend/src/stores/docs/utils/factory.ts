@@ -82,12 +82,13 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 
 //#region MESSAGES
 
-export function buildMessageDetail(message: Message, format: MSG_FORMAT) {
+export function buildMessageDetail(message: Message, format: MSG_FORMAT, autoFormat: boolean = true) {
 	if (!message) { console.error("no param"); return null }
 	const msgStore = buildStore({
 		type: DOC_TYPE.MESSAGE,
 		message,
 		format,
+		autoFormat,
 	} as MessageState)
 	return msgStore
 }
