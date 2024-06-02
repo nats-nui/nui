@@ -2,8 +2,9 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import ShowForm from "./ShowForm"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
+import { EDIT_STATE } from "../../../../types"
+import ActionsCmp from "./Actions"
+import Form from "./Form"
 
 
 
@@ -12,32 +13,27 @@ interface Props {
 }
 
 const ConsumerDetailView: FunctionComponent<Props> = ({
-	store: consumerSo,
+	store,
 }) => {
 
 	// STORE
-	const consumerSa = useStore(consumerSo)
+	const state = useStore(store)
 
 	// HOOKs
 	useEffect(() => {
-		consumerSo.fetchIfVoid()
+		store.fetchIfVoid()
 	}, [])
 
 	// HANDLER
 
 	// RENDER
+	const inRead = state.editState == EDIT_STATE.READ
+
 	return <FrameworkCard variantBg
-		store={consumerSo}
-		actionsRender={<>
-			<OptionsCmp
-				style={{ marginLeft: 5 }}
-				store={consumerSo}
-			/>
-			<div style={{ flex: 1 }} />
-		</>
-		}
+		store={store}
+		actionsRender={<ActionsCmp store={store} />}
 	>
-		<ShowForm store={consumerSo} />
+		<Form store={store} />
 	</FrameworkCard>
 }
 
