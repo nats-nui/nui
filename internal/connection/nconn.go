@@ -102,7 +102,14 @@ func NewNatsConn(hosts string, options ...nats.Option) (*NatsConn, error) {
 }
 
 func newMocked() (*NatsConn, error) {
-	return newWithBuilder("", nil, buildMockConn, true)
+	nConn, err := newWithBuilder("", nil, buildMockConn, true)
+	if err != nil {
+		return nil, err
+	}
+	nConn.SetReconnectHandler(nConn.buildStatusHandler(StatusConnected))
+	nConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected))
+	nConn.SetClosedHandler(nConn.buildStatusHandler(StatusDisconnected))
+	return nConn, nil
 }
 
 type buildFunc func(string, []nats.Option) (*nats.Conn, error)
@@ -152,6 +159,4 @@ func buildConn(hosts string, options []nats.Option) (*nats.Conn, error) {
 	return nats.Connect(hosts, options...)
 }
 
-func buildMockConn(_ string, _ []nats.Option) (*nats.Conn, error) {
-	return &nats.Conn{}, nil
-}
+func buildMockConn(_ string, _ []nats.Option) (*nats.Conn, error) { return &nats.Conn{}, nil }
