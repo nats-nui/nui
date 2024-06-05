@@ -3,6 +3,7 @@ package nui
 import (
 	"encoding/base64"
 	"github.com/gofiber/fiber/v2"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-nui/nui/internal/connection"
 	"time"
 )
@@ -51,8 +52,9 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 404)
 	}
 	pubReq := &struct {
-		Subject string `json:"subject"`
-		Payload string `json:"payload"`
+		Subject string      `json:"subject"`
+		Headers nats.Header `json:"headers"`
+		Payload string      `json:"payload"`
 	}{}
 	err = c.BodyParser(pubReq)
 	if err != nil {
@@ -63,8 +65,10 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-
-	err = conn.Publish(pubReq.Subject, payload)
+	msg := nats.NewMsg(pubReq.Subject)
+	msg.Header = pubReq.Headers
+	msg.Data = payload
+	err = conn.PublishMsg(msg)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}

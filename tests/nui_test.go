@@ -479,7 +479,7 @@ func (s *NuiTestSuite) TestPubSubWs() {
 
 	// publish on sub1 via rest
 	s.e.POST("/api/connection/" + connId + "/messages/publish").
-		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk="}`)).
+		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk=", "headers": {"key1": ["val1", "val2"]}}`)).
 		Expect().Status(http.StatusOK)
 
 	// both ws receive the connected event and the message published
@@ -487,6 +487,7 @@ func (s *NuiTestSuite) TestPubSubWs() {
 	r := ws.WithReadTimeout(500 * time.Millisecond).Expect().JSON().Object().Value("payload").Object()
 	r.Value("subject").String().IsEqual("sub1")
 	r.Value("payload").String().IsEqual("aGk=")
+	r.Value("headers").Object().Value("key1").Array().IsEqual([]string{"val1", "val2"})
 	// received at is 0-value in core nats message
 	r.Value("received_at").IsEqual("0001-01-01T00:00:00Z")
 
