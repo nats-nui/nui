@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
@@ -446,20 +447,43 @@ func (s *NuiTestSuite) TestKvRest() {
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
+
 	// create a subscription with s.nc that wait for requests and say "hi" as response
+	var reqPayload []byte
+	var reqHeaders nats.Header
 	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
-		err := s.nc.Publish(m.Reply, []byte("hi"))
+		reqPayload = m.Data
+		reqHeaders = m.Header
+		replyMsg := nats.NewMsg(m.Reply)
+		replyMsg.Data = []byte("hi")
+		replyMsg.Header = nats.Header{
+			"reply_key1": []string{"val1", "val2"},
+		}
+		err := m.RespondMsg(replyMsg)
 		s.NoError(err)
 	})
 	defer sub.Unsubscribe()
 	time.Sleep(10 * time.Millisecond)
 
 	// send request and read response via nui rest
+	// payload is base64 encoded "req"
 	r := s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
+		WithBytes([]byte(`{"subject": "request_sub", "payload": "cmVx", "headers": {"key1": ["val1", "val2"]}}`)).
 		Expect()
-	r.Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
+	r.Status(http.StatusOK)
 	r.JSON().Object().Value("subject").NotEqual("")
+	r.JSON().Object().Value("payload").String().IsEqual("aGk=")
+	r.JSON().Object().Value("headers").Object().Value("reply_key1").Array().IsEqual([]string{"val1", "val2"})
+	r.JSON()
+
+	// expect that request have correct payload and headers
+	expectedHeaders := nats.Header{
+		"key1": []string{"val1", "val2"},
+	}
+	s.Require().EventuallyWithT(func(c *assert.CollectT) {
+		assert.Equal(c, []byte("req"), reqPayload)
+		assert.Equal(c, expectedHeaders, reqHeaders)
+	}, 1*time.Second, 100*time.Millisecond)
 
 }
 

@@ -1,12 +1,18 @@
 package nui
 
 import (
-	"encoding/base64"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-nui/nui/internal/connection"
 	"time"
 )
+
+type msgReq struct {
+	Subject   string      `json:"subject"`
+	Payload   []byte      `json:"payload"`
+	Headers   nats.Header `json:"headers"`
+	TimeoutMs int         `json:"timeoutMs"`
+}
 
 func (a *App) handleIndexSubscriptions(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
@@ -51,23 +57,15 @@ func (a *App) handlePublish(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	pubReq := &struct {
-		Subject string      `json:"subject"`
-		Headers nats.Header `json:"headers"`
-		Payload string      `json:"payload"`
-	}{}
+	pubReq := &msgReq{}
 	err = c.BodyParser(pubReq)
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
 
-	payload, err := base64.StdEncoding.DecodeString(pubReq.Payload)
-	if err != nil {
-		return a.logAndFiberError(c, err, 422)
-	}
 	msg := nats.NewMsg(pubReq.Subject)
 	msg.Header = pubReq.Headers
-	msg.Data = payload
+	msg.Data = pubReq.Payload
 	err = conn.PublishMsg(msg)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
@@ -83,11 +81,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	req := &struct {
-		Subject   string `json:"subject"`
-		Payload   []byte `json:"payload"`
-		TimeoutMs int    `json:"timeout_ms"`
-	}{}
+	req := &msgReq{}
 	err = c.BodyParser(req)
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
@@ -99,13 +93,18 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	msg, err := conn.Request(req.Subject, req.Payload, timeout)
+	reqMsg := nats.NewMsg(req.Subject)
+	reqMsg.Data = req.Payload
+	reqMsg.Header = req.Headers
+
+	replyMsg, err := conn.RequestMsg(reqMsg, timeout)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
 	reply := &struct {
-		Subject string `json:"subject"`
-		Payload []byte `json:"payload"`
-	}{Payload: msg.Data, Subject: msg.Subject}
+		Subject string      `json:"subject"`
+		Payload []byte      `json:"payload"`
+		Headers nats.Header `json:"headers"`
+	}{Payload: replyMsg.Data, Subject: replyMsg.Subject, Headers: replyMsg.Header}
 	return c.JSON(reply)
 }
