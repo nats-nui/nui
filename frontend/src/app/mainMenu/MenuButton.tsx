@@ -39,7 +39,9 @@ const MenuButton: FunctionComponent<Props> = ({
 	const showCloseBtt = enter && !!onClose
 	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
-		<div className={clsRoot}>
+		<div className={clsRoot}
+			onClick={onClick}
+		>
 			<TooltipWrapCmp className={cls.box}
 				content={<div>
 					<div className={cls.tooltip_title}>{title}</div>
@@ -57,7 +59,7 @@ const MenuButton: FunctionComponent<Props> = ({
 					onClick={onClose}
 				>{badge}</div>}
 
-				<div onClick={onClick}>
+				<div>
 					{children}
 				</div>
 			</TooltipWrapCmp>
