@@ -102,7 +102,14 @@ func NewNatsConn(hosts string, options ...nats.Option) (*NatsConn, error) {
 }
 
 func newMocked() (*NatsConn, error) {
-	return newWithBuilder("", nil, buildMockConn, true)
+	nConn, err := newWithBuilder("", nil, buildMockConn, true)
+	if err != nil {
+		return nil, err
+	}
+	nConn.SetReconnectHandler(nConn.buildStatusHandler(StatusConnected))
+	nConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected))
+	nConn.SetClosedHandler(nConn.buildStatusHandler(StatusDisconnected))
+	return nConn, nil
 }
 
 type buildFunc func(string, []nats.Option) (*nats.Conn, error)
@@ -132,15 +139,18 @@ func newWithBuilder(hosts string, options []nats.Option, builder buildFunc, mock
 	nConn.lastError = err
 
 	// After probing and saving the status and error, the long-term connection is established.
+
+	// add options to manage the connection events
+	options = append(options, nats.ConnectHandler(nConn.buildStatusHandler(StatusConnected)))
+	options = append(options, nats.ReconnectHandler(nConn.buildStatusHandler(StatusConnected)))
+	options = append(options, nats.DisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected)))
+
+	// create the long-term connection
 	natsConn, err := builder(hosts, options)
 	if err != nil {
 		return nil, err
 	}
 	nConn.Conn = natsConn
-
-	natsConn.SetDisconnectErrHandler(nConn.buildStatusHandlerWithErr(StatusDisconnected))
-	natsConn.SetReconnectHandler(nConn.buildStatusHandler(StatusConnected))
-	natsConn.SetClosedHandler(nConn.buildStatusHandler(StatusDisconnected))
 
 	return nConn, nil
 }
@@ -149,6 +159,4 @@ func buildConn(hosts string, options []nats.Option) (*nats.Conn, error) {
 	return nats.Connect(hosts, options...)
 }
 
-func buildMockConn(_ string, _ []nats.Option) (*nats.Conn, error) {
-	return &nats.Conn{}, nil
-}
+func buildMockConn(_ string, _ []nats.Option) (*nats.Conn, error) { return &nats.Conn{}, nil }
