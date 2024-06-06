@@ -31,7 +31,8 @@ const CopyButton: FunctionComponent<Props> = ({
 		e.preventDefault()
 		e.stopPropagation()
 		let txt = typeof value == "function" ? value() : value
-		navigator?.clipboard?.writeText(txt)
+		clipboardSet(txt)
+		//navigator?.clipboard?.writeText(txt)
 	}
 
 	// RENDER
@@ -52,3 +53,16 @@ const CopyButton: FunctionComponent<Props> = ({
 }
 
 export default CopyButton
+
+/**
+ * Copia in clipboard un testo
+ * @param text da copiare nella clipboard
+ */
+function clipboardSet(text: string): void {
+	const el = document.createElement('textarea');
+	el.value = text;
+	document.body.appendChild(el);
+	el.select();
+	document.execCommand('copy');
+	document.body.removeChild(el);
+};
