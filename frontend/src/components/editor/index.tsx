@@ -54,8 +54,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
 		editorRef.current = editor
 		editor.updateOptions(editorOptionsDefault)
-		if (autoFormat) formatRun()
-		//if (autoFormat) setTimeout(formatRun, 100)
+		if (autoFormat) setTimeout(formatRun, 300)
 	}
 	useImperativeHandle(ref, () => ({ format: formatRun, }), [])
 
@@ -78,7 +77,11 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		theme="vs-dark"
 		onMount={handleEditorDidMount}
 		onChange={onChange}
-		options={{ readOnly: readOnly }}
+		options={{ 
+			readOnly,
+			formatOnType: true,
+    		formatOnPaste: true,
+		}}
 	/>
 }
 
