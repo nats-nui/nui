@@ -1,7 +1,5 @@
 import docsSo, { FIXED_CARD } from "@/stores/docs"
-import { deckCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
-import { buildTextEditor } from "@/stores/stacks/editor/utils/factory"
 import { ClearSession, LoadSession, SaveSession } from "@/utils/session/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
@@ -9,8 +7,6 @@ import Button from "../../components/buttons/Button"
 import AboutButton from "./AboutButton"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
-import MenuButton from "./MenuButton"
-import EditorIcon from "@/icons/EditorIcon"
 
 
 
@@ -29,11 +25,6 @@ const MainMenu: FunctionComponent<Props> = ({
 	// HOOKS
 
 	// HANDLERS
-	const handleOpenEditor = () => {
-		const view = buildTextEditor("ciao!")
-		deckCardsSo.add({ view, anim: true })
-	}
-	const handleHelp = () => window.open("https://natsnui.app/help/")
 
 	// RENDER
 	if (!docsSo.state?.fixedViews) return null
@@ -59,7 +50,6 @@ const MainMenu: FunctionComponent<Props> = ({
 			<Button children="SAVE" onClick={() => SaveSession()} />
 			<Button children="LOAD" onClick={() => LoadSession()} />
 			<Button children="RESET" onClick={() => ClearSession()} />
-			<Button children="EDITOR" onClick={() => handleOpenEditor()} />
 		</>}
 		{/* *** DEBUG *** */}
 
