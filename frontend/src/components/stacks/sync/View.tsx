@@ -20,12 +20,10 @@ import cls from "./View.module.css"
 
 interface Props {
 	store?: SyncStore
-	style?: React.CSSProperties,
 }
 
 const SyncView: FunctionComponent<Props> = ({
 	store: syncSo,
-	style,
 }) => {
 
 	// STORE
@@ -41,7 +39,8 @@ const SyncView: FunctionComponent<Props> = ({
 	const handleSend = () => syncSo.send()
 	const handleFormat = () => {
 		refSender.current?.format()
-		refReceiver.current?.format()
+		// timeout altrimenti non lo formatta se formatta il precedente!!!
+		setTimeout(refReceiver.current?.format, 300)
 	}
 	const handleMessageClick = (txt: string) => syncSo.openMessageDetail({
 		payload: txt,

@@ -1,4 +1,4 @@
-import EditorCode from "@/components/editor"
+import EditorCode, { EditorRefProps } from "@/components/editor"
 import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
@@ -29,6 +29,8 @@ const DetailForm: FunctionComponent<Props> = ({
 	if (!kventry) return null
 	const inRead = kventrySa.editState == EDIT_STATE.READ
 	const inEdit = kventrySa.editState == EDIT_STATE.EDIT
+	const autoFormat = kventrySa.autoFormat
+	const refEditor = (ref:EditorRefProps) => kventrySa.editorRef = ref
 
 	return <div className="lyt-form" style={{ height: "100%" }}>
 
@@ -42,11 +44,12 @@ const DetailForm: FunctionComponent<Props> = ({
 		</div>
 
 		<EditorCode
-			ref={ref => kventrySo.state.editorRef = ref}
+			ref={refEditor}
 			value={kventrySo.getEditorText()}
 			onChange={handlePayloadChange}
 			format={kventrySa.format}
 			readOnly={inRead}	
+			autoFormat={autoFormat}
 		/>
 
 	</div>
