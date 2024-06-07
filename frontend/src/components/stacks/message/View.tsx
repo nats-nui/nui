@@ -26,11 +26,11 @@ const MessageView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const refEditor = (ref:EditorRefProps) => msgSa.editorRef = ref
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
 	const autoFormat = msgSa.autoFormat
+	const refEditor = (ref:EditorRefProps) => msgSa.editorRef = ref
 
 	return <FrameworkCard
 		store={msgSo}
@@ -51,10 +51,10 @@ const MessageView: FunctionComponent<Props> = ({
 			</div>
 
 			<EditorCode readOnly
-				autoFormat={autoFormat}
 				ref={refEditor}
-				format={msgSa.format}
 				value={msgSo.getEditorText()}
+				format={msgSa.format}
+				autoFormat={autoFormat}
 			/>
 
 			<div className={cls.timestamp}>{timestamp}</div>

@@ -1,7 +1,7 @@
 import Button from "@/components/buttons/Button"
 import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import EditorCode from "@/components/editor"
+import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import TextInput from "@/components/input/TextInput"
 import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
@@ -40,6 +40,8 @@ const MessageSendView: FunctionComponent<Props> = ({
 	// RENDER
 	const canSend = sendSo.getCanEdit()
 	const inLoading = sendSa.loadingState == LOAD_STATE.LOADING
+	const autoFormat = sendSa.autoFormat
+	const refEditor = (ref:EditorRefProps) => sendSa.editorRef = ref
 
 	return <FrameworkCard
 		store={sendSo}
@@ -73,10 +75,11 @@ const MessageSendView: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<EditorCode
-				ref={ref => sendSa.editorRef = ref}
-				format={sendSa.format}
+				ref={refEditor}
 				value={sendSo.getEditorText()}
+				format={sendSa.format}
 				onChange={handleValueChange}
+				autoFormat={autoFormat}
 			/>
 
 			<div className="lyt-float">
