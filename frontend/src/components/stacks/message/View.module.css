@@ -16,3 +16,15 @@
 	font-size: 12px;
 	font-weight: 400;
 }
+
+.header {
+	display: flex;
+	font-size: 12px;
+	gap: 5px;
+}
+.header .key {
+	font-weight: 600;
+}
+.header .values {
+	font-weight: 300;
+}

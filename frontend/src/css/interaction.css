@@ -15,6 +15,10 @@
 	display: none;
 }
 
+.hover-container {
+	position: relative;
+}
+
 .hover-container:hover .hover-show {
 	display: flex;
 }

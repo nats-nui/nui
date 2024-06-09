@@ -16,6 +16,7 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subjects: <string[]>[],
+		header: <[string, string][]>[],
 		subsOpen: false,
 
 		loadingState: LOAD_STATE.IDLE,
@@ -71,6 +72,7 @@ const setup = {
 					store.state.connectionId,
 					store.state.subject,
 					store.state.text,
+					store.state.header,
 					{ store }
 				)
 				store.setSnackbar({ open: true,
@@ -87,6 +89,7 @@ const setup = {
 	mutators: {
 		setText: (text: string, store?: MessageSendStore) => ({ text }),
 		setSubject: (subject: string) => ({ subject }),
+		setHeader: (header: [string, string][]) => ({ header }),
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
 
 		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),

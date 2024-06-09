@@ -164,6 +164,7 @@ export class SocketService {
 				if (!this.onMessage) return
 				const payload = message.payload as PayloadMessage
 				this.onMessage({
+					headers: payload.headers,
 					subject: payload.subject,
 					payload: atob(payload.payload),
 				})

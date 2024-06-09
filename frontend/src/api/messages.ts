@@ -4,8 +4,13 @@ import { Subscription } from "@/types"
 /** PUBLISH
  * permette di pubblicare un messaggio
  */
-function publish(cnnId: string, subject: string, payload: string, opt?: CallOptions) {
+function publish(cnnId: string, subject: string, payload: string, headerArray: [string, string][], opt?: CallOptions) {
+	const header: { [key: string]: string[] } = headerArray.reduce((acc, [key, value]) => {
+		acc[key] = value?.split(";") ?? []
+		return acc;
+	}, {})
 	const data = {
+		header,
 		subject,
 		payload: btoa(payload)
 	}
@@ -35,8 +40,8 @@ async function sync(cnnId: string, subject: string, payload: string, timeout: nu
 		payload: btoa(payload),
 		timeout
 	}
-	const resp = await ajax.post(`connection/${cnnId}/request`, data, opt) as SyncResp 
-	resp.payload = atob(resp.payload) 
+	const resp = await ajax.post(`connection/${cnnId}/request`, data, opt) as SyncResp
+	resp.payload = atob(resp.payload)
 	return resp
 }
 
