@@ -47,7 +47,7 @@ export function buildKVEntries(connectionId: string, bucket: BucketState) {
 	return bucketsStore;
 }
 
-export function buildKVEntry(connectionId: string, bucket: Partial<BucketState>, kventry: KVEntry) {
+export function buildKVEntry(connectionId: string, bucket: Partial<BucketState>, kventry: KVEntry, autoFormat: boolean = true) {
 	if (!bucket || !connectionId) { console.error("no param"); return null; }
 	const store = buildStore({
 		type: DOC_TYPE.KVENTRY,
@@ -55,6 +55,7 @@ export function buildKVEntry(connectionId: string, bucket: Partial<BucketState>,
 		connectionId,
 		bucket,
 		kventry,
+		autoFormat
 	} as KVEntryState) as KVEntryStore;
 	return store;
 }

@@ -50,6 +50,10 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		})
 	}, [readOnly])
 
+	useEffect(() => {
+		if (autoFormat && readOnly) setTimeout(formatRun, 20)
+	}, [value,readOnly]);
+
 	// HANDLER
 	const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
 		editorRef.current = editor

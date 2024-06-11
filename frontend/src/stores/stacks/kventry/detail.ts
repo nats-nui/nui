@@ -26,6 +26,8 @@ const setup = {
 		historyOpen: false,
 		revisionSelected: <number>null,
 
+		autoFormat: true,
+
 		//#region VIEWBASE
 		colorVar: COLOR_VAR.MINT,
 		width: 420,
