@@ -39,13 +39,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 		sendSo.setSubsOpen(!select)
 	}
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
-	const handleHeaderChange = (headers: [string, string][]) => {
-		// const header = tuples.reduce((acc, [key, value]) => {
-		// 	acc[key] = value;
-		// 	return acc;
-		// }, {} as { [key: string]: string });
-		sendSo.setHeader(headers)
-	}
+	const handleHeaderChange = (headers: [string, string][]) => sendSo.setHeaders(headers)
 
 	// RENDER
 	const canSend = sendSo.getCanEdit()
@@ -72,9 +66,9 @@ const MessageSendView: FunctionComponent<Props> = ({
 	>
 		<div className="lyt-form" style={{ height: "100%" }}>
 
-			<TitleAccordion title="HEADER" open={false}>
+			<TitleAccordion title="HEADERS" open={false}>
 				<EditList<[string, string]>
-					items={sendSa.header}
+					items={sendSa.headers}
 					onItemsChange={handleHeaderChange}
 					//readOnly={inRead}
 					placeholder="ex. 10"

@@ -4,13 +4,9 @@ import { Subscription } from "@/types"
 /** PUBLISH
  * permette di pubblicare un messaggio
  */
-function publish(cnnId: string, subject: string, payload: string, headerArray: [string, string][], opt?: CallOptions) {
-	const header: { [key: string]: string[] } = headerArray.reduce((acc, [key, value]) => {
-		acc[key] = value?.split(";") ?? []
-		return acc;
-	}, {})
+function publish(cnnId: string, subject: string, payload: string, headersArray: [string, string][], opt?: CallOptions) {
 	const data = {
-		header,
+		headers: toDic(headersArray),
 		subject,
 		payload: btoa(payload)
 	}
@@ -34,10 +30,11 @@ function subscriptionUpdate(cnnId: string, subscriptions: Subscription[], opt?: 
 /** SYNC
  * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
  */
-async function sync(cnnId: string, subject: string, payload: string, timeout: number = 2000, opt?: CallOptions): Promise<SyncResp> {
+async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeout: number = 2000, opt?: CallOptions): Promise<SyncResp> {
 	const data = {
 		subject,
 		payload: btoa(payload),
+		headers: toDic(headersArray),
 		timeout
 	}
 	const resp = await ajax.post(`connection/${cnnId}/request`, data, opt) as SyncResp
@@ -57,3 +54,16 @@ const messagesApi = {
 	sync,
 }
 export default messagesApi
+
+
+function toDic(arr: [string, string][]): { [key: string]: string[] } {
+	const headers: { [key: string]: string[] } = arr.reduce<{ [key: string]: string[] }>((acc, [key, value]) => {
+		if (!acc[key]) {
+			acc[key] = [value]
+		} else {
+			acc[key].push(value)
+		}
+		return acc;
+	}, {})
+	return headers
+}

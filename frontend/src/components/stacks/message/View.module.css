@@ -25,6 +25,11 @@
 .header .key {
 	font-weight: 600;
 }
+.header .row {
+	flex: 1;
+	 display: flex; 
+	 flex-direction: column;
+}
 .header .values {
 	font-weight: 300;
 }

@@ -20,6 +20,7 @@ const setup = {
 		messageReceived: "",
 		messageSend: "",
 		subject: "",
+		headers: <[string, string][]>[],
 
 		loadingState: LOAD_STATE.IDLE,
 
@@ -41,6 +42,7 @@ const setup = {
 				messageReceived: state.messageReceived,
 				messageSend: state.messageSend,
 				subject: state.subject,
+				headers: state.headers,
 			}
 		},
 		//#endregion
@@ -58,6 +60,7 @@ const setup = {
 			state.messageReceived = data.messageReceived
 			state.messageSend = data.messageSend
 			state.subject = data.subject
+			state.headers = data.headers
 		},
 		//#endregion
 
@@ -67,6 +70,7 @@ const setup = {
 					store.state.connectionId,
 					store.state.subject,
 					store.state.messageSend,
+					store.state.headers,
 					null,
 					{ store }
 				)
@@ -95,6 +99,7 @@ const setup = {
 		setMessageReceived: (messageReceived: string) => ({ messageReceived }),
 		setMessageSend: (messageSend: string) => ({ messageSend }),
 		setSubject: (subject: string) => ({ subject }),
+		setHeaders: (headers: [string, string][]) => ({ headers }),
 	},
 }
 
