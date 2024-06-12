@@ -5,10 +5,11 @@ import FormatAction from "@/components/editor/FormatAction"
 import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useMemo } from "react"
-import FormatDialog from "../../editor/FormatDialog"
-import cls from "./View.module.css"
+import { FunctionComponent } from "react"
 import TitleAccordion from "../../accordion/TitleAccordion"
+import FormatDialog from "../../editor/FormatDialog"
+import HeadersCmp from "./HeadersCmp"
+import cls from "./View.module.css"
 
 
 
@@ -30,14 +31,6 @@ const MessageView: FunctionComponent<Props> = ({
 	const refEditor = (ref: EditorRefProps) => msgSa.editorRef = ref
 
 	// RENDER
-	// const headers: [string, string][] = useMemo(() => {
-	// 	if (!msgSa.message.headers) return []
-	// 	return Object
-	// 		.entries(msgSa.message.headers)
-	// 		.reduce<[string, string][]>((acc, [key, values]) => {
-	// 			return acc.concat(values.map(v => [key, v]))
-	// 		}, [])
-	// }, [msgSa.message.headers])
 	const timestamp = dateShow(msgSa.message.receivedAt)
 	const autoFormat = msgSa.autoFormat
 
@@ -50,29 +43,7 @@ const MessageView: FunctionComponent<Props> = ({
 		<div className={`lyt-form ${cls.form}`}>
 
 			<TitleAccordion title="HEADER" open={false}>
-				{/* {headers.map(([key, values]) => <div className={`${cls.header} hover-container`}>
-					<div className={cls.key}>{key}</div>:
-					<div className={cls.values}>{values}</div>
-					<CopyButton absolute
-						value={values}
-					//style={{ backgroundColor: "var(--bg-default)" }}
-					/>
-				</div>)} */}
-				{Object.entries(msgSa.message.headers).map(([key, values]) => <div className={cls.header}>
-					<div className={cls.key}>{key}</div>
-					<div>:</div>
-					<div className={cls.row}>
-						{values.map(value => <div className={`${cls.header} hover-container`}>
-							<div className={cls.values}>{value}</div>
-							<CopyButton absolute
-								value={value}
-							//style={{ backgroundColor: "var(--bg-default)" }}
-							/>
-						</div>)}
-					</div>
-				</div>)}
-
-
+				<HeadersCmp headers={msgSa.message.headers} />
 			</TitleAccordion>
 
 			<div className="hover-container">
