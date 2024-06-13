@@ -33,6 +33,8 @@ const MessageView: FunctionComponent<Props> = ({
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
 	const autoFormat = msgSa.autoFormat
+	const noHeaders = !msgSa.message.headers || Object.keys(msgSa.message.headers).length == 0
+	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
 		store={msgSo}
@@ -42,7 +44,7 @@ const MessageView: FunctionComponent<Props> = ({
 	>
 		<div className={`lyt-form ${cls.form}`}>
 
-			<TitleAccordion title="HEADER" open={false}>
+			<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
 				<HeadersCmp headers={msgSa.message.headers} />
 			</TitleAccordion>
 
@@ -51,7 +53,7 @@ const MessageView: FunctionComponent<Props> = ({
 					value={msgSa.message.subject}
 					style={{ backgroundColor: "var(--bg-default)" }}
 				/>
-				<span className="lbl-prop">SUBJECT: </span>
+				<span className="lbl-prop">SUBJECT2: </span>
 				<span className="lbl-readonly">
 					{msgSa.message.subject}
 				</span>

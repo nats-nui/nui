@@ -86,6 +86,7 @@ const SyncView: FunctionComponent<Props> = ({
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative", gap: 5 }} >
 
 				<div className="lyt-v">
+
 					<TitleAccordion title="HEADERS" open={false}>
 						<EditList<[string, string]>
 							items={syncSa.headers}
@@ -97,12 +98,14 @@ const SyncView: FunctionComponent<Props> = ({
 							RenderRow={EditMetadataRow}
 						/>
 					</TitleAccordion>
+
 					<div className={cls.row}>
 						<div className="lbl-prop">SUBJECT</div>
 						<IconButton onClick={handleRequestClick}>
 							<ArrowRightIcon />
 						</IconButton>
 					</div>
+					
 					<TextInput autoFocus
 						placeholder="Write here e.g. persons.ivano"
 						value={syncSa.subject}
