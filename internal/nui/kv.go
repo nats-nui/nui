@@ -41,8 +41,9 @@ type KevValueEntry struct {
 
 func NewKeyValueEntry(entry jetstream.KeyValueEntry) KevValueEntry {
 	return KevValueEntry{
-		Key:        entry.Key(),
-		Payload:    entry.Value(),
+		Key:     entry.Key(),
+		Payload: entry.Value(),
+
 		LastUpdate: LastUpdate(entry.Created()),
 		Operation:  entry.Operation().String(),
 		Revision:   entry.Revision(),

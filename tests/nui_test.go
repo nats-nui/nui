@@ -248,10 +248,11 @@ func (s *NuiTestSuite) TestStreamMessagesIndex() {
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(15)
 
-	// check that messages are ordered by sequence number
-	r.Value(0).Object().Value("payload").NotEqual("0001-01-01T00:00:00Z")
-	r.Value(0).Object().Value("seq_num").NotEqual("0001-01-01T00:00:00Z")
+	// check that messages are ordered by sequence number and filled with payload and headers
+	r.Value(0).Object().Value("payload").NotEqual("")
+	r.Value(0).Object().Value("seq_num").IsEqual(1)
 	r.Value(1).Object().Value("received_at").NotEqual("0001-01-01T00:00:00Z")
+	r.Value(1).Object().Value("headers").Object().Value("key1").Array().IsEqual([]string{"val1", "val2"})
 
 	// filter by interval
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").

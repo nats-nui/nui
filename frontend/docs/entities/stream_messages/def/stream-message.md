@@ -8,10 +8,10 @@ interface StreamMessage {
 
     seq_num:  number
 
-    headers: string[],
     subject: string,
     payload: string,        // base64 encoded
-
+    headers: { [key: string]: string[] },
+    
     size?: number           // NON USATO
     received_at?: number 
 }

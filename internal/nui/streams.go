@@ -295,6 +295,7 @@ func (a *App) fetchMessages(c *fiber.Ctx, err error, stream jetstream.Stream, co
 			SeqNum:     metadata.Sequence.Stream,
 			ReceivedAt: metadata.Timestamp,
 			Payload:    msg.Data(),
+			Headers:    msg.Headers(),
 		})
 	}
 	_ = stream.DeleteConsumer(c.Context(), config.Name)
