@@ -46,8 +46,9 @@ const handlers = [
 	*/
 	rest.post('/api/connection/:cnnId/request', async (req, res, ctx) => {
 		const { cnnId } = req.params
-		const { subject, payload, timeout } = await req.json()
+		const { subject, payload, headers, timeout } = await req.json()
 		const response = {
+			headers,
 			subject,
 			payload,
 		}
