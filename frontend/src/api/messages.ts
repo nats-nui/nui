@@ -1,15 +1,19 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
 import { Subscription } from "@/types"
+import {camelToSnake} from "@/utils/object.ts";
 
 /** PUBLISH
  * permette di pubblicare un messaggio
  */
 function publish(cnnId: string, subject: string, payload: string, headersArray: [string, string][], opt?: CallOptions) {
-	const data = {
-		headers: toDic(headersArray),
+	const data = camelToSnake({
 		subject,
 		payload: btoa(payload)
-	}
+	})
+	// when publishing a message, the headers must not converted to snake case
+	// so we add them after the conversion and disable the auto snake case conversion
+	data.headers = toDic(headersArray)
+	opt.noSnake = true
 	return ajax.post(`connection/${cnnId}/messages/publish`, data, opt)
 }
 
@@ -31,12 +35,15 @@ function subscriptionUpdate(cnnId: string, subscriptions: Subscription[], opt?: 
  * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
  */
 async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeout: number = 2000, opt?: CallOptions): Promise<SyncResp> {
-	const data = {
+	const data = camelToSnake({
 		subject,
 		payload: btoa(payload),
-		headers: toDic(headersArray),
 		timeout
-	}
+	})
+	// like publish, also here the auto conversion to snake case is disabled
+	data.headers = toDic(headersArray)
+	opt.noSnake = true
+
 	const resp = await ajax.post(`connection/${cnnId}/request`, data, opt) as SyncResp
 	resp.payload = atob(resp.payload)
 	return resp
