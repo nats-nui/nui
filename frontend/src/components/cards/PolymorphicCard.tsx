@@ -9,7 +9,6 @@ import { MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { MessagesStore } from "@/stores/stacks/connection/messages"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
-import { TextEditorStore } from "@/stores/stacks/editor"
 import { HelpStore } from "@/stores/stacks/help"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
@@ -28,7 +27,6 @@ import BucketsListView from "../stacks/buckets/list/ListView"
 import CnnListView from "../stacks/connections/ListView"
 import ConsumersListView from "../stacks/consumers/ListView"
 import ConsumerDetailView from "../stacks/consumers/detail/View"
-import TextEditorView from "../stacks/editorTxt/View"
 import HelpView from "../stacks/help/View"
 import KvEntryDetailView from "../stacks/kventries/detail/View"
 import KVEntryListView from "../stacks/kventries/list/ListView"
@@ -39,8 +37,6 @@ import StreamDetailView from "../stacks/streams/detail/View"
 import StreamsListView from "../stacks/streams/list/ListView"
 import StreamMessagesView from "../stacks/streams/messages/View"
 import SyncView from "../stacks/sync/View"
-import { EditorCodeStore } from "@/stores/stacks/editorCode"
-import EditorCodeView from "../stacks/editorCode/View"
 
 
 
@@ -91,10 +87,6 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <LogsView store={view as ViewLogStore} />
 			case DOC_TYPE.ABOUT:
 				return <AboutView store={view as AboutStore} />
-			case DOC_TYPE.TEXT_EDITOR:
-				return <TextEditorView store={view as TextEditorStore} />
-			case DOC_TYPE.CODE_EDITOR:
-				return <EditorCodeView store={view as EditorCodeStore} />
 			case DOC_TYPE.HELP:
 				return <HelpView store={view as HelpStore} />
 			case DOC_TYPE.SYNC:

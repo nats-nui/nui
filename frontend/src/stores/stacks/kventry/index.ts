@@ -139,7 +139,14 @@ const setup = {
 		select(key: string, store?: KVEntriesStore) {
 			const oldkey = store.state.select
 			const newKey = (key && oldkey !== key) ? key : null
-			const view = newKey ? buildKVEntry(store.state.connectionId, store.state.bucket, store.getByName(key)) : null
+			const view = newKey 
+				? buildKVEntry(
+					store.state.connectionId, 
+					store.state.bucket, 
+					store.getByName(key), 
+					(store.state.linked as any)?.state.autoFormat
+				) 
+				: null
 			store.setSelect(newKey)
 			store.state.group.addLink({ view, parent: store, anim: !oldkey || !newKey })
 		},

@@ -7,7 +7,6 @@ import messageSendSetup from "@/stores/stacks/connection/messageSend";
 import messagesSetup from "@/stores/stacks/connection/messages";
 import consumersSetup from "@/stores/stacks/consumer";
 import consumerSetup from "@/stores/stacks/consumer/detail";
-import txtEditorSetup from "@/stores/stacks/editor";
 import helpSetup from "@/stores/stacks/help";
 import kventriesSetup from "@/stores/stacks/kventry";
 import kventrySetup from "@/stores/stacks/kventry/detail";
@@ -22,7 +21,6 @@ import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/utils/editor";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
-import editCodeSetup from "@/stores/stacks/editorCode";
 
 
 
@@ -65,8 +63,6 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.LOGS]: logsSetup,
 		[DOC_TYPE.ABOUT]: aboutSetup,
 
-		[DOC_TYPE.TEXT_EDITOR]: txtEditorSetup,
-		[DOC_TYPE.CODE_EDITOR]: editCodeSetup,
 		[DOC_TYPE.HELP]: helpSetup,
 
 		[DOC_TYPE.SYNC]: syncSetup,
