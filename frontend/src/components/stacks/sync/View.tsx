@@ -15,6 +15,10 @@ import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import cls from "./View.module.css"
+import TitleAccordion from "../../accordion/TitleAccordion"
+import EditList from "../../lists/EditList"
+import EditMetadataRow from "../../rows/EditMetadataRow"
+import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx";
 
 
 
@@ -49,10 +53,13 @@ const SyncView: FunctionComponent<Props> = ({
 	})
 	const handleRequestClick = () => handleMessageClick(syncSo.state.messageSend)
 	const handleResponseClick = () => handleMessageClick(syncSo.state.messageReceived)
+	const handleHeaderChange = (headers: [string, string][]) => syncSo.setHeaders(headers)
 
 	// RENDER
 	const canSend = syncSo.getCanSend()
 	const inLoading = syncSa.loadingState == LOAD_STATE.LOADING
+	const noHeaders = !syncSa.headersReceived || Object.keys(syncSa.headersReceived).length == 0
+	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
 		store={syncSo}
@@ -81,24 +88,40 @@ const SyncView: FunctionComponent<Props> = ({
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative", gap: 5 }} >
 
 				<div className="lyt-v">
-					<div className={cls.response}>
+
+					<TitleAccordion title="HEADERS" open={false}>
+						<EditList<[string, string]>
+							items={syncSa.headers}
+							onItemsChange={handleHeaderChange}
+							//readOnly={inRead}
+							placeholder="ex. 10"
+							onNewItem={() => ["", ""]}
+							fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
+							RenderRow={EditMetadataRow}
+						/>
+					</TitleAccordion>
+
+					<div className={cls.row}>
 						<div className="lbl-prop">SUBJECT</div>
 						<IconButton onClick={handleRequestClick}>
 							<ArrowRightIcon />
 						</IconButton>
 					</div>
+					
 					<TextInput autoFocus
-						placeholder="Write here e.g. persons.ivano"
+						placeholder="Write here e.g. foo.bar"
 						value={syncSa.subject}
 						onChange={handleSubjectChange}
 					/>
 				</div>
 
-				<EditorCode ref={refSender}
-					format={syncSa.format}
-					value={syncSa.messageSend}
-					onChange={handleSendChange}
-				/>
+				<div style={{ flex: 1, height: 0 }} >
+					<EditorCode ref={refSender}
+						format={syncSa.format}
+						value={syncSa.messageSend}
+						onChange={handleSendChange}
+					/>
+				</div>
 
 				<div className="lyt-float">
 					<FloatButton style={{ position: "relative" }}
@@ -115,17 +138,25 @@ const SyncView: FunctionComponent<Props> = ({
 			</div>
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 5 }}>
-				<div className={cls.response}>
+				<div className={cls.row}>
 					<div className="lbl-prop">RESPONSE</div>
 					<IconButton onClick={handleResponseClick}>
 						<ArrowRightIcon />
 					</IconButton>
 				</div>
-				<EditorCode ref={refReceiver}
-					format={syncSa.format}
-					value={syncSa.messageReceived}
-					readOnly={true}
-				/>
+
+				<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
+					<HeadersCmp headers={syncSa.headersReceived} />
+				</TitleAccordion>
+
+				<div style={{ flex: 1, height: 0 }} >
+					<EditorCode ref={refReceiver}
+						format={syncSa.format}
+						value={syncSa.messageReceived}
+						readOnly={true}
+					/>
+				</div>
+
 			</div>
 		</div>
 

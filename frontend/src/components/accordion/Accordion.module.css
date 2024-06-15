@@ -22,6 +22,10 @@
     justify-content: center;
     cursor: pointer;
 }
+.title.disabled {
+	opacity: .8;
+	font-weight: 500;
+}
 
 .title_text {
 	flex: 1;

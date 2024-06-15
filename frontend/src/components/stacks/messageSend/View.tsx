@@ -12,6 +12,9 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import FormatDialog from "../../editor/FormatDialog"
 import SubjectsDialog from "./SubjectsDialog"
+import EditList from "../../lists/EditList"
+import EditMetadataRow from "../../rows/EditMetadataRow"
+import TitleAccordion from "../../accordion/TitleAccordion"
 
 
 
@@ -36,6 +39,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 		sendSo.setSubsOpen(!select)
 	}
 	const handleSubjectChange = (value: string) => sendSo.setSubject(value)
+	const handleHeaderChange = (headers: [string, string][]) => sendSo.setHeaders(headers)
 
 	// RENDER
 	const canSend = sendSo.getCanEdit()
@@ -63,7 +67,19 @@ const MessageSendView: FunctionComponent<Props> = ({
 		</>}
 	>
 		<div className="lyt-form" style={{ height: "100%" }}>
-			
+
+			<TitleAccordion title="HEADERS" open={false}>
+				<EditList<[string, string]>
+					items={sendSa.headers}
+					onItemsChange={handleHeaderChange}
+					//readOnly={inRead}
+					placeholder="ex. 10"
+					onNewItem={() => ["", ""]}
+					fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
+					RenderRow={EditMetadataRow}
+				/>
+			</TitleAccordion>
+
 			<div className="lyt-v">
 				<div className="lbl-prop cliccable"
 					onClick={handleSubsClick}
@@ -74,13 +90,15 @@ const MessageSendView: FunctionComponent<Props> = ({
 					onChange={handleSubjectChange}
 				/>
 			</div>
-			<EditorCode
-				ref={refEditor}
-				value={sendSo.getEditorText()}
-				format={sendSa.format}
-				onChange={handleValueChange}
-				autoFormat={autoFormat}
-			/>
+
+			<div style={{ flex: 1, height: 0 }} >
+				<EditorCode
+					ref={ref => sendSa.editorRef = ref}
+					format={sendSa.format}
+					value={sendSo.getEditorText()}
+					onChange={handleValueChange}
+				/>
+			</div>
 
 			<div className="lyt-float">
 				<FloatButton style={{ position: "relative" }}

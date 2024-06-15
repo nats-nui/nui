@@ -136,6 +136,7 @@ const setup = {
 			if (store.state.noSysMessages && (msg.subject.startsWith("_INBOX") || msg.subject.startsWith("$"))) return
 
 			const message: Message = {
+				headers: msg.headers,
 				subject: msg.subject,
 				payload: msg.payload as string,
 				receivedAt: Date.now(),

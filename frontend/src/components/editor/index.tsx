@@ -75,6 +75,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	}
 	return <Editor
 		className={className}
+		height={"100%"}
 		defaultLanguage="json"
 		language={getEditorLanguage(format)}
 		value={value}

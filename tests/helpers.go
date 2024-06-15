@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"net/http"
 	"strconv"
@@ -38,10 +39,16 @@ func (s *NuiTestSuite) filledStream(name string, subjects ...string) jetstream.S
 func (s *NuiTestSuite) filledStreamMultiSub(name, sub1, sub2 string) jetstream.Stream {
 	stream, err := s.emptyStream(name, sub1, sub2)
 	for i := 1; i <= 10; i++ {
-		_, err = s.js.Publish(s.ctx, sub1, []byte("msg"+strconv.Itoa(i)))
+		nMsg := nats.NewMsg(sub1)
+		nMsg.Data = []byte("msg" + strconv.Itoa(i))
+		nMsg.Header.Add("key1", "val1")
+		nMsg.Header.Add("key1", "val2")
+		nMsg.Header.Add("key2", "val3")
+		_, err = s.js.PublishMsg(s.ctx, nMsg)
 		s.NoError(err)
 		if i%2 == 0 {
-			_, err = s.js.Publish(s.ctx, sub2, []byte("msg"+strconv.Itoa(i)))
+			nMsg.Subject = sub2
+			_, err = s.js.PublishMsg(s.ctx, nMsg)
 			s.NoError(err)
 		}
 	}

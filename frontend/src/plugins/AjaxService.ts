@@ -22,12 +22,14 @@ export interface CallOptions {
 	loading?: boolean
 	noError?: boolean
 	store?: ViewStore
-	/** utilizza questo signal per fare l'abort */
+	/** manage the abort with the signal */
 	signal?: AbortSignal
-	/** se true setto nello store l'oggetto per l'abort */
+	/** if true, the abrt object is set in the store */
 	manageAbort?: boolean
-	/** non restituire trasformato in camelCase */
+	/** disable the parsing of the response from snake case to camel case */
 	noCamel?: boolean
+	/** disable the parsing of the request from camel case to snake case */
+	noSnake?: boolean
 }
 
 const httpUrlBuilder = () => {
@@ -77,7 +79,9 @@ export class AjaxService {
 		options = { ...optionsParamDefault, ...options }
 
 		// PREPARE DATA
-		data = camelToSnake(data)
+		if (!options.noSnake){
+			data = camelToSnake(data)
+		}
 		const headers = {
 			"Content-Type": "application/json",
 			"Accept": "application/json",

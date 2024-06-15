@@ -17,6 +17,7 @@ POST /api/connection/:connection_id/request
 {
     "subject": string,	// request subject
     "payload": string,  // base64 encoded request payload
+    "headers": {[key: string] : string[]},
     "timeout": int // timeout in ms 
 }
 ```
@@ -27,5 +28,6 @@ POST /api/connection/:connection_id/request
 {
     "subject": string,	// response subject
     "payload": string  // base64 encoded response payload
+    "headers": {[key: string] : string[]}
 }
 ```

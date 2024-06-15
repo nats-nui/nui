@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"testing"
@@ -247,10 +248,11 @@ func (s *NuiTestSuite) TestStreamMessagesIndex() {
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(15)
 
-	// check that messages are ordered by sequence number
-	r.Value(0).Object().Value("payload").NotEqual("0001-01-01T00:00:00Z")
-	r.Value(0).Object().Value("seq_num").NotEqual("0001-01-01T00:00:00Z")
+	// check that messages are ordered by sequence number and filled with payload and headers
+	r.Value(0).Object().Value("payload").NotEqual("")
+	r.Value(0).Object().Value("seq_num").IsEqual(1)
 	r.Value(1).Object().Value("received_at").NotEqual("0001-01-01T00:00:00Z")
+	r.Value(1).Object().Value("headers").Object().Value("key1").Array().IsEqual([]string{"val1", "val2"})
 
 	// filter by interval
 	e.GET("/api/connection/" + connId + "/stream/stream1/messages").
@@ -446,20 +448,43 @@ func (s *NuiTestSuite) TestKvRest() {
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
+
 	// create a subscription with s.nc that wait for requests and say "hi" as response
+	var reqPayload []byte
+	var reqHeaders nats.Header
 	sub, _ := s.nc.Subscribe("request_sub", func(m *nats.Msg) {
-		err := s.nc.Publish(m.Reply, []byte("hi"))
+		reqPayload = m.Data
+		reqHeaders = m.Header
+		replyMsg := nats.NewMsg(m.Reply)
+		replyMsg.Data = []byte("hi")
+		replyMsg.Header = nats.Header{
+			"reply_key1": []string{"val1", "val2"},
+		}
+		err := m.RespondMsg(replyMsg)
 		s.NoError(err)
 	})
 	defer sub.Unsubscribe()
 	time.Sleep(10 * time.Millisecond)
 
 	// send request and read response via nui rest
+	// payload is base64 encoded "req"
 	r := s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(`{"subject": "request_sub", "payload": ""}`)).
+		WithBytes([]byte(`{"subject": "request_sub", "payload": "cmVx", "headers": {"key1": ["val1", "val2"]}}`)).
 		Expect()
-	r.Status(http.StatusOK).JSON().Object().Value("payload").String().IsEqual("aGk=")
+	r.Status(http.StatusOK)
 	r.JSON().Object().Value("subject").NotEqual("")
+	r.JSON().Object().Value("payload").String().IsEqual("aGk=")
+	r.JSON().Object().Value("headers").Object().Value("reply_key1").Array().IsEqual([]string{"val1", "val2"})
+	r.JSON()
+
+	// expect that request have correct payload and headers
+	expectedHeaders := nats.Header{
+		"key1": []string{"val1", "val2"},
+	}
+	s.Require().EventuallyWithT(func(c *assert.CollectT) {
+		assert.Equal(c, []byte("req"), reqPayload)
+		assert.Equal(c, expectedHeaders, reqHeaders)
+	}, 1*time.Second, 100*time.Millisecond)
 
 }
 
@@ -479,7 +504,7 @@ func (s *NuiTestSuite) TestPubSubWs() {
 
 	// publish on sub1 via rest
 	s.e.POST("/api/connection/" + connId + "/messages/publish").
-		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk="}`)).
+		WithBytes([]byte(`{"subject": "sub1", "payload": "aGk=", "headers": {"key1": ["val1", "val2"]}}`)).
 		Expect().Status(http.StatusOK)
 
 	// both ws receive the connected event and the message published
@@ -487,11 +512,48 @@ func (s *NuiTestSuite) TestPubSubWs() {
 	r := ws.WithReadTimeout(500 * time.Millisecond).Expect().JSON().Object().Value("payload").Object()
 	r.Value("subject").String().IsEqual("sub1")
 	r.Value("payload").String().IsEqual("aGk=")
+	r.Value("headers").Object().Value("key1").Array().IsEqual([]string{"val1", "val2"})
 	// received at is 0-value in core nats message
 	r.Value("received_at").IsEqual("0001-01-01T00:00:00Z")
 
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
 	ws2.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("aGk=")
+}
+
+func (s *NuiTestSuite) TestHeadersOnSub() {
+	connId := s.defaultConn()
+
+	// open the ws
+	ws := s.ws("/ws/sub", "id="+connId)
+	defer ws.Disconnect()
+
+	// ws subscribe to sub1
+	ws.WriteText(`{"type": "subscriptions_req", "payload": {"subjects": ["sub1"]}}`)
+	time.Sleep(10 * time.Millisecond)
+
+	// create headers
+	headers := nats.Header{
+		"header1": []string{"value1"},
+		"header2": []string{"value2", "value3"},
+	}
+
+	// publish on sub1 via nats client with headers
+	err := s.nc.PublishMsg(&nats.Msg{
+		Subject: "sub1",
+		Data:    []byte("hi"),
+		Header:  headers,
+	})
+	s.NoError(err)
+
+	// ws receive the connected event and the message published
+	ws.WithReadTimeout(500 * time.Millisecond).Expect().Body().Contains("connected")
+	r := ws.WithReadTimeout(500 * time.Millisecond).Expect().JSON().Object().Value("payload").Object()
+	r.Value("subject").String().IsEqual("sub1")
+	r.Value("payload").String().IsEqual("aGk=")
+	r.Value("headers").Object().Value("header1").Array().Value(0).String().IsEqual("value1")
+	r.Value("headers").Object().Value("header2").Array().Value(0).String().IsEqual("value2")
+	r.Value("headers").Object().Value("header2").Array().Value(1).String().IsEqual("value3")
+
 }
 
 func (s *NuiTestSuite) TestConnectionEventsWs() {

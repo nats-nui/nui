@@ -6,12 +6,12 @@ export enum MESSAGE_TYPE {
 }
 
 export interface Message {
+	headers?: { [key: string]: string[] }
 	seqNum?: number
 	subject: string
 	/** base64 encoded */
 	payload: string
 	receivedAt?: number
-
 	// INTERNAL
 	type?: MESSAGE_TYPE
 }

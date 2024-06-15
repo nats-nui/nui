@@ -35,6 +35,7 @@ server -> client
 	"type": "nats_msg"
 	"subject": string,
 	"payload": string // base64 encoded
+    "headers": {[key: string] : string[]}
 }
 ```
 

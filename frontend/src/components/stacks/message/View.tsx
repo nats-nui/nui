@@ -6,7 +6,9 @@ import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import TitleAccordion from "../../accordion/TitleAccordion"
 import FormatDialog from "../../editor/FormatDialog"
+import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
 
 
@@ -26,11 +28,13 @@ const MessageView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+	const refEditor = (ref: EditorRefProps) => msgSa.editorRef = ref
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
 	const autoFormat = msgSa.autoFormat
-	const refEditor = (ref:EditorRefProps) => msgSa.editorRef = ref
+	const noHeaders = !msgSa.message.headers || Object.keys(msgSa.message.headers).length == 0
+	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
 		store={msgSo}
@@ -39,23 +43,30 @@ const MessageView: FunctionComponent<Props> = ({
 		</>}
 	>
 		<div className={`lyt-form ${cls.form}`}>
+
+			<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
+				<HeadersCmp headers={msgSa.message.headers} />
+			</TitleAccordion>
+
 			<div className="hover-container">
-				<CopyButton absolute 
-					value={msgSa.message.subject} 
-					style={{backgroundColor: "var(--bg-default)" }}
+				<CopyButton absolute
+					value={msgSa.message.subject}
+					style={{ backgroundColor: "var(--bg-default)" }}
 				/>
-				<span className="lbl-prop">SUBJECT: </span>
+				<span className="lbl-prop">SUBJECT2: </span>
 				<span className="lbl-readonly">
 					{msgSa.message.subject}
 				</span>
 			</div>
 
-			<EditorCode readOnly
-				ref={refEditor}
-				value={msgSo.getEditorText()}
-				format={msgSa.format}
-				autoFormat={autoFormat}
-			/>
+			<div style={{ flex: 1, height: 0 }} >
+				<EditorCode readOnly
+					autoFormat={autoFormat}
+					ref={refEditor}
+					format={msgSa.format}
+					value={msgSo.getEditorText()}
+				/>
+			</div>
 
 			<div className={cls.timestamp}>{timestamp}</div>
 		</div>
@@ -66,3 +77,5 @@ const MessageView: FunctionComponent<Props> = ({
 }
 
 export default MessageView
+
+
