@@ -86,7 +86,7 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	timeout := 200 * time.Millisecond
+	timeout := 2000 * time.Millisecond
 	if req.TimeoutMs > 0 {
 		timeout = time.Duration(req.TimeoutMs) * time.Millisecond
 	}

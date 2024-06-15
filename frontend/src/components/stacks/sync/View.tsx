@@ -18,6 +18,7 @@ import cls from "./View.module.css"
 import TitleAccordion from "../../accordion/TitleAccordion"
 import EditList from "../../lists/EditList"
 import EditMetadataRow from "../../rows/EditMetadataRow"
+import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx";
 
 
 
@@ -58,6 +59,8 @@ const SyncView: FunctionComponent<Props> = ({
 	// RENDER
 	const canSend = syncSo.getCanSend()
 	const inLoading = syncSa.loadingState == LOAD_STATE.LOADING
+	const noHeaders = !syncSa.headersReceived || Object.keys(syncSa.headersReceived).length == 0
+	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
 		store={syncSo}
@@ -107,7 +110,7 @@ const SyncView: FunctionComponent<Props> = ({
 					</div>
 					
 					<TextInput autoFocus
-						placeholder="Write here e.g. persons.ivano"
+						placeholder="Write here e.g. foo.bar"
 						value={syncSa.subject}
 						onChange={handleSubjectChange}
 					/>
@@ -142,6 +145,10 @@ const SyncView: FunctionComponent<Props> = ({
 						<ArrowRightIcon />
 					</IconButton>
 				</div>
+
+				<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
+					<HeadersCmp headers={syncSa.headersReceived} />
+				</TitleAccordion>
 
 				<div style={{ flex: 1, height: 0 }} >
 					<EditorCode ref={refReceiver}

@@ -21,6 +21,8 @@ const setup = {
 		messageSend: "",
 		subject: "",
 		headers: <[string, string][]>[],
+		headersReceived: {},
+
 
 		loadingState: LOAD_STATE.IDLE,
 
@@ -43,6 +45,7 @@ const setup = {
 				messageSend: state.messageSend,
 				subject: state.subject,
 				headers: state.headers,
+
 			}
 		},
 		//#endregion
@@ -75,6 +78,7 @@ const setup = {
 					{ store }
 				)
 				store.setMessageReceived(resp.payload)
+				store.setHeadersReceived(resp.headers)
 				store.setSnackbar({
 					open: true,
 					type: MESSAGE_TYPE.INFO,
@@ -97,9 +101,10 @@ const setup = {
 	mutators: {
 		setAbout: (about: About) => ({ about }),
 		setMessageReceived: (messageReceived: string) => ({ messageReceived }),
+		setHeadersReceived: (headersReceived: { [key: string]: string[] }) => ({ headersReceived }),
 		setMessageSend: (messageSend: string) => ({ messageSend }),
 		setSubject: (subject: string) => ({ subject }),
-		setHeaders: (headers: [string, string][]) => ({ headers }),
+		setHeaders: (headers: [string,string][]) => ({ headers }),
 	},
 }
 

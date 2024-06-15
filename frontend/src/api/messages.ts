@@ -52,6 +52,7 @@ async function sync(cnnId: string, subject: string, payload: string, headersArra
 type SyncResp = {
 	subject: string,	// response subject
 	payload: string, 	// base64 encoded response payload
+	headers: { [key: string]: string[] } // response headers
 }
 
 const messagesApi = {
