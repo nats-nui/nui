@@ -16,6 +16,7 @@ const setup = {
 		text: <string>null,
 		subject: <string>null,
 		subjects: <string[]>[],
+		headers: <[string, string][]>[],
 		subsOpen: false,
 
 		loadingState: LOAD_STATE.IDLE,
@@ -42,7 +43,8 @@ const setup = {
 				connectionId: state.connectionId,
 				text: state.text,
 				subject: state.subject,
-				subjects : state.subjects,
+				subjects: state.subjects,
+				headers: state.headers,
 			}
 		},
 		//#endregion
@@ -62,6 +64,7 @@ const setup = {
 			state.text = data.text
 			state.subject = data.subject
 			state.subjects = data.subjects
+			state.headers = data.headers
 		},
 		//#endregion
 
@@ -71,9 +74,11 @@ const setup = {
 					store.state.connectionId,
 					store.state.subject,
 					store.state.text,
+					store.state.headers,
 					{ store }
 				)
-				store.setSnackbar({ open: true,
+				store.setSnackbar({
+					open: true,
 					type: MESSAGE_TYPE.INFO,
 					title: "MESSAGE SENT",
 					body: "Your message has been sent correctly",
@@ -87,6 +92,7 @@ const setup = {
 	mutators: {
 		setText: (text: string, store?: MessageSendStore) => ({ text }),
 		setSubject: (subject: string) => ({ subject }),
+		setHeaders: (headers: [string, string][]) => ({ headers }),
 		setSubsOpen: (subsOpen: boolean) => ({ subsOpen }),
 
 		setLoadingState: (loadingState: LOAD_STATE) => ({ loadingState }),

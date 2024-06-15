@@ -19,13 +19,13 @@ function serverStart(port = 31311) {
 		const location = url.parse(req.url, true);
 		const { id: cnnId } = location.query
 		console.log("fe:connection:", cnnId);
-		const client = { 
-			cnnId, 
+		const client = {
+			cnnId,
 			cws,
 		}
 		cws.on('message', onMessage(client))
 		cws.on('close', () => {
-			Thread.Find({cnnId})?.stop()
+			Thread.Find({ cnnId })?.stop()
 			console.log(`server:close:${client.cnnId}`);
 		});
 	})
@@ -61,7 +61,7 @@ const onMessage = client => msgRaw => {
 	const type = msg.type
 	switch (type) {
 		case "subscriptions_req":
-			Thread.Find({cnnId: client.cnnId})?.stop()
+			Thread.Find({ cnnId: client.cnnId })?.stop()
 			const subjects = msg.payload.subjects
 			if (Array.isArray(subjects) && subjects.length > 0) {
 				new Thread(
@@ -95,11 +95,16 @@ function sendTestMessages(client, subjects) {
 		send(client.cws, {
 			type: "nats_msg",
 			payload: {
+				headers: {
+					"key1": ["value1"],
+					"key2": [],
+					"key3": ["value1", "value2", "value3 dldsfòlfd dsfòfd fjfgs bfdg dlghs df sgshdsfs gljfsdh gldfg sfdjglsdfgh sdlfgh sdfljgh sdflgj sldfhg dfljgh sdlgh lsdfhgl sdh glsdh g "],
+				},
 				subject,
 				payload,
 			},
 		})
-	// manda il messaggio di disconnessione
+		// manda il messaggio di disconnessione
 	} else if (messagesSend == numMsg) {
 		send(client.cws, {
 			type: "connection_status",
@@ -107,7 +112,7 @@ function sendTestMessages(client, subjects) {
 				status: "diconnected"
 			},
 		})
-	// manda il messaggio che si sta riconnettendo
+		// manda il messaggio che si sta riconnettendo
 	} else if (messagesSend == numMsg + 2) {
 		send(client.cws, {
 			type: "connection_status",
@@ -115,7 +120,7 @@ function sendTestMessages(client, subjects) {
 				status: "reconnecting"
 			},
 		})
-	// manda il messaggio che s'e' riconnesso
+		// manda il messaggio che s'e' riconnesso
 	} else if (messagesSend == numMsg + 5) {
 		send(client.cws, {
 			type: "connection_status",

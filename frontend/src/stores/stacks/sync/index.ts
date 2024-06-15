@@ -20,6 +20,9 @@ const setup = {
 		messageReceived: "",
 		messageSend: "",
 		subject: "",
+		headers: <[string, string][]>[],
+		headersReceived: {},
+
 
 		loadingState: LOAD_STATE.IDLE,
 
@@ -41,6 +44,8 @@ const setup = {
 				messageReceived: state.messageReceived,
 				messageSend: state.messageSend,
 				subject: state.subject,
+				headers: state.headers,
+
 			}
 		},
 		//#endregion
@@ -58,6 +63,7 @@ const setup = {
 			state.messageReceived = data.messageReceived
 			state.messageSend = data.messageSend
 			state.subject = data.subject
+			state.headers = data.headers
 		},
 		//#endregion
 
@@ -67,10 +73,12 @@ const setup = {
 					store.state.connectionId,
 					store.state.subject,
 					store.state.messageSend,
+					store.state.headers,
 					null,
 					{ store }
 				)
 				store.setMessageReceived(resp.payload)
+				store.setHeadersReceived(resp.headers)
 				store.setSnackbar({
 					open: true,
 					type: MESSAGE_TYPE.INFO,
@@ -93,8 +101,10 @@ const setup = {
 	mutators: {
 		setAbout: (about: About) => ({ about }),
 		setMessageReceived: (messageReceived: string) => ({ messageReceived }),
+		setHeadersReceived: (headersReceived: { [key: string]: string[] }) => ({ headersReceived }),
 		setMessageSend: (messageSend: string) => ({ messageSend }),
 		setSubject: (subject: string) => ({ subject }),
+		setHeaders: (headers: [string,string][]) => ({ headers }),
 	},
 }
 

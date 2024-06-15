@@ -1,4 +1,4 @@
-import {CNN_STATUS} from "@/types"
+import { CNN_STATUS } from "@/types"
 
 
 export interface SocketOptions {
@@ -30,6 +30,7 @@ export type PayloadSub = {
 }
 /** NATS MESSAGE - server */
 export type PayloadMessage = {
+    headers: { [key: string]: string[] }
     subject: string
     payload: string
 }

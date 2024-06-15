@@ -10,6 +10,7 @@ interface Props {
 	title?: string
 	children?: React.ReactNode
 	open?: boolean
+	disabled?: boolean
 	style?: CSSProperties
 }
 
@@ -17,6 +18,7 @@ const TitleAccordion: FunctionComponent<Props> = ({
 	title,
 	children,
 	open: openExt,
+	disabled,
 	style,
 }) => {
 
@@ -30,19 +32,22 @@ const TitleAccordion: FunctionComponent<Props> = ({
 	}, [openExt])
 
 	// HANDLER
-	const handleClick = () => setOpen(!open)
+	const handleClick = () => { if (!disabled) setOpen(!open) }
 
 	// RENDER
 	return <div className={cls.root_title} style={style}>
 
-		<div className={`lbl-prop-title ${cls.title}`}
+		<div className={`lbl-prop-title ${cls.title} ${disabled ? cls.disabled : ""}`}
 			style={{ alignItems: "center", display: "flex", justifyContent: "center", cursor: "pointer" }}
 			onClick={handleClick}
 		>
 			<div className={cls.title_text}>{title}</div>
-			<div className={cls.title_icon}>
-				{open ? <ArrowDownIcon /> : <ArrowUpIcon />}
-			</div>
+
+			{!disabled && (
+				<div className={cls.title_icon}>
+					{open ? <ArrowDownIcon /> : <ArrowUpIcon />}
+				</div>
+			)}
 		</div>
 
 		<Accordion

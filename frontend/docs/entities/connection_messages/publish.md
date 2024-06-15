@@ -17,6 +17,7 @@ la connection su cui si vuole pubblicare
 {
     "subject": string,	// un solo SUBJECT
     "payload": string,  // base64 encoded
+    "headers": {[key: string] : string[]}
 }
 ```
 
