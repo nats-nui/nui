@@ -1,11 +1,11 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
 import { Subscription } from "@/types"
-import {camelToSnake} from "@/utils/object.ts";
+import { camelToSnake } from "@/utils/object.ts";
 
 /** PUBLISH
  * permette di pubblicare un messaggio
  */
-function publish(cnnId: string, subject: string, payload: string, headersArray: [string, string][], opt?: CallOptions) {
+function publish(cnnId: string, subject: string, payload: string, headersArray: [string, string][], opt: CallOptions = {}) {
 	const data = camelToSnake({
 		subject,
 		payload: btoa(payload)
@@ -34,7 +34,7 @@ function subscriptionUpdate(cnnId: string, subscriptions: Subscription[], opt?: 
 /** SYNC
  * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
  */
-async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeout: number = 2000, opt?: CallOptions): Promise<SyncResp> {
+async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeout: number = 2000, opt: CallOptions = {}): Promise<SyncResp> {
 	const data = camelToSnake({
 		subject,
 		payload: btoa(payload),
