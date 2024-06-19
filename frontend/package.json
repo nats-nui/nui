@@ -1,7 +1,7 @@
 {
   "name": "nats-client",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.4.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,6 @@
     "build-desktop": "cross-env VITE_TARGET=desktop vite build",
     "typescript": "tsc",
     "start:socket:mock": "node ./src/mocks/socket/index.js",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest watch"
   },
@@ -29,20 +28,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-virtuoso": "^4.7.1",
-    "slate": "^0.103.0",
-    "slate-history": "^0.100.0",
-    "slate-react": "^0.102.0",
-    "ws": "^8.14.2"
+    "ws": "^8.17.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^8.53.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4",
     "msw": "^1",
     "typescript": "^5.2.2",
     "vite": "^5.2.12",
