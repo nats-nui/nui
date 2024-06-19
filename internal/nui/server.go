@@ -81,6 +81,7 @@ func (a *App) registerHandlers() {
 	a.Get("/api/connection/:connection_id/kv/:bucket", a.handleShowBucket)
 	a.Post("/api/connection/:connection_id/kv", a.handleCreateBucket)
 	a.Delete("/api/connection/:connection_id/kv/:bucket", a.handleDeleteBucket)
+	a.Post("/api/connection/:connection_id/kv/:bucket/purge_deleted", a.handlePurgeDeletedKeys)
 
 	a.Get("/api/connection/:connection_id/kv/:bucket/key", a.handleIndexKeys)
 	a.Get("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleShowKey)

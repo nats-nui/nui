@@ -440,9 +440,13 @@ func (s *NuiTestSuite) TestKvRest() {
 	r.JSON().Object().Value("operation").String().IsEqual("KeyValueDeleteOp")
 
 	// purge key
-	e.POST("/api/connection/" + connId + "/kv/bucket1/key/key1/purge").Expect()
+	e.POST("/api/connection/" + connId + "/kv/bucket1/key/key1/purge").Expect().Status(http.StatusNoContent)
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().
 		JSON().Object().Value("history").Array().Length().IsEqual(1)
+
+	//purge entire bucket
+	e.POST("/api/connection/" + connId + "/kv/bucket1/purge_deleted").Expect().Status(http.StatusNoContent)
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusNotFound)
 
 }
 
