@@ -159,6 +159,18 @@ watch:
 	return c.JSON(keysData)
 }
 
+func (a *App) handlePurgeDeletedKeys(c *fiber.Ctx) error {
+	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
+	if !ok {
+		return a.logAndFiberError(c, err, 404)
+	}
+	err = kv.PurgeDeletes(c.Context(), jetstream.DeleteMarkersOlderThan(-1))
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.SendStatus(204)
+}
+
 func (a *App) handleShowKey(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
