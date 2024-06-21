@@ -3,6 +3,7 @@ import { bucketStateFromConfig } from '@/mocks/data/utils/bucket'
 import { BucketConfig, BucketState } from '@/types/Bucket'
 import { camelToSnake, snakeToCamel } from '@/utils/object'
 import { rest } from 'msw'
+import keyValueEntries_S from "../../data/kventries";
 
 
 
@@ -50,7 +51,7 @@ const handlers = [
 		// return res(
 		// 	ctx.status(400),
 		// 	ctx.json({
-		// 		error: "TITOLO ABBASTANZA LUNGO DA ESSERE PREOCCUPOANTE	http:error:500 nats: API error: code=500 err_code=10052 description=max age needs to be = 100ms etc etc etc etc etc etc"
+		// 		error: "ERROR TITLE	http:error:500 nats: API error: code=500 err_code=10052 description=max age needs to be = 100ms etc"
 		// 	}),
 		// )
 		return res(
@@ -58,6 +59,11 @@ const handlers = [
 			ctx.json(camelToSnake(bucketState)),
 		)
 	}),
+
+	rest.post('/api/connection/:cnnId/kv/:bucketName', async (req, res, ctx) => {
+		keyValueEntries_S.splice(0, keyValueEntries_S.length, ...keyValueEntries_S.filter((entry) => !entry.is_deleted))
+		return res(ctx.status(204))
+	})
 
 ]
 

@@ -25,6 +25,10 @@ function create(connectionId: string, bucket: BucketConfig, opt?: CallOptions): 
 	return ajax.post(`connection/${connectionId}/kv`, bucket, opt)
 }
 
+/** PURGE DELETED keys from bucket */
+function purgeDeleted(connectionId: string, bucketName: string, opt?: CallOptions): Promise<void> {
+	return ajax.post(`connection/${connectionId}/kv/${bucketName}/purge`, null, opt)
+}
 
 
 const api = {
@@ -32,5 +36,6 @@ const api = {
 	get,
 	remove,
 	create,
+	purgeDeleted
 }
 export default api
