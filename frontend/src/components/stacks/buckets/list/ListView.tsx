@@ -34,6 +34,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const handleSelect = (bucket: BucketState) => bucketsSo.select(bucket.bucket)
 	const handleNew = () => bucketsSo.create()
 	const handleDelete = () => bucketsSo.delete()
+	const handlePurge = () => bucketsSo.purgeDeleted()
 
 	// RENDER
 	const buckets = bucketsSo.getFiltered() ?? []
@@ -52,6 +53,10 @@ const BucketsListView: FunctionComponent<Props> = ({
 				value={bucketsSa.textSearch}
 				onChange={text => bucketsSo.setTextSearch(text)}
 			/>
+			{!!selected && <Button
+				children="PURGE"
+				onClick={handlePurge}
+			/>}
 			{!!selected && <Button
 				children="DELETE"
 				onClick={handleDelete}
