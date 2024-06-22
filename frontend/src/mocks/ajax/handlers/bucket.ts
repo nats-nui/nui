@@ -60,7 +60,7 @@ const handlers = [
 		)
 	}),
 
-	rest.post('/api/connection/:cnnId/kv/:bucketName', async (req, res, ctx) => {
+	rest.post('/api/connection/:cnnId/kv/:bucketName/purge_deleted', async (req, res, ctx) => {
 		keyValueEntries_S.splice(0, keyValueEntries_S.length, ...keyValueEntries_S.filter((entry) => !entry.is_deleted))
 		return res(ctx.status(204))
 	})

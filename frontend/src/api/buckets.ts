@@ -27,7 +27,7 @@ function create(connectionId: string, bucket: BucketConfig, opt?: CallOptions): 
 
 /** PURGE DELETED keys from bucket */
 function purgeDeleted(connectionId: string, bucketName: string, opt?: CallOptions): Promise<void> {
-	return ajax.post(`connection/${connectionId}/kv/${bucketName}/purge`, null, opt)
+	return ajax.post(`connection/${connectionId}/kv/${bucketName}/purge_deleted`, null, opt)
 }
 
 
