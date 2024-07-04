@@ -39,7 +39,7 @@
 	--z-zen: 101;
 }
 
-
+/* 
 .bars-alert-bg {
 	background: repeating-linear-gradient(135deg, transparent, transparent 7px, #000 7px, #000 15px)
 }
@@ -49,4 +49,4 @@
 
 .bars-alert-bg-1 {
 	background: repeating-linear-gradient(135deg, transparent, transparent 10px, var(--var-1) 10px, var(--var-1) 20px)
-}
+} */

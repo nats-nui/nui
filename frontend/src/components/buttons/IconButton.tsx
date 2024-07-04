@@ -1,43 +1,46 @@
-import React, { FunctionComponent, useState } from "react"
-import classes from "./IconButton.module.css"
+export { IconButton as default } from "@priolo/jack"
+
+
+// import React, { FunctionComponent, useState } from "react"
+// import classes from "./IconButton.module.css"
 
 
 
-interface Props {
-	onClick?: (e: React.MouseEvent) => void
-	children?: React.ReactNode
-	effect?: boolean
-	select?: boolean
-	className?: string
-	style?: React.CSSProperties
-}
+// interface Props {
+// 	onClick?: (e: React.MouseEvent) => void
+// 	children?: React.ReactNode
+// 	effect?: boolean
+// 	select?: boolean
+// 	className?: string
+// 	style?: React.CSSProperties
+// }
 
-const IconButton: FunctionComponent<Props> = ({
-	onClick,
-	select,
-	children,
-	effect,
-	className = "",
-	style,
-}) => {
-	// STORE
+// const IconButton: FunctionComponent<Props> = ({
+// 	onClick,
+// 	select,
+// 	children,
+// 	effect,
+// 	className = "",
+// 	style,
+// }) => {
+// 	// STORE
 
-	// HOOK
-	const [mouseOver, setMouseOver] = useState(false)
+// 	// HOOK
+// 	const [mouseOver, setMouseOver] = useState(false)
 
-	// HANDLER
+// 	// HANDLER
 
-	// RENDER
-	const cls = `${classes.root} ${(mouseOver || select) ? "color-bg color-text" : ""} ${className}`
-	return (
-		<div style={style} className={cls}
-			onClick={onClick}
-			onMouseEnter={effect ? () => setMouseOver(true) : null}
-			onMouseLeave={effect ? () => setMouseOver(false) : null}
-		>
-			{children}
-		</div>
-	)
-}
+// 	// RENDER
+// 	const cls = `${classes.root} ${(mouseOver || select) ? "color-bg color-text" : ""} ${className}`
+// 	return (
+// 		<div style={style} className={cls}
+// 			onClick={onClick}
+// 			onMouseEnter={effect ? () => setMouseOver(true) : null}
+// 			onMouseLeave={effect ? () => setMouseOver(false) : null}
+// 		>
+// 			{children}
+// 		</div>
+// 	)
+// }
 
-export default IconButton
+// export default IconButton

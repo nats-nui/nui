@@ -2,7 +2,8 @@
 .root {
 	display: flex;
 
-	background-color: var(--text-bg);
+	color: #BBFB35;
+	background-color: #393939;
 	z-index: 2;
 }
 .bottom.root {

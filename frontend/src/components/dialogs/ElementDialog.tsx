@@ -1,36 +1,40 @@
-import Dialog, { DialogProps } from "@/components/dialogs/Dialog"
-import { FunctionComponent, useMemo } from "react"
+export { ElementDialog as default } from "@priolo/jack"
 
 
 
-export interface ElementDialogProps extends DialogProps {
-	element: Element
-}
+// import Dialog, { DialogProps } from "@/components/dialogs/Dialog"
+// import { FunctionComponent, useMemo } from "react"
 
-const ElementDialog: FunctionComponent<ElementDialogProps> = ({
-	element,
-	...props
-}) => {
 
-	// STORE
 
-	// HOOKs
-	const top = useMemo(() => {
-		if (!element) return null
-		return element.getBoundingClientRect().y
-	}, [element])
+// export interface ElementDialogProps extends DialogProps {
+// 	element: Element
+// }
 
-	// HANDLER
+// const ElementDialog: FunctionComponent<ElementDialogProps> = ({
+// 	element,
+// 	...props
+// }) => {
 
-	// RENDER
-	return (
-		<Dialog	{...props}
-			open={top != null}
-			top={top}
-		>
-			{props.children}
-		</Dialog>
-	)
-}
+// 	// STORE
 
-export default ElementDialog
+// 	// HOOKs
+// 	const top = useMemo(() => {
+// 		if (!element) return null
+// 		return element.getBoundingClientRect().y
+// 	}, [element])
+
+// 	// HANDLER
+
+// 	// RENDER
+// 	return (
+// 		<Dialog	{...props}
+// 			open={top != null}
+// 			top={top}
+// 		>
+// 			{props.children}
+// 		</Dialog>
+// 	)
+// }
+
+// export default ElementDialog

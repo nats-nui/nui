@@ -1,135 +1,139 @@
-import React, { CSSProperties, FunctionComponent, useMemo, useState } from "react"
-import Header, { ORDER_TYPE } from "./Header"
-import cls from "./Table.module.css"
-import CopyButton from "../buttons/CopyButton"
+export { Table as default } from "@priolo/jack"
 
 
 
-export interface ItemProp {
-	label?: string
-	getValue?: (item: any) => any
-	getShow?: (item: any) => string
+// import React, { CSSProperties, FunctionComponent, useMemo, useState } from "react"
+// import Header, { ORDER_TYPE } from "./Header"
+// import cls from "./Table.module.css"
+// import CopyButton from "../buttons/CopyButton"
 
-	isMain?: boolean
-}
 
-interface Props {
-	/** le prop da visualizzare nelle colonne */
-	props: ItemProp[]
-	/** i dati */
-	items?: any[]
-	/** l'id selezionato */
-	selectId?: string
-	/** stessa riga per propMain e props */
-	singleRow?: boolean
-	/** evento cambio selezione */
-	onSelectChange?: (item: any) => void
-	/** callback per determinare un id di un item */
-	getId?: (item: any) => string
-	style?: React.CSSProperties
-}
 
-const Table: FunctionComponent<Props> = ({
-	props,
-	items = [],
-	selectId,
-	singleRow,
-	onSelectChange,
-	getId = (item) => item.toString(),
-	style,
-}) => {
+// export interface ItemProp {
+// 	label?: string
+// 	getValue?: (item: any) => any
+// 	getShow?: (item: any) => string
 
-	// STORE
-	const [propOrder, setPropOrder] = useState<ItemProp>(null)
-	const [typeOrder, setTypeOrder] = useState<ORDER_TYPE>(ORDER_TYPE.ASC)
+// 	isMain?: boolean
+// }
 
-	// HOOKs
-	const propMain = useMemo(() => props.find(p => p.isMain), [props])
-	const propToShow = useMemo(() => singleRow ? props : props.filter(p => !p.isMain), [props, singleRow])
-	const itemsSort: any[] = useMemo(() => {
-		if (!propOrder || typeOrder == ORDER_TYPE.NOTHING) {
-			return items.sort((i1, i2) => {
-				const v1 = getValueString(i1, propMain)
-				const v2 = getValueString(i2, propMain)
-				return v1.localeCompare(v2)
-			})
-		}
-		return items.sort((i1, i2) => {
-			const v1 = propOrder.getValue(i1)
-			const v2 = propOrder.getValue(i2)
-			return typeOrder == ORDER_TYPE.ASC ? v1 - v2 : v2 - v1
-		})
-	}, [items, propOrder, typeOrder])
+// interface Props {
+// 	/** le prop da visualizzare nelle colonne */
+// 	props: ItemProp[]
+// 	/** i dati */
+// 	items?: any[]
+// 	/** l'id selezionato */
+// 	selectId?: string
+// 	/** stessa riga per propMain e props */
+// 	singleRow?: boolean
+// 	/** evento cambio selezione */
+// 	onSelectChange?: (item: any) => void
+// 	/** callback per determinare un id di un item */
+// 	getId?: (item: any) => string
+// 	style?: React.CSSProperties
+// }
 
-	// HANDLER
-	const handleSelect = (item: any) => onSelectChange(item)
-	const handleOrderChange = (prop: ItemProp, type: ORDER_TYPE) => {
-		setPropOrder(prop)
-		setTypeOrder(type)
-	}
+// const Table: FunctionComponent<Props> = ({
+// 	props,
+// 	items = [],
+// 	selectId,
+// 	singleRow,
+// 	onSelectChange,
+// 	getId = (item) => item.toString(),
+// 	style,
+// }) => {
 
-	// RENDER
-	const isSelected = (item: any) => getId(item) == selectId
-	const colspan = props.length
-	function getValueString(item: any, prop: ItemProp): string {
-		if (!prop) return
-		return prop.getShow?.(item) ?? prop.getValue?.(item)
-	}
+// 	// STORE
+// 	const [propOrder, setPropOrder] = useState<ItemProp>(null)
+// 	const [typeOrder, setTypeOrder] = useState<ORDER_TYPE>(ORDER_TYPE.ASC)
 
-	return <table className={cls.root} style={style}>
+// 	// HOOKs
+// 	const propMain = useMemo(() => props.find(p => p.isMain), [props])
+// 	const propToShow = useMemo(() => singleRow ? props : props.filter(p => !p.isMain), [props, singleRow])
+// 	const itemsSort: any[] = useMemo(() => {
+// 		if (!propOrder || typeOrder == ORDER_TYPE.NOTHING) {
+// 			return items.sort((i1, i2) => {
+// 				const v1 = getValueString(i1, propMain)
+// 				const v2 = getValueString(i2, propMain)
+// 				return v1.localeCompare(v2)
+// 			})
+// 		}
+// 		return items.sort((i1, i2) => {
+// 			const v1 = propOrder.getValue(i1)
+// 			const v2 = propOrder.getValue(i2)
+// 			return typeOrder == ORDER_TYPE.ASC ? v1 - v2 : v2 - v1
+// 		})
+// 	}, [items, propOrder, typeOrder])
 
-		<Header
-			props={propToShow}
-			order={propOrder}
-			orderType={typeOrder}
-			onOrderChange={handleOrderChange}
-		/>
+// 	// HANDLER
+// 	const handleSelect = (item: any) => onSelectChange(item)
+// 	const handleOrderChange = (prop: ItemProp, type: ORDER_TYPE) => {
+// 		setPropOrder(prop)
+// 		setTypeOrder(type)
+// 	}
 
-		<tbody>
-			{itemsSort.map((item, index) => {
-				const id = getId(item)
-				const selected = isSelected(item)
-				const mainText = getValueString(item, propMain)
+// 	// RENDER
+// 	const isSelected = (item: any) => getId(item) == selectId
+// 	const colspan = props.length
+// 	function getValueString(item: any, prop: ItemProp): string {
+// 		if (!prop) return
+// 		return prop.getShow?.(item) ?? prop.getValue?.(item)
+// 	}
 
-				const clsSelected = selected ? `color-bg color-text ${cls.selected}` : ""
-				const clsRow = `${cls.row} ${clsSelected} hover-container`
-				const clsCell = `${cls.cell}`
-				const clsCellMain = `${clsCell} ${cls.main}`
+// 	return <table className={cls.root} style={style}>
 
-				return <React.Fragment key={id}>
+// 		<Header
+// 			props={propToShow}
+// 			order={propOrder}
+// 			orderType={typeOrder}
+// 			onOrderChange={handleOrderChange}
+// 		/>
 
-					{!!propMain && !singleRow && (
-						<tr
-							className={clsRow}
-							onClick={() => handleSelect(item)}
-						>
-							<td colSpan={colspan}
-								className={clsCellMain}
-							>
-								{mainText}
-							</td>
-							<CopyButton absolute value={mainText} />
-						</tr>
-					)}
+// 		<tbody>
+// 			{itemsSort.map((item, index) => {
+// 				const id = getId(item)
+// 				const selected = isSelected(item)
+// 				const mainText = getValueString(item, propMain)
 
-					<tr
-						className={clsRow}
-						onClick={() => handleSelect(item)}
-					>
-						{propToShow.map((prop, index) => !(!singleRow && prop.isMain) && (
-							<td key={index}
-								className={prop.isMain ? clsCellMain : clsCell}
-							>
-								{getValueString(item, prop)}
-							</td>
-						))}
-					</tr>
+// 				const clsSelected = selected ? `color-bg color-text ${cls.selected}` : ""
+// 				const clsRow = `${cls.row} ${clsSelected} hover-container`
+// 				const clsCell = `${cls.cell}`
+// 				const clsCellMain = `${clsCell} ${cls.main}`
 
-				</React.Fragment>
-			})}
-		</tbody>
-	</table>
-}
+// 				return <React.Fragment key={id}>
 
-export default Table
+// 					{!!propMain && !singleRow && (
+// 						<tr
+// 							className={clsRow}
+// 							onClick={() => handleSelect(item)}
+// 						>
+// 							<td colSpan={colspan}
+// 								className={clsCellMain}
+// 							>
+// 								{mainText}
+// 							</td>
+// 							<CopyButton absolute value={mainText} />
+// 						</tr>
+// 					)}
+
+// 					<tr
+// 						className={clsRow}
+// 						onClick={() => handleSelect(item)}
+// 					>
+// 						{propToShow.map((prop, index) => !(!singleRow && prop.isMain) && (
+// 							<td key={index}
+// 								className={prop.isMain ? clsCellMain : clsCell}
+// 							>
+// 								{getValueString(item, prop)}
+// 							</td>
+// 						))}
+// 					</tr>
+
+// 				</React.Fragment>
+// 			})}
+// 		</tbody>
+// 	</table>
+// }
+
+// export default Table
 

@@ -1,6 +1,5 @@
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -23,7 +22,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 200,
-		colorVar: COLOR_VAR.GREEN,
+		//colorVar: COLOR_VAR.GREEN,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion
 	},

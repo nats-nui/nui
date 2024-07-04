@@ -1,11 +1,12 @@
+import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
+import GitHubIcon from "@/icons/GitHubIcon"
+import HelpIcon from "@/icons/HelpIcon"
 import { AboutStore } from "@/stores/stacks/about"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
+import clsCard from "../CardWhiteDef.module.css"
 import cls from "./View.module.css"
-import Button from "@/components/buttons/Button"
-import GitHubIcon from "@/icons/GitHubIcon"
-import HelpIcon from "@/icons/HelpIcon"
 
 
 
@@ -36,6 +37,8 @@ const AboutView: FunctionComponent<Props> = ({
 	const current = aboutSa.about?.currentVersion ?? "--"
 	const latest = aboutSa.about?.latestVersion ?? "--"
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<div style={{ fontSize: 16, fontWeight: 700 }}>?</div>}
 		store={aboutSo}
 	>
 		<div className={cls.logo} />

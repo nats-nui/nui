@@ -2,7 +2,6 @@ import strApi from "@/api/streams"
 import cnnSo from "@/stores/connections"
 import { GetAllCards } from "@/stores/docs/cards"
 import { findAll } from "@/stores/docs/utils/manage"
-import { COLOR_VAR } from "@/stores/layout"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
@@ -28,7 +27,6 @@ const setup = {
 		//#region VIEWBASE
 		width: 310,
 		widthMax: 800,
-		colorVar: COLOR_VAR.YELLOW,
 		//#endregion
 	},
 

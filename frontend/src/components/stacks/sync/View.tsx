@@ -6,6 +6,7 @@ import EditorCode from "@/components/editor"
 import FormatDialog from "@/components/editor/FormatDialog"
 import TextInput from "@/components/input/TextInput"
 import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
+import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx"
 import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import FormatIcon from "@/icons/FormatIcon"
@@ -13,12 +14,13 @@ import SendIcon from "@/icons/SendIcon"
 import { SyncStore } from "@/stores/stacks/sync"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useRef } from "react"
-import cls from "./View.module.css"
+import { FunctionComponent, useRef } from "react"
+import SyncIcon from "../../../icons/SyncIcon"
 import TitleAccordion from "../../accordion/TitleAccordion"
 import EditList from "../../lists/EditList"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx";
+import clsCard from "../CardCyanDef.module.css"
+import cls from "./View.module.css"
 
 
 
@@ -62,6 +64,8 @@ const SyncView: FunctionComponent<Props> = ({
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<SyncIcon />}
 		store={syncSo}
 		actionsRender={<>
 
@@ -107,7 +111,7 @@ const SyncView: FunctionComponent<Props> = ({
 							<ArrowRightIcon />
 						</IconButton>
 					</div>
-					
+
 					<TextInput autoFocus
 						placeholder="Write here e.g. foo.bar"
 						value={syncSa.subject}

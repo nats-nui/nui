@@ -32,7 +32,7 @@ const ElementRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!title) return null
-	const clsRoot = `${cls.root} ${selected ? "color-bg color-text" : ""}`
+	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
 
 	return <div className={clsRoot}
 		onClick={onClick}

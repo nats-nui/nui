@@ -1,10 +1,12 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import GitHubIcon from "@/icons/GitHubIcon"
 import YouTubeIcon from "@/icons/YouTubeIcon"
 import { HelpStore } from "@/stores/stacks/help"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import cls from "./View.module.css"
+import clsCard from "../CardWhiteDef.module.css"
+import HelpIcon from "../../../icons/HelpIcon"
+
 
 
 interface Props {
@@ -26,6 +28,8 @@ const HelpView: FunctionComponent<Props> = ({
 
 	// RENDER
 	return <FrameworkCard
+		icon={<HelpIcon />}
+		className={clsCard.root}
 		store={helpSo}
 	>
 		<div className={cls.root}>

@@ -5,12 +5,14 @@ import FindInputHeader from "@/components/input/FindInputHeader"
 import OptionsCmp from "@/components/loaders/OptionsCmp"
 import PurgeDialog from "@/components/stacks/streams/list/PurgeDialog.tsx"
 import Table from "@/components/table"
+import StreamsIcon from "@/icons/cards/StreamsIcon"
 import { StreamsStore } from "@/stores/stacks/streams"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import clsCard from "../../CardYellowDef.module.css"
 
 
 
@@ -42,7 +44,10 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const nameSelected = streamsSa.select
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
 
-	return <FrameworkCard styleBody={{ padding: 0, }}
+	return <FrameworkCard
+		className={clsCard.root}
+		icon={<StreamsIcon />}
+		styleBody={{ padding: 0, }}
 		store={streamsSo}
 		actionsRender={<>
 			<OptionsCmp

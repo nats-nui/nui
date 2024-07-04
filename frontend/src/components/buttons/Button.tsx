@@ -1,54 +1,54 @@
-import React, { FunctionComponent, useState } from "react"
-import cls from "./Button.module.css"
+// import React, { FunctionComponent, useState } from "react"
+// import cls from "./Button.module.css"
 
+export { Button as default } from "@priolo/jack"
 
+// interface Props {
+// 	select?: boolean
+// 	children?: React.ReactNode
 
-interface Props {
-	select?: boolean
-	children?: React.ReactNode
+// 	className?: string
+// 	style?: React.CSSProperties
 
-	className?: string
-	style?: React.CSSProperties
+// 	disabled?: boolean
+// 	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
+// }
 
-	disabled?: boolean
-	onClick?: (e: React.MouseEvent<HTMLDivElement>, select: boolean) => void
-}
+// const Button: FunctionComponent<Props> = ({
+// 	select,
+// 	children,
 
-const Button: FunctionComponent<Props> = ({
-	select,
-	children,
+// 	className = "",
+// 	style,
 
-	className = "",
-	style,
+// 	disabled,
+// 	onClick,
+// }) => {
 
-	disabled,
-	onClick,
-}) => {
+// 	// STORE
+// 	const [mouseOver, setMouseOver] = useState(false)
 
-	// STORE
-	const [mouseOver, setMouseOver] = useState(false)
+// 	// HOOK
 
-	// HOOK
+// 	// HANDLER
+// 	const handleEnter = () => setMouseOver(true)
+// 	const handleLeave = () => setMouseOver(false)
+// 	const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+// 		onClick?.(e, select)
+// 	}
 
-	// HANDLER
-	const handleEnter = () => setMouseOver(true)
-	const handleLeave = () => setMouseOver(false)
-	const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-		onClick?.(e, select)
-	}
+// 	// RENDER
+// 	const clsRoot = `${(mouseOver || select) ? `color-bg color-text ${cls.select}` : ""} ${cls.root} ${disabled ? cls.disabled : ""} ${className}`
 
-	// RENDER
-	const clsRoot = `${(mouseOver || select) ? `color-bg color-text ${cls.select}` : ""} ${cls.root} ${disabled ? cls.disabled : ""} ${className}`
+// 	return (
+// 		<div style={style} className={clsRoot}
+// 			onClick={handleClick}
+// 			onMouseEnter={handleEnter}
+// 			onMouseLeave={handleLeave}
+// 		>
+// 			{children}
+// 		</div>
+// 	)
+// }
 
-	return (
-		<div style={style} className={clsRoot}
-			onClick={handleClick}
-			onMouseEnter={handleEnter}
-			onMouseLeave={handleLeave}
-		>
-			{children}
-		</div>
-	)
-}
-
-export default Button
+// export default Button

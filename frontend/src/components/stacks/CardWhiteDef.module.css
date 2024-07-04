@@ -1,0 +1,13 @@
+.root {
+	background-color: #3E3E3E;
+	color: white;
+	/* button icon button */
+	--cmp-select-bg: white;
+	--cmp-select-fg: #393939;
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button*/
+	--dialog-bg: white;
+	--dialog-fg: #393939;
+}

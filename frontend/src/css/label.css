@@ -32,7 +32,7 @@
 
 
 /* DIALOG */
-.lbl-dialog-title {
+/* .lbl-dialog-title {
 	font-size: 16px;
 	font-weight: 800;
 	font-family: "Darker Grotesque";
@@ -42,13 +42,13 @@
 	font-weight: 500;
 	margin: 5px 0px 8px 0px;
 	overflow-wrap: break-word;
-}
+} */
 
 
 
 /* FORM */
 /* titolo colonna di proprietà */
-.lbl-prop-title {
+/* .lbl-prop-title {
 	font-size: 13px;
 	font-weight: 800;
 	border-bottom: 1px solid rgb(0 0 0 / 32%);
@@ -57,7 +57,7 @@
 	text-align: center;
 	margin-top: 3px;
 	margin-bottom: 3px;
-}
+} */
 /* label proprietà */
 .lbl-prop {
 	font-size: 12px;
@@ -76,14 +76,14 @@
 }
 
 /* lista vuota */
-.lbl-empty {
+/* .lbl-empty {
 	border: 1px dashed currentColor;
 	padding: 3px;
 	margin: 5px;
 	font-size: 12px;
 	font-weight: 500;
 	text-align: center;
-}
+} */
 
 /* elemento disabilitato */
 .lbl-disabled {

@@ -1,10 +1,10 @@
 import cnnSo from "@/stores/connections"
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildStreams } from "../streams/utils/factory"
-import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
 import { CnnDetailStore } from "./detail"
+import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
+import { ViewActions, ViewGetters, ViewMutators } from "@priolo/jack"
 
 
 
@@ -16,7 +16,6 @@ const setup = {
 	state: {
 		//#region VIEWBASE
 		width: 220,
-		colorVar: COLOR_VAR.GREEN,
 		pinnable: false,
 		//#endregion
 	},
@@ -87,9 +86,9 @@ const setup = {
 }
 
 export type CnnListState = typeof setup.state & ViewState
-export type CnnListGetters = typeof setup.getters
-export type CnnListActions = typeof setup.actions
-export type CnnListMutators = typeof setup.mutators
+export type CnnListGetters = typeof setup.getters & ViewGetters
+export type CnnListActions = typeof setup.actions & ViewActions
+export type CnnListMutators = typeof setup.mutators & ViewMutators
 export interface CnnListStore extends ViewStore, StoreCore<CnnListState>, CnnListGetters, CnnListActions, CnnListMutators {
 	state: CnnListState
 }

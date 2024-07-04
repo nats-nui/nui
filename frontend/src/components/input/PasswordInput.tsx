@@ -1,41 +1,44 @@
-import CloseIcon from "@/icons/CloseIcon"
-import FindIcon from "@/icons/FindIcon"
-import { FunctionComponent, useState } from "react"
-import IconButton from "../buttons/IconButton"
-import TextInput, { TextInputProps } from "./TextInput"
-import EyeIcon from "@/icons/EyeIcon"
-import EyeOffIcon from "@/icons/EyeOffIcon"
+export { PasswordInput as default } from "@priolo/jack"
+
+
+// import CloseIcon from "@/icons/CloseIcon"
+// import FindIcon from "@/icons/FindIcon"
+// import { FunctionComponent, useState } from "react"
+// import IconButton from "../buttons/IconButton"
+// import TextInput, { TextInputProps } from "./TextInput"
+// import EyeIcon from "@/icons/EyeIcon"
+// import EyeOffIcon from "@/icons/EyeOffIcon"
 
 
 
-interface Props extends TextInputProps {
-}
+// interface Props extends TextInputProps {
+// }
 
-const PasswordInput: FunctionComponent<Props> = ({
-	...props
-}) => {
+// const PasswordInput: FunctionComponent<Props> = ({
+// 	...props
+// }) => {
 
-	// STORE
-	const [hide, setHide] = useState<boolean>(true)
+// 	// STORE
+// 	const [hide, setHide] = useState<boolean>(true)
 
-	// HOOK
+// 	// HOOK
 
-	// HANDLER
+// 	// HANDLER
 
-	// RENDER
-	return <div className="cmp-h">
-		<TextInput
-			{...props}
-			type={hide ? "password" : null}
-		/>
-		<IconButton onClick={() => setHide(!hide)}>
-			{hide ? (
-				<EyeOffIcon />
-			) : (
-				<EyeIcon />
-			)}
-		</IconButton>
-	</div>
-}
+// 	// RENDER
+// 	return <div className="cmp-h">
+// 		<TextInput
+// 			{...props}
+// 			type={hide ? "password" : null}
+// 		/>
+// 		<IconButton onClick={() => setHide(!hide)}>
+// 			{hide ? (
+// 				<EyeOffIcon />
+// 			) : (
+// 				<EyeIcon />
+// 			)}
+// 		</IconButton>
+// 	</div>
+// }
 
-export default PasswordInput
+// export default PasswordInput

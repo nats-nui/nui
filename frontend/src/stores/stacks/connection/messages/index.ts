@@ -3,7 +3,6 @@ import { socketPool } from "@/plugins/SocketService/pool"
 import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
@@ -53,7 +52,6 @@ const setup = {
 		pause: false,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		//#endregion
 	},
 

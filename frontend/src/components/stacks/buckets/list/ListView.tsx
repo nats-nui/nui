@@ -10,6 +10,8 @@ import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import BucketsIcon from "../../../../icons/cards/BucketsIcon"
+import clsCard from "../../CardMintDef.module.css"
 
 
 
@@ -43,6 +45,8 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
+		className={clsCard.root}
+		icon={<BucketsIcon />}
 		store={bucketsSo}
 		actionsRender={<>
 			<OptionsCmp

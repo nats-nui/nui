@@ -1,61 +1,65 @@
-import CloseIcon from "@/icons/CloseIcon"
-import FindIcon from "@/icons/FindIcon"
-import React, { FunctionComponent } from "react"
-import IconButton from "../buttons/IconButton"
-import cls from "./FindInput.module.css"
-import TextInput from "./TextInput"
+export { FindInput as default } from "@priolo/jack"
 
 
 
-interface Props {
-	value?: string
-	onChange?: (newValue: string) => void
-	style?: React.CSSProperties
-	className?: string
-}
+// import CloseIcon from "@/icons/CloseIcon"
+// import FindIcon from "@/icons/FindIcon"
+// import React, { FunctionComponent } from "react"
+// import IconButton from "../buttons/IconButton"
+// import cls from "./FindInput.module.css"
+// import TextInput from "./TextInput"
 
-const FindInput: FunctionComponent<Props> = ({
-	value,
-	onChange,
-	style,
-	className = "",
-}) => {
-	// STORE
 
-	// HOOK
 
-	// HANDLER
-	const handleChange = (value: string) => onChange?.(value)
-	const handleClear = () => onChange?.("")
+// interface Props {
+// 	value?: string
+// 	onChange?: (newValue: string) => void
+// 	style?: React.CSSProperties
+// 	className?: string
+// }
 
-	// RENDER
-	const haveValue = value?.length > 0
-	const clsRoot = `${cls.root} ${className}`
+// const FindInput: FunctionComponent<Props> = ({
+// 	value,
+// 	onChange,
+// 	style,
+// 	className = "",
+// }) => {
+// 	// STORE
 
-	return (
-		<div
-			className={clsRoot}
-			style={style}
-		>
-			<TextInput
-				placeholder="search..."
-				className={cls.input}
-				value={value}
-				onChange={handleChange}
-			/>
+// 	// HOOK
 
-			{haveValue ? (
-				<IconButton
-					onClick={handleClear}
-				>
-					<CloseIcon />
-				</IconButton>
-			) : (
-				<FindIcon />
-			)}
+// 	// HANDLER
+// 	const handleChange = (value: string) => onChange?.(value)
+// 	const handleClear = () => onChange?.("")
 
-		</div>
-	)
-}
+// 	// RENDER
+// 	const haveValue = value?.length > 0
+// 	const clsRoot = `${cls.root} ${className}`
 
-export default FindInput
+// 	return (
+// 		<div
+// 			className={clsRoot}
+// 			style={style}
+// 		>
+// 			<TextInput
+// 				placeholder="search..."
+// 				className={cls.input}
+// 				value={value}
+// 				onChange={handleChange}
+// 			/>
+
+// 			{haveValue ? (
+// 				<IconButton
+// 					onClick={handleClear}
+// 				>
+// 					<CloseIcon />
+// 				</IconButton>
+// 			) : (
+// 				<FindIcon />
+// 			)}
+
+// 		</div>
+// 	)
+// }
+
+// export default FindInput

@@ -1,42 +1,45 @@
-import React, { FunctionComponent } from "react"
-import classes from "./FloatButton.module.css"
+export { FloatButton as default } from "@priolo/jack"
+
+
+// import React, { FunctionComponent } from "react"
+// import classes from "./FloatButton.module.css"
 
 
 
-interface Props {
-	onClick?: (e: React.MouseEvent) => void
-	children?: React.ReactNode
-	disabled?: boolean
-	style?: React.CSSProperties
-}
+// interface Props {
+// 	onClick?: (e: React.MouseEvent) => void
+// 	children?: React.ReactNode
+// 	disabled?: boolean
+// 	style?: React.CSSProperties
+// }
 
-const FloatButton: FunctionComponent<Props> = ({
-	onClick,
-	children,
-	disabled,
-	style,
-}) => {
-	// STORE
+// const FloatButton: FunctionComponent<Props> = ({
+// 	onClick,
+// 	children,
+// 	disabled,
+// 	style,
+// }) => {
+// 	// STORE
 
-	// HOOK
+// 	// HOOK
 
-	// HANDLER
-	const handleClick = (e) => {
-		if ( disabled ) return
-		onClick?.(e)
-	}
+// 	// HANDLER
+// 	const handleClick = (e) => {
+// 		if ( disabled ) return
+// 		onClick?.(e)
+// 	}
 
 
-	// RENDER
-	const cls = `${classes.root} ${disabled ? classes.disabled : "color-bg color-text"}`
-	return (
-		<div style={style} 
-			className={cls}
-			onClick={handleClick}
-		>
-			{children}
-		</div>
-	)
-}
+// 	// RENDER
+// 	const cls = `${classes.root} ${disabled ? classes.disabled : "color-bg color-text"}`
+// 	return (
+// 		<div style={style} 
+// 			className={cls}
+// 			onClick={handleClick}
+// 		>
+// 			{children}
+// 		</div>
+// 	)
+// }
 
-export default FloatButton
+// export default FloatButton

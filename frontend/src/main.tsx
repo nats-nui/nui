@@ -9,16 +9,19 @@ import '@fontsource-variable/inter';
 import './css/colors.css';
 import './css/colors-var.css';
 import './css/index.css';
-import './css/input.css';
+//import './css/input.css';
 import './css/label.css';
-import './css/textarea.css';
-import './css/scrollbar.css';
+//import './css/textarea.css';
+//import './css/scrollbar.css';
 import './css/animation.css';
 import './css/button.css';
 import './css/interaction.css';
 import './css/layout.css';
 import './css/monaco.css';
-import "./utils/session/startup.ts"
+import "./utils/session/startup.ts";
+
+import "@priolo/jack/dist/style.css";
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

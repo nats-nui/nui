@@ -14,7 +14,8 @@ import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
 import SyncIcon from "@/icons/SyncIcon"
-
+import clsGreen from "../../CardGreen.module.css"
+import ConnectionIcon from "../../../../icons/cards/ConnectionIcon"
 
 
 interface Props {
@@ -54,7 +55,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
 	</TooltipWrapCmp>
 
-	return <FrameworkCard variantBg
+	return <FrameworkCard
+		className={clsGreen.root}
+		icon={<ConnectionIcon />}
 		store={cnnDetailSo}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={

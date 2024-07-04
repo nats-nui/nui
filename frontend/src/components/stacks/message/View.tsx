@@ -6,8 +6,10 @@ import { MessageState, MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import MessageIcon from "../../../icons/cards/MessageIcon"
 import TitleAccordion from "../../accordion/TitleAccordion"
 import FormatDialog from "../../editor/FormatDialog"
+import clsCard from "../CardCyanDef.module.css"
 import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
 
@@ -37,6 +39,8 @@ const MessageView: FunctionComponent<Props> = ({
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<MessageIcon />}
 		store={msgSo}
 		actionsRender={<>
 			<FormatAction store={msgSo} />

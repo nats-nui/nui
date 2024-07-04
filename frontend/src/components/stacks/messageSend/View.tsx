@@ -10,11 +10,13 @@ import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/m
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
+import StreamsIcon from "../../../icons/cards/StreamsIcon"
+import TitleAccordion from "../../accordion/TitleAccordion"
 import FormatDialog from "../../editor/FormatDialog"
-import SubjectsDialog from "./SubjectsDialog"
 import EditList from "../../lists/EditList"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import TitleAccordion from "../../accordion/TitleAccordion"
+import clsCard from "../CardCyanDef.module.css"
+import SubjectsDialog from "./SubjectsDialog"
 
 
 
@@ -45,9 +47,11 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const canSend = sendSo.getCanEdit()
 	const inLoading = sendSa.loadingState == LOAD_STATE.LOADING
 	const autoFormat = sendSa.autoFormat
-	const refEditor = (ref:EditorRefProps) => sendSa.editorRef = ref
+	const refEditor = (ref: EditorRefProps) => sendSa.editorRef = ref
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<StreamsIcon />}
 		store={sendSo}
 		actionsRender={<>
 

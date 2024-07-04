@@ -15,7 +15,8 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
-
+import clsCard from "../CardGreenDef.module.css"
+import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
 
 
 interface Props {
@@ -75,6 +76,8 @@ const CnnListView: FunctionComponent<Props> = ({
 
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<ConnectionsIcon />}
 		store={cnnListSo}
 		actionsRender={<>
 			<OptionsCmp

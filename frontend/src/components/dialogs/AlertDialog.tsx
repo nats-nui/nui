@@ -1,65 +1,69 @@
-import Button from "@/components/buttons/Button"
-import Dialog from "@/components/dialogs/Dialog"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+export { AlertDialog as default } from "@priolo/jack"
 
 
 
-interface Props {
-	store?: ViewStore
-}
+// import Button from "@/components/buttons/Button"
+// import Dialog from "@/components/dialogs/Dialog"
+// import { ViewStore } from "@/stores/stacks/viewBase"
+// import { useStore } from "@priolo/jon"
+// import { FunctionComponent } from "react"
 
-const AlertDialog: FunctionComponent<Props> = ({
-	store,
-}) => {
 
-	// STORE
-	const storeSa = useStore(store)
 
-	// HOOKs
+// interface Props {
+// 	store?: ViewStore
+// }
 
-	// HANDLER
-	const handleClose = (ok: boolean) => {
-		storeSa.alert.open = false
-		store.setAlert({ ...storeSa.alert })
-		storeSa.alert.resolve(ok)
-	}
+// const AlertDialog: FunctionComponent<Props> = ({
+// 	store,
+// }) => {
 
-	// RENDER
-	const alert = storeSa.alert
+// 	// STORE
+// 	const storeSa = useStore(store)
 
-	return <Dialog
-		title={alert.title}
-		width={200}
-		open={alert.open}
-		store={store}
-		onClose={() => handleClose(false)}
-	>
+// 	// HOOKs
 
-		<div className="lbl-prop-title">DANGER</div>
+// 	// HANDLER
+// 	const handleClose = (ok: boolean) => {
+// 		storeSa.alert.open = false
+// 		store.setAlert({ ...storeSa.alert })
+// 		storeSa.alert.resolve(ok)
+// 	}
 
-		<div className="lbl-dialog-text">
-			{alert.body}
-		</div>
+// 	// RENDER
+// 	const alert = storeSa.alert
 
-		<div className="bars-alert-bg" style={{ height: 20 }} />
+// 	return <Dialog
+// 		title={alert.title}
+// 		width={200}
+// 		open={alert.open}
+// 		store={store}
+// 		onClose={() => handleClose(false)}
+// 	>
 
-		<div
-			className="var-dialog"
-			style={{ display: "flex", gap: 15, marginTop: 10 }}
-		>
-			<Button
-				children={alert.labelOk}
-				onClick={() => handleClose(true)}
-			/>
-			<Button
-				children={alert.labelCancel}
-				onClick={() => handleClose(false)}
-			/>
-		</div>
+// 		<div className="lbl-prop-title">DANGER</div>
 
-	</Dialog>
-}
+// 		<div className="lbl-dialog-text">
+// 			{alert.body}
+// 		</div>
 
-export default AlertDialog
+// 		<div className="bars-alert-bg" style={{ height: 20 }} />
+
+// 		<div
+// 			className="var-dialog"
+// 			style={{ display: "flex", gap: 15, marginTop: 10 }}
+// 		>
+// 			<Button
+// 				children={alert.labelOk}
+// 				onClick={() => handleClose(true)}
+// 			/>
+// 			<Button
+// 				children={alert.labelCancel}
+// 				onClick={() => handleClose(false)}
+// 			/>
+// 		</div>
+
+// 	</Dialog>
+// }
+
+// export default AlertDialog

@@ -1,8 +1,6 @@
-export enum VIEW_SIZE {
-	NORMAL,
-	COMPACT,
-	ICONIZED,
-}
+export { VIEW_SIZE } from  "@priolo/jack" 
+
+
 
 export enum VIEW_PARAMS {
 	POSITION = "pos",

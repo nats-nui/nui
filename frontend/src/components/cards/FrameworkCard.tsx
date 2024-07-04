@@ -1,87 +1,91 @@
-import CloseIcon from "@/icons/CloseIcon"
-import DetachIcon from "@/icons/DetachIcon"
-import docsSo from "@/stores/docs"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { DOC_ANIM } from "@/types"
-import { FunctionComponent } from "react"
-import IconButton from "../buttons/IconButton"
-import ErrorBoundary from "./ErrorBoundary"
-import cls from "./FrameworkCard.module.css"
-import Header from "./Header"
+export { FrameworkCard as default } from "@priolo/jack"
 
 
 
-interface Props {
-	store: ViewStore
-	style?: React.CSSProperties
-	styleBody?: React.CSSProperties
-	/** la variante colora il bg */
-	variantBg?: boolean
-	actionsRender?: React.ReactNode
-	iconizedRender?: React.ReactNode
-	children: React.ReactNode
-}
+// import CloseIcon from "@/icons/CloseIcon"
+// import DetachIcon from "@/icons/DetachIcon"
+// import docsSo from "@/stores/docs"
+// import { VIEW_SIZE } from "@/stores/stacks/utils"
+// import { ViewStore } from "@/stores/stacks/viewBase"
+// import { DOC_ANIM } from "@/types"
+// import { FunctionComponent } from "react"
+// import IconButton from "../buttons/IconButton"
+// import ErrorBoundary from "./ErrorBoundary"
+// import cls from "./FrameworkCard.module.css"
+// import Header from "./Header"
 
-/** struttura standard di una CARD */
-const FrameworkCard: FunctionComponent<Props> = ({
-	store,
-	style,
-	styleBody,
-	variantBg,
-	actionsRender,
-	iconizedRender,
-	children,
-}) => {
 
-	// HANDLER
-	const handleClose = () => store.onRemoveFromDeck()
-	const handleDetach = () => store.state.group.detach(store)
 
-	// RENDER
-	const inZen = docsSo.state.zenCard == store
-	const inRoot = inZen || !store.state.parent
-	const isIconized = store.state.size == VIEW_SIZE.COMPACT
-	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
-	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`
-	const clsChildren = `${cls.children} ${store.state.disabled ? cls.disabled : ""}`
+// interface Props {
+// 	store: ViewStore
+// 	style?: React.CSSProperties
+// 	styleBody?: React.CSSProperties
+// 	/** la variante colora il bg */
+// 	variantBg?: boolean
+// 	actionsRender?: React.ReactNode
+// 	iconizedRender?: React.ReactNode
+// 	children: React.ReactNode
+// }
 
-	return <div className={clsRoot} style={style} >
+// /** struttura standard di una CARD */
+// const FrameworkCard: FunctionComponent<Props> = ({
+// 	store,
+// 	style,
+// 	styleBody,
+// 	variantBg,
+// 	actionsRender,
+// 	iconizedRender,
+// 	children,
+// }) => {
 
-		<Header store={store} />
+// 	// HANDLER
+// 	const handleClose = () => store.onRemoveFromDeck()
+// 	const handleDetach = () => store.state.group.detach(store)
 
-		<ErrorBoundary>
+// 	// RENDER
+// 	const inZen = docsSo.state.zenCard == store
+// 	const inRoot = inZen || !store.state.parent
+// 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
+// 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
+// 	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`
+// 	const clsChildren = `${cls.children} ${store.state.disabled ? cls.disabled : ""}`
 
-			{isIconized ? <>
-				<div
-					className={`${cls.actions} ${cls.hovercontainer}`}
-				>
-					<IconButton
-						onClick={handleClose}
-					><CloseIcon /></IconButton>
+// 	return <div className={clsRoot} style={style} >
 
-					{!inRoot && (
-						<IconButton
-							className={`${cls.btt} color-bg ${cls.hovershow}`}
-							onClick={handleDetach}
-						><DetachIcon /></IconButton>
-					)}
+// 		<Header store={store} />
 
-				</div>
-				{iconizedRender}
-			</> : <>
-				<div className={cls.actions}>
-					{actionsRender}
-				</div>
+// 		<ErrorBoundary>
 
-				<div className={clsChildren} style={styleBody}>
-					{children}
-				</div>
-			</>}
+// 			{isIconized ? <>
+// 				<div
+// 					className={`${cls.actions} ${cls.hovercontainer}`}
+// 				>
+// 					<IconButton
+// 						onClick={handleClose}
+// 					><CloseIcon /></IconButton>
 
-		</ErrorBoundary>
+// 					{!inRoot && (
+// 						<IconButton
+// 							className={`${cls.btt} color-bg ${cls.hovershow}`}
+// 							onClick={handleDetach}
+// 						><DetachIcon /></IconButton>
+// 					)}
 
-	</div>
-}
+// 				</div>
+// 				{iconizedRender}
+// 			</> : <>
+// 				<div className={cls.actions}>
+// 					{actionsRender}
+// 				</div>
 
-export default FrameworkCard
+// 				<div className={clsChildren} style={styleBody}>
+// 					{children}
+// 				</div>
+// 			</>}
+
+// 		</ErrorBoundary>
+
+// 	</div>
+// }
+
+// export default FrameworkCard

@@ -7,6 +7,11 @@
 	padding: 4px 0px 4px 8px;
 }
 
+.root.select {
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
+}
+
 .label {
 	display: flex;
 	flex-direction: column;
