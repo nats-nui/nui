@@ -10,6 +10,7 @@ interface Props {
 	subtitle?: string
 	children?: React.ReactNode
 	badge?: React.ReactNode
+	style?: React.CSSProperties
 	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -23,6 +24,7 @@ const MenuButton: FunctionComponent<Props> = ({
 	subtitle,
 	children,
 	badge,
+	style,
 	className,
 	onClick,
 	onClose,
@@ -39,7 +41,9 @@ const MenuButton: FunctionComponent<Props> = ({
 	const showCloseBtt = enter && !!onClose
 	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
-		<div className={clsRoot}
+		<div 
+			style={style} 
+			className={clsRoot}
 			onClick={onClick}
 		>
 			<TooltipWrapCmp className={cls.box}

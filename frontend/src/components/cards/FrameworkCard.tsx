@@ -1,91 +1,77 @@
-export { FrameworkCard as default } from "@priolo/jack"
+import { ViewStore } from "@/stores/stacks/viewBase"
+import { FrameworkCard, Header, IconButton } from "@priolo/jack"
+import { FunctionComponent } from "react"
+import docsSo from "../../stores/docs"
+import { drawerCardsSo } from "../../stores/docs/cards"
+import IconizedIcon from "../../icons/IconizeIcon"
+import { menuSo } from "../../stores/docs/links"
 
 
 
-// import CloseIcon from "@/icons/CloseIcon"
-// import DetachIcon from "@/icons/DetachIcon"
-// import docsSo from "@/stores/docs"
-// import { VIEW_SIZE } from "@/stores/stacks/utils"
-// import { ViewStore } from "@/stores/stacks/viewBase"
-// import { DOC_ANIM } from "@/types"
-// import { FunctionComponent } from "react"
-// import IconButton from "../buttons/IconButton"
-// import ErrorBoundary from "./ErrorBoundary"
-// import cls from "./FrameworkCard.module.css"
-// import Header from "./Header"
+interface Props {
+	store: ViewStore
+	className?: string
+	style?: React.CSSProperties
+	styleBody?: React.CSSProperties
 
+	icon?: React.ReactNode
+	actionsRender?: React.ReactNode
+	iconizedRender?: React.ReactNode
+	children: React.ReactNode
+}
 
+/** struttura standard di una CARD */
+const MyFrameworkCard: FunctionComponent<Props> = ({
+	store,
+	className,
+	style,
+	styleBody,
+	icon,
+	actionsRender,
+	iconizedRender,
+	children,
+}) => {
 
-// interface Props {
-// 	store: ViewStore
-// 	style?: React.CSSProperties
-// 	styleBody?: React.CSSProperties
-// 	/** la variante colora il bg */
-// 	variantBg?: boolean
-// 	actionsRender?: React.ReactNode
-// 	iconizedRender?: React.ReactNode
-// 	children: React.ReactNode
-// }
+	// HANDLER
+	const handleToggleIconize = () => {
+		if (!inMenu) {
+			//store.state.group.remove({ view: store })
+			menuSo.add({ view: store })
+		}
+		// else {
+		// 	menuCardsSo.remove({ view: store })
+		// }
+	}
 
-// /** struttura standard di una CARD */
-// const FrameworkCard: FunctionComponent<Props> = ({
-// 	store,
-// 	style,
-// 	styleBody,
-// 	variantBg,
-// 	actionsRender,
-// 	iconizedRender,
-// 	children,
-// }) => {
+	// RENDER
+	const inZen = docsSo.state.zenCard == store
+	const inMenu = !inZen && menuSo.find(store)
+	const inRoot = inZen || !store.state.parent
+	//const inDrawer = !inZen && store.state.group == drawerCardsSo
+	const showBttPin = !inZen && inRoot && store.state.pinnable
+	//const showBttAnchor = !inZen && inRoot && (enter || inDrawer)
 
-// 	// HANDLER
-// 	const handleClose = () => store.onRemoveFromDeck()
-// 	const handleDetach = () => store.state.group.detach(store)
+	return <FrameworkCard
+		store={store}
+		className={className}
+		style={style}
+		styleBody={styleBody}
 
-// 	// RENDER
-// 	const inZen = docsSo.state.zenCard == store
-// 	const inRoot = inZen || !store.state.parent
-// 	const isIconized = store.state.size == VIEW_SIZE.COMPACT
-// 	const inDrag = store.state.docAnim == DOC_ANIM.DRAGGING
-// 	const clsRoot = `${cls.root} ${variantBg ? "color-bg color-text" : ""} ${!inRoot ? cls.linked : ""} ${inDrag ? cls.drag : ""} ${isIconized ? cls.iconized : ""}`
-// 	const clsChildren = `${cls.children} ${store.state.disabled ? cls.disabled : ""}`
+		headerRender={<Header
+			store={store}
+			icon={icon}
+			extraRender={showBttPin && (
+				<IconButton onClick={handleToggleIconize}>
+					<IconizedIcon />
+				</IconButton>
+			)}
+		/>}
 
-// 	return <div className={clsRoot} style={style} >
+		actionsRender={actionsRender}
+		iconizedRender={iconizedRender}
+		children={children}
+	/>
 
-// 		<Header store={store} />
+}
 
-// 		<ErrorBoundary>
-
-// 			{isIconized ? <>
-// 				<div
-// 					className={`${cls.actions} ${cls.hovercontainer}`}
-// 				>
-// 					<IconButton
-// 						onClick={handleClose}
-// 					><CloseIcon /></IconButton>
-
-// 					{!inRoot && (
-// 						<IconButton
-// 							className={`${cls.btt} color-bg ${cls.hovershow}`}
-// 							onClick={handleDetach}
-// 						><DetachIcon /></IconButton>
-// 					)}
-
-// 				</div>
-// 				{iconizedRender}
-// 			</> : <>
-// 				<div className={cls.actions}>
-// 					{actionsRender}
-// 				</div>
-
-// 				<div className={clsChildren} style={styleBody}>
-// 					{children}
-// 				</div>
-// 			</>}
-
-// 		</ErrorBoundary>
-
-// 	</div>
-// }
-
-// export default FrameworkCard
+export default MyFrameworkCard
