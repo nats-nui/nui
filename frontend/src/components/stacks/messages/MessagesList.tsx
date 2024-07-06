@@ -106,11 +106,11 @@ const MessagesList: FunctionComponent<Props> = ({
 			components={{
 				Header: !!header && (() => header),
 				Footer: !!footer && (() => footer),
-				EmptyPlaceholder: () => <div className="lbl-empty color-fg">EMPTY LIST</div>,
+				EmptyPlaceholder: () => <div className="jack-lbl-empty color-fg">EMPTY LIST</div>,
 			}}
 		/>
 
-		<div className="lyt-float" style={{ bottom: 30 }}>
+		<div className="jack-lyt-float" style={{ bottom: 30 }}>
 			{extraActions}
 			{showKeepDown &&
 				<FloatButton

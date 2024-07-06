@@ -87,7 +87,7 @@ const SyncView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className="lyt-form" style={{ flex: 1 }}>
+		<div className="jack-lyt-form" style={{ flex: 1 }}>
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative", gap: 5 }} >
 
@@ -106,7 +106,7 @@ const SyncView: FunctionComponent<Props> = ({
 					</TitleAccordion>
 
 					<div className={cls.row}>
-						<div className="lbl-prop">SUBJECT</div>
+						<div className="jack-lbl-prop">SUBJECT</div>
 						<IconButton onClick={handleRequestClick}>
 							<ArrowRightIcon />
 						</IconButton>
@@ -127,7 +127,7 @@ const SyncView: FunctionComponent<Props> = ({
 					/>
 				</div>
 
-				<div className="lyt-float">
+				<div className="jack-lyt-float">
 					<FloatButton style={{ position: "relative" }}
 						onClick={handleSend}
 						disabled={!canSend}
@@ -143,7 +143,7 @@ const SyncView: FunctionComponent<Props> = ({
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 5 }}>
 				<div className={cls.row}>
-					<div className="lbl-prop">RESPONSE</div>
+					<div className="jack-lbl-prop">RESPONSE</div>
 					<IconButton onClick={handleResponseClick}>
 						<ArrowRightIcon />
 					</IconButton>

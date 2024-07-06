@@ -32,10 +32,10 @@ const DetailForm: FunctionComponent<Props> = ({
 	const autoFormat = kventrySa.autoFormat
 	const refEditor = (ref:EditorRefProps) => kventrySa.editorRef = ref
 
-	return <div className="lyt-form" style={{ height: "100%" }}>
+	return <div className="jack-lyt-form" style={{ height: "100%" }}>
 
 		<div className="lyt-v">
-			<div className="lbl-prop">KEY</div>
+			<div className="jack-lbl-prop">KEY</div>
 			<TextInput autoFocus
 				value={kventry.key ?? ""}
 				onChange={handleKeyChange}

@@ -25,7 +25,7 @@ export { ListDialog as default } from "@priolo/jack"
 
 // const ListDialog: FunctionComponent<Props> = ({
 // 	items,
-// 	RenderRow = ({ item }) => <div className="list-row">{item?.toString() ?? ""}</div>,
+// 	RenderRow = ({ item }) => <div className="jack-list-row">{item?.toString() ?? ""}</div>,
 // 	select,
 // 	style,
 // 	readOnly,

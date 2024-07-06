@@ -93,7 +93,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		open={msgSa.subscriptionsOpen}
 		onClose={handleCancel}
 	>
-		<div className="lyt-form var-dialog">
+		<div className="jack-lyt-form var-dialog">
 
 			<EditList<Subscription>
 				items={subscriptions}
@@ -119,12 +119,12 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 				/>
 			</TitleAccordion>
 
-			<div className="cmp-h" style={{ marginTop: 10 }}>
+			<div className="jack-cmp-h" style={{ marginTop: 10 }}>
 				<IconToggle
 					check={msgSa.noSysMessages}
 					onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
 				/>
-				<div className="lbl-prop">DISCARDS SYSTEM MESSAGES</div>
+				<div className="jack-lbl-prop">DISCARDS SYSTEM MESSAGES</div>
 			</div>
 
 			<div className="var-dialog cmp-footer">

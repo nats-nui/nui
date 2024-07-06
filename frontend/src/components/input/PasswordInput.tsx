@@ -26,7 +26,7 @@ export { PasswordInput as default } from "@priolo/jack"
 // 	// HANDLER
 
 // 	// RENDER
-// 	return <div className="cmp-h">
+// 	return <div className="jack-cmp-h">
 // 		<TextInput
 // 			{...props}
 // 			type={hide ? "password" : null}

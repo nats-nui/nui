@@ -60,13 +60,13 @@ const MessageRow: FunctionComponent<Props> = ({
 	/>
 
 	return (
-		<div className={`hover-container ${clsRoot}`}
+		<div className={`jack-hover-container ${clsRoot}`}
 			onClick={handleClick}
 		>
 			<div className={cls.title}>
 				<span style={{ flex: 1 }}>
 					<span className={cls.seq_num}>{message.seqNum} </span>
-					<span className={`${cls.subject} hover-container`}>
+					<span className={`${cls.subject} jack-hover-container`}>
 						{message.subject}
 					</span>
 				</span>

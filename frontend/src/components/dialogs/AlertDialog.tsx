@@ -41,7 +41,7 @@ export { AlertDialog as default } from "@priolo/jack"
 // 		onClose={() => handleClose(false)}
 // 	>
 
-// 		<div className="lbl-prop-title">DANGER</div>
+// 		<div className="jack-lbl-prop-title">DANGER</div>
 
 // 		<div className="lbl-dialog-text">
 // 			{alert.body}

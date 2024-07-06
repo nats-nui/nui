@@ -70,7 +70,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className="lyt-form" style={{ height: "100%" }}>
+		<div className="jack-lyt-form" style={{ height: "100%" }}>
 
 			<TitleAccordion title="HEADERS" open={false}>
 				<EditList<[string, string]>
@@ -85,7 +85,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 			</TitleAccordion>
 
 			<div className="lyt-v">
-				<div className="lbl-prop cliccable"
+				<div style={{ cursor: "pointer" }} className="jack-lbl-prop"
 					onClick={handleSubsClick}
 				>SUBJECT</div>
 				<TextInput autoFocus
@@ -104,7 +104,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="lyt-float">
+			<div className="jack-lyt-float">
 				<FloatButton style={{ position: "relative" }}
 					onClick={handleSend}
 					disabled={!canSend}

@@ -61,11 +61,11 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 	const auths = connection.auth ?? []
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-	return <div className="lyt-form var-dialog">
+	return <div className="jack-lyt-form var-dialog">
 
 		<TitleAccordion title="BASE">
 			<div className="lyt-v">
-				<div className="lbl-prop">NAME</div>
+				<div className="jack-lbl-prop">NAME</div>
 				<TextInput autoFocus
 					value={name}
 					onChange={handleChangeName}
@@ -73,7 +73,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">HOST</div>
+				<div className="jack-lbl-prop">HOST</div>
 				<EditList<string>
 					items={hosts}
 					onItemsChange={handleHostsChange}
@@ -90,14 +90,14 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="ADVANCED">
 			<div className="lyt-v">
-				<div className="lbl-prop">AUTH</div>
+				<div className="jack-lbl-prop">AUTH</div>
 				<ListObjects<Auth>
 					store={cnnDetailSo}
 					items={auths}
 					readOnly={inRead}
 					width={170}
 					RenderLabel={({ item: auth, index }) => (
-						<div className="cmp-h">
+						<div className="jack-cmp-h">
 							<IconToggle
 								check={auth.active}
 								onChange={(check, e) => handleActivate(check, index, e)}

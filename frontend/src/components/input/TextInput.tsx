@@ -84,7 +84,7 @@ export { TextInput as default } from "@priolo/jack"
 // 	if (readOnly) {
 // 		if ( type == "password" ) value = "***"
 // 		return (
-// 			<div className={`lbl-readonly ${className ?? ""}`}
+// 			<div className={`jack-lbl-readonly ${className ?? ""}`}
 // 				style={style}
 // 			>
 // 				{value ?? ""}

@@ -1,6 +1,7 @@
 .root {
-	background-color: #EBFB35;
-	color: #393939;
+	--card-fg: #393939;
+	--card-bg: #EBFB35;
+	
 	/* button icon button */
 	--cmp-select-bg: #EBFB35;
 	--cmp-select-fg: #393939;

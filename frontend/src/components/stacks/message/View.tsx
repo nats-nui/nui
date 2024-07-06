@@ -46,19 +46,19 @@ const MessageView: FunctionComponent<Props> = ({
 			<FormatAction store={msgSo} />
 		</>}
 	>
-		<div className={`lyt-form ${cls.form}`}>
+		<div className={`jack-lyt-form ${cls.form}`}>
 
 			<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
 				<HeadersCmp headers={msgSa.message.headers} />
 			</TitleAccordion>
 
-			<div className="hover-container">
+			<div className="jack-hover-container">
 				<CopyButton absolute
 					value={msgSa.message.subject}
-					style={{ backgroundColor: "var(--bg-default)" }}
+					style={{ backgroundColor: "var(--card-bg)" }}
 				/>
-				<span className="lbl-prop">SUBJECT2: </span>
-				<span className="lbl-readonly">
+				<span className="jack-lbl-prop">SUBJECT2: </span>
+				<span className="jack-lbl-readonly">
 					{msgSa.message.subject}
 				</span>
 			</div>

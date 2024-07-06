@@ -54,16 +54,16 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 	const valueShow = bytesToValue(value, unit)
 
 	return <div className="lyt-v">
-		<div className="cmp-h">
+		<div className="jack-cmp-h">
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
 				readOnly={readOnly}
 			/>
-			<div className="lbl-prop">{label}</div>
+			<div className="jack-lbl-prop">{label}</div>
 		</div>
 		<Accordion open={isEnabled} height={22}>
-			<div className="cmp-h" style={{ minHeight: 22 }}>
+			<div className="jack-cmp-h" style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 2 }}
 					value={valueShow}

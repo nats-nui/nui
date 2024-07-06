@@ -83,7 +83,7 @@ export { ListMultiWithFilter as default } from "@priolo/jack"
 // 			// 		check={selects.indexOf(item) != -1}
 // 			// 		onChange={select => handleSubjectChange(item)}
 // 			// 	/>
-// 			// 	<div className="lbl-prop">{item}</div>
+// 			// 	<div className="jack-lbl-prop">{item}</div>
 // 			// </div>}
 
 // 			RenderRow2={(item, index) => <div style={{ padding: '4px 6px', display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
@@ -114,6 +114,6 @@ export { ListMultiWithFilter as default } from "@priolo/jack"
 // // 			check={selects.indexOf(item) != -1}
 // // 			onChange={select => handleSubjectChange(item)}
 // // 		/>
-// // 		<div className="lbl-prop">{item}</div>
+// // 		<div className="jack-lbl-prop">{item}</div>
 // // 	</div>
 // // }

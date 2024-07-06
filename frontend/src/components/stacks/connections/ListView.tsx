@@ -106,7 +106,7 @@ const CnnListView: FunctionComponent<Props> = ({
 				onClick={() => handleSelect(cnn)}
 			/>
 		)) : (
-			<div className="lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
+			<div className="jack-lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
 		)}
 
 		<AlertDialog store={cnnListSo} />

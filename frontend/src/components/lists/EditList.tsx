@@ -169,7 +169,7 @@ export type { RenderRowBaseProps } from "@priolo/jack"
 // 					onChange={(newItem) => handleChangeItem(newItem, index)}
 // 					onSelect={(e) => handleSelect(index, e)}
 // 				/>
-// 			) : readOnly ? <div className="lbl-empty lbl-disabled">EMPTY LIST</div> : null}
+// 			) : readOnly ? <div className="jack-lbl-empty lbl-disabled">EMPTY LIST</div> : null}
 
 // 			{/* NEW BUTTON */}
 // 			{!readOnly && onNewItem && (

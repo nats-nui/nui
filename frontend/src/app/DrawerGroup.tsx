@@ -90,9 +90,9 @@ const DrawerGroup: FunctionComponent<Props> = ({
 					{inRight ? <MenuBottomIcon /> : <MenuRightIcon />}
 				</IconButton>
 
-				<div className="bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
+				<div className="jack-bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 				<div className={cls.handle_label} draggable={false}>DRAWER</div>
-				<div className="bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
+				<div className="jack-bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 
 				<div className={cls.size}>
 					{size}

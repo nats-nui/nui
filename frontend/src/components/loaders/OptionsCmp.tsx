@@ -149,7 +149,7 @@ export { OptionsCmp as default } from "@priolo/jack"
 // 				onSelect={handleOptionsChange}
 // 				RenderRow2={(item) => item.mode == LOAD_MODE.PARENT && !haveParent
 // 					? null
-// 					: <div className={`list-row ${item.mode == LOAD_MODE.PARENT ? cls.divider : ""}`}>{item.label}</div>
+// 					: <div className={`jack-list-row ${item.mode == LOAD_MODE.PARENT ? cls.divider : ""}`}>{item.label}</div>
 // 				}
 // 			/>
 // 		</Dialog>

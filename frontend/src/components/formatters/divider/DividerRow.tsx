@@ -43,13 +43,13 @@ const DividerRow: FunctionComponent<Props> = ({
 		onClick={onClick}
 	>
 		{(variant == DIVIDER_VARIANT.BORDER_UP || variant == DIVIDER_VARIANT.BORDER_BOTH) && (
-			<div className="bars-alert-bg" style={{ height: 10 }} />
+			<div className="jack-bars-alert-bg" style={{ height: 10 }} />
 		)}
 		<div className={cls.title}>{title}</div>
 		<div className={cls.body}>{children}</div>
 		<div className={cls.footer}>{time}</div>
 		{(variant == DIVIDER_VARIANT.BORDER_DOWN || variant == DIVIDER_VARIANT.BORDER_BOTH) && (
-			<div className="bars-alert-bg" style={{ height: 10 }} />
+			<div className="jack-bars-alert-bg" style={{ height: 10 }} />
 		)}
 	</div>
 }

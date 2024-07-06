@@ -62,13 +62,13 @@ const Form: FunctionComponent<Props> = ({
 	const inRead = state.editState == EDIT_STATE.READ
 	const inNew = state.editState == EDIT_STATE.NEW
 
-	return <div className="lyt-form var-dialog">
+	return <div className="jack-lyt-form var-dialog">
 
 		<TitleAccordion title="BASE">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">NAME</div>
-				{/* <div className="lbl-readonly">{consumer.name ?? "-"}</div> */}
+				<div className="jack-lbl-prop">NAME</div>
+				{/* <div className="jack-lbl-readonly">{consumer.name ?? "-"}</div> */}
 				<TextInput
 					value={consumer.config.name}
 					onChange={name => handlePropChange({ name })}
@@ -77,7 +77,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DURABLE NAME</div>
+				<div className="jack-lbl-prop">DURABLE NAME</div>
 				<TextInput
 					value={consumer.config.durableName}
 					onChange={durableName => handlePropChange({ durableName })}
@@ -86,7 +86,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DESCRIPTION</div>
+				<div className="jack-lbl-prop">DESCRIPTION</div>
 				<TextInput multiline rows={2}
 					value={consumer.config.description}
 					onChange={description => handlePropChange({ description })}
@@ -95,7 +95,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">REPLAY POLICY</div>
+				<div className="jack-lbl-prop">REPLAY POLICY</div>
 				<ListDialog width={80}
 					store={store}
 					select={Object.values(ReplayPolicy).indexOf(consumer.config.replayPolicy ?? ReplayPolicy.ReplayInstantPolicy)}
@@ -108,8 +108,8 @@ const Form: FunctionComponent<Props> = ({
 
 			{inRead && (
 				<div className="lyt-v">
-					<div className="lbl-prop">CREATION DATETIME</div>
-					<div className="lbl-readonly">{dateShow(consumer.created)}</div>
+					<div className="jack-lbl-prop">CREATION DATETIME</div>
+					<div className="jack-lbl-readonly">{dateShow(consumer.created)}</div>
 				</div>
 			)}
 
@@ -119,23 +119,23 @@ const Form: FunctionComponent<Props> = ({
 			<TitleAccordion title="MESSAGES">
 
 				<div className="lyt-v">
-					<div className="lbl-prop">WAITING</div>
-					<div className="lbl-readonly">{consumer.numWaiting ?? "-"}</div>
+					<div className="jack-lbl-prop">WAITING</div>
+					<div className="jack-lbl-readonly">{consumer.numWaiting ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">PENDING</div>
-					<div className="lbl-readonly">{consumer.numPending ?? "-"}</div>
+					<div className="jack-lbl-prop">PENDING</div>
+					<div className="jack-lbl-readonly">{consumer.numPending ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">ACKS PENDING</div>
-					<div className="lbl-readonly">{consumer.numAckPending ?? "-"}</div>
+					<div className="jack-lbl-prop">ACKS PENDING</div>
+					<div className="jack-lbl-readonly">{consumer.numAckPending ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">REDELIVERED</div>
-					<div className="lbl-readonly">{consumer.numRedelivered ?? "-"}</div>
+					<div className="jack-lbl-prop">REDELIVERED</div>
+					<div className="jack-lbl-readonly">{consumer.numRedelivered ?? "-"}</div>
 				</div>
 
 			</TitleAccordion>
@@ -143,18 +143,18 @@ const Form: FunctionComponent<Props> = ({
 			<TitleAccordion title="LAST DELIVERED">
 
 				<div className="lyt-v">
-					<div className="lbl-prop">DATETIME</div>
-					<div className="lbl-readonly">{consumer.delivered?.lastActive ?? "-"}</div>
+					<div className="jack-lbl-prop">DATETIME</div>
+					<div className="jack-lbl-readonly">{consumer.delivered?.lastActive ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">STREAM SEQ</div>
-					<div className="lbl-readonly">{consumer.delivered?.streamSeq ?? "-"}</div>
+					<div className="jack-lbl-prop">STREAM SEQ</div>
+					<div className="jack-lbl-readonly">{consumer.delivered?.streamSeq ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">CONSUMER SEQ</div>
-					<div className="lbl-readonly">{consumer.delivered?.consumerSeq ?? "-"}</div>
+					<div className="jack-lbl-prop">CONSUMER SEQ</div>
+					<div className="jack-lbl-readonly">{consumer.delivered?.consumerSeq ?? "-"}</div>
 				</div>
 
 			</TitleAccordion>
@@ -162,18 +162,18 @@ const Form: FunctionComponent<Props> = ({
 			<TitleAccordion title="LAST ACKED">
 
 				<div className="lyt-v">
-					<div className="lbl-prop">DATETIME</div>
-					<div className="lbl-readonly">{consumer.ackFloor?.lastActive ?? "-"}</div>
+					<div className="jack-lbl-prop">DATETIME</div>
+					<div className="jack-lbl-readonly">{consumer.ackFloor?.lastActive ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">STREAM SEQ</div>
-					<div className="lbl-readonly">{consumer.ackFloor?.streamSeq ?? "-"}</div>
+					<div className="jack-lbl-prop">STREAM SEQ</div>
+					<div className="jack-lbl-readonly">{consumer.ackFloor?.streamSeq ?? "-"}</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">CONSUMER SEQ</div>
-					<div className="lbl-readonly">{consumer.ackFloor?.consumerSeq ?? "-"}</div>
+					<div className="jack-lbl-prop">CONSUMER SEQ</div>
+					<div className="jack-lbl-readonly">{consumer.ackFloor?.consumerSeq ?? "-"}</div>
 				</div>
 
 			</TitleAccordion>
@@ -184,7 +184,7 @@ const Form: FunctionComponent<Props> = ({
 		<TitleAccordion title="DELIVERY POLICY">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DELIVER POLICY</div>
+				<div className="jack-lbl-prop">DELIVER POLICY</div>
 				<ListDialog width={150}
 					store={store}
 					select={Object.values(DeliverPolicy).indexOf(consumer.config.deliverPolicy ?? DeliverPolicy.DeliverAllPolicy)}
@@ -197,7 +197,7 @@ const Form: FunctionComponent<Props> = ({
 
 			{consumer.config.deliverPolicy == DeliverPolicy.DeliverByStartSequencePolicy && (
 				<div className="lyt-v">
-					<div className="lbl-prop">OPT START SEQ</div>
+					<div className="jack-lbl-prop">OPT START SEQ</div>
 					<NumberInput
 						value={consumer.config.optStartSeq}
 						onChange={optStartSeq => handlePropChange({ optStartSeq })}
@@ -208,7 +208,7 @@ const Form: FunctionComponent<Props> = ({
 
 			{consumer.config.deliverPolicy == DeliverPolicy.DeliverByStartTimePolicy && (
 				<div className="lyt-v">
-					<div className="lbl-prop">OPT START TIME</div>
+					<div className="jack-lbl-prop">OPT START TIME</div>
 					<DateTimeInput
 						value={consumer.config.optStartTime}
 						onChange={optStartTime => handlePropChange({ optStartTime })}
@@ -217,7 +217,7 @@ const Form: FunctionComponent<Props> = ({
 			)}
 
 			<div className="lyt-v">
-				<div className="lbl-prop">FILTER SUBJECTS</div>
+				<div className="jack-lbl-prop">FILTER SUBJECTS</div>
 				<EditList<string>
 					items={consumer.config.filterSubjects}
 					onItemsChange={filterSubjects => handlePropChange({ filterSubjects })}
@@ -230,7 +230,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">FILTER SUBJECT</div>
+				<div className="jack-lbl-prop">FILTER SUBJECT</div>
 				<TextInput
 					value={consumer.config.filterSubject}
 					onChange={filterSubject => handlePropChange({ filterSubject })}
@@ -244,7 +244,7 @@ const Form: FunctionComponent<Props> = ({
 		<TitleAccordion title="ACK POLICY">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">ACK POLICY</div>
+				<div className="jack-lbl-prop">ACK POLICY</div>
 				<ListDialog width={150}
 					store={store}
 					select={Object.values(AckPolicy).indexOf(consumer.config.ackPolicy ?? AckPolicy.AckAllPolicy)}
@@ -302,7 +302,7 @@ const Form: FunctionComponent<Props> = ({
 			/>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">BACKOFF</div>
+				<div className="jack-lbl-prop">BACKOFF</div>
 				<EditList<number>
 					items={consumer.config.backoff}
 					onItemsChange={handleBackoffChange}
@@ -353,9 +353,9 @@ const Form: FunctionComponent<Props> = ({
 
 
 		{/*<TitleAccordion title="PUSH OPTIONS (legacy)">
-			<div className="lbl-prop">Read only section</div>
+			<div className="jack-lbl-prop">Read only section</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">DELIVER SUBJECT</div>
+				<div className="jack-lbl-prop">DELIVER SUBJECT</div>
 				<TextInput
 					value={consumer.config.deliverSubject}
 					onChange={deliverSubject => handlePropChange({ deliverSubject })}
@@ -364,7 +364,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DELIVER GROUP</div>
+				<div className="jack-lbl-prop">DELIVER GROUP</div>
 				<TextInput
 					value={consumer.config.deliverGroup}
 					onChange={deliverGroup => handlePropChange({ deliverGroup })}
@@ -372,17 +372,17 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={consumer.config.flowControl}
 					onChange={flowControl => handlePropChange({ flowControl })}
 					readOnly={true}
 				/>
-				<div className="lbl-prop">FLOW CONTROL</div>
+				<div className="jack-lbl-prop">FLOW CONTROL</div>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">IDLE HEARTBEAT</div>
+				<div className="jack-lbl-prop">IDLE HEARTBEAT</div>
 				<NumberInput
 					value={consumer.config.idleHeartbeat}
 					onChange={idleHeartbeat => handlePropChange({ idleHeartbeat })}
@@ -390,13 +390,13 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={consumer.config.headersOnly}
 					onChange={headersOnly => handlePropChange({ headersOnly })}
 					readOnly={true}
 				/>
-				<div className="lbl-prop">HEADERS ONLY</div>
+				<div className="jack-lbl-prop">HEADERS ONLY</div>
 			</div>
 
 			<MaxNumberCmp
@@ -431,17 +431,17 @@ const Form: FunctionComponent<Props> = ({
 				onChange={inactiveThreshold => handlePropChange({ inactiveThreshold })}
 			/>
 
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={consumer.config.memStorage}
 					onChange={memStorage => handlePropChange({ memStorage })}
 					readOnly={inRead || !inNew}
 				/>
-				<div className="lbl-prop">MEM STORAGE</div>
+				<div className="jack-lbl-prop">MEM STORAGE</div>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">METADATA</div>
+				<div className="jack-lbl-prop">METADATA</div>
 				<EditList<[string, string]>
 					items={!!consumer.config.metadata ? Object.entries(consumer.config.metadata) : []}
 					onItemsChange={handleMetadataChange}

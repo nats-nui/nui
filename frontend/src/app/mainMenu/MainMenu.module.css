@@ -3,9 +3,10 @@
 	flex-direction: column; 
 	align-items: stretch;
 
+	background-color: var(--bg-disabled);
+
 	width: 50px;
 	gap: 10px;
-	background-color: var(--bg-disabled);
 	padding: 10px;
 
 	box-shadow: rgba(0, 0, 0, 0.25) 2px 0px 1px 0px;

@@ -41,7 +41,7 @@ export { TitleAccordion as default } from "@priolo/jack"
 // 	// RENDER
 // 	return <div className={cls.root_title} style={style}>
 
-// 		<div className={`lbl-prop-title ${cls.title} ${disabled ? cls.disabled : ""}`}
+// 		<div className={`jack-lbl-prop-title ${cls.title} ${disabled ? cls.disabled : ""}`}
 // 			style={{ alignItems: "center", display: "flex", justifyContent: "center", cursor: "pointer" }}
 // 			onClick={handleClick}
 // 		>

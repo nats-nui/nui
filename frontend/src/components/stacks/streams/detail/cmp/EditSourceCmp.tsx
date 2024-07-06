@@ -31,9 +31,9 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!source) return null
 
-	return <div className="lyt-form var-dialog">
+	return <div className="jack-lyt-form var-dialog">
 		<div className="lyt-v">
-			<div className="lbl-prop">NAME</div>
+			<div className="jack-lbl-prop">NAME</div>
 			<Options<string> height={500}
 				value={source.name}
 				items={allStream}
@@ -42,7 +42,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			/>
 		</div>
 		<div className="lyt-v">
-			<div className="lbl-prop">START SEQUENCE</div>
+			<div className="jack-lbl-prop">START SEQUENCE</div>
 			<NumberInput
 				value={source.optStartSeq}
 				onChange={handleSequenceChange}
@@ -50,7 +50,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			/>
 		</div>
 		<div className="lyt-v">
-			<div className="lbl-prop">FILTER SUBJECT</div>
+			<div className="jack-lbl-prop">FILTER SUBJECT</div>
 			<TextInput
 				value={source.filterSubject}
 				onChange={handleFilterSubjectChange}

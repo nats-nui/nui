@@ -1,43 +1,48 @@
-import IconButton from "@/components/buttons/IconButton"
-import CloseIcon from "@/icons/CloseIcon"
-import { FunctionComponent } from "react"
-import Box from "../format/Box"
-import { RenderRowBaseProps } from "../lists/EditList"
-import ListRow from "../lists/ListRow"
+export { EditItemRow as default } from "@priolo/jack"
+
+// import IconButton from "@/components/buttons/IconButton"
+// import CloseIcon from "@/icons/CloseIcon"
+// import { FunctionComponent } from "react"
+// import Box from "../format/Box"
+// import { RenderRowBaseProps } from "../lists/EditList"
+// import ListRow from "../lists/ListRow"
 
 
+// /** 
+//  * renderizza una riga con l'aggiunta del bttone "close"
+//  * che se premuto cambia in "null"
+//   */
+// const EditItemRow: FunctionComponent<RenderRowBaseProps<any>> = ({
+// 	item,
+// 	isSelect,
+// 	readOnly = false,
+// 	onChange,
+// 	onSelect,
+// }) => {
 
-const EditItemRow: FunctionComponent<RenderRowBaseProps<any>> = ({
-	item,
-	isSelect,
-	readOnly = false,
-	onChange,
-	onSelect,
-}) => {
+// 	// HOOKS
 
-	// HOOKS
+// 	// HANDLER
+// 	const handleDelete = () => onChange?.(null)
 
-	// HANDLER
-	const handleDelete = () => onChange?.(null)
+// 	// RENDER
+// 	return <Box
+// 		style={cssRow}
+// 		enterRender={!readOnly && 
+// 			<IconButton onClick={handleDelete} >
+// 				<CloseIcon />
+// 			</IconButton>}
+// 	>
+// 		<ListRow style={{ flex: 1, padding: '3px 5px' }} onClick={onSelect} isSelect={isSelect}>
+// 			{item ?? ""}
+// 		</ListRow>
+// 	</Box>
+// }
 
-	// RENDER
-	return <Box
-		style={cssRow}
-		enterRender={!readOnly && 
-			<IconButton onClick={handleDelete} >
-				<CloseIcon />
-			</IconButton>}
-	>
-		<ListRow style={{ flex: 1, padding: '3px 5px' }} onClick={onSelect} isSelect={isSelect}>
-			{item ?? ""}
-		</ListRow>
-	</Box>
-}
+// export default EditItemRow
 
-export default EditItemRow
-
-const cssRow: React.CSSProperties = {
-	//minHeight: 22,
-	display: "flex",
-	alignItems: 'stretch',
-}
+// const cssRow: React.CSSProperties = {
+// 	//minHeight: 22,
+// 	display: "flex",
+// 	alignItems: 'stretch',
+// }

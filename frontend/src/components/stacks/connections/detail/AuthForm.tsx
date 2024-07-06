@@ -36,11 +36,11 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!authEdit) return null
-	return <div className="lyt-form var-dialog">
+	return <div className="jack-lyt-form var-dialog">
 
 		<div className="lbl-info-container">
 			<Options<string> style={{ marginBottom: 8 }}
-				className={readOnly ? "lbl-prop-title" : ""}
+				className={readOnly ? "jack-lbl-prop-title" : ""}
 				value={authEdit?.mode?.toUpperCase()}
 				items={authItems}
 				RenderRow={StringUpRow}
@@ -55,20 +55,20 @@ const AuthForm: FunctionComponent<Props> = ({
 
 		{{
 			[AUTH_MODE.USER_PASSWORD]: <>
-				<div className="lyt-form"><div className="lbl-prop">USERNAME</div><TextInput
+				<div className="jack-lyt-form"><div className="jack-lbl-prop">USERNAME</div><TextInput
 					value={authEdit.username}
 					onChange={username => handlePropChange({ username })}
 					readOnly={readOnly}
 				/></div>
-				<div className="lyt-form"><div className="lbl-prop">PASSWORD</div><PasswordInput
+				<div className="jack-lyt-form"><div className="jack-lbl-prop">PASSWORD</div><PasswordInput
 					value={authEdit.password}
 					onChange={password => handlePropChange({ password })}
 					readOnly={readOnly}
 				/></div>
 			</>,
 			[AUTH_MODE.TOKEN]: (
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">TOKEN
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">TOKEN
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 							content="Client token string specified in authorization config of the server"
 						/>
@@ -81,8 +81,8 @@ const AuthForm: FunctionComponent<Props> = ({
 				</div>
 			),
 			[AUTH_MODE.NKEY]: <>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">PUBLIC NKEY
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">PUBLIC NKEY
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 										content="NATS public NKEY representing the user. It starts with 'U'"
 						/>
@@ -92,8 +92,8 @@ const AuthForm: FunctionComponent<Props> = ({
 						onChange={username => handlePropChange({username})}
 						readOnly={readOnly}
 					/></div>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">NKEY SEED
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 										content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 						/>
@@ -105,8 +105,8 @@ const AuthForm: FunctionComponent<Props> = ({
 					/></div>
 			</>,
 			[AUTH_MODE.JWT]: <>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">JWT
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">JWT
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 										content="User JWT string to couple with private NKEY"
 						/>
@@ -117,8 +117,8 @@ const AuthForm: FunctionComponent<Props> = ({
 						readOnly={readOnly}
 					/>
 				</div>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">NKEY SEED
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 						/>
@@ -131,8 +131,8 @@ const AuthForm: FunctionComponent<Props> = ({
 				</div>
 			</>,
 			[AUTH_MODE.BEARER_JWT]: <>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">BEARER JWT
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">BEARER JWT
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 							content="NATS user JWT as bearer token (with no nuance)"
 						/>
@@ -145,8 +145,8 @@ const AuthForm: FunctionComponent<Props> = ({
 				</div>
 			</>,
 			[AUTH_MODE.CREDS_FILE]: <>
-				<div className="lyt-form">
-					<div className="lbl-prop lbl-info-container">CREDS PATH FILE
+				<div className="jack-lyt-form">
+					<div className="jack-lbl-prop lbl-info-container">CREDS PATH FILE
 						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
 							content="Local path of NATS .creds file containing JWT and NKEY seed"
 						/>

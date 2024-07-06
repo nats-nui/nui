@@ -29,24 +29,23 @@
 
 
 	--bg-default: #3E3E3E;
-	--bg-disabled: #494949;
+	
 
 
 	--bg-1: #3E3E3E;
 	--bg-2: #2e2e2e;
 
+
+
+
+
+
+
+
 	--z-resizer: 100;
 	--z-zen: 101;
+
+
+	--bg-disabled: #494949;
 }
 
-/* 
-.bars-alert-bg {
-	background: repeating-linear-gradient(135deg, transparent, transparent 7px, #000 7px, #000 15px)
-}
-.bars-alert-bg-c {
-	background: repeating-linear-gradient(135deg, transparent, transparent 7px, currentColor 7px, currentColor 15px)
-}
-
-.bars-alert-bg-1 {
-	background: repeating-linear-gradient(135deg, transparent, transparent 10px, var(--var-1) 10px, var(--var-1) 20px)
-} */

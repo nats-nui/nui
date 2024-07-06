@@ -43,7 +43,7 @@ const AboutView: FunctionComponent<Props> = ({
 	>
 		<div className={cls.logo} />
 
-		<div className="lyt-form">
+		<div className="jack-lyt-form">
 
 			<div className={cls.linkContainer}>
 				<div className={cls.link}
@@ -58,13 +58,13 @@ const AboutView: FunctionComponent<Props> = ({
 			<div className={cls.divider} />
 
 			<div className="lyt-v">
-				<div className="lbl-prop">CURRENT</div>
-				<div className="lbl-readonly">{current}</div>
+				<div className="jack-lbl-prop">CURRENT</div>
+				<div className="jack-lbl-readonly">{current}</div>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">LAST</div>
-				<div className="lbl-readonly">{latest}</div>
+				<div className="jack-lbl-prop">LAST</div>
+				<div className="jack-lbl-readonly">{latest}</div>
 			</div>
 
 			{aboutSa.about?.shouldUpdate && <>

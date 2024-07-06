@@ -55,16 +55,16 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const valueShow = nsToValue(value, unit)
 
 	return <div className="lyt-v">
-		<div className="cmp-h">
+		<div className="jack-cmp-h">
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
 				readOnly={readOnly}
 			/>
-			<div className="lbl-prop">{label}</div>
+			<div className="jack-lbl-prop">{label}</div>
 		</div>
 		<Accordion open={isEnabled}>
-			<div className="cmp-h" style={{ minHeight: 22 }}>
+			<div className="jack-cmp-h" style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 1.5 }}
 					value={valueShow}
