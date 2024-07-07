@@ -35,7 +35,7 @@ const HeadersCmp: FunctionComponent<Props> = ({
 			<div className={cls.key}>{key}</div>
 			<div>:</div>
 			<div className={cls.row}>
-				{values.map(value => <div className={`${cls.header} hover-container`}>
+				{values.map(value => <div className={`${cls.header} jack-hover-container`}>
 					<div className={cls.values}>{value}</div>
 					<CopyButton absolute value={value} />
 				</div>)}

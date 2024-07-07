@@ -3,12 +3,13 @@
 	--card-bg: #10F3F3;
 	
 	/* button icon button */
-	--cmp-select-bg: #10F3F3;
 	--cmp-select-fg: #393939;
+	--cmp-select-bg: #10F3F3;
+	
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
-	/* tooltip drag dialog float-button*/
+	/* tooltip drag dialog float-button snackbar*/
 	--dialog-bg: #10F3F3;
 	--dialog-fg: #393939;
 }

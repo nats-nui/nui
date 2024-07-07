@@ -14,3 +14,14 @@ body {
 #root {
   height: 100%;
 }
+
+:root {
+  --card-inv-fg: #dedede;
+  --color-primary-fg: #393939;
+  --color-primary-bg: #BBFB35;
+  --color-element-bg: #393939;
+}
+
+.jack-cmp.jack-inv:not(.jack-cmp-select) {
+  color: var(--card-inv-fg)
+}

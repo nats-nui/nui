@@ -3,7 +3,7 @@
 	flex-direction: column; 
 	align-items: stretch;
 
-	background-color: var(--bg-disabled);
+	background-color: #494949;
 
 	width: 50px;
 	gap: 10px;

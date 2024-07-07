@@ -31,7 +31,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	if (state.consumer == null) return null
 	if (state.editState == EDIT_STATE.NEW) {
 		return (
-			<Button
+			<Button className="jack-inv"
 				children="CREATE"
 				onClick={handleSaveClick}
 			/>
@@ -44,7 +44,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 				store={store}
 			/>
 			<div style={{ flex: 1}} />
-			<Button
+			<Button className="jack-inv"
 				children="EDIT"
 				onClick={handleEditClick}
 			/>
@@ -53,11 +53,11 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// EDIT
 	return (<>
-		<Button
+		<Button className="jack-inv"
 			children="SAVE"
 			onClick={handleSaveClick}
 		/>
-		<Button
+		<Button className="jack-inv"
 			children="CANCEL"
 			onClick={handleCancelClick}
 		/>

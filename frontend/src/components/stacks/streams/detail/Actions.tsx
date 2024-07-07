@@ -1,6 +1,5 @@
 import Button from "@/components/buttons/Button"
 import OptionsCmp from "@/components/loaders/OptionsCmp"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -30,7 +29,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	if (streamSa.stream == null) return null
 	if (streamSa.editState == EDIT_STATE.NEW) {
 		return (
-			<Button
+			<Button className="jack-inv"
 				children="CREATE"
 				onClick={handleSaveClick}
 			/>
@@ -43,7 +42,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 				store={streamSo}
 			/>
 			<div style={{ flex: 1}} />
-			<Button
+			<Button className="jack-inv"
 				children="EDIT"
 				onClick={handleEditClick}
 			/>
@@ -52,11 +51,11 @@ const ActionsCmp: FunctionComponent<Props> = ({
 
 	// EDIT
 	return (<>
-		<Button
+		<Button className="jack-inv"
 			children="SAVE"
 			onClick={handleSaveClick}
 		/>
-		<Button
+		<Button className="jack-inv"
 			children="CANCEL"
 			onClick={handleCancelClick}
 		/>

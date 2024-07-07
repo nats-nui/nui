@@ -30,7 +30,7 @@ export { Box as default} from "@priolo/jack"
 
 // 	// RENDER
 // 	return (
-// 		<div className={`hover-container ${cls.root} ${className}`}
+// 		<div className={`jack-hover-container ${cls.root} ${className}`}
 // 			style={style}
 // 		>
 // 			{preRender}

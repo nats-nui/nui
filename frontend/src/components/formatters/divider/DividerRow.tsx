@@ -16,7 +16,9 @@ interface Props {
 	time?: string
 	onClick?: () => void
 	variant?: DIVIDER_VARIANT
-	colorVar?: number
+
+	style?: React.CSSProperties,
+	className?: string
 }
 
 const DividerRow: FunctionComponent<Props> = ({
@@ -25,7 +27,9 @@ const DividerRow: FunctionComponent<Props> = ({
 	time,
 	onClick,
 	variant = DIVIDER_VARIANT.BORDER_UP,
-	colorVar,
+
+	style,
+	className,
 }) => {
 
 	// STORE
@@ -35,11 +39,12 @@ const DividerRow: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	return <div className={`color-bg ${cls.root}`}
-		style={{
-			backgroundColor: !!colorVar ? `var(--var-${colorVar})` : null,
-			cursor: !onClick ? null : "pointer",
-		}}
+	const clsSelected = !!onClick ? cls.selected : ""
+	const clsRoot = `${cls.root} ${clsSelected} ${className}`
+
+	return <div
+		className={clsRoot}
+		style={style}
 		onClick={onClick}
 	>
 		{(variant == DIVIDER_VARIANT.BORDER_UP || variant == DIVIDER_VARIANT.BORDER_BOTH) && (

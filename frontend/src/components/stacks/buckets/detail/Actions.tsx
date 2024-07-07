@@ -34,7 +34,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	</>
 
 	return (<>
-		<Button
+		<Button className="jack-inv"
 			children="CREATE"
 			onClick={handleSave}
 		/>

@@ -38,7 +38,7 @@ const ItemRow: FunctionComponent<Props> = ({
 		<div className={clsRoot}
 			onClick={handleClick}
 		>
-			<div className={`hover-container ${cls.title}`}>
+			<div className={`jack-hover-container ${cls.title}`}>
 				{log.title ?? "--"}
 				<CopyButton absolute value={log.body} />
 			</div>

@@ -1,22 +1,9 @@
-import { socketPool } from "@/plugins/SocketService/pool"
-import layoutSo from "@/stores/layout"
-import { ANIM_TIME, DOC_ANIM, DOC_TYPE } from "@/types"
-import { delay } from "@/utils/time"
-import { LISTENER_CHANGE, StoreCore } from "@priolo/jon"
-import { CardsStore } from "../docs/cards"
-import { buildStore } from "../docs/utils/factory"
-import { COLOR_VAR } from "../layout"
 import { MESSAGE_TYPE } from "../log/utils"
-import { LoadBaseStore } from "./loadBase"
-import { VIEW_SIZE } from "./utils"
-import { forEachViews } from "../docs/utils/manage"
-import docsSo from "../docs"
-import { DragDoc } from "../mouse/utils"
 
 
 
-export type {ViewStore, ViewState } from "@priolo/jack"
-export {viewSetup as default} from "@priolo/jack"
+export { viewSetup as default } from "@priolo/jack"
+export type { ViewState, ViewStore, ViewMutators } from "@priolo/jack"
 
 // const viewSetup = {
 

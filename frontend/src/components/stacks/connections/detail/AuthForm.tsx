@@ -36,7 +36,7 @@ const AuthForm: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!authEdit) return null
-	return <div className="jack-lyt-form var-dialog">
+	return <div className="jack-lyt-form">
 
 		<div className="lbl-info-container">
 			<Options<string> style={{ marginBottom: 8 }}
@@ -48,7 +48,7 @@ const AuthForm: FunctionComponent<Props> = ({
 				onSelect={(mode) => handlePropChange({ mode: mode as AUTH_MODE })}
 			/>
 			{/* <TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-				style={{ top: readOnly ? 7 : 3, backgroundColor: "var(--var-1)" }}
+				style={{ top: readOnly ? 7 : 3, backgroundColor: "#BBFB35" }}
 				content="una bella spiegazione completa"
 			/> */}
 		</div>

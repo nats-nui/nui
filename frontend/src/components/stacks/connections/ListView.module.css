@@ -16,10 +16,10 @@
 }
 
 .icon.reconnecting {
-	background-color: var(--var-4);
+	background-color: #EBFB35;
 	color: #000;
 }
 
 .icon.disconnected {
-	background-color: var(--var-5);
+	background-color: #f374e6;
 }

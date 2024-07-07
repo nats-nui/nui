@@ -30,7 +30,7 @@ const Component: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isCliccable = !!onClick
-	const clsRoot = `hover-container ${cls.root} ${isCliccable ? "cliccable" : ""} ${selected ? cls.selected : ""} ${readOnly ? cls.readonly : ""}`
+	const clsRoot = `jack-hover-container ${cls.root} ${isCliccable ? "cliccable" : ""} ${selected ? cls.selected : ""} ${readOnly ? cls.readonly : ""}`
 
 	return (
 		<div className={clsRoot}

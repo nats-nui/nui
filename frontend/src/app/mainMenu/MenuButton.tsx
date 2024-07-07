@@ -41,16 +41,18 @@ const MenuButton: FunctionComponent<Props> = ({
 	const showCloseBtt = enter && !!onClose
 	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
-		<div 
-			style={style} 
+		<div
+			style={style}
 			className={clsRoot}
 			onClick={onClick}
 		>
 			<TooltipWrapCmp className={cls.box}
-				content={<div>
-					<div className={cls.tooltip_title}>{title}</div>
-					<div className={cls.tooltip_sub}>{subtitle}</div>
-				</div>}
+				content={
+					<div className={cls.tooltip}>
+						<div className={cls.title}>{title}</div>
+						<div className={cls.sub}>{subtitle}</div>
+					</div>
+				}
 				onMouseOver={enter => setEnter(enter)}
 			>
 				{/* BADGE BUTTON CANCEL */}
@@ -59,7 +61,7 @@ const MenuButton: FunctionComponent<Props> = ({
 				><CloseIcon /></div>}
 
 				{/* BADGE */}
-				{badge && <div className={`color-bg color-text ${cls.badge}`}
+				{badge && <div className={cls.badge}
 					onClick={onClose}
 				>{badge}</div>}
 

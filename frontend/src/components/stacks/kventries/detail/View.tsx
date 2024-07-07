@@ -9,7 +9,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import KvEntryIcon from "../../../../icons/cards/KvEntryIcon"
 import FormatDialog from "../../../editor/FormatDialog"
-import clsCard from "../../CardMint.module.css"
+import clsCard from "../../CardMintDef.module.css"
 import ActionsCmp from "./Actions"
 import DetailForm from "./DetailForm"
 
