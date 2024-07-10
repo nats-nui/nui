@@ -109,7 +109,7 @@ jobs:
       - name: rename artifacts linux webkit2gtk-4.0
         if: ${{ matrix.build.platform_name == 'linux-amd64-gtk40' }}
         run: |
-          mv build/bin/nui-app build/bin/${{ matrix.build.platform_name }}-nui-app-gtk-40
+          mv build/bin/nui-app build/bin/${{ matrix.build.platform_name }}-nui-app
       - name: rename artifacts windows
         if : ${{ matrix.build.platform_name == 'windows-amd64' }}
         run: |
