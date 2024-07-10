@@ -11,6 +11,10 @@ inputs:
   app-version:
     description: "Version of the app"
     required: false
+  gtk-40:
+    description: "Use webkit2gtk-4.0 instead of 4.1"
+    required: false
+    default: "false"
   sign:
     description: "Sign the build"
     required: false
@@ -33,7 +37,7 @@ inputs:
   wails-version:
     description: "Wails version to use"
     required: false
-    default: "latest"
+    default: "v2.9.1"
   wails-build-webview2:
     description: "Webview2 installer method [download,embed,browser,error]"
     required: false
@@ -145,10 +149,15 @@ runs:
       working-directory: ${{ inputs.app-working-directory }}
       run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags "-X main.Version=${{inputs.app-version}}"
       shell: bash
-    - name: Build App
-      if: inputs.build == 'true' &&  runner.os == 'Linux'
+    - name: Build App Linux
+      if: inputs.build == 'true' &&  runner.os == 'Linux' && inputs.gtk-40 == 'false'
       working-directory: ${{ inputs.app-working-directory }}
       run: wails build --platform ${{inputs.build-platform}} -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags  "-X main.Version=${{inputs.app-version}}"
+      shell: bash
+    - name: Build App Linux GTK 40
+      if: inputs.build == 'true' &&  runner.os == 'Linux' && inputs.gtk-40 == 'true'
+      working-directory: ${{ inputs.app-working-directory }}
+      run: wails build --platform ${{inputs.build-platform}} -tags webkit2_41 -webview2 ${{inputs.wails-build-webview2}} -o ${{inputs.build-name}} --ldflags  "-X main.Version=${{inputs.app-version}}"
       shell: bash
     - name: Build Windows App
       if: inputs.build == 'true' && runner.os == 'Windows' && inputs.nsis == 'false'

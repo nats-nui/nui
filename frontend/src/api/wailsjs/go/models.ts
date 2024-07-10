@@ -20,7 +20,7 @@ export namespace mapping {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -50,7 +50,7 @@ export namespace mapping {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -125,7 +125,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -212,7 +212,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -247,7 +247,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -300,7 +300,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -414,7 +414,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -444,7 +444,6 @@ export namespace nats {
 	    storage: number;
 	    num_replicas: number;
 	    no_ack?: boolean;
-	    template_owner?: string;
 	    duplicate_window?: number;
 	    placement?: Placement;
 	    mirror?: StreamSource;
@@ -461,6 +460,7 @@ export namespace nats {
 	    mirror_direct: boolean;
 	    consumer_limits?: StreamConsumerLimits;
 	    metadata?: {[key: string]: string};
+	    template_owner?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamConfig(source);
@@ -483,7 +483,6 @@ export namespace nats {
 	        this.storage = source["storage"];
 	        this.num_replicas = source["num_replicas"];
 	        this.no_ack = source["no_ack"];
-	        this.template_owner = source["template_owner"];
 	        this.duplicate_window = source["duplicate_window"];
 	        this.placement = this.convertValues(source["placement"], Placement);
 	        this.mirror = this.convertValues(source["mirror"], StreamSource);
@@ -500,13 +499,14 @@ export namespace nats {
 	        this.mirror_direct = source["mirror_direct"];
 	        this.consumer_limits = this.convertValues(source["consumer_limits"], StreamConsumerLimits);
 	        this.metadata = source["metadata"];
+	        this.template_owner = source["template_owner"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -565,7 +565,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -617,7 +617,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
@@ -660,7 +660,7 @@ export namespace nats {
 		    if (!a) {
 		        return a;
 		    }
-		    if (a.slice) {
+		    if (a.slice && a.map) {
 		        return (a as any[]).map(elem => this.convertValues(elem, classs));
 		    } else if ("object" === typeof a) {
 		        if (asMap) {
