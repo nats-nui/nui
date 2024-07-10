@@ -58,24 +58,24 @@ const ConnectionDetailActions: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (cnnDetailSa.editState == EDIT_STATE.NEW) {
-		return <Button className="jack-inv"
+		return <Button
 			children="CREATE"
 			onClick={handleSaveClick}
 		/>
 
 	} else if (cnnDetailSa.editState == EDIT_STATE.READ) {
-		return <Button className="jack-inv"
+		return <Button
 			children="EDIT"
 			onClick={handleEditClick}
 		/>
 	}
 
 	return <>
-		<Button className="jack-inv"
+		<Button
 			children="SAVE"
 			onClick={handleSaveClick}
 		/>
-		<Button className="jack-inv"
+		<Button
 			children="CANCEL"
 			onClick={handleCancelClick}
 		/>

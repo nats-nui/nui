@@ -65,8 +65,8 @@
 	height: 18px;
 	font-size: 10px;
 
-	color: var(--dialog-fg);
-	background-color: var(--dialog-bg);
+	color: var(--dialog-bg);
+	background-color: var(--dialog-fg);
 	box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 2px 0px;
 }
 

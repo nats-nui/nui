@@ -1,9 +1,8 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FrameworkCard, Header, IconButton } from "@priolo/jack"
 import { FunctionComponent } from "react"
-import docsSo from "../../stores/docs"
-import { drawerCardsSo } from "../../stores/docs/cards"
 import IconizedIcon from "../../icons/IconizeIcon"
+import docsSo from "../../stores/docs"
 import { menuSo } from "../../stores/docs/links"
 
 
