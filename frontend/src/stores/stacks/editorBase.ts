@@ -1,6 +1,5 @@
 import { EditorRefProps } from "@/components/editor"
 import { MSG_FORMAT } from "@/utils/editor"
-import { StoreCore } from "@priolo/jon"
 import { ViewState, ViewStore } from "./viewBase"
 
 
@@ -59,7 +58,7 @@ export type EditorState = Partial<typeof editorSetup.state> & ViewState
 export type EditorGetters = typeof editorSetup.getters
 export type EditorActions = typeof editorSetup.actions
 export type EditorMutators = typeof editorSetup.mutators
-export interface EditorStore extends ViewStore, StoreCore<EditorState>, EditorGetters, EditorActions, EditorMutators {
+export interface EditorStore extends ViewStore, EditorGetters, EditorActions, EditorMutators {
 	state: EditorState
 }
 

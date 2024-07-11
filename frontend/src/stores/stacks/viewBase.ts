@@ -1,9 +1,47 @@
-import { MESSAGE_TYPE } from "../log/utils"
-
-
-
-export { viewSetup as default } from "@priolo/jack"
+//import { MESSAGE_TYPE } from "../log/utils"
+import { viewSetup, ViewStore } from "@priolo/jack"
+import { buildStore } from "../docs/utils/factory"
 export type { ViewState, ViewStore, ViewMutators } from "@priolo/jack"
+
+
+
+const setSerializationBase = viewSetup.actions.setSerialization
+
+viewSetup.actions.setSerialization = (state: any, store?: ViewStore) => {
+	setSerializationBase(state, store)
+	
+	// recursion
+	const linkedState = state.linked
+	if (!!state.linked) delete state.linked
+	if (linkedState) {
+		const linkedStore = buildStore({ type: linkedState.type, group: store.state.group })
+		linkedStore.setSerialization(linkedState)
+		store.setLinked(linkedStore)
+		linkedStore.onLinked()
+	}
+}
+
+export default viewSetup
+
+
+
+// export interface SnackbarState {
+// 	open: boolean
+// 	title?: string
+// 	body?: string
+// 	type?: MESSAGE_TYPE
+// 	timeout?: number
+// }
+// export interface AlertState {
+// 	open?: boolean
+// 	title: string
+// 	body: string
+// 	labelOk?: string
+// 	labelCancel?: string
+// 	resolve?: (value: boolean) => void
+// }
+
+
 
 // const viewSetup = {
 
@@ -241,22 +279,4 @@ export type { ViewState, ViewStore, ViewMutators } from "@priolo/jack"
 // }
 
 // export default viewSetup
-
-export interface SnackbarState {
-	open: boolean
-	title?: string
-	body?: string
-	type?: MESSAGE_TYPE
-	timeout?: number
-}
-export interface AlertState {
-	open?: boolean
-	title: string
-	body: string
-	labelOk?: string
-	labelCancel?: string
-	resolve?: (value: boolean) => void
-}
-
-
 

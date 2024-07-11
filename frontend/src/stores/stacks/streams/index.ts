@@ -159,7 +159,7 @@ export type StreamsState = typeof setup.state & ViewState & LoadBaseState
 export type StreamsGetters = typeof setup.getters
 export type StreamsActions = typeof setup.actions
 export type StreamsMutators = typeof setup.mutators
-export interface StreamsStore extends ViewStore, LoadBaseStore, StoreCore<StreamsState>, StreamsGetters, StreamsActions, StreamsMutators {
+export interface StreamsStore extends ViewStore, LoadBaseStore, StreamsGetters, StreamsActions, StreamsMutators {
 	state: StreamsState
 }
 const streamsSetup = mixStores(docSetup, loadBaseSetup, setup)
