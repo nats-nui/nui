@@ -10,6 +10,6 @@
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
 	/* tooltip drag dialog float-button snackbar*/
-	--dialog-bg: #10F3F3;
 	--dialog-fg: #393939;
+	--dialog-bg: #10F3F3;
 }
