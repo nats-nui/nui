@@ -66,15 +66,23 @@ jobs:
             platform_name: 'linux-amd64'
             platform:  'linux/amd64'
             os: 'ubuntu-latest'
+            gtk-40: 'false'
+          - name: 'nui-app'
+            platform_name: 'linux-amd64-gtk40'
+            platform: 'linux/amd64'
+            os: 'ubuntu-latest'
+            gtk-40: 'true'
           - name: 'nui-app'
             platform_name: 'windows-amd64'
             platform:  'windows/amd64'
             os: 'windows-latest'
+            build_tags:
             nsis: true
           - name: 'nui-app'
             platform_name : 'macOS'
             platform:  'darwin/universal'
             os: 'macos-latest'
+            build_tags:
 
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -89,12 +97,17 @@ jobs:
           app-version: ${{github.ref_name}}
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
+          gtk-40: ${{ matrix.build.gtk-40 }}
           wails-build-webview2: embed
           package: false
           go-version: '1.21'
           nsis: ${{ matrix.build.nsis }}
       - name: rename artifacts linux
         if : ${{ matrix.build.platform_name == 'linux-amd64' }}
+        run: |
+          mv build/bin/nui-app build/bin/${{ matrix.build.platform_name }}-nui-app
+      - name: rename artifacts linux webkit2gtk-4.0
+        if: ${{ matrix.build.platform_name == 'linux-amd64-gtk40' }}
         run: |
           mv build/bin/nui-app build/bin/${{ matrix.build.platform_name }}-nui-app
       - name: rename artifacts windows
