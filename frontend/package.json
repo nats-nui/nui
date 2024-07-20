@@ -15,14 +15,14 @@
   },
   "//dependencies": {
     "@priolo/jon": "file:C:/Users/ivano.iorio/Documents/jon",
-    "_@priolo/jon": "^0.7.6"
+    "@priolo/jack": "file:C:/Users/iorio/Documents/Jack"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.17",
     "@fontsource/darker-grotesque": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
     "@priolo/jon": "^0.7.7",
-    "@priolo/jack": "file:C:/Users/iorio/Documents/Jack",
+    "@priolo/jack": "^0.0.3",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
     "monaco-editor": "^0.46.0",

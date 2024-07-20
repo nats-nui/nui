@@ -53,7 +53,7 @@ const MessageRow: FunctionComponent<Props> = ({
 	const clsRoot = `${cls.root} ${clsBg}`
 
 	if (!!message.type) return <DividerRow
-		style={{ backgroundColor: message.type == MESSAGE_TYPE.WARN ? "red" : null }}
+		style={{ backgroundColor: message.type == MESSAGE_TYPE.WARN ? "var(--color-primary-bg)" : null }}
 		title={message.subject}
 		children={message.payload}
 		time={time}

@@ -12,8 +12,8 @@
 }
 
 .root.selected {
-	color: var(--cmp-select-bg);
-	background-color: var(--cmp-select-fg);
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 }
 
 .extra {
@@ -31,8 +31,8 @@
 }
 
 .extra.selected {
-	color: var(--cmp-select-bg);
-	background-color: var(--cmp-select-fg);
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 }
 
 .root:hover .extra {
