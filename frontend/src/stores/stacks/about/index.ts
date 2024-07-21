@@ -1,9 +1,8 @@
-import { COLOR_VAR } from "@/stores/layout"
+import aboutApi from "@/api/about"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import { About } from "@/types/About"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ViewState } from "../viewBase"
-import aboutApi from "@/api/about"
-import { About } from "@/types/About"
 
 
 
@@ -15,9 +14,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 150,
-		colorVar: COLOR_VAR.GENERIC,
 		pinnable: false,
-		
 		//#endregion
 	},
 

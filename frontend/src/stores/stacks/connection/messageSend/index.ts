@@ -1,11 +1,10 @@
 import messagesApi from "@/api/messages"
 import cnnSo from "@/stores/connections"
-import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../../editorBase"
 import { LOAD_STATE } from "../../utils"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -22,7 +21,6 @@ const setup = {
 		loadingState: LOAD_STATE.IDLE,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		width: 420,
 		//#endregion
 	},

@@ -1,15 +1,15 @@
 .root {
-	--card-fg: #dedede;
+	--card-fg: #DEDEDE;
 	--card-bg: #3E3E3E;
 	
 	/* button icon button */
-	--cmp-select-bg: white;
 	--cmp-select-fg: #393939;
+	--cmp-select-bg: #DEDEDE;
 
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
 	/* tooltip drag dialog float-button*/
 	--dialog-fg: #393939;
-	--dialog-bg: white;
+	--dialog-bg: #DEDEDE;
 }

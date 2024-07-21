@@ -27,7 +27,7 @@ const TextRow: FunctionComponent<Props> = ({
 	if (!text) return null
 	// accorcio la stringa se è troppo lunga
 	const render = useMemo(() => text.length > maxChar
-		? <>{text.substring(0, 200)}<span className="color-fg">{'\u2026'}{text.length}</span></>
+		? <>{text.substring(0, 200)}<span style={cssSelect}>{'\u2026'}{text.length}</span></>
 		: text
 		, [text]
 	)
@@ -40,3 +40,7 @@ const TextRow: FunctionComponent<Props> = ({
 }
 
 export default TextRow
+
+const cssSelect:React.CSSProperties = {
+	color: "var(--cmp-select-bg)"
+}

@@ -3,8 +3,8 @@
 	--card-bg: #3E3E3E;
 
 	/* button icon button */
-	--cmp-select-bg: #6affab;
 	--cmp-select-fg: #393939;
+	--cmp-select-bg: #6affab;
 
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);

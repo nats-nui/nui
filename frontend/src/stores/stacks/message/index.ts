@@ -1,4 +1,3 @@
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -12,7 +11,6 @@ const setup = {
 		message: <Message>null,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		width: 420,
 		widthMax: 1000,
 		//#endregion

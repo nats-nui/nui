@@ -1,13 +1,12 @@
 import cnsApi from "@/api/consumers"
-import { COLOR_VAR } from "@/stores/layout"
+import { findInRoot } from "@/stores/docs/utils/manage"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { findInRoot } from "@/stores/docs/utils/manage"
 import { MESSAGE_TYPE } from "../../log/utils"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
 
@@ -26,7 +25,6 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 230,
-		colorVar: COLOR_VAR.FUCHSIA,
 		//#endregion
 	},
 

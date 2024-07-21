@@ -1,16 +1,15 @@
 import kventryApi from "@/api/kventries"
 import cnnSo from "@/stores/connections"
-import { COLOR_VAR } from "@/stores/layout"
+import { GetAllCards } from "@/stores/docs/cards"
+import { findAll } from "@/stores/docs/utils/manage"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { ViewState, ViewStore, default as viewSetup } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { StoreCore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { findAll } from "@/stores/docs/utils/manage"
-import { GetAllCards } from "@/stores/docs/cards"
-import { DOC_TYPE } from "@/types"
 
 
 
@@ -28,7 +27,6 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 340,
-		colorVar: COLOR_VAR.MINT,
 		//#endregion
 	},
 

@@ -1,16 +1,16 @@
 import bucketApi from "@/api/buckets"
 import cnnSo from "@/stores/connections"
-import {COLOR_VAR} from "@/stores/layout"
-import {default as docSetup, default as viewSetup, ViewState, ViewStore} from "@/stores/stacks/viewBase"
-import {BucketState} from "@/types/Bucket"
-import {mixStores, StoreCore} from "@priolo/jon"
-import loadBaseSetup, {LoadBaseState, LoadBaseStore} from "../loadBase"
-import {buildBucket, buildBucketNew} from "./utils/factory"
-import {MESSAGE_TYPE} from "@/stores/log/utils"
-import {findAll, forEachViews} from "@/stores/docs/utils/manage"
-import {GetAllCards} from "@/stores/docs/cards"
-import {DOC_TYPE} from "@/types"
-import {KVEntriesStore} from "@/stores/stacks/kventry";
+import { GetAllCards } from "@/stores/docs/cards"
+import { findAll, forEachViews } from "@/stores/docs/utils/manage"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { KVEntriesStore } from "@/stores/stacks/kventry"
+import { default as docSetup, default as viewSetup, ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
+import { BucketState } from "@/types/Bucket"
+import { mixStores, StoreCore } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { buildBucket, buildBucketNew } from "./utils/factory"
+
 
 
 /** BUCKETS COLLECTION */
@@ -27,7 +27,6 @@ const setup = {
 
         //#region VIEWBASE
         width: 310,
-        colorVar: COLOR_VAR.MINT,
         //#endregion
     },
 

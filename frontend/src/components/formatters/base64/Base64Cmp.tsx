@@ -30,7 +30,7 @@ const Base64Cmp: FunctionComponent<Props> = ({
 		<div className={cls.root} style={style}>
 			{base64}
 			{isTruncate && <>
-				<span className="color-fg">
+				<span style={cssSelect}>
 					{'\u2026'}
 					{text.length}
 				</span>
@@ -40,3 +40,7 @@ const Base64Cmp: FunctionComponent<Props> = ({
 }
 
 export default Base64Cmp
+
+const cssSelect:React.CSSProperties = {
+	color: "var(--cmp-select-bg)"
+}

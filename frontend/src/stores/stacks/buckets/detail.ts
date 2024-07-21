@@ -1,6 +1,7 @@
 import bucketApi from "@/api/buckets"
 import docSo from "@/stores/docs"
-import { COLOR_VAR } from "@/stores/layout"
+import { findInRoot } from "@/stores/docs/utils/manage"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketConfig, BucketState } from "@/types/Bucket"
@@ -9,8 +10,6 @@ import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
-import { findInRoot } from "@/stores/docs/utils/manage"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -25,7 +24,6 @@ const setup = {
 		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.MINT,
 		width: 230,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion

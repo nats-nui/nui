@@ -14,7 +14,7 @@
     "test": "vitest watch"
   },
   "//dependencies": {
-    "@priolo/jon": "file:C:/Users/ivano.iorio/Documents/jon",
+    "@priolo/jon": "file:C:/Users/iorio/Documents/jon",
     "@priolo/jack": "file:C:/Users/iorio/Documents/Jack"
   },
   "dependencies": {

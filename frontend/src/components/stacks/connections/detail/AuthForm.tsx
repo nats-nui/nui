@@ -1,12 +1,11 @@
 import Options from "@/components/Options"
 import Button from "@/components/buttons/Button"
-import { AUTH_MODE, Auth } from "@/types"
-import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import TextInput from "../../../input/TextInput"
-import StringUpRow from "@/components/rows/StringUpRow"
 import PasswordInput from "@/components/input/PasswordInput"
+import StringUpRow from "@/components/rows/StringUpRow"
 import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
-import { COLOR_VAR } from "@/stores/layout"
+import { AUTH_MODE, Auth } from "@/types"
+import { FunctionComponent, useEffect, useState } from "react"
+import TextInput from "../../../input/TextInput"
 
 
 
@@ -69,7 +68,7 @@ const AuthForm: FunctionComponent<Props> = ({
 			[AUTH_MODE.TOKEN]: (
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">TOKEN
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+						<TooltipWrapCmp className="lbl-info" children="?"
 							content="Client token string specified in authorization config of the server"
 						/>
 					</div>
@@ -83,32 +82,32 @@ const AuthForm: FunctionComponent<Props> = ({
 			[AUTH_MODE.NKEY]: <>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">PUBLIC NKEY
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-										content="NATS public NKEY representing the user. It starts with 'U'"
+						<TooltipWrapCmp className="lbl-info" children="?"
+							content="NATS public NKEY representing the user. It starts with 'U'"
 						/>
 					</div>
 					<TextInput
 						value={authEdit.username}
-						onChange={username => handlePropChange({username})}
+						onChange={username => handlePropChange({ username })}
 						readOnly={readOnly}
 					/></div>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-										content="Private NKEY seed used to sign server challenge. It starts with 'S'"
+						<TooltipWrapCmp className="lbl-info" children="?"
+							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 						/>
 					</div>
 					<PasswordInput
 						value={authEdit.nKeySeed}
-						onChange={nKeySeed => handlePropChange({nKeySeed})}
+						onChange={nKeySeed => handlePropChange({ nKeySeed })}
 						readOnly={readOnly}
 					/></div>
 			</>,
 			[AUTH_MODE.JWT]: <>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">JWT
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
-										content="User JWT string to couple with private NKEY"
+						<TooltipWrapCmp className="lbl-info" children="?"
+							content="User JWT string to couple with private NKEY"
 						/>
 					</div>
 					<TextInput
@@ -119,7 +118,7 @@ const AuthForm: FunctionComponent<Props> = ({
 				</div>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+						<TooltipWrapCmp className="lbl-info" children="?"
 							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 						/>
 					</div>
@@ -133,7 +132,7 @@ const AuthForm: FunctionComponent<Props> = ({
 			[AUTH_MODE.BEARER_JWT]: <>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">BEARER JWT
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+						<TooltipWrapCmp className="lbl-info" children="?"
 							content="NATS user JWT as bearer token (with no nuance)"
 						/>
 					</div>
@@ -147,7 +146,7 @@ const AuthForm: FunctionComponent<Props> = ({
 			[AUTH_MODE.CREDS_FILE]: <>
 				<div className="jack-lyt-form">
 					<div className="jack-lbl-prop lbl-info-container">CREDS PATH FILE
-						<TooltipWrapCmp colorVar={COLOR_VAR.CYAN} className="lbl-info" children="?"
+						<TooltipWrapCmp className="lbl-info" children="?"
 							content="Local path of NATS .creds file containing JWT and NKEY seed"
 						/>
 					</div>

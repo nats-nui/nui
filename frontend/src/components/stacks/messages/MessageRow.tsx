@@ -60,7 +60,7 @@ const MessageRow: FunctionComponent<Props> = ({
 	/>
 
 	return (
-		<div className={`jack-hover-container ${clsRoot}`}
+		<div className={`${clsRoot} jack-hover-container`}
 			onClick={handleClick}
 		>
 			<div className={cls.title}>
