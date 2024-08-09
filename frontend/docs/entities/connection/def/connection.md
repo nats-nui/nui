@@ -1,7 +1,8 @@
 ## CONNECTION
 
-Oggetto a livello di NUI  
-consente la gestione di uno o piu' SERVER-NATS
+Nui connection  that manages one or more underlying NATS servers connections
+
+```typescript
 
 ```typescript
 Connection {
@@ -10,6 +11,7 @@ Connection {
 	hosts: string[]
 	subscriptions: Subscription[]
 	auth: Auth[]
+	tls_auth: TLSAuth
 	status?: CNN_STATUS
 }
 ```
@@ -25,7 +27,7 @@ CNN_STATUS {
 
 ## AUTH
 
-Definisce il tipo di autentificazione
+Manage the authentication for the connection
 
 ```typescript
 Auth {
@@ -59,11 +61,21 @@ AUTH_MODE {
 }
 ```
 
+```typescript
+TLSAuth {
+    enabled: bool
+    cert_path: string
+    key_path: string
+    ca_path: string
+}
+```
+
+```typescript
+```
 
 ## SUBSCRIPTION
 
-una specie di bookmark di alcuni SUBJECT  utilizzati tipicamente da questa CONNECTION  
-Una volta stabilita la connessione con NUI è possibile cambiarli
+bookmarks favorite core nats messages subscriptions to be used in the connection
 
 ```typescript
 Subscription {

@@ -93,6 +93,7 @@ func natsBuilder(connection *Connection) (*NatsConn, error) {
 		nats.MaxPingsOutstanding(3),
 	}
 	options = appendAuthOption(connection, options)
+	options = appendTLSAuthOptions(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
 }
 
@@ -124,6 +125,18 @@ func appendAuthOption(connection *Connection, options []nats.Option) []nats.Opti
 		return append(options, buildJwtBearerOption(activeAuth))
 	case AuthModeCredsFile:
 		return append(options, nats.UserCredentials(activeAuth.Creds))
+	}
+	return options
+}
+
+func appendTLSAuthOptions(connection *Connection, options []nats.Option) []nats.Option {
+	if connection.TLSAuth.Enabled {
+		if connection.TLSAuth.CertPath != "" && connection.TLSAuth.KeyPath != "" {
+			options = append(options, nats.ClientCert(connection.TLSAuth.CertPath, connection.TLSAuth.KeyPath))
+		}
+		if connection.TLSAuth.CaPath != "" {
+			options = append(options, nats.RootCAs(connection.TLSAuth.CaPath))
+		}
 	}
 	return options
 }

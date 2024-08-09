@@ -6,22 +6,12 @@ type Connection struct {
 	Hosts         []string       `json:"hosts" `
 	Subscriptions []Subscription `clover:"subscriptions" json:"subscriptions"`
 	Auth          []Auth         `json:"auth" `
+	TLSAuth       TLSAuth        `clover:"tls_auth" json:"tls_auth" `
 }
 
 type Subscription struct {
 	Subject string `json:"subject"`
 }
-
-const AuthModeNone = "auth_none"
-const AuthModeToken = "auth_token"
-const AuthModeUserPassword = "auth_user_password"
-const AuthModeNKey = "auth_nkey"
-const AuthModeJwt = "auth_jwt"
-const AuthModeJwtBearer = "auth_jwt_bearer"
-const AuthModeCredsFile = "auth_creds_file"
-
-const StatusConnected = "connected"
-const StatusDisconnected = "disconnected"
 
 type Auth struct {
 	Active   bool   `json:"active"`
@@ -34,7 +24,25 @@ type Auth struct {
 	Creds    string `json:"creds"`
 }
 
+const AuthModeNone = "auth_none"
+const AuthModeToken = "auth_token"
+const AuthModeUserPassword = "auth_user_password"
+const AuthModeNKey = "auth_nkey"
+const AuthModeJwt = "auth_jwt"
+const AuthModeJwtBearer = "auth_jwt_bearer"
+const AuthModeCredsFile = "auth_creds_file"
+
+type TLSAuth struct {
+	Enabled  bool   `clover:"enabled" json:"enabled"`
+	CertPath string `clover:"cert_path" json:"cert_path"`
+	KeyPath  string `clover:"key_path" json:"key_path"`
+	CaPath   string `clover:"ca_path" json:"ca_path"`
+}
+
 type ConnStatusChanged struct {
 	Status string
 	Err    error
 }
+
+const StatusConnected = "connected"
+const StatusDisconnected = "disconnected"
