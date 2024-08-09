@@ -21,7 +21,8 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 
 	newConn := `{
 		"name": "c1",
-		"hosts": ["host1", "host2"]
+		"hosts": ["host1", "host2"],
+		"tls_auth": { "enabled": true, "cert_path": "cert_path", "key_path": "key_path", "ca_path": "ca_path" }
 	}`
 
 	e.POST("/api/connection").
@@ -37,6 +38,10 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	a.Value(0).Object().Value("name").IsEqual("c1")
 	a.Value(0).Object().Value("hosts").Array().Value(0).String().IsEqual("host1")
 	a.Value(0).Object().Value("hosts").Array().Value(1).String().IsEqual("host2")
+	a.Value(0).Object().Value("tls_auth").Object().Value("enabled").Boolean().IsTrue()
+	a.Value(0).Object().Value("tls_auth").Object().Value("cert_path").String().IsEqual("cert_path")
+	a.Value(0).Object().Value("tls_auth").Object().Value("key_path").String().IsEqual("key_path")
+	a.Value(0).Object().Value("tls_auth").Object().Value("ca_path").String().IsEqual("ca_path")
 
 	id := a.Value(0).Object().Value("id").String().Raw()
 
