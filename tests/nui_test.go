@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"encoding/json"
+	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
@@ -21,8 +22,7 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 
 	newConn := `{
 		"name": "c1",
-		"hosts": ["host1", "host2"],
-		"tls_auth": { "enabled": true, "cert_path": "cert_path", "key_path": "key_path", "ca_path": "ca_path" }
+		"hosts": ["host1", "host2"]
 	}`
 
 	e.POST("/api/connection").
@@ -38,10 +38,6 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	a.Value(0).Object().Value("name").IsEqual("c1")
 	a.Value(0).Object().Value("hosts").Array().Value(0).String().IsEqual("host1")
 	a.Value(0).Object().Value("hosts").Array().Value(1).String().IsEqual("host2")
-	a.Value(0).Object().Value("tls_auth").Object().Value("enabled").Boolean().IsTrue()
-	a.Value(0).Object().Value("tls_auth").Object().Value("cert_path").String().IsEqual("cert_path")
-	a.Value(0).Object().Value("tls_auth").Object().Value("key_path").String().IsEqual("key_path")
-	a.Value(0).Object().Value("tls_auth").Object().Value("ca_path").String().IsEqual("ca_path")
 
 	id := a.Value(0).Object().Value("id").String().Raw()
 
@@ -61,6 +57,32 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	a.Length().IsEqual(1)
 	a.Value(0).Object().Value("name").IsEqual("c1_updated")
 	a.Value(0).Object().Value("hosts").Array().Value(0).String().IsEqual("host2")
+
+	newConnTls := `{
+		"name": "c_tls",
+		"hosts": ["host1", "host2"],
+		"tls_auth": { "enabled": true, "cert_path": "cert_path", "key_path": "key_path", "ca_path": "ca_path" }
+	}`
+
+	// mocked nats server not support tls so connection data is saved but
+	// connection test return a 500 error
+	e.POST("/api/connection").
+		WithBytes([]byte(newConnTls)).
+		Expect().
+		Status(http.StatusInternalServerError)
+
+	// check tls paths are saved in connection entity
+	a = e.GET("/api/connection").
+		Expect().
+		Status(http.StatusOK).JSON().Array()
+	a.Length().IsEqual(2)
+
+	// find the tls enabled connection and assert tls_auth fields exists
+	tlsRes := a.Find(func(i int, v *httpexpect.Value) bool { return v.Object().Value("name").String().Raw() == "c_tls" })
+	tlsRes.Object().Value("tls_auth").Object().Value("enabled").Boolean().IsTrue()
+	tlsRes.Object().Value("tls_auth").Object().Value("cert_path").String().IsEqual("cert_path")
+	tlsRes.Object().Value("tls_auth").Object().Value("key_path").String().IsEqual("key_path")
+	tlsRes.Object().Value("tls_auth").Object().Value("ca_path").String().IsEqual("ca_path")
 }
 
 func (s *NuiTestSuite) TestMessagesSubscriptionRest() {
