@@ -13,32 +13,28 @@
     "preview": "vite preview",
     "test": "vitest watch"
   },
-  "//dependencies": {
-    "@priolo/jon": "file:C:/Users/iorio/Documents/jon",
-    "@priolo/jack": "file:C:/Users/iorio/Documents/Jack"
-  },
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.17",
     "@fontsource/darker-grotesque": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
     "@priolo/jon": "^0.7.7",
-    "@priolo/jack": "^0.0.3",
+    "@priolo/jack": "^0.0.4",
     "cross-env": "^7.0.3",
-    "dayjs": "^1.11.10",
-    "monaco-editor": "^0.46.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-virtuoso": "^4.7.1",
+    "dayjs": "^1.11.12",
+    "monaco-editor": "^0.50.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-virtuoso": "^4.7.13",
     "ws": "^8.17.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "msw": "^1",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.12",
-    "vitest": "^1.6.0"
+    "typescript": "^5.5.4",
+    "vite": "^5.3.4",
+    "vitest": "^2.0.4"
   },
   "msw": {
     "workerDirectory": "public"

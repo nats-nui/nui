@@ -1,8 +1,8 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import logSo from "@/stores/log"
 import { Log } from "@/stores/log/utils"
 import { ViewLogStore } from "@/stores/stacks/log"
+import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import { Virtuoso } from "react-virtuoso"
@@ -36,7 +36,6 @@ const LogsView: FunctionComponent<Props> = ({
 	// RENDER
 	const allLogs = logSa.all
 	if (!allLogs) return <div>no messages</div>
-	const variant = viewLogSa.colorVar
 
 	return <FrameworkCard
 		icon={<LogIcon />}

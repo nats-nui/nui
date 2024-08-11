@@ -1,7 +1,7 @@
 import aboutApi from "@/api/about"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores, StoreCore } from "@priolo/jon"
 import { ViewState } from "../viewBase"
 
 

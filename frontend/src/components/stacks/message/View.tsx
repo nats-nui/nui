@@ -2,7 +2,7 @@ import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
-import { MessageState, MessageStore } from "@/stores/stacks/message"
+import { MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -25,7 +25,7 @@ const MessageView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const msgSa = useStore(msgSo) as MessageState
+	const msgSa = useStore(msgSo)
 
 	// HOOKs
 

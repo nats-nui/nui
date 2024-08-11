@@ -1,6 +1,6 @@
-import CopyButton from "@/components/buttons/CopyButton"
 import { Log } from "@/stores/log/utils"
 import { dateShow } from "@/utils/time"
+import { CopyButton } from "@priolo/jack"
 import { FunctionComponent, useMemo } from "react"
 import cls from "./ItemRow.module.css"
 

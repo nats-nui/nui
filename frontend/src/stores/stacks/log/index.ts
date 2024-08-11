@@ -46,7 +46,7 @@ export type ViewLogState = typeof setup.state & ViewState
 export type ViewLogGetters = typeof setup.getters
 export type ViewLogActions = typeof setup.actions
 export type ViewLogMutators = typeof setup.mutators
-export interface ViewLogStore extends ViewStore, StoreCore<ViewLogState>, ViewLogGetters, ViewLogActions, ViewLogMutators {
+export interface ViewLogStore extends ViewStore, ViewLogGetters, ViewLogActions, ViewLogMutators {
 	state: ViewLogState
 }
 const msgSetup = mixStores(viewSetup, setup)

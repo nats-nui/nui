@@ -1,5 +1,4 @@
 import { deckCardsSo } from "@/stores/docs/cards"
-import { menuSo } from "@/stores/docs/links"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
@@ -7,6 +6,7 @@ import CardIcon from "../../components/cards/CardIcon"
 import { getColorFromViewType } from "../../stores/stacks/utils"
 import { DOC_TYPE } from "../../types"
 import MenuButton from "./MenuButton"
+import { menuSo } from "../../stores/docs/links"
 
 
 

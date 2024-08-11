@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
 import { deckCardsSo } from "../stores/docs/cards"
-import CardsGroup from "./CardsGroups"
 import cls from "./DeckGroup.module.css"
 import PolymorphicCard from "../components/cards/PolymorphicCard"
+import { CardsGroup } from "@priolo/jack"
 
 
 

@@ -58,7 +58,7 @@ export type MessageState = typeof setup.state & ViewState & EditorState
 export type MessageGetters = typeof setup.getters
 export type MessageActions = typeof setup.actions
 export type MessageMutators = typeof setup.mutators
-export interface MessageStore extends ViewStore, EditorStore, StoreCore<MessageState>, MessageGetters, MessageActions, MessageMutators {
+export interface MessageStore extends ViewStore, EditorStore, MessageGetters, MessageActions, MessageMutators {
 	state: MessageState
 }
 const msgSetup = mixStores(viewSetup, editorSetup, setup)

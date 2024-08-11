@@ -1,4 +1,3 @@
-import IconButton from "@/components/buttons/IconButton"
 import CompressAllIcon from "@/icons/CompressAllIcon"
 import DirectionDownIcon from "@/icons/DirectionDownIcon"
 import DirectionLeftIcon from "@/icons/DirectionLeftIcon"
@@ -9,15 +8,12 @@ import MenuRightIcon from "@/icons/MenuRightIcon"
 import docsSo, { DRAWER_POSITION } from "@/stores/docs"
 import { drawerCardsSo as drawerSo } from "@/stores/docs/cards"
 import { forEachViews } from "@/stores/docs/utils/manage"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
 import { delay } from "@/utils/time"
-import { RESIZER_DIRECTION, ResizerCmp } from "@priolo/jack"
+import { CardsGroup, IconButton, RESIZER_DIRECTION, ResizerCmp, VIEW_SIZE } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import CardsGroup from "./CardsGroups"
-import cls from "./DrawerGroup.module.css"
 import PolymorphicCard from "../components/cards/PolymorphicCard"
-
+import cls from "./DrawerGroup.module.css"
 
 
 interface Props {

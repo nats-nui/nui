@@ -161,7 +161,7 @@ export type KVEntriesState = typeof setup.state & ViewState & LoadBaseState
 export type KVEntriesGetters = typeof setup.getters
 export type KVEntriesActions = typeof setup.actions
 export type KVEntriesMutators = typeof setup.mutators
-export interface KVEntriesStore extends ViewStore, LoadBaseStore, StoreCore<KVEntriesState>, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
+export interface KVEntriesStore extends ViewStore, LoadBaseStore, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
 	state: KVEntriesState
 }
 const kventriesSetup = mixStores(viewSetup, loadBaseSetup, setup)

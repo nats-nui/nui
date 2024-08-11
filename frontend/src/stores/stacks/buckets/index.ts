@@ -160,7 +160,7 @@ export type BucketsGetters = typeof setup.getters
 export type BucketsActions = typeof setup.actions
 export type BucketsMutators = typeof setup.mutators
 
-export interface BucketsStore extends ViewStore, LoadBaseStore, StoreCore<BucketsState>, BucketsGetters, BucketsActions, BucketsMutators {
+export interface BucketsStore extends ViewStore, LoadBaseStore, BucketsGetters, BucketsActions, BucketsMutators {
     state: BucketsState
 }
 

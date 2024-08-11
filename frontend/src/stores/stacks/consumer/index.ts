@@ -151,7 +151,7 @@ export type ConsumersState = typeof setup.state & ViewState & LoadBaseState
 export type ConsumersGetters = typeof setup.getters
 export type ConsumersActions = typeof setup.actions
 export type ConsumersMutators = typeof setup.mutators
-export interface ConsumersStore extends ViewStore, LoadBaseStore, StoreCore<ConsumersState>, ConsumersGetters, ConsumersActions, ConsumersMutators {
+export interface ConsumersStore extends ViewStore, LoadBaseStore, ConsumersGetters, ConsumersActions, ConsumersMutators {
 	state: ConsumersState
 }
 const consumersSetup = mixStores(viewSetup, loadBaseSetup, setup)

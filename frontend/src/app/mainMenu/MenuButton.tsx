@@ -1,7 +1,7 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import CloseIcon from "@/icons/CloseIcon"
 import React, { FunctionComponent, useState } from "react"
 import cls from "./MenuButton.module.css"
+import { TooltipWrapCmp } from "@priolo/jack"
 
 
 

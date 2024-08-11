@@ -119,7 +119,7 @@ export type BucketStatus = typeof setup.state & ViewState & LoadBaseState
 export type BucketGetters = typeof setup.getters
 export type BucketActions = typeof setup.actions
 export type BucketMutators = typeof setup.mutators
-export interface BucketStore extends ViewStore, LoadBaseStore, StoreCore<BucketStatus>, BucketGetters, BucketActions, BucketMutators {
+export interface BucketStore extends ViewStore, LoadBaseStore, BucketGetters, BucketActions, BucketMutators {
 	state: BucketStatus
 }
 const bucketSetup = mixStores(viewSetup, loadBaseSetup, setup)

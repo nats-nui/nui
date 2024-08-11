@@ -5,7 +5,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
@@ -151,7 +151,7 @@ export type KVEntryState = typeof setup.state & ViewState & LoadBaseState & Edit
 export type KVEntryGetters = typeof setup.getters
 export type KVEntryActions = typeof setup.actions
 export type KVEntryMutators = typeof setup.mutators
-export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
+export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, KVEntryGetters, KVEntryActions, KVEntryMutators {
 	state: KVEntryState
 }
 const kventrySetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)
