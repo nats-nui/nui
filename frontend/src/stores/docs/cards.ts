@@ -3,7 +3,7 @@ import { StoreCore, createStore, mixStores } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import docsSo from "./index"
 import { forEachViews, getById, getRoot } from "./utils/manage"
-import { DOC_ANIM } from "@priolo/jack/dist/types"
+import { DOC_ANIM } from "@priolo/jack"
 import { DOC_TYPE } from "./types"
 
 

@@ -92,5 +92,5 @@ export type CnnListMutators = typeof setup.mutators & ViewMutators
 export interface CnnListStore extends ViewStore, CnnListGetters, CnnListActions, CnnListMutators {
 	state: CnnListState
 }
-const cnnSetup = mixStores(viewSetup, setup)
+const cnnSetup = mixStores(viewSetup, setup) 
 export default cnnSetup
