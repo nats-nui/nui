@@ -1,6 +1,6 @@
-import CopyButton from "@/components/buttons/CopyButton"
 import { FunctionComponent } from "react"
 import cls from "./HeadersCmp.module.css"
+import { CopyButton } from "@priolo/jack"
 
 
 

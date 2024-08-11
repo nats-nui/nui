@@ -1,4 +1,3 @@
-import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
@@ -7,11 +6,11 @@ import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import MessageIcon from "../../../icons/cards/MessageIcon"
-import TitleAccordion from "../../accordion/TitleAccordion"
 import FormatDialog from "../../editor/FormatDialog"
 import clsCard from "../CardCyanDef.module.css"
 import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
+import { CopyButton, TitleAccordion } from "@priolo/jack"
 
 
 

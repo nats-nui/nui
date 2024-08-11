@@ -1,5 +1,5 @@
-import TitleAccordion from "@/components/accordion/TitleAccordion"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 

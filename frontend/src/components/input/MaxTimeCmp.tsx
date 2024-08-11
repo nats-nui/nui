@@ -1,10 +1,6 @@
-import Accordion from "@/components/accordion/Accordion"
-import IconToggle from "@/components/buttons/IconToggle"
-import ListDialog from "@/components/dialogs/ListDialog"
-import NumberInput from "@/components/input/NumberInput"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
-import StringUpRow from "../rows/StringUpRow"
+import { Accordion, IconToggle, ListDialog, NumberInput, StringUpRow } from "@priolo/jack"
 
 
 

@@ -1,18 +1,11 @@
-import IconToggle from "@/components/buttons/IconToggle.tsx"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList.tsx"
-import EditStringRow from "@/components/rows/EditStringRow.tsx"
-import StringUpRow from "@/components/rows/StringUpRow"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketConfig } from "@/types/Bucket"
 import { STORAGE } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import ListDialog from "../../../dialogs/ListDialog"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
+import { EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 

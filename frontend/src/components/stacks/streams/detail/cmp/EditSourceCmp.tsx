@@ -1,7 +1,5 @@
-import Options from "@/components/Options"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
 import { Source } from "@/types/Stream"
+import { NumberInput, TextInput, Options } from "@priolo/jack"
 import { FunctionComponent } from "react"
 
 

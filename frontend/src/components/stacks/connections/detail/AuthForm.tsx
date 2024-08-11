@@ -1,11 +1,6 @@
-import Options from "@/components/Options"
-import Button from "@/components/buttons/Button"
-import PasswordInput from "@/components/input/PasswordInput"
-import StringUpRow from "@/components/rows/StringUpRow"
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useState } from "react"
-import TextInput from "../../../input/TextInput"
+import { Button, PasswordInput, StringUpRow, TextInput, TooltipWrapCmp, Options } from "@priolo/jack"
 
 
 

@@ -1,4 +1,3 @@
-import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ClearIcon from "@/icons/ClearIcon"
 import { Message } from "@/types/Message"
@@ -7,6 +6,7 @@ import { debounce } from "@/utils/time"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import MessageRow from "./MessageRow"
+import { FloatButton } from "@priolo/jack"
 
 
 

@@ -1,15 +1,6 @@
-import Accordion from "@/components/accordion/Accordion"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
-import IconToggle from "@/components/buttons/IconToggle"
-import ListDialog from "@/components/dialogs/ListDialog"
 import MaxBytesCmp from "@/components/input/MaxBytesCmp"
 import MaxNumberCmp from "@/components/input/MaxNumberCmp"
 import MaxTimeCmp from "@/components/input/MaxTimeCmp"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList"
-import EditStringRow from "@/components/rows/EditStringRow"
-import StringUpRow from "@/components/rows/StringUpRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE } from "@/types/Stream"
@@ -17,6 +8,7 @@ import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
+import { Accordion, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 

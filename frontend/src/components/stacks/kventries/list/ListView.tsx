@@ -1,9 +1,4 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import FindInputHeader from "@/components/input/FindInputHeader"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
-import VTable from "@/components/table/VTable"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -14,6 +9,7 @@ import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
 import KvEntriesIcon from "../../../../icons/cards/KvEntriesIcon"
 import clsCard from "../../CardMintDef.module.css"
+import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 
 
 

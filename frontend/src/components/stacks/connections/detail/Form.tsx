@@ -1,15 +1,10 @@
-import IconToggle from "@/components/buttons/IconToggle"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList"
-import ListObjects from "@/components/lists/ListObjects"
-import EditStringRow from "@/components/rows/EditStringRow"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
+import { EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 

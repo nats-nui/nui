@@ -1,6 +1,3 @@
-import ElementDialog from "@/components/dialogs/ElementDialog"
-import EditList, { LIST_ACTIONS } from "@/components/lists/EditList"
-import EditItemRow from "@/components/rows/EditItemRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { newSource } from "@/stores/stacks/streams/utils/factory"
 import { EDIT_STATE } from "@/types"
@@ -8,6 +5,8 @@ import { Source, StreamConfig } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import EditSourceCmp from "./EditSourceCmp"
+import { EditItemRow, EditList, ElementDialog } from "@priolo/jack"
+import { LIST_ACTIONS } from "@priolo/jack"
 
 
 

@@ -1,10 +1,6 @@
-import Button from "@/components/buttons/Button"
-import IconToggle from "@/components/buttons/IconToggle"
-import Dialog from "@/components/dialogs/Dialog"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { StreamsStore } from "@/stores/stacks/streams/index.ts"
+import { Button, Dialog, IconToggle, NumberInput, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
 

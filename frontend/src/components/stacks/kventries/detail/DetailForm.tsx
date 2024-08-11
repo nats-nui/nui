@@ -1,7 +1,7 @@
 import EditorCode, { EditorRefProps } from "@/components/editor"
-import TextInput from "@/components/input/TextInput"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
+import { TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 

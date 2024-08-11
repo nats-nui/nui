@@ -1,7 +1,4 @@
-import Button from "@/components/buttons/Button"
-import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import FindInputHeader from "@/components/input/FindInputHeader"
 import PauseIcon from "@/icons/PauseIcon"
 import PlayIcon from "@/icons/PlayIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -15,6 +12,7 @@ import FormatDialog from "../../../editor/FormatDialog"
 import clsCard from "../../CardCyanDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
+import { Button, FindInputHeader, FloatButton } from "@priolo/jack"
 
 
 

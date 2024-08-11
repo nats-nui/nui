@@ -3,10 +3,10 @@ import { menuSo } from "@/stores/docs/links"
 import { ClearSession, LoadSession, SaveSession } from "@/utils/session/startup"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
-import Button from "../../components/buttons/Button"
 import AboutButton from "./AboutButton"
 import cls from "./MainMenu.module.css"
 import StoreButton from "./StoreButton"
+import { Button } from "@priolo/jack"
 
 
 

@@ -1,8 +1,6 @@
-import IconButton from "@/components/buttons/IconButton"
 import LinkButton from "@/components/buttons/LinkButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import SendIcon from "@/icons/SendIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -16,6 +14,7 @@ import ConnectionDetailForm from "./Form"
 import SyncIcon from "@/icons/SyncIcon"
 import clsGreen from "../../CardGreen.module.css"
 import ConnectionIcon from "../../../../icons/cards/ConnectionIcon"
+import { IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 
 interface Props {

@@ -1,18 +1,10 @@
-import TitleAccordion from "@/components/accordion/TitleAccordion"
-import Button from "@/components/buttons/Button"
-import IconToggle from "@/components/buttons/IconToggle"
-import Dialog from "@/components/dialogs/Dialog"
-import DateTimeInput from "@/components/input/DateTimeInput"
-import NumberInput from "@/components/input/NumberInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
-import EditList from "@/components/lists/EditList"
-import EditStringRow from "@/components/rows/EditStringRow"
 import cls from "./FllterDialog.module.css"
+import { Button, DateTimeInput, Dialog, EditList, EditStringRow, IconToggle, ListMultiWithFilter, NumberInput, TitleAccordion } from "@priolo/jack"
 
 
 

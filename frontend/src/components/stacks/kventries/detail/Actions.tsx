@@ -1,6 +1,3 @@
-import Button from "@/components/buttons/Button"
-import IconButton from "@/components/buttons/IconButton"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
 import FormatAction from "@/components/editor/FormatAction"
 import ArrowLeftIcon from "@/icons/ArrowLeftIcon"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
@@ -8,6 +5,7 @@ import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import { Button, IconButton, OptionsCmp } from "@priolo/jack"
 
 
 

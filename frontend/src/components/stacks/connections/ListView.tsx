@@ -1,7 +1,4 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
 import AlertIcon from "@/icons/AlertIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DoneIcon from "@/icons/DoneIcon"
@@ -17,6 +14,7 @@ import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
 import clsCard from "../CardGreenDef.module.css"
 import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
+import { AlertDialog, Button, OptionsCmp } from "@priolo/jack"
 
 
 interface Props {

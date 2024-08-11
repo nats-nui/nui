@@ -1,7 +1,4 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import Dialog from "@/components/dialogs/Dialog"
-import { RenderRowBaseProps } from "@/components/lists/EditList"
-import List from "@/components/lists/List"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { KVEntry, OPERATION } from "@/types/KVEntry"
 import { dateShow } from "@/utils/time"
@@ -12,6 +9,8 @@ import FormatDialog from "../../../editor/FormatDialog"
 import clsCard from "../../CardMintDef.module.css"
 import ActionsCmp from "./Actions"
 import DetailForm from "./DetailForm"
+import { Dialog, List } from "@priolo/jack"
+import { RenderRowBaseProps } from "@priolo/jack"
 
 
 

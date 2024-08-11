@@ -1,6 +1,3 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
-import CopyButton from "@/components/buttons/CopyButton"
-import IconButton from "@/components/buttons/IconButton"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import DividerRow from "@/components/formatters/divider/DividerRow"
 import HexTable from "@/components/formatters/hex/HexTable"
@@ -12,6 +9,7 @@ import { MSG_FORMAT } from "@/utils/editor"
 import { dateShow } from "@/utils/time"
 import { FunctionComponent, useMemo } from "react"
 import cls from "./MessageRow.module.css"
+import { CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 
 

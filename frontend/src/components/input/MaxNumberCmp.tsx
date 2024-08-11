@@ -1,6 +1,4 @@
-import Accordion from "@/components/accordion/Accordion"
-import IconToggle from "@/components/buttons/IconToggle"
-import NumberInput from "@/components/input/NumberInput"
+import { Accordion, IconToggle, NumberInput } from "@priolo/jack"
 import { FunctionComponent } from "react"
 
 

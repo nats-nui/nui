@@ -1,6 +1,5 @@
-import Dialog from "@/components/dialogs/Dialog"
-import List from "@/components/lists/List"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
+import { Dialog, List } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
 
