@@ -1,4 +1,3 @@
-import { COLOR_VAR } from "@/stores/layout"
 import { Log } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -10,7 +9,6 @@ const setup = {
 
 	state: {
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.GENERIC,
 		pinnable: false,
 		//#endregion
 	},
@@ -48,7 +46,7 @@ export type ViewLogState = typeof setup.state & ViewState
 export type ViewLogGetters = typeof setup.getters
 export type ViewLogActions = typeof setup.actions
 export type ViewLogMutators = typeof setup.mutators
-export interface ViewLogStore extends ViewStore, StoreCore<ViewLogState>, ViewLogGetters, ViewLogActions, ViewLogMutators {
+export interface ViewLogStore extends ViewStore, ViewLogGetters, ViewLogActions, ViewLogMutators {
 	state: ViewLogState
 }
 const msgSetup = mixStores(viewSetup, setup)

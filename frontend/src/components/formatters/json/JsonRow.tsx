@@ -1,7 +1,8 @@
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
+import { toJson } from "@/utils/editor"
 import { FunctionComponent, useMemo } from "react"
 import TextRow from "../text/TextRow"
-import { toJson } from "@/utils/editor"
+
+
 
 const limLength = [8, 3, 2]
 const limitDeept = 2
@@ -116,32 +117,31 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 }
 
 
-const cssNull = {
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
+const cssNull: React.CSSProperties = {
+	color: "var(--color-fuchsia)",
 }
-const cssString = {
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.GREEN].bg,
+const cssString: React.CSSProperties = {
+	color: "var(--color-green)",
 }
-const cssNumber = {
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.CYAN].bg,
+const cssNumber: React.CSSProperties = {
+	color: "var(--color-cyan)",
 }
-const cssTrue = {
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.GREEN].bg,
+const cssTrue: React.CSSProperties = {
+	color: "var(--color-green)",
 }
-const cssFalse = {
-	color: layoutSo.state.theme.palette.var[COLOR_VAR.FUCHSIA].bg,
+const cssFalse: React.CSSProperties = {
+	color: "var(--color-fuchsia)",
 }
-const cssArrayInfo = {
+const cssArrayInfo: React.CSSProperties = {
 	opacity: .5
 }
 const cssBrackets = (deep: number): React.CSSProperties => {
-	const colors = layoutSo.state.theme.palette.var
 	return {
 		color: [
 			null,
-			colors[COLOR_VAR.CYAN].bg,
-			colors[COLOR_VAR.FUCHSIA].bg,
-			colors[COLOR_VAR.YELLOW].bg
+			"var(--color-cyan)",
+			"var(--color-fuchsia)",
+			"var(--color-yellow)",
 		][deep % 4]
 	}
 }

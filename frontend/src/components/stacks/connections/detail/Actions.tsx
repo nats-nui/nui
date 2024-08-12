@@ -1,10 +1,9 @@
-import Button from "@/components/buttons/Button"
-import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
+import { Button, CircularLoadingCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 

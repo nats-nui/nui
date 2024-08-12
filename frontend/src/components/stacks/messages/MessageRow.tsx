@@ -1,6 +1,3 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
-import CopyButton from "@/components/buttons/CopyButton"
-import IconButton from "@/components/buttons/IconButton"
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import DividerRow from "@/components/formatters/divider/DividerRow"
 import HexTable from "@/components/formatters/hex/HexTable"
@@ -12,6 +9,7 @@ import { MSG_FORMAT } from "@/utils/editor"
 import { dateShow } from "@/utils/time"
 import { FunctionComponent, useMemo } from "react"
 import cls from "./MessageRow.module.css"
+import { CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 
 
@@ -53,20 +51,20 @@ const MessageRow: FunctionComponent<Props> = ({
 	const clsRoot = `${cls.root} ${clsBg}`
 
 	if (!!message.type) return <DividerRow
-		colorVar={message.type == MESSAGE_TYPE.WARN ? 1 : null}
+		style={{ backgroundColor: message.type == MESSAGE_TYPE.WARN ? "var(--color-primary-bg)" : null }}
 		title={message.subject}
 		children={message.payload}
 		time={time}
 	/>
 
 	return (
-		<div className={`hover-container ${clsRoot}`}
+		<div className={`${clsRoot} jack-hover-container`}
 			onClick={handleClick}
 		>
 			<div className={cls.title}>
 				<span style={{ flex: 1 }}>
 					<span className={cls.seq_num}>{message.seqNum} </span>
-					<span className={`${cls.subject} hover-container`}>
+					<span className={`${cls.subject} jack-hover-container`}>
 						{message.subject}
 					</span>
 				</span>

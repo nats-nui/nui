@@ -1,8 +1,7 @@
 import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
+import { StreamConsumer } from "@/types/Consumer"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { GetAllCards } from "../../docs/cards"
 import { DOC_TYPE } from "../../docs/types"
@@ -29,7 +28,6 @@ const setup = {
 		//#region VIEWBASE
 		width: 310,
 		widthMax: 800,
-		colorVar: COLOR_VAR.FUCHSIA,
 		//#endregion
 	},
 
@@ -153,7 +151,7 @@ export type ConsumersState = typeof setup.state & ViewState & LoadBaseState
 export type ConsumersGetters = typeof setup.getters
 export type ConsumersActions = typeof setup.actions
 export type ConsumersMutators = typeof setup.mutators
-export interface ConsumersStore extends ViewStore, LoadBaseStore, StoreCore<ConsumersState>, ConsumersGetters, ConsumersActions, ConsumersMutators {
+export interface ConsumersStore extends ViewStore, LoadBaseStore, ConsumersGetters, ConsumersActions, ConsumersMutators {
 	state: ConsumersState
 }
 const consumersSetup = mixStores(viewSetup, loadBaseSetup, setup)

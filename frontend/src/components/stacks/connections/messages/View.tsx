@@ -1,9 +1,7 @@
-import Button from "@/components/buttons/Button"
-import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import FindInputHeader from "@/components/input/FindInputHeader"
 import PauseIcon from "@/icons/PauseIcon"
 import PlayIcon from "@/icons/PlayIcon"
+import MessagesIcon from "@/icons/cards/MessagesIcon"
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { DOC_TYPE } from "@/types"
 import { Message } from "@/types/Message"
@@ -11,8 +9,10 @@ import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
+import clsCard from "../../CardCyanDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
+import { Button, FindInputHeader, FloatButton } from "@priolo/jack"
 
 
 
@@ -67,6 +67,8 @@ const MessagesView: FunctionComponent<Props> = ({
 	const isSendSelect = msgSa.linked?.state.type == DOC_TYPE.MESSAGE_SEND
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<MessagesIcon />}
 		store={msgSo}
 		actionsRender={<>
 			<FindInputHeader

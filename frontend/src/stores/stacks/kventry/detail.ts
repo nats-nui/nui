@@ -1,15 +1,14 @@
 import kventryApi from "@/api/kventries"
 import { findInRoot } from "@/stores/docs/utils/manage"
-import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -29,7 +28,6 @@ const setup = {
 		autoFormat: true,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.MINT,
 		width: 420,
 		//#endregion
 	},
@@ -153,7 +151,7 @@ export type KVEntryState = typeof setup.state & ViewState & LoadBaseState & Edit
 export type KVEntryGetters = typeof setup.getters
 export type KVEntryActions = typeof setup.actions
 export type KVEntryMutators = typeof setup.mutators
-export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<KVEntryState>, KVEntryGetters, KVEntryActions, KVEntryMutators {
+export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, KVEntryGetters, KVEntryActions, KVEntryMutators {
 	state: KVEntryState
 }
 const kventrySetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)

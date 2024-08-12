@@ -1,12 +1,14 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import { ViewLogStore } from "@/stores/stacks/log"
+import logSo from "@/stores/log"
 import { Log } from "@/stores/log/utils"
+import { ViewLogStore } from "@/stores/stacks/log"
+import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import { Virtuoso } from "react-virtuoso"
+import LogIcon from "../../../icons/LogIcon"
+import clsCard from "../CardWhiteDef.module.css"
 import ItemRow from "./ItemRow"
-import logSo from "@/stores/log"
-import Button from "@/components/buttons/Button"
 
 
 
@@ -34,9 +36,10 @@ const LogsView: FunctionComponent<Props> = ({
 	// RENDER
 	const allLogs = logSa.all
 	if (!allLogs) return <div>no messages</div>
-	const variant = viewLogSa.colorVar
 
 	return <FrameworkCard
+		icon={<LogIcon />}
+		className={clsCard.root}
 		store={viewLogSo}
 		actionsRender={<>
 			<Button

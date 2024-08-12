@@ -1,15 +1,14 @@
 import messagesApi from "@/api/messages"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
-import { COLOR_VAR } from "@/stores/layout"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
 import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import { MessageStore } from "../message"
 import { LOAD_STATE } from "../utils"
 import { ViewState } from "../viewBase"
-import { MessageStore } from "../message"
 
 
 
@@ -27,7 +26,6 @@ const setup = {
 		loadingState: LOAD_STATE.IDLE,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		width: 420,
 		//#endregion
 	},

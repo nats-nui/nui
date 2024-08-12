@@ -1,6 +1,6 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import React, { FunctionComponent } from "react"
 import cls from "./LinkButton.module.css"
+import { TooltipWrapCmp } from "@priolo/jack"
 
 
 
@@ -32,7 +32,7 @@ const LinkButton: FunctionComponent<Props> = ({
 	// RENDER
 	const clsSelect = selected ? cls.selected : ""
 	const clsRoot = `${cls.root} ${clsSelect}`
-	const clsExtra = `${selected ? cls.selected : "color-bg color-text"} ${cls.extra}`
+	const clsExtra = `${cls.extra} ${clsSelect}`
 
 	return (
 		<TooltipWrapCmp content={tooltip}

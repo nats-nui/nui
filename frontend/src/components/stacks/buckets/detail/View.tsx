@@ -1,11 +1,13 @@
 import LinkButton from "@/components/buttons/LinkButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
+import BucketIcon from "@/icons/cards/BucketIcon"
 import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import clsCard from "../../CardMint.module.css"
 import ActionsCmp from "./Actions"
 import CreateForm from "./CreateForm"
 import ShowForm from "./ShowForm"
@@ -36,7 +38,9 @@ const BucketDetailView: FunctionComponent<Props> = ({
 	const inRead = bucketSa.editState == EDIT_STATE.READ
 	const isKVEntriesSelect = bucketSo.getKVEntriesOpen()
 
-	return <FrameworkCard variantBg
+	return <FrameworkCard
+		className={clsCard.root}
+		icon={<BucketIcon />}
 		store={bucketSo}
 		actionsRender={<ActionsCmp store={bucketSo} />}
 		iconizedRender={

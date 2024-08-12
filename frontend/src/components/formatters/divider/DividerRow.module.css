@@ -1,22 +1,28 @@
-
-
 .root {
-	color: var(--text-bg);
 	display: flex;
 	flex-direction: column;
+
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 }
+
+.root.selected {
+	cursor: pointer;
+}
+
 .title {
 	font-size: 12px;
-    font-weight: 700;
-    text-align: center;
+	font-weight: 700;
+	text-align: center;
 	padding: 5px
-
 }
+
 .body {
 	font-size: 12px;
 	font-weight: 500;
 	padding: 0px 6px;
 }
+
 .footer {
 	font-family: monospace;
 	font-size: 11px;

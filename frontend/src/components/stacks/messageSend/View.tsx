@@ -1,20 +1,17 @@
-import Button from "@/components/buttons/Button"
-import FloatButton from "@/components/buttons/FloatButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
-import TextInput from "@/components/input/TextInput"
-import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import SendIcon from "@/icons/SendIcon"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
+import StreamsIcon from "../../../icons/cards/StreamsIcon"
 import FormatDialog from "../../editor/FormatDialog"
-import SubjectsDialog from "./SubjectsDialog"
-import EditList from "../../lists/EditList"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import TitleAccordion from "../../accordion/TitleAccordion"
+import clsCard from "../CardCyanDef.module.css"
+import SubjectsDialog from "./SubjectsDialog"
+import { Button, CircularLoadingCmp, EditList, FloatButton, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -45,9 +42,11 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const canSend = sendSo.getCanEdit()
 	const inLoading = sendSa.loadingState == LOAD_STATE.LOADING
 	const autoFormat = sendSa.autoFormat
-	const refEditor = (ref:EditorRefProps) => sendSa.editorRef = ref
+	const refEditor = (ref: EditorRefProps) => sendSa.editorRef = ref
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<StreamsIcon />}
 		store={sendSo}
 		actionsRender={<>
 
@@ -66,7 +65,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className="lyt-form" style={{ height: "100%" }}>
+		<div className="jack-lyt-form" style={{ height: "100%" }}>
 
 			<TitleAccordion title="HEADERS" open={false}>
 				<EditList<[string, string]>
@@ -81,7 +80,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 			</TitleAccordion>
 
 			<div className="lyt-v">
-				<div className="lbl-prop cliccable"
+				<div style={{ cursor: "pointer" }} className="jack-lbl-prop"
 					onClick={handleSubsClick}
 				>SUBJECT</div>
 				<TextInput autoFocus
@@ -100,7 +99,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<div className="lyt-float">
+			<div className="jack-lyt-float">
 				<FloatButton style={{ position: "relative" }}
 					onClick={handleSend}
 					disabled={!canSend}

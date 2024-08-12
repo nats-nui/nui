@@ -1,14 +1,11 @@
-import IconButton from "@/components/buttons/IconButton"
-import IconToggle from "@/components/buttons/IconToggle"
 import CloseIcon from "@/icons/CloseIcon"
 import HeartIcon from "@/icons/HeartIcon"
 import HeartOutlineIcon from "@/icons/HeartOutlineIcon"
 import { Subscription } from "@/types"
 import { FunctionComponent } from "react"
-import Box from "../format/Box"
-import TextInput from "../input/TextInput"
-import { RenderRowBaseProps } from "../lists/EditList"
 import cls from "./EditSubscriptionRow.module.css"
+import { Box, IconButton, IconToggle, TextInput } from "@priolo/jack"
+import { RenderRowBaseProps } from "@priolo/jack"
 
 
 

@@ -2,8 +2,7 @@ import { EditorStore } from "@/stores/stacks/editorBase"
 import { MSG_FORMAT, MSG_FORMAT_EDIT } from "@/utils/editor"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
-import Dialog from "../dialogs/Dialog"
-import List from "../lists/List"
+import { Dialog, List } from "@priolo/jack"
 
 
 

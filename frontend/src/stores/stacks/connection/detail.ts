@@ -1,7 +1,6 @@
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import { COLOR_VAR } from "@/stores/layout"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewState, ViewStore, ViewMutators } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { StoreCore, mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
@@ -23,7 +22,7 @@ const setup = {
 
 		//#region VIEWBASE
 		width: 200,
-		colorVar: COLOR_VAR.GREEN,
+		//colorVar: COLOR_VAR.GREEN,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion
 	},
@@ -134,8 +133,8 @@ const setup = {
 export type CnnDetailState = typeof setup.state & ViewState
 export type CnnDetailGetters = typeof setup.getters
 export type CnnDetailActions = typeof setup.actions
-export type CnnDetailMutators = typeof setup.mutators
-export interface CnnDetailStore extends ViewStore, StoreCore<CnnDetailState>, CnnDetailGetters, CnnDetailActions, CnnDetailMutators {
+export type CnnDetailMutators = typeof setup.mutators & ViewMutators
+export interface CnnDetailStore extends ViewStore, CnnDetailGetters, CnnDetailActions, CnnDetailMutators {
 	state: CnnDetailState
 }
 const connectonSetup = mixStores(viewSetup, setup) as typeof setup

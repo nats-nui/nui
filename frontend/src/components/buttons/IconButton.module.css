@@ -1,9 +1,0 @@
-.root {
-	display: flex;
-	cursor: pointer;
-	padding: 2px;
-	
-	transition: background-color 300ms, color 300ms;
-	border-radius: 3px;
-}
-

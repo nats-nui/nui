@@ -1,11 +1,10 @@
 import messagesApi from "@/api/messages"
 import cnnSo from "@/stores/connections"
-import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../../editorBase"
 import { LOAD_STATE } from "../../utils"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -22,7 +21,6 @@ const setup = {
 		loadingState: LOAD_STATE.IDLE,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		width: 420,
 		//#endregion
 	},
@@ -103,7 +101,7 @@ export type MessageSendState = typeof setup.state & ViewState & EditorState
 export type MessageSendGetters = typeof setup.getters
 export type MessageSendActions = typeof setup.actions
 export type MessageSendMutators = typeof setup.mutators
-export interface MessageSendStore extends ViewStore, EditorStore, StoreCore<MessageSendState>, MessageSendGetters, MessageSendActions, MessageSendMutators {
+export interface MessageSendStore extends ViewStore, EditorStore, MessageSendGetters, MessageSendActions, MessageSendMutators {
 	state: MessageSendState
 }
 const msgSetup = mixStores(viewSetup, editorSetup, setup)

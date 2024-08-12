@@ -1,20 +1,20 @@
 .root {
-	display: flex; 
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 2px;
 }
 
 .box {
-	display: flex; 
-	align-items: center; 
+	display: flex;
+	align-items: center;
 	justify-content: center;
 
 	cursor: pointer;
 	position: relative;
 
-	background-color: rgba(0,0,0,0.3);
-	
+	background-color: rgba(0, 0, 0, 0.3);
+
 	border-radius: 10px;
 	/* border: 2px solid black; */
 	width: 30px;
@@ -36,25 +36,37 @@
 	text-overflow: ellipsis;
 }
 
-.tooltip_title {
+
+
+.tooltip {
+	display: "flex";
+	flex-direction: column;
+}
+
+.tooltip.title {
 	font-weight: 800;
 }
 
-.tooltip_sub {
+.tooltip.sub {
 	font-weight: 600;
 }
 
+
+
 .badge {
-	display: flex; 
-	align-items: center; 
+	display: flex;
+	align-items: center;
 	justify-content: center;
-	position: absolute; 
-	left: -8px; 
+	position: absolute;
+	left: -8px;
 	top: -8px;
 	border-radius: 50%;
-	width: 18px; 
+	width: 18px;
 	height: 18px;
 	font-size: 10px;
+
+	color: var(--dialog-bg);
+	background-color: var(--dialog-fg);
 	box-shadow: rgba(0, 0, 0, 0.4) 2px 2px 2px 0px;
 }
 

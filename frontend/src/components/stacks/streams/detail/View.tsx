@@ -3,10 +3,12 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import ConsumersIcon from "@/icons/cards/ConsumersIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
+import StreamIcon from "@/icons/cards/StreamIcon"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import clsCard from "../../CardYellow.module.css"
 import ActionsCmp from "./Actions"
 import Form from "./Form"
 
@@ -38,7 +40,9 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const isConsumersSelect = streamSo.getConsumerOpen()
 	const isMessagesSelect = streamSo.getMessagesOpen()
 
-	return <FrameworkCard variantBg
+	return <FrameworkCard
+		className={clsCard.root}
+		icon={<StreamIcon />}
 		store={streamSo}
 		actionsRender={<ActionsCmp store={streamSo} />}
 		iconizedRender={
@@ -71,7 +75,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				selected={isConsumersSelect}
 				onClick={handleConsumersClick}
 			/>
-			
+
 		</>}
 
 		<Form store={streamSo} />

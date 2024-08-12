@@ -1,14 +1,12 @@
 .root {
-	background-color: bgcolor;
 	display: flex;
 	flex-direction: column;
 	padding: 5px 7px;
 }
 .bg1 {
-	background-color: var(--bg-1);
 }
 .bg2 {
-	background-color: var(--bg-2);
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .title {

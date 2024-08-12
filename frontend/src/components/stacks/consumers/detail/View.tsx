@@ -5,7 +5,8 @@ import { FunctionComponent, useEffect } from "react"
 import { EDIT_STATE } from "../../../../types"
 import ActionsCmp from "./Actions"
 import Form from "./Form"
-
+import ConsumerIcon from "@/icons/cards/ConsumerIcon"
+import clsCard from "../../CardFuchsia.module.css"
 
 
 interface Props {
@@ -29,7 +30,9 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	// RENDER
 	const inRead = state.editState == EDIT_STATE.READ
 
-	return <FrameworkCard variantBg
+	return <FrameworkCard
+		className={clsCard.root}
+		icon={<ConsumerIcon />}
 		store={store}
 		actionsRender={<ActionsCmp store={store} />}
 	>

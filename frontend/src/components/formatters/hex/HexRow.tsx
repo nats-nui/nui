@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import React, { FunctionComponent } from "react"
 import HexAsciiBlock from "./HexAsciiBlock"
 import HexBlock from "./HexBlock"
@@ -39,5 +38,5 @@ const cssRow: React.CSSProperties = {
 }
 const cssIndex: React.CSSProperties = {
 	minWidth: 30,
-	color: layoutSo.state.theme.palette.default.fg2,
+	opacity: .7,
 }

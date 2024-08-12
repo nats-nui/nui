@@ -1,15 +1,16 @@
-import CopyButton from "@/components/buttons/CopyButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
-import { MessageState, MessageStore } from "@/stores/stacks/message"
+import { MessageStore } from "@/stores/stacks/message"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import TitleAccordion from "../../accordion/TitleAccordion"
+import MessageIcon from "../../../icons/cards/MessageIcon"
 import FormatDialog from "../../editor/FormatDialog"
+import clsCard from "../CardCyanDef.module.css"
 import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
+import { CopyButton, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -23,7 +24,7 @@ const MessageView: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const msgSa = useStore(msgSo) as MessageState
+	const msgSa = useStore(msgSo)
 
 	// HOOKs
 
@@ -37,24 +38,26 @@ const MessageView: FunctionComponent<Props> = ({
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<MessageIcon />}
 		store={msgSo}
 		actionsRender={<>
 			<FormatAction store={msgSo} />
 		</>}
 	>
-		<div className={`lyt-form ${cls.form}`}>
+		<div className={`jack-lyt-form ${cls.form}`}>
 
 			<TitleAccordion title={headersTitle} open={false} disabled={noHeaders}>
 				<HeadersCmp headers={msgSa.message.headers} />
 			</TitleAccordion>
 
-			<div className="hover-container">
+			<div className="jack-hover-container">
 				<CopyButton absolute
 					value={msgSa.message.subject}
-					style={{ backgroundColor: "var(--bg-default)" }}
+					style={{ backgroundColor: "var(--card-bg)" }}
 				/>
-				<span className="lbl-prop">SUBJECT2: </span>
-				<span className="lbl-readonly">
+				<span className="jack-lbl-prop">SUBJECT2: </span>
+				<span className="jack-lbl-readonly">
 					{msgSa.message.subject}
 				</span>
 			</div>

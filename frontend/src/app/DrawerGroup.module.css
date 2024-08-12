@@ -2,7 +2,8 @@
 .root {
 	display: flex;
 
-	background-color: var(--text-bg);
+	color: var(--color-primary-bg);
+	background-color: var(--color-element-bg);
 	z-index: 2;
 }
 .bottom.root {
@@ -25,37 +26,35 @@
 }
 
 .btt {
-	color: var(--text-bg);
-	background-color: var(--var-1);
+	color: var(--color-primary-fg);
+	background-color: var(--color-primary-bg);
 }
 
 .handle_label {
 	user-select: none;
 	writing-mode: vertical-lr;
     font-size: 14px;
-    border-left: 1px solid var(--var-1);
-    border-right: 1px solid var(--var-1);
+    border-left: 1px solid currentColor;
+    border-right: 1px solid currentColor;
     height: 80px;
     text-align: center;
-    color: var(--var-1);
 	font-weight: 700;
 }
 .bottom .handle_label {
 	writing-mode: unset;
 	border-left: unset;
     border-right: unset;
-	border-top: 1px solid var(--var-1);
-    border-bottom: 1px solid var(--var-1);
+	border-top: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
     height: unset;
 }
 
 .size {
 	font-size: 10px;
     font-weight: 600;
-    border: 2px solid var(--var-1);
+    border: 2px solid currentColor;
     text-align: center;
     padding: 1px 0px;
-    color: var(--var-1);
 }
 .bottom .size {
 	min-width: 18px;

@@ -16,17 +16,19 @@ const HexAsciiBlock: FunctionComponent<Props> = ({
 
 	const render = useMemo(() => {
 		const render = Array.from(block, (value: number) => String.fromCharCode(value))
-		return render.join("").replace(regex, " ").padEnd(8," ");
+		return render.join("").replace(regex, " ").padEnd(8, " ");
 	}, [block, columns])
 
-	return <span
-		className="color-fg"
-		style={cssRoot}
-	>{render}</span>
+	return (
+		<span style={cssRoot}>
+			{render}
+		</span>
+	)
 }
 
 export default HexAsciiBlock
 
 const cssRoot: React.CSSProperties = {
-    whiteSpace: "pre",
+	color: "var(--cmp-select-bg)",
+	whiteSpace: "pre",
 }

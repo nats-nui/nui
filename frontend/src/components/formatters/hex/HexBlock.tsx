@@ -1,4 +1,3 @@
-import layoutSo from "@/stores/layout"
 import { FunctionComponent, useMemo } from "react"
 
 
@@ -41,12 +40,12 @@ const HexCell: FunctionComponent<HexCellProps> = ({
 	</span>
 }
 
-const cssHex1 = {
+const cssHex1:React.CSSProperties = {
 	padding: "0px 3px",
 }
-const cssHex2 = {
+const cssHex2:React.CSSProperties = {
 	padding: "0px 3px",
-	color: layoutSo.state.theme.palette.default.fg2,
+	opacity: .7,
 }
 const toHex = (value: number): string => {
 	if ( value == null ) return ".."

@@ -2,12 +2,14 @@
 	display: flex; 
 	flex-direction: column; 
 	align-items: stretch;
+	z-index: 5;
 
 	width: 50px;
 	gap: 10px;
-	background-color: var(--bg-disabled);
 	padding: 10px;
 
+
+	color: var(--color-element-fg);
+	background-color: var(--color-element-bg);
 	box-shadow: rgba(0, 0, 0, 0.25) 2px 0px 1px 0px;
-    z-index: 5;
 }

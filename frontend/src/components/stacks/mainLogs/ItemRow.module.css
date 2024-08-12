@@ -6,20 +6,22 @@
 }
 
 .bg1 {
-	background-color: var(--bg-1);
+	background-color: #3E3E3E;
 }
+
 .bg2 {
-	background-color: var(--bg-2);
+	background-color: #2e2e2e;
 }
 
 .error {
-	border-left: 2px solid var(--var-1);
+	border-left: 2px solid #f374e6;
 }
+
 .warn {
-	border-left: 2px solid var(--var-2);
+	border-left: 2px solid #BBFB35;
 }
-.info {
-}
+
+.info {}
 
 
 
@@ -31,11 +33,13 @@
 	font-weight: 600;
 	margin-bottom: 5px;
 }
+
 .body {
 	font-size: 12px;
 	font-weight: 400;
 	overflow-wrap: break-word;
 }
+
 .footer {
 	margin-top: 5px;
 	font-size: 10px;
