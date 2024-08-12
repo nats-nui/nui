@@ -1,9 +1,5 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
 import DividerRow, { DIVIDER_VARIANT } from "@/components/formatters/divider/DividerRow"
-import FindInputHeader from "@/components/input/FindInputHeader"
-import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
@@ -12,10 +8,12 @@ import { Message } from "@/types/Message"
 import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
+import MessageIcon from "../../../../icons/cards/MessageIcon"
 import FormatDialog from "../../../editor/FormatDialog"
+import clsCard from "../../CardCyanDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
+import { AlertDialog, Button, CircularLoadingCmp, FindInputHeader, OptionsCmp } from "@priolo/jack"
 
 
 
@@ -59,6 +57,8 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	const inLoading = strMsgSa.loadingState == LOAD_STATE.LOADING
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<MessageIcon />}
 		store={strMsgSo}
 		actionsRender={<>
 			<OptionsCmp

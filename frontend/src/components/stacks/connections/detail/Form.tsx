@@ -1,15 +1,11 @@
-import IconToggle from "@/components/buttons/IconToggle"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList"
-import ListObjects from "@/components/lists/ListObjects"
-import EditStringRow from "@/components/rows/EditStringRow"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
-import {CnnDetailStore} from "@/stores/stacks/connection/detail"
-import {Auth, EDIT_STATE} from "@/types"
-import {useStore} from "@priolo/jon"
-import {FunctionComponent} from "react"
+import { CnnDetailStore } from "@/stores/stacks/connection/detail"
+import { Auth, EDIT_STATE } from "@/types"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
+import { EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion } from "@priolo/jack"
+
 
 
 interface Props {
@@ -20,8 +16,8 @@ interface Props {
  * dettaglio di una CONNECTION
  */
 const ConnectionDetailForm: FunctionComponent<Props> = ({
-                                                            cnnDetailSo,
-                                                        }) => {
+    cnnDetailSo,
+}) => {
 
     // STORE
     const cnnDetailSa = useStore(cnnDetailSo)
@@ -30,39 +26,39 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
     // HANDLER
     const handleChangeName = (name: string) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, name})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, name })
     }
     const handleHostsChange = (hosts: string[]) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, hosts})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
     }
     const handleAuthChange = (auth: Auth, index: number) => {
         if (!auth) return
         const cnnAuth = cnnDetailSa.connection.auth
         if (index == -1) cnnAuth.push(auth); else cnnAuth[index] = auth
-        cnnDetailSo.setConnection({...cnnDetailSa.connection})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
     }
     const handleAuthDelete = (index: number) => {
         if (index < 0) return
         cnnDetailSa.connection.auth.splice(index, 1)
-        cnnDetailSo.setConnection({...cnnDetailSa.connection})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
     }
     const handleActivate = (check: boolean, indexSel: number, e: React.MouseEvent) => {
         e.stopPropagation()
         cnnDetailSa.connection.auth.forEach((auth, index) => auth.active = check && index == indexSel)
-        cnnDetailSo.setConnection({...cnnDetailSa.connection})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection })
     }
 
     const handleChangeTlsEnable = (enabled: boolean) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, tlsAuth: {...cnnDetailSa.connection.tlsAuth, enabled}})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, enabled } })
     }
     const handleChangeTlsCertPath = (certPath: string) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, tlsAuth: {...cnnDetailSa.connection.tlsAuth, certPath}})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, certPath } })
     }
     const handleChangeTlsKeyPath = (keyPath: string) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, tlsAuth: {...cnnDetailSa.connection.tlsAuth, keyPath}})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, keyPath } })
     }
     const handleChangeTlsCaPath = (caPath: string) => {
-        cnnDetailSo.setConnection({...cnnDetailSa.connection, tlsAuth: {...cnnDetailSa.connection.tlsAuth, caPath}})
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, caPath } })
     }
 
     // RENDER
@@ -71,22 +67,22 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     const name = connection.name ?? ""
     const hosts = connection.hosts ?? []
     const auths = connection.auth ?? []
-    const tlsAuth = connection.tlsAuth ?? {enabled: false, certPath: "", keyPath: "", caPath: ""}
+    const tlsAuth = connection.tlsAuth ?? { enabled: false, certPath: "", keyPath: "", caPath: "" }
     const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-    return <div className="lyt-form var-dialog">
+    return <div className="jack-lyt-form var-dialog">
 
         <TitleAccordion title="BASE">
             <div className="lyt-v">
-                <div className="lbl-prop">NAME</div>
+                <div className="jack-lbl-prop">NAME</div>
                 <TextInput autoFocus
-                           value={name}
-                           onChange={handleChangeName}
-                           readOnly={inRead}
+                    value={name}
+                    onChange={handleChangeName}
+                    readOnly={inRead}
                 />
             </div>
             <div className="lyt-v">
-                <div className="lbl-prop">HOST</div>
+                <div className="jack-lbl-prop">HOST</div>
                 <EditList<string>
                     items={hosts}
                     onItemsChange={handleHostsChange}
@@ -103,25 +99,25 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
 
         <TitleAccordion title="AUTH">
             <div className="lyt-v">
-                <div className="lbl-prop">AUTH</div>
+                <div className="jack-lbl-prop">AUTH</div>
                 <ListObjects<Auth>
                     store={cnnDetailSo}
                     items={auths}
                     readOnly={inRead}
                     width={170}
-                    RenderLabel={({item: auth, index}) => (
-                        <div className="cmp-h">
+                    RenderLabel={({ item: auth, index }) => (
+                        <div className="jack-cmp-h">
                             <IconToggle
                                 check={auth.active}
                                 onChange={(check, e) => handleActivate(check, index, e)}
                                 readOnly={inRead}
-                                trueIcon={<CheckRadioOnIcon/>}
+                                trueIcon={<CheckRadioOnIcon />}
                             />
                             {auth?.mode?.toUpperCase()}
                         </div>
                     )}
                     onDelete={handleAuthDelete}
-                    RenderForm={({item, index, onClose}) => (
+                    RenderForm={({ item, index, onClose }) => (
                         <AuthForm
                             auth={item}
                             readOnly={inRead}
@@ -135,36 +131,36 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
             </div>
         </TitleAccordion>
         <TitleAccordion title="TLS CLIENT AUTH">
-            < div className="cmp-h">
+            < div className="jack-cmp-h">
                 <IconToggle
                     check={!!tlsAuth.enabled}
                     onChange={handleChangeTlsEnable}
                     readOnly={inRead}
                 />
-                <div className="lbl-prop">ENABLE</div>
+                <div className="jack-lbl-prop">ENABLE</div>
             </div>
             <div className="lyt-v">
-                <div className="lbl-prop">CLIENT CERT PATH</div>
+                <div className="jack-lbl-prop">CLIENT CERT PATH</div>
                 <TextInput autoFocus
-                           value={tlsAuth.certPath}
-                           onChange={handleChangeTlsCertPath}
-                           readOnly={inRead}
+                    value={tlsAuth.certPath}
+                    onChange={handleChangeTlsCertPath}
+                    readOnly={inRead}
                 />
             </div>
             <div className="lyt-v">
-                <div className="lbl-prop">CLIENT KEY PATH</div>
+                <div className="jack-lbl-prop">CLIENT KEY PATH</div>
                 <TextInput autoFocus
-                           value={tlsAuth.keyPath}
-                           onChange={handleChangeTlsKeyPath}
-                           readOnly={inRead}
+                    value={tlsAuth.keyPath}
+                    onChange={handleChangeTlsKeyPath}
+                    readOnly={inRead}
                 />
             </div>
             <div className="lyt-v">
-                <div className="lbl-prop">CA PATH</div>
+                <div className="jack-lbl-prop">CA PATH</div>
                 <TextInput autoFocus
-                           value={tlsAuth.caPath}
-                           onChange={handleChangeTlsCaPath}
-                           readOnly={inRead}
+                    value={tlsAuth.caPath}
+                    onChange={handleChangeTlsCaPath}
+                    readOnly={inRead}
                 />
             </div>
         </TitleAccordion>

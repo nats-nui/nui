@@ -1,11 +1,8 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
-import Button from "@/components/buttons/Button"
-import IconButton from "@/components/buttons/IconButton"
 import FormatIcon from "@/icons/FormatIcon"
 import { EditorStore } from "@/stores/stacks/editorBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import CopyButton from "../buttons/CopyButton"
+import { Button, CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 
 

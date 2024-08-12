@@ -54,8 +54,8 @@ export function randomMessages(start: number, interval: number): Message[] {
 		interval = -interval
 	}
 	return Array.from({ length: interval }, (_, i) => ({
-		seqNum: i+start,
-		headers: [],
+		seqNum: i + start,
+		headers: {},
 		subject: "subject",
 		payload: btoa(`payload:${i}`),
 		size: 10,

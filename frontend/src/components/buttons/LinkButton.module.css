@@ -11,15 +11,18 @@
 	margin-left: 4px;
 }
 
-.selected {
-	color: var(--text);
-	background-color: var(--bg-default);
+.root.selected {
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 }
 
 .extra {
 	position: absolute;
 	left: 80%;
 	border-radius: 5px;
+
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 	box-shadow: rgba(0, 0, 0, 0.25) 2px 2px 1px 0px;
 
 	transition: opacity 300ms, transform 300ms ease-in-out;
@@ -27,7 +30,13 @@
 	transform: translate(-10px, 0px);
 }
 
+.extra.selected {
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
+}
+
 .root:hover .extra {
 	opacity: 1;
 	transform: translate(0px, 0px);
 }
+

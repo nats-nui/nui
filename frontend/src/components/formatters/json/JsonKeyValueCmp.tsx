@@ -1,7 +1,6 @@
 import { FunctionComponent, useEffect, useState } from "react"
 import JsonValueCmp from "./JsonValueCmp"
 import { COLLAPSE_TYPE, getInitCollapsed, inShow } from "./utils"
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 
 
 
@@ -62,7 +61,7 @@ export default JsonKeyValueCmp
 const cssKey = (inShow: boolean): React.CSSProperties => ({
 	cursor: "pointer",
 	backgroundColor: !inShow && "rgb(0 0 0 / 60%)",
-	color: !inShow && layoutSo.state.theme.palette.var[COLOR_VAR.YELLOW].bg,
+	color: !inShow && "#EBFB35",
 })
 
 const cssHighlight: React.CSSProperties = {

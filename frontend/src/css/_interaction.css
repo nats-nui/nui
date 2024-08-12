@@ -1,0 +1,12 @@
+.cliccable:hover {
+	/* background-color: rgba(0, 0, 0, .2); */
+	border: "1px solid rgb(0 0 0 / 15%)",
+}
+
+.cliccable {
+	cursor: pointer;
+}
+
+.draggable {
+	cursor: grab;
+}

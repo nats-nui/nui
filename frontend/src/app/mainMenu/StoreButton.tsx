@@ -1,10 +1,12 @@
 import { deckCardsSo } from "@/stores/docs/cards"
-import { menuSo } from "@/stores/docs/links"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import CardIcon from "../../components/cards/CardIcon"
+import { getColorFromViewType } from "../../stores/stacks/utils"
+import { DOC_TYPE } from "../../types"
 import MenuButton from "./MenuButton"
+import { menuSo } from "../../stores/docs/links"
 
 
 
@@ -31,20 +33,25 @@ const StoreButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!store) return null
-	const type = store.state.type
-	const cls = `var${store.state.colorVar}`
+	const type = store.state.type as DOC_TYPE
+	const colorVar = getColorFromViewType(type)
+	const style = {
+		'--dialog-bg': colorVar.bg,
+		'--dialog-fg': colorVar.fg,
+	} as React.CSSProperties;
 	const canDelete = store.state.pinnable
-	if ( !label ) label = store.getSubTitle()
+	if (!label) label = store.getSubTitle()
 
 	return (
-		<MenuButton className={cls}
+		<MenuButton
+			style={style}
 			title={store.getTitle()}
 			subtitle={label}
 			badge={badge}
 			onClick={() => handleOpenStoreClick(store)}
 			onClose={canDelete ? () => handleDeleteButtonClick(store) : null}
 		>
-			<CardIcon type={type} style={{ width: 20 }} className="color-fg" />
+			<CardIcon type={type} style={{ width: 20, color: colorVar.bg }} />
 		</MenuButton>
 	)
 }

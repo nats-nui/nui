@@ -1,9 +1,10 @@
-import { DOC_ANIM } from "@/stores/docs/types"
 import { delay, delayAnim } from "@/utils/time"
 import { StoreCore, createStore, mixStores } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
 import docsSo from "./index"
 import { forEachViews, getById, getRoot } from "./utils/manage"
+import { DOC_ANIM } from "@priolo/jack"
+import { DOC_TYPE } from "./types"
 
 
 
@@ -82,7 +83,7 @@ const setup = {
 				delete docsSo.state.cardOptions[parent.state.type]
 				return
 			} else {
-				docsSo.state.cardOptions[parent.state.type] = view.state.type
+				docsSo.state.cardOptions[parent.state.type] = view.state.type as DOC_TYPE
 			}
 
 			// imposto la view

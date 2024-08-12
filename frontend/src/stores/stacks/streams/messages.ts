@@ -1,17 +1,15 @@
 import strApi from "@/api/streams"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
-import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { MessageStore } from "../message"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { DOC_TYPE } from "@/types"
-import { MessageStore } from "../message"
 
 
 
@@ -43,7 +41,6 @@ const setup = {
 		rangeTop: <number>null,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		//#endregion
 
 	},

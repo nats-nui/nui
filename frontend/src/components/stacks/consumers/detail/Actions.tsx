@@ -1,11 +1,10 @@
-import Button from "@/components/buttons/Button"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import { ConsumerStore } from "../../../../stores/stacks/consumer/detail"
+import { Button, OptionsCmp } from "@priolo/jack"
 
 
 

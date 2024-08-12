@@ -1,0 +1,20 @@
+.root {
+	--card-fg: #393939;
+	--card-bg: #BBFB35;
+
+	/* button icon button */
+	--cmp-select-fg: #BBFB35;
+	--cmp-select-bg: #393939;
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button*/
+	--dialog-fg: #393939;
+	--dialog-bg: #BBFB35;
+}
+
+.root :global(.jack-framework-actions) {
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: #BBFB35;
+}

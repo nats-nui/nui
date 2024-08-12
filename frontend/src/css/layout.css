@@ -20,49 +20,7 @@
 	align-self: stretch;
 	margin-top: 10px;;
 }
-
-/* FLOAT BUTTONS */
-.lyt-float {
-	position: absolute;
-	bottom: 20px; 
-	right: 20px;
-	display: flex; 
-	gap: 5px;
-
-	z-index: 1;
-}
-
-/* FORM */
-.lyt-form {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-}
  
-/* QUOTE */
-.lyt-quote {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-	border-left: 2px solid rgba(0, 0, 0, 0.4);
-	padding-left: 5px;
-	margin-top: 3px;
-}
-
-/* HORIZONTAL COMPONENTS: TOGGLE */
-.cmp-h {
-	display: flex; 
-	flex: 1;
-	align-items: center; 
-	position: relative;
-	gap: 5px;
-}
-
-/* righa di una lista in sola lettura */
-.list-row {
-	padding: 3px 5px;
-}
 
 /* footer presente nelle DIALOG */
 .cmp-footer {

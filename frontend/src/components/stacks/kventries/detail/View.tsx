@@ -1,16 +1,16 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
+import { KVEntry, OPERATION } from "@/types/KVEntry"
+import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import KvEntryIcon from "../../../../icons/cards/KvEntryIcon"
+import FormatDialog from "../../../editor/FormatDialog"
+import clsCard from "../../CardMintDef.module.css"
 import ActionsCmp from "./Actions"
 import DetailForm from "./DetailForm"
-import Dialog from "@/components/dialogs/Dialog"
-import List from "@/components/lists/List"
-import { KVEntry, OPERATION } from "@/types/KVEntry"
-import FormatDialog from "../../../editor/FormatDialog"
-import { RenderRowBaseProps } from "@/components/lists/EditList"
-import dayjs from "dayjs"
-import { dateShow } from "@/utils/time"
+import { Dialog, List } from "@priolo/jack"
+import { RenderRowBaseProps } from "@priolo/jack"
 
 
 
@@ -39,6 +39,8 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 	const historySelected = kventrySo.getKVSelectIndex()
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<KvEntryIcon />}
 		store={kventrySo}
 		actionsRender={<ActionsCmp store={kventrySo} />}
 	>

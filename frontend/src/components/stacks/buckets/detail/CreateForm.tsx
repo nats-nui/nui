@@ -1,18 +1,11 @@
-import IconToggle from "@/components/buttons/IconToggle.tsx"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList.tsx"
-import EditStringRow from "@/components/rows/EditStringRow.tsx"
-import StringUpRow from "@/components/rows/StringUpRow"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { BucketConfig } from "@/types/Bucket"
 import { STORAGE } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import ListDialog from "../../../dialogs/ListDialog"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
+import { EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -40,12 +33,12 @@ const CreateForm: FunctionComponent<Props> = ({
 	if (bucketSa.bucketConfig == null) return null
 	const bucket: BucketConfig = bucketSa.bucketConfig
 
-	return <div className="lyt-form">
+	return <div className="jack-lyt-form">
 
 		<TitleAccordion title="BASE">
 			
 			<div className="lyt-v">
-				<div className="lbl-prop">NAME</div>
+				<div className="jack-lbl-prop">NAME</div>
 				<TextInput
 					value={bucket.bucket}
 					onChange={bucket => handlePropChange({ bucket })}
@@ -53,7 +46,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DESCRIPTION</div>
+				<div className="jack-lbl-prop">DESCRIPTION</div>
 				<TextInput multiline rows={2}
 					value={bucket.description}
 					onChange={description => handlePropChange({ description })}
@@ -61,7 +54,7 @@ const CreateForm: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">STORAGE</div>
+				<div className="jack-lbl-prop">STORAGE</div>
 				<ListDialog width={80}
 					store={bucketSo}
 					select={Object.values(STORAGE).indexOf(bucket.storage ?? STORAGE.FILE)}
@@ -77,7 +70,7 @@ const CreateForm: FunctionComponent<Props> = ({
 		<TitleAccordion title="KEY/VALUE STORE SETTINGS">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">HISTORY</div>
+				<div className="jack-lbl-prop">HISTORY</div>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={bucket.history}
@@ -103,12 +96,12 @@ const CreateForm: FunctionComponent<Props> = ({
 				onChange={maxBytes => handlePropChange({ maxBytes })}
 			/>
 
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={bucket.compression}
 					onChange={compression => handlePropChange({ compression })}
 				/>
-				<div className="lbl-prop">COMPRESSION</div>
+				<div className="jack-lbl-prop">COMPRESSION</div>
 			</div>
 
 		</TitleAccordion>
@@ -116,7 +109,7 @@ const CreateForm: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="PLACEMENT">
 			<div className="lyt-v">
-				<div className="lbl-prop">NUM REPLICAS</div>
+				<div className="jack-lbl-prop">NUM REPLICAS</div>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={bucket.replicas}
@@ -124,17 +117,17 @@ const CreateForm: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">CLUSTER</div>
-				<div className="lyt-quote">
+				<div className="jack-lbl-prop">CLUSTER</div>
+				<div className="jack-lyt-quote">
 					<div className="lyt-v">
-						<div className="lbl-prop">NAME</div>
+						<div className="jack-lbl-prop">NAME</div>
 						<TextInput
 							value={bucket.placement?.cluster}
 							onChange={cluster => handlePlacementPropChange({ cluster })}
 						/>
 					</div>
 					<div className="lyt-v">
-						<div className="lbl-prop">TAGS</div>
+						<div className="jack-lbl-prop">TAGS</div>
 						<EditList<string>
 							items={bucket.placement?.tags}
 							onItemsChange={tags => handlePlacementPropChange({ tags })}

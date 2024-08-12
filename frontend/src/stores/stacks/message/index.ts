@@ -1,4 +1,3 @@
-import { COLOR_VAR } from "@/stores/layout"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
@@ -12,7 +11,6 @@ const setup = {
 		message: <Message>null,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.CYAN,
 		width: 420,
 		widthMax: 1000,
 		//#endregion
@@ -60,7 +58,7 @@ export type MessageState = typeof setup.state & ViewState & EditorState
 export type MessageGetters = typeof setup.getters
 export type MessageActions = typeof setup.actions
 export type MessageMutators = typeof setup.mutators
-export interface MessageStore extends ViewStore, EditorStore, StoreCore<MessageState>, MessageGetters, MessageActions, MessageMutators {
+export interface MessageStore extends ViewStore, EditorStore, MessageGetters, MessageActions, MessageMutators {
 	state: MessageState
 }
 const msgSetup = mixStores(viewSetup, editorSetup, setup)

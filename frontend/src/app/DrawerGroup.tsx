@@ -1,23 +1,19 @@
-import IconButton from "@/components/buttons/IconButton"
 import CompressAllIcon from "@/icons/CompressAllIcon"
+import DirectionDownIcon from "@/icons/DirectionDownIcon"
 import DirectionLeftIcon from "@/icons/DirectionLeftIcon"
 import DirectionRightIcon from "@/icons/DirectionRightIcon"
-import { drawerCardsSo as drawerSo } from "@/stores/docs/cards"
-import { forEachViews } from "@/stores/docs/utils/manage"
-import { VIEW_SIZE } from "@/stores/stacks/utils"
-import { delay } from "@/utils/time"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
-import CardsGroup from "./CardsGroups"
-import cls from "./DrawerGroup.module.css"
-import docsSo, { DRAWER_POSITION } from "@/stores/docs"
+import DirectionUpIcon from "@/icons/DirectionUpIcon"
 import MenuBottomIcon from "@/icons/MenuBottomIcon"
 import MenuRightIcon from "@/icons/MenuRightIcon"
-import ResizerCmp, { RESIZER_DIRECTION } from "@/components/cards/ResizerCmp"
-import DirectionUpIcon from "@/icons/DirectionUpIcon"
-import DirectionDownIcon from "@/icons/DirectionDownIcon"
-
-
+import docsSo, { DRAWER_POSITION } from "@/stores/docs"
+import { drawerCardsSo as drawerSo } from "@/stores/docs/cards"
+import { forEachViews } from "@/stores/docs/utils/manage"
+import { delay } from "@/utils/time"
+import { CardsGroup, IconButton, RESIZER_DIRECTION, ResizerCmp, VIEW_SIZE } from "@priolo/jack"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent } from "react"
+import PolymorphicCard from "../components/cards/PolymorphicCard"
+import cls from "./DrawerGroup.module.css"
 
 
 interface Props {
@@ -90,9 +86,9 @@ const DrawerGroup: FunctionComponent<Props> = ({
 					{inRight ? <MenuBottomIcon /> : <MenuRightIcon />}
 				</IconButton>
 
-				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
+				<div className="jack-bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 				<div className={cls.handle_label} draggable={false}>DRAWER</div>
-				<div className="bars-alert-bg-1" draggable={false} style={{ flex: 1, userSelect: "none" }} />
+				<div className="jack-bars-alert-bg" draggable={false} style={{ flex: 1, userSelect: "none" }} />
 
 				<div className={cls.size}>
 					{size}
@@ -104,7 +100,10 @@ const DrawerGroup: FunctionComponent<Props> = ({
 				className={`${cls.handle_container} ${drawerSa.animation ? cls.animate : ""}`}
 				style={styleContainer}
 			>
-				<CardsGroup cardsStore={drawerSo} />
+				<CardsGroup 
+					cardsStore={drawerSo} 
+					Render={PolymorphicCard}
+				/>
 			</div>
 
 		</div>

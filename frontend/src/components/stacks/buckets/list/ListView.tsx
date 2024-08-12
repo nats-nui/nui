@@ -1,15 +1,13 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import FindInputHeader from "@/components/input/FindInputHeader"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
-import VTable from "@/components/table/VTable"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
+import BucketsIcon from "../../../../icons/cards/BucketsIcon"
+import clsCard from "../../CardMintDef.module.css"
+import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 
 
 
@@ -43,6 +41,8 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
+		className={clsCard.root}
+		icon={<BucketsIcon />}
 		store={bucketsSo}
 		actionsRender={<>
 			<OptionsCmp

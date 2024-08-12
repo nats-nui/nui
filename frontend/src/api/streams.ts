@@ -17,7 +17,7 @@ async function get(connectionId: string, streamName: string, opt?: CallOptions):
 	opt.noCamel = true
 	const resSnake = await ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
 	const resCamel: StreamInfo = snakeToCamel(resSnake)
-	resCamel.state.subjects = resSnake.state.subjects
+	if ( !!resCamel ) resCamel.state.subjects = resSnake.state.subjects
 	return resCamel
 }
 

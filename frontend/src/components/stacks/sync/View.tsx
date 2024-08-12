@@ -1,24 +1,19 @@
-import Button from "@/components/buttons/Button"
-import FloatButton from "@/components/buttons/FloatButton"
-import IconButton from "@/components/buttons/IconButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode from "@/components/editor"
 import FormatDialog from "@/components/editor/FormatDialog"
-import TextInput from "@/components/input/TextInput"
-import CircularLoadingCmp from "@/components/loaders/CircularLoadingCmp"
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
+import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import FormatIcon from "@/icons/FormatIcon"
 import SendIcon from "@/icons/SendIcon"
 import { SyncStore } from "@/stores/stacks/sync"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useRef } from "react"
-import cls from "./View.module.css"
-import TitleAccordion from "../../accordion/TitleAccordion"
-import EditList from "../../lists/EditList"
+import { FunctionComponent, useRef } from "react"
+import SyncIcon from "../../../icons/SyncIcon"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx";
+import clsCard from "../CardCyanDef.module.css"
+import cls from "./View.module.css"
+import { Button, CircularLoadingCmp, EditList, FloatButton, IconButton, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 
 
 
@@ -62,6 +57,8 @@ const SyncView: FunctionComponent<Props> = ({
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<SyncIcon />}
 		store={syncSo}
 		actionsRender={<>
 
@@ -83,7 +80,7 @@ const SyncView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className="lyt-form" style={{ flex: 1 }}>
+		<div className="jack-lyt-form" style={{ flex: 1 }}>
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, position: "relative", gap: 5 }} >
 
@@ -102,12 +99,12 @@ const SyncView: FunctionComponent<Props> = ({
 					</TitleAccordion>
 
 					<div className={cls.row}>
-						<div className="lbl-prop">SUBJECT</div>
+						<div className="jack-lbl-prop">SUBJECT</div>
 						<IconButton onClick={handleRequestClick}>
 							<ArrowRightIcon />
 						</IconButton>
 					</div>
-					
+
 					<TextInput autoFocus
 						placeholder="Write here e.g. foo.bar"
 						value={syncSa.subject}
@@ -123,7 +120,7 @@ const SyncView: FunctionComponent<Props> = ({
 					/>
 				</div>
 
-				<div className="lyt-float">
+				<div className="jack-lyt-float">
 					<FloatButton style={{ position: "relative" }}
 						onClick={handleSend}
 						disabled={!canSend}
@@ -139,7 +136,7 @@ const SyncView: FunctionComponent<Props> = ({
 
 			<div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 5 }}>
 				<div className={cls.row}>
-					<div className="lbl-prop">RESPONSE</div>
+					<div className="jack-lbl-prop">RESPONSE</div>
 					<IconButton onClick={handleResponseClick}>
 						<ArrowRightIcon />
 					</IconButton>

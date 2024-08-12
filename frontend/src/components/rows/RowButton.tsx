@@ -1,4 +1,3 @@
-import layoutSo, { COLOR_VAR } from "@/stores/layout"
 import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useState } from "react"
 
@@ -49,8 +48,8 @@ export default RowButton
 
 const cssRoot = (select: boolean): React.CSSProperties => ({
 	...select && {
-		color: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].fg,
-		backgroundColor: layoutSo.state.theme.palette.var[COLOR_VAR.DEFAULT].bg,
+		color: "var(--card-bg)",
+		backgroundColor: "var(--card-fg)",
 	},
 	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
 	display: "flex", alignItems: "center",
@@ -61,8 +60,11 @@ const cssRoot = (select: boolean): React.CSSProperties => ({
 	marginRight: -10,
 	marginLeft: -7,
 })
+
 const cssLabel: React.CSSProperties = {
-	...layoutSo.state.theme.texts.rowButton,
+	fontSize: 14, 
+	fontWeight: 800, 
+	fontFamily: "Darker Grotesque",
 	flex: 1,
 	marginLeft: 5,
 }

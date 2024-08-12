@@ -1,9 +1,4 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import FindInputHeader from "@/components/input/FindInputHeader"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
-import VTable from "@/components/table/VTable"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -12,6 +7,9 @@ import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
+import KvEntriesIcon from "../../../../icons/cards/KvEntriesIcon"
+import clsCard from "../../CardMintDef.module.css"
+import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 
 
 
@@ -44,12 +42,15 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	const selected = kventriesSa.select
 	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.editState == EDIT_STATE.NEW
 
-	return <FrameworkCard styleBody={{ padding: 0 }}
+	return <FrameworkCard
+		className={clsCard.root}
+		icon={<KvEntriesIcon />}
+		styleBody={{ padding: 0 }}
 		store={kventriesSo}
 		actionsRender={<>
-			<OptionsCmp 
+			<OptionsCmp
 				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
-				store={kventriesSo}  
+				store={kventriesSo}
 			/>
 			<FindInputHeader
 				value={kventriesSa.textSearch}
@@ -73,10 +74,10 @@ const KVEntryListView: FunctionComponent<Props> = ({
 		<VTable
 			items={kventries}
 			props={[
-				{ 
-					label: "REVISION", 
-					getValue: b => b.revision, 
-					flex: .5 
+				{
+					label: "REVISION",
+					getValue: b => b.revision,
+					flex: .5
 				},
 				{
 					label: "LAST",

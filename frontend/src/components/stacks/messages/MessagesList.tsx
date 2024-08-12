@@ -1,4 +1,3 @@
-import FloatButton from "@/components/buttons/FloatButton"
 import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ClearIcon from "@/icons/ClearIcon"
 import { Message } from "@/types/Message"
@@ -7,6 +6,7 @@ import { debounce } from "@/utils/time"
 import { FunctionComponent, useEffect, useRef, useState } from "react"
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import MessageRow from "./MessageRow"
+import { FloatButton } from "@priolo/jack"
 
 
 
@@ -106,11 +106,11 @@ const MessagesList: FunctionComponent<Props> = ({
 			components={{
 				Header: !!header && (() => header),
 				Footer: !!footer && (() => footer),
-				EmptyPlaceholder: () => <div className="lbl-empty color-fg">EMPTY LIST</div>,
+				EmptyPlaceholder: () => <div className="jack-lbl-empty color-fg">EMPTY LIST</div>,
 			}}
 		/>
 
-		<div className="lyt-float" style={{ bottom: 30 }}>
+		<div className="jack-lyt-float" style={{ bottom: 30 }}>
 			{extraActions}
 			{showKeepDown &&
 				<FloatButton

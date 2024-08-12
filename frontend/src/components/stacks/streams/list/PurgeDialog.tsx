@@ -1,10 +1,6 @@
-import Button from "@/components/buttons/Button"
-import IconToggle from "@/components/buttons/IconToggle"
-import Dialog from "@/components/dialogs/Dialog"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { StreamsStore } from "@/stores/stacks/streams/index.ts"
+import { Button, Dialog, IconToggle, NumberInput, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useState } from "react"
 
@@ -63,22 +59,22 @@ const PurgeDialog: FunctionComponent<Props> = ({
             open={streamSa.purgeOpen}
             onClose={handleClose}
         >
-            <div className="lyt-form">
+            <div className="jack-lyt-form">
 
                 <div className="lyt-v" style={{ gap: 3 }}>
-                    <div className="cmp-h">
+                    <div className="jack-cmp-h">
                         <IconToggle
                             check={purgeParams.bySeq}
                             onChange={select => handlePurgePropChange({ bySeq: select, byKeep: false })}
                             trueIcon={<CheckRadioOnIcon />}
                         />
-                        <div className="lbl-prop">SEQUENCE</div>
+                        <div className="jack-lbl-prop">SEQUENCE</div>
                         <IconToggle
                             check={purgeParams.byKeep}
                             onChange={select => handlePurgePropChange({ byKeep: select, bySeq: false })}
                             trueIcon={<CheckRadioOnIcon />}
                         />
-                        <div className="lbl-prop">KEEP</div>
+                        <div className="jack-lbl-prop">KEEP</div>
                     </div>
                     <NumberInput
                         style={{ flex: 1 }}
@@ -88,7 +84,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                 </div>
 
                 <div className="lyt-v">
-                    <div className="lbl-prop">SUBJECT</div>
+                    <div className="jack-lbl-prop">SUBJECT</div>
                     <TextInput
                         value={purgeParams.subject}
                         onChange={subject => handlePurgePropChange({ subject })}
@@ -97,7 +93,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
 
             </div>
 
-            <div className="lbl-prop-title" style={{ marginTop: 10 }}>
+            <div className="jack-lbl-prop-title" style={{ marginTop: 10 }}>
                 DANGER
             </div>
 
@@ -106,7 +102,7 @@ const PurgeDialog: FunctionComponent<Props> = ({
                 Are you sure you want to purge the STREAM?
             </div>
 
-            <div className="bars-alert-bg" style={{ height: 25 }} />
+            <div className="jack-bars-alert-bg" style={{ height: 25 }} />
 
             <div
                 className="var-dialog"

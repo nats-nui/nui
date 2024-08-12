@@ -1,11 +1,12 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import { AboutStore } from "@/stores/stacks/about"
-import { useStore } from "@priolo/jon"
-import React, { FunctionComponent, useEffect } from "react"
-import cls from "./View.module.css"
-import Button from "@/components/buttons/Button"
 import GitHubIcon from "@/icons/GitHubIcon"
 import HelpIcon from "@/icons/HelpIcon"
+import { AboutStore } from "@/stores/stacks/about"
+import { Button } from "@priolo/jack"
+import { useStore } from "@priolo/jon"
+import React, { FunctionComponent, useEffect } from "react"
+import clsCard from "../CardWhiteDef.module.css"
+import cls from "./View.module.css"
 
 
 
@@ -36,11 +37,13 @@ const AboutView: FunctionComponent<Props> = ({
 	const current = aboutSa.about?.currentVersion ?? "--"
 	const latest = aboutSa.about?.latestVersion ?? "--"
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<div style={{ fontSize: 16, fontWeight: 700 }}>?</div>}
 		store={aboutSo}
 	>
 		<div className={cls.logo} />
 
-		<div className="lyt-form">
+		<div className="jack-lyt-form">
 
 			<div className={cls.linkContainer}>
 				<div className={cls.link}
@@ -55,13 +58,13 @@ const AboutView: FunctionComponent<Props> = ({
 			<div className={cls.divider} />
 
 			<div className="lyt-v">
-				<div className="lbl-prop">CURRENT</div>
-				<div className="lbl-readonly">{current}</div>
+				<div className="jack-lbl-prop">CURRENT</div>
+				<div className="jack-lbl-readonly">{current}</div>
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">LAST</div>
-				<div className="lbl-readonly">{latest}</div>
+				<div className="jack-lbl-prop">LAST</div>
+				<div className="jack-lbl-readonly">{latest}</div>
 			</div>
 
 			{aboutSa.about?.shouldUpdate && <>

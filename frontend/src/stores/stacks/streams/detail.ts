@@ -1,7 +1,7 @@
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
 import { findInRoot } from "@/stores/docs/utils/manage"
-import { COLOR_VAR } from "@/stores/layout"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamConfig, StreamInfo } from "@/types/Stream"
@@ -11,7 +11,6 @@ import { buildConsumers } from "../consumer/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
 import { buildStreamMessages } from "./utils/factory"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
 
 
 
@@ -29,7 +28,6 @@ const setup = {
 		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
-		colorVar: COLOR_VAR.YELLOW,
 		width: 230,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion
@@ -180,7 +178,7 @@ export type StreamState = typeof setup.state & ViewState & LoadBaseState
 export type StreamGetters = typeof setup.getters
 export type StreamActions = typeof setup.actions
 export type StreamMutators = typeof setup.mutators
-export interface StreamStore extends ViewStore, LoadBaseStore, StoreCore<StreamState>, StreamGetters, StreamActions, StreamMutators {
+export interface StreamStore extends ViewStore, LoadBaseStore, StreamGetters, StreamActions, StreamMutators {
 	state: StreamState
 }
 const streamSetup = mixStores(viewSetup, loadBaseSetup, setup)

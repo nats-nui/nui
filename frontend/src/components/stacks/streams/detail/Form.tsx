@@ -1,15 +1,6 @@
-import Accordion from "@/components/accordion/Accordion"
-import TitleAccordion from "@/components/accordion/TitleAccordion"
-import IconToggle from "@/components/buttons/IconToggle"
-import ListDialog from "@/components/dialogs/ListDialog"
 import MaxBytesCmp from "@/components/input/MaxBytesCmp"
 import MaxNumberCmp from "@/components/input/MaxNumberCmp"
 import MaxTimeCmp from "@/components/input/MaxTimeCmp"
-import NumberInput from "@/components/input/NumberInput"
-import TextInput from "@/components/input/TextInput"
-import EditList from "@/components/lists/EditList"
-import EditStringRow from "@/components/rows/EditStringRow"
-import StringUpRow from "@/components/rows/StringUpRow"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { DISCARD, RETENTION, STORAGE } from "@/types/Stream"
@@ -17,6 +8,7 @@ import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
+import { Accordion, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -70,47 +62,47 @@ const Form: FunctionComponent<Props> = ({
 	const inNew = streamSa.editState == EDIT_STATE.NEW
 	const allStreams = streamSa.allStreams
 
-	return <div className="lyt-form var-dialog" style={{ marginBottom: 25 }}>
+	return <div className="jack-lyt-form var-dialog" style={{ marginBottom: 25 }}>
 
 		{inRead && (
 			<TitleAccordion title="STATS">
 
 				<div className="lyt-h-props">
 					<div className="item">
-						<div className="lbl-prop">COUNT</div>
-						<div className="lbl-readonly">{state.messages}</div>
+						<div className="jack-lbl-prop">COUNT</div>
+						<div className="jack-lbl-readonly">{state.messages}</div>
 					</div>
 					<div className="lbl-divider-v" />
 					<div className="item">
-						<div className="lbl-prop">BYTES</div>
-						<div className="lbl-readonly">{state.bytes}</div>
+						<div className="jack-lbl-prop">BYTES</div>
+						<div className="jack-lbl-readonly">{state.bytes}</div>
 					</div>
 					<div className="lbl-divider-v" />
 					<div className="item">
-						<div className="lbl-prop">DELETED</div>
-						<div className="lbl-readonly">{state.numDeleted}</div>
+						<div className="jack-lbl-prop">DELETED</div>
+						<div className="jack-lbl-readonly">{state.numDeleted}</div>
 					</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">FIRST SEQUENCE</div>
-					<div className="lbl-readonly" style={{ display: "flex" }}>
+					<div className="jack-lbl-prop">FIRST SEQUENCE</div>
+					<div className="jack-lbl-readonly" style={{ display: "flex" }}>
 						<div style={{ flex: 1 }}>{state.firstSeq}</div>
 						<div style={{ fontFamily: "monospace" }}>{firstTs}</div>
 					</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">LAST SEQUENCE</div>
-					<div className="lbl-readonly" style={{ display: "flex" }}>
+					<div className="jack-lbl-prop">LAST SEQUENCE</div>
+					<div className="jack-lbl-readonly" style={{ display: "flex" }}>
 						<div style={{ flex: 1 }}>{state.lastSeq}</div>
 						<div style={{ fontFamily: "monospace" }}>{lastTs}</div>
 					</div>
 				</div>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">CONSUMER COUNT</div>
-					<div className="lbl-readonly">{state.consumerCount}</div>
+					<div className="jack-lbl-prop">CONSUMER COUNT</div>
+					<div className="jack-lbl-readonly">{state.consumerCount}</div>
 				</div>
 
 			</TitleAccordion>
@@ -119,7 +111,7 @@ const Form: FunctionComponent<Props> = ({
 		<TitleAccordion title="BASE">
 
 			<div className="lyt-v">
-				<div className="lbl-prop">NAME</div>
+				<div className="jack-lbl-prop">NAME</div>
 				<TextInput
 					value={config.name}
 					onChange={name => handlePropChange({ name })}
@@ -128,7 +120,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">DESCRIPTION</div>
+				<div className="jack-lbl-prop">DESCRIPTION</div>
 				<TextInput multiline rows={2}
 					value={config.description}
 					onChange={description => handlePropChange({ description })}
@@ -137,7 +129,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">STORAGE</div>
+				<div className="jack-lbl-prop">STORAGE</div>
 				<ListDialog width={80}
 					store={streamSo}
 					select={Object.values(STORAGE).indexOf(config.storage ?? STORAGE.FILE)}
@@ -149,7 +141,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">SUBJECTS</div>
+				<div className="jack-lbl-prop">SUBJECTS</div>
 				<EditList<string>
 					items={config.subjects}
 					onItemsChange={subjects => handlePropChange({ subjects })}
@@ -163,23 +155,23 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 			<div className="lyt-v">
-				<div className="lbl-prop">SOURCES</div>
+				<div className="jack-lbl-prop">SOURCES</div>
 				<SourcesCmp store={streamSo} />
 			</div>
 
 			<div className="lyt-v">
-				<div className="cmp-h">
+				<div className="jack-cmp-h">
 					<IconToggle
 						check={!!config.mirror}
 						onChange={handleMirrorCheck}
 						readOnly={inRead || !inNew}
 					/>
-					<div className="lbl-prop">MIRROR</div>
+					<div className="jack-lbl-prop">MIRROR</div>
 				</div>
 				<Accordion open={!!config.mirror}>
-					<div className="lyt-quote">
+					<div className="jack-lyt-quote">
 						<div className="lyt-v">
-							<div className="lbl-prop">NAME</div>
+							<div className="jack-lbl-prop">NAME</div>
 							{/* <TextInput
 							value={config.mirror?.name}
 							onChange={name => handleMirrorPropChange({ name })}
@@ -196,7 +188,7 @@ const Form: FunctionComponent<Props> = ({
 							/>
 						</div>
 						<div className="lyt-v">
-							<div className="lbl-prop">START SEQUENCE</div>
+							<div className="jack-lbl-prop">START SEQUENCE</div>
 							<NumberInput
 								style={{ flex: 1 }}
 								value={config.mirror?.optStartSeq}
@@ -205,7 +197,7 @@ const Form: FunctionComponent<Props> = ({
 							/>
 						</div>
 						<div className="lyt-v">
-							<div className="lbl-prop">FILTER SUBJECT</div>
+							<div className="jack-lbl-prop">FILTER SUBJECT</div>
 							<TextInput
 								value={config.mirror?.filterSubject}
 								onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
@@ -220,7 +212,7 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="RETENTION" open={!inRead}>
 			<div className="lyt-v">
-				<div className="lbl-prop">POLICY</div>
+				<div className="jack-lbl-prop">POLICY</div>
 				<ListDialog width={100}
 					store={streamSo}
 					select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
@@ -231,7 +223,7 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">DISCARD</div>
+				<div className="jack-lbl-prop">DISCARD</div>
 				<ListDialog width={80}
 					store={streamSo}
 					select={Object.values(DISCARD).indexOf(config.discard ?? DISCARD.OLD)}
@@ -243,29 +235,29 @@ const Form: FunctionComponent<Props> = ({
 					}}
 				/>
 			</div>
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={config.allowRollupHdrs}
 					onChange={allowRollupHdrs => handlePropChange({ allowRollupHdrs })}
 					readOnly={inRead}
 				/>
-				<div className="lbl-prop">ALLOW ROLL UP HDRS</div>
+				<div className="jack-lbl-prop">ALLOW ROLL UP HDRS</div>
 			</div>
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={config.denyDelete}
 					onChange={denyDelete => handlePropChange({ denyDelete })}
 					readOnly={inRead || !inNew}
 				/>
-				<div className="lbl-prop">DENY DELETE</div>
+				<div className="jack-lbl-prop">DENY DELETE</div>
 			</div>
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={config.denyPurge}
 					onChange={denyPurge => handlePropChange({ denyPurge })}
 					readOnly={inRead || !inNew}
 				/>
-				<div className="lbl-prop">DENY PURGE</div>
+				<div className="jack-lbl-prop">DENY PURGE</div>
 			</div>
 		</TitleAccordion>
 
@@ -313,7 +305,7 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="PLACEMENT" open={!inRead}>
 			<div className="lyt-v">
-				<div className="lbl-prop">NUM REPLICAS</div>
+				<div className="jack-lbl-prop">NUM REPLICAS</div>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={config.numReplicas}
@@ -322,10 +314,10 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">CLUSTER</div>
-				<div className="lyt-quote">
+				<div className="jack-lbl-prop">CLUSTER</div>
+				<div className="jack-lyt-quote">
 					<div className="lyt-v">
-						<div className="lbl-prop">NAME</div>
+						<div className="jack-lbl-prop">NAME</div>
 						<TextInput
 							value={config.placement?.cluster}
 							onChange={cluster => handlePlacementPropChange({ cluster })}
@@ -333,7 +325,7 @@ const Form: FunctionComponent<Props> = ({
 						/>
 					</div>
 					<div className="lyt-v">
-						<div className="lbl-prop">TAGS</div>
+						<div className="jack-lbl-prop">TAGS</div>
 						<EditList<string>
 							items={config.placement?.tags}
 							onItemsChange={tags => handlePlacementPropChange({ tags })}
@@ -350,16 +342,16 @@ const Form: FunctionComponent<Props> = ({
 
 
 		<TitleAccordion title="PUBLISH" open={!inRead}>
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={config.noAck}
 					onChange={noAck => handlePropChange({ noAck })}
 					readOnly={inRead}
 				/>
-				<div className="lbl-prop">ALLOW NO ACK ON PUBLISH</div>
+				<div className="jack-lbl-prop">ALLOW NO ACK ON PUBLISH</div>
 			</div>
 			<div className="lyt-v">
-				<div className="lbl-prop">DUPLICATE WINDOW</div>
+				<div className="jack-lbl-prop">DUPLICATE WINDOW</div>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={config.duplicateWindow}
@@ -368,7 +360,7 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 			<div className="lyt-v">
-				<div className="cmp-h">
+				<div className="jack-cmp-h">
 					<IconToggle
 						check={!!config.republish}
 						onChange={check => {
@@ -390,12 +382,12 @@ const Form: FunctionComponent<Props> = ({
 						}}
 						readOnly={inRead}
 					/>
-					<div className="lbl-prop">REPUBLISH</div>
+					<div className="jack-lbl-prop">REPUBLISH</div>
 				</div>
 				<Accordion open={!!config.republish}>
-					<div className="lyt-quote">
+					<div className="jack-lyt-quote">
 						<div className="lyt-v">
-							<div className="lbl-prop">SOURCE</div>
+							<div className="jack-lbl-prop">SOURCE</div>
 							<TextInput
 								value={config.republish?.src}
 								onChange={src => handleRepublishPropChange({ src })}
@@ -403,20 +395,20 @@ const Form: FunctionComponent<Props> = ({
 							/>
 						</div>
 						<div className="lyt-v">
-							<div className="lbl-prop">DESTINATION</div>
+							<div className="jack-lbl-prop">DESTINATION</div>
 							<TextInput
 								value={config.republish?.dest}
 								onChange={dest => handleRepublishPropChange({ dest })}
 								readOnly={inRead}
 							/>
 						</div>
-						<div className="cmp-h">
+						<div className="jack-cmp-h">
 							<IconToggle
 								check={config.republish?.headersOnly}
 								onChange={headersOnly => handleRepublishPropChange({ headersOnly })}
 								readOnly={inRead}
 							/>
-							<div className="lbl-prop">HEADERS ONLY</div>
+							<div className="jack-lbl-prop">HEADERS ONLY</div>
 						</div>
 					</div>
 				</Accordion>
@@ -425,17 +417,17 @@ const Form: FunctionComponent<Props> = ({
 
 
 		<TitleAccordion title="SEAL" open={!inRead}>
-			<div className="cmp-h">
+			<div className="jack-cmp-h">
 				<IconToggle
 					check={config.sealed}
 					onChange={sealed => handlePropChange({ sealed })}
 					readOnly={inRead}
 				/>
-				<div className="lbl-prop">SEALED</div>
+				<div className="jack-lbl-prop">SEALED</div>
 			</div>
 
 			{/*<div className="lyt-v">
-			<div className="lbl-prop">TEMPLATE OWNER</div>
+			<div className="jack-lbl-prop">TEMPLATE OWNER</div>
 			<TextInput
 				value={config.templateOwner}
 				onChange={templateOwner => handlePropChange({templateOwner})}

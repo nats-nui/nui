@@ -1,7 +1,4 @@
-import Button from "@/components/buttons/Button"
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import AlertDialog from "@/components/dialogs/AlertDialog"
-import OptionsCmp from "@/components/loaders/OptionsCmp"
 import AlertIcon from "@/icons/AlertIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DoneIcon from "@/icons/DoneIcon"
@@ -15,7 +12,9 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
-
+import clsCard from "../CardGreenDef.module.css"
+import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
+import { AlertDialog, Button, OptionsCmp } from "@priolo/jack"
 
 
 interface Props {
@@ -75,6 +74,8 @@ const CnnListView: FunctionComponent<Props> = ({
 
 
 	return <FrameworkCard
+		className={clsCard.root}
+		icon={<ConnectionsIcon />}
 		store={cnnListSo}
 		actionsRender={<>
 			<OptionsCmp
@@ -103,7 +104,7 @@ const CnnListView: FunctionComponent<Props> = ({
 				onClick={() => handleSelect(cnn)}
 			/>
 		)) : (
-			<div className="lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
+			<div className="jack-lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
 		)}
 
 		<AlertDialog store={cnnListSo} />

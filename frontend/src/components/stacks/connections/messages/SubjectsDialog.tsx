@@ -1,17 +1,12 @@
-import TitleAccordion from "@/components/accordion/TitleAccordion"
-import Button from "@/components/buttons/Button"
-import IconToggle from "@/components/buttons/IconToggle"
-import FindInput from "@/components/input/FindInput"
-import EditList from "@/components/lists/EditList"
-import List, { RenderRowBaseProps } from "@/components/lists/List"
 import EditSubscriptionRow from "@/components/rows/EditSubscriptionRow"
 import { MessageStat, MessagesState, MessagesStore } from "@/stores/stacks/connection/messages"
 import { Subscription } from "@/types"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import Dialog from "../../../dialogs/Dialog"
 import cls from "./SubjectsDialog.module.css"
+import { Button, Dialog, EditList, FindInput, IconToggle, List, TitleAccordion } from "@priolo/jack"
+import { RenderRowBaseProps } from "@priolo/jack"
 
 
 
@@ -93,7 +88,7 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 		open={msgSa.subscriptionsOpen}
 		onClose={handleCancel}
 	>
-		<div className="lyt-form var-dialog">
+		<div className="jack-lyt-form var-dialog">
 
 			<EditList<Subscription>
 				items={subscriptions}
@@ -119,12 +114,12 @@ const SubjectsDialog: FunctionComponent<Props> = ({
 				/>
 			</TitleAccordion>
 
-			<div className="cmp-h" style={{ marginTop: 10 }}>
+			<div className="jack-cmp-h" style={{ marginTop: 10 }}>
 				<IconToggle
 					check={msgSa.noSysMessages}
 					onChange={() => msgSo.setNoSysMessages(!msgSa.noSysMessages)}
 				/>
-				<div className="lbl-prop">DISCARDS SYSTEM MESSAGES</div>
+				<div className="jack-lbl-prop">DISCARDS SYSTEM MESSAGES</div>
 			</div>
 
 			<div className="var-dialog cmp-footer">

@@ -1,7 +1,7 @@
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import CloseIcon from "@/icons/CloseIcon"
 import React, { FunctionComponent, useState } from "react"
 import cls from "./MenuButton.module.css"
+import { TooltipWrapCmp } from "@priolo/jack"
 
 
 
@@ -10,6 +10,7 @@ interface Props {
 	subtitle?: string
 	children?: React.ReactNode
 	badge?: React.ReactNode
+	style?: React.CSSProperties
 	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 	onClose?: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -23,6 +24,7 @@ const MenuButton: FunctionComponent<Props> = ({
 	subtitle,
 	children,
 	badge,
+	style,
 	className,
 	onClick,
 	onClose,
@@ -39,14 +41,18 @@ const MenuButton: FunctionComponent<Props> = ({
 	const showCloseBtt = enter && !!onClose
 	const clsRoot = `${className ?? ""} ${cls.root}`
 	return (
-		<div className={clsRoot}
+		<div
+			style={style}
+			className={clsRoot}
 			onClick={onClick}
 		>
 			<TooltipWrapCmp className={cls.box}
-				content={<div>
-					<div className={cls.tooltip_title}>{title}</div>
-					<div className={cls.tooltip_sub}>{subtitle}</div>
-				</div>}
+				content={
+					<div className={cls.tooltip}>
+						<div className={cls.title}>{title}</div>
+						<div className={cls.sub}>{subtitle}</div>
+					</div>
+				}
 				onMouseOver={enter => setEnter(enter)}
 			>
 				{/* BADGE BUTTON CANCEL */}
@@ -55,7 +61,7 @@ const MenuButton: FunctionComponent<Props> = ({
 				><CloseIcon /></div>}
 
 				{/* BADGE */}
-				{badge && <div className={`color-bg color-text ${cls.badge}`}
+				{badge && <div className={cls.badge}
 					onClick={onClose}
 				>{badge}</div>}
 

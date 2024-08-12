@@ -1,18 +1,10 @@
-import TitleAccordion from "@/components/accordion/TitleAccordion"
-import Button from "@/components/buttons/Button"
-import IconToggle from "@/components/buttons/IconToggle"
-import Dialog from "@/components/dialogs/Dialog"
-import DateTimeInput from "@/components/input/DateTimeInput"
-import NumberInput from "@/components/input/NumberInput"
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
-import ListMultiWithFilter from "../../../lists/ListMultiWithFilter"
-import EditList from "@/components/lists/EditList"
-import EditStringRow from "@/components/rows/EditStringRow"
 import cls from "./FllterDialog.module.css"
+import { Button, DateTimeInput, Dialog, EditList, EditStringRow, IconToggle, ListMultiWithFilter, NumberInput, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -83,15 +75,15 @@ const FilterDialog: FunctionComponent<Props> = ({
 			open={strMsgSa.filtersOpen}
 			onClose={handleClose}
 		>
-			<div className="lyt-form var-dialog">
+			<div className="jack-lyt-form var-dialog">
 
-				<div className="cmp-h">
+				<div className="jack-cmp-h">
 					<IconToggle
 						check={!filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: false })}
 						trueIcon={<CheckRadioOnIcon />}
 					/>
-					<div className="lbl-prop">START</div>
+					<div className="jack-lbl-prop">START</div>
 					<div style={{ flex: 1 }} />
 					<div style={{ display: "flex", alignItems: "center", gap: 2 }}>
 						[<Button onClick={hadleFirstSeqClick}>{firstSeq}</Button>
@@ -106,13 +98,13 @@ const FilterDialog: FunctionComponent<Props> = ({
 					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
 				/>
 
-				<div className="cmp-h">
+				<div className="jack-cmp-h">
 					<IconToggle
 						check={filter.byTime}
 						onChange={select => handleFilterPropChange({ byTime: true })}
 						trueIcon={<CheckRadioOnIcon />}
 					/>
-					<div className="lbl-prop">TIME START</div>
+					<div className="jack-lbl-prop">TIME START</div>
 				</div>
 				<DateTimeInput
 					style={{ flex: 1 }}
@@ -121,7 +113,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				/>
 
 				<div className="lyt-v">
-					<div className="lbl-prop">INTERVAL</div>
+					<div className="jack-lbl-prop">INTERVAL</div>
 					<NumberInput
 						style={{ flex: 1 }}
 						value={filter.interval}
@@ -135,7 +127,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 						selects={filter.subjects}
 						onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
 						renderRow={(item, index) => <div className={cls.sbj_row}>
-							<div className="lbl-prop">{item}</div>
+							<div className="jack-lbl-prop">{item}</div>
 							<div className={cls.sbj_row_counter}>{counters[index]}</div>
 						</div>}
 					/>

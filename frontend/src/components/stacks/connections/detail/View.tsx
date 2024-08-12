@@ -1,8 +1,6 @@
-import IconButton from "@/components/buttons/IconButton"
 import LinkButton from "@/components/buttons/LinkButton"
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
-import TooltipWrapCmp from "@/components/tooltip/TooltipWrapCmp"
 import SendIcon from "@/icons/SendIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
@@ -14,7 +12,9 @@ import { FunctionComponent } from "react"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
 import SyncIcon from "@/icons/SyncIcon"
-
+import clsGreen from "../../CardGreen.module.css"
+import ConnectionIcon from "../../../../icons/cards/ConnectionIcon"
+import { IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 
 interface Props {
@@ -54,7 +54,9 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
 	</TooltipWrapCmp>
 
-	return <FrameworkCard variantBg
+	return <FrameworkCard
+		className={clsGreen.root}
+		icon={<ConnectionIcon />}
 		store={cnnDetailSo}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
 		iconizedRender={

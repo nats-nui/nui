@@ -1,6 +1,4 @@
-import Accordion from "@/components/accordion/Accordion"
-import IconToggle from "@/components/buttons/IconToggle"
-import NumberInput from "@/components/input/NumberInput"
+import { Accordion, IconToggle, NumberInput } from "@priolo/jack"
 import { FunctionComponent } from "react"
 
 
@@ -41,16 +39,16 @@ const MaxNumberCmp: FunctionComponent<Props> = ({
 	const valueShow = value
 
 	return <div className="lyt-v">
-		<div className="cmp-h">
+		<div className="jack-cmp-h">
 			<IconToggle
 				check={isEnabled}
 				onChange={handleEnabledCheck}
 				readOnly={readOnly}
 			/>
-			<div className="lbl-prop">{label}</div>
+			<div className="jack-lbl-prop">{label}</div>
 		</div>
 		<Accordion open={isEnabled}>
-			<div className="cmp-h" style={{ minHeight: 22 }}>
+			<div className="jack-cmp-h" style={{ minHeight: 22 }}>
 				<NumberInput
 					style={{ flex: 1 }}
 					value={valueShow}
