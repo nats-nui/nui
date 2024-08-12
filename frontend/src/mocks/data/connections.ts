@@ -15,6 +15,12 @@ const connections:Connection[] = [
 		auth: [
 			{ mode: AUTH_MODE.CREDS_FILE, creds: "myfle.cred" }
 		],
+		tls_auth: {
+			enabled: true,
+			cert_path: "./certs/cert.pem",
+			key_path: "./certs/key.pem",
+			ca_path: "./certs/ca.pem",
+		}
 	},
 	{
 		id: "cnn-2",
