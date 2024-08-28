@@ -114,10 +114,7 @@ export function newSource(): Source {
 	return {
 		name: "",
 		domain: "",
-		external: {
-			api: "",
-			deliver: ""
-		},
+		external: null,
 		filterSubject: "",
 		optStartSeq: 0,
 	}
