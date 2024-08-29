@@ -264,14 +264,15 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="LIMIT" open={!inRead}>
 			<MaxTimeCmp store={streamSo}
-				readOnly={inRead || !inNew}
+				readOnly={inRead}
 				label="MAX AGE"
 				value={config.maxAge}
 				desiredDefault={0}
+				initDefault={null}
 				onChange={maxAge => streamSo.setStreamConfig({ ...streamSa.stream.config, maxAge })}
 			/>
 			<MaxBytesCmp store={streamSo}
-				readOnly={inRead || !inNew}
+				readOnly={inRead}
 				label="MAX BYTES"
 				value={config.maxBytes}
 				onChange={maxBytes => streamSo.setStreamConfig({ ...streamSa.stream.config, maxBytes })}
@@ -283,19 +284,19 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxConsumers => streamSo.setStreamConfig({ ...streamSa.stream.config, maxConsumers })}
 			/>
 			<MaxBytesCmp store={streamSo}
-				readOnly={inRead || !inNew}
+				readOnly={inRead}
 				label="MAX MSG SIZE"
 				value={config.maxMsgSize}
 				onChange={maxMsgSize => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgSize })}
 			/>
 			<MaxNumberCmp
-				readOnly={inRead || !inNew}
+				readOnly={inRead}
 				label="MAX MESSAGES"
 				value={config.maxMsgs}
 				onChange={maxMsgs => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgs })}
 			/>
 			<MaxNumberCmp
-				readOnly={inRead || !inNew}
+				readOnly={inRead}
 				label="MAX MSGS PER SUBJECT"
 				value={config.maxMsgsPerSubject}
 				onChange={maxMsgsPerSubject => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgsPerSubject })}
