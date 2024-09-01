@@ -1,7 +1,7 @@
 import { Source } from "@/types/Stream"
-import {NumberInput, TextInput, Options, IconToggle, TooltipWrapCmp} from "@priolo/jack"
+import {NumberInput, TextInput, Options, IconToggle, TooltipWrapCmp, DateTimeInput} from "@priolo/jack"
 import {FunctionComponent, useEffect, useState} from "react"
-
+import dayjs from "dayjs";
 
 
 interface Props {
@@ -23,13 +23,20 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	//chose if render sources select dialog or external source dialog
 	const [isExternal, setIsExternal] = useState<boolean>(false)
+	const [optStartTime, setOptStartTime] = useState<string>("")
 	useEffect(() => {
 		setIsExternal(source?.external != null)
-	}, []);
+		setOptStartTime(source?.optStartTime ? dayjs(source.optStartTime).format("YYYY-MM-DD HH:mm:ss") : "")
+	}, [source.name]);
 	// HANDLER
 	const handleNameChange = (name: string) => onChange?.({ ...source, name })
 	const handleSequenceChange = (optStartSeq: number) => onChange?.({ ...source, optStartSeq })
-	//const handleStartTimeChange = (startTime: any) => onChange?.({ ...source, startTime: startTime })
+	const handleStartTimeChange = (startTime: any) => {
+		setOptStartTime(startTime)
+		const time = dayjs(startTime)
+		const isoTime = time.isValid() ? time.toISOString() : ""
+		onChange?.({ ...source, optStartTime: isoTime })
+	}
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
 
 	const handleIsExternalChange = (check: boolean) => {
@@ -46,6 +53,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!source) return null
+	const timeRender = source.optStartTime ? dayjs(source.optStartTime).format("YYYY-MM-DD HH:mm:ss") : ""
 
 	return <div className="jack-lyt-form var-dialog">
 		<div className="lyt-v">
@@ -108,14 +116,23 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 		</div>
 
 		<div className="lyt-v">
-			<div className="jack-lbl-prop">FILTER SUBJECTS</div>
-			<TextInput
-				value={source.filterSubject}
-				onChange={handleFilterSubjectChange}
+			<div className="jack-lbl-prop">START TIME</div>
+			<DateTimeInput
+				style={{flex: 1}}
+				value={optStartTime}
+				onChange={handleStartTimeChange}
 				readOnly={readOnly}
 			/>
 		</div>
-	</div>
-}
+			<div className="lyt-v">
+				<div className="jack-lbl-prop">FILTER SUBJECTS</div>
+				<TextInput
+					value={source.filterSubject}
+					onChange={handleFilterSubjectChange}
+					readOnly={readOnly}
+				/>
+			</div>
+		</div>
+		}
 
-export default EditSourceCmp
+		export default EditSourceCmp
