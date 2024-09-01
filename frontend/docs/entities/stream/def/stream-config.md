@@ -60,7 +60,12 @@ Mirror {
 	/** is taken from stream names */
 	name: string				// omitted if empty
 	optStartSeq: number			// omitted if zero
+    optStartTime: string        // omitted if empty
 	filterSubject: string		// omitted if empty
+    external: {					// omitted if null
+        api: string
+        deliver: string
+    }
 }
 ```
 
