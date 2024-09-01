@@ -78,7 +78,8 @@ export interface Placement {
 
 export interface Source {
 	name: string				// string, omitted if empty
-	optStartSeq: number			// integer, omitted if zero
+	optStartSeq: number
+	optStartTime: string	    // time string, omitted if zero
 	filterSubject: string		// string, omitted if empty
 	external: {					// object, omitted if null
 		api: string
