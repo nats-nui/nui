@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 
 interface Props {
 	source: Source
-	external?: boolean
 	readOnly?: boolean
 	allStream?: string[]
 	onChange: (source: Source) => void
@@ -34,7 +33,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	const handleStartTimeChange = (startTime: any) => {
 		setOptStartTime(startTime)
 		const time = dayjs(startTime)
-		const isoTime = time.isValid() ? time.toISOString() : ""
+		const isoTime = time.isValid() ? time.toISOString() : null
 		onChange?.({ ...source, optStartTime: isoTime })
 	}
 	const handleFilterSubjectChange = (filterSubject: string) => onChange?.({ ...source, filterSubject })
