@@ -117,5 +117,6 @@ export function newSource(): Source {
 		external: null,
 		filterSubject: "",
 		optStartSeq: 0,
+		optStartTime: null
 	}
 }
