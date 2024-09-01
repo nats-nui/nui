@@ -3,12 +3,13 @@ import MaxNumberCmp from "@/components/input/MaxNumberCmp"
 import MaxTimeCmp from "@/components/input/MaxTimeCmp"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
-import { DISCARD, RETENTION, STORAGE } from "@/types/Stream"
+import {DISCARD, RETENTION, Source, STORAGE} from "@/types/Stream"
 import { dateShow } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
 import { Accordion, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx";
 
 
 
@@ -32,6 +33,10 @@ const Form: FunctionComponent<Props> = ({
 		config.mirror = { ...config.mirror, ...prop }
 		streamSo.setStreamConfig(config)
 	}
+	const handleMirrorChange = (mirror: Source) => {
+		config.mirror = mirror
+		streamSo.setStreamConfig(config)
+	}
 	const handleRepublishPropChange = (prop: { [name: string]: any }) => {
 		const config = { ...streamSa.stream.config }
 		config.republish = { ...config.republish, ...prop }
@@ -44,7 +49,7 @@ const Form: FunctionComponent<Props> = ({
 	}
 	const handleMirrorCheck = (check: boolean) => {
 		if (check && !config.mirror) {
-			handlePropChange({ mirror: { name: "", optStartSeq: 0, filterSubject: "" } })
+			handlePropChange({ mirror: { name: "", optStartSeq: 0, optStartTime: null, filterSubject: "" } })
 			return
 		}
 		if (!check && config.mirror) {
@@ -153,10 +158,12 @@ const Form: FunctionComponent<Props> = ({
 					RenderRow={EditStringRow}
 				/>
 			</div>
+		</TitleAccordion>
 
+		<TitleAccordion title="SOURCE / MIRROR" open={!inRead}>
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">SOURCES</div>
-				<SourcesCmp store={streamSo} />
+				<SourcesCmp store={streamSo}/>
 			</div>
 
 			<div className="lyt-v">
@@ -169,64 +176,33 @@ const Form: FunctionComponent<Props> = ({
 					<div className="jack-lbl-prop">MIRROR</div>
 				</div>
 				<Accordion open={!!config.mirror}>
-					<div className="jack-lyt-quote">
-						<div className="lyt-v">
-							<div className="jack-lbl-prop">NAME</div>
-							{/* <TextInput
-							value={config.mirror?.name}
-							onChange={name => handleMirrorPropChange({ name })}
-							readOnly={inRead || !inNew}
-						/> */}
-							<ListDialog width={200}
-								store={streamSo}
-								select={allStreams?.indexOf(config?.mirror?.name) ?? -1}
-								items={allStreams}
-								readOnly={inRead || !inNew}
-								onSelect={index => {
-									handleMirrorPropChange({ name: allStreams[index] })
-								}}
-							/>
-						</div>
-						<div className="lyt-v">
-							<div className="jack-lbl-prop">START SEQUENCE</div>
-							<NumberInput
-								style={{ flex: 1 }}
-								value={config.mirror?.optStartSeq}
-								onChange={optStartSeq => handleMirrorPropChange({ optStartSeq })}
-								readOnly={inRead || !inNew}
-							/>
-						</div>
-						<div className="lyt-v">
-							<div className="jack-lbl-prop">FILTER SUBJECT</div>
-							<TextInput
-								value={config.mirror?.filterSubject}
-								onChange={filterSubject => handleMirrorPropChange({ filterSubject })}
-								readOnly={inRead || !inNew}
-							/>
-						</div>
-					</div>
+					{config.mirror && <EditSourceCmp
+						source={config.mirror}
+						readOnly={inRead || !inNew}
+						allStream={streamSa.allStreams}
+						onChange={handleMirrorChange}
+					/>}
 				</Accordion>
 			</div>
 		</TitleAccordion>
-
 
 		<TitleAccordion title="RETENTION" open={!inRead}>
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">POLICY</div>
 				<ListDialog width={100}
-					store={streamSo}
-					select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
-					items={Object.values(RETENTION)}
-					RenderRow={StringUpRow}
-					readOnly={inRead || !inNew}
-					onSelect={index => handlePropChange({ retention: Object.values(RETENTION)[index] })}
+							store={streamSo}
+							select={Object.values(RETENTION).indexOf(config.retention ?? RETENTION.INTEREST)}
+							items={Object.values(RETENTION)}
+							RenderRow={StringUpRow}
+							readOnly={inRead || !inNew}
+							onSelect={index => handlePropChange({retention: Object.values(RETENTION)[index]})}
 				/>
 			</div>
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">DISCARD</div>
 				<ListDialog width={80}
-					store={streamSo}
-					select={Object.values(DISCARD).indexOf(config.discard ?? DISCARD.OLD)}
+							store={streamSo}
+							select={Object.values(DISCARD).indexOf(config.discard ?? DISCARD.OLD)}
 					items={Object.values(DISCARD)}
 					RenderRow={StringUpRow}
 					readOnly={inRead}
