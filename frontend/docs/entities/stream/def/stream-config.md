@@ -40,6 +40,7 @@ StreamConfig {
 	republish: Republish 		// omitted if null
 	allow_direct: boolean 		// omitted if false
 	mirror_direct: boolean 		// omitted if false
+    metadata? {[key: string] : string} // hash of string -> string to add custom metadata to consumer
 }
 ```
 

@@ -18,7 +18,11 @@ const consumers: any[] = [
 			"max_ack_pending": -1,
 			"max_batch": 4096,
 			"max_bytes": -1,
-			"num_replicas": 1
+			"num_replicas": 1,
+			"metadata": {
+				"key1": "value1",
+				"key2": "value2"
+			}
 		},
 		"delivered": {
 			"consumer_seq": 0,

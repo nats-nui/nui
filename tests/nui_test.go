@@ -133,7 +133,14 @@ func (s *NuiTestSuite) TestStreamRest() {
 
 	// update stream
 	e.POST("/api/connection/"+connId+"/stream/stream1").
-		WithBytes([]byte(`{"name": "stream1", "storage": "memory", "subjects": ["sub1", "sub2", "sub3"]}`)).
+		WithBytes([]byte(
+			`{
+                "name": "stream1", 
+                "storage": "memory", 
+                "subjects": ["sub1", "sub2", "sub3"],
+                "metadata": {"meta_key": "meta_val"}
+            }`,
+		)).
 		Expect().
 		Status(http.StatusOK).
 		JSON().Object().Value("config").Object().Value("subjects").
@@ -145,6 +152,7 @@ func (s *NuiTestSuite) TestStreamRest() {
 		Status(http.StatusOK).JSON().Object()
 	r2.Value("config").Object().Value("name").String().IsEqual("stream1")
 	r2.Value("config").Object().Value("subjects").Array().ContainsAll("sub1", "sub2", "sub3")
+	r2.Value("config").Object().Value("metadata").Object().Value("meta_key").String().IsEqual("meta_val")
 
 	// delete stream
 	e.DELETE("/api/connection/" + connId + "/stream/stream1").
@@ -232,13 +240,16 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 		Description:   "",
 		DeliverPolicy: 0,
 		OptStartSeq:   0,
+		Metadata:      map[string]string{"meta_key": "meta_val"},
 	})
 	e.POST("/api/connection/" + connId + "/stream/stream1/consumer").
 		WithBytes(consumerConfig).Expect().Status(200)
-
+	time.Sleep(2000 * time.Millisecond)
 	// get the new consumer
-	e.GET("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
-		Expect().Status(200).JSON().Object().Value("name").IsEqual("new_consumer")
+	ro := e.GET("/api/connection/" + connId + "/stream/stream1/consumer/new_consumer").
+		Expect().Status(200).JSON().Object()
+	ro.Value("name").IsEqual("new_consumer")
+	ro.Value("config").Object().Value("metadata").Object().Value("meta_key").String().IsEqual("meta_val")
 
 	// update the new consumer
 	consumerConfig, _ = json.Marshal(jetstream.ConsumerConfig{
