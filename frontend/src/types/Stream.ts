@@ -32,6 +32,7 @@ export interface StreamConfig {
 	republish: Republish 		// object, omitted if null
 	allowDirect: boolean 			// boolean, omitted if false
 	mirrorDirect: boolean 		// boolean, omitted if false
+	metadata?: { [key: string]: string } // hash of string -> string to add custom metadata to consumer
 }
 
 export interface StreamState {

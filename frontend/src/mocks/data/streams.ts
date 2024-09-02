@@ -23,7 +23,11 @@ const streams: any[] = [
             "compression": "none",
             "allow_direct": false,
             "mirror_direct": false,
-            "consumer_limits": {}
+            "consumer_limits": {},
+            "metadata": {
+                "key1": "value1",
+                "key2": "value2"
+            }
         },
         "created": "2023-10-12T12:23:09.779108275Z",
         "state": {

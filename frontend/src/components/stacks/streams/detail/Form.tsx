@@ -10,6 +10,7 @@ import { FunctionComponent } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
 import { Accordion, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx";
+import EditMetadataRow from "@/components/rows/EditMetadataRow.tsx";
 
 
 
@@ -47,6 +48,13 @@ const Form: FunctionComponent<Props> = ({
 		config.placement = { ...config.placement, ...prop }
 		streamSo.setStreamConfig(config)
 	}
+	const handleMetadataChange = (tuples: [string, string][]) => {
+		const metadata = tuples.reduce((acc, [key, value]) => {
+			acc[key] = value;
+			return acc;
+		}, {} as { [key: string]: string });
+		streamSo.setStreamConfig({ ...config.metadata, metadata })
+	}
 	const handleMirrorCheck = (check: boolean) => {
 		if (check && !config.mirror) {
 			handlePropChange({ mirror: { name: "", optStartSeq: 0, optStartTime: null, filterSubject: "" } })
@@ -56,6 +64,7 @@ const Form: FunctionComponent<Props> = ({
 			handlePropChange({ mirror: null })
 		}
 	}
+
 
 	// RENDER
 	if (streamSa.stream?.config == null) return null
@@ -412,6 +421,22 @@ const Form: FunctionComponent<Props> = ({
 			/>
 		</div>*/}
 		</TitleAccordion>
+
+		<TitleAccordion title="ADVANCED" open={!inRead}>
+			<div className="lyt-v">
+				<div className="jack-lbl-prop">METADATA</div>
+				<EditList<[string, string]>
+					items={!!config.metadata ? Object.entries(config.metadata) : []}
+					onItemsChange={handleMetadataChange}
+					readOnly={inRead}
+					placeholder="ex. 10"
+					onNewItem={() => ["", ""]}
+					fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
+					RenderRow={EditMetadataRow}
+				/>
+			</div>
+		</TitleAccordion>
+
 
 	</div>
 }
