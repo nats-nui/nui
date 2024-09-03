@@ -10,7 +10,7 @@ import { FunctionComponent } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
 import { Accordion, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx";
-import EditMetadataRow from "@/components/rows/EditMetadataRow.tsx";
+import KeyValueMap from "@/components/input/KeyValueMap.tsx";
 
 
 
@@ -29,12 +29,8 @@ const Form: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => streamSo.setStreamConfig({ ...streamSa.stream.config, ...prop })
-	const handleMirrorPropChange = (prop: { [name: string]: any }) => {
-		const config = { ...streamSa.stream.config }
-		config.mirror = { ...config.mirror, ...prop }
-		streamSo.setStreamConfig(config)
-	}
-	const handleMirrorChange = (mirror: Source) => {
+
+	const handleMirrorPropChange = (mirror: Source) => {
 		config.mirror = mirror
 		streamSo.setStreamConfig(config)
 	}
@@ -48,13 +44,12 @@ const Form: FunctionComponent<Props> = ({
 		config.placement = { ...config.placement, ...prop }
 		streamSo.setStreamConfig(config)
 	}
-	const handleMetadataChange = (tuples: [string, string][]) => {
-		const metadata = tuples.reduce((acc, [key, value]) => {
-			acc[key] = value;
-			return acc;
-		}, {} as { [key: string]: string });
-		streamSo.setStreamConfig({ ...config.metadata, metadata })
+	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
+		const config = { ...streamSa.stream.config }
+		config.metadata = metadata
+		streamSo.setStreamConfig(config)
 	}
+
 	const handleMirrorCheck = (check: boolean) => {
 		if (check && !config.mirror) {
 			handlePropChange({ mirror: { name: "", optStartSeq: 0, optStartTime: null, filterSubject: "" } })
@@ -189,7 +184,7 @@ const Form: FunctionComponent<Props> = ({
 						source={config.mirror}
 						readOnly={inRead || !inNew}
 						allStream={streamSa.allStreams}
-						onChange={handleMirrorChange}
+						onChange={handleMirrorPropChange}
 					/>}
 				</Accordion>
 			</div>
@@ -425,14 +420,11 @@ const Form: FunctionComponent<Props> = ({
 		<TitleAccordion title="ADVANCED" open={!inRead}>
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">METADATA</div>
-				<EditList<[string, string]>
-					items={!!config.metadata ? Object.entries(config.metadata) : []}
-					onItemsChange={handleMetadataChange}
-					readOnly={inRead}
+				<KeyValueMap
+					items={config.metadata}
 					placeholder="ex. 10"
-					onNewItem={() => ["", ""]}
-					fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
-					RenderRow={EditMetadataRow}
+					readOnly={inRead}
+					onChange={handleMetadataPropChange}
 				/>
 			</div>
 		</TitleAccordion>
