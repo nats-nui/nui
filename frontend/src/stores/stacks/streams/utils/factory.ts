@@ -104,13 +104,10 @@ export function buildNewStreamConfig(): StreamConfig {
 		republish: null,
 		allowDirect: false,
 		mirrorDirect: false,
-		compress: "",
+		compression: "",
 		firstSeq: 0,
-		subjectTransform: null, // object, omitted if null
-		consumerLimits: {
-			maxAckPending: 0,
-			inactiveThreshold: 0
-		} // object, omitted if null
+		subjectTransform: null,
+		consumerLimits: null
 	}
 }
 

@@ -63,13 +63,13 @@ const Form: FunctionComponent<Props> = ({
 
     const handleSubjectTransformPropChange = (prop: { [name: string]: any }) => {
         const config = {...streamSa.stream.config}
-        config.republish = {...config.subjectTransform, ...prop}
+        config.subjectTransform = {...config.subjectTransform, ...prop}
         streamSo.setStreamConfig(config)
     }
 
     const handleConsumerLimitsPropChange = (prop: { [name: string]: any }) => {
         const config = {...streamSa.stream.config}
-        config.republish = {...config.consumerLimits, ...prop}
+        config.consumerLimits = {...config.consumerLimits, ...prop}
         streamSo.setStreamConfig(config)
     }
 
@@ -83,6 +83,8 @@ const Form: FunctionComponent<Props> = ({
         }
     }
 
+    // UTILS
+    const compressionIsSet = (compression: COMPRESSION) => compression && compression != COMPRESSION.NONE
 
     // RENDER
     if (streamSa.stream?.config == null) return null
@@ -454,23 +456,24 @@ const Form: FunctionComponent<Props> = ({
             <div className="lyt-v">
                 <div className="jack-cmp-h">
                     <IconToggle
-                        check={!!config.compress}
+                        check={compressionIsSet(config.compression)}
                         onChange={check => {
-                            if (check && !config.compress) {
-                                handlePropChange({compress: COMPRESSION.S2})
+                            if (check && !compressionIsSet(config.compression)) {
+                                handlePropChange({compression: COMPRESSION.S2})
                             } else {
-                                if (!check && config.compress) {
-                                    handlePropChange({compress: COMPRESSION.NONE})
+                                if (!check && compressionIsSet(config.compression)) {
+                                    handlePropChange({compression: COMPRESSION.NONE})
                                 }
                             }
                         }}
                         readOnly={inRead}
                     />
-                    <div className="jack-lbl-prop">COMPRESS</div>
+                    <div className="jack-lbl-prop">COMPRESSION</div>
                 </div>
             </div>
 
             <div className="lyt-v">
+                <div className="jack-lbl-prop">FIRST SEQ</div>
                 <div className="jack-cmp-h">
                     <NumberInput
                         style={{flex: 1}}
@@ -478,7 +481,6 @@ const Form: FunctionComponent<Props> = ({
                         onChange={firstSeq => handlePropChange({firstSeq})}
                         readOnly={inRead && !inNew}
                     />
-                    <div className="jack-lbl-prop">FIRST SEQ</div>
                 </div>
             </div>
 
@@ -536,8 +538,8 @@ const Form: FunctionComponent<Props> = ({
                             if (check && !config.consumerLimits) {
                                 handlePropChange({
                                     consumerLimits: {
-                                        inactive_thresold: 0,
-                                        max_ack_pending: 0,
+                                        inactiveThreshold: 0,
+                                        maxAckPending: 0,
                                     }
                                 })
                             } else {
@@ -553,18 +555,19 @@ const Form: FunctionComponent<Props> = ({
                 <Accordion open={!!config.consumerLimits}>
                     <div className="jack-lyt-quote">
                         <div className="lyt-v">
-                            <div className="jack-lbl-prop">INACTIVE THRESOLD</div>
                             <MaxTimeCmp store={streamSo}
-                                        label="INACTIVE THRESOLD"
+                                        label="INACTIVE THRESHOLD"
                                         value={config.consumerLimits?.inactiveThreshold}
-                                        onChange={nactiveThreshold => handleConsumerLimitsPropChange({ nactiveThreshold })}
+                                        desiredDefault={0}
+                                        initDefault={1}
+                                        onChange={inactiveThreshold => handleConsumerLimitsPropChange({ inactiveThreshold })}
                             />
                         </div>
                         <div className="lyt-v">
                             <div className="jack-lbl-prop">MAX CONSUMERS</div>
                             <NumberInput
-                                value={config.consumerLimits?.maxConsumers}
-                                onChange={maxConsumers => handleConsumerLimitsPropChange({maxConsumers})}
+                                value={config.consumerLimits?.maxAckPending}
+                                onChange={maxAckPending => handleConsumerLimitsPropChange({maxAckPending})}
                                 readOnly={inRead}
                             />
                         </div>

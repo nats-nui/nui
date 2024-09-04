@@ -33,7 +33,7 @@ export interface StreamConfig {
 	allowDirect: boolean 			// boolean, omitted if false
 	mirrorDirect: boolean 		// boolean, omitted if false
 	metadata?: { [key: string]: string } // hash of string -> string to add custom metadata to consumer
-	compress: string 			// string, omitted if null
+	compression: string 			// string, omitted if null
 	firstSeq: number 			// integer, omitted if zero
 	subjectTransform?: SubjectTransform // object, omitted if null
 	consumerLimits: ConsumerLimit // object, omitted if null
