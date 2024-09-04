@@ -41,6 +41,10 @@ StreamConfig {
 	allow_direct: boolean 		// omitted if false
 	mirror_direct: boolean 		// omitted if false
     metadata? {[key: string] : string} // hash of string -> string to add custom metadata to consumer
+    compress: string 			// string, omitted if null
+    firstSeq: number 			// integer, omitted if zero
+    subjectTransform?: SubjectTransform // object, omitted if null
+    consumerLimits: ConsumerLimit // object, omitted if null
 }
 ```
 
@@ -93,6 +97,18 @@ Source {
 		deliver: string
 	}
 	domain: string 				// omitted if empty
+}
+```
+```typescript
+SubjectTransform {
+    src: string
+    dest: string
+}
+```
+```typescript
+ConsumerLimit {
+    inactiveThreshold: string   // time string, omitted if zero
+    maxAckPending: number 		// integer, omitted if zero
 }
 ```
 
