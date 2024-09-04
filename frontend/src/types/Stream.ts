@@ -33,6 +33,10 @@ export interface StreamConfig {
 	allowDirect: boolean 			// boolean, omitted if false
 	mirrorDirect: boolean 		// boolean, omitted if false
 	metadata?: { [key: string]: string } // hash of string -> string to add custom metadata to consumer
+	compress: string 			// string, omitted if null
+	firstSeq: number 			// integer, omitted if zero
+	subjectTransform?: SubjectTransform // object, omitted if null
+	consumerLimits: ConsumerLimit // object, omitted if null
 }
 
 export interface StreamState {
@@ -89,6 +93,15 @@ export interface Source {
 	domain: string 				// string, omitted if empty
 }
 
+export interface SubjectTransform {
+	src: string
+	dest: string
+}
+
+export interface ConsumerLimit {
+	inactiveThreshold: number // time string, omitted if zero
+	maxAckPending: number 		// integer, omitted if zero
+}
 
 export enum STORAGE {
 	FILE = "file",
@@ -109,4 +122,8 @@ export enum UM_BIT {
 	MBIT = "MiB",
 	GBIT = "GiB",
 	TBIT = "TiB",
+}
+export enum COMPRESSION {
+	NONE = "none",
+	S2 = "s2",
 }

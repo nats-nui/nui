@@ -1,11 +1,12 @@
 import { StreamInfo } from "@/types/Stream"
 import { randomStreams } from "./utils/stream"
+import {randomInt} from "@/mocks/data/utils.ts";
 
 
 const streams: any[] = [
     {
         "config": {
-            "name": "$MQTT_msgs",
+            "name": "__test1",
             "subjects": [
                 "$MQTT.msgs.>"
             ],
@@ -23,10 +24,19 @@ const streams: any[] = [
             "compression": "none",
             "allow_direct": false,
             "mirror_direct": false,
-            "consumer_limits": {},
             "metadata": {
                 "key1": "value1",
                 "key2": "value2"
+            },
+            "compress": "s2",
+            "first_seq": 10,
+            "subject_transform": {
+                "src": "foo.*",
+                "dest": "foo.bar.*"
+            },
+            "consumer_limits": {
+                "inactive_thresold": 10000,
+                "max_ack_pending": 10,
             }
         },
         "created": "2023-10-12T12:23:09.779108275Z",
@@ -46,7 +56,7 @@ const streams: any[] = [
     },
     {
         "config": {
-            "name": "$MQTT_out",
+            "name": "__test2",
             "subjects": [
                 "$MQTT.out.>"
             ],
