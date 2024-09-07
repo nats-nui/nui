@@ -97,7 +97,7 @@ const Form: FunctionComponent<Props> = ({
     const inNew = streamSa.editState == EDIT_STATE.NEW
     const allStreams = streamSa.allStreams
     // this is needed because NATS return an empty object instead of null when consumer limits are not set
-    const consumerLimitsIsSet  = config.consumerLimits != null && Object.keys(config.consumerLimits).length === 0
+    const consumerLimitsIsSet  = config.consumerLimits != null && Object.keys(config.consumerLimits).length > 0
 
     return <div className="jack-lyt-form var-dialog" style={{marginBottom: 25}}>
 
@@ -555,7 +555,7 @@ const Form: FunctionComponent<Props> = ({
                     />
                     <div className="jack-lbl-prop">CONSUMER LIMITS</div>
                 </div>
-                <Accordion open={!!config.consumerLimits}>
+                <Accordion open={consumerLimitsIsSet}>
                     <div className="jack-lyt-quote">
                         <div className="lyt-v">
                             <MaxTimeCmp store={streamSo}
