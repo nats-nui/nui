@@ -86,6 +86,7 @@ const Form: FunctionComponent<Props> = ({
     // UTILS
     const compressionIsSet = (compression: COMPRESSION) => compression && compression != COMPRESSION.NONE
 
+
     // RENDER
     if (streamSa.stream?.config == null) return null
     const config = streamSa.stream.config
@@ -95,6 +96,8 @@ const Form: FunctionComponent<Props> = ({
     const inRead = streamSa.editState == EDIT_STATE.READ
     const inNew = streamSa.editState == EDIT_STATE.NEW
     const allStreams = streamSa.allStreams
+    // this is needed because NATS return an empty object instead of null when consumer limits are not set
+    const consumerLimitsIsSet  = config.consumerLimits != null && Object.keys(config.consumerLimits).length === 0
 
     return <div className="jack-lyt-form var-dialog" style={{marginBottom: 25}}>
 
@@ -533,9 +536,9 @@ const Form: FunctionComponent<Props> = ({
             <div className="lyt-v">
                 <div className="jack-cmp-h">
                     <IconToggle
-                        check={!!config.consumerLimits}
+                        check={consumerLimitsIsSet}
                         onChange={check => {
-                            if (check && !config.consumerLimits) {
+                            if (check && !consumerLimitsIsSet) {
                                 handlePropChange({
                                     consumerLimits: {
                                         inactiveThreshold: 0,
@@ -543,7 +546,7 @@ const Form: FunctionComponent<Props> = ({
                                     }
                                 })
                             } else {
-                                if (!check && config.consumerLimits) {
+                                if (!check && consumerLimitsIsSet) {
                                     handlePropChange({consumerLimits: null})
                                 }
                             }
