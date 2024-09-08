@@ -67,10 +67,12 @@ Mirror {
 	optStartSeq: number			// omitted if zero
     optStartTime: string        // omitted if empty
 	filterSubject: string		// omitted if empty
+	subjectTransforms: SubjectTransform[] // object, omitted if null
     external: {					// omitted if null
         api: string
         deliver: string
     }
+	domain: string 				// omitted if empty
 }
 ```
 
@@ -91,9 +93,8 @@ Source {
 	name: string				// omitted if empty
 	optStartSeq: number			// omitted if zero
 	optStartTime: string		// omitted if empty
-    filterSubject: string		// omitted if empty
+	filterSubject: string		// omitted if empty
     subjectTransforms: SubjectTransform[] // object, omitted if null
-    
 	external: {					// omitted if null
 		api: string
 		deliver: string

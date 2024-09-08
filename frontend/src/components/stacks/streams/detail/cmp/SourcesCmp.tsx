@@ -86,7 +86,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 			title="SOURCE"
 			element={elementSource}
 			store={streamSo}
-			width={250}
+			width={280}
 			timeoutClose={0}
 			onClose={handleDialogClose}
 		>
