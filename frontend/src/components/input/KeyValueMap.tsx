@@ -1,5 +1,5 @@
-import { FunctionComponent, useState } from "react"
-import {EditList} from "@priolo/jack"
+import { FunctionComponent, useEffect, useState } from "react"
+import { EditList } from "@priolo/jack"
 import EditMetadataRow from "@/components/rows/EditMetadataRow.tsx";
 
 
@@ -14,10 +14,10 @@ enum TIME {
 }
 
 interface Props {
-	items: {[key: string]: string};
+	items: { [key: string]: string };
 	readOnly?: boolean
 	placeholder?: string
-	onChange?: (itemsNew: {[key: string]: string}) => void
+	onChange?: (itemsNew: { [key: string]: string }) => void
 }
 
 const KeyValueMap: FunctionComponent<Props> = ({
@@ -30,10 +30,17 @@ const KeyValueMap: FunctionComponent<Props> = ({
 	// STORE
 
 	// HOOKs
+	const [entres, setEntries] = useState<[string, string][]>(!!items ? Object.entries(items) : [])
+	useEffect(() => {
+		setEntries(!!items ? Object.entries(items) : [])
+	}, [items])
 
 	// HANDLER
-	const handleItemsChange = (tuples: [string, string][]) => {
-		const keyValues = tuples.reduce((acc, [key, value]) => {
+	const handleItemsChange = (tuples: [string, string][]) => setEntries(tuples)
+
+	const handleBlur = () => {
+		const keyValues = entres.reduce((acc, [key, value]) => {
+			if (!!acc[key]) return acc
 			acc[key] = value;
 			return acc;
 		}, {} as { [key: string]: string });
@@ -42,9 +49,9 @@ const KeyValueMap: FunctionComponent<Props> = ({
 
 	// RENDER
 
-	return <div className="lyt-v">
+	return <div className="lyt-v" onBlur={handleBlur}>
 		<EditList<[string, string]>
-			items={!!items ? Object.entries(items) : []}
+			items={entres}
 			onItemsChange={handleItemsChange}
 			readOnly={readOnly}
 			placeholder={placeholder}
