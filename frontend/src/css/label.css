@@ -2,6 +2,10 @@
 .lbl-divider-v {
 	border-left: 1px solid rgba(0, 0, 0, 0.2);
 }
+.lbl-divider-h {
+	margin: 3px 0px 3px 0px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
 
 .lbl-info-container {
 	position: relative;
