@@ -75,7 +75,7 @@ export interface Mirror {
 	optStartSeq: number
 	optStartTime: string	    // time string, omitted if zero
 	filterSubject: string		// string, omitted if empty
-	subjectTransform: SubjectTransform[] // object, omitted if null
+	subjectTransforms: SubjectTransform[] // object, omitted if null
 	external: {					// object, omitted if null
 		api: string
 		deliver: string
@@ -93,7 +93,7 @@ export interface Source {
 	optStartSeq: number
 	optStartTime: string	    // time string, omitted if zero
 	filterSubject: string		// string, omitted if empty
-	subjectTransform: SubjectTransform[] // object, omitted if null
+	subjectTransforms: SubjectTransform[] // object, omitted if null
 	external: {					// object, omitted if null
 		api: string
 		deliver: string

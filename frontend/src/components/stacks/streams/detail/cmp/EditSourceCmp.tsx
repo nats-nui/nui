@@ -51,8 +51,8 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	const handleExternalApiChange = (api: string) => onChange?.({ ...source, external: { ...source.external, api } })
 	const handleExternalDeliverChange = (deliver: string) => onChange?.({ ...source, external: { ...source.external, deliver } })
 
-	const handleSubjectTransformsChange = (subjectTransform: SubjectTransform[]) => {
-		onChange?.({ ...source, subjectTransform })
+	const handleSubjectTransformsChange = (subjectTransforms: SubjectTransform[]) => {
+		onChange?.({ ...source, subjectTransforms })
 	}
 
 	// RENDER
@@ -142,7 +142,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 			<div className="jack-lbl-prop">SUBJECT TRANSFORMS</div>
 			<EditList<SubjectTransform>
 				style={{ marginTop: 5 }}
-				items={source.subjectTransform}
+				items={source.subjectTransforms}
 				onItemsChange={handleSubjectTransformsChange}
 				placeholder="ex. orders.* or telemetry.>"
 				readOnly={readOnly}
