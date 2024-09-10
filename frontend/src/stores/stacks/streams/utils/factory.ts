@@ -1,6 +1,15 @@
 import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
-import { DISCARD, RETENTION, STORAGE, Source, StreamConfig, StreamInfo, StreamState as StreamEntityState } from "@/types/Stream";
+import {
+	DISCARD,
+	RETENTION,
+	STORAGE,
+	Source,
+	StreamConfig,
+	StreamInfo,
+	StreamState as StreamEntityState,
+	SubjectTransform, ConsumerLimit
+} from "@/types/Stream";
 import { StreamsState, StreamsStore } from "..";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { StreamState, StreamStore } from "../detail";
@@ -95,6 +104,10 @@ export function buildNewStreamConfig(): StreamConfig {
 		republish: null,
 		allowDirect: false,
 		mirrorDirect: false,
+		compression: "",
+		firstSeq: 0,
+		subjectTransform: null,
+		consumerLimits: null
 	}
 }
 

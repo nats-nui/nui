@@ -16,5 +16,6 @@ BucketConfig {
     mirror: Mirror // The mirror source for the bucket (same as stream)
     sources: Source[] // The sources for the bucket (same as stream)
     compression: boolean // Whether the bucket is compressed or not
+    metadata? {[key: string] : string} // hash of string -> string to add custom metadata to consumer
 }
 ```

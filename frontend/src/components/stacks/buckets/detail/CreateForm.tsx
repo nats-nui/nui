@@ -6,6 +6,7 @@ import { FunctionComponent } from "react"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import { EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import KeyValueMap from "@/components/input/KeyValueMap.tsx";
 
 
 
@@ -23,10 +24,19 @@ const CreateForm: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handlePropChange = (prop: { [name: string]: any }) => bucketSo.setBucketConfig({ ...bucketSa.bucketConfig, ...prop })
+	const handlePropChange = (prop: { [name: string]: any }) => {
+		console.log("metada prop")
+		console.log(prop)
+		bucketSo.setBucketConfig({ ...bucketSa.bucketConfig, ...prop })
+	}
 	const handlePlacementPropChange = (prop: { [name: string]: any }) => {
 		const config = { ...bucketSa.bucketConfig }
 		config.placement = { ...config.placement, ...prop }
+		bucketSo.setBucketConfig(config)
+	}
+	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
+		const config = { ...bucketSa.bucketConfig }
+		config.metadata = metadata
 		bucketSo.setBucketConfig(config)
 	}
 	// RENDER
@@ -139,6 +149,18 @@ const CreateForm: FunctionComponent<Props> = ({
 						/>
 					</div>
 				</div>
+			</div>
+		</TitleAccordion>
+
+		<TitleAccordion title="ADVANCED" open={true}>
+			<div className="lyt-v">
+				<div className="jack-lbl-prop">METADATA</div>
+				<KeyValueMap
+					items={bucket.metadata}
+					placeholder="ex. 10"
+					readOnly={false}
+					onChange={handleMetadataPropChange}
+				/>
 			</div>
 		</TitleAccordion>
 

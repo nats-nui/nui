@@ -40,6 +40,11 @@ StreamConfig {
 	republish: Republish 		// omitted if null
 	allow_direct: boolean 		// omitted if false
 	mirror_direct: boolean 		// omitted if false
+    metadata? {[key: string] : string} // hash of string -> string to add custom metadata to consumer
+    compression: string 			// string, omitted if null
+    firstSeq: number 			// integer, omitted if zero
+    subjectTransform?: SubjectTransform // object, omitted if null
+    consumerLimits: ConsumerLimit // object, omitted if null
 }
 ```
 
@@ -62,10 +67,12 @@ Mirror {
 	optStartSeq: number			// omitted if zero
     optStartTime: string        // omitted if empty
 	filterSubject: string		// omitted if empty
+	subjectTransforms: SubjectTransform[] // object, omitted if null
     external: {					// omitted if null
         api: string
         deliver: string
     }
+	domain: string 				// omitted if empty
 }
 ```
 
@@ -86,12 +93,25 @@ Source {
 	name: string				// omitted if empty
 	optStartSeq: number			// omitted if zero
 	optStartTime: string		// omitted if empty
-    filterSubject: string		// omitted if empty
+	filterSubject: string		// omitted if empty
+    subjectTransforms: SubjectTransform[] // object, omitted if null
 	external: {					// omitted if null
 		api: string
 		deliver: string
 	}
 	domain: string 				// omitted if empty
+}
+```
+```typescript
+SubjectTransform {
+    src: string
+    dest: string
+}
+```
+```typescript
+ConsumerLimit {
+    inactiveThreshold: string   // time string, omitted if zero
+    maxAckPending: number 		// integer, omitted if zero
 }
 ```
 
