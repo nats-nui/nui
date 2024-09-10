@@ -9,6 +9,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import EditMetadataRow from "../../../rows/EditMetadataRow"
 import { DateTimeInput, EditList, EditNumberRow, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import KeyValueMap from "@/components/input/KeyValueMap.tsx";
 
 
 
@@ -40,13 +41,10 @@ const Form: FunctionComponent<Props> = ({
 		}
 		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null})
 	}
-	const handleMetadataChange = (tuples: [string, string][]) => {
-		const metadata = tuples.reduce((acc, [key, value]) => {
-			acc[key] = value;
-			return acc;
-		}, {} as { [key: string]: string });
+	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
 	}
+
 	// RENDER
 	const consumer = state.consumer
 	if (!consumer?.config) return null
@@ -433,14 +431,11 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">METADATA</div>
-				<EditList<[string, string]>
-					items={!!consumer.config.metadata ? Object.entries(consumer.config.metadata) : []}
-					onItemsChange={handleMetadataChange}
-					readOnly={inRead}
+				<KeyValueMap
+					items={consumer.config.metadata}
 					placeholder="ex. 10"
-					onNewItem={() => ["", ""]}
-					fnIsVoid={m => !m || (m[0] == "" && m[1] == "")}
-					RenderRow={EditMetadataRow}
+					readOnly={inRead}
+					onChange={handleMetadataPropChange}
 				/>
 			</div>
 

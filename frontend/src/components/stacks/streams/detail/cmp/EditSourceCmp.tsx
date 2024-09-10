@@ -1,7 +1,8 @@
-import { Source } from "@/types/Stream"
-import {NumberInput, TextInput, Options, IconToggle, TooltipWrapCmp, DateTimeInput} from "@priolo/jack"
-import {FunctionComponent, useEffect, useState} from "react"
+import { Source, SubjectTransform } from "@/types/Stream"
+import { NumberInput, TextInput, Options, IconToggle, TooltipWrapCmp, DateTimeInput, EditList } from "@priolo/jack"
+import { FunctionComponent, useEffect, useState } from "react"
 import dayjs from "dayjs";
+import EditSubjectTransformRow from "../../../../rows/EditSubjectTransformRow";
 
 
 interface Props {
@@ -40,21 +41,26 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 	const handleIsExternalChange = (check: boolean) => {
 		source.external = null
-        if (check) {
-			source.external = {api: "", deliver: ""}
+		if (check) {
+			source.external = { api: "", deliver: "" }
 		}
 		handleNameChange("")
-        setIsExternal(source?.external != null)
+		setIsExternal(source?.external != null)
 	}
 
-    const handleExternalApiChange = (api: string) => onChange?.({ ...source, external: { ...source.external, api } })
-    const handleExternalDeliverChange = (deliver: string) => onChange?.({ ...source, external: { ...source.external, deliver } })
+	const handleExternalApiChange = (api: string) => onChange?.({ ...source, external: { ...source.external, api } })
+	const handleExternalDeliverChange = (deliver: string) => onChange?.({ ...source, external: { ...source.external, deliver } })
+
+	const handleSubjectTransformsChange = (subjectTransform: SubjectTransform[]) => {
+		onChange?.({ ...source, subjectTransform })
+	}
 
 	// RENDER
 	if (!source) return null
 	const timeRender = source.optStartTime ? dayjs(source.optStartTime).format("YYYY-MM-DD HH:mm:ss") : ""
 
 	return <div className="jack-lyt-form var-dialog">
+
 		<div className="lyt-v">
 			<div className="jack-cmp-h lbl-info-container">
 				<IconToggle
@@ -64,27 +70,26 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				/>
 				<div className="jack-lbl-prop">EXTERNAL</div>
 				<TooltipWrapCmp className="lbl-info" children="?"
-								content="Source from external JS API (different account or domain)"
+					content="Source from external JS API (different account or domain)"
 				/>
 			</div>
 		</div>
+
 		<div className="lyt-v">
 			<div className="jack-lbl-prop">NAME</div>
 			{!isExternal
 				? <Options<string> height={500}
-								   value={source.name}
-								   items={allStream}
-								   readOnly={readOnly}
-								   onSelect={handleNameChange}
+					value={source.name}
+					items={allStream}
+					readOnly={readOnly}
+					onSelect={handleNameChange}
 				/>
-
 				: <TextInput
 					value={source.name}
 					onChange={handleNameChange}
 					readOnly={readOnly}
 				/>
 			}
-
 		</div>
 
 		{isExternal && <div className="lyt-v">
@@ -117,21 +122,37 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 		<div className="lyt-v">
 			<div className="jack-lbl-prop">START TIME</div>
 			<DateTimeInput
-				style={{flex: 1}}
+				style={{ flex: 1 }}
 				value={optStartTime}
 				onChange={handleStartTimeChange}
 				readOnly={readOnly}
 			/>
 		</div>
-			<div className="lyt-v">
-				<div className="jack-lbl-prop">FILTER SUBJECTS</div>
-				<TextInput
-					value={source.filterSubject}
-					onChange={handleFilterSubjectChange}
-					readOnly={readOnly}
-				/>
-			</div>
-		</div>
-		}
 
-		export default EditSourceCmp
+		<div className="lyt-v">
+			<div className="jack-lbl-prop">FILTER SUBJECTS</div>
+			<TextInput
+				value={source.filterSubject}
+				onChange={handleFilterSubjectChange}
+				readOnly={readOnly}
+			/>
+		</div>
+
+		<div className="lyt-v">
+			<div className="jack-lbl-prop">SUBJECT TRANSFORMS</div>
+			<EditList<SubjectTransform>
+				style={{ marginTop: 5 }}
+				items={source.subjectTransform}
+				onItemsChange={handleSubjectTransformsChange}
+				placeholder="ex. orders.* or telemetry.>"
+				readOnly={readOnly}
+				onNewItem={() => ({ src: "", dest: "" })}
+				fnIsVoid={i => !(i?.src.trim().length > 0) || !(i?.dest.trim().length > 0)}
+				RenderRow={EditSubjectTransformRow}
+			/>
+		</div>
+
+	</div>
+}
+
+export default EditSourceCmp
