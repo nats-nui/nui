@@ -104,7 +104,7 @@ export function buildNewStreamConfig(): StreamConfig {
 		republish: null,
 		allowDirect: false,
 		mirrorDirect: false,
-		compression: "",
+		compression: "none",
 		firstSeq: 0,
 		subjectTransform: null,
 		consumerLimits: null
