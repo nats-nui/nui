@@ -11,7 +11,7 @@ type msgReq struct {
 	Subject   string      `json:"subject"`
 	Payload   []byte      `json:"payload"`
 	Headers   nats.Header `json:"headers"`
-	TimeoutMs int         `json:"timeoutMs"`
+	TimeoutMs int         `json:"timeout_ms"`
 }
 
 func (a *App) handleIndexSubscriptions(c *fiber.Ctx) error {
@@ -98,7 +98,11 @@ func (a *App) handleRequest(c *fiber.Ctx) error {
 	reqMsg.Header = req.Headers
 
 	replyMsg, err := conn.RequestMsg(reqMsg, timeout)
+
 	if err != nil {
+		if err == nats.ErrTimeout {
+			return a.logAndFiberError(c, err, 408)
+		}
 		return a.logAndFiberError(c, err, 500)
 	}
 	reply := &struct {

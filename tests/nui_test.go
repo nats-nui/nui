@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
@@ -505,13 +506,14 @@ func (s *NuiTestSuite) TestRequestResponseRest() {
 		err := m.RespondMsg(replyMsg)
 		s.NoError(err)
 	})
-	defer sub.Unsubscribe()
+
 	time.Sleep(10 * time.Millisecond)
 
 	// send request and read response via nui rest
 	// payload is base64 encoded "req"
+	reqPayload = []byte(`{"subject": "request_sub", "payload": "cmVx", "headers": {"key1": ["val1", "val2"]}}`)
 	r := s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(`{"subject": "request_sub", "payload": "cmVx", "headers": {"key1": ["val1", "val2"]}}`)).
+		WithBytes(reqPayload).
 		Expect()
 	r.Status(http.StatusOK)
 	r.JSON().Object().Value("subject").NotEqual("")
@@ -527,6 +529,29 @@ func (s *NuiTestSuite) TestRequestResponseRest() {
 		assert.Equal(c, []byte("req"), reqPayload)
 		assert.Equal(c, expectedHeaders, reqHeaders)
 	}, 1*time.Second, 100*time.Millisecond)
+
+	// test timeout of request
+
+	// recreate the req handler sub with delay
+	sub.Unsubscribe()
+	sub, _ = s.nc.Subscribe("request_sub", func(m *nats.Msg) {
+		time.Sleep(350 * time.Millisecond)
+		err := m.Respond(nil)
+		s.NoError(err)
+	})
+	defer sub.Unsubscribe()
+
+	time.Sleep(10 * time.Millisecond)
+
+	reqFormat := `{"subject": "request_sub", "payload": "cmVx", "timeout_ms": %d}`
+	r = s.e.POST("/api/connection/" + connId + "/request").
+		WithBytes([]byte(fmt.Sprintf(reqFormat, 400))).
+		Expect().Status(http.StatusOK)
+	r.Status(http.StatusOK)
+
+	r = s.e.POST("/api/connection/" + connId + "/request").
+		WithBytes([]byte(fmt.Sprintf(reqFormat, 200))).
+		Expect().Status(http.StatusRequestTimeout)
 
 }
 
