@@ -2,7 +2,6 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertIcon from "@/icons/AlertIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DoneIcon from "@/icons/DoneIcon"
-import connections from "@/mocks/data/connections"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
@@ -59,18 +58,16 @@ const CnnListView: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const connnections = useMemo(() => {
+	const connections = useMemo(() => {
 		return cnnSo.state.all?.sort((c1, c2) => c1.name?.localeCompare(c2.name))
 	}, [cnnSa.all])
-
-	if (!connnections) return null
 
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
 	const isNewSelect = cnnListSa.linked?.state.type == DOC_TYPE.CONNECTION && (cnnListSa.linked as CnnDetailStore).state.editState == EDIT_STATE.NEW
 	const selectId = (cnnListSa.linked as CnnDetailStore)?.state?.connection?.id
 	const isSelected = (cnn: Connection) => cnn.id == selectId
-	const isVoid = connections.length == 0
+	const isVoid = !(connections?.length > 0)
 
 
 	return <FrameworkCard
@@ -95,7 +92,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		{!isVoid ? connnections.map(cnn => (
+		{!isVoid ? connections.map(cnn => (
 			<ElementRow key={cnn.id}
 				title={getTitle(cnn)}
 				subtitle={getSubtitle(cnn)}
