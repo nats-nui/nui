@@ -3,6 +3,9 @@ import { Connection } from "@/types/Connection"
 import { StoreCore, createStore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
 import { socketPool } from "@/plugins/SocketService/pool"
+import { findAll } from "../docs/utils/manage"
+import { GetAllCards } from "../docs/cards"
+import { DOC_TYPE } from "../docs/types"
 
 
 
@@ -28,7 +31,8 @@ const setup = {
 		//#region OVERWRITE
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConnectionStore>store
-			const cnn = await cnnApi.index()
+			const cnnStore = findAll(GetAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
+			const cnn = await cnnApi.index({ store: cnnStore })
 			s.setAll(cnn)
 			await loadBaseSetup.actions.fetch(_, store)
 		},
@@ -50,12 +54,12 @@ const setup = {
 			const key = `global::${cnnSaved.id}`
 			socketPool.destroyForce(key)
 			socketPool.create(key, cnnSaved.id)
-			
+
 			return cnnSaved
 		},
 		/** inserisce o aggiorna la CONNECTION passata come paramnetro */
 		update(cnn: Partial<Connection>, store?: ConnectionStore) {
-			if ( !cnn?.id ) return
+			if (!cnn?.id) return
 			const cnns = [...store.state.all]
 			const index = store.getIndexById(cnn.id)
 			if (index == -1) {
