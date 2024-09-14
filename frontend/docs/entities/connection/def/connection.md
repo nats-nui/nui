@@ -9,6 +9,7 @@ Connection {
 	id?: string
 	name: string
 	hosts: string[]
+	inboxPrefix: string
 	subscriptions: Subscription[]
 	auth: Auth[]
 	tls_auth: TLSAuth
