@@ -4,6 +4,7 @@ type Connection struct {
 	Id            string         `json:"id" `
 	Name          string         `json:"name" `
 	Hosts         []string       `json:"hosts" `
+	InboxPrefix   string         `json:"inbox_prefix"`
 	Subscriptions []Subscription `clover:"subscriptions" json:"subscriptions"`
 	Auth          []Auth         `json:"auth" `
 	TLSAuth       TLSAuth        `clover:"tls_auth" json:"tls_auth" `
