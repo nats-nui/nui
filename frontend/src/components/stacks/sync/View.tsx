@@ -5,15 +5,16 @@ import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import FormatIcon from "@/icons/FormatIcon"
 import SendIcon from "@/icons/SendIcon"
-import { SyncStore } from "@/stores/stacks/sync"
+import sync, { SyncStore } from "@/stores/stacks/sync"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import SyncIcon from "../../../icons/SyncIcon"
 import EditMetadataRow from "../../rows/EditMetadataRow"
 import clsCard from "../CardCyanDef.module.css"
 import cls from "./View.module.css"
 import { Button, CircularLoadingCmp, EditList, FloatButton, IconButton, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
+import OptionsDialog from "@/components/stacks/sync/OptionsDialog.tsx";
 
 
 
@@ -40,6 +41,10 @@ const SyncView: FunctionComponent<Props> = ({
 		refSender.current?.format()
 		// timeout altrimenti non lo formatta se formatta il precedente!!!
 		setTimeout(refReceiver.current?.format, 300)
+	}
+	const handleOptionsClick = (e: React.MouseEvent, select?: boolean) => {
+		if (select) return
+		syncSo.setOptionsOpen(!select)
 	}
 	const handleMessageClick = (txt: string) => syncSo.openMessageDetail({
 		payload: txt,
@@ -71,6 +76,12 @@ const SyncView: FunctionComponent<Props> = ({
 				select={syncSa.formatsOpen}
 				children={syncSa.format?.toUpperCase() ?? ""}
 				onClick={() => syncSo.setFormatsOpen(true)}
+			/>
+			<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
+			<Button
+				select={syncSa.formatsOpen}
+				children={"OPTIONS"}
+				onClick={() => syncSo.setOptionsOpen(true)}
 			/>
 			<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
 			<Button
@@ -158,7 +169,7 @@ const SyncView: FunctionComponent<Props> = ({
 		</div>
 
 		<FormatDialog editMode store={syncSo} />
-
+		<OptionsDialog store={syncSo}/>
 	</FrameworkCard>
 }
 
