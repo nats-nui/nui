@@ -34,11 +34,11 @@ function subscriptionUpdate(cnnId: string, subscriptions: Subscription[], opt?: 
 /** SYNC
  * https://github.com/nats-nui/nui/blob/main/frontend/docs/entities/request_response/request_response.md
  */
-async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeout: number = 2000, opt: CallOptions = {}): Promise<SyncResp> {
+async function sync(cnnId: string, subject: string, payload: string, headersArray: [string, string][], timeoutMs: number = 2000, opt: CallOptions = {}): Promise<SyncResp> {
 	const data = camelToSnake({
 		subject,
 		payload: btoa(payload),
-		timeout
+		timeout_ms: timeoutMs
 	})
 	// like publish, also here the auto conversion to snake case is disabled
 	data.headers = toDic(headersArray)
