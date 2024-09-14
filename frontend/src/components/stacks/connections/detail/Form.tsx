@@ -4,7 +4,7 @@ import { Auth, EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import { EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion } from "@priolo/jack"
+import {EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion, TooltipWrapCmp} from "@priolo/jack"
 
 
 
@@ -30,6 +30,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     }
     const handleHostsChange = (hosts: string[]) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
+    }
+    const handleInboxPrefixChange = (inboxPrefix: string) => {
+        cnnDetailSo.setConnection({ ...cnnDetailSa.inboxPrefix, inboxPrefix })
     }
     const handleAuthChange = (auth: Auth, index: number) => {
         if (!auth) return
@@ -163,6 +166,19 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
                     readOnly={inRead}
                 />
             </div>
+        </TitleAccordion>
+        <TitleAccordion title="ADVANCED">
+            <div className="jack-lbl-prop lbl-info-container">INBOX PREFIX
+                <TooltipWrapCmp className="lbl-info" children="?"
+                                content="The prefix of subject used to receive responses in req /reply"
+                />
+            </div>
+            <TextInput autoFocus
+                       value={connection.inboxPrefix}
+                       onChange={handleInboxPrefixChange}
+                       placeholder="eg. _INBOX.>"
+                       readOnly={inRead}
+            />
         </TitleAccordion>
     </div>
 }
