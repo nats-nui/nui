@@ -20,7 +20,8 @@ const connections:Connection[] = [
 			cert_path: "./certs/cert.pem",
 			key_path: "./certs/key.pem",
 			ca_path: "./certs/ca.pem",
-		}
+		},
+		inboxPrefix: "_INBOX"
 	},
 	{
 		id: "cnn-2",
@@ -33,6 +34,7 @@ const connections:Connection[] = [
 		auth: [
 			{ mode: AUTH_MODE.CREDS_FILE, creds: "myfle.cred" }
 		],
+		inboxPrefix: "_INBOX.custom"
 	},
 	{
 		id: "cnn-3",
