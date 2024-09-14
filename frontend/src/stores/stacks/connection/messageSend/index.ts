@@ -5,6 +5,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../../editorBase"
 import { LOAD_STATE } from "../../utils"
+import { stringToBinaryString } from "../../../../utils/string"
 
 
 
@@ -71,7 +72,7 @@ const setup = {
 				await messagesApi.publish(
 					store.state.connectionId,
 					store.state.subject,
-					store.state.text,
+					stringToBinaryString(store.state.text),
 					store.state.headers,
 					{ store }
 				)
