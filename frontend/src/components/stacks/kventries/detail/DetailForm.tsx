@@ -4,6 +4,7 @@ import { EDIT_STATE } from "@/types"
 import { TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import { binaryStringToString, stringToBinaryString } from "../../../../utils/string"
 
 
 
@@ -22,7 +23,7 @@ const DetailForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleKeyChange = (key: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, key })
-	const handlePayloadChange = (payload: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, payload })
+	const handlePayloadChange = (payload: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, payload: stringToBinaryString(payload) })
 
 	// RENDER
 	const kventry = kventrySo.getKVSelect()
@@ -30,7 +31,8 @@ const DetailForm: FunctionComponent<Props> = ({
 	const inRead = kventrySa.editState == EDIT_STATE.READ
 	const inEdit = kventrySa.editState == EDIT_STATE.EDIT
 	const autoFormat = kventrySa.autoFormat
-	const refEditor = (ref:EditorRefProps) => kventrySa.editorRef = ref
+	const refEditor = (ref: EditorRefProps) => kventrySa.editorRef = ref
+	const payload = binaryStringToString(kventrySo.getEditorText())
 
 	return <div className="jack-lyt-form" style={{ height: "100%" }}>
 
@@ -45,10 +47,10 @@ const DetailForm: FunctionComponent<Props> = ({
 
 		<EditorCode
 			ref={refEditor}
-			value={kventrySo.getEditorText()}
+			value={payload}
 			onChange={handlePayloadChange}
 			format={kventrySa.format}
-			readOnly={inRead}	
+			readOnly={inRead}
 			autoFormat={autoFormat}
 		/>
 
