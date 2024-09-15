@@ -1,5 +1,6 @@
 import { FunctionComponent, useMemo } from "react"
 import cls from "./TextRow.module.css"
+import { binaryStringToString } from "../../../utils/string"
 
 
 
@@ -27,8 +28,8 @@ const TextRow: FunctionComponent<Props> = ({
 	if (!text) return null
 	// accorcio la stringa se è troppo lunga
 	const render = useMemo(() => text.length > maxChar
-		? <>{text.substring(0, 200)}<span style={cssSelect}>{'\u2026'}{text.length}</span></>
-		: text
+		? <>{binaryStringToString(text.substring(0, maxChar))}<span style={cssSelect}>{'\u2026'}{text.length}</span></>
+		: binaryStringToString(text)
 		, [text]
 	)
 
