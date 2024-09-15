@@ -7,6 +7,7 @@ import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
+import { binaryStringToString, stringToBinaryString } from "../../../utils/string"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
@@ -49,7 +50,8 @@ const setup = {
 		},
 		//#endregion
 
-		getEditorText: (_: void, store?: ViewStore) => (<KVEntryStore>store).getKVSelect()?.payload ?? "",
+		getEditorText: (_: void, store?: ViewStore) => 
+			binaryStringToString((<KVEntryStore>store).getKVSelect()?.payload ?? ""),
 
 
 		// [II] TODO
@@ -118,7 +120,7 @@ const setup = {
 				body: "you have it on the KVENTRY list",
 			})
 		},
-		/** reset EBTITY */
+		/** reset ENTITY */
 		restore: (_: void, store?: KVEntryStore) => {
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
@@ -136,6 +138,12 @@ const setup = {
 			const next = store.state.kventry.history[index + offset]
 			if (!next) return
 			store.revisionSelect(next.revision)
+		},
+		setEditorText(text: string, store?: KVEntryStore) {
+			store.setKVEntry({ 
+				...store.state.kventry, 
+				payload: stringToBinaryString(text) }
+			)
 		}
 	},
 
