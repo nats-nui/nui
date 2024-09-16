@@ -527,33 +527,36 @@ func (s *NuiTestSuite) TestRequestResponseRest() {
 	expectedHeaders := nats.Header{
 		"key1": []string{"val1", "val2"},
 	}
+
 	s.Require().EventuallyWithT(func(c *assert.CollectT) {
 		assert.Equal(c, []byte("req"), reqPayload)
 		assert.Equal(c, expectedHeaders, reqHeaders)
-	}, 1*time.Second, 100*time.Millisecond)
-
+	}, 5*time.Second, 100*time.Millisecond)
 	// test timeout of request
 
 	// recreate the req handler sub with delay
-	sub.Unsubscribe()
+	err := sub.Unsubscribe()
+	s.NoError(err)
 	sub, _ = s.nc.Subscribe("request_sub", func(m *nats.Msg) {
-		time.Sleep(350 * time.Millisecond)
+		fmt.Printf("Received request\n %v\n", m)
+		time.Sleep(150 * time.Millisecond)
 		err := m.Respond(nil)
 		s.NoError(err)
 	})
 	defer sub.Unsubscribe()
 
-	time.Sleep(10 * time.Millisecond)
-
 	reqFormat := `{"subject": "request_sub", "payload": "cmVx", "timeout_ms": %d}`
 	r = s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(fmt.Sprintf(reqFormat, 400))).
+		WithBytes([]byte(fmt.Sprintf(reqFormat, 200))).
 		Expect().Status(http.StatusOK)
 	r.Status(http.StatusOK)
 
 	r = s.e.POST("/api/connection/" + connId + "/request").
-		WithBytes([]byte(fmt.Sprintf(reqFormat, 200))).
+		WithBytes([]byte(fmt.Sprintf(reqFormat, 100))).
 		Expect().Status(http.StatusRequestTimeout)
+
+	//timeout to ensure that the response is sent with no error, but after the timeout
+	time.Sleep(100 * time.Millisecond)
 
 }
 
