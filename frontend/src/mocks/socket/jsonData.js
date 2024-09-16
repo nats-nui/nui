@@ -201,7 +201,7 @@ export default [
 	},
 	{
 		"id": 786,
-		"lot_code": "23033bfd1077f29c2f30c091a0290425",
+		"uft8": "Пиши свой код здесь",
 		"cycle_uuid": null,
 		"ref_to_cycle_uuid": "76a6a849-008f-4bc0-b1b1-a973d0318c00",
 		"crop_cycle_id": 41,

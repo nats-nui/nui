@@ -1,6 +1,7 @@
 import { toJson } from "@/utils/editor"
 import { FunctionComponent, useMemo } from "react"
 import TextRow from "../text/TextRow"
+import { binaryStringToString } from "../../../utils/string"
 
 
 
@@ -86,7 +87,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 				ret.push(FormatObj({ json: value, deep: deep + 1 }))
 
 			} else if (type === "string") {
-				if (value.length > 8) value = `${value.substring(0, 8)}\u2026`
+				value = value.length > 8 ? `${binaryStringToString(value.substring(0, 8))}\u2026` : binaryStringToString(value)
 				ret.push(<span style={cssString}>"{value}"</span>)
 
 			} else if (type === "number") {

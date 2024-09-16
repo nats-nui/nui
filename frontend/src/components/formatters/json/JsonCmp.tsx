@@ -1,11 +1,13 @@
 import { toJson } from "@/utils/editor"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useMemo } from "react"
 import TextCmp from "../text/TextCmp"
 import JsonKeyValueCmp from "./JsonKeyValueCmp"
 import { COLLAPSE_TYPE, inShow, isPrimitive } from "./utils"
 
 
-
+/**
+ * NOT USED
+ */
 interface Props {
 	text?: string
 	style?: React.CSSProperties
@@ -17,7 +19,7 @@ const JsonCmp: FunctionComponent<Props> = ({
 }) => {
 
 	// RENDER
-	const { json, success } = toJson(text)
+	const { json, success } = useMemo(() => toJson(text), [text])
 	if (!success) return <TextCmp text={text} />
 
 	return (
