@@ -165,6 +165,8 @@ func (s *NuiTestSuite) TestStreamRest() {
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 
 	s.filledStreamMultiSub("filled_stream", "sub1", "sub2")
+	time.Sleep(50 * time.Millisecond)
+
 	// check that subject messages are added in state of the stream
 	e.GET("/api/connection/" + connId + "/stream/filled_stream").
 		Expect().
