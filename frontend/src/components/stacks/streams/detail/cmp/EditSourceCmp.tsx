@@ -144,7 +144,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 				style={{ marginTop: 5 }}
 				items={source.subjectTransforms}
 				onItemsChange={handleSubjectTransformsChange}
-				placeholder="ex. orders.* or telemetry.>"
+				placeholder="eg. orders.* or telemetry.>"
 				readOnly={readOnly}
 				onNewItem={() => ({ src: "", dest: "" })}
 				fnIsVoid={i => !(i?.src.trim().length > 0) || !(i?.dest.trim().length > 0)}

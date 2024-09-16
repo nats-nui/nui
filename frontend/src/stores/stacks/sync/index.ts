@@ -16,12 +16,15 @@ const setup = {
 
 	state: {
 		connectionId: <string>null,
-		messageReceived: "",
-		messageSend: "",
 		subject: "",
+		messageSend: "",
+		timeoutMs: 2000,
 		headers: <[string, string][]>[],
+
+		messageReceived: "",
 		headersReceived: {},
 
+		optionsOpen: false,
 
 		loadingState: LOAD_STATE.IDLE,
 
@@ -72,7 +75,7 @@ const setup = {
 					store.state.subject,
 					store.state.messageSend,
 					store.state.headers,
-					null,
+					store.state.timeoutMs,
 					{ store }
 				)
 				store.setMessageReceived(resp.payload)
@@ -103,6 +106,9 @@ const setup = {
 		setMessageSend: (messageSend: string) => ({ messageSend }),
 		setSubject: (subject: string) => ({ subject }),
 		setHeaders: (headers: [string,string][]) => ({ headers }),
+		setTimeoutMs: (timeoutMs) => ({ timeoutMs }),
+		setOptionsOpen: (optionsOpen: boolean) => ({ optionsOpen }),
+
 	},
 }
 

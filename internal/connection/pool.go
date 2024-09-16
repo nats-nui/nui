@@ -94,6 +94,7 @@ func natsBuilder(connection *Connection) (*NatsConn, error) {
 	}
 	options = appendAuthOption(connection, options)
 	options = appendTLSAuthOptions(connection, options)
+	options = appendInboxPrefixOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
 }
 
@@ -137,6 +138,13 @@ func appendTLSAuthOptions(connection *Connection, options []nats.Option) []nats.
 		if connection.TLSAuth.CaPath != "" {
 			options = append(options, nats.RootCAs(connection.TLSAuth.CaPath))
 		}
+	}
+	return options
+}
+
+func appendInboxPrefixOption(connection *Connection, options []nats.Option) []nats.Option {
+	if connection.InboxPrefix != "" {
+		options = append(options, nats.CustomInboxPrefix(connection.InboxPrefix))
 	}
 	return options
 }
