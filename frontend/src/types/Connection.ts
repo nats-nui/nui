@@ -2,6 +2,7 @@ export interface Connection {
     id?: string
     name: string
     hosts: string[]
+    inboxPrefix: string
     subscriptions: Subscription[]
     auth: Auth[]
     tlsAuth: TLSAuth

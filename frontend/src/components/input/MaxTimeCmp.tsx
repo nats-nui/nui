@@ -1,10 +1,10 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
-import { FunctionComponent, useState } from "react"
+import {FunctionComponent, useEffect, useState} from "react"
 import { Accordion, IconToggle, ListDialog, NumberInput, StringUpRow } from "@priolo/jack"
 
 
 
-enum TIME {
+export enum TIME {
 	NS = "nano s.",
 	MS = "milli s.",
 	SECONDS = "seconds",
@@ -13,6 +13,15 @@ enum TIME {
 	DAYS = "days",
 }
 
+const unitsInNs = {
+	[TIME.NS]: 1,
+	[TIME.MS]: 1e6,
+	[TIME.SECONDS]: 1e9,
+	[TIME.MINUTES]: 60 * 1e9,
+	[TIME.HOURS]: 60 * 60 * 1e9,
+	[TIME.DAYS]: 60 * 60 * 24 * 1e9
+};
+
 interface Props {
 	store?: ViewStore
 	label?: string
@@ -20,6 +29,8 @@ interface Props {
 	readOnly?: boolean
 	desiredDefault?: number
 	initDefault?: number
+	inputUnit?: TIME
+	outputUnit?: TIME
 	onChange?: (valueNew: number) => void
 }
 
@@ -30,25 +41,50 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	readOnly,
 	desiredDefault = -1,
 	initDefault = 0,
+	inputUnit = TIME.NS,
+	outputUnit = TIME.NS,
 	onChange,
 }) => {
 
 	// STORE
 
 	// HOOKs
-	const [unit, setUnit] = useState(TIME.NS)
+	const [valueShow, setValueShow] = useState(nsToValue(valueToNs(value, outputUnit), inputUnit))
+
+	const [unit, setUnit] = useState(inputUnit)
+	const [valueShowNeedUpdate, setValueShowNeedUpdate] = useState(false)
+
+	 useEffect(() => {
+	 	const valueInNs = valueToNs(value, outputUnit)
+		 console.log(valueInNs)
+	 	const largestUnit = getLargestUnit(valueInNs, inputUnit)
+		 console.log(largestUnit)
+	 	setUnit(largestUnit)
+		 setValueShow(nsToValue(valueInNs, largestUnit))
+	 }, []);
+
+	useEffect(() => {
+		if (valueShowNeedUpdate) {
+			handlePropChange(valueShow)
+			setValueShowNeedUpdate(false)
+		}
+	}, [unit,valueShowNeedUpdate])
 
 	// HANDLER
 	const handlePropChange = (value: number) => {
-		const duration = valueToNs(value, unit)
+		const duration = nsToValue(valueToNs(value, unit), outputUnit)
+		setValueShow(nsToValue(valueToNs(duration, outputUnit), unit))
 		onChange?.(duration)
 	}
+	const handleUnitChange = (index: number) => {
+		setValueShowNeedUpdate(true)
+		setUnit(Object.values(TIME)[index])
+	}
+
 	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
-	const handleUnitChange = (index: number) => setUnit(Object.values(TIME)[index])
 
 	// RENDER
 	const isEnabled = (value != null || initDefault == null) && value !== desiredDefault
-	const valueShow = nsToValue(value, unit)
 
 	return <div className="lyt-v">
 		<div className="jack-cmp-h">
@@ -83,47 +119,26 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 export default MaxTimeCmp
 
 function nsToValue(value: number, from: TIME) {
-	let result: number;
-	switch (from) {
-		case TIME.DAYS:
-			result = value / 60 / 60 / 24 / 1e9;
-			break;
-		case TIME.HOURS:
-			result = value / 60 / 60 / 1e9;
-			break;
-		case TIME.MINUTES:
-			result = value / 60 / 1e9;
-			break;
-		case TIME.SECONDS:
-			result = value / 1e9;
-			break;
-		case TIME.MS:
-			result = value / 1e6;
-			break;
-		case TIME.NS:
-			result = value;
-			break;
-		default:
-			result = value;
-	}
-	return result
+	return value / unitsInNs[from];
 }
 
 function valueToNs(value: number, from: TIME) {
-	switch (from) {
-		case TIME.DAYS:
-			return value * 60 * 60 * 24 * 1e9;
-		case TIME.HOURS:
-			return value * 60 * 60 * 1e9;
-		case TIME.MINUTES:
-			return value * 60 * 1e9;
-		case TIME.SECONDS:
-			return value * 1e9;
-		case TIME.MS:
-			return value * 1e6;
-		case TIME.NS:
-			return value;
-		default:
-			return value;
-	}
+	return value * unitsInNs[from];
 }
+
+function  getLargestUnit(valueInNs: number, defaultUnit: TIME): TIME {
+	let largestUnit = TIME.NS;
+	if (valueInNs == 0) {
+		return defaultUnit;
+	}
+	for (const [unit, ns] of Object.entries(unitsInNs)) {
+		if (valueInNs % ns  == 0) {
+			largestUnit = unit as TIME;
+		} else {
+			break;
+		}
+	}
+
+	return largestUnit;
+}
+
