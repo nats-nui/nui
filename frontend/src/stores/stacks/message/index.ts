@@ -2,6 +2,8 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import { binaryStringToString } from "../../../utils/string"
+import { MSG_FORMAT } from "../../../utils/editor"
 
 
 
@@ -34,7 +36,15 @@ const setup = {
 		},
 		//#endregion
 
-		getEditorText: (_: void, store?: ViewStore) => (<MessageStore>store).state.message?.payload ?? ""
+		getEditorText: (_: void, store?: ViewStore) => {
+			const msgSo = <MessageStore>store
+			const payload = msgSo.state.message?.payload ?? ""
+			const format = msgSo.state.format
+			if (format != MSG_FORMAT.BASE64 && format != MSG_FORMAT.HEX) {
+				return binaryStringToString(payload)
+			}
+			return payload
+		}
 	},
 
 	actions: {

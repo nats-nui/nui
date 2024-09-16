@@ -9,6 +9,7 @@ import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { MessageStore } from "../message"
 import { LOAD_STATE } from "../utils"
 import { ViewState } from "../viewBase"
+import { binaryStringToString, stringToBinaryString } from "../../../utils/string"
 
 
 
@@ -73,12 +74,12 @@ const setup = {
 				const resp = await messagesApi.sync(
 					store.state.connectionId,
 					store.state.subject,
-					store.state.messageSend,
+					stringToBinaryString(store.state.messageSend),
 					store.state.headers,
 					store.state.timeoutMs,
 					{ store }
 				)
-				store.setMessageReceived(resp.payload)
+				store.setMessageReceived(binaryStringToString(resp.payload))
 				store.setHeadersReceived(resp.headers)
 				store.setSnackbar({
 					open: true,
