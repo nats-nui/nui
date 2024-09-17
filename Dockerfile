@@ -7,7 +7,7 @@ COPY . .
 RUN  go build -ldflags "-X main.Version=$VERSION" -o /cmd/nui-web ./cmd/server/main.go
 
 ## frontend build
-FROM node:18 AS build_fe
+FROM --platform=$BUILDPLATFORM node:18 AS build_fe
 WORKDIR /frontend
 COPY ./frontend .
 RUN npm install
