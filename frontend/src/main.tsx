@@ -10,11 +10,13 @@ import './css/index.css';
 //import './css/colors.css';
 //import './css/colors-var.css';
 //import './css/interaction.css';
-import './css/label.css';
+
 import './css/layout.css';
 import './css/scrollbar.css';
 import './css/monaco.css';
 import "@priolo/jack/dist/style.css";
+import './css/label.css';
+
 
 import "./utils/session/startup.ts";
 
