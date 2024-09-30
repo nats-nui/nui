@@ -91,7 +91,7 @@ func (a *App) handleShowBucket(c *fiber.Ctx) error {
 func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	bucketConfig := jetstream.KeyValueConfig{}
 	if err := c.BodyParser(&bucketConfig); err != nil {
@@ -108,14 +108,42 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	return c.JSON(NewBucketState(status))
 }
 
+func (a *App) handleUpdateBucket(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucketName := c.Params("bucket")
+	_, ok, err = a.bucketOrFail(c, bucketName)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucketConfig := jetstream.KeyValueConfig{}
+
+	err = c.BodyParser(&bucketConfig)
+	if err != nil {
+		return a.logAndFiberError(c, err, 422)
+	}
+	bucketConfig.Bucket = bucketName
+	kv, err := js.CreateOrUpdateKeyValue(c.Context(), bucketConfig)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	status, err := kv.Status(c.Context())
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.JSON(NewBucketState(status))
+}
+
 func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	_, ok, err = a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	err = js.DeleteKeyValue(c.Context(), c.Params("bucket"))
 	if err != nil {
@@ -126,7 +154,7 @@ func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 func (a *App) handleIndexKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	watcher, err := kv.WatchAll(c.Context(), jetstream.MetaOnly())
 
