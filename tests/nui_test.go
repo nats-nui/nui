@@ -446,6 +446,13 @@ func (s *NuiTestSuite) TestKvRest() {
 	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().
 		JSON().Object().Value("bucket").String().IsEqual("bucket3")
 
+	// update the new bucket
+	r = e.POST("/api/connection/" + connId + "/kv/bucket3").
+		WithBytes([]byte(`{"bucket": "bucket3", "storage": "memory", "ttl": 2000000000}`)).
+		Expect()
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket3")
+	r.JSON().Object().Value("ttl").Number().IsEqual(2000000000)
+
 	//delete new bucket
 	e.DELETE("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusOK)
 
