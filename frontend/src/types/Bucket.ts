@@ -27,4 +27,5 @@ export interface BucketState {
     backingStore: STORAGE // The backing store of the bucket, same as stream storage
     bytes: number // The size of the bucket in bytes
     compressed: boolean // Whether the bucket is compressed or not
+    config: BucketConfig // The configuration of the bucket
 }
