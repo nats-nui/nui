@@ -4,20 +4,24 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
+	"strings"
 	"time"
 )
 
+const KV_STREAM_PREFIX = "KV_"
+
 type BucketState struct {
-	Bucket       string        `json:"bucket"`
-	Values       uint64        `json:"values"`
-	History      int64         `json:"history"`
-	TTL          time.Duration `json:"ttl"`
-	BackingStore string        `json:"backing_store"`
-	Bytes        uint64        `json:"bytes"`
-	Compressed   bool          `json:"compressed"`
+	Bucket       string                    `json:"bucket"`
+	Values       uint64                    `json:"values"`
+	History      int64                     `json:"history"`
+	TTL          time.Duration             `json:"ttl"`
+	BackingStore string                    `json:"backing_store"`
+	Bytes        uint64                    `json:"bytes"`
+	Compressed   bool                      `json:"compressed"`
+	Config       *jetstream.KeyValueConfig `json:"config"`
 }
 
-func NewBucketState(kvs jetstream.KeyValueStatus) BucketState {
+func NewBucketState(kvs jetstream.KeyValueStatus, config *jetstream.KeyValueConfig) BucketState {
 	return BucketState{
 		Bucket:       kvs.Bucket(),
 		Values:       kvs.Values(),
@@ -26,6 +30,7 @@ func NewBucketState(kvs jetstream.KeyValueStatus) BucketState {
 		BackingStore: kvs.BackingStore(),
 		Bytes:        kvs.Bytes(),
 		Compressed:   kvs.IsCompressed(),
+		Config:       config,
 	}
 }
 
@@ -41,9 +46,8 @@ type KevValueEntry struct {
 
 func NewKeyValueEntry(entry jetstream.KeyValueEntry) KevValueEntry {
 	return KevValueEntry{
-		Key:     entry.Key(),
-		Payload: entry.Value(),
-
+		Key:        entry.Key(),
+		Payload:    entry.Value(),
 		LastUpdate: LastUpdate(entry.Created()),
 		Operation:  entry.Operation().String(),
 		Revision:   entry.Revision(),
@@ -71,7 +75,7 @@ func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
 		if kvLister.Error() != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
-		statuses = append(statuses, NewBucketState(status))
+		statuses = append(statuses, NewBucketState(status, nil))
 	}
 	return c.JSON(statuses)
 }
@@ -85,13 +89,43 @@ func (a *App) handleShowBucket(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(NewBucketState(status))
+
+	// retrieve config from the related stream cause no direct api available for get bucket config
+	stream, ok, err := a.streamOrFail(c, KV_STREAM_PREFIX+c.Params("bucket"))
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	streamInfo, err := stream.Info(c.Context())
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucketConfig := parseStreamConfigToKeyValueConfig(streamInfo.Config)
+
+	return c.JSON(NewBucketState(status, &bucketConfig))
+}
+
+func parseStreamConfigToKeyValueConfig(scfg jetstream.StreamConfig) jetstream.KeyValueConfig {
+	return jetstream.KeyValueConfig{
+		Bucket:       strings.TrimPrefix(scfg.Name, KV_STREAM_PREFIX),
+		Description:  scfg.Description,
+		MaxValueSize: scfg.MaxMsgSize,
+		History:      uint8(scfg.MaxMsgsPerSubject),
+		TTL:          scfg.MaxAge,
+		MaxBytes:     scfg.MaxBytes,
+		Storage:      scfg.Storage,
+		Replicas:     scfg.Replicas,
+		Placement:    scfg.Placement,
+		RePublish:    scfg.RePublish,
+		Mirror:       scfg.Mirror,
+		Sources:      scfg.Sources,
+		Compression:  scfg.Compression != jetstream.NoCompression,
+	}
 }
 
 func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	bucketConfig := jetstream.KeyValueConfig{}
 	if err := c.BodyParser(&bucketConfig); err != nil {
@@ -105,17 +139,45 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(NewBucketState(status))
+	return c.JSON(NewBucketState(status, &bucketConfig))
+}
+
+func (a *App) handleUpdateBucket(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucketName := c.Params("bucket")
+	_, ok, err = a.bucketOrFail(c, bucketName)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucketConfig := jetstream.KeyValueConfig{}
+
+	err = c.BodyParser(&bucketConfig)
+	if err != nil {
+		return a.logAndFiberError(c, err, 422)
+	}
+	bucketConfig.Bucket = bucketName
+	kv, err := js.CreateOrUpdateKeyValue(c.Context(), bucketConfig)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	status, err := kv.Status(c.Context())
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.JSON(NewBucketState(status, &bucketConfig))
 }
 
 func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	_, ok, err = a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	err = js.DeleteKeyValue(c.Context(), c.Params("bucket"))
 	if err != nil {
@@ -126,7 +188,7 @@ func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 func (a *App) handleIndexKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	watcher, err := kv.WatchAll(c.Context(), jetstream.MetaOnly())
 
