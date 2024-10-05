@@ -60,6 +60,22 @@ const handlers = [
 		)
 	}),
 
+	/** UPDATE */
+	rest.post('/api/connection/:cnnId/kv/:bucketName', async (req, res, ctx) => {
+		const { cnnId, bucketName } = req.params
+		const bucketConfig_S = await req.json()
+		if (!bucketConfig_S) return res(ctx.status(500))
+		const bucketConfig = snakeToCamel(bucketConfig_S) as BucketConfig
+		const index = buckets.findIndex(b => b.bucket == bucketName)
+		buckets[index] = { ...buckets[index], config: bucketConfig }
+		return res(
+			ctx.status(200),
+			ctx.json(camelToSnake(buckets[index])),
+		)
+	}),
+
+	/** PURGE DELETED */
+
 	rest.post('/api/connection/:cnnId/kv/:bucketName/purge_deleted', async (req, res, ctx) => {
 		keyValueEntries_S.splice(0, keyValueEntries_S.length, ...keyValueEntries_S.filter((entry) => !entry.is_deleted))
 		return res(ctx.status(204))
