@@ -18,6 +18,21 @@ func (a *App) jsOrFail(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
 	return js, true, nil
 }
 
+func (a *App) streamOrFail(c *fiber.Ctx, stream string) (jetstream.Stream, bool, error) {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return nil, false, err
+	}
+	str, err := js.Stream(c.Context(), stream)
+	if err != nil {
+		if errors.Is(err, jetstream.ErrStreamNotFound) {
+			return nil, false, a.logAndFiberError(c, err, 404)
+		}
+		return nil, false, a.logAndFiberError(c, err, 500)
+	}
+	return str, true, nil
+}
+
 func (a *App) bucketOrFail(c *fiber.Ctx, bucket string) (jetstream.KeyValue, bool, error) {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {

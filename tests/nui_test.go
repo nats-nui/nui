@@ -432,10 +432,13 @@ func (s *NuiTestSuite) TestKvRest() {
 	r.JSON().Array().Value(0).Object().Value("bucket").String().IsEqual("bucket1")
 	r.JSON().Array().Value(0).Object().Value("values").Number().IsEqual(10)
 	r.JSON().Array().Value(0).Object().Value("history").Number().IsEqual(5)
+	r.JSON().Array().Value(0).Object().Value("config").IsNull()
 
 	// get existing bucket
 	r = e.GET("/api/connection/" + connId + "/kv/bucket1").Expect()
-	r.Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.Status(http.StatusOK)
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Object().Value("config").NotNull()
 
 	// create a new bucket
 	e.POST("/api/connection/" + connId + "/kv").
