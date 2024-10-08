@@ -2,9 +2,15 @@ package clicontext
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/nats-nui/nui/pkg/logging"
 	"os"
 	"strings"
+)
+
+var (
+	PathImportError = errors.New("Importing NATS CLI context failed")
 )
 
 type CliConnectionContext struct {
@@ -34,51 +40,61 @@ type Importer struct {
 	path string
 }
 
+type ImportedContextEntry struct {
+	Path            string
+	ImportedContext CliConnectionContext
+	Error           error
+}
+
 func NewImporter(l logging.Slogger, path string) *Importer {
 	return &Importer{
-		l: l,
+		l:    l,
+		path: path,
 	}
 }
 
-func (i *Importer) Import() ([]CliConnectionContext, error) {
-	files, err := findContextFiles(i.path)
+func (i *Importer) Import() ([]ImportedContextEntry, error) {
+	i.l.Info("searching NATS contexts in " + i.path)
+	filePaths, err := i.findContextFiles(i.path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%v: %w", PathImportError, err)
 	}
-	var contexts []CliConnectionContext
-	for _, file := range files {
-		cliContext, err := parseContextJson(file)
-		if err != nil {
-			return nil, err
-		}
-		contexts = append(contexts, cliContext)
+	var contexts []ImportedContextEntry
+	i.l.Info("parsing context files")
+	for _, filePath := range filePaths {
+		contexts = append(contexts, i.parseContextJson(filePath))
 	}
 	return contexts, nil
 }
 
-func findContextFiles(dir string) ([]string, error) {
+func (i *Importer) findContextFiles(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
-	var jsonEntries []string
 	if err != nil {
 		return nil, err
 	}
+	var jsonEntries []string
 	for _, entry := range entries {
 		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".json") {
 			jsonEntries = append(jsonEntries, dir+string(os.PathSeparator)+entry.Name())
+			i.l.Info("added context file: " + entry.Name())
 		}
 	}
 	return jsonEntries, err
 }
 
-func parseContextJson(filePath string) (CliConnectionContext, error) {
+func (i *Importer) parseContextJson(filePath string) ImportedContextEntry {
+	importedContext := ImportedContextEntry{Path: filePath}
 	data, err := os.ReadFile(filePath)
 	if err != nil {
-		return CliConnectionContext{}, err
+		importedContext.Error = err
+		return importedContext
 	}
-	var context CliConnectionContext
-	err = json.Unmarshal(data, &context)
+	connContext := CliConnectionContext{}
+	err = json.Unmarshal(data, &connContext)
 	if err != nil {
-		return CliConnectionContext{}, err
+		importedContext.Error = err
+		return importedContext
 	}
-	return context, nil
+	importedContext.ImportedContext = connContext
+	return importedContext
 }

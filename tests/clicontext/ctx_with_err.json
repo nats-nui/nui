@@ -1,0 +1,7 @@
+{
+  "description": "context 1",
+  "url": "nats://cluster1, nats://cluster2",
+  "socks_proxy": "",
+  "token": "token",
+  "user": "user1",
+  "password": "pass1",
