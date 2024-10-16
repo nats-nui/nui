@@ -64,3 +64,7 @@ func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
 	a.nui.ConnPool.Purge()
 	return ctx.SendStatus(200)
 }
+
+func (a *App) handleImportConnections(c *fiber.Ctx) error {
+
+}
