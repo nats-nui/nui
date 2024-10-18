@@ -11,8 +11,8 @@ import (
 func TestCliContext(t *testing.T) {
 	l := &logging.NullLogger{}
 	dir, _ := os.Getwd()
-	importer := clicontext.NewImporter(l, dir)
-	entries, err := importer.Import()
+	importer := clicontext.NewImporter(l)
+	entries, err := importer.Import(dir)
 	assert.NoError(t, err)
 	assert.Equal(t, 3, len(entries))
 	assert.NoError(t, entries[0].Error)
@@ -40,7 +40,7 @@ func TestCliContext(t *testing.T) {
 		ColorScheme:          "",
 		TLSFirst:             false,
 	}
-
+	assert.Equal(t, "ctx1", entries[0].Name)
 	assert.Equal(t, expected, entries[0].ImportedContext)
 
 }
