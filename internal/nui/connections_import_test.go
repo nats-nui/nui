@@ -1,10 +1,11 @@
-package connection
+package nui
 
 import (
+	"github.com/nats-nui/nui/internal/connection"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/nats-nui/nui/pkg/clicontext"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestParseFromCliContext(t *testing.T) {
@@ -12,7 +13,7 @@ func TestParseFromCliContext(t *testing.T) {
 		name      string
 		inputName string
 		input     clicontext.CliConnectionContext
-		expected  Connection
+		expected  connection.Connection
 	}{
 		{
 			name: "UserPassword",
@@ -20,11 +21,11 @@ func TestParseFromCliContext(t *testing.T) {
 				User:     "testuser",
 				Password: "testpass",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name: "Test Connection",
-				Auth: []Auth{
+				Auth: []connection.Auth{
 					{
-						Mode:     AuthModeUserPassword,
+						Mode:     connection.AuthModeUserPassword,
 						Username: "testuser",
 						Password: "testpass",
 					},
@@ -36,11 +37,11 @@ func TestParseFromCliContext(t *testing.T) {
 			input: clicontext.CliConnectionContext{
 				Token: "testtoken",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name: "Test Connection",
-				Auth: []Auth{
+				Auth: []connection.Auth{
 					{
-						Mode:  AuthModeToken,
+						Mode:  connection.AuthModeToken,
 						Token: "testtoken",
 					},
 				},
@@ -51,11 +52,11 @@ func TestParseFromCliContext(t *testing.T) {
 			input: clicontext.CliConnectionContext{
 				UserJWT: "testjwt",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name: "Test Connection",
-				Auth: []Auth{
+				Auth: []connection.Auth{
 					{
-						Mode: AuthModeJwt,
+						Mode: connection.AuthModeJwt,
 						Jwt:  "testjwt",
 					},
 				},
@@ -66,11 +67,11 @@ func TestParseFromCliContext(t *testing.T) {
 			input: clicontext.CliConnectionContext{
 				NKey: "testnkey",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name: "Test Connection",
-				Auth: []Auth{
+				Auth: []connection.Auth{
 					{
-						Mode:     AuthModeNKey,
+						Mode:     connection.AuthModeNKey,
 						NKeySeed: "testnkey",
 					},
 				},
@@ -81,11 +82,11 @@ func TestParseFromCliContext(t *testing.T) {
 			input: clicontext.CliConnectionContext{
 				Creds: "testcreds",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name: "Test Connection",
-				Auth: []Auth{
+				Auth: []connection.Auth{
 					{
-						Mode:  AuthModeCredsFile,
+						Mode:  connection.AuthModeCredsFile,
 						Creds: "testcreds",
 					},
 				},
@@ -96,7 +97,7 @@ func TestParseFromCliContext(t *testing.T) {
 			input: clicontext.CliConnectionContext{
 				URL: "nats://localhost:4222,nats://remotehost:4222",
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name:  "Test Connection",
 				Hosts: []string{"nats://localhost:4222", "nats://remotehost:4222"},
 			},
@@ -115,11 +116,11 @@ func TestParseFromCliContext(t *testing.T) {
 				JetStreamEventPrefix: "event_prefix",
 				TLSFirst:             true,
 			},
-			expected: Connection{
+			expected: connection.Connection{
 				Name:        "Test Connection",
 				Hosts:       []string{"nats://localhost:4222"},
 				InboxPrefix: "inbox",
-				TLSAuth: TLSAuth{
+				TLSAuth: connection.TLSAuth{
 					Enabled:  true,
 					CertPath: "path/to/cert",
 					KeyPath:  "path/to/key",
@@ -128,7 +129,6 @@ func TestParseFromCliContext(t *testing.T) {
 			},
 		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := parseFromCliContext("Test Connection", tt.input)

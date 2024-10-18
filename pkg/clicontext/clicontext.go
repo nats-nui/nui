@@ -35,25 +35,30 @@ type CliConnectionContext struct {
 	TLSFirst             bool   `json:"tls_first"`
 }
 
-type Importer struct {
+type Importer[T any] interface {
+	Import(uri string) ([]T, error)
+}
+
+type CliImporter struct {
 	l    logging.Slogger
 	path string
 }
 
 type ImportedContextEntry struct {
+	Name            string
 	Path            string
 	ImportedContext CliConnectionContext
 	Error           error
 }
 
-func NewImporter(l logging.Slogger, path string) *Importer {
-	return &Importer{
-		l:    l,
-		path: path,
+func NewImporter(l logging.Slogger) *CliImporter {
+	return &CliImporter{
+		l: l,
 	}
 }
 
-func (i *Importer) Import() ([]ImportedContextEntry, error) {
+func (i *CliImporter) Import(uri string) ([]ImportedContextEntry, error) {
+	i.path = uri
 	i.l.Info("searching NATS contexts in " + i.path)
 	filePaths, err := i.findContextFiles(i.path)
 	if err != nil {
@@ -67,7 +72,7 @@ func (i *Importer) Import() ([]ImportedContextEntry, error) {
 	return contexts, nil
 }
 
-func (i *Importer) findContextFiles(dir string) ([]string, error) {
+func (i *CliImporter) findContextFiles(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return nil, err
@@ -82,8 +87,9 @@ func (i *Importer) findContextFiles(dir string) ([]string, error) {
 	return jsonEntries, err
 }
 
-func (i *Importer) parseContextJson(filePath string) ImportedContextEntry {
-	importedContext := ImportedContextEntry{Path: filePath}
+func (i *CliImporter) parseContextJson(filePath string) ImportedContextEntry {
+	nameFromPath := strings.TrimSuffix(strings.TrimPrefix(filePath, i.path+string(os.PathSeparator)), ".json")
+	importedContext := ImportedContextEntry{Name: nameFromPath, Path: filePath}
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		importedContext.Error = err

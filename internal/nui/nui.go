@@ -3,15 +3,17 @@ package nui
 import (
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/ws"
+	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
 	docstore "github.com/nats-nui/nui/pkg/storage"
 )
 
 type Nui struct {
-	ConnRepo connection.ConnRepo
-	ConnPool connection.Pool[*connection.NatsConn]
-	Hub      ws.IHub
-	l        logging.Slogger
+	ConnRepo        connection.ConnRepo
+	ConnPool        connection.Pool[*connection.NatsConn]
+	CliConnImporter clicontext.Importer[clicontext.ImportedContextEntry]
+	Hub             ws.IHub
+	l               logging.Slogger
 }
 
 func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {

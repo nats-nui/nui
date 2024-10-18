@@ -1,13 +1,28 @@
 package connection
 
 type Connection struct {
-	Id            string         `json:"id" `
-	Name          string         `json:"name" `
-	Hosts         []string       `json:"hosts" `
-	InboxPrefix   string         `json:"inbox_prefix"`
-	Subscriptions []Subscription `clover:"subscriptions" json:"subscriptions"`
-	Auth          []Auth         `json:"auth" `
-	TLSAuth       TLSAuth        `clover:"tls_auth" json:"tls_auth" `
+	Id            string            `json:"id" `
+	Name          string            `json:"name" `
+	Hosts         []string          `json:"hosts" `
+	InboxPrefix   string            `json:"inbox_prefix"`
+	Subscriptions []Subscription    `clover:"subscriptions" json:"subscriptions"`
+	Auth          []Auth            `json:"auth" `
+	TLSAuth       TLSAuth           `clover:"tls_auth" json:"tls_auth" `
+	Metadata      map[string]string `json:"metadata" `
+}
+
+func (c *Connection) GetMetadata(key string) (string, bool) {
+	if c.Metadata == nil {
+		return "", false
+	}
+	return c.Metadata[key], true
+}
+
+func (c *Connection) SetMetadata(key, value string) {
+	if c.Metadata == nil {
+		c.Metadata = make(map[string]string)
+	}
+	c.Metadata[key] = value
 }
 
 type Subscription struct {
