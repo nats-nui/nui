@@ -55,6 +55,8 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id", a.handleSaveConnection)
 	a.Delete("/api/connection/:id", a.handleDeleteConnection)
 
+	a.Post("/api/connection/import/nats-cli", a.handleImportCliContextsFromPath)
+
 	a.Get("/api/connection/:id/messages/subscription", a.handleIndexSubscriptions)
 	a.Post("/api/connection/:id/messages/subscription", a.handleUpdateSubscriptions)
 

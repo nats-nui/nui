@@ -86,6 +86,14 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	tlsRes.Object().Value("tls_auth").Object().Value("ca_path").String().IsEqual("ca_path")
 }
 
+func (s *NuiTestSuite) TestConnectionImport() {
+	e := s.e
+	r := e.POST("/api/connection/import/nats-cli").
+		WithBytes([]byte(fmt.Sprintf(`{ "path": "%s" }`, "./clicontext"))).
+		Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("connections").Array().Length().IsEqual(2)
+}
+
 func (s *NuiTestSuite) TestMessagesSubscriptionRest() {
 	e := s.e
 	connId := s.defaultConn()

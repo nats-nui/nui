@@ -24,6 +24,7 @@ func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {
 	}
 	n.ConnRepo = connection.NewDocStoreConnRepo(store)
 	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
+	n.CliConnImporter = clicontext.NewImporter(logger)
 	n.Hub = ws.NewNatsHub(n.ConnPool, logger)
 	n.l = logger
 	return n, nil

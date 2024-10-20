@@ -13,14 +13,22 @@ const IMPORT_METADATA_KEY_PATH = "import-path"
 const IMPORT_METADATA_KEY_DATETIME = "import-datetime"
 const IMPORT_TYPE_CLI = "nats-cli"
 
+type CliImportRequest struct {
+	Path string `json:"path"`
+}
+
 type CliConnImportResponse struct {
 	Connections []connection.Connection           `json:"connections"`
 	CliContexts []clicontext.ImportedContextEntry `json:"errors"`
 }
 
 func (a *App) handleImportCliContextsFromPath(c *fiber.Ctx) error {
-	path := c.Params("path")
-	cliContexts, err := a.nui.CliConnImporter.Import(path)
+	req := CliImportRequest{}
+	err := c.BodyParser(&req)
+	if err != nil {
+		return a.logAndFiberError(c, err, 422)
+	}
+	cliContexts, err := a.nui.CliConnImporter.Import(req.Path)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
