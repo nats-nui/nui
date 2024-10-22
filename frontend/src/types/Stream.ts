@@ -119,7 +119,7 @@ export enum STORAGE {
 export enum RETENTION {
 	LIMIT = "limits",
 	INTEREST = "interest",
-	WORKQUEQUE = "workqueque",
+	WORKQUEUE = "workqueue",
 }
 
 export enum DISCARD {
