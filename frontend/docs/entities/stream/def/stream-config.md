@@ -130,7 +130,7 @@ STORAGE {
 RETENTION {
 	LIMIT = "limits",
 	INTEREST = "interest",
-	WORKQUEQUE = "workqueque",
+	WORKQUEUE = "workqueue",
 }
 ```
 
