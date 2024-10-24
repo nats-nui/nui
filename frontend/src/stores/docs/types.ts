@@ -25,6 +25,7 @@ export enum DOC_TYPE {
 
 	HELP = "help",
 	SYNC = "sync",
+	JSON_CONFIG = "json_config",
 }
 
 export enum DOC_ANIM {
