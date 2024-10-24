@@ -25,8 +25,6 @@ const CreateForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => {
-		console.log("metada prop")
-		console.log(prop)
 		bucketSo.setBucketConfig({ ...bucketSa.bucketConfig, ...prop })
 	}
 	const handlePlacementPropChange = (prop: { [name: string]: any }) => {
