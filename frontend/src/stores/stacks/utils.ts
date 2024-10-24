@@ -45,6 +45,7 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 			return { fg: "#393939", bg: "#6affab" }
 		case DOC_TYPE.ABOUT:
 		case DOC_TYPE.HELP:
+		case DOC_TYPE.JSON_CONFIG:
 		case DOC_TYPE.LOGS:
 			return { fg: "#393939", bg: "#dedede" }
 		case DOC_TYPE.STREAM:

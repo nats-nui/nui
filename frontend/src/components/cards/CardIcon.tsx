@@ -14,6 +14,7 @@ import StreamIcon from "@/icons/cards/StreamIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent } from "react"
+import ConfigIcon from "../../icons/cards/ConfigIcon"
 
 
 
@@ -71,6 +72,8 @@ const CardIcon: FunctionComponent<Props> = ({
 
 		case DOC_TYPE.SYNC:
 			return <SyncIcon className={className} style={style} />
+		case DOC_TYPE.JSON_CONFIG:
+			return <ConfigIcon className={className} style={style} />
 
 		default:
 			return null
