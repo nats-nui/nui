@@ -147,7 +147,6 @@ const setup = {
 				store.state.group.addLink({ view: null, parent: store, anim: true })
 				return
 			}
-			
 			const configStore = buildStore({
 				type: DOC_TYPE.JSON_CONFIG,
 				value: JSON.stringify(store.state.stream.config),
@@ -155,7 +154,7 @@ const setup = {
 				onClose: (value: string) => {
 					if (!value) return
 					const config = JSON.parse(value) as StreamConfig
-					store.setStreamConfig(config)
+					store?.setStreamConfig(config)
 				},
 			} as JsonConfigState) as JsonConfigStore;
 			store.state.group.addLink({ view: configStore, parent: store, anim: true })
