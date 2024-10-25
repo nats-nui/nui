@@ -2,9 +2,15 @@ import { Mirror, Placement, Republish, STORAGE, Source } from "./Stream"
 
 
 
-export interface BucketInfo {
-	config: BucketConfig
-	state?: BucketState
+export interface BucketState {
+	bucket: string // The name of the bucket
+    values: number // The number of key-values in the bucket
+    history: number // The max entries history of the bucket
+    ttl: number // ttl in nanoseconds
+    backingStore: STORAGE // The backing store of the bucket, same as stream storage
+    bytes: number // The size of the bucket in bytes
+    compressed: boolean // Whether the bucket is compressed or not
+    config: BucketConfig // The configuration of the bucket
 }
 
 export interface BucketConfig {
@@ -22,15 +28,4 @@ export interface BucketConfig {
     sources: Source[] // The sources for the bucket (same as stream)
     compression: boolean // Whether the bucket is compressed or not
     metadata?: { [key: string]: string } // hash of string -> string to add custom metadata to consumer
-}
-
-export interface BucketState {
-	bucket: string // The name of the bucket
-    values: number // The number of key-values in the bucket
-    history: number // The max entries history of the bucket
-    ttl: number // ttl in nanoseconds
-    backingStore: STORAGE // The backing store of the bucket, same as stream storage
-    bytes: number // The size of the bucket in bytes
-    compressed: boolean // Whether the bucket is compressed or not
-    config: BucketConfig // The configuration of the bucket
 }
