@@ -22,5 +22,5 @@ bucket_config
 ```
 stream_info
 ```
-[BUCKET-STATE](./def/bucket-state.md)
+[BUCKET-INFO](./def/bucket-info.md)
 

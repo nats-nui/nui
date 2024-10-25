@@ -99,6 +99,11 @@ const setup = {
 				body: "you have it on the DUCKETS list",
 			})
 		},
+		/** reset ENTITY */
+		restore: (_: void, store?: BucketStore) => {
+			store.fetch()
+			store.setEditState(EDIT_STATE.READ)
+		},
 
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
@@ -106,6 +111,7 @@ const setup = {
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
+		
 	},
 
 	mutators: {
