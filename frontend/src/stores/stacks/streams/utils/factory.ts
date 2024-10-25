@@ -66,14 +66,14 @@ export function buildStreamMessages(connectionId: string, stream: Partial<Stream
 	return streamMessagesStore;
 }
 
-export function buildNewStreamInfo(): StreamInfo {
+function buildNewStreamInfo(): StreamInfo {
 	return {
 		config: buildNewStreamConfig(),
 		state: newStreamState(),
 	}
 }
 
-export function buildNewStreamConfig(): StreamConfig {
+function buildNewStreamConfig(): StreamConfig {
 	return {
 		name: "",
 		description: "",

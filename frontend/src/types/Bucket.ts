@@ -2,6 +2,11 @@ import { Mirror, Placement, Republish, STORAGE, Source } from "./Stream"
 
 
 
+export interface BucketInfo {
+	config: BucketConfig
+	state?: BucketState
+}
+
 export interface BucketConfig {
 	bucket: string // The name of the bucket
     description: string // The description of the bucket
