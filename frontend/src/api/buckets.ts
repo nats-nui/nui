@@ -42,6 +42,7 @@ const api = {
 	get,
 	remove,
 	create,
-	purgeDeleted
+	purgeDeleted,
+	update
 }
 export default api

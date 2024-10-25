@@ -88,7 +88,12 @@ const setup = {
 
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
-			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
+			let bucketSaved:BucketState = null
+			if (store.state.editState == EDIT_STATE.NEW) {
+				bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
+			} else {
+				bucketSaved = await bucketApi.update(store.state.connectionId, store.state.bucketConfig, { store })
+			}
 			store.setBucket(bucketSaved)
 			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)

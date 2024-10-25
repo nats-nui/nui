@@ -17,8 +17,8 @@ uuid of the connection to get the KV buckets for
 
 ### RESPONSE
 ```
-bucket_info[]
+bucket_state[]
 ```
 
-[BUCKET-INFO](./def/bucket-info.md)
+[BUCKET-STATE](./def/bucket-state.md)
 

@@ -20,7 +20,7 @@ bucket_config
 
 ### RESPONSE
 ```
-stream_info
+stream_state
 ```
-[BUCKET-INFO](./def/bucket-info.md)
+[BUCKET-STATE](./def/bucket-state.md)
 
