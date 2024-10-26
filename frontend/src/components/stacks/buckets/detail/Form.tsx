@@ -9,7 +9,7 @@ import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
 import { EDIT_STATE } from "@/types"
 import EditSourceCmp from "../../streams/detail/cmp/EditSourceCmp"
-import ArrowRightIcon from "../../../../icons/ArrowRightIcon"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import SourcesCmp from "../../streams/detail/cmp/SourcesCmp"
 
 
