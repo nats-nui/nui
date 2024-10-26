@@ -17,7 +17,6 @@ export function buildBucketNew(connectionId: string, allStreams: string[]) {
 
 		connectionId: connectionId,
 		bucket: null,
-		bucketConfig: buildNewConfig(),
 	} as BucketStatus) as BucketStore;
 	return store;
 }
