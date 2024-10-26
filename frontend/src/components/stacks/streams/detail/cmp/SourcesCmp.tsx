@@ -26,7 +26,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	const haveNew = () => sources?.some(s => !(s.name?.length > 0))
 
 	// STORE
-	const streamSa = useStore(streamSo)
+	useStore(streamSo)
 
 	// HOOKs
 	// indica praticamente se la dialog è aperta o no
@@ -44,15 +44,11 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	}
 
 	const handleSourcesChange = (sources: Source[], action: LIST_ACTIONS) => {
-		// config.sources = sources
-		// streamSo.setStream({ ...streamSa.stream })
 		onChangeSources?.(sources)
 		if (action == LIST_ACTIONS.DELETE) handleSelectChange(-1)
 	}
 
 	const handleSourceChange = (source: Source) => {
-		// config.sources[souceIndex] = source
-		// streamSo.setStream({ ...streamSa.stream })
 		sources[souceIndex] = source
 		onChangeSources?.(sources)
 	}
@@ -73,11 +69,6 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	//const config: StreamConfig = streamSa.stream?.config
-	//if (config == null) return null
-	//const sources = config.sources ?? []
-	//const inRead = streamSa.editState == EDIT_STATE.READ
-	//const allStreams = streamSa.allStreams
 	if ( sources == null) return null
 
 	return <>
