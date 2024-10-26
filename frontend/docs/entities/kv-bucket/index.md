@@ -7,9 +7,9 @@ List of all the KV buckets for a connection
 ```
 GET /api/connection/:connection_id/kv
 ```
+
 - `connection_id`  
 uuid of the connection to get the KV buckets for
-
 
 ### BODY
 `null`
@@ -19,6 +19,7 @@ uuid of the connection to get the KV buckets for
 ```
 bucket_state[]
 ```
+buckets come with config = null
 
 [BUCKET-STATE](./def/bucket-state.md)
 
