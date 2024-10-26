@@ -19,7 +19,7 @@ type CliImportRequest struct {
 
 type CliConnImportResponse struct {
 	Connections []connection.Connection           `json:"connections"`
-	CliContexts []clicontext.ImportedContextEntry `json:"errors"`
+	CliContexts []clicontext.ImportedContextEntry `json:"imports"`
 }
 
 func (a *App) handleImportCliContextsFromPath(c *fiber.Ctx) error {

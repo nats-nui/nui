@@ -45,10 +45,10 @@ type CliImporter struct {
 }
 
 type ImportedContextEntry struct {
-	Name            string
-	Path            string
-	ImportedContext CliConnectionContext
-	Error           error
+	Name            string               `json:"name"`
+	Path            string               `json:"path"`
+	ImportedContext CliConnectionContext `json:"imported_context"`
+	Error           error                `json:"error"`
 }
 
 func NewImporter(l logging.Slogger) *CliImporter {
