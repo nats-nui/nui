@@ -1,16 +1,16 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
-import { Connection } from "@/types/Connection"
+import {CliConnectionImport, Connection} from "@/types/Connection"
 
 
 /** INDEX
- * Recupera tutte le CONNECTION
+ * Get all the CONNECTIONs
  */
 function index(opt?: CallOptions): Promise<Connection[]> {
 	return ajax.get(`connection`, null, opt)
 }
 
 /** UPDATE
- * Modifica/crea un CONNECTION
+ * Update a CONNECTION
  */
 function save(cnn: Connection, opt?: CallOptions): Promise<Connection> {
 	const blockId = cnn.id ? `/${cnn.id}` : ""
@@ -18,11 +18,15 @@ function save(cnn: Connection, opt?: CallOptions): Promise<Connection> {
 }
 
 /** DELETE
- * Rimuove un CONNECTION 
+ * delete a CONNECTION
  */
 function remove(id: string, opt?: CallOptions): Promise<void> {
 	if (!id) return
 	return ajax.delete(`connection/${id}`, null, opt)
+}
+
+function importFromNatsCli(path: string): Promise<CliConnectionImport[]> {
+	return ajax.post(`connection/import/nats-cli`, null)
 }
 
 const api = {

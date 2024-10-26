@@ -55,3 +55,7 @@ export enum CNN_STATUS {
     DISCONNECTED = "disconnected",
 }
 
+export interface CliConnectionImport {
+    path: string
+    error?: string
+}
