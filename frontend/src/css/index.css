@@ -30,3 +30,7 @@ body {
   --color-element-bg: #393939;
 }
 
+
+input, textarea,  button {
+  font-family: 'Inter Variable', sans-serif;
+}
