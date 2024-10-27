@@ -38,7 +38,8 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// RENDER
 	const streams = streamsSo.getFiltered() ?? []
 	const nameSelected = streamsSa.select
-	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM && (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
+	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM 
+		&& (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard
 		className={clsCard.root}

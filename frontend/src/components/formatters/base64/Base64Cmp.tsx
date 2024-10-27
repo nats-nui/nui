@@ -24,7 +24,7 @@ const Base64Cmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!text) return null
 	const isTruncate = maxChar && text.length > maxChar
-	const base64 = btoa(isTruncate ? text.slice(0, maxChar) : text)
+	const base64 = btoa(unescape(encodeURIComponent(isTruncate ? text.slice(0, maxChar) : text)))
 
 	return (
 		<div className={cls.root} style={style}>

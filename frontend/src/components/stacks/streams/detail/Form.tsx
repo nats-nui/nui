@@ -43,13 +43,18 @@ const Form: FunctionComponent<Props> = ({
         config.republish = { ...config.republish, ...prop }
         streamSo.setStreamConfig(config)
     }
+    const handleRepublishToggle = (check: boolean) => {
+        const config = { ...streamSa.stream.config }
+        config.republish = check ? { src: "", dest: "", headersOnly: false } : null
+        streamSo.setStreamConfig(config)
+    }
 
     const handlePlacementPropChange = (prop: { [name: string]: any }) => {
         const config = { ...streamSa.stream.config }
         config.placement = { ...config.placement, ...prop }
         streamSo.setStreamConfig(config)
     }
-    
+
     const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
         const config = { ...streamSa.stream.config }
         config.metadata = metadata
@@ -107,6 +112,7 @@ const Form: FunctionComponent<Props> = ({
             handlePropChange({ consumerLimits: null })
         }
     }
+
 
     // RENDER
     if (streamSa.stream?.config == null) return null
@@ -218,7 +224,13 @@ const Form: FunctionComponent<Props> = ({
 
             <div className="lyt-v">
                 <div className="jack-lbl-prop">SOURCES</div>
-                <SourcesCmp store={streamSo} />
+                <SourcesCmp 
+                    store={streamSo}
+                    readOnly={inRead}
+                    sources={config.sources ?? []} 
+                    allStreams={allStreams}
+                    onChangeSources={sources => handlePropChange({ sources })}
+                />
             </div>
 
             <div className="lyt-v">
@@ -410,23 +422,7 @@ const Form: FunctionComponent<Props> = ({
                 <div className="jack-cmp-h">
                     <IconToggle
                         check={!!config.republish}
-                        onChange={check => {
-                            if (check) {
-                                if (!config.republish) {
-                                    handlePropChange({
-                                        republish: {
-                                            src: "",
-                                            dest: "",
-                                            headersOnly: false,
-                                        }
-                                    })
-                                }
-                            } else {
-                                if (config.republish) {
-                                    handlePropChange({ republish: null })
-                                }
-                            }
-                        }}
+                        onChange={handleRepublishToggle}
                         readOnly={inRead}
                     />
                     <div className="jack-lbl-prop">REPUBLISH</div>
