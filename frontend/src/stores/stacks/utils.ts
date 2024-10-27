@@ -1,29 +1,8 @@
-export { VIEW_SIZE, LOAD_STATE } from "@priolo/jack"
-
-import { DOC_TYPE } from "../docs/types"
+export { LOAD_STATE, VIEW_SIZE } from "@priolo/jack"
 import { ColorVar } from "@priolo/jack"
+import { DOC_TYPE } from "../docs/types"
 
 
-// export enum VIEW_PARAMS {
-// 	POSITION = "pos",
-// }
-
-// export enum VIEW_VARIANTS {
-// 	DEFAULT = "",
-// 	LINK = "_link",
-// }
-
-// export enum LOAD_MODE {
-// 	MANUAL,
-// 	PARENT,
-// 	POLLING
-// }
-
-// export enum LOAD_STATE {
-// 	IDLE,
-// 	LOADING,
-// 	ERROR
-// }
 
 export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 	switch (type) {
