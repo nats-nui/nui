@@ -20,22 +20,43 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleSave = () => bucketSo.save()
+	const handleEditClick = async () => bucketSo.setEditState(EDIT_STATE.EDIT)
+	const handleCancelClick = () => bucketSo.restore()
+	const handleSaveClick = async () => bucketSo.save()
 
 	// RENDER
+	
+	if (bucketSa.editState == EDIT_STATE.NEW) {
+		return (
+			<Button
+				children="CREATE"
+				onClick={handleSaveClick}
+			/>
+		)
 
-	if (bucketSa.editState == EDIT_STATE.READ) return <>
-		<OptionsCmp
-			style={{ marginLeft: 5 }}
-			store={bucketSo}
-		/>
-		<div style={{ flex: 1 }} />
-	</>
+	} else if (bucketSa.editState == EDIT_STATE.READ) {
+		return <>
+			<OptionsCmp
+				style={{ marginLeft: 5 }}
+				store={bucketSo}
+			/>
+			<div style={{ flex: 1}} />
+			<Button
+				children="EDIT"
+				onClick={handleEditClick}
+			/>
+		</>
+	}
 
+	// EDIT
 	return (<>
 		<Button
-			children="CREATE"
-			onClick={handleSave}
+			children="SAVE"
+			onClick={handleSaveClick}
+		/>
+		<Button
+			children="CANCEL"
+			onClick={handleCancelClick}
 		/>
 	</>)
 }

@@ -1,27 +1,32 @@
-import { StreamStore } from "@/stores/stacks/streams/detail"
 import { newSource } from "@/stores/stacks/streams/utils/factory"
-import { EDIT_STATE } from "@/types"
-import { Source, StreamConfig } from "@/types/Stream"
+import { Source } from "@/types/Stream"
+import { EditItemRow, EditList, ElementDialog, LIST_ACTIONS, ViewStore } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useRef, useState } from "react"
 import EditSourceCmp from "./EditSourceCmp"
-import { EditItemRow, EditList, ElementDialog } from "@priolo/jack"
-import { LIST_ACTIONS } from "@priolo/jack"
 
 
 
 interface Props {
-	store?: StreamStore
+	store?: ViewStore //StreamStore
+	sources: Source[]
+	allStreams?: string[]
+	onChangeSources?: (source: Source[]) => void
+	readOnly?: boolean
 }
 
 const SourcesCmp: FunctionComponent<Props> = ({
 	store: streamSo,
+	sources = [],
+	allStreams,
+	onChangeSources,
+	readOnly = false,
 }) => {
 
-	const haveNew = () => config.sources?.some(s => !(s.name?.length > 0))
+	const haveNew = () => sources?.some(s => !(s.name?.length > 0))
 
 	// STORE
-	const streamSa = useStore(streamSo)
+	useStore(streamSo)
 
 	// HOOKs
 	// indica praticamente se la dialog è aperta o no
@@ -39,14 +44,13 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	}
 
 	const handleSourcesChange = (sources: Source[], action: LIST_ACTIONS) => {
-		config.sources = sources
-		streamSo.setStream({ ...streamSa.stream })
+		onChangeSources?.(sources)
 		if (action == LIST_ACTIONS.DELETE) handleSelectChange(-1)
 	}
 
 	const handleSourceChange = (source: Source) => {
-		config.sources[souceIndex] = source
-		streamSo.setStream({ ...streamSa.stream })
+		sources[souceIndex] = source
+		onChangeSources?.(sources)
 	}
 
 	const handleDialogClose = (e) => {
@@ -65,17 +69,13 @@ const SourcesCmp: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const config: StreamConfig = streamSa.stream?.config
-	if (config == null) return null
-	const sources = config.sources ?? []
-	const inRead = streamSa.editState == EDIT_STATE.READ
-	const allStreams = streamSa.allStreams
+	if ( sources == null) return null
 
 	return <>
 		<EditList<Source> ref={listRef} keepSelectOnBlur toggleSelect
 			items={sources}
 			select={souceIndex}
-			readOnly={inRead}
+			readOnly={readOnly}
 			onItemsChange={handleSourcesChange}
 			onSelectChange={handleSelectChange}
 			onNewItem={handleNewSource}
@@ -94,7 +94,7 @@ const SourcesCmp: FunctionComponent<Props> = ({
 				source={sources?.[souceIndex]}
 				onChange={handleSourceChange}
 				allStream={allStreams}
-				readOnly={inRead}
+				readOnly={readOnly}
 			/>
 		</ElementDialog>
 	</>

@@ -81,14 +81,21 @@ const setup = {
 		},
 		//#endregion
 
-		async fetchIfVoid(_: void, store?: BucketsStore) {
-			if (!!store.state.all) return
-			await store.fetch()
+		async fetchIfVoid(_: void, store?: BucketStore) {
+			// eventualmente aggiorno i dati
+			if (store.state.editState != EDIT_STATE.NEW /*&& !store.state.bucket?.config*/) {
+				await store.fetch()
+			}
 		},
 
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
-			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
+			let bucketSaved: BucketState = null
+			if (store.state.editState == EDIT_STATE.NEW) {
+				bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucket.config, { store })
+			} else {
+				bucketSaved = await bucketApi.update(store.state.connectionId, store.state.bucket.config, { store })
+			}
 			store.setBucket(bucketSaved)
 			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)
@@ -99,6 +106,11 @@ const setup = {
 				body: "you have it on the DUCKETS list",
 			})
 		},
+		/** reset ENTITY */
+		restore: (_: void, store?: BucketStore) => {
+			store.fetch()
+			store.setEditState(EDIT_STATE.READ)
+		},
 
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
@@ -106,11 +118,14 @@ const setup = {
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
+
 	},
 
 	mutators: {
 		setBucket: (bucket: BucketState) => ({ bucket }),
-		setBucketConfig: (bucketConfig: BucketConfig) => ({ bucketConfig }),
+		setBucketConfig: (config: Partial<BucketConfig>, store?: BucketStore) => {
+			return { bucket: { ...store.state.bucket, config } }
+		},
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},
 }
