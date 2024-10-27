@@ -1,3 +1,4 @@
+import KeyValueMap from "@/components/input/KeyValueMap.tsx"
 import MaxBytesCmp from "@/components/input/MaxBytesCmp.tsx"
 import MaxNumberCmp from "@/components/input/MaxNumberCmp.tsx"
 import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx"
@@ -5,11 +6,9 @@ import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { dateShow } from "@/utils/time"
+import { DateTimeInput, EditList, EditNumberRow, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import EditMetadataRow from "../../../rows/EditMetadataRow"
-import { DateTimeInput, EditList, EditNumberRow, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
-import KeyValueMap from "@/components/input/KeyValueMap.tsx";
 
 
 

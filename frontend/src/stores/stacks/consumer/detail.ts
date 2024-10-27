@@ -3,9 +3,11 @@ import { findInRoot } from "@/stores/docs/utils/manage"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
+import { buildStore } from "../../docs/utils/factory"
 import { MESSAGE_TYPE } from "../../log/utils"
+import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
 
@@ -100,6 +102,28 @@ const setup = {
 		restore: (_: void, store?: ConsumerStore) => {
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
+		},
+
+
+		/** apertura della CARD JSON CONFIG */
+		openJsonConfig(_: void, store?: ConsumerStore) {
+			// se è già aperta la chiudo
+			const configOpen = store.state.linked?.state.type == DOC_TYPE.JSON_CONFIG
+			if (configOpen) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+				return
+			}
+			const configStore = buildStore({
+				type: DOC_TYPE.JSON_CONFIG,
+				value: JSON.stringify(store.state.consumer.config),
+				title: `CONSUMER: ${store.state.consumer.config.name}`,
+				onClose: (value: string) => {
+					if (!value) return
+					const config = JSON.parse(value) as ConsumerConfig
+					store?.setConsumerConfig(config)
+				},
+			} as JsonConfigState) as JsonConfigStore;
+			store.state.group.addLink({ view: configStore, parent: store, anim: true })
 		},
 
 	},
