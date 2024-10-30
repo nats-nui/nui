@@ -92,6 +92,7 @@ func (s *NuiTestSuite) TestConnectionImport() {
 		WithBytes([]byte(fmt.Sprintf(`{ "path": "%s" }`, "./clicontext"))).
 		Expect().Status(http.StatusOK)
 	r.JSON().Object().Value("connections").Array().Length().IsEqual(2)
+	r.JSON().Object().Value("imports").Array().Length().IsEqual(3)
 }
 
 func (s *NuiTestSuite) TestMessagesSubscriptionRest() {

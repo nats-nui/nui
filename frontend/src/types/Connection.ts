@@ -56,6 +56,7 @@ export enum CNN_STATUS {
 }
 
 export interface CliConnectionImport {
+    name: string
     path: string
     error?: string
 }
