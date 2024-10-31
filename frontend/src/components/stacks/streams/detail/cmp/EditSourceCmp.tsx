@@ -58,6 +58,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 	// RENDER
 	if (!source) return null
 	const timeRender = source.optStartTime ? dayjs(source.optStartTime).format("YYYY-MM-DD HH:mm:ss") : ""
+	const haveListStream = allStream && allStream.length > 0
 
 	return <div className="jack-lyt-form var-dialog">
 
@@ -77,7 +78,7 @@ const EditSourceCmp: FunctionComponent<Props> = ({
 
 		<div className="lyt-v">
 			<div className="jack-lbl-prop">NAME</div>
-			{!isExternal
+			{!isExternal && haveListStream
 				? <Options<string> height={500}
 					value={source.name}
 					items={allStream}

@@ -37,6 +37,8 @@ import StreamDetailView from "../stacks/streams/detail/View"
 import StreamsListView from "../stacks/streams/list/ListView"
 import StreamMessagesView from "../stacks/streams/messages/View"
 import SyncView from "../stacks/sync/View"
+import JsonConfigView from "../stacks/jsonconfig/View"
+import { JsonConfigStore } from "../../stores/stacks/jsonconfig"
 
 
 
@@ -91,6 +93,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <HelpView store={view as HelpStore} />
 			case DOC_TYPE.SYNC:
 				return <SyncView store={view as SyncStore} />
+			case DOC_TYPE.JSON_CONFIG:
+				return <JsonConfigView store={view as JsonConfigStore} />
 
 			default:
 				return null

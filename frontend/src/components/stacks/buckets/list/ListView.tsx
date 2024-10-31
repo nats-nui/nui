@@ -1,7 +1,7 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { DOC_TYPE } from "@/types"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
@@ -38,7 +38,8 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const buckets = bucketsSo.getFiltered() ?? []
 	if (!buckets) return null
 	const selected = bucketsSa.select
-	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET && !!(bucketsSa.linked as BucketStore).state.bucketConfig
+	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET 
+		&& (bucketsSa.linked as BucketStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
 		className={clsCard.root}

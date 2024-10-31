@@ -1,5 +1,5 @@
 
-## STREAM-CONSUMER
+## BUCKET-CONFIG
 
 ```typescript
 BucketConfig {

@@ -9,8 +9,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import clsCard from "../../CardMint.module.css"
 import ActionsCmp from "./Actions"
-import CreateForm from "./CreateForm"
-import ShowForm from "./ShowForm"
+import Form from "./Form"
 
 
 
@@ -54,17 +53,17 @@ const BucketDetailView: FunctionComponent<Props> = ({
 			</div>
 		}
 	>
-		{inRead ? (<>
+		{inRead && <>
 			<RowButton style={{ marginBottom: 13 }}
 				icon={<KvEntriesIcon />}
 				label="KVENTRIES"
 				selected={isKVEntriesSelect}
 				onClick={handleKVEntriesClick}
 			/>
-			<ShowForm store={bucketSo} />
-		</>) : (
-			<CreateForm store={bucketSo} />
-		)}
+		</>}
+
+		<Form store={bucketSo} />
+
 	</FrameworkCard>
 }
 

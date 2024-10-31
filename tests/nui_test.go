@@ -441,10 +441,13 @@ func (s *NuiTestSuite) TestKvRest() {
 	r.JSON().Array().Value(0).Object().Value("bucket").String().IsEqual("bucket1")
 	r.JSON().Array().Value(0).Object().Value("values").Number().IsEqual(10)
 	r.JSON().Array().Value(0).Object().Value("history").Number().IsEqual(5)
+	r.JSON().Array().Value(0).Object().Value("config").IsNull()
 
 	// get existing bucket
 	r = e.GET("/api/connection/" + connId + "/kv/bucket1").Expect()
-	r.Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.Status(http.StatusOK)
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Object().Value("config").NotNull()
 
 	// create a new bucket
 	e.POST("/api/connection/" + connId + "/kv").
@@ -454,6 +457,13 @@ func (s *NuiTestSuite) TestKvRest() {
 	// get new bucket
 	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().
 		JSON().Object().Value("bucket").String().IsEqual("bucket3")
+
+	// update the new bucket
+	r = e.POST("/api/connection/" + connId + "/kv/bucket3").
+		WithBytes([]byte(`{"bucket": "bucket3", "storage": "memory", "ttl": 2000000000}`)).
+		Expect()
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket3")
+	r.JSON().Object().Value("ttl").Number().IsEqual(2000000000)
 
 	//delete new bucket
 	e.DELETE("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusOK)

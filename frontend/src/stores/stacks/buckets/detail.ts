@@ -10,6 +10,8 @@ import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
+import { buildStore } from "../../docs/utils/factory"
+import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
 
 
 
@@ -81,14 +83,21 @@ const setup = {
 		},
 		//#endregion
 
-		async fetchIfVoid(_: void, store?: BucketsStore) {
-			if (!!store.state.all) return
-			await store.fetch()
+		async fetchIfVoid(_: void, store?: BucketStore) {
+			// eventualmente aggiorno i dati
+			if (store.state.editState != EDIT_STATE.NEW /*&& !store.state.bucket?.config*/) {
+				await store.fetch()
+			}
 		},
 
 		/** crea un nuovo BUCKET tramite BUCKET-CONFIG */
 		async save(_: void, store?: BucketStore) {
-			const bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucketConfig, { store })
+			let bucketSaved: BucketState = null
+			if (store.state.editState == EDIT_STATE.NEW) {
+				bucketSaved = await bucketApi.create(store.state.connectionId, store.state.bucket.config, { store })
+			} else {
+				bucketSaved = await bucketApi.update(store.state.connectionId, store.state.bucket.config, { store })
+			}
 			store.setBucket(bucketSaved)
 			store.getParentList()?.update(bucketSaved)
 			store.getParentList()?.setSelect(bucketSaved.bucket)
@@ -99,6 +108,33 @@ const setup = {
 				body: "you have it on the DUCKETS list",
 			})
 		},
+		/** reset ENTITY */
+		restore: (_: void, store?: BucketStore) => {
+			store.fetch()
+			store.setEditState(EDIT_STATE.READ)
+		},
+
+
+		/** apertura della CARD JSON CONFIG */
+		openJsonConfig(_: void, store?: BucketStore) {
+			// se è già aperta la chiudo
+			const configOpen = store.state.linked?.state.type == DOC_TYPE.JSON_CONFIG
+			if (configOpen) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+				return
+			}
+			const configStore = buildStore({
+				type: DOC_TYPE.JSON_CONFIG,
+				value: JSON.stringify(store.state.bucket.config),
+				title: `BUCKET: ${store.state.bucket.bucket}`,
+				onClose: (value: string) => {
+					if (!value) return
+					const config = JSON.parse(value) as BucketConfig
+					store?.setBucketConfig(config)
+				},
+			} as JsonConfigState) as JsonConfigStore;
+			store.state.group.addLink({ view: configStore, parent: store, anim: true })
+		},
 
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
@@ -106,11 +142,14 @@ const setup = {
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
+
 	},
 
 	mutators: {
 		setBucket: (bucket: BucketState) => ({ bucket }),
-		setBucketConfig: (bucketConfig: BucketConfig) => ({ bucketConfig }),
+		setBucketConfig: (config: Partial<BucketConfig>, store?: BucketStore) => {
+			return { bucket: { ...store.state.bucket, config } }
+		},
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},
 }
