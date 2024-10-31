@@ -10,6 +10,8 @@ import { BucketsState, BucketsStore } from "."
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
+import { buildStore } from "../../docs/utils/factory"
+import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
 
 
 
@@ -110,6 +112,28 @@ const setup = {
 		restore: (_: void, store?: BucketStore) => {
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
+		},
+
+
+		/** apertura della CARD JSON CONFIG */
+		openJsonConfig(_: void, store?: BucketStore) {
+			// se è già aperta la chiudo
+			const configOpen = store.state.linked?.state.type == DOC_TYPE.JSON_CONFIG
+			if (configOpen) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+				return
+			}
+			const configStore = buildStore({
+				type: DOC_TYPE.JSON_CONFIG,
+				value: JSON.stringify(store.state.bucket.config),
+				title: `BUCKET: ${store.state.bucket.bucket}`,
+				onClose: (value: string) => {
+					if (!value) return
+					const config = JSON.parse(value) as BucketConfig
+					store?.setBucketConfig(config)
+				},
+			} as JsonConfigState) as JsonConfigStore;
+			store.state.group.addLink({ view: configStore, parent: store, anim: true })
 		},
 
 		/** apertura della CARD KVENTRY */
