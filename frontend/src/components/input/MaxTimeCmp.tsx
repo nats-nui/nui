@@ -1,5 +1,5 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
-import {FunctionComponent, useEffect, useState} from "react"
+import { FunctionComponent, useEffect, useState } from "react"
 import { Accordion, IconToggle, ListDialog, NumberInput, StringUpRow } from "@priolo/jack"
 
 
@@ -54,21 +54,19 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const [unit, setUnit] = useState(inputUnit)
 	const [valueShowNeedUpdate, setValueShowNeedUpdate] = useState(false)
 
-	 useEffect(() => {
-	 	const valueInNs = valueToNs(value, outputUnit)
-		 console.log(valueInNs)
-	 	const largestUnit = getLargestUnit(valueInNs, inputUnit)
-		 console.log(largestUnit)
-	 	setUnit(largestUnit)
-		 setValueShow(nsToValue(valueInNs, largestUnit))
-	 }, []);
+	useEffect(() => {
+		const valueInNs = valueToNs(value, outputUnit)
+		const largestUnit = getLargestUnit(valueInNs, inputUnit)
+		setUnit(largestUnit)
+		setValueShow(nsToValue(valueInNs, largestUnit))
+	}, []);
 
 	useEffect(() => {
 		if (valueShowNeedUpdate) {
 			handlePropChange(valueShow)
 			setValueShowNeedUpdate(false)
 		}
-	}, [unit,valueShowNeedUpdate])
+	}, [unit, valueShowNeedUpdate])
 
 	// HANDLER
 	const handlePropChange = (value: number) => {
@@ -126,13 +124,13 @@ function valueToNs(value: number, from: TIME) {
 	return value * unitsInNs[from];
 }
 
-function  getLargestUnit(valueInNs: number, defaultUnit: TIME): TIME {
+function getLargestUnit(valueInNs: number, defaultUnit: TIME): TIME {
 	let largestUnit = TIME.NS;
 	if (valueInNs == 0) {
 		return defaultUnit;
 	}
 	for (const [unit, ns] of Object.entries(unitsInNs)) {
-		if (valueInNs % ns  == 0) {
+		if (valueInNs % ns == 0) {
 			largestUnit = unit as TIME;
 		} else {
 			break;

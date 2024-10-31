@@ -19,6 +19,7 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const state = useStore(store)
+	useStore(store.state.group)
 
 	// HOOKs
 	useEffect(() => {

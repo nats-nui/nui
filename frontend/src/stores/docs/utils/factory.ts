@@ -21,6 +21,7 @@ import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/utils/editor";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
+import jsonConfigSetup from "../../stacks/jsonconfig";
 
 
 
@@ -64,8 +65,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.ABOUT]: aboutSetup,
 
 		[DOC_TYPE.HELP]: helpSetup,
-
 		[DOC_TYPE.SYNC]: syncSetup,
+		[DOC_TYPE.JSON_CONFIG]: jsonConfigSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)
