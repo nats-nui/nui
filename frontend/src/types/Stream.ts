@@ -75,12 +75,12 @@ export interface Mirror {
 	optStartSeq: number
 	optStartTime: string	    // time string, omitted if zero
 	filterSubject: string		// string, omitted if empty
-	subjectTransforms: SubjectTransform[] // object, omitted if null
-	external: {					// object, omitted if null
+	subjectTransforms?: SubjectTransform[] // object, omitted if null
+	external?: {					// object, omitted if null
 		api: string
 		deliver: string
 	}
-	domain: string 				// string, omitted if empty
+	domain?: string 				// string, omitted if empty
 }
 
 export interface Placement {
@@ -93,12 +93,12 @@ export interface Source {
 	optStartSeq: number
 	optStartTime: string	    // time string, omitted if zero
 	filterSubject: string		// string, omitted if empty
-	subjectTransforms: SubjectTransform[] // object, omitted if null
-	external: {					// object, omitted if null
+	subjectTransforms?: SubjectTransform[] // object, omitted if null
+	external?: {					// object, omitted if null
 		api: string
 		deliver: string
 	}
-	domain: string 				// string, omitted if empty
+	domain?: string 				// string, omitted if empty
 }
 
 export interface SubjectTransform {
@@ -119,7 +119,7 @@ export enum STORAGE {
 export enum RETENTION {
 	LIMIT = "limits",
 	INTEREST = "interest",
-	WORKQUEQUE = "workqueque",
+	WORKQUEUE = "workqueue",
 }
 
 export enum DISCARD {

@@ -1,8 +1,9 @@
 import { BucketStore } from "@/stores/stacks/buckets/detail"
-import { EDIT_STATE } from "@/types"
-import { Button, OptionsCmp } from "@priolo/jack"
+import { DOC_TYPE, EDIT_STATE } from "@/types"
+import { Button, IconButton, OptionsCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import ConfigIcon from "../../../../icons/cards/ConfigIcon"
 
 
 
@@ -20,24 +21,55 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleSave = () => bucketSo.save()
+	const handleEditClick = async () => bucketSo.setEditState(EDIT_STATE.EDIT)
+	const handleCancelClick = () => bucketSo.restore()
+	const handleSaveClick = async () => bucketSo.save()
+	const handleConfigClick = () => bucketSo.openJsonConfig()
 
 	// RENDER
+	const configOpen = bucketSa.linked?.state.type == DOC_TYPE.JSON_CONFIG
+	
+	if (bucketSa.editState == EDIT_STATE.NEW) {
+		return <>
+			<Button
+				children="CREATE"
+				onClick={handleSaveClick}
+			/>
+			<IconButton
+				select={configOpen}
+				onClick={handleConfigClick}
+			><ConfigIcon style={{ width: 14, height: 14 }} /></IconButton>
+		</>
 
-	if (bucketSa.editState == EDIT_STATE.READ) return <>
-		<OptionsCmp
-			style={{ marginLeft: 5 }}
-			store={bucketSo}
-		/>
-		<div style={{ flex: 1 }} />
-	</>
+	} else if (bucketSa.editState == EDIT_STATE.READ) {
+		return <>
+			<OptionsCmp
+				style={{ marginLeft: 5 }}
+				store={bucketSo}
+			/>
+			<div style={{ flex: 1}} />
+			<Button
+				children="EDIT"
+				onClick={handleEditClick}
+			/>
+		</>
+	}
 
-	return (<>
+	// EDIT
+	return <>
 		<Button
-			children="CREATE"
-			onClick={handleSave}
+			children="SAVE"
+			onClick={handleSaveClick}
 		/>
-	</>)
+		<Button
+			children="CANCEL"
+			onClick={handleCancelClick}
+		/>
+		<IconButton
+			select={configOpen}
+			onClick={handleConfigClick}
+		><ConfigIcon style={{ width: 14, height: 14 }} /></IconButton>
+	</>
 }
 
 export default ActionsCmp

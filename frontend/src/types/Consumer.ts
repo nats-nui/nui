@@ -1,5 +1,7 @@
 import { TimestampString } from "./global"
 
+
+
 export interface StreamConsumer {
 	/** The name of the stream the consumer is attached to  */
 	streamName: string
@@ -26,8 +28,6 @@ export interface StreamConsumer {
 	/** Whether the consumer is bound to a push subscription */
 	pushBound?: boolean
 }
-
-
 
 export interface ConsumerConfig {
 
