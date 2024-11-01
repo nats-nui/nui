@@ -17,9 +17,9 @@ export class SocketService {
 
 	options: SocketOptions;
 	websocket: WebSocket;
-	// l'ultimo id connection utilizzato per la connessione WS
+	/** l'ultimo id connection utilizzato per la connessione WS */
 	cnnId: string = null
-	// modulo per la riconnessione
+	/** modulo per la riconnessione */
 	reconnect: Reconnect;
 
 	// callback su apertura connessione

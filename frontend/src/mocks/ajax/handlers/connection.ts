@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import connections from "../../data/connections"
 import { createUUID } from '@/mocks/data/utils'
+import cnnImports from '../../data/connections_cli_imports'
 
 
 
@@ -67,7 +68,20 @@ const handlers = [
 			ctx.status(200),
 		)
 	}),
-	
+
+	/** IMPORT
+	 * importa le connection dai file presentiin una specifica PATH
+	 */
+	rest.post('/api/connection/import/nats-cli', async (req, res, ctx) => {
+		const params: { path: string } = await req.json()
+		if (!params) return res(ctx.status(500))
+		return res(
+			ctx.delay(1000),
+			ctx.status(200),
+			ctx.json(cnnImports),
+		)
+	}),
+
 ]
 
 export default handlers

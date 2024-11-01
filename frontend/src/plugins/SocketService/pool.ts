@@ -47,6 +47,22 @@ class SocketPool {
 		ss.disconnect()
 		delete this.sockets[key]
 	}
+
+	/** chiude tutte le connessioni */
+	closeAll() {
+		Object.keys(this.sockets).forEach(key => {
+			const ss = this.getById(key)
+			ss.disconnect()
+		})
+	}
+	/** prova a riconnettersi sulle connessioni chiuse */
+	connectAll() {
+		Object.keys(this.sockets).forEach(key => {
+			const ss = this.getById(key)
+			ss.connect()
+		})
+	}
+
 }
 
 export const socketPool = new SocketPool()
