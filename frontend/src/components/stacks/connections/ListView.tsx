@@ -13,7 +13,8 @@ import ElementRow from "../../rows/ElementRow"
 import cls from "./ListView.module.css"
 import clsCard from "../CardGreenDef.module.css"
 import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
-import { AlertDialog, Button, OptionsCmp } from "@priolo/jack"
+import { AlertDialog, Button, IconButton, OptionsCmp } from "@priolo/jack"
+import ConfigIcon from "../../../icons/cards/ConfigIcon"
 
 
 interface Props {
@@ -56,6 +57,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			timeout: 5000,
 		})
 	}
+	const handleConfigClick = () => cnnListSo.openLoader()
 
 	// RENDER
 	const connections = useMemo(() => {
@@ -68,7 +70,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	const selectId = (cnnListSa.linked as CnnDetailStore)?.state?.connection?.id
 	const isSelected = (cnn: Connection) => cnn.id == selectId
 	const isVoid = !(connections?.length > 0)
-
+	const loaderOpen = cnnListSa.linked?.state.type == DOC_TYPE.CNN_LOADER
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -90,6 +92,10 @@ const CnnListView: FunctionComponent<Props> = ({
 				select={isNewSelect}
 				onClick={handleNew}
 			/>
+			<IconButton
+				select={loaderOpen}
+				onClick={handleConfigClick}
+			><ConfigIcon style={{ width: 14, height: 14 }} /></IconButton>
 		</>}
 	>
 		{!isVoid ? connections.map(cnn => (

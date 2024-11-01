@@ -22,6 +22,7 @@ import { MSG_FORMAT } from "@/utils/editor";
 import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
 import jsonConfigSetup from "../../stacks/jsonconfig";
+import cnnLoaderSetup from "../../stacks/connectionLoader";
 
 
 
@@ -44,6 +45,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
+		[DOC_TYPE.CNN_LOADER]: cnnLoaderSetup,		
 
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 		[DOC_TYPE.MESSAGE]: messageSetup,

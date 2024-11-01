@@ -1,5 +1,5 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
-import {CliConnectionImport, Connection} from "@/types/Connection"
+import { CliImport, Connection } from "@/types/Connection"
 
 
 /** INDEX
@@ -25,13 +25,14 @@ function remove(id: string, opt?: CallOptions): Promise<void> {
 	return ajax.delete(`connection/${id}`, null, opt)
 }
 
-function importFromNatsCli(path: string): Promise<{ connections: Connection[], imports: CliConnectionImport[]}> {
+function importFromNatsCli(path: string): Promise<{ connections: Connection[], imports: CliImport[]}> {
 	return ajax.post(`connection/import/nats-cli`, {path: path})
 }
 
-const api = {
+const connectionApi = {
 	index,
 	remove,
 	save,
+	importFromNatsCli,
 }
-export default api
+export default connectionApi

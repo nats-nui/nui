@@ -1,6 +1,6 @@
 import messagesApi from "@/api/messages"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage } from "@/plugins/SocketService/types"
+import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"

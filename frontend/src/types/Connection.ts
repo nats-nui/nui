@@ -33,6 +33,14 @@ export interface Subscription {
     favorite?: boolean
 }
 
+export interface CliImport {
+    name: string
+    path: string
+    error: string
+    importedContext: { [key: string]: any }
+}
+
+
 export enum AUTH_MODE {
     // use token field
     TOKEN = "auth_token",
@@ -53,10 +61,4 @@ export enum CNN_STATUS {
     CONNECTED = "connected",
     RECONNECTING = "reconnecting",
     DISCONNECTED = "disconnected",
-}
-
-export interface CliConnectionImport {
-    name: string
-    path: string
-    error?: string
 }

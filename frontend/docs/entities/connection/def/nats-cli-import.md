@@ -9,7 +9,6 @@ CliImport
     path: string
     error: string
     importedContext: { [key: string]: any }
-    
 }
 ```
 
