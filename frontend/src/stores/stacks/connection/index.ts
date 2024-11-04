@@ -4,7 +4,7 @@ import { ViewState, ViewStore } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
-import { CnnLoaderState, CnnLoaderStore } from "../connectionLoader"
+import { CnnImportState, CnnImportStore, IMPORT_STATUS } from "../cnnImport"
 import { buildStreams } from "../streams/utils/factory"
 import { CnnDetailStore } from "./detail"
 import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
@@ -96,7 +96,8 @@ const setup = {
 				type: DOC_TYPE.CNN_LOADER,
 				path: "",
 				imports: [],
-			} as CnnLoaderState) as CnnLoaderStore;
+				status: IMPORT_STATUS.INIT,
+			} as CnnImportState) as CnnImportStore;
 			store.state.group.addLink({ view: configStore, parent: store, anim: true })
 		},
 	},

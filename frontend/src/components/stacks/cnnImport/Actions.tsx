@@ -1,12 +1,12 @@
 import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import { CnnLoaderStore } from "../../../stores/stacks/connectionLoader"
+import { CnnImportStore, IMPORT_STATUS } from "../../../stores/stacks/cnnImport"
 
 
 
 interface Props {
-	store?: CnnLoaderStore
+	store?: CnnImportStore
 }
 
 const ActionsCmp: FunctionComponent<Props> = ({
@@ -19,15 +19,19 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleImportClick = async () => store.import()
+	const handleImportClick = async () => {
+		if (store.state.status == IMPORT_STATUS.LOADING ) return
+		store.import()
+	}
 
 	// RENDER
-	const haveList = store.state.imports?.length > 0
-	if ( haveList ) return null
-
+	if (store.state.status == IMPORT_STATUS.DONE) return null
+	const clsRoot = store.state.status == IMPORT_STATUS.LOADING ? "jack-ani-loading" : ""
+	const styRoot = store.state.status == IMPORT_STATUS.LOADING ? { color: "var(--cmp-select-fg)"} : null
+	
 	return <>
-
 		<Button
+			className={clsRoot} style={styRoot}
 			children="IMPORT"
 			onClick={handleImportClick}
 		/>

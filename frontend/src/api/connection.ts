@@ -25,8 +25,8 @@ function remove(id: string, opt?: CallOptions): Promise<void> {
 	return ajax.delete(`connection/${id}`, null, opt)
 }
 
-function importFromNatsCli(path: string): Promise<{ connections: Connection[], imports: CliImport[]}> {
-	return ajax.post(`connection/import/nats-cli`, {path: path})
+function importFromNatsCli(path: string, opt?: CallOptions): Promise<{ connections: Connection[], imports: CliImport[]}> {
+	return ajax.post(`connection/import/nats-cli`, {path: path}, opt)
 }
 
 const connectionApi = {

@@ -39,7 +39,7 @@ import StreamMessagesView from "../stacks/streams/messages/View"
 import SyncView from "../stacks/sync/View"
 import JsonConfigView from "../stacks/jsonconfig/View"
 import { JsonConfigStore } from "../../stores/stacks/jsonconfig"
-import { CnnLoaderStore } from "../../stores/stacks/connectionLoader"
+import { CnnImportStore } from "../../stores/stacks/cnnImport"
 import CnnLoaderView from "../stacks/cnnImport/View"
 
 
@@ -60,7 +60,7 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 			case DOC_TYPE.CONNECTION:
 				return <CnnDetailView store={view as CnnDetailStore} />
 			case DOC_TYPE.CNN_LOADER:
-				return <CnnLoaderView store={view as CnnLoaderStore} />
+				return <CnnLoaderView store={view as CnnImportStore} />
 
 			case DOC_TYPE.MESSAGES:
 				return <MessagesView store={view as MessagesStore} />
