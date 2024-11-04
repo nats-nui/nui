@@ -116,7 +116,9 @@ func parseFromCliContext(name string, cliContext clicontext.CliConnectionContext
 			Creds: cliContext.Creds,
 		})
 	}
-
+	if len(auths) > 0 {
+		auths[0].Active = true
+	}
 	var hosts []string
 	if cliContext.URL != "" {
 		hosts = append(hosts, strings.Split(cliContext.URL, ",")...)
