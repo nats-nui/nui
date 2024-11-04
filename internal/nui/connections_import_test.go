@@ -26,6 +26,7 @@ func TestParseFromCliContext(t *testing.T) {
 				Auth: []connection.Auth{
 					{
 						Mode:     connection.AuthModeUserPassword,
+						Active:   true,
 						Username: "testuser",
 						Password: "testpass",
 					},
@@ -41,8 +42,9 @@ func TestParseFromCliContext(t *testing.T) {
 				Name: "Test Connection",
 				Auth: []connection.Auth{
 					{
-						Mode:  connection.AuthModeToken,
-						Token: "testtoken",
+						Active: true,
+						Mode:   connection.AuthModeToken,
+						Token:  "testtoken",
 					},
 				},
 			},
@@ -56,8 +58,9 @@ func TestParseFromCliContext(t *testing.T) {
 				Name: "Test Connection",
 				Auth: []connection.Auth{
 					{
-						Mode: connection.AuthModeJwt,
-						Jwt:  "testjwt",
+						Active: true,
+						Mode:   connection.AuthModeJwt,
+						Jwt:    "testjwt",
 					},
 				},
 			},
@@ -71,6 +74,7 @@ func TestParseFromCliContext(t *testing.T) {
 				Name: "Test Connection",
 				Auth: []connection.Auth{
 					{
+						Active:   true,
 						Mode:     connection.AuthModeNKey,
 						NKeySeed: "testnkey",
 					},
@@ -86,8 +90,33 @@ func TestParseFromCliContext(t *testing.T) {
 				Name: "Test Connection",
 				Auth: []connection.Auth{
 					{
-						Mode:  connection.AuthModeCredsFile,
-						Creds: "testcreds",
+						Active: true,
+						Mode:   connection.AuthModeCredsFile,
+						Creds:  "testcreds",
+					},
+				},
+			},
+		},
+		{
+			name: "multiple auths",
+			input: clicontext.CliConnectionContext{
+				User:     "user",
+				Password: "pass",
+				Creds:    "testcreds",
+			},
+			expected: connection.Connection{
+				Name: "Test Connection",
+				Auth: []connection.Auth{
+					{
+						Active:   true,
+						Mode:     connection.AuthModeUserPassword,
+						Username: "user",
+						Password: "pass",
+					},
+					{
+						Active: false,
+						Mode:   connection.AuthModeCredsFile,
+						Creds:  "testcreds",
 					},
 				},
 			},
