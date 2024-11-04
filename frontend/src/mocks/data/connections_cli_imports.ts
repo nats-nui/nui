@@ -27,7 +27,7 @@ const cnnImports = {
 		{
 			"name": "test",
 			"path": "/home/mat/.config/nats/context/test.json",
-			"error": null
+			"error": "errore generico: con  una descrizione abbastanza lunga e dettagliata per capire cosa è successo"
 		},
 		{
 			"name": "test2",
@@ -37,7 +37,7 @@ const cnnImports = {
 		{
 			"name": "test3",
 			"path": "/home/mat/.config/nats/context/test.json",
-			"error": null
+			"error": "n'arrtro errore"
 		},
 		{
 			"name": "demo",

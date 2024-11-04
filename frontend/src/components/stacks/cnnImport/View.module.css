@@ -1,4 +1,60 @@
-.form {
-	height: 100%;
-	position: relative;
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
+
+.list .item {
+	display: flex;
+	align-items: start;
+	gap: 5px;
+	cursor: pointer;
+}
+
+.list .icon {
+	width: 16px;
+	height: 16px;
+	color: var(--cmp-select-bg);
+	margin-top: 2px;
+}
+
+.list .icon.error {
+	color: var(--color-fuchsia);
+}
+
+.list .text {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.list .title {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.list .path {
+	font-size: 10px;
+	opacity: .7;
+	font-weight: 400;
+}
+
+
+.dlg {
+	display: flex;
+	align-items: start;
+	gap: 5px;
+}
+.dlg .icon {
+	width: 16px;
+	height: 16px;
+	
+}
+.dlg .desc {
+	flex: 1;
+	font-size: 12px;
+	font-weight: 600;;
+}	

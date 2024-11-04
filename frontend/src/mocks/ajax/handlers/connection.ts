@@ -73,10 +73,10 @@ const handlers = [
 	 * importa le connection dai file presentiin una specifica PATH
 	 */
 	rest.post('/api/connection/import/nats-cli', async (req, res, ctx) => {
-		const params: { path: string } = await req.json()
-		if (!params) return res(ctx.status(500))
+		const { path } = await req.json()
+		if (path?.length == 0 ) return res(ctx.status(500))
 		return res(
-			ctx.delay(1000),
+			ctx.delay(3000),
 			ctx.status(200),
 			ctx.json(cnnImports),
 		)

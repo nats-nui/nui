@@ -57,7 +57,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			timeout: 5000,
 		})
 	}
-	const handleConfigClick = () => cnnListSo.openLoader()
+	const handleLoaderClick = () => cnnListSo.openLoader()
 
 	// RENDER
 	const connections = useMemo(() => {
@@ -94,7 +94,7 @@ const CnnListView: FunctionComponent<Props> = ({
 			/>
 			<IconButton
 				select={loaderOpen}
-				onClick={handleConfigClick}
+				onClick={handleLoaderClick}
 			><ConfigIcon style={{ width: 14, height: 14 }} /></IconButton>
 		</>}
 	>
