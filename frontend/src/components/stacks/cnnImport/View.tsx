@@ -12,6 +12,7 @@ import ActionsCmp from "./Actions"
 import cls from "./View.module.css"
 import SkullIcon from "../../../icons/SkullIcon"
 import SuccessIcon from "../../../icons/SuccessIcon"
+import { CliImport } from "../../../types"
 
 
 
@@ -28,12 +29,17 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 	useStore(store)
 
 	// HOOKs
-	const [dialogOpen, setDialogOpen] = useState(false)
 
 	// HANDLER
+	const handleDialogClose = () => store.setDilaog({ ...store.state.dialog, imp: null, open: false })
+	const handleSelect = (imp: CliImport) => {
+		if (store.state.dialog.imp == imp) return handleDialogClose()
+		store.setDilaog({ ...store.state.dialog, imp, open: true })
+	}
 
 	// RENDER
 	const haveList = store.state.status == "DONE"
+	const isSelect = (imp: CliImport) => store.state.dialog.imp == imp
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -42,7 +48,10 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={store} />}
 	>
 		{!haveList ? <>
-			<BigEyeIcon style={{ alignSelf: "center", margin: "30px 0px 40px 0px" }} />
+			<div className="jack-title" style={{ textAlign: "center" }}>
+				IMPORT NATS CLI CONTEXT FILES INTO NUI
+			</div>
+			<BigEyeIcon className={cls.bigEye} />
 			<div className={`jack-lyt-form`}>
 				<div className="lyt-v">
 					<div className="jack-lbl-prop">DIRECTORY TO SEARCH:</div>
@@ -57,18 +66,18 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 		</> : <>
 			<div className={cls.list}>
 				{store.state.imports.map((imp, i) => (
-					<div key={i} className={cls.item}
-						onClick={() => store.setDilaog({ open: true, imp })}
+					<div key={i} className={`${cls.item} ${isSelect(imp) ? cls.selected : ""}`}
+						onClick={() => handleSelect(imp)}
 					>
-						{!!imp.error ?
-							<CloseIcon className={`${cls.icon} ${cls.error}`} />
-							:
-							<DoneIcon className={cls.icon} />
-						}
-						<div className={cls.text}>
+						<div className={cls.first}>
+							{!!imp.error ?
+								<CloseIcon className={`${cls.icon} ${cls.error}`} />
+								:
+								<DoneIcon className={cls.icon} />
+							}
 							<div className={cls.title}>{imp.name}</div>
-							<div className={cls.path}>{trunc(imp.path, 35)}</div>
 						</div>
+						<div className={cls.path}>{trunc(imp.path, 35)}</div>
 					</div>
 				))}
 			</div>
@@ -77,10 +86,10 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 				width={250}
 				open={store.state.dialog.open}
 				store={store}
-				onClose={() => store.setDilaog({ ...store.state.dialog, open: false })}
+				onClose={handleDialogClose}
 			>
 				<div className="jack-lbl-readonly">{store.state.dialog.imp?.path}</div>
-				<div style={{ borderBottom: "1px dashed black", flex: 1, margin: "5px 0px", opacity: .2 }} />
+				<div className={cls.divider} />
 				<div className={cls.dlg}>
 					{store.state.dialog.imp?.error ? <>
 						<SkullIcon className={cls.icon} />

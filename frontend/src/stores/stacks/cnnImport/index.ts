@@ -3,7 +3,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { CliImport } from "@/types"
 import { mixStores } from "@priolo/jon"
 import cnnSo from "../../connections"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { MESSAGE_TYPE } from "@priolo/jack"
 
 
 
