@@ -1,0 +1,86 @@
+.bigEye {
+	align-self: center;
+	margin: 20px 0px 30px 0px;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.list .item {
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+	gap: 3px;
+	padding: 5px;
+	border-radius: 5px;;
+}
+.list .item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.list .item.selected {
+    background-color: var(--cmp-select-bg);
+	color: var(--cmp-select-fg);
+}
+
+
+.list .icon {
+	width: 16px;
+	height: 16px;
+	color: var(--cmp-select-bg);
+	margin-top: 2px;
+}
+
+.list .icon.error {
+	color: var(--color-fuchsia);
+}
+
+.list .first {
+	display: flex;
+	gap: 5px;
+}
+
+.list .title {
+	font-size: 14px;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.list .path {
+	font-size: 10px;
+	opacity: .7;
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
+
+
+.dlg {
+	display: flex;
+	align-items: start;
+	gap: 5px;
+}
+.dlg .icon {
+	width: 16px;
+	height: 16px;
+	
+}
+.dlg .desc {
+	flex: 1;
+	font-size: 12px;
+	font-weight: 600;;
+}
+
+.divider {
+	border-bottom: 1px dashed black; 
+	flex: 1; 
+	margin: 5px 0px;
+	opacity: .2;
+}

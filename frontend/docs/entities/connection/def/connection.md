@@ -3,8 +3,6 @@
 Nui connection  that manages one or more underlying NATS servers connections
 
 ```typescript
-
-```typescript
 Connection {
 	id?: string
 	name: string

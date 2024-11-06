@@ -1,10 +1,13 @@
 import cnnSo from "@/stores/connections"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
+import viewSetup from "@/stores/stacks/viewBase"
+import { ViewState, ViewStore } from "@priolo/jack"
+import { mixStores } from "@priolo/jon"
+import { DOC_TYPE } from "../../docs/types"
+import { buildStore } from "../../docs/utils/factory"
+import { CnnImportState, CnnImportStore, IMPORT_STATUS } from "../cnnImport"
 import { buildStreams } from "../streams/utils/factory"
 import { CnnDetailStore } from "./detail"
 import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
-import { ViewActions, ViewGetters, ViewMutators } from "@priolo/jack"
 
 
 
@@ -24,13 +27,13 @@ const setup = {
 
 		//#region OVERRIDE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
-		getSubTitle: (_: void, store?: ViewStore) => "All connections available",
-		getSerialization: (_: void, store?: ViewStore) => {
-			const state = store.state as CnnListState
-			return {
-				...viewSetup.getters.getSerialization(null, store),
-			}
-		},
+		getSubTitle: (_: void, store?: ViewStore):string => "All connections available",
+		// getSerialization: (_: void, store?: ViewStore) => {
+		// 	const state = store.state as CnnListState
+		// 	return {
+		// 		...viewSetup.getters.getSerialization(null, store),
+		// 	}
+		// },
 		//#endregion
 
 	},
@@ -38,20 +41,20 @@ const setup = {
 	actions: {
 
 		//#region OVERRIDE
-		setSerialization: (data: any, store?: ViewStore) => {
-			viewSetup.actions.setSerialization(data, store)
-			const state = store.state as CnnListState
-		},
+		// setSerialization: (data: any, store?: ViewStore) => {
+		// 	viewSetup.actions.setSerialization(data, store)
+		// 	const state = store.state as CnnListState
+		// },
 		//#endregion
 
 		/** apro/chiudo la CARD del dettaglio */
 		select(cnnId: string, store?: CnnListStore) {
 			const connection = cnnSo.getById(cnnId)
 			const oldId = (store.state.linked as CnnDetailStore)?.state.connection?.id
-    		const newId = (cnnId && oldId !== cnnId) ? cnnId : null
-    		const view = newId ? buildConnection(connection) : null
-    		store.setSelect(newId)
-    		store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
+			const newId = (cnnId && oldId !== cnnId) ? cnnId : null
+			const view = newId ? buildConnection(connection) : null
+			store.setSelect(newId)
+			store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
 		},
 
 		/** apro la CARD per creare un nuovo elemento */
@@ -78,6 +81,25 @@ const setup = {
 				anim: true
 			})
 		},
+
+
+
+		/** apertura della CARD JSON CONFIG */
+		openLoader(_: void, store?: CnnDetailStore) {
+			// se è già aperta la chiudo
+			const configOpen = store.state.linked?.state.type == DOC_TYPE.CNN_LOADER
+			if (configOpen) {
+				store.state.group.addLink({ view: null, parent: store, anim: true })
+				return
+			}
+			const configStore = buildStore({
+				type: DOC_TYPE.CNN_LOADER,
+				path: "",
+				imports: [],
+				status: IMPORT_STATUS.INIT,
+			} as CnnImportState) as CnnImportStore;
+			store.state.group.addLink({ view: configStore, parent: store, anim: true })
+		},
 	},
 
 	mutators: {
@@ -86,11 +108,11 @@ const setup = {
 }
 
 export type CnnListState = typeof setup.state & ViewState
-export type CnnListGetters = typeof setup.getters & ViewGetters
-export type CnnListActions = typeof setup.actions & ViewActions
-export type CnnListMutators = typeof setup.mutators & ViewMutators
+export type CnnListGetters = typeof setup.getters
+export type CnnListActions = typeof setup.actions
+export type CnnListMutators = typeof setup.mutators
 export interface CnnListStore extends ViewStore, CnnListGetters, CnnListActions, CnnListMutators {
 	state: CnnListState
 }
-const cnnSetup = mixStores(viewSetup, setup) 
+const cnnSetup = mixStores(viewSetup, setup)
 export default cnnSetup
