@@ -1,0 +1,21 @@
+{
+  "description": "context 1",
+  "url": "nats://cluster1, nats://cluster2",
+  "socks_proxy": "",
+  "token": "token",
+  "user": "user1",
+  "password": "pass1",
+  "creds": "/path/to/creds",
+  "nkey": "SKEYSEED",
+  "cert": "/path/to/cert",
+  "key": "/path/to/key",
+  "ca": "/path/to/ca",
+  "nsc": "",
+  "jetstream_domain": "",
+  "jetstream_api_prefix": "",
+  "jetstream_event_prefix": "",
+  "inbox_prefix": "custom_inbox",
+  "user_jwt": "bearer_jwt",
+  "color_scheme": "",
+  "tls_first": false
+}

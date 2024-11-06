@@ -2,7 +2,7 @@ import { AUTH_MODE, Connection } from "@/types";
 
 
 
-const connections:Connection[] = [
+const connections: any[] = [
 	{
 		id: "cnn-1",
 		name: "conn 1",

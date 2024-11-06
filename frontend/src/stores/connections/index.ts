@@ -32,9 +32,11 @@ const setup = {
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConnectionStore>store
 			const cnnStore = findAll(GetAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
+			socketPool.closeAll()
 			const cnn = await cnnApi.index({ store: cnnStore })
 			s.setAll(cnn)
 			await loadBaseSetup.actions.fetch(_, store)
+			socketPool.connectAll()
 		},
 		//#endregion
 
