@@ -299,7 +299,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 		</TitleAccordion>
 
-		<TitleAccordion title="ADVANCED" open={true}>
+		{/* <TitleAccordion title="ADVANCED" open={true}>
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">METADATA</div>
 				<KeyValueMap
@@ -309,7 +309,7 @@ const Form: FunctionComponent<Props> = ({
 					readOnly={inRead}
 				/>
 			</div>
-		</TitleAccordion>
+		</TitleAccordion> */}
 
 	</div>
 }
