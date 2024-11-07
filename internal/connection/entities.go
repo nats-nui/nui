@@ -7,8 +7,8 @@ type Connection struct {
 	InboxPrefix   string            `json:"inbox_prefix"`
 	Subscriptions []Subscription    `clover:"subscriptions" json:"subscriptions"`
 	Auth          []Auth            `json:"auth" `
-	TLSAuth       TLSAuth           `clover:"tls_auth" json:"tls_auth" `
-	Metadata      map[string]string `json:"metadata" `
+	TLSAuth       TLSAuth           `clover:"tls_auth" json:"tls_auth"`
+	Metadata      map[string]string `clover:"metadata" json:"metadata"`
 }
 
 func (c *Connection) GetMetadata(key string) (string, bool) {
