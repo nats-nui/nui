@@ -1,18 +1,18 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import ConfigIcon from "@/icons/cards/ConfigIcon"
 import { CnnImportStore } from "@/stores/stacks/cnnImport"
-import { Dialog, TextInput } from "@priolo/jack"
+import { Dialog, TextInput, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 import BigEyeIcon from "../../../icons/BigEyeIcon"
 import CloseIcon from "../../../icons/CloseIcon"
 import DoneIcon from "../../../icons/DoneIcon"
-import clsCard from "../CardGreenDef.module.css"
-import ActionsCmp from "./Actions"
-import cls from "./View.module.css"
 import SkullIcon from "../../../icons/SkullIcon"
 import SuccessIcon from "../../../icons/SuccessIcon"
 import { CliImport } from "../../../types"
+import clsCard from "../CardGreenDef.module.css"
+import ActionsCmp from "./Actions"
+import cls from "./View.module.css"
 
 
 
@@ -41,6 +41,16 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 	const haveList = store.state.status == "DONE"
 	const isSelect = (imp: CliImport) => store.state.dialog.imp == imp
 
+	const ResultCmp = ({ imp }: { imp: CliImport }) => <div className={cls.dlg}>
+		{imp?.error ? <>
+			<SkullIcon className={cls.icon} />
+			<div className={cls.desc}>{imp?.error}</div>
+		</> : <>
+			<SuccessIcon className={cls.icon} />
+			<div className={cls.desc}>SUCCESS</div>
+		</>}
+	</div>
+
 	return <FrameworkCard
 		className={clsCard.root}
 		icon={<ConfigIcon />}
@@ -64,10 +74,13 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 				</div>
 			</div>
 		</> : <>
+
+			{/* LIST */}
 			<div className={cls.list}>
 				{store.state.imports.map((imp, i) => (
-					<div key={i} className={`${cls.item} ${isSelect(imp) ? cls.selected : ""}`}
+					<TooltipWrapCmp key={i} className={`${cls.item} ${isSelect(imp) ? cls.selected : ""}`}
 						onClick={() => handleSelect(imp)}
+						content={<ResultCmp imp={imp} />}
 					>
 						<div className={cls.first}>
 							{!!imp.error ?
@@ -78,9 +91,10 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 							<div className={cls.title}>{imp.name}</div>
 						</div>
 						<div className={cls.path}>{trunc(imp.path, 35)}</div>
-					</div>
+					</TooltipWrapCmp>
 				))}
 			</div>
+
 			<Dialog noCloseOnClickParent
 				title={store.state.dialog.imp?.name}
 				width={250}
@@ -90,15 +104,7 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 			>
 				<div className="jack-lbl-readonly">{store.state.dialog.imp?.path}</div>
 				<div className={cls.divider} />
-				<div className={cls.dlg}>
-					{store.state.dialog.imp?.error ? <>
-						<SkullIcon className={cls.icon} />
-						<div className={cls.desc}>{store.state.dialog.imp?.error}</div>
-					</> : <>
-						<SuccessIcon className={cls.icon} />
-						<div className={cls.desc}>SUCCESS</div>
-					</>}
-				</div>
+				<ResultCmp imp={store.state.dialog.imp} />
 			</Dialog>
 		</>}
 	</FrameworkCard>
