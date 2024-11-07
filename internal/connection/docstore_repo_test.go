@@ -19,12 +19,14 @@ func setupDocRepoSuite(t *testing.T) *docRepoSuite {
 		Hosts:         []string{"localhost:4222"},
 		Subscriptions: make([]Subscription, 0),
 		Auth:          make([]Auth, 0),
+		Metadata:      map[string]string{"key": "value"},
 	}
 	s.c2 = &Connection{
 		Name:          "c2",
 		Hosts:         []string{"localhost:4222"},
 		Subscriptions: []Subscription{},
 		Auth:          make([]Auth, 0),
+		Metadata:      map[string]string{},
 	}
 	store, err := docstore.NewDocStore(":memory:")
 	if err != nil {
