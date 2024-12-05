@@ -68,7 +68,7 @@ const MessageRow: FunctionComponent<Props> = ({
 						{message.subject}
 					</span>
 				</span>
-				<div className={`hover-show ${cls.box_actions} ${clsBg}`}>
+				<div className={`jack-hover-hide ${cls.box_actions} ${clsBg}`}>
 					<CopyButton value={message.subject} label="COPY SUBJECT" />
 					<CopyButton value={message.payload} />
 					{!!onDelete && (
