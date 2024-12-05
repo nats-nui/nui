@@ -19,6 +19,9 @@ WORKDIR /
 RUN apk add libc6-compat
 COPY --from=build_be /cmd/nui-web /cmd/nui-web
 COPY --from=build_fe /frontend/dist /frontend/dist
+# Run as user daemon (uid 2)
+RUN mkdir /db && chown 2:2 /db
+USER 2
 EXPOSE 31311/tcp
 ENTRYPOINT ["/cmd/nui-web"]
 CMD ["--db-path=/db"]
