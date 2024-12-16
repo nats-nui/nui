@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useMemo } from "react"
 import cls from "./Base64Cmp.module.css"
 
 
@@ -22,9 +22,12 @@ const Base64Cmp: FunctionComponent<Props> = ({
 	// HANDLER
 
 	// RENDER
-	if (!text) return null
 	const isTruncate = maxChar && text.length > maxChar
-	const base64 = btoa(unescape(encodeURIComponent(isTruncate ? text.slice(0, maxChar) : text)))
+	const base64 = useMemo(() => {
+		if (!text) return null
+		return btoa(isTruncate ? text.slice(0, maxChar) : text)
+	}, [text, maxChar])
+	if (!base64) return null
 
 	return (
 		<div className={cls.root} style={style}>
@@ -41,6 +44,6 @@ const Base64Cmp: FunctionComponent<Props> = ({
 
 export default Base64Cmp
 
-const cssSelect:React.CSSProperties = {
+const cssSelect: React.CSSProperties = {
 	color: "var(--cmp-select-bg)"
 }

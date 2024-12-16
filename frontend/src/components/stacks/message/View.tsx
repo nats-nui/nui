@@ -56,7 +56,7 @@ const MessageView: FunctionComponent<Props> = ({
 					value={msgSa.message.subject}
 					style={{ backgroundColor: "var(--card-bg)" }}
 				/>
-				<span className="jack-lbl-prop">SUBJECT2: </span>
+				<span className="jack-lbl-prop">SUBJECT: </span>
 				<span className="jack-lbl-readonly">
 					{msgSa.message.subject}
 				</span>

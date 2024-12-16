@@ -5,7 +5,7 @@ import JsonRow from "@/components/formatters/json/JsonRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CloseIcon from "@/icons/CloseIcon"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
-import { MSG_FORMAT } from "@/utils/editor"
+import { MSG_FORMAT, toFormat } from "@/utils/editor"
 import { dateShow } from "@/utils/time"
 import { FunctionComponent, useMemo } from "react"
 import cls from "./MessageRow.module.css"
@@ -44,6 +44,7 @@ const MessageRow: FunctionComponent<Props> = ({
 		e.stopPropagation()
 		onDelete?.(message)
 	}
+	const handleCopyPayload = () => toFormat(message.payload, format)
 
 	// RENDER
 	if (!message) return null
@@ -70,7 +71,7 @@ const MessageRow: FunctionComponent<Props> = ({
 				</span>
 				<div className={`jack-hover-hide ${cls.box_actions} ${clsBg}`}>
 					<CopyButton value={message.subject} label="COPY SUBJECT" />
-					<CopyButton value={message.payload} />
+					<CopyButton value={handleCopyPayload} />
 					{!!onDelete && (
 						<TooltipWrapCmp content="DELETE">
 							<IconButton onClick={handleDeleteClick}>

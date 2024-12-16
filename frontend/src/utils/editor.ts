@@ -14,7 +14,7 @@ export enum MSG_FORMAT_EDIT {
 	HTML = "html",
 }
 
-
+/** trasforma una stringa in un JSON gestendo gl errori */
 export function toJson(text: string): { json: JSON, success: boolean } {
 	let json = null
 	let success = false
@@ -42,4 +42,22 @@ export function toBin(text: string): number[] {
 		bin.push(text.charCodeAt(i))
 	}
 	return bin
+}
+
+export function toFormat(text: string, format: MSG_FORMAT): string {
+	if ( text == null ) return ""
+	switch (format) {
+		case MSG_FORMAT.JSON:
+			return JSON.stringify(JSON.parse(text), null, 2)
+		case MSG_FORMAT.TEXT:
+			return text
+		case MSG_FORMAT.HEX:
+			return toHex(text).join(' ')
+		case MSG_FORMAT.BASE64:
+			return btoa(text)
+		case MSG_FORMAT.XML:
+			return text
+		case MSG_FORMAT.HTML:
+			return text
+	}
 }
