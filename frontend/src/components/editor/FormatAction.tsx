@@ -3,6 +3,7 @@ import { EditorStore } from "@/stores/stacks/editorBase"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import { Button, CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
+import { toFormat } from "../../utils/editor"
 
 
 
@@ -35,7 +36,7 @@ const FormatAction: FunctionComponent<Props> = ({
 	const autoFormat = store.state.autoFormat
 
 	return <>
-		<CopyButton value={() => store.getEditorText()} />
+		<CopyButton value={() => toFormat(store.getEditorText(), state.format)} />
 		<TooltipWrapCmp content="FORMAT">
 			<IconButton effect
 				select={autoFormat}
