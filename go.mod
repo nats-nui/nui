@@ -2,6 +2,7 @@ module github.com/nats-nui/nui
 
 go 1.23.0
 
+
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/adrg/xdg v0.4.0
@@ -16,7 +17,7 @@ require (
 	github.com/nats-io/nkeys v0.4.7
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
 	github.com/samber/slog-fiber v1.11.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/wailsapp/wails/v2 v2.9.1
 )
 
