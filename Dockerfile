@@ -1,4 +1,3 @@
-
 ## be build
 FROM golang:1.23 AS build_be
 ARG VERSION
@@ -16,9 +15,20 @@ RUN npm run build
 ### production image
 FROM alpine:3
 WORKDIR /
+# Install deps
 RUN apk add libc6-compat
+
+# Create regular NUI user account
+RUN addgroup -g 1001 nui && \
+    adduser -u 1001 -D nui -G nui -s /bin/sh
+
+# Copy the needed binary from the builder stage
 COPY --from=build_be /cmd/nui-web /cmd/nui-web
 COPY --from=build_fe /frontend/dist /frontend/dist
+RUN chown -R nui:nui /cmd/nui-web /frontend
+
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 31311/tcp
-ENTRYPOINT ["/cmd/nui-web"]
-CMD ["--db-path=/db"]
+ENTRYPOINT ["/entrypoint.sh"]
