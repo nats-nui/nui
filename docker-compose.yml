@@ -7,6 +7,8 @@ services:
       - "8222:8222"
   nui:
     image: ghcr.io/nats-nui/nui:edge
+    volumes:
+      - ./db:/db
     ports:
       - "31312:31311"
     depends_on:
