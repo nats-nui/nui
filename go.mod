@@ -2,7 +2,6 @@ module github.com/nats-nui/nui
 
 go 1.23.0
 
-
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/adrg/xdg v0.4.0
