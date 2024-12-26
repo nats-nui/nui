@@ -66,7 +66,7 @@ func (s *NuiTestSuite) startNuiServer() {
 	nuiSvc, err := nui.Setup(":memory:", mockedLogger)
 	s.NoError(err)
 
-	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger)
+	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
 	go func() {
