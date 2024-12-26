@@ -19,7 +19,7 @@ type App struct {
 	ctx  context.Context
 }
 
-func NewServer(port string, nui *Nui, l logging.Slogger) *App {
+func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 
 	app := &App{
 		App:  fiber.New(),
@@ -34,11 +34,16 @@ func NewServer(port string, nui *Nui, l logging.Slogger) *App {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression,
 	}))
-	allowedOrigins := "http://wails.localhost, http://wails.:34115"
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: allowedOrigins,
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
+
+	// wails in linux / mac desktop app is using wails://wails, http://wails.localhost, http://wails.:34115 as origins
+	// that are not supported by fiber anymore, so * wildcard is required to make call to server on 31311
+	if isDesktop {
+		allowedOrigins := "*"
+		app.Use(cors.New(cors.Config{
+			AllowOrigins: allowedOrigins,
+			AllowHeaders: "Origin, Content-Type, Accept",
+		}))
+	}
 	app.registerHandlers()
 	return app
 }

@@ -53,7 +53,7 @@ func (a *App) Startup(ctx context.Context) {
 		a.l.Error("fatal error setting up app nui service: " + err.Error())
 		os.Exit(1)
 	}
-	server := nui.NewServer(a.serverPort, nuiSvc, a.l)
+	server := nui.NewServer(a.serverPort, nuiSvc, a.l, a.target == TargetDesktop)
 	err = server.Start(ctx)
 	if err != nil {
 		a.l.Error("fatal error setting up app webserver: " + err.Error())
