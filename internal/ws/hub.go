@@ -194,7 +194,6 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 		return err
 	}
 	events := serverConn.ObserveConnectionEvents(ctx)
-	//time.Sleep(5 * time.Second)
 	firstStatus, firstConnErr := serverConn.LastEvent()
 	errMsg := ""
 	if firstConnErr != nil {
