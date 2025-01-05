@@ -13,7 +13,7 @@ type msgReq struct {
 	TimeoutMs int         `json:"timeout_ms"`
 }
 
-func (a *App) handleRequest(c *fiber.Ctx) error {
+func (a *App) HandleRequest(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}

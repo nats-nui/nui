@@ -5,7 +5,7 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-func (a *App) handleIndexConnections(c *fiber.Ctx) error {
+func (a *App) HandleIndexConnections(c *fiber.Ctx) error {
 	connections, err := a.nui.ConnRepo.All()
 	if err != nil {
 		return err
@@ -17,7 +17,7 @@ func (a *App) handleIndexConnections(c *fiber.Ctx) error {
 	return c.JSON(connArray)
 }
 
-func (a *App) handleGetConnection(c *fiber.Ctx) error {
+func (a *App) HandleGetConnection(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
@@ -28,7 +28,7 @@ func (a *App) handleGetConnection(c *fiber.Ctx) error {
 	return c.JSON(conn)
 }
 
-func (a *App) handleSaveConnection(c *fiber.Ctx) error {
+func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	conn := &connection.Connection{}
 	err := c.BodyParser(conn)
 	if err != nil {
@@ -53,7 +53,7 @@ func (a *App) handleSaveConnection(c *fiber.Ctx) error {
 	return c.JSON(conn)
 }
 
-func (a *App) handleDeleteConnection(ctx *fiber.Ctx) error {
+func (a *App) HandleDeleteConnection(ctx *fiber.Ctx) error {
 	if ctx.Params("id") == "" {
 		return ctx.Status(422).JSON("id is required")
 	}
