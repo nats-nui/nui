@@ -51,6 +51,10 @@ type ImportedContextEntry struct {
 	Error           error                `json:"error"`
 }
 
+func SanitizePaths(paths string) []string {
+	return strings.Split(strings.ReplaceAll(paths, " ", ""), ",")
+}
+
 func NewImporter(l logging.Slogger) *CliImporter {
 	return &CliImporter{
 		l: l,
