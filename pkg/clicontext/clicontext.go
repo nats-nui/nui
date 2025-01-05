@@ -52,6 +52,9 @@ type ImportedContextEntry struct {
 }
 
 func SanitizePaths(paths string) []string {
+	if paths == "" {
+		return []string{}
+	}
 	return strings.Split(strings.ReplaceAll(paths, " ", ""), ",")
 }
 
