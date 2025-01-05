@@ -59,9 +59,13 @@ func (a *App) Startup(ctx context.Context) {
 	if len(a.natsCliContextDirs) > 0 {
 		for _, path := range a.natsCliContextDirs {
 			a.l.Info("importing cli contexts from path: " + path)
-			_, err = server.ImportCliContextsFromPath(ctx, path)
+			response, err := server.ImportCliContextsFromPath(ctx, path)
 			if err != nil {
 				a.l.Error("error importing cli contexts from path: " + path + " - " + err.Error())
+			}
+			// log all imported connection names
+			for _, conn := range response.Connections {
+				a.l.Info("imported connection: " + conn.Name)
 			}
 		}
 	}
