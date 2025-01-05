@@ -38,7 +38,7 @@ func main() {
 		app.WithVersion(Version),
 		app.WithDb(*dbPath),
 		app.WithLogger(logger),
-		app.WithNatsCliContexts(clicontext.SplitPaths(*cliContextsStr)),
+		app.WithNatsCliContexts(clicontext.SanitizePaths(*cliContextsStr)),
 	)
 	if err != nil {
 		logger.Error(err.Error())
