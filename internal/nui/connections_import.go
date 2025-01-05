@@ -57,6 +57,7 @@ func (a *App) ImportCliContextsFromPath(ctx context.Context, path string) (CliCo
 		case <-ctx.Done():
 			return response, ctx.Err()
 		default:
+			response.CliContexts = append(response.CliContexts, cliContext)
 			if cliContext.Error != nil {
 				continue
 			}
@@ -64,7 +65,6 @@ func (a *App) ImportCliContextsFromPath(ctx context.Context, path string) (CliCo
 			if err != nil {
 				return response, err
 			}
-			response.CliContexts = append(response.CliContexts, cliContext)
 			response.Connections = append(response.Connections, newConn)
 		}
 	}
