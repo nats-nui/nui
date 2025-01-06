@@ -3,10 +3,12 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/desktop/mapping"
 	"github.com/nats-nui/nui/internal/app"
 	"github.com/nats-nui/nui/internal/version"
+	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
 	"github.com/nats-nui/nui/pkg/ospaths"
 	"github.com/wailsapp/wails/v2"
@@ -29,9 +31,17 @@ func main() {
 
 	version.Set(Version)
 
-	logLevel := *flag.String("log-level", "info", "log level")
-	logsOutput := *flag.String("log-output", "", "log output")
-	dbPath := *flag.String("db-path", "", "path to the database")
+	var logLevel string
+	var logsOutput string
+	var dbPath string
+	var cliContextsStr string
+
+	flag.StringVar(&logLevel, "log-level", "info", "log level")
+	flag.StringVar(&logsOutput, "log-output", "", "log output")
+	flag.StringVar(&dbPath, "db-path", "", "path to the database")
+	flag.StringVar(&cliContextsStr, "nats-cli-contexts", "", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
+
+	flag.Parse()
 
 	if logsOutput == "" {
 		lo, err := ospaths.LogsPath()
@@ -41,6 +51,7 @@ func main() {
 		logsOutput = lo
 	}
 
+	fmt.Print("dbpath " + dbPath)
 	if dbPath == "" {
 		dbp, err := ospaths.DbPath()
 		if err != nil {
@@ -60,6 +71,7 @@ func main() {
 		app.WithVersion(Version),
 		app.WithDb(dbPath),
 		app.WithLogger(logger),
+		app.WithNatsCliContexts(clicontext.SanitizePaths(cliContextsStr)),
 	)
 	if err != nil {
 		logger.Error(err.Error())
