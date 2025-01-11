@@ -32,7 +32,7 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 		app.Use(slogfiber.New(sLog))
 	}
 	app.Use(compress.New(compress.Config{
-		Level: compress.LevelBestCompression,
+		Level: compress.LevelDefault,
 	}))
 
 	// wails in linux / mac desktop app is using wails://wails, http://wails.localhost, http://wails.:34115 as origins
