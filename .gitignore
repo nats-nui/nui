@@ -24,6 +24,7 @@ go.work
 
 
 db
+db_bak
 credentials
 build/*
 !build/.gitkeep
