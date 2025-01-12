@@ -3,8 +3,7 @@ import { Connection } from "@/types/Connection"
 import { StoreCore, createStore, mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { findAll } from "../docs/utils/manage"
-import { GetAllCards } from "../docs/cards"
+import { cardsSetup, utils } from "@priolo/jack"
 import { DOC_TYPE } from "../docs/types"
 
 
@@ -31,7 +30,7 @@ const setup = {
 		//#region OVERWRITE
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConnectionStore>store
-			const cnnStore = findAll(GetAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
+			const cnnStore = utils.findAll(cardsSetup.GetAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
 			socketPool.closeAll()
 			const cnn = await cnnApi.index({ store: cnnStore })
 			s.setAll(cnn)
@@ -86,7 +85,7 @@ export type ConnectionMutators = typeof setup.mutators
 /**
  * Gestisce le connessioni disponibili dal BE
  */
-export interface ConnectionStore extends StoreCore<ConnectionState>, LoadBaseStore, ConnectionGetters, ConnectionActions, ConnectionMutators {
+export interface ConnectionStore extends LoadBaseStore, ConnectionGetters, ConnectionActions, ConnectionMutators {
 	state: ConnectionState
 }
 

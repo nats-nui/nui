@@ -1,5 +1,5 @@
 import kventryApi from "@/api/kventries"
-import { findInRoot } from "@/stores/docs/utils/manage"
+import { utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -55,7 +55,7 @@ const setup = {
 
 
 		// [II] TODO
-		getParentList: (_: void, store?: KVEntryStore): KVEntriesStore => findInRoot(store.state.group.state.all,{
+		getParentList: (_: void, store?: KVEntryStore): KVEntriesStore => utils.findInRoot(store.state.group.state.all,{
 			type: DOC_TYPE.KVENTRIES,
 			connectionId: store.state.connectionId,
 			bucket: { bucket: store.state.bucket.bucket }
