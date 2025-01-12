@@ -1,5 +1,4 @@
-import { GetAllCards, deckCardsSo, drawerCardsSo } from "@/stores/docs/cards";
-import { findAll } from "@/stores/docs/utils/manage";
+import { cardsSetup, utils } from "@priolo/jack";
 import { debounce } from "@/utils/time";
 import { SocketService } from ".";
 
@@ -34,7 +33,7 @@ class SocketPool {
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
 			// se lo usa qualcun'altro alllora non lo eliminare
-			if (findAll(GetAllCards(), { connectionId: ss.cnnId }).length > 0) return
+			if (utils.findAll(cardsSetup.GetAllCard(), { connectionId: ss.cnnId }).length > 0) return
 			this.destroyForce(key)
 		}, 2000)
 	}

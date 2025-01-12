@@ -26,20 +26,6 @@ import cnnImportSetup from "../../stacks/cnnImport";
 
 
 
-/** genera un uuid per un DOC */
-export function createUUID(): string {
-	var dt = new Date().getTime();
-	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-		/[xy]/g,
-		(c) => {
-			let r = (dt + (Math.random() * 16)) % 16 | 0;
-			dt = Math.floor(dt / 16);
-			return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-		}
-	)
-	return uuid;
-}
-
 /** crea lo STORE adeguato */
 export function buildStore(state: Partial<ViewState>): ViewStore {
 	const setup = {
@@ -72,10 +58,10 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)
-	store.state = { ...store.state, ...state }
+	store.state = { ...store.state, ...state };
 	// se non c'e' l'uuid lo creo IO!
-	if (store.state.uuid == null) store.state.uuid = createUUID()
-	store.onCreated()
+	//if (store.state.uuid == null) store.state.uuid = createUUID()
+	(<any>store).onCreated?.()
 	return store
 }
 

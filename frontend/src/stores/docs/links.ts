@@ -1,7 +1,7 @@
 import { deepEqual } from "@/utils/object"
 import { StoreCore, createStore } from "@priolo/jon"
 import { ViewStore } from "../stacks/viewBase"
-import { forEachViews, getById } from "./utils/manage"
+import { utils } from "@priolo/jack"
 
 
 
@@ -18,7 +18,7 @@ const setup = {
 	getters: {
 		getById(id: string, store?: LinksStore): ViewStore {
 			if (!id) return null
-			return getById(store.state.all, id)
+			return utils.getById(store.state.all, id)
 		},
 		getIndexByView(view: ViewStore, store?: LinksStore) {
 			return store.state.all.findIndex(v => v == view)
@@ -26,7 +26,7 @@ const setup = {
 
 		/** cerca nel DECK solo le CARD senza parent */
 		find(state: any, store?: LinksStore) {
-			return forEachViews(
+			return utils.forEachViews(
 				store.state.all,
 				(view) => deepEqual(state, view.state) ? view : null
 			)
@@ -34,7 +34,7 @@ const setup = {
 		/** cerca nel DECK su tutte le CARD (anche i children) */
 		findAll(state: any, store?: LinksStore) {
 			const ret: ViewStore[] = []
-			forEachViews(
+			utils.forEachViews(
 				store.state.all,
 				(view) => {
 					if (deepEqual(state, view.state)) ret.push(view)
@@ -53,7 +53,7 @@ const setup = {
 			store?: LinksStore
 		) {
 			// se c'e' gia' non faccio nulla
-			if (forEachViews(store.state.all, (v) => v.state.uuid == view.state.uuid)) return
+			if (utils.forEachViews(store.state.all, (v) => v.state.uuid == view.state.uuid)) return
 			const newViews = [...store.state.all]
 			if (index == null) newViews.push(view); else newViews.splice(index, 0, view);
 			store.setAll(newViews)

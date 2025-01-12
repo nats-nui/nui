@@ -1,6 +1,6 @@
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
-import { findInRoot } from "@/stores/docs/utils/manage"
+import { utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -53,7 +53,7 @@ const setup = {
 		//#endregion
 
 		// [II] TODO
-		getParentList: (_: void, store?: StreamStore): StreamsStore => findInRoot(store.state.group.state.all, {
+		getParentList: (_: void, store?: StreamStore): StreamsStore => utils.findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.STREAMS,
 			connectionId: store.state.connectionId,
 		} as Partial<StreamsState>) as StreamsStore,

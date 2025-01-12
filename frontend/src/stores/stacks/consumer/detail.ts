@@ -1,5 +1,5 @@
 import cnsApi from "@/api/consumers"
-import { findInRoot } from "@/stores/docs/utils/manage"
+import { utils } from "@priolo/jack"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
@@ -45,7 +45,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => findInRoot(store.state.group.state.all, {
+		getParentList: (_: void, store?: ConsumerStore): ConsumersStore => utils.findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.CONSUMERS,
 			connectionId: store.state.connectionId,
 			streamName: store.state.streamName,

@@ -1,6 +1,6 @@
 import bucketApi from "@/api/buckets"
 import docSo from "@/stores/docs"
-import { findInRoot } from "@/stores/docs/utils/manage"
+import { utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -47,7 +47,7 @@ const setup = {
 		},
 		//#endregion
 
-		getParentList: (_: void, store?: BucketStore): BucketsStore => findInRoot(store.state.group.state.all, {
+		getParentList: (_: void, store?: BucketStore): BucketsStore => utils.findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
 		} as Partial<BucketsState>) as BucketsStore,
