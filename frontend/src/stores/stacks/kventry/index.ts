@@ -5,7 +5,7 @@ import { ViewState, ViewStore, default as viewSetup } from "@/stores/stacks/view
 import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
-import { cardsSetup, utils } from "@priolo/jack"
+import { docsSo, utils } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
@@ -104,7 +104,7 @@ const setup = {
 			store.setSelect(null)
 
 			// cerco eventuali CARD di questo stream e lo chiudo
-			const cardStreams = utils.findAll(cardsSetup.GetAllCards(), { type: DOC_TYPE.KVENTRY, bucket: { bucket: store.state.bucket.bucket } })
+			const cardStreams = utils.findAll(docsSo.getAllCards(), { type: DOC_TYPE.KVENTRY, bucket: { bucket: store.state.bucket.bucket } })
 			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
 
 			store.setSnackbar({

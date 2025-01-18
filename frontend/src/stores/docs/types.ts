@@ -29,20 +29,10 @@ export enum DOC_TYPE {
 	JSON_CONFIG = "json_config",
 }
 
-export enum DOC_ANIM {
-	SHOW = "show",
-	EXIT = "exit",
-	DRAGGING = "dragging",
-	EXITING = "exiting",
-	SHOWING = "showing",
-	SIZING = "iconize",
-}
-
 export enum EDIT_STATE {
 	NEW,
 	READ,
 	EDIT,
 }
 
-export const ANIM_TIME = 200
 export const ANIM_TIME_CSS = 200

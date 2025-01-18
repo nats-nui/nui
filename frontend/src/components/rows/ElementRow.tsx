@@ -8,8 +8,8 @@ interface Props {
 	title: string
 	icon?: React.ReactNode
 	subtitle?: string
+	tabIndex?: number
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
-	testRender?: React.ReactNode
 }
 
 /**
@@ -20,8 +20,8 @@ const ElementRow: FunctionComponent<Props> = ({
 	subtitle,
 	icon,
 	selected,
+	tabIndex = 0,
 	onClick,
-	testRender,
 }) => {
 
 	// STORE
@@ -29,13 +29,19 @@ const ElementRow: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.code === "Space") {
+			onClick?.(e as any);
+		}
+	}
 
 	// RENDER
 	if (!title) return null
 	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
 
-	return <div className={clsRoot}
+	return <div className={clsRoot} tabIndex={tabIndex}
 		onClick={onClick}
+		onKeyDown={handleKeyDown}
 	>
 		{icon}
 		<div className={cls.label}>
@@ -44,7 +50,6 @@ const ElementRow: FunctionComponent<Props> = ({
 			</div>
 			<div className={cls.subtitle}>
 				<div>{subtitle}</div>
-				{testRender}
 			</div>
 		</div>
 	</div>

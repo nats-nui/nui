@@ -2,7 +2,7 @@ import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
-import { cardsSetup, utils } from "@priolo/jack"
+import { docsSo, utils } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { MESSAGE_TYPE } from "../../log/utils"
@@ -104,7 +104,7 @@ const setup = {
 			store.setSelect(null)
 
 			// cerco eventuali CARD di questo stream e lo chiudo
-			const cardStreams = utils.findAll(cardsSetup.GetAllCards(), {
+			const cardStreams = utils.findAll(docsSo.getAllCards(), {
 				type: DOC_TYPE.CONSUMER,
 				connectionId: store.state.connectionId,
 				streamName: store.state.streamName

@@ -1,12 +1,10 @@
-import { cardsSetup, CardsState, CardsStore } from "@priolo/jack"
+import { cardsSetup, CardsState, CardsStore, docsSo } from "@priolo/jack"
 import { createStore, mixStores } from "@priolo/jon"
 
 
 
 // creo il DECK
 export const deckCardsSo = createStore(cardsSetup) as CardsStore
-cardsSetup.AllDeck.push(deckCardsSo)
-
 
 // creo il DRAWER
 const setupDrawer = {
@@ -26,5 +24,6 @@ type DrawerMutators = typeof setupDrawer.mutators
 export interface DrawerStore extends CardsStore, DrawerMutators { state: DrawerState }
 
 export const drawerCardsSo = createStore(mixStores(cardsSetup, setupDrawer)) as DrawerStore
-cardsSetup.AllDeck.push(drawerCardsSo)
 
+
+docsSo.setAllDeck([deckCardsSo, drawerCardsSo])

@@ -40,7 +40,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (cnn: Connection) => cnnListSo.select(cnn.id)
+	const handleSelect = (cnn: Connection, detached: boolean) => cnnListSo.select({ cnnId: cnn.id, detached })
 	const handleNew = () => cnnListSo.create()
 	const handleDelete = async () => {
 		if (!await cnnListSo.alertOpen({
@@ -104,7 +104,7 @@ const CnnListView: FunctionComponent<Props> = ({
 				subtitle={getSubtitle(cnn)}
 				icon={<ConnectionIcon cnn={cnn} />}
 				selected={isSelected(cnn)}
-				onClick={() => handleSelect(cnn)}
+				onClick={(e) => handleSelect(cnn, e.ctrlKey)}
 			/>
 		)) : (
 			<div className="jack-lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>
