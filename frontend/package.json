@@ -18,7 +18,7 @@
     "@fontsource/darker-grotesque": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
     "@priolo/jon": "^0.7.7",
-    "@priolo/jack": "^0.1.11",
+    "@priolo/jack": "file:C://Users//iorio//Documents//jack",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.12",
     "monaco-editor": "^0.50.0",
@@ -30,11 +30,11 @@
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.7.0",
+    "@vitejs/plugin-react-swc": "^3.7.2",
     "msw": "^1",
     "typescript": "^5.5.4",
-    "vite": "^5.4.3",
-    "vitest": "^2.0.5"
+    "vite": "^6.0.7",
+    "vitest": "^3.0.2"
   },
   "msw": {
     "workerDirectory": "public"

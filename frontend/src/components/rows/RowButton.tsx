@@ -1,5 +1,5 @@
-import { ANIM_TIME_CSS } from "@/types"
 import React, { FunctionComponent, useState } from "react"
+import cls from "./RowButton.module.css"
 
 
 
@@ -7,6 +7,7 @@ interface Props {
 	icon?: React.ReactNode
 	label?: string
 	selected?: boolean
+	tabIndex?: number
 	renderEnd?: React.ReactElement
 	onClick?: (e: React.MouseEvent) => void
 	style?: React.CSSProperties
@@ -16,6 +17,7 @@ const RowButton: FunctionComponent<Props> = ({
 	icon,
 	label,
 	selected,
+	tabIndex = 0,
 	renderEnd,
 	onClick,
 	style,
@@ -31,14 +33,15 @@ const RowButton: FunctionComponent<Props> = ({
 	const handleLeave = () => setMouseOver(false)
 
 	// RENDER
+	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
 	return (
-		<div style={{ ...cssRoot(selected), ...style }}
+		<div className={clsRoot} style={style} tabIndex={tabIndex}
 			onClick={onClick}
 			onMouseEnter={handleEnter}
 			onMouseLeave={handleLeave}
 		>
 			{icon}
-			<div style={cssLabel}>{label}</div>
+			<div className={cls.label}>{label}</div>
 			{renderEnd}
 		</div>
 	)
@@ -46,25 +49,3 @@ const RowButton: FunctionComponent<Props> = ({
 
 export default RowButton
 
-const cssRoot = (select: boolean): React.CSSProperties => ({
-	...select && {
-		color: "var(--card-bg)",
-		backgroundColor: "var(--card-fg)",
-	},
-	transition: `background-color ${ANIM_TIME_CSS}ms, color ${ANIM_TIME_CSS}ms`,
-	display: "flex", alignItems: "center",
-	padding: "5px 8px",
-	cursor: "pointer",
-	borderTopLeftRadius: 5,
-	borderBottomLeftRadius: 5,
-	marginRight: -10,
-	marginLeft: -7,
-})
-
-const cssLabel: React.CSSProperties = {
-	fontSize: 14, 
-	fontWeight: 800, 
-	fontFamily: "Darker Grotesque",
-	flex: 1,
-	marginLeft: 5,
-}

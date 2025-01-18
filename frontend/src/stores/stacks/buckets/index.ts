@@ -1,12 +1,12 @@
 import bucketApi from "@/api/buckets"
 import cnnSo from "@/stores/connections"
-import { cardsSetup, utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { default as docSetup, default as viewSetup, ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
-import { mixStores, StoreCore } from "@priolo/jon"
+import { docsSo, utils } from "@priolo/jack"
+import { mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildBucket, buildBucketNew } from "./utils/factory"
 
@@ -101,7 +101,7 @@ const setup = {
             store.setSelect(null)
 
             // find other cards related to the bucket to close it
-            const cardbuckets = utils.findAll(cardsSetup.GetAllCards(), {type: DOC_TYPE.BUCKET, connectionId: store.state.connectionId})
+            const cardbuckets = utils.findAll(docsSo.getAllCards(), {type: DOC_TYPE.BUCKET, connectionId: store.state.connectionId})
             cardbuckets.forEach(view => view.state.group.remove({view, anim: true}))
 
             store.setSnackbar({
@@ -120,7 +120,7 @@ const setup = {
             await bucketApi.purgeDeleted(store.state.connectionId, name, {store})
 
             //find other cards related to the same bucket keys and refresh them to remove the deleted ones
-            utils.forEachViews(cardsSetup.GetAllCards(),(view) => {
+            utils.forEachViews(docsSo.getAllCards(),(view) => {
                 if (view.state.type === DOC_TYPE.KVENTRIES) {
                     const v = view as KVEntriesStore
                     if (v.state.connectionId == store.state.connectionId && v.state.bucket.bucket == name) {

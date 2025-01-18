@@ -11,6 +11,10 @@
 	margin-left: 4px;
 }
 
+.root:focus {
+	outline: 2px solid var(--cmp-focus);
+}
+
 .root.selected {
 	color: var(--cmp-select-fg);
 	background-color: var(--cmp-select-bg);

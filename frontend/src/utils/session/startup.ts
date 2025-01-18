@@ -3,17 +3,17 @@ import docsSo from "@/stores/docs"
 import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { buildStore } from "@/stores/docs/utils/factory"
-import { cardsSetup, utils } from "@priolo/jack"
 import logSo from "@/stores/log"
+import { AboutStore } from "@/stores/stacks/about"
 import { CnnListStore } from "@/stores/stacks/connection"
+import { HelpStore } from "@/stores/stacks/help"
 import { ViewLogStore } from "@/stores/stacks/log"
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
+import { utils } from "@priolo/jack"
 import { delay } from "../time"
 import { loadLocalStorage, saveLocalStorage } from "./storage"
 import { Session } from "./types"
-import { AboutStore } from "@/stores/stacks/about"
-import { HelpStore } from "@/stores/stacks/help"
 
 
 
@@ -27,7 +27,7 @@ export async function SaveSession() {
 	const deckStates = deckCardsSo.state.all.map(store => store.getSerialization())
 	const drawerStates = drawerCardsSo.state.all.map(store => store.getSerialization())
 	const menuStates = menuSo.state.all.reduce((acc, store) => {
-		if (utils.forEachViews(cardsSetup.GetAllCards(), (v) => v.state.uuid == store.state.uuid)) return acc
+		if (utils.forEachViews(docsSo.getAllCards(), (v) => v.state.uuid == store.state.uuid)) return acc
 		return [...acc, store.getSerialization()]
 	}, [])
 	const docsState = docsSo.getSerialization()
