@@ -32,7 +32,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, hosts })
     }
     const handleInboxPrefixChange = (inboxPrefix: string) => {
-        cnnDetailSo.setConnection({ ...cnnDetailSa.inboxPrefix, inboxPrefix })
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, inboxPrefix })
     }
     const handleAuthChange = (auth: Auth, index: number) => {
         if (!auth) return

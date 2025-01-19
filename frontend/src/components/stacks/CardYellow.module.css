@@ -12,6 +12,9 @@
 	/* tooltip drag dialog float-button*/
 	--dialog-fg: #393939;
 	--dialog-bg: #EBFB35;
+
+	--cmp-focus: #39393989;
+	--framework-focus: #EBFB35;
 }
 
 .root :global(.jack-framework-actions) {

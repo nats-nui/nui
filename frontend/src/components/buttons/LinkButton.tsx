@@ -30,6 +30,10 @@ const LinkButton: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+		const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+			if (e.code == "Space" || e.code == "Enter") onClick?.(e as any);
+		}
+	
 
 	// RENDER
 	const clsSelect = selected ? cls.selected : ""
@@ -40,6 +44,7 @@ const LinkButton: FunctionComponent<Props> = ({
 		<TooltipWrapCmp content={tooltip} tabIndex={tabIndex}
 			className={clsRoot}
 			onClick={onClick}
+			onKeyDown={handleKeyDown}
 		>
 			{icon}
 			{renderExtra && <div className={clsExtra}>{renderExtra}</div>}
