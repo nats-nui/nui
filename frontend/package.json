@@ -18,7 +18,7 @@
     "@fontsource/darker-grotesque": "^5.0.8",
     "@monaco-editor/react": "^4.6.0",
     "@priolo/jon": "^0.7.7",
-    "@priolo/jack": "file:C://Users//iorio//Documents//jack",
+    "@priolo/jack": "^0.2.1",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.12",
     "monaco-editor": "^0.50.0",

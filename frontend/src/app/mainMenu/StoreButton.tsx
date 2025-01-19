@@ -7,6 +7,7 @@ import { getColorFromViewType } from "../../stores/stacks/utils"
 import { DOC_TYPE } from "../../types"
 import MenuButton from "./MenuButton"
 import { menuSo } from "../../stores/docs/links"
+import { focusSo } from "@priolo/jack"
 
 
 
@@ -28,7 +29,10 @@ const StoreButton: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleOpenStoreClick = (view: ViewStore) => deckCardsSo.add({ view, anim: true })
+	const handleOpenStoreClick = (view: ViewStore) => {
+		deckCardsSo.add({ view, anim: true })
+		focusSo.focus(view)
+	}
 	const handleDeleteButtonClick = (view: ViewStore) => menuSo.remove(view)
 
 	// RENDER
