@@ -11,6 +11,9 @@
 }
 
 .root:focus {
+	outline: none;
+}
+:global(.jack-framework-focus-ctrl) .root:focus {
 	outline: 2px solid var(--cmp-focus);
 }
 

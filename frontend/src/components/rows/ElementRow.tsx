@@ -30,7 +30,7 @@ const ElementRow: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-		if (e.code === "Space") {
+		if (e.code === "Space" || e.code === "Enter") {
 			onClick?.(e as any);
 		}
 	}

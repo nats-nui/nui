@@ -24,24 +24,25 @@ const RowButton: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const [mouseOver, setMouseOver] = useState(false)
 
 	// HOOK
 
 	// HANDLER
-	const handleEnter = () => setMouseOver(true)
-	const handleLeave = () => setMouseOver(false)
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.code == "Space" || e.code == "Enter") onClick?.(e as any);
+	}
 
 	// RENDER
 	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
 	return (
 		<div className={clsRoot} style={style} tabIndex={tabIndex}
 			onClick={onClick}
-			onMouseEnter={handleEnter}
-			onMouseLeave={handleLeave}
+			onKeyDown={handleKeyDown}
 		>
 			{icon}
-			<div className={cls.label}>{label}</div>
+			<div className={cls.label}>
+				{label}
+			</div>
 			{renderEnd}
 		</div>
 	)
