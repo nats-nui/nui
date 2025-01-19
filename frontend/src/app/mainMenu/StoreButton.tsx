@@ -29,8 +29,8 @@ const StoreButton: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleOpenStoreClick = (view: ViewStore) => {
-		deckCardsSo.add({ view, anim: true })
+	const handleOpenStoreClick = async (view: ViewStore) => {
+		await deckCardsSo.add({ view, anim: true })
 		focusSo.focus(view)
 	}
 	const handleDeleteButtonClick = (view: ViewStore) => menuSo.remove(view)
