@@ -251,6 +251,7 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 			} else {
 				querySeq = int(info.State.LastSeq)
 			}
+			querySeq = max(querySeq, 1)
 		}
 		var seekFromSeq uint64
 		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, config, querySeq, interval)
