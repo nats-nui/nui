@@ -6,7 +6,7 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-func (a *App) handleIndexStreamConsumers(c *fiber.Ctx) error {
+func (a *App) HandleIndexStreamConsumers(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err

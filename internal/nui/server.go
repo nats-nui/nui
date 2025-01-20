@@ -54,48 +54,48 @@ func (a *App) registerHandlers() {
 
 	a.Get("/api/about", a.handleAbout)
 
-	a.Get("/api/connection", a.handleIndexConnections)
-	a.Get("/api/connection/:id", a.handleGetConnection)
-	a.Post("/api/connection", a.handleSaveConnection)
-	a.Post("/api/connection/:id", a.handleSaveConnection)
-	a.Delete("/api/connection/:id", a.handleDeleteConnection)
+	a.Get("/api/connection", a.HandleIndexConnections)
+	a.Get("/api/connection/:id", a.HandleGetConnection)
+	a.Post("/api/connection", a.HandleSaveConnection)
+	a.Post("/api/connection/:id", a.HandleSaveConnection)
+	a.Delete("/api/connection/:id", a.HandleDeleteConnection)
 
-	a.Post("/api/connection/import/nats-cli", a.handleImportCliContextsFromPath)
+	a.Post("/api/connection/import/nats-cli", a.HandleImportCliContextsFromPath)
 
-	a.Get("/api/connection/:id/messages/subscription", a.handleIndexSubscriptions)
-	a.Post("/api/connection/:id/messages/subscription", a.handleUpdateSubscriptions)
+	a.Get("/api/connection/:id/messages/subscription", a.HandleIndexSubscriptions)
+	a.Post("/api/connection/:id/messages/subscription", a.HandleUpdateSubscriptions)
 
-	a.Post("/api/connection/:id/messages/publish", a.handlePublish)
-	a.Post("/api/connection/:id/request", a.handleRequest)
+	a.Post("/api/connection/:id/messages/publish", a.HandlePublish)
+	a.Post("/api/connection/:id/request", a.HandleRequest)
 
-	a.Get("/api/connection/:connection_id/stream", a.handleIndexStreams)
-	a.Get("/api/connection/:connection_id/stream/:stream_name", a.handleShowStream)
-	a.Post("/api/connection/:connection_id/stream", a.handleCreateStream)
-	a.Post("/api/connection/:connection_id/stream/:stream_name", a.handleUpdateStream)
-	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.handleDeleteStream)
-	a.Post("/api/connection/:connection_id/stream/:stream_name/purge", a.handlePurgeStream)
+	a.Get("/api/connection/:connection_id/stream", a.HandleIndexStreams)
+	a.Get("/api/connection/:connection_id/stream/:stream_name", a.HandleShowStream)
+	a.Post("/api/connection/:connection_id/stream", a.HandleCreateStream)
+	a.Post("/api/connection/:connection_id/stream/:stream_name", a.HandleUpdateStream)
+	a.Delete("/api/connection/:connection_id/stream/:stream_name", a.HandleDeleteStream)
+	a.Post("/api/connection/:connection_id/stream/:stream_name/purge", a.HandlePurgeStream)
 
-	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleIndexStreamConsumers)
+	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer", a.HandleIndexStreamConsumers)
 	a.Get("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleShowStreamConsumer)
 	a.Post("/api/connection/:connection_id/stream/:stream_name/consumer", a.handleCreateStreamConsumer)
 	a.Post("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleUpdateStreamConsumer)
 	a.Delete("/api/connection/:connection_id/stream/:stream_name/consumer/:consumer_name", a.handleDeleteStreamConsumer)
 
-	a.Get("/api/connection/:connection_id/stream/:stream_name/messages", a.handleIndexStreamMessages)
-	a.Delete("/api/connection/:connection_id/stream/:stream_name/messages/:seq", a.handleDeleteStreamMessage)
+	a.Get("/api/connection/:connection_id/stream/:stream_name/messages", a.HandleIndexStreamMessages)
+	a.Delete("/api/connection/:connection_id/stream/:stream_name/messages/:seq", a.HandleDeleteStreamMessage)
 
-	a.Get("/api/connection/:connection_id/kv", a.handleIndexBuckets)
-	a.Get("/api/connection/:connection_id/kv/:bucket", a.handleShowBucket)
-	a.Post("/api/connection/:connection_id/kv", a.handleCreateBucket)
-	a.Post("/api/connection/:connection_id/kv/:bucket", a.handleUpdateBucket)
-	a.Delete("/api/connection/:connection_id/kv/:bucket", a.handleDeleteBucket)
-	a.Post("/api/connection/:connection_id/kv/:bucket/purge_deleted", a.handlePurgeDeletedKeys)
+	a.Get("/api/connection/:connection_id/kv", a.HandleIndexBuckets)
+	a.Get("/api/connection/:connection_id/kv/:bucket", a.HandleShowBucket)
+	a.Post("/api/connection/:connection_id/kv", a.HandleCreateBucket)
+	a.Post("/api/connection/:connection_id/kv/:bucket", a.HandleUpdateBucket)
+	a.Delete("/api/connection/:connection_id/kv/:bucket", a.HandleDeleteBucket)
+	a.Post("/api/connection/:connection_id/kv/:bucket/purge_deleted", a.HandlePurgeDeletedKeys)
 
-	a.Get("/api/connection/:connection_id/kv/:bucket/key", a.handleIndexKeys)
-	a.Get("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleShowKey)
-	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key", a.handlePutKey)
-	a.Delete("/api/connection/:connection_id/kv/:bucket/key/:key", a.handleDeleteKey)
-	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key/purge", a.handlePurgeKey)
+	a.Get("/api/connection/:connection_id/kv/:bucket/key", a.HandleIndexKeys)
+	a.Get("/api/connection/:connection_id/kv/:bucket/key/:key", a.HandleShowKey)
+	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key", a.HandlePutKey)
+	a.Delete("/api/connection/:connection_id/kv/:bucket/key/:key", a.HandleDeleteKey)
+	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key/purge", a.HandlePurgeKey)
 
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
@@ -104,7 +104,7 @@ func (a *App) registerHandlers() {
 		}
 		return fiber.ErrUpgradeRequired
 	})
-	a.Get("/ws/sub", websocket.New(a.handleWsSub))
+	a.Get("/ws/sub", websocket.New(a.HandleWsSub))
 
 	a.Static("/", "./frontend/dist")
 	a.Static("/*", "./frontend/dist/index,html")

@@ -8,7 +8,7 @@ import (
 	"github.com/nats-nui/nui/internal/ws"
 )
 
-func (a *App) handleWsSub(c *websocket.Conn) {
+func (a *App) HandleWsSub(c *websocket.Conn) {
 	connId := c.Query("id")
 	if connId == "" {
 		writeError(c, 4422, errors.New("id is required"))
@@ -37,12 +37,12 @@ func (a *App) handleWsSub(c *websocket.Conn) {
 		return
 	}
 
-	go handleWsMsgs(c, ctx, msgCh, cancel)
-	go handleWsRequest(c, ctx, reqCh, cancel)
+	go HandleWsMsgs(c, ctx, msgCh, cancel)
+	go HandleWsRequest(c, ctx, reqCh, cancel)
 	<-ctx.Done()
 }
 
-func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Request, cancel context.CancelFunc) {
+func HandleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Request, cancel context.CancelFunc) {
 	for {
 		req := &ws.Request{}
 		err := c.ReadJSON(req)
@@ -60,7 +60,7 @@ func handleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 	}
 }
 
-func handleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.Payload, cancel context.CancelFunc) {
+func HandleWsMsgs(c *websocket.Conn, ctx context.Context, msgCh chan ws.Payload, cancel context.CancelFunc) {
 	for {
 		select {
 		case <-ctx.Done():
