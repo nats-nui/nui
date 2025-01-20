@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/internal/app"
 	"github.com/nats-nui/nui/internal/version"
+	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
 	"os"
 	"os/signal"
@@ -21,6 +22,7 @@ func main() {
 	logLevel := flag.String("log-level", "info", "log level")
 	logOutput := flag.String("log-output", "", "log output")
 	dbPath := flag.String("db-path", ":memory:", "path to the database")
+	cliContextsStr := flag.String("nats-cli-contexts", "", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
 
 	flag.Parse()
 	logger, err := logging.NewSlogger(*logLevel, *logOutput)
@@ -36,6 +38,7 @@ func main() {
 		app.WithVersion(Version),
 		app.WithDb(*dbPath),
 		app.WithLogger(logger),
+		app.WithNatsCliContexts(clicontext.SanitizePaths(*cliContextsStr)),
 	)
 	if err != nil {
 		logger.Error(err.Error())
