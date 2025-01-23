@@ -9,6 +9,7 @@ interface Props {
 	icon?: React.ReactNode
 	subtitle?: string
 	tabIndex?: number
+	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
@@ -21,6 +22,7 @@ const ElementRow: FunctionComponent<Props> = ({
 	icon,
 	selected,
 	tabIndex = 0,
+	className,
 	onClick,
 }) => {
 
@@ -37,7 +39,7 @@ const ElementRow: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!title) return null
-	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
+	const clsRoot = `${cls.root} ${selected ? cls.select : ""} ${className ?? ""}`
 
 	return <div className={clsRoot} tabIndex={tabIndex}
 		onClick={onClick}

@@ -10,6 +10,7 @@ interface Props {
 	selected?: boolean
 	tabIndex?: number
 	renderExtra?: React.ReactNode
+	className?: string
 	onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
@@ -22,6 +23,7 @@ const LinkButton: FunctionComponent<Props> = ({
 	selected,
 	tabIndex = 0,
 	renderExtra,
+	className,
 	onClick,
 }) => {
 
@@ -37,7 +39,7 @@ const LinkButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	const clsSelect = selected ? cls.selected : ""
-	const clsRoot = `${cls.root} ${clsSelect}`
+	const clsRoot = `${cls.root} ${clsSelect} ${className ?? ""}`
 	const clsExtra = `${cls.extra} ${clsSelect}`
 
 	return (
