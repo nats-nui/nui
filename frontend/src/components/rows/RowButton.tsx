@@ -9,6 +9,7 @@ interface Props {
 	selected?: boolean
 	tabIndex?: number
 	renderEnd?: React.ReactElement
+	className?: string
 	onClick?: (e: React.MouseEvent) => void
 	style?: React.CSSProperties
 }
@@ -19,6 +20,7 @@ const RowButton: FunctionComponent<Props> = ({
 	selected,
 	tabIndex = 0,
 	renderEnd,
+	className,
 	onClick,
 	style,
 }) => {
@@ -33,7 +35,7 @@ const RowButton: FunctionComponent<Props> = ({
 	}
 
 	// RENDER
-	const clsRoot = `${cls.root} ${selected ? cls.select : ""}`
+	const clsRoot = `${cls.root} ${selected ? cls.select : ""} ${className ?? ""}`
 	return (
 		<div className={clsRoot} style={style} tabIndex={tabIndex}
 			onClick={onClick}

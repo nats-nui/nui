@@ -14,6 +14,7 @@ import { utils } from "@priolo/jack"
 import { delay } from "../time"
 import { loadLocalStorage, saveLocalStorage } from "./storage"
 import { Session } from "./types"
+import { shortcutStart } from "./shortcut"
 
 
 
@@ -63,6 +64,8 @@ export async function LoadSession() {
 	menuSo.setAll(menuStores)
 
 	logSo.add({ body: "STARTUP NUI - load session" })
+
+	shortcutStart()
 }
 
 export function ClearSession() {

@@ -98,8 +98,9 @@ const CnnListView: FunctionComponent<Props> = ({
 			><ConfigIcon style={{ width: 14, height: 14 }} /></IconButton>
 		</>}
 	>
-		{!isVoid ? connections.map(cnn => (
+		{!isVoid ? connections.map((cnn, index) => (
 			<ElementRow key={cnn.id}
+				className={`jack-focus-${index + 1}`}
 				title={getTitle(cnn)}
 				subtitle={getSubtitle(cnn)}
 				icon={<ConnectionIcon cnn={cnn} />}
