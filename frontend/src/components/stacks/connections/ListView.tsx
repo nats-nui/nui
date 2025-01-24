@@ -105,7 +105,7 @@ const CnnListView: FunctionComponent<Props> = ({
 				subtitle={getSubtitle(cnn)}
 				icon={<ConnectionIcon cnn={cnn} />}
 				selected={isSelected(cnn)}
-				onClick={(e) => handleSelect(cnn, e.ctrlKey)}
+				onClick={(e) => handleSelect(cnn, e.shiftKey)}
 			/>
 		)) : (
 			<div className="jack-lbl-empty">Create a new connection by clicking on the <b>NEW</b> button, don't be shy!</div>

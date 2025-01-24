@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import viewSetup from "@/stores/stacks/viewBase"
-import { ViewState, ViewStore } from "@priolo/jack"
+import { VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
@@ -54,10 +54,10 @@ const setup = {
 			const newId = (cnnId && oldId !== cnnId) ? cnnId : null
 
 			if (detached) {
-				const view = buildConnection(connection)
+				const view = buildConnection({ connection, size: VIEW_SIZE.NORMAL })
 				store.state.group.add({ view, index: store.state.group.getIndexByView(store) + 1 })
 			} else {
-				const view = newId ? buildConnection(connection) : null
+				const view = newId ? buildConnection({ connection }) : null
 				store.setSelect(newId)
 				store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
 			}
