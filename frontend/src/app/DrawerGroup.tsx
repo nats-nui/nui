@@ -6,7 +6,7 @@ import DirectionUpIcon from "@/icons/DirectionUpIcon"
 import MenuBottomIcon from "@/icons/MenuBottomIcon"
 import MenuRightIcon from "@/icons/MenuRightIcon"
 import docsSo, { DRAWER_POSITION } from "@/stores/docs"
-import { drawerCardsSo as drawerSo } from "@/stores/docs/cards"
+import { drawerCardsSo, drawerCardsSo as drawerSo } from "@/stores/docs/cards"
 import { delay } from "@/utils/time"
 import { CardsGroup, IconButton, RESIZER_DIRECTION, ResizerCmp, VIEW_SIZE, utils } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
@@ -32,11 +32,12 @@ const DrawerGroup: FunctionComponent<Props> = ({
 	// HANDLERS
 	const handleToggle = async (e: React.MouseEvent) => {
 		e.stopPropagation()
-		const w = drawerSo.state.lastWidth < 20 ? 500 : drawerSo.state.lastWidth
-		drawerSo.state.animation = true
-		drawerSo.setWidth(drawerSo.state.width > 0 ? 0 : w)
-		await delay(400)
-		drawerSo.state.animation = false
+		drawerCardsSo.toggle()
+		// const w = drawerSo.state.lastWidth < 20 ? 500 : drawerSo.state.lastWidth
+		// drawerSo.state.animation = true
+		// drawerSo.setWidth(drawerSo.state.width > 0 ? 0 : w)
+		// await delay(400)
+		// drawerSo.state.animation = false
 	}
 	const handleCompressAll = (e: React.MouseEvent) => {
 		e.stopPropagation()

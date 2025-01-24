@@ -1,4 +1,4 @@
-import cnnSo from "@/stores/connections";
+import cnnSo, { ConnectionState } from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages";
@@ -46,11 +46,11 @@ export function buildConnectionNew() {
 	return cnnStore;
 }
 
-export function buildConnection(connection: Connection) {
+export function buildConnection(state:Partial<CnnDetailState>) {
 	const cnnStore = buildStore({
 		type: DOC_TYPE.CONNECTION,
 		editState: EDIT_STATE.READ,
-		connection
+		...state,
 	} as CnnDetailState) as CnnDetailStore;
 	return cnnStore;
 }
