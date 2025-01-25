@@ -40,7 +40,8 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (cnn: Connection, detached: boolean) => cnnListSo.select({ cnnId: cnn.id, detached })
+	const handleSelect = (cnn: Connection, detached: boolean) => 
+			cnnListSo.select({ cnnId: cnn.id, detached })
 	const handleNew = () => cnnListSo.create()
 	const handleDelete = async () => {
 		if (!await cnnListSo.alertOpen({

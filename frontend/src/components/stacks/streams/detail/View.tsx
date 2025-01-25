@@ -50,12 +50,14 @@ const StreamDetailView: FunctionComponent<Props> = ({
 				<LinkButton
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
+					className="jack-focus-1"
 					selected={isMessagesSelect}
 					onClick={handleMessagesClick}
 				/>
 				<LinkButton
 					icon={<ConsumersIcon />}
 					tooltip="CONSUMERS"
+					className="jack-focus-2"
 					selected={isConsumersSelect}
 					onClick={handleConsumersClick}
 				/>
@@ -66,12 +68,14 @@ const StreamDetailView: FunctionComponent<Props> = ({
 			<RowButton
 				icon={<MessagesIcon />}
 				label="MESSAGES"
+				className="jack-focus-1"
 				selected={isMessagesSelect}
 				onClick={handleMessagesClick}
 			/>
 			<RowButton style={{ marginBottom: 13 }}
 				icon={<ConsumersIcon />}
 				label="CONSUMERS"
+				className="jack-focus-2"
 				selected={isConsumersSelect}
 				onClick={handleConsumersClick}
 			/>
