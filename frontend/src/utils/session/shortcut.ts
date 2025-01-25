@@ -1,5 +1,6 @@
 import { docsSo, FIXED_CARD, focusSo, utils } from "@priolo/jack"
 import { DECK_INDEX, deckCardsSo, drawerCardsSo } from "../../stores/docs/cards"
+import { LoadSession, SaveSession } from "./startup"
 
 
 
@@ -12,7 +13,7 @@ export function shortcutStart() {
 		// 	event.preventDefault()
 		// 	SaveSession()
 		// }
-
+ 
 		if (event.ctrlKey) {
 			// if (event.code == "ArrowLeft") {
 			// 	const group = docsSo.state.allDeck[DECK_INDEX.MAIN]
@@ -65,7 +66,6 @@ export function shortcutStart() {
 				if (nextDeck == drawerDeck && !drawerCardsSo.isOpen()) drawerCardsSo.toggle()
 				break
 			}
-
 		}
 	})
 }
