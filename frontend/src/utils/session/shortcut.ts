@@ -1,7 +1,5 @@
 import { docsSo, FIXED_CARD, focusSo, utils } from "@priolo/jack"
-import { DECK_INDEX, deckCardsSo, drawerCardsSo } from "../../stores/docs/cards"
-import { LoadSession, SaveSession } from "./startup"
-
+import { deckCardsSo, drawerCardsSo } from "../../stores/docs/cards"
 
 
 
@@ -9,24 +7,8 @@ export function shortcutStart() {
 	document.addEventListener('keydown', (event) => {
 		if (!event.altKey) return
 		if (event.code == "AltLeft" || event.code == "AltRight") return
-		// if (event.ctrlKey && event.key === 's') {
-		// 	event.preventDefault()
-		// 	SaveSession()
-		// }
- 
-		if (event.ctrlKey) {
-			// if (event.code == "ArrowLeft") {
-			// 	const group = docsSo.state.allDeck[DECK_INDEX.MAIN]
-			// 	const view = group.state.all[0]
-			// 	if (!!view) focusSo.focus(view)
-			// 	if (drawerCardsSo.isOpen()) drawerCardsSo.toggle()
 
-			// } else if (event.code == "ArrowRight") {
-			// 	const group = docsSo.state.allDeck[DECK_INDEX.DRAWER]
-			// 	const view = group.state.all[0]
-			// 	if (!!view) focusSo.focus(view)
-			// 	if (!drawerCardsSo.isOpen()) drawerCardsSo.toggle()
-			// }
+		if (event.ctrlKey) {
 			return
 		}
 

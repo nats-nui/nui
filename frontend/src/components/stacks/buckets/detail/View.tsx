@@ -47,6 +47,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 				<LinkButton
 					icon={<KvEntriesIcon />}
 					tooltip="KVENTRIES"
+					className="jack-focus-1"
 					selected={isKVEntriesSelect}
 					onClick={handleKVEntriesClick}
 				/>
@@ -57,6 +58,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 			<RowButton style={{ marginBottom: 13 }}
 				icon={<KvEntriesIcon />}
 				label="KVENTRIES"
+				className="jack-focus-1"
 				selected={isKVEntriesSelect}
 				onClick={handleKVEntriesClick}
 			/>
