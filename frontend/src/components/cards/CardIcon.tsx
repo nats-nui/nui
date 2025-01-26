@@ -77,6 +77,8 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <SyncIcon className={className} style={style} />
 		case DOC_TYPE.JSON_CONFIG:
 			return <ConfigIcon className={className} style={style} />
+		case DOC_TYPE.SHORTCUT:
+			return <div className={className} style={{ fontSize: 16, fontWeight: 700 }}>?</div>
 
 		default:
 			return null

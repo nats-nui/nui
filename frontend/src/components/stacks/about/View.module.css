@@ -34,15 +34,10 @@
 
 .btt {
 	align-self: center;
+	color: var(--color-green);
 }
 
 
-.title {
-	text-align: center;
-	font-size: 14px;
-	font-weight: 700;
-	margin-bottom: 10px;
-}
 
 .shortcut {
 	display: flex;
@@ -55,7 +50,7 @@
 
 .kbr {
 	font-size: 10px;
-	
+
 	height: 18px;
 	min-width: 18px;
 	font-family: monospace;
@@ -74,6 +69,5 @@
 
 .description {
 	font-size: 12px;
-	
-}
 
+}
