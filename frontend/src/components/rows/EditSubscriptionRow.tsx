@@ -54,14 +54,16 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 		enterRender={<IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		{!noDisable && (
-			<IconToggle style={{ marginTop: '5px' }}
+			<IconToggle 
+				//style={{ marginTop: '5px' }}
 				check={!item.disabled}
 				onChange={handleChangeEnabled}
 				readOnly={readOnly}
 			/>
 		)}
 		{!noFavorite && (
-			<IconToggle style={{ marginTop: '5px' }}
+			<IconToggle 
+				//style={{ marginTop: '5px' }}
 				check={item.favorite}
 				onChange={handleChangeFavorite}
 				readOnly={readOnly}
