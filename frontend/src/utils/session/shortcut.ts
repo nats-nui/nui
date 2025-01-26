@@ -25,6 +25,7 @@ export function shortcutStart() {
 			case "KeyX": {
 				const [mainDeck, drawerDeck] = docsSo.state.allDeck
 				const view = focusSo.state.view
+				if ( !view ) return
 				const nextFocus = utils.getNear(view) ?? utils.getNear(view, true)
 				const group = view.state.group
 
