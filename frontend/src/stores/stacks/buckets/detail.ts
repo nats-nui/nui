@@ -1,6 +1,6 @@
 import bucketApi from "@/api/buckets"
 import docSo from "@/stores/docs"
-import { utils } from "@priolo/jack"
+import { focusSo, utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -138,9 +138,10 @@ const setup = {
 
 		/** apertura della CARD KVENTRY */
 		openKVEntries(_: void, store?: BucketStore) {
+			const detached = focusSo.state.shiftKey
 			const isOpen = store.getKVEntriesOpen()
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
-			store.state.group.addLink({ view, parent: store, anim: true })
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 
 	},

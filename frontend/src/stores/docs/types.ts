@@ -27,6 +27,7 @@ export enum DOC_TYPE {
 	HELP = "help",
 	SYNC = "sync",
 	JSON_CONFIG = "json_config",
+	SHORTCUT = "shortcut",
 }
 
 export enum EDIT_STATE {

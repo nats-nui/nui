@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import viewSetup from "@/stores/stacks/viewBase"
-import { VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
+import { focusSo, VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
@@ -48,7 +48,8 @@ const setup = {
 		//#endregion
 
 		/** apro/chiudo la CARD del dettaglio */
-		select({ cnnId, detached }: { cnnId: string, detached: boolean }, store?: CnnListStore) {
+		select(cnnId: string, store?: CnnListStore) {
+			const detached = focusSo.state.shiftKey
 			const connection = cnnSo.getById(cnnId)
 			const oldId = (store.state.linked as CnnDetailStore)?.state.connection?.id
 			const newId = (cnnId && oldId !== cnnId) ? cnnId : null

@@ -1,5 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import AlertIcon from "@/icons/AlertIcon"
+import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DoneIcon from "@/icons/DoneIcon"
 import cnnSo from "@/stores/connections"
@@ -7,14 +8,14 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
+import { AlertDialog, Button, IconButton, OptionsCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo } from "react"
-import ElementRow from "../../rows/ElementRow"
-import cls from "./ListView.module.css"
-import clsCard from "../CardGreenDef.module.css"
-import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
-import { AlertDialog, Button, IconButton, OptionsCmp } from "@priolo/jack"
 import ConfigIcon from "../../../icons/cards/ConfigIcon"
+import ElementRow from "../../rows/ElementRow"
+import clsCard from "../CardGreenDef.module.css"
+import cls from "./ListView.module.css"
+
 
 
 interface Props {
@@ -40,8 +41,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	}, [])
 
 	// HANDLER
-	const handleSelect = (cnn: Connection, detached: boolean) => 
-			cnnListSo.select({ cnnId: cnn.id, detached })
+	const handleSelect = (cnn: Connection, detached: boolean) => cnnListSo.select(cnn.id)
 	const handleNew = () => cnnListSo.create()
 	const handleDelete = async () => {
 		if (!await cnnListSo.alertOpen({
