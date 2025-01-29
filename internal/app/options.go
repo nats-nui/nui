@@ -39,3 +39,9 @@ func WithDb(path string) AppOption {
 		a.dbPath = path
 	}
 }
+
+func WithNatsCliContexts(paths []string) AppOption {
+	return func(a *App) {
+		a.natsCliContextDirs = paths
+	}
+}

@@ -61,7 +61,7 @@ func (l LastUpdate) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + time.Time(l).Format(time.RFC3339) + `"`), nil
 }
 
-func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
+func (a *App) HandleIndexBuckets(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -80,7 +80,7 @@ func (a *App) handleIndexBuckets(c *fiber.Ctx) error {
 	return c.JSON(statuses)
 }
 
-func (a *App) handleShowBucket(c *fiber.Ctx) error {
+func (a *App) HandleShowBucket(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
@@ -122,7 +122,7 @@ func parseStreamConfigToKeyValueConfig(scfg jetstream.StreamConfig) jetstream.Ke
 	}
 }
 
-func (a *App) handleCreateBucket(c *fiber.Ctx) error {
+func (a *App) HandleCreateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return a.logAndFiberError(c, err, 500)
@@ -142,7 +142,7 @@ func (a *App) handleCreateBucket(c *fiber.Ctx) error {
 	return c.JSON(NewBucketState(status, &bucketConfig))
 }
 
-func (a *App) handleUpdateBucket(c *fiber.Ctx) error {
+func (a *App) HandleUpdateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return a.logAndFiberError(c, err, 500)
@@ -170,7 +170,7 @@ func (a *App) handleUpdateBucket(c *fiber.Ctx) error {
 	return c.JSON(NewBucketState(status, &bucketConfig))
 }
 
-func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
+func (a *App) HandleDeleteBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return a.logAndFiberError(c, err, 500)
@@ -185,7 +185,8 @@ func (a *App) handleDeleteBucket(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(200)
 }
-func (a *App) handleIndexKeys(c *fiber.Ctx) error {
+
+func (a *App) HandleIndexKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return a.logAndFiberError(c, err, 500)
@@ -221,7 +222,7 @@ watch:
 	return c.JSON(keysData)
 }
 
-func (a *App) handlePurgeDeletedKeys(c *fiber.Ctx) error {
+func (a *App) HandlePurgeDeletedKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return a.logAndFiberError(c, err, 404)
@@ -233,7 +234,7 @@ func (a *App) handlePurgeDeletedKeys(c *fiber.Ctx) error {
 	return c.SendStatus(204)
 }
 
-func (a *App) handleShowKey(c *fiber.Ctx) error {
+func (a *App) HandleShowKey(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
@@ -265,7 +266,7 @@ type PutRequest struct {
 	Payload []byte `json:"payload"`
 }
 
-func (a *App) handlePutKey(c *fiber.Ctx) error {
+func (a *App) HandlePutKey(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
@@ -292,7 +293,7 @@ func (a *App) handlePutKey(c *fiber.Ctx) error {
 	return c.JSON(&kvResp)
 }
 
-func (a *App) handleDeleteKey(c *fiber.Ctx) error {
+func (a *App) HandleDeleteKey(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
@@ -307,7 +308,7 @@ func (a *App) handleDeleteKey(c *fiber.Ctx) error {
 	return c.SendStatus(204)
 }
 
-func (a *App) handlePurgeKey(c *fiber.Ctx) error {
+func (a *App) HandlePurgeKey(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err

@@ -288,6 +288,17 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 
 }
 
+func (s *NuiTestSuite) TestStreamMessagesOnEmptyStream() {
+	e := s.e
+	connId := s.defaultConn()
+	s.emptyStream("empty_stream")
+
+	//get stream messages
+	r := e.GET("/api/connection/" + connId + "/stream/empty_stream/messages").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(0)
+}
+
 func (s *NuiTestSuite) TestStreamMessagesIndex() {
 	e := s.e
 	connId := s.defaultConn()
