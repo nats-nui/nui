@@ -1,10 +1,10 @@
 import cnnApi from "@/api/connection"
-import { Connection } from "@/types/Connection"
-import { StoreCore, createStore, mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { cardsSetup, utils } from "@priolo/jack"
+import { Connection } from "@/types/Connection"
+import { docsSo, utils } from "@priolo/jack"
+import { createStore, mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../docs/types"
+import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
 
 
 
@@ -30,7 +30,7 @@ const setup = {
 		//#region OVERWRITE
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConnectionStore>store
-			const cnnStore = utils.findAll(cardsSetup.GetAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
+			const cnnStore = utils.findAll(docsSo.getAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
 			socketPool.closeAll()
 			const cnn = await cnnApi.index({ store: cnnStore })
 			s.setAll(cnn)

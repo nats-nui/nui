@@ -50,7 +50,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" style={{ padding: 5}}>
+	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" style={{ padding: 5 }}>
 		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
 	</TooltipWrapCmp>
 
@@ -62,6 +62,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		iconizedRender={
 			<div className="lyt-v lyt-v-btts">
 				<LinkButton
+					className="jack-focus-1"
 					icon={<MessagesIcon />}
 					tooltip="MESSAGES"
 					selected={isMessageOpen}
@@ -69,18 +70,21 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					renderExtra={ButtonSend}
 				/>
 				<LinkButton
+					className="jack-focus-2"
 					icon={<SyncIcon />}
 					tooltip="REQUEST / REPLY"
 					selected={isSyncOpen}
 					onClick={handleSyncClick}
 				/>
 				<LinkButton
+					className="jack-focus-3"
 					icon={<StreamsIcon />}
 					tooltip="STREAMS"
 					selected={isStreamsOpen}
 					onClick={handleStreamsClick}
 				/>
 				<LinkButton
+					className="jack-focus-4"
 					icon={<BucketsIcon />}
 					tooltip="BUCKETS"
 					selected={isBucketsOpen}
@@ -91,6 +95,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	>
 		{inRead && <>
 			<RowButton
+				className="jack-focus-1"
 				icon={<MessagesIcon />}
 				label="MESSAGES"
 				selected={isMessageOpen}
@@ -98,18 +103,21 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				renderEnd={ButtonSend}
 			/>
 			<RowButton
+				className="jack-focus-2"
 				icon={<SyncIcon />}
 				label="REQUEST / REPLY"
 				selected={isSyncOpen}
 				onClick={handleSyncClick}
 			/>
 			<RowButton
+				className="jack-focus-3"
 				icon={<StreamsIcon />}
 				label="STREAMS"
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton style={{ marginBottom: 12 }}
+				className="jack-focus-4"
 				icon={<BucketsIcon />}
 				label="BUCKETS"
 				selected={isBucketsOpen}

@@ -24,6 +24,7 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 		case DOC_TYPE.KVENTRY:
 			return { fg: "#393939", bg: "#6affab" }
 		case DOC_TYPE.ABOUT:
+		case DOC_TYPE.SHORTCUT:
 		case DOC_TYPE.HELP:
 		case DOC_TYPE.JSON_CONFIG:
 		case DOC_TYPE.LOGS:

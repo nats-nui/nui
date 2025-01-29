@@ -1,6 +1,6 @@
 import cnnSo from "@/stores/connections"
 import viewSetup from "@/stores/stacks/viewBase"
-import { ViewState, ViewStore } from "@priolo/jack"
+import { focusSo, VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
@@ -27,7 +27,7 @@ const setup = {
 
 		//#region OVERRIDE
 		getTitle: (_: void, store?: ViewStore) => "CONNECTIONS",
-		getSubTitle: (_: void, store?: ViewStore):string => "All connections available",
+		getSubTitle: (_: void, store?: ViewStore): string => "All connections available",
 		// getSerialization: (_: void, store?: ViewStore) => {
 		// 	const state = store.state as CnnListState
 		// 	return {
@@ -49,12 +49,19 @@ const setup = {
 
 		/** apro/chiudo la CARD del dettaglio */
 		select(cnnId: string, store?: CnnListStore) {
+			const detached = focusSo.state.shiftKey
 			const connection = cnnSo.getById(cnnId)
 			const oldId = (store.state.linked as CnnDetailStore)?.state.connection?.id
 			const newId = (cnnId && oldId !== cnnId) ? cnnId : null
-			const view = newId ? buildConnection(connection) : null
-			store.setSelect(newId)
-			store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
+
+			if (detached) {
+				const view = buildConnection({ connection, size: VIEW_SIZE.NORMAL })
+				store.state.group.add({ view, index: store.state.group.getIndexByView(store) + 1 })
+			} else {
+				const view = newId ? buildConnection({ connection }) : null
+				store.setSelect(newId)
+				store.state.group.addLink({ view, parent: store, anim: !oldId || !newId })
+			}
 		},
 
 		/** apro la CARD per creare un nuovo elemento */
@@ -63,8 +70,6 @@ const setup = {
 			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
-
-
 
 		openStreams(connectionId: string, store?: CnnListStore) {
 			store.state.group.addLink({

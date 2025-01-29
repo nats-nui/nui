@@ -1,0 +1,52 @@
+.logo {
+	margin-top: 30px;
+	margin-bottom: 30px;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 15px;
+}
+
+.divider {
+	border-top: 1px dashed #ffffff59;
+	margin: 10px 0px 10px;
+}
+
+.title {
+	text-align: center;
+	font-size: 14px;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.shortcut {
+	display: flex;
+	align-items: baseline;
+	font-size: 12px;
+	gap: 4px;
+	font-weight: 600;
+}
+
+.kbr {
+	font-size: 10px;
+
+	height: 18px;
+	min-width: 18px;
+	font-family: monospace;
+	border: 1px solid #ffffff5e;
+	border-radius: 5px;
+	padding: 0px 5px;
+	min-width: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: black;
+}
+
+.kbr.single {
+	font-size: 12px;
+}
+
+.description {
+	font-size: 12px;
+
+}

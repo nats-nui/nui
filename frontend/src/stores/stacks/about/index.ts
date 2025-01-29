@@ -3,6 +3,9 @@ import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
 import { mixStores, StoreCore } from "@priolo/jon"
 import { ViewState } from "../viewBase"
+import { focusSo } from "@priolo/jack"
+import { DOC_TYPE } from "../../docs/types"
+import { buildStore } from "../../docs/utils/factory"
 
 
 
@@ -47,6 +50,13 @@ const setup = {
 		async fetchIfVoid(_: void, store?: AboutStore) {
 			if (!!store.state.about) return
 			await store.fetch()
+		},
+
+		openShortcut(_: void, store?: AboutStore) {
+			const detached = focusSo.state.shiftKey
+			const isOpen = !!store.state.linked
+			const view = !isOpen || detached ? buildStore({ type: DOC_TYPE.SHORTCUT })  : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 	},
 

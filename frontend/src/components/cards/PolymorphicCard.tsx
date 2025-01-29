@@ -22,6 +22,7 @@ import { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent, useMemo } from "react"
 import AboutView from "../stacks/about/View"
+import ShortcutView from "../stacks/shortcut/View"
 import BucketDetailView from "../stacks/buckets/detail/View"
 import BucketsListView from "../stacks/buckets/list/ListView"
 import CnnListView from "../stacks/connections/ListView"
@@ -41,6 +42,7 @@ import JsonConfigView from "../stacks/jsonconfig/View"
 import { JsonConfigStore } from "../../stores/stacks/jsonconfig"
 import { CnnImportStore } from "../../stores/stacks/cnnImport"
 import CnnLoaderView from "../stacks/cnnImport/View"
+import { ShortcutStore } from "../../stores/stacks/shortcut"
 
 
 
@@ -100,6 +102,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <SyncView store={view as SyncStore} />
 			case DOC_TYPE.JSON_CONFIG:
 				return <JsonConfigView store={view as JsonConfigStore} />
+			case DOC_TYPE.SHORTCUT:
+				return <ShortcutView store={view as ShortcutStore} />
 
 			default:
 				return null

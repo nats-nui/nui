@@ -4,7 +4,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
-import { cardsSetup, utils } from "@priolo/jack"
+import { docsSo, utils } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildStream, buildStreamNew } from "./utils/factory"
@@ -106,7 +106,7 @@ const setup = {
 			store.setSelect(null)
 
 			// cerco eventuali CARD di questo stream e lo chiudo
-			const cardStreams = utils.findAll(cardsSetup.GetAllCards(), { type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
+			const cardStreams = utils.findAll(docsSo.getAllCards(), { type: DOC_TYPE.STREAM, connectionId: store.state.connectionId })
 			cardStreams.forEach(view => view.state.group.remove({ view, anim: true }))
 
 			store.setSnackbar({

@@ -7,6 +7,7 @@ import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
 import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionSync } from "./utils/factory"
+import { focusSo } from "@priolo/jack"
 
 
 
@@ -48,10 +49,10 @@ const setup = {
 			return store.state.connection
 		},
 
-		getMessagesOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.MESSAGES,
-		getSyncOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.SYNC,
-		getStreamsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.STREAMS,
-		getBucketsOpen: (_: void, store?: CnnDetailStore)=> store.state.linked?.state.type == DOC_TYPE.BUCKETS,
+		getMessagesOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.MESSAGES,
+		getSyncOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SYNC,
+		getStreamsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.STREAMS,
+		getBucketsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.BUCKETS,
 
 	},
 
@@ -86,35 +87,40 @@ const setup = {
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
 			const isOpen = store.getMessagesOpen()
-			const view = !isOpen ? buildConnectionMessages(store.state.connection?.id) : null
-			store.state.group.addLink({ view, parent: store, anim: true })
+			const view = !isOpen || detached ? buildConnectionMessages(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		openSync(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
 			const isOpen = store.getSyncOpen()
-			const view = !isOpen ? buildConnectionSync(store.state.connection?.id) : null
-			store.state.group.addLink({ view, parent: store, anim: true })
+			const view = !isOpen || detached ? buildConnectionSync(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD STREAMS */
 		openStreams(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
 			const isOpen = store.getStreamsOpen()
-			const view = !isOpen ? buildStreams(store.state.connection?.id) : null
-			store.state.group.addLink({ view, parent: store, anim: true })
+			const view = !isOpen || detached ? buildStreams(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		/** apertura della CARD BUCKETS */
 		openBuckets(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
 			const isOpen = store.getBucketsOpen()
-			const view = !isOpen ? buildBuckets(store.state.connection?.id) : null
-			store.state.group.addLink({ view, parent: store, anim: true })
+			const view = !isOpen || detached ? buildBuckets(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		/** apertura CARD MESSAGE-SEND */
 		openMessageSend(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
 			const cnn = store.getConnection()
 			if (!cnn) return
 			const subscriptions = store.state.connection?.subscriptions?.map(s => s.subject)
-			store.state.group.addLink({
+			store.state.group[detached ? "add" : "addLink"]({
 				view: buildConnectionMessageSend(
-					cnn.id, 
+					cnn.id,
 					subscriptions,
 				),
 				parent: store,

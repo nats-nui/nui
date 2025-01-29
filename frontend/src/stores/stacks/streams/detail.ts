@@ -1,6 +1,6 @@
 import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
-import { utils } from "@priolo/jack"
+import { focusSo, utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
@@ -163,23 +163,23 @@ const setup = {
 		/** apertura della CARD CONSUMERS */
 		openConsumers(_: void, store?: StreamStore) {
 			const view = buildConsumers(store.state.connectionId, store.state.stream)
-			store.state.group.addLink({ view, parent: store, anim: true })
+			store.state.group[focusSo.state.shiftKey ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 
 		/** apertura della CARD MESSAGES */
 		openMessages(_: void, store?: StreamStore) {
 			const view = buildStreamMessages(store.state.connectionId, store.state.stream)
-			store.state.group.addLink({ view, parent: store, anim: true })
+			store.state.group[focusSo.state.shiftKey ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		toggleConsumer(_: void, store?: StreamStore) {
-			if (store.getConsumerOpen()) {
+			if (!focusSo.state.shiftKey && store.getConsumerOpen()) {
 				store.state.group.addLink({ view: null, parent: store, anim: true })
 			} else {
 				store.openConsumers()
 			}
 		},
 		toggleMessages(_: void, store?: StreamStore) {
-			if (store.getMessagesOpen()) {
+			if (!focusSo.state.shiftKey && store.getMessagesOpen()) {
 				store.state.group.addLink({ view: null, parent: store, anim: true })
 			} else {
 				store.openMessages()

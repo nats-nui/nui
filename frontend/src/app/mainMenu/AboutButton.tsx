@@ -3,6 +3,7 @@ import docSo, { FIXED_CARD } from "@/stores/docs"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import StoreButton from "./StoreButton"
+import { AboutState, AboutStore } from "../../stores/stacks/about"
 
 
 
@@ -13,8 +14,8 @@ const AboutButton: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const store = docSo.state.fixedViews[FIXED_CARD.ABOUT]
-	const state = useStore(store)
+	const store = docSo.state.fixedViews[FIXED_CARD.ABOUT] as AboutStore
+	useStore(store)
 
 	// HOOKs
 
@@ -22,7 +23,9 @@ const AboutButton: FunctionComponent<Props> = ({
 
 	// RENDER
 	if (!store) return null
-	const icon = state.about?.shouldUpdate ? <ArrowUpIcon /> : null
+	const icon = store.state.about?.shouldUpdate 
+		? <ArrowUpIcon style={{color: "var(--color-fuchsia)"}}/> 
+		: null
 
 	return (
 		<StoreButton
