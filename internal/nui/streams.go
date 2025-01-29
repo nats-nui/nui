@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func (a *App) handleIndexStreams(c *fiber.Ctx) error {
+func (a *App) HandleIndexStreams(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -37,7 +37,7 @@ func (a *App) handleIndexStreams(c *fiber.Ctx) error {
 	}
 }
 
-func (a *App) handleShowStream(c *fiber.Ctx) error {
+func (a *App) HandleShowStream(c *fiber.Ctx) error {
 	streamName := c.Params("stream_name")
 	if streamName == "" {
 		return c.Status(422).JSON("stream_name is required")
@@ -57,7 +57,7 @@ func (a *App) handleShowStream(c *fiber.Ctx) error {
 	return c.JSON(info)
 }
 
-func (a *App) handleCreateStream(c *fiber.Ctx) error {
+func (a *App) HandleCreateStream(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -78,7 +78,7 @@ func (a *App) handleCreateStream(c *fiber.Ctx) error {
 	return c.JSON(info)
 }
 
-func (a *App) handleUpdateStream(c *fiber.Ctx) error {
+func (a *App) HandleUpdateStream(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -99,7 +99,7 @@ func (a *App) handleUpdateStream(c *fiber.Ctx) error {
 	return c.JSON(info)
 }
 
-func (a *App) handleDeleteStream(c *fiber.Ctx) error {
+func (a *App) HandleDeleteStream(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -119,7 +119,7 @@ func (a *App) handleDeleteStream(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func (a *App) handlePurgeStream(c *fiber.Ctx) error {
+func (a *App) HandlePurgeStream(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -165,7 +165,7 @@ func (a *App) handlePurgeStream(c *fiber.Ctx) error {
 	return c.SendStatus(204)
 }
 
-func (a *App) handleSealStream(c *fiber.Ctx) error {
+func (a *App) HandleSealStream(c *fiber.Ctx) error {
 	//conn, err := a.nui.ConnPool.Get(c.Params("connection_id"))
 	//if err != nil {
 	//	return a.logAndFiberError(c,err,404)
@@ -189,7 +189,7 @@ func (a *App) handleSealStream(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
+func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -251,6 +251,7 @@ func (a *App) handleIndexStreamMessages(c *fiber.Ctx) error {
 			} else {
 				querySeq = int(info.State.LastSeq)
 			}
+			querySeq = max(querySeq, 1)
 		}
 		var seekFromSeq uint64
 		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, config, querySeq, interval)
@@ -302,7 +303,7 @@ func (a *App) fetchMessages(c *fiber.Ctx, err error, stream jetstream.Stream, co
 	return msgs, nil
 }
 
-func (a *App) handleDeleteStreamMessage(c *fiber.Ctx) error {
+func (a *App) HandleDeleteStreamMessage(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err

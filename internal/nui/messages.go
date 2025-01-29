@@ -6,7 +6,7 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-func (a *App) handleIndexSubscriptions(c *fiber.Ctx) error {
+func (a *App) HandleIndexSubscriptions(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
@@ -20,7 +20,7 @@ func (a *App) handleIndexSubscriptions(c *fiber.Ctx) error {
 	return c.JSON(conn.Subscriptions)
 }
 
-func (a *App) handleUpdateSubscriptions(c *fiber.Ctx) error {
+func (a *App) HandleUpdateSubscriptions(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
@@ -41,7 +41,7 @@ func (a *App) handleUpdateSubscriptions(c *fiber.Ctx) error {
 	return c.JSON(conn.Subscriptions)
 }
 
-func (a *App) handlePublish(c *fiber.Ctx) error {
+func (a *App) HandlePublish(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}

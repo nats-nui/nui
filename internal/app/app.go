@@ -10,12 +10,13 @@ import (
 
 // App struct
 type App struct {
-	ctx        context.Context
-	version    string
-	target     Target
-	l          logging.Slogger
-	dbPath     string
-	serverPort string
+	ctx                context.Context
+	version            string
+	target             Target
+	l                  logging.Slogger
+	dbPath             string
+	serverPort         string
+	natsCliContextDirs []string
 }
 
 // NewApp creates a new App application struct
@@ -54,6 +55,21 @@ func (a *App) Startup(ctx context.Context) {
 		os.Exit(1)
 	}
 	server := nui.NewServer(a.serverPort, nuiSvc, a.l, a.target == TargetDesktop)
+
+	if len(a.natsCliContextDirs) > 0 {
+		for _, path := range a.natsCliContextDirs {
+			a.l.Info("importing cli contexts from path: " + path)
+			response, err := server.ImportCliContextsFromPath(ctx, path)
+			if err != nil {
+				a.l.Error("error importing cli contexts from path: " + path + " - " + err.Error())
+			}
+			// log all imported connection names
+			for _, conn := range response.Connections {
+				a.l.Info("imported connection: " + conn.Name)
+			}
+		}
+	}
+
 	err = server.Start(ctx)
 	if err != nil {
 		a.l.Error("fatal error setting up app webserver: " + err.Error())
