@@ -12,4 +12,6 @@
 	/* tooltip drag dialog float-button*/
 	--dialog-fg: #393939;
 	--dialog-bg: #EBFB35;
+
+	--cmp-focus: #EBFB3589;
 }

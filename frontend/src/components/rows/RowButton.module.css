@@ -1,0 +1,31 @@
+.root {
+	transition: background-color 200ms, color 200ms;
+	display: flex;
+	align-items: center;
+	padding: 5px 8px;
+	cursor: pointer;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	margin-right: -10px;
+	margin-left: -7px;
+}
+
+.root:focus {
+	outline: none;
+}
+:global(.jack-framework-focus-ctrl) .root:focus {
+	outline: 2px solid var(--cmp-focus);
+}
+
+.root.select {
+	color: var(--card-bg);
+	background-color: var(--card-fg);
+}
+
+.label {
+	font-size: 14px;
+	font-weight: 800;
+	font-family: "Darker Grotesque";
+	flex: 1;
+	margin-left: 5px;
+}

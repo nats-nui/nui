@@ -27,15 +27,7 @@ export enum DOC_TYPE {
 	HELP = "help",
 	SYNC = "sync",
 	JSON_CONFIG = "json_config",
-}
-
-export enum DOC_ANIM {
-	SHOW = "show",
-	EXIT = "exit",
-	DRAGGING = "dragging",
-	EXITING = "exiting",
-	SHOWING = "showing",
-	SIZING = "iconize",
+	SHORTCUT = "shortcut",
 }
 
 export enum EDIT_STATE {
@@ -44,5 +36,4 @@ export enum EDIT_STATE {
 	EDIT,
 }
 
-export const ANIM_TIME = 200
 export const ANIM_TIME_CSS = 200

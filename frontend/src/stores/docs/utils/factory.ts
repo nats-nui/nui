@@ -23,6 +23,7 @@ import { createStore } from "@priolo/jon";
 import { ViewState, ViewStore } from "../../stacks/viewBase";
 import jsonConfigSetup from "../../stacks/jsonconfig";
 import cnnImportSetup from "../../stacks/cnnImport";
+import shortcutSetup from "../../stacks/shortcut";
 
 
 
@@ -55,6 +56,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.HELP]: helpSetup,
 		[DOC_TYPE.SYNC]: syncSetup,
 		[DOC_TYPE.JSON_CONFIG]: jsonConfigSetup,
+		[DOC_TYPE.SHORTCUT]: shortcutSetup,
 	}[state?.type]
 	if (!setup) return
 	const store: ViewStore = <ViewStore>createStore(setup)
