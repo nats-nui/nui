@@ -124,7 +124,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: nui-${{runner.os}}-${{matrix.build.name}}
+          name: nui-${{ runner.os }}-${{ matrix.build.platform_name }}-${{ github.run_id }}
           path: |
             build/bin/
             build\bin\*
