@@ -1,5 +1,6 @@
-import KeyValueMap from "@/components/input/KeyValueMap.tsx"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
+import { EDIT_STATE } from "@/types"
 import { BucketConfig } from "@/types/Bucket"
 import { Source, STORAGE } from "@/types/Stream"
 import { Accordion, Component, EditList, EditStringRow, ElementDialog, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
@@ -7,10 +8,9 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
 import MaxBytesCmp from "../../../input/MaxBytesCmp"
 import MaxTimeCmp from "../../../input/MaxTimeCmp"
-import { EDIT_STATE } from "@/types"
 import EditSourceCmp from "../../streams/detail/cmp/EditSourceCmp"
-import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import SourcesCmp from "../../streams/detail/cmp/SourcesCmp"
+import { formatNumber } from "../../../../utils/string"
 
 
 
@@ -54,19 +54,19 @@ const Form: FunctionComponent<Props> = ({
 
 	const [mirrorElm, setMirrorElm] = useState<HTMLElement>(null)
 	const handleMirrorCheck = (check: boolean) => {
-        if (check && !bucketSa.bucket.config.mirror) {
-            bucketSo.setBucketConfig({ mirror: { name: "", optStartSeq: 0, optStartTime: null, filterSubject: "" } })
-            return
-        }
-        if (!check && bucketSa.bucket.config.mirror) {
-            bucketSo.setBucketConfig({ mirror: null })
-        }
-    }
+		if (check && !bucketSa.bucket.config.mirror) {
+			bucketSo.setBucketConfig({ mirror: { name: "", optStartSeq: 0, optStartTime: null, filterSubject: "" } })
+			return
+		}
+		if (!check && bucketSa.bucket.config.mirror) {
+			bucketSo.setBucketConfig({ mirror: null })
+		}
+	}
 	const handleMirrorPropChange = (mirror: Source) => {
 		const config = { ...bucketSa.bucket.config }
-        config.mirror = mirror
-        bucketSo.setBucketConfig(config)
-    }
+		config.mirror = mirror
+		bucketSo.setBucketConfig(config)
+	}
 
 
 	// RENDER
@@ -83,14 +83,14 @@ const Form: FunctionComponent<Props> = ({
 					<div className="item">
 						<div className="jack-lbl-prop">VALUES</div>
 						<div className="jack-lbl-readonly">
-							{bucketSa.bucket.values}
+							{formatNumber(bucketSa.bucket.values)}
 						</div>
 					</div>
 					<div className="lbl-divider-v" />
 					<div className="item">
 						<div className="jack-lbl-prop">BYTES</div>
 						<div className="jack-lbl-readonly">
-							{bucketSa.bucket.bytes}
+							{formatNumber(bucketSa.bucket.bytes)}
 						</div>
 					</div>
 				</div>
@@ -135,7 +135,7 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">SOURCES</div>
-				<SourcesCmp 
+				<SourcesCmp
 					store={bucketSo}
 					readOnly={inRead}
 					sources={bucket.sources ?? []}

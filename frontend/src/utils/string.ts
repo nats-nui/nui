@@ -1,4 +1,3 @@
-
 /**
  * Converts a "binary-string" to a "string"
  */
@@ -23,4 +22,15 @@ export function stringToBinaryString(str: string): string {
 	const binaryString = String.fromCharCode(...utf8Bytes);
 	return binaryString
 	// return btoa(binaryString);
+}
+
+/**
+  * Esporta un numero intero in formato con divisione in migliaia
+  */
+export function formatNumber(value: number | string, separator: string = "'") {
+	if (value == null ) return '--';
+	const num = typeof value === 'string' ? Number(value) : value;
+	if (isNaN(num)) return '--';
+	const intStr = num.toFixed(0)
+	return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }

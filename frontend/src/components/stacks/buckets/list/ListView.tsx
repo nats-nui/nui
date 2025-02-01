@@ -8,6 +8,7 @@ import { FunctionComponent, useEffect } from "react"
 import BucketsIcon from "../../../../icons/cards/BucketsIcon"
 import clsCard from "../../CardMintDef.module.css"
 import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
+import { formatNumber } from "../../../../utils/string"
 
 
 
@@ -38,7 +39,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 	const buckets = bucketsSo.getFiltered() ?? []
 	if (!buckets) return null
 	const selected = bucketsSa.select
-	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET 
+	const isNewSelect = bucketsSa.linked?.state.type == DOC_TYPE.BUCKET
 		&& (bucketsSa.linked as BucketStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
@@ -72,10 +73,10 @@ const BucketsListView: FunctionComponent<Props> = ({
 		<VTable
 			items={buckets}
 			props={[
-				{ label: "VALUES", getValue: b => b.values },
+				{ label: "VALUES", getValue: b => b.values, getShow: b => formatNumber(b.values) },
 				{ label: "HISTORY", getValue: b => b.history },
 				{ label: "TTL", getValue: b => b.ttl },
-				{ label: "BYTES", getValue: b => b.bytes },
+				{ label: "BYTES", getValue: b => b.bytes, getShow: b => formatNumber(b.bytes) },
 			]}
 			propMain={{ getValue: b => b.bucket }}
 			selectId={selected}
