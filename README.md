@@ -2,9 +2,9 @@
   <img width=200px src=https://github.com/nats-nui/nui/assets/22039194/626b87c8-66ba-433c-8785-dc934b61cbe2" alt="NATS WebUI Logo"/> 
 </p>
 
-# NUI 
+# NUI
 ---
-#### Free and Open Source NATS management GUI. 
+#### Free and Open Source NATS management GUI.
 Easily manage your NATS core, streams and buckets, both from Desktop App or Web interface!
 
 <p align="center">
@@ -66,3 +66,7 @@ starts the application in web mode, using the `db` dir as persistent data direct
 make dev
 ```
 starts wails in development mode, building the application based on the underlying operating system
+
+#### macOS Desktop App Installation
+- Right-click the PKG and select **Open** (to bypass macOS quarantine, [see Apple documentation](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)).
+- If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
