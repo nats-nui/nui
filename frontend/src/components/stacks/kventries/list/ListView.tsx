@@ -4,12 +4,13 @@ import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { KVEntry } from "@/types/KVEntry"
 import { dateShow } from "@/utils/time"
+import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
 import KvEntriesIcon from "../../../../icons/cards/KvEntriesIcon"
+import { formatNumber } from "../../../../utils/string"
 import clsCard from "../../CardMintDef.module.css"
-import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 
 
 
@@ -76,19 +77,20 @@ const KVEntryListView: FunctionComponent<Props> = ({
 			props={[
 				{
 					label: "REVISION",
-					getValue: b => b.revision,
+					getShow: i => formatNumber(i.revision),
+					getValue: i => i.revision,
 					flex: .5
 				},
 				{
 					label: "LAST",
 					getShow: i => dateShow(i.lastUpdate),
-					getValue: b => dayjs(b.lastUpdate).valueOf(),
+					getValue: i => dayjs(i.lastUpdate).valueOf(),
 				},
 				//{ label: "OPERATION", getValue: b => b.operation },
 				{
 					label: "DELETED",
 					getShow: i => i.isDeleted ? "YES" : "NO",
-					getValue: b => b.isDeleted ? 1 : 0,
+					getValue: i => i.isDeleted ? 1 : 0,
 					flex: .5,
 				},
 			]}

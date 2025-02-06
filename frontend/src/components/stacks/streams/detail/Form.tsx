@@ -12,6 +12,7 @@ import { Accordion, Component, EditList, EditStringRow, ElementDialog, IconToggl
 import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx";
 import KeyValueMap from "@/components/input/KeyValueMap.tsx";
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
+import { formatNumber } from "@/utils/string"
 
 
 interface Props {
@@ -135,24 +136,24 @@ const Form: FunctionComponent<Props> = ({
                 <div className="lyt-h-props">
                     <div className="item">
                         <div className="jack-lbl-prop">COUNT</div>
-                        <div className="jack-lbl-readonly">{state.messages}</div>
+                        <div className="jack-lbl-readonly">{formatNumber(state.messages)}</div>
                     </div>
                     <div className="lbl-divider-v" />
                     <div className="item">
                         <div className="jack-lbl-prop">BYTES</div>
-                        <div className="jack-lbl-readonly">{state.bytes}</div>
+                        <div className="jack-lbl-readonly">{formatNumber(state.bytes)}</div>
                     </div>
                     <div className="lbl-divider-v" />
                     <div className="item">
                         <div className="jack-lbl-prop">DELETED</div>
-                        <div className="jack-lbl-readonly">{state.numDeleted}</div>
+                        <div className="jack-lbl-readonly">{formatNumber(state.numDeleted)}</div>
                     </div>
                 </div>
 
                 <div className="lyt-v">
                     <div className="jack-lbl-prop">FIRST SEQUENCE</div>
                     <div className="jack-lbl-readonly" style={{ display: "flex" }}>
-                        <div style={{ flex: 1 }}>{state.firstSeq}</div>
+                        <div style={{ flex: 1 }}>{formatNumber(state.firstSeq)}</div>
                         <div style={{ fontFamily: "monospace" }}>{firstTs}</div>
                     </div>
                 </div>
@@ -160,14 +161,14 @@ const Form: FunctionComponent<Props> = ({
                 <div className="lyt-v">
                     <div className="jack-lbl-prop">LAST SEQUENCE</div>
                     <div className="jack-lbl-readonly" style={{ display: "flex" }}>
-                        <div style={{ flex: 1 }}>{state.lastSeq}</div>
+                        <div style={{ flex: 1 }}>{formatNumber(state.lastSeq)}</div>
                         <div style={{ fontFamily: "monospace" }}>{lastTs}</div>
                     </div>
                 </div>
 
                 <div className="lyt-v">
                     <div className="jack-lbl-prop">CONSUMER COUNT</div>
-                    <div className="jack-lbl-readonly">{state.consumerCount}</div>
+                    <div className="jack-lbl-readonly">{formatNumber(state.consumerCount)}</div>
                 </div>
 
             </TitleAccordion>
