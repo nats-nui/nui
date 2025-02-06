@@ -5,7 +5,7 @@ import { AUTH_MODE, Connection } from "@/types";
 const connections: any[] = [
 	{
 		id: "cnn-1",
-		name: "conn 1",
+		name: "conn 1 spacespacespacespacespacespacespace",
 		hosts: ["localhost:3000"],
 		subscriptions: [
 			{ "subject": "camelCase" },
