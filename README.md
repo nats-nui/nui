@@ -42,8 +42,11 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 - Try the [Live Demo](https://natsnui.app/demo/).
 - [Download](https://natsnui.app/downloads/) Desktop app or deploy with [Docker](https://natsnui.app/downloads/#deploying-with-docker) or [Helm](https://github.com/nats-nui/k8s) (Experimental).
 
-
+#### macOS Desktop App Installation tweak
+- Right-click the PKG and select **Open** (to bypass macOS quarantine, [see Apple documentation](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)).
+- If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
 ---
+
 # Build and run Locally
 The projects uses Go and Wails.io as to run the BE and React on Vite on FE.
 
@@ -66,7 +69,3 @@ starts the application in web mode, using the `db` dir as persistent data direct
 make dev
 ```
 starts wails in development mode, building the application based on the underlying operating system
-
-#### macOS Desktop App Installation
-- Right-click the PKG and select **Open** (to bypass macOS quarantine, [see Apple documentation](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)).
-- If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
