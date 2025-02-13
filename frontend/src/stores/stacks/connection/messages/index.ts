@@ -1,13 +1,13 @@
 import messagesApi from "@/api/messages"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
+import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { Subscription } from "@/types"
+import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
-import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
+import { LISTENER_CHANGE, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
 import { MessageStore } from "../../message"
 import { ViewState } from "../../viewBase"
@@ -151,6 +151,12 @@ const setup = {
 			}
 			sbjCounter.counter++;
 			sbjCounter.last = dayjs().valueOf()
+
+			// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
+			const linked = store.state.linked as MessageStore
+			if ( !!linked && linked?.state.type == DOC_TYPE.MESSAGE && linked.state.linkToLast ) {
+				linked.setMessage(message)
+			}
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
