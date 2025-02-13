@@ -2,9 +2,9 @@
   <img width=200px src=https://github.com/nats-nui/nui/assets/22039194/626b87c8-66ba-433c-8785-dc934b61cbe2" alt="NATS WebUI Logo"/> 
 </p>
 
-# NUI 
+# NUI
 ---
-#### Free and Open Source NATS management GUI. 
+#### Free and Open Source NATS management GUI.
 Easily manage your NATS core, streams and buckets, both from Desktop App or Web interface!
 
 <p align="center">
@@ -42,8 +42,11 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 - Try the [Live Demo](https://natsnui.app/demo/).
 - [Download](https://natsnui.app/downloads/) Desktop app or deploy with [Docker](https://natsnui.app/downloads/#deploying-with-docker) or [Helm](https://github.com/nats-nui/k8s) (Experimental).
 
-
+#### macOS Desktop App Installation tweak
+- Right-click the PKG and select **Open** (to bypass macOS quarantine, [see Apple documentation](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)).
+- If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
 ---
+
 # Build and run Locally
 The projects uses Go and Wails.io as to run the BE and React on Vite on FE.
 
