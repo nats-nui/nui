@@ -9,6 +9,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import clsCard from "../../CardYellowDef.module.css"
 import { AlertDialog, Button, FindInputHeader, OptionsCmp, Table } from "@priolo/jack"
+import { formatNumber } from "../../../../utils/string"
 
 
 
@@ -75,10 +76,10 @@ const StreamsListView: FunctionComponent<Props> = ({
 			items={streams}
 			props={[
 				{ label: "NAME", getValue: s => s.config.name, isMain: true },
-				{ label: "SIZE", getValue: s => s.state.messages },
-				{ label: "FIRST", getValue: s => s.state.firstSeq },
-				{ label: "LAST", getValue: s => s.state.lastSeq },
-				{ label: "BYTES", getValue: s => s.state.bytes },
+				{ label: "SIZE", getValue: s => s.state.messages, getShow: s => formatNumber(s.state.messages) },
+				{ label: "FIRST", getValue: s => s.state.firstSeq, getShow: s => formatNumber(s.state.firstSeq) },
+				{ label: "LAST", getValue: s => s.state.lastSeq, getShow: s => formatNumber(s.state.lastSeq) },
+				{ label: "BYTES", getValue: s => s.state.lastSeq, getShow: s => formatNumber(s.state.bytes) },
 			]}
 			selectId={nameSelected}
 			onSelectChange={handleSelect}

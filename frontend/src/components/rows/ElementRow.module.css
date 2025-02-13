@@ -28,6 +28,7 @@
 .label .title {
 	font-size: 14px;
 	font-weight: 700;
+	overflow-wrap: anywhere;
 }
 
 .label .subtitle {
@@ -35,4 +36,5 @@
 	font-size: 12px;
 	font-weight: 400;
 	opacity: 0.9;
+	overflow-wrap: anywhere;
 }
