@@ -62,7 +62,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 		store={strMsgSo}
 		actionsRender={<>
 			<OptionsCmp
-				style={{ marginLeft: 5 }}
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
 				store={strMsgSo}
 			/>
 			<FindInputHeader
