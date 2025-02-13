@@ -10,6 +10,7 @@ import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { MessageStore } from "../message"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
+import { DOC_TYPE } from "../../docs/types"
 
 
 
@@ -184,9 +185,20 @@ const setup = {
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: StreamMessagesStore) {
 			const storeMsg = (store.state.linked as MessageStore)
-			const msgOld = storeMsg?.state.message
-			const view = msgOld?.seqNum == message?.seqNum ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
-			store.state.group.addLink({ view, parent: store, anim: !msgOld || !view })
+
+			// se è gia' aperto il dettaglio del messaggio 
+			if (storeMsg?.state.type == DOC_TYPE.MESSAGE) {
+				// se è uguale a quello precedente allora lo chiudo
+				if (storeMsg.state.message.seqNum == message.seqNum) {
+					store.state.group.addLink({ view: null, parent: store, anim: true})
+				} else {
+					const msgSo: MessageStore = store.state.linked as MessageStore
+					msgSo.setMessage(message)
+				}
+				return
+			}
+			const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 
 		/** elimina un messaggio  */
