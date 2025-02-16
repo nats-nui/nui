@@ -1,9 +1,9 @@
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
-import { StoreCore, mixStores } from "@priolo/jon"
-import editorSetup, { EditorState, EditorStore } from "../editorBase"
-import { binaryStringToString } from "../../../utils/string"
+import { mixStores } from "@priolo/jon"
 import { MSG_FORMAT } from "../../../utils/editor"
+import { binaryStringToString } from "../../../utils/string"
+import editorSetup, { EditorState, EditorStore } from "../editorBase"
 
 
 
@@ -16,6 +16,9 @@ const setup = {
 		width: 420,
 		widthMax: 1000,
 		//#endregion
+
+		/* voglio vedere sepre l'ultimo messaggio arrivato*/
+		linkToLast: false,
 	},
 
 	getters: {
@@ -23,6 +26,12 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "MESSAGE DETAIL",
 		getSubTitle: (_: void, store?: ViewStore): string => (store as MessageStore).state.message?.subject ?? "--",
+		
+		// getSubTitle: (_: void, store?: ViewStore): string => {
+		// 	const msgStore = store as MessageStore
+		// 	return `[${msgStore.state.message?.seqNum ?? "--"}] ${msgStore?.state.message?.subject ?? "--"}`
+		// },
+
 		// 	const timestamp = (store as MessageStore).state.message?.receivedAt
 		// 	return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		// },
@@ -61,6 +70,8 @@ const setup = {
 	},
 
 	mutators: {
+		setLinkToLast: (linkToLast: boolean) => ({ linkToLast }),
+		setMessage: (message: Message) => ({ message }),
 	},
 }
 

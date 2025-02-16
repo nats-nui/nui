@@ -12,6 +12,7 @@ import { FloatButton } from "@priolo/jack"
 
 interface Props {
 	messages: Message[]
+	selectedIndex?: number
 	format: MSG_FORMAT
 	onMessageClick?: (message: Message) => void
 	onMessageDelete?: (message: Message) => void
@@ -25,6 +26,7 @@ interface Props {
 
 const MessagesList: FunctionComponent<Props> = ({
 	messages,
+	selectedIndex,
 	format,
 	onMessageClick,
 	onMessageDelete,
@@ -98,6 +100,7 @@ const MessagesList: FunctionComponent<Props> = ({
 			defaultItemHeight={96}
 			itemContent={(index, message) => <MessageRow
 				message={message}
+				selected={index == selectedIndex}
 				format={format}
 				index={index}
 				onClick={onMessageClick}
