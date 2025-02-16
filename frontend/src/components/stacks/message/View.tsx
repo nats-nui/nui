@@ -80,7 +80,10 @@ const MessageView: FunctionComponent<Props> = ({
 				/>
 			</div>
 
+				<div style={{display: "flex", justifyContent: 'space-between'}}>
+				<div className={cls.timestamp}>[{msgSa.message?.seqNum}]</div>
 			<div className={cls.timestamp}>{timestamp}</div>
+			</div>
 		</div>
 
 		<FormatDialog store={msgSo} />

@@ -190,15 +190,17 @@ const setup = {
 			if (storeMsg?.state.type == DOC_TYPE.MESSAGE) {
 				// se è uguale a quello precedente allora lo chiudo
 				if (storeMsg.state.message.seqNum == message.seqNum) {
-					store.state.group.addLink({ view: null, parent: store, anim: true})
+					store.state.group.addLink({ view: null, parent: store, anim: true })
 				} else {
 					const msgSo: MessageStore = store.state.linked as MessageStore
 					msgSo.setMessage(message)
 				}
-				return
+			// se invece è chiuso...
+			} else {
+				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+				store.state.group.addLink({ view, parent: store, anim: true })
 			}
-			const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
-			store.state.group.addLink({ view, parent: store, anim: true })
+			store._update()
 		},
 
 		/** elimina un messaggio  */
