@@ -44,5 +44,7 @@
 }
 
 .selected {
-	background-color: rgba(255, 255, 255, 0.2);
+	/* background-color: rgba(255, 255, 255, 0.2); */
+	outline: 1px solid var(--cmp-select-bg);
+	outline-offset: -2px;
 }
