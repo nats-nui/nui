@@ -191,6 +191,7 @@ const setup = {
 			const msgOld = storeMsg?.state.message
 			const view = msgOld == message ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
 			store.state.group.addLink({ view, parent: store, anim: !msgOld || !view })
+			store._update()
 		},
 		/** apertura CARD MESSAGE-SEND */
 		openMessageSend(_: void, store?: MessagesStore) {

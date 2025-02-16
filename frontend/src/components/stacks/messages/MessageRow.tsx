@@ -15,6 +15,7 @@ import { CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
 
 interface Props {
 	message?: Message
+	selected?: boolean,
 	format?: MSG_FORMAT
 	index?: number
 	onClick?: (message: Message) => void
@@ -23,6 +24,7 @@ interface Props {
 
 const MessageRow: FunctionComponent<Props> = ({
 	message,
+	selected,
 	format,
 	index,
 	onClick,
@@ -49,7 +51,8 @@ const MessageRow: FunctionComponent<Props> = ({
 	// RENDER
 	if (!message) return null
 	const clsBg = index % 2 == 0 ? cls.bg1 : cls.bg2
-	const clsRoot = `${cls.root} ${clsBg}`
+	const clsSelected = selected ? cls.selected : ""
+	const clsRoot = `${cls.root} ${clsBg} ${clsSelected}`
 
 	if (!!message.type) return <DividerRow
 		style={{ backgroundColor: message.type == MESSAGE_TYPE.WARN ? "var(--color-primary-bg)" : null }}

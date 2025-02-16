@@ -26,6 +26,12 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "MESSAGE DETAIL",
 		getSubTitle: (_: void, store?: ViewStore): string => (store as MessageStore).state.message?.subject ?? "--",
+		
+		// getSubTitle: (_: void, store?: ViewStore): string => {
+		// 	const msgStore = store as MessageStore
+		// 	return `[${msgStore.state.message?.seqNum ?? "--"}] ${msgStore?.state.message?.subject ?? "--"}`
+		// },
+
 		// 	const timestamp = (store as MessageStore).state.message?.receivedAt
 		// 	return !!timestamp ? dayjs(timestamp).format("YYYY-MM-DD HH:mm:ss") : ""
 		// },

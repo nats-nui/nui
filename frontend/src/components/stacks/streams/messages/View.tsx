@@ -14,6 +14,8 @@ import clsCard from "../../CardCyanDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
 import { AlertDialog, Button, CircularLoadingCmp, FindInputHeader, OptionsCmp } from "@priolo/jack"
+import { MessageStore } from "../../../../stores/stacks/message"
+import { DOC_TYPE } from "../../../../types"
 
 
 
@@ -30,6 +32,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(strMsgSa.textSearch ?? "")
+
 	useEffect(() => {
 		strMsgSo.fetchIfVoid()
 	}, [])
@@ -55,6 +58,15 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	const messages = useMemo(() => strMsgSo.getFiltered(), [strMsgSa.textSearch, strMsgSa.messages])
 	const formatSel = strMsgSa.format?.toUpperCase() ?? ""
 	const inLoading = strMsgSa.loadingState == LOAD_STATE.LOADING
+
+	const storeMsg = (strMsgSo.state.linked as MessageStore)
+	const selectedIndex = useMemo(() => {
+		if (!!messages && storeMsg?.state.type == DOC_TYPE.MESSAGE && !!storeMsg.state.message) {
+			return messages.findIndex(m => m.seqNum == storeMsg.state.message.seqNum)
+		}
+		return null
+	}, [storeMsg?.state?.message?.seqNum])
+
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -83,6 +95,7 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	>
 		<MessagesList
 			messages={messages}
+			selectedIndex={selectedIndex}
 			format={strMsgSa.format}
 			onLoading={handleLoad}
 			onMessageClick={hendleMessageClick}
