@@ -12,6 +12,7 @@ import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
 import { CopyButton, IconButton, TitleAccordion } from "@priolo/jack"
 import LinkDownIcon from "../../../icons/LinkDownIcon"
+import { DOC_TYPE } from "../../../types"
 
 
 
@@ -38,7 +39,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const autoFormat = msgSa.autoFormat
 	const noHeaders = !msgSa.message.headers || Object.keys(msgSa.message.headers).length == 0
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
-	const haveParent = !!msgSo.state.parent
+	const haveParent = !!msgSo.state.parent && msgSo.state.parent.state.type == DOC_TYPE.MESSAGES
 	const linkToLast = haveParent && msgSo.state.linkToLast
 
 	return <FrameworkCard
@@ -80,10 +81,11 @@ const MessageView: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-				<div style={{display: "flex", justifyContent: 'space-between'}}>
+			<div style={{ display: "flex", justifyContent: 'space-between' }}>
 				<div className={cls.timestamp}>[{msgSa.message?.seqNum}]</div>
-			<div className={cls.timestamp}>{timestamp}</div>
+				<div className={cls.timestamp}>{timestamp}</div>
 			</div>
+
 		</div>
 
 		<FormatDialog store={msgSo} />
