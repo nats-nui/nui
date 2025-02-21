@@ -13,6 +13,7 @@ import clsCard from "../../CardCyanDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
 import { Button, FindInputHeader, FloatButton } from "@priolo/jack"
+import { MessageStore } from "../../../../stores/stacks/message"
 
 
 
@@ -65,6 +66,13 @@ const MessagesView: FunctionComponent<Props> = ({
 	const messages = useMemo(() => msgSo.getFiltered(), [msgSa.textSearch, msgSa.messages])
 	const formatSel = msgSa.format.toUpperCase()
 	const isSendSelect = msgSa.linked?.state.type == DOC_TYPE.MESSAGE_SEND
+	const storeMsg = (msgSo.state.linked as MessageStore)
+		const selectedIndex = useMemo(() => {
+			if (!!messages && storeMsg?.state.type == DOC_TYPE.MESSAGE && !!storeMsg.state.message) {
+				return messages.findIndex(m => m.receivedAt == storeMsg.state.message.receivedAt)
+			}
+			return null
+		}, [storeMsg?.state?.message?.receivedAt])
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -96,6 +104,7 @@ const MessagesView: FunctionComponent<Props> = ({
 
 		<MessagesList
 			messages={messages}
+			selectedIndex={selectedIndex}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}
 			onClear={handleClear}

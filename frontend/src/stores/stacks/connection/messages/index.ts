@@ -1,14 +1,15 @@
 import messagesApi from "@/api/messages"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage, PayloadStatus } from "@/plugins/SocketService/types"
+import { PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { Subscription } from "@/types"
+import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
-import { LISTENER_CHANGE, StoreCore, mixStores } from "@priolo/jon"
+import { LISTENER_CHANGE, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
+import { debounce } from "../../../../utils/time"
 import { MessageStore } from "../../message"
 import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
@@ -151,6 +152,12 @@ const setup = {
 			}
 			sbjCounter.counter++;
 			sbjCounter.last = dayjs().valueOf()
+
+			// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
+			const linked = store.state.linked as MessageStore
+			if ( !!linked && linked?.state.type == DOC_TYPE.MESSAGE && linked.state.linkToLast ) {
+				debounce(`msg-last-${store.state.uuid}`, () => linked.setMessage(message), 300)
+			}
 		},
 		/** aggiorno i subjects di questo stack messages */
 		sendSubscriptions: (_: void, store?: MessagesStore) => {
@@ -182,9 +189,27 @@ const setup = {
 		/** apertura CARD MESSAGE-DETAIL */
 		openMessageDetail(message: Message, store?: MessagesStore) {
 			const storeMsg = (store.state.linked as MessageStore)
-			const msgOld = storeMsg?.state.message
-			const view = msgOld == message ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
-			store.state.group.addLink({ view, parent: store, anim: !msgOld || !view })
+
+			// se è gia' aperto il dettaglio del messaggio 
+			if (storeMsg?.state.type == DOC_TYPE.MESSAGE) {
+				// se è uguale a quello precedente allora lo chiudo
+				if (storeMsg.state.message == message) {
+					store.state.group.addLink({ view: null, parent: store, anim: true })
+				} else {
+					const msgSo: MessageStore = store.state.linked as MessageStore
+					msgSo.setMessage(message)
+				}
+			// se invece è chiuso...
+			} else {
+				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+				store.state.group.addLink({ view, parent: store, anim: true })
+			}
+			store._update()
+
+			// tolgo l'aggancio all'ultimo messaggio
+			if ( store.state.linked?.state.type == DOC_TYPE.MESSAGE ) {
+				(<MessageStore>store.state.linked).state.linkToLast = false
+			}
 		},
 		/** apertura CARD MESSAGE-SEND */
 		openMessageSend(_: void, store?: MessagesStore) {
