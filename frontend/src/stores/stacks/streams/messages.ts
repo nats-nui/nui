@@ -11,6 +11,7 @@ import { MessageStore } from "../message"
 import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
 import { DOC_TYPE } from "../../docs/types"
+import { debounce } from "../../../utils/time"
 
 
 
@@ -142,6 +143,12 @@ const setup = {
 			if (pre) {
 				store.setMessages(msgs.concat(all))
 			} else {
+				// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
+				const linked = store.state.linked as MessageStore
+				if (msgs.length > 0 && !!linked && linked?.state.type == DOC_TYPE.MESSAGE && linked.state.linkToLast) {
+					const msg = msgs[msgs.length - 1]
+					debounce(`str-last-${store.state.uuid}`, () => linked.setMessage(msg), 300)
+				}
 				store.setMessages(all.concat(msgs))
 			}
 			return msgs.length
@@ -195,7 +202,7 @@ const setup = {
 					const msgSo: MessageStore = store.state.linked as MessageStore
 					msgSo.setMessage(message)
 				}
-			// se invece è chiuso...
+				// se invece è chiuso...
 			} else {
 				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
 				store.state.group.addLink({ view, parent: store, anim: true })
