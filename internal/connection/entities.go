@@ -49,10 +49,11 @@ const AuthModeJwtBearer = "auth_jwt_bearer"
 const AuthModeCredsFile = "auth_creds_file"
 
 type TLSAuth struct {
-	Enabled  bool   `clover:"enabled" json:"enabled"`
-	CertPath string `clover:"cert_path" json:"cert_path"`
-	KeyPath  string `clover:"key_path" json:"key_path"`
-	CaPath   string `clover:"ca_path" json:"ca_path"`
+	Enabled        bool   `clover:"enabled" json:"enabled"`
+	CertPath       string `clover:"cert_path" json:"cert_path"`
+	KeyPath        string `clover:"key_path" json:"key_path"`
+	CaPath         string `clover:"ca_path" json:"ca_path"`
+	HandshakeFirst bool   `clover:"handshake_first" json:"handshake_first"`
 }
 
 type ConnStatusChanged struct {

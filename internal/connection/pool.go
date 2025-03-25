@@ -139,6 +139,9 @@ func appendTLSAuthOptions(connection *Connection, options []nats.Option) []nats.
 			options = append(options, nats.RootCAs(connection.TLSAuth.CaPath))
 		}
 	}
+	if connection.TLSAuth.HandshakeFirst {
+		options = append(options, nats.TLSHandshakeFirst())
+	}
 	return options
 }
 

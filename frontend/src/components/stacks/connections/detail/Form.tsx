@@ -63,6 +63,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     const handleChangeTlsCaPath = (caPath: string) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, caPath } })
     }
+    const handleChangeHandshakeFirst = (handshakeFirst: boolean) => {
+        cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, handshakeFirst } })
+    }
 
     // RENDER
     const connection = cnnDetailSo.getConnection()
@@ -70,7 +73,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     const name = connection.name ?? ""
     const hosts = connection.hosts ?? []
     const auths = connection.auth ?? []
-    const tlsAuth = connection.tlsAuth ?? { enabled: false, certPath: "", keyPath: "", caPath: "" }
+    const tlsAuth = connection.tlsAuth ?? { enabled: false, certPath: "", keyPath: "", caPath: "", handshakeFirst: false }
     const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
     return <div className="jack-lyt-form var-dialog">
@@ -133,14 +136,22 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
                 />
             </div>
         </TitleAccordion>
-        <TitleAccordion title="TLS CLIENT AUTH">
+        <TitleAccordion title="CLIENT TLS">
+            < div className="jack-cmp-h">
+                <IconToggle
+                    check={!!tlsAuth.handshakeFirst}
+                    onChange={handleChangeHandshakeFirst}
+                    readOnly={inRead}
+                />
+                <div className="jack-lbl-prop">ENABLE HANDSHAKE FIRST</div>
+            </div>
             < div className="jack-cmp-h">
                 <IconToggle
                     check={!!tlsAuth.enabled}
                     onChange={handleChangeTlsEnable}
                     readOnly={inRead}
                 />
-                <div className="jack-lbl-prop">ENABLE</div>
+                <div className="jack-lbl-prop">ENABLE AUTH</div>
             </div>
             <div className="lyt-v">
                 <div className="jack-lbl-prop">CLIENT CERT PATH</div>
