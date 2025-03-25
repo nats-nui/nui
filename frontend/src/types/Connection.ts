@@ -25,6 +25,7 @@ export interface TLSAuth {
     certPath: string
     keyPath: string
     caPath: string
+    handshakeFirst: boolean
 }
 
 export interface Subscription {

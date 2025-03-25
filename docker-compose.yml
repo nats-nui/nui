@@ -5,11 +5,21 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+  secured_nats:
+    image: nats:2.10
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    #command: ["--tls", "--tlscert", "/tests/certs_insecure/server-cert.pem", "--tlskey", "/tests/certs_insecure/server-key.pem --tlshandshake"]
+    command: ["--config", "/etc/nats/nats-server.conf"]
+    volumes:
+      - ./tests/certs_insecure:/tests/certs_insecure
+      - ./tests/nats.conf:/etc/nats/nats-server.conf
   nui:
     image: ghcr.io/nats-nui/nui:edge
     volumes:
       - ./db:/db
     ports:
-      - "31312:31311"
+      - "31312:31311" 
     depends_on:
       - nats

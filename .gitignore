@@ -26,6 +26,7 @@ go.work
 db
 db_bak
 credentials
+tests/certs_insecure/*
 build/*
 !build/.gitkeep
 !build/appicon.png

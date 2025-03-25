@@ -62,7 +62,7 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	newConnTls := `{
 		"name": "c_tls",
 		"hosts": ["host1", "host2"],
-		"tls_auth": { "enabled": true, "cert_path": "cert_path", "key_path": "key_path", "ca_path": "ca_path" }
+		"tls_auth": { "enabled": true, "cert_path": "cert_path", "key_path": "key_path", "ca_path": "ca_path", "handshake_first": true }
 	}`
 
 	// mocked nats server not support tls so connection data is saved but
@@ -84,6 +84,7 @@ func (s *NuiTestSuite) TestConnectionsRest() {
 	tlsRes.Object().Value("tls_auth").Object().Value("cert_path").String().IsEqual("cert_path")
 	tlsRes.Object().Value("tls_auth").Object().Value("key_path").String().IsEqual("key_path")
 	tlsRes.Object().Value("tls_auth").Object().Value("ca_path").String().IsEqual("ca_path")
+	tlsRes.Object().Value("tls_auth").Object().Value("handshake_first").Boolean().IsTrue()
 }
 
 func (s *NuiTestSuite) TestConnectionImport() {
