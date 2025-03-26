@@ -22,7 +22,10 @@ type App struct {
 func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 
 	app := &App{
-		App:  fiber.New(),
+		App: fiber.New(
+			fiber.Config{
+				UnescapePath: true,
+			}),
 		Port: port,
 		nui:  nui,
 		l:    l,
