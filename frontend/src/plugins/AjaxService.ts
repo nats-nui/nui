@@ -87,6 +87,15 @@ export class AjaxService {
 			"Accept": "application/json",
 		}
 
+		// ENCODE URL PATH COMPONENTS
+		const encodedUrl = url.split('/')
+			.map((segment, index) => {
+				// Don't encode the empty segments that appear when the path starts or ends with /
+				// or when there are consecutive slashes
+				return segment === '' ? segment : encodeURIComponent(segment);
+			})
+			.join('/');
+
 		// SEND REQUEST
 		let response = null
 		try {
@@ -98,7 +107,7 @@ export class AjaxService {
 				options.signal = loadStore.state.fetchAbort.signal
 			}
 			response = await fetch(
-				`${this.options.baseUrl}${url}`,
+				`${this.options.baseUrl}${encodedUrl}`,
 				{
 					method: method,
 					headers,
