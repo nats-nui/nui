@@ -1,160 +1,187 @@
 import logSo from "@/stores/log"
-import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { ViewStore } from "@/stores/stacks/viewBase"
-import { LOAD_STATE } from "@/stores/stacks/utils"
-import { camelToSnake, snakeToCamel } from "@/utils/object"
-import { LoadBaseStore } from "@/stores/stacks/loadBase"
-
+import {MESSAGE_TYPE} from "@/stores/log/utils"
+import {ViewStore} from "@/stores/stacks/viewBase"
+import {LOAD_STATE} from "@/stores/stacks/utils"
+import {camelToSnake, snakeToCamel} from "@/utils/object"
+import {LoadBaseStore} from "@/stores/stacks/loadBase"
 
 
 enum METHOD {
-	POST = "post",
-	GET = "get",
-	PATCH = "patch",
-	PUT = "put",
-	DELETE = "delete"
+    POST = "post",
+    GET = "get",
+    PATCH = "patch",
+    PUT = "put",
+    DELETE = "delete"
 }
+
 interface Options {
-	baseUrl: string
+    baseUrl: string
 }
+
 export interface CallOptions {
-	isLogin?: boolean
-	loading?: boolean
-	noError?: boolean
-	store?: ViewStore
-	/** manage the abort with the signal */
-	signal?: AbortSignal
-	/** if true, the abrt object is set in the store */
-	manageAbort?: boolean
-	/** disable the parsing of the response from snake case to camel case */
-	noCamel?: boolean
-	/** disable the parsing of the request from camel case to snake case */
-	noSnake?: boolean
+    isLogin?: boolean
+    loading?: boolean
+    noError?: boolean
+    store?: ViewStore
+    /** manage the abort with the signal */
+    signal?: AbortSignal
+    /** if true, the abrt object is set in the store */
+    manageAbort?: boolean
+    /** disable the parsing of the response from snake case to camel case */
+    noCamel?: boolean
+    /** disable the parsing of the request from camel case to snake case */
+    noSnake?: boolean
 }
 
 const httpUrlBuilder = () => {
-	if (import.meta.env.VITE_TARGET == "desktop") return "http://localhost:31311/api/"
-	return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
+    if (import.meta.env.VITE_TARGET == "desktop") return "http://localhost:31311/api/"
+    return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
 }
 
 const optionsParamDefault: CallOptions = {
-	isLogin: false,
-	loading: true,
-	noError: false,
-	store: null,
+    isLogin: false,
+    loading: true,
+    noError: false,
+    store: null,
 }
 const optionsDefault: Options = {
-	baseUrl: httpUrlBuilder(),
+    baseUrl: httpUrlBuilder(),
 }
 
 
 export class AjaxService {
 
-	options: Options
+    options: Options
 
-	constructor(options: Options = optionsDefault) {
-		this.options = { ...optionsDefault, ...options }
-	}
+    constructor(options: Options = optionsDefault) {
+        this.options = {...optionsDefault, ...options}
+    }
 
-	async post(url: string, data?: any, options?: CallOptions) {
-		return await this.send(url, METHOD.POST, data, options)
-	}
-	async get(url: string, data?: any, options?: CallOptions) {
-		return await this.send(url, METHOD.GET, data, options)
-	}
-	async patch(url: string, data?: any, options?: CallOptions) {
-		return await this.send(url, METHOD.PATCH, data, options)
-	}
-	async put(url: string, data?: any, options?: CallOptions) {
-		return await this.send(url, METHOD.PUT, data, options)
-	}
-	async delete(url: string, data?: any, options?: CallOptions) {
-		return await this.send(url, METHOD.DELETE, data, options)
-	}
+    async post(url: string, data?: any, options?: CallOptions) {
+        return await this.send(url, METHOD.POST, data, options)
+    }
 
-	/**
-	 * Send a ajax to server
-	 */
-	async send(url: string, method: METHOD, data?: any, options: CallOptions = {}) {
-		options = { ...optionsParamDefault, ...options }
+    async get(url: string, data?: any, options?: CallOptions) {
+        return await this.send(url, METHOD.GET, data, options)
+    }
 
-		// PREPARE DATA
-		if (!options.noSnake){
-			data = camelToSnake(data)
-		}
-		const headers = {
-			"Content-Type": "application/json",
-			"Accept": "application/json",
-		}
+    async patch(url: string, data?: any, options?: CallOptions) {
+        return await this.send(url, METHOD.PATCH, data, options)
+    }
 
-		// ENCODE URL PATH COMPONENTS
-		const encodedUrl = url.split('/')
-			.map((segment, index) => {
-				// Don't encode the empty segments that appear when the path starts or ends with /
-				// or when there are consecutive slashes
-				return segment === '' ? segment : encodeURIComponent(segment);
-			})
-			.join('/');
+    async put(url: string, data?: any, options?: CallOptions) {
+        return await this.send(url, METHOD.PUT, data, options)
+    }
 
-		// SEND REQUEST
-		let response = null
-		try {
-			const loadStore = <LoadBaseStore>options.store
-			if (options.loading) loadStore?.setLoadingState?.(LOAD_STATE.LOADING)
-			if (options.manageAbort && !!loadStore && !options.signal) {
-				if ( !!loadStore.state.fetchAbort ) loadStore.fetchAbort?.()
-				loadStore.state.fetchAbort = new AbortController()
-				options.signal = loadStore.state.fetchAbort.signal
-			}
-			response = await fetch(
-				`${this.options.baseUrl}${encodedUrl}`,
-				{
-					method: method,
-					headers,
-					body: data ? JSON.stringify(data) : undefined,
-					signal: options.signal,
-				}
-			)
-		} catch (e) {
-			if (options.noError) return
-			if (e.code != 20) {
-				logSo.add({
-					type: MESSAGE_TYPE.ERROR,
-					title: "http:error:fetch",
-					body: e.toString(),
-					targetId: options.store?.state?.uuid,
-				})
-			}
-			throw e
-		} finally {
-			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.IDLE)
-		}
+    async delete(url: string, data?: any, options?: CallOptions) {
+        return await this.send(url, METHOD.DELETE, data, options)
+    }
 
-		// GET DATA
-		let ret = null
-		let jsonError: string = null
-		try {
-			const raw = await response.json()
-			ret = options.noCamel ? raw : snakeToCamel(raw)
-		} catch (e) {
-			jsonError = e.toString()
-		}
+    /**
+     * Send a ajax to server
+     */
+    async send(url: string, method: METHOD, data?: any, options: CallOptions = {}) {
+        options = {...optionsParamDefault, ...options}
 
-		// MANAGE HTTP ERRORS
-		const status = response.status
-		if (status >= 400 && !options.noError) {
-			const error = ret?.error as string ?? jsonError ?? `${status} generic`
-			logSo.add({
-				type: MESSAGE_TYPE.ERROR,
-				title: `http:error:${status}`,
-				body: error,
-				targetId: options.store?.state?.uuid,
-			})
-			if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.ERROR)
-			throw error
-		}
-		return ret
-	}
+        // PREPARE DATA
+        if (!options.noSnake) {
+            data = camelToSnake(data)
+        }
+        const headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        // ENCODE URL PATH COMPONENTS
+        const encodedUrl = this.encodeUrl(url)
+
+        // SEND REQUEST
+        let response = null
+        try {
+            const loadStore = <LoadBaseStore>options.store
+            if (options.loading) loadStore?.setLoadingState?.(LOAD_STATE.LOADING)
+            if (options.manageAbort && !!loadStore && !options.signal) {
+                if (!!loadStore.state.fetchAbort) loadStore.fetchAbort?.()
+                loadStore.state.fetchAbort = new AbortController()
+                options.signal = loadStore.state.fetchAbort.signal
+            }
+            response = await fetch(
+                `${this.options.baseUrl}${encodedUrl}`,
+                {
+                    method: method,
+                    headers,
+                    body: data ? JSON.stringify(data) : undefined,
+                    signal: options.signal,
+                }
+            )
+        } catch (e) {
+            if (options.noError) return
+            if (e.code != 20) {
+                logSo.add({
+                    type: MESSAGE_TYPE.ERROR,
+                    title: "http:error:fetch",
+                    body: e.toString(),
+                    targetId: options.store?.state?.uuid,
+                })
+            }
+            throw e
+        } finally {
+            if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.IDLE)
+        }
+
+        // GET DATA
+        let ret = null
+        let jsonError: string = null
+        try {
+            const raw = await response.json()
+            ret = options.noCamel ? raw : snakeToCamel(raw)
+        } catch (e) {
+            jsonError = e.toString()
+        }
+
+        // MANAGE HTTP ERRORS
+        const status = response.status
+        if (status >= 400 && !options.noError) {
+            const error = ret?.error as string ?? jsonError ?? `${status} generic`
+            logSo.add({
+                type: MESSAGE_TYPE.ERROR,
+                title: `http:error:${status}`,
+                body: error,
+                targetId: options.store?.state?.uuid,
+            })
+            if (options.loading) (<LoadBaseStore>options.store)?.setLoadingState?.(LOAD_STATE.ERROR)
+            throw error
+        }
+        return ret
+    }
+
+    encodeUrl(url: string): string {
+        const regex = /\?[^?/]+=[^?]*&$/g;
+        let match: RegExpExecArray | null;
+        let lastMatchIndex = -1;
+        let queryString = "";
+
+        // find the last match to avoid errors in case of ? special chars
+        // in stream names
+        while ((match = regex.exec(url)) !== null) {
+            lastMatchIndex = match.index;
+        }
+
+        if (lastMatchIndex !== -1) {
+            queryString = url.substring(lastMatchIndex)
+            url = url.substring(0, lastMatchIndex)
+        }
+
+        return url.split('/')
+            .map((segment, index) => {
+                // Don't encode the empty segments that appear when the path starts or ends with /
+                // or when there are consecutive slashes
+                return segment === '' ? segment : encodeURIComponent(segment);
+            })
+            .join('/').concat(queryString);
+
+    }
+
 }
 
 export default new AjaxService()
