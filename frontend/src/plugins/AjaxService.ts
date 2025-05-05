@@ -176,7 +176,7 @@ export class AjaxService {
             .map((segment, index) => {
                 // Don't encode the empty segments that appear when the path starts or ends with /
                 // or when there are consecutive slashes
-                return segment === '' ? segment : encodeURIComponent(segment);
+                return segment === '' ? segment : encodeURI(segment);
             })
             .join('/').concat(queryString);
 
