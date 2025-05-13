@@ -19,16 +19,20 @@ export function stringToBinaryString(str: string): string {
 	// encode the string in UTF-8
 	const utf8Bytes = new TextEncoder().encode(str);
 	// convert byte array to binary string
-	const binaryString = String.fromCharCode(...utf8Bytes);
-	return binaryString
-	// return btoa(binaryString);
+	let binaryString = '';
+	const CHUNK_SIZE = 0x8000; // 32KB chunks (safe size for most environments)
+	for (let i = 0; i < utf8Bytes.length; i += CHUNK_SIZE) {
+		const chunk = utf8Bytes.subarray(i, i + CHUNK_SIZE);
+		binaryString += String.fromCharCode(...chunk);
+	}
+	return binaryString;
 }
 
 /**
   * Esporta un numero intero in formato con divisione in migliaia
   */
 export function formatNumber(value: number | string, separator: string = "'") {
-	if (value == null ) return '--';
+	if (value == null) return '--';
 	const num = typeof value === 'string' ? Number(value) : value;
 	if (isNaN(num)) return '--';
 	const intStr = num.toFixed(0)
