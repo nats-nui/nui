@@ -76,7 +76,7 @@ func TestParseFromCliContext(t *testing.T) {
 					{
 						Active:   true,
 						Mode:     connection.AuthModeNKey,
-						NKeySeed: "testnkey",
+						Username: "testnkey",
 					},
 				},
 			},

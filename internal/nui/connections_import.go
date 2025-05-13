@@ -106,7 +106,7 @@ func parseFromCliContext(name string, cliContext clicontext.CliConnectionContext
 	if cliContext.NKey != "" {
 		auths = append(auths, connection.Auth{
 			Mode:     connection.AuthModeNKey,
-			NKeySeed: cliContext.NKey,
+			Username: cliContext.NKey,
 		})
 	}
 

@@ -34,7 +34,7 @@ func NewServer(port string, nui *Nui, l logging.Slogger) *App {
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelBestCompression,
 	}))
-	allowedOrigins := "http://wails.localhost, http://wails.:34115"
+	allowedOrigins := "*"
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: allowedOrigins,
 		AllowHeaders: "Origin, Content-Type, Accept",
