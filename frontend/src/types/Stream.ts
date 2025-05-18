@@ -14,6 +14,7 @@ export interface StreamConfig {
 	maxMsgs: number 			// integer, omitted if zero
 	maxBytes: number			// integer, omitted if zero
 	discard: DISCARD 			// string: "old" or "new"
+	discardNewPerSubject: boolean // boolean, omitted if false
 	maxAge?: number				// integer, omitted if zero
 	maxMsgsPerSubject: number, 	// integer, omitted if zero
 	maxMsgSize: number, 		// integer, omitted if zero
