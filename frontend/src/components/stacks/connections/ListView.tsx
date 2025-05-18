@@ -8,7 +8,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { CNN_STATUS, Connection, DOC_TYPE, EDIT_STATE } from "@/types"
-import { AlertDialog, Button, IconButton, OptionsCmp } from "@priolo/jack"
+import { AlertDialog, Button, FindInputHeader, IconButton, OptionsCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ConfigIcon from "../../../icons/cards/ConfigIcon"
@@ -62,8 +62,8 @@ const CnnListView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const connections = useMemo(() => {
-		return cnnSo.state.all?.sort((c1, c2) => c1.name?.localeCompare(c2.name))
-	}, [cnnSa.all])
+		return cnnListSo.getFiltered(cnnSo.state.all).sort((c1, c2) => c1.name?.localeCompare(c2.name))
+	}, [cnnSa.all, cnnListSa.textSearch])
 
 	const getTitle = (cnn: Connection) => cnn.name
 	const getSubtitle = (cnn: Connection) => cnn.hosts?.[0]
@@ -83,7 +83,10 @@ const CnnListView: FunctionComponent<Props> = ({
 				store={cnnSo}
 				storeView={cnnListSo}
 			/>
-			<div style={{ flex: 1 }} />
+			<FindInputHeader
+				value={cnnListSa.textSearch}
+				onChange={text => cnnListSo.setTextSearch(text)}
+			/>
 			{!!selectId && <Button
 				children="DELETE"
 				onClick={handleDelete}

@@ -91,7 +91,7 @@ const setup = {
 			store.state.group.addLink({ view, parent: store, anim: true })
 			store.setSelect(null)
 		},
-		/** elimina lo sTREAM selezionato "state.select" */
+		/** elimina il CONSUMER selezionato "state.select" */
 		async delete(_: void, store?: ConsumersStore) {
 			if (!await store.alertOpen({
 				title: "CONSUMER DELETION",
