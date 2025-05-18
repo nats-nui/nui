@@ -8,6 +8,7 @@ import { CnnImportState, CnnImportStore, IMPORT_STATUS } from "../cnnImport"
 import { buildStreams } from "../streams/utils/factory"
 import { CnnDetailStore } from "./detail"
 import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
+import { Connection } from "@/types"
 
 
 
@@ -21,6 +22,8 @@ const setup = {
 		width: 220,
 		pinnable: false,
 		//#endregion
+
+		textSearch: <string>null,
 	},
 
 	getters: {
@@ -35,6 +38,16 @@ const setup = {
 		// 	}
 		// },
 		//#endregion
+
+		/** filtrati e da visualizzare in lista */
+		getFiltered(connections: Connection[], store?: CnnListStore) {
+			if (!connections) return []
+			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
+			if (!text || text.trim().length == 0) return connections
+			return connections.filter(connection =>
+				connection.name.concat(connection.hosts?.join("") ?? "").toLowerCase().includes(text)
+			)
+		}
 
 	},
 
@@ -109,6 +122,7 @@ const setup = {
 
 	mutators: {
 		setSelect: (select: string) => ({ select }),
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 
