@@ -40,7 +40,9 @@ export function randomStream() {
 			compression: "none",
 			allow_direct: false,
 			mirror_direct: false,
-			consumer_limits: {}
+			consumer_limits: {},
+			allow_msg_ttl: false,
+			subject_delete_marker_ttl: 0,
 		},
 		created: randomDate().toISOString(),
 		state: randomState

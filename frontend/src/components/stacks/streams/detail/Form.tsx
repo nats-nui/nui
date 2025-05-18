@@ -114,6 +114,10 @@ const Form: FunctionComponent<Props> = ({
         }
     }
 
+    const handleAllowMsgTtlChange = (check: boolean) => {
+        streamSo.setStreamConfig({ ...streamSa.stream.config, allowMsgTtl: check })
+    }
+
 
     // RENDER
     if (streamSa.stream?.config == null) return null
@@ -494,6 +498,28 @@ const Form: FunctionComponent<Props> = ({
             <div className="lyt-v">
                 <div className="jack-cmp-h">
                     <IconToggle
+                        check={config.allowMsgTtl}
+                        onChange={handleAllowMsgTtlChange}
+                        readOnly={inRead && !inNew}
+                    />
+                    <div className="jack-lbl-prop">ALLOW MSG TTL</div>
+                </div>
+            </div>
+
+            <div className="lyt-v">
+                <MaxTimeCmp store={streamSo}
+                            readOnly={inRead}
+                            label="SUBJECT DELETE MARKER TTL"
+                            value={config.subjectDeleteMarkerTtl}
+                            desiredDefault={0}
+                            initDefault={1}
+                            onChange={subjectDeleteMarkerTtl => streamSo.setStreamConfig({ ...streamSa.stream.config, subjectDeleteMarkerTtl })}
+                />
+            </div>
+
+            <div className="lyt-v">
+                <div className="jack-cmp-h">
+                    <IconToggle
                         check={compressionIsSet}
                         onChange={handleCompressionChange}
                         readOnly={inRead}
@@ -583,4 +609,3 @@ const Form: FunctionComponent<Props> = ({
 }
 
 export default Form
-
