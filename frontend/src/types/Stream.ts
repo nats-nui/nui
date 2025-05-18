@@ -37,6 +37,8 @@ export interface StreamConfig {
 	firstSeq: number 			// integer, omitted if zero
 	subjectTransform?: SubjectTransform // object, omitted if null
 	consumerLimits: ConsumerLimit // object, omitted if null
+	allowMsgTtl: boolean 		// boolean, omitted if false
+	subjectDeleteMarkerTtl: number // integer, omitted if zero
 }
 
 export interface StreamState {

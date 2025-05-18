@@ -1,4 +1,3 @@
-
 ## STREAM-CONFIG
 
 This is the STREAM creation data
@@ -45,6 +44,8 @@ StreamConfig {
     firstSeq: number 			// integer, omitted if zero
     subjectTransform?: SubjectTransform // object, omitted if null
     consumerLimits: ConsumerLimit // object, omitted if null
+    subjectDeleteMarkerTtl: number // integer, omitted if zero
+    allowMsgTtl: boolean          // boolean, omitted if false
 }
 ```
 

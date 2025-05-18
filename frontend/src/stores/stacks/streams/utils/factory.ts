@@ -107,7 +107,9 @@ function buildNewStreamConfig(): StreamConfig {
 		compression: "none",
 		firstSeq: 0,
 		subjectTransform: null,
-		consumerLimits: null
+		consumerLimits: null,
+		allowMsgTtl: false,
+		subjectDeleteMarkerTtl: 0,
 	}
 }
 
