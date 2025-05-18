@@ -31,6 +31,7 @@ export function randomStream() {
 			max_msgs: -1,
 			max_bytes: -1,
 			discard: "old",
+			discard_new_per_subject: false,
 			max_age: 0,
 			max_msgs_per_subject: -1,
 			max_msg_size: -1,
@@ -40,7 +41,9 @@ export function randomStream() {
 			compression: "none",
 			allow_direct: false,
 			mirror_direct: false,
-			consumer_limits: {}
+			consumer_limits: {},
+			allow_msg_ttl: false,
+			subject_delete_marker_ttl: 0,
 		},
 		created: randomDate().toISOString(),
 		state: randomState

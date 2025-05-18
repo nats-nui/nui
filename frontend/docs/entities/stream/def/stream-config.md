@@ -1,4 +1,3 @@
-
 ## STREAM-CONFIG
 
 This is the STREAM creation data
@@ -22,7 +21,8 @@ StreamConfig {
 	max_msgs: number 			// omitted if zero
 	max_bytes: number			// omitted if zero
 	discard: DISCARD 			// "old" or "new"
-	max_age?: number			// omitted if zero
+    discardNewPerSubject: boolean // boolean, omitted if false
+    max_age?: number			// omitted if zero
 	max_msgs_per_subject: number, // omitted if zero
   	max_msg_size: number, 		// omitted if zero
 	storage?: STORAGE			// not editable
@@ -45,6 +45,8 @@ StreamConfig {
     firstSeq: number 			// integer, omitted if zero
     subjectTransform?: SubjectTransform // object, omitted if null
     consumerLimits: ConsumerLimit // object, omitted if null
+    subjectDeleteMarkerTtl: number // integer, omitted if zero
+    allowMsgTtl: boolean          // boolean, omitted if false
 }
 ```
 

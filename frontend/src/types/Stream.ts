@@ -14,6 +14,7 @@ export interface StreamConfig {
 	maxMsgs: number 			// integer, omitted if zero
 	maxBytes: number			// integer, omitted if zero
 	discard: DISCARD 			// string: "old" or "new"
+	discardNewPerSubject: boolean // boolean, omitted if false
 	maxAge?: number				// integer, omitted if zero
 	maxMsgsPerSubject: number, 	// integer, omitted if zero
 	maxMsgSize: number, 		// integer, omitted if zero
@@ -37,6 +38,8 @@ export interface StreamConfig {
 	firstSeq: number 			// integer, omitted if zero
 	subjectTransform?: SubjectTransform // object, omitted if null
 	consumerLimits: ConsumerLimit // object, omitted if null
+	allowMsgTtl: boolean 		// boolean, omitted if false
+	subjectDeleteMarkerTtl: number // integer, omitted if zero
 }
 
 export interface StreamState {

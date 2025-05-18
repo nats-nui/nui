@@ -79,16 +79,14 @@ function buildNewStreamConfig(): StreamConfig {
 		description: "",
 		subjects: [],
 		retention: RETENTION.LIMIT,
-
-		// LIMIT
 		maxAge: 0,
 		maxBytes: -1,
 		maxConsumers: -1,
 		maxMsgSize: -1,
 		maxMsgs: -1,
 		maxMsgsPerSubject: -1,
-
 		discard: DISCARD.OLD,
+		discardNewPerSubject: false,
 		storage: STORAGE.FILE,
 		numReplicas: 0,
 		noAck: false,
@@ -107,7 +105,9 @@ function buildNewStreamConfig(): StreamConfig {
 		compression: "none",
 		firstSeq: 0,
 		subjectTransform: null,
-		consumerLimits: null
+		consumerLimits: null,
+		allowMsgTtl: false,
+		subjectDeleteMarkerTtl: 0,
 	}
 }
 
