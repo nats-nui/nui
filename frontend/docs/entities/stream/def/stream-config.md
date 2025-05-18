@@ -21,7 +21,8 @@ StreamConfig {
 	max_msgs: number 			// omitted if zero
 	max_bytes: number			// omitted if zero
 	discard: DISCARD 			// "old" or "new"
-	max_age?: number			// omitted if zero
+    discardNewPerSubject: boolean // boolean, omitted if false
+    max_age?: number			// omitted if zero
 	max_msgs_per_subject: number, // omitted if zero
   	max_msg_size: number, 		// omitted if zero
 	storage?: STORAGE			// not editable

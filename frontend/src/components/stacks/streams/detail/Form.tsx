@@ -118,6 +118,9 @@ const Form: FunctionComponent<Props> = ({
         streamSo.setStreamConfig({ ...streamSa.stream.config, allowMsgTtl: check })
     }
 
+    const handleDiscardNewPerSubjectChange = (check: boolean) => {
+        streamSo.setStreamConfig({ ...streamSa.stream.config, discardNewPerSubject: check })
+    }
 
     // RENDER
     if (streamSa.stream?.config == null) return null
@@ -297,6 +300,14 @@ const Form: FunctionComponent<Props> = ({
                         handlePropChange({ discard: Object.values(DISCARD)[index] })
                     }}
                 />
+            </div>
+            <div className="jack-cmp-h">
+                <IconToggle
+                    check={config.discardNewPerSubject}
+                    onChange={handleDiscardNewPerSubjectChange}
+                    readOnly={inRead}
+                />
+                <div className="jack-lbl-prop">DISCARD NEW PER SUBJECT</div>
             </div>
             <div className="jack-cmp-h">
                 <IconToggle

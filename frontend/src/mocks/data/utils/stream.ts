@@ -31,6 +31,7 @@ export function randomStream() {
 			max_msgs: -1,
 			max_bytes: -1,
 			discard: "old",
+			discard_new_per_subject: false,
 			max_age: 0,
 			max_msgs_per_subject: -1,
 			max_msg_size: -1,
