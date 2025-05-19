@@ -15,6 +15,7 @@ StreamConsumer {
     num_pending: number; // The number of messages that are pending delivery
     cluster?: ClusterInfo; // Information about the cluster the consumer is part of
     push_bound?: boolean; // Whether the consumer is bound to a push subscription
+    paused?: boolean; // Whether the consumer is currently paused - Read only
 }
 ```
 

@@ -398,8 +398,25 @@ const Form: FunctionComponent<Props> = ({
 
 		</TitleAccordion>*/}
 
+		<TitleAccordion title="PAUSE"  style={{marginBottom: 20}}>
+			<div className="lyt-v">
+				<div className="jack-lbl-prop">PAUSED</div>
+				<div className="jack-lbl-readonly">
+					{consumer.paused ? "Yes" : "No"}
+				</div>
+			</div>
+			<div className="lyt-v">
+				<div className="jack-lbl-prop">PAUSE UNTIL</div>
+				<DateTimeInput
+					value={consumer.config.pauseUntil}
+					onChange={pauseUntil => handlePropChange({ pauseUntil })}
+					readOnly={inRead}
+				/>
+			</div>
+		</TitleAccordion>
 
 		<TitleAccordion title="ADVANCED" style={{ marginBottom: 20 }}>
+
 
 			<MaxNumberCmp
 				readOnly={inRead}

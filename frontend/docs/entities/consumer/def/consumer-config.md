@@ -1,4 +1,3 @@
-
 ## CONSUMER-CONFIG
 
 ```typescript
@@ -65,6 +64,8 @@ ConsumerConfig {
     // checkbox - default off
     memStorage?: boolean; // Whether to use memory storage - Not editable
     metadata? {[key: string] : string} // hash of string -> string to add custom metadata to consumer
+
+    // NATS 2.11+: Pause delivery of messages until the given time (ISO string)
+    pauseUntil?: string; // The time until which the consumer is paused - Editable
 }
 ```
-

@@ -98,6 +98,9 @@ export function newConsumerConfig(): ConsumerConfig {
 		idleHeartbeat: 0,
 		headersOnly: false,
 
+		/// PAUSE
+		pauseUntil: "", // Added default for PauseUntil
+
 		/// ADVANCED
 		inactiveThreshold: 0,
 		numReplicas: 0,
