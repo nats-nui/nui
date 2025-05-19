@@ -31,12 +31,24 @@ function remove(connectionId: string, streamName:string, consumerName:string, op
 
 function updateConsumerConfig(consumerConfig: ConsumerConfig) {
 	// update datetime field to match the required API format
-	if (consumerConfig.optStartTime) {
-		const dateTime = dayjs(consumerConfig.optStartTime)
-		if ( !dateTime.isValid()) return
-		consumerConfig.optStartTime = dateTime.toISOString()
+	convertDateFieldToISO(consumerConfig, "optStartTime")
+	convertDateFieldToISO(consumerConfig, "pauseUntil")
+}
+
+// Converts a date field to ISO string if valid
+function convertDateFieldToISO(obj: any, field: string) {
+	if (obj[field] === "") {
+		obj[field] = null
+		return
+	}
+	if (obj[field]) {
+		const dateTime = dayjs(obj[field])
+		if (!dateTime.isValid()) return
+		obj[field] = dateTime.toISOString()
 	}
 }
+
+
 
 const api = {
 	index,

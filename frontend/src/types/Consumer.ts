@@ -93,6 +93,9 @@ export interface ConsumerConfig {
 	// what is the default value?
 	headersOnly?: boolean; // Whether to deliver only the headers of the message - Editable
 
+ 	/// PAUSE
+
+	pauseUntil?: any; // The time to pause the consumer until - Editable
 
 	/// ADVANCED
 
