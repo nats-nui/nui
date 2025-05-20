@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
+	"time"
 )
 
 func (a *App) HandleIndexStreamConsumers(c *fiber.Ctx) error {
@@ -146,4 +147,55 @@ func (a *App) handleDeleteStreamConsumer(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	return c.SendStatus(204)
+}
+
+func (a *App) handlePauseAndResumeConsumer(c *fiber.Ctx) error {
+	ctx := c.Context()
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return err
+	}
+	streamName := c.Params("stream_name")
+	if streamName == "" {
+		return a.logAndFiberError(c, errors.New("stream_name is required"), 422)
+	}
+	consumerName := c.Params("consumer_name")
+	if consumerName == "" {
+		return a.logAndFiberError(c, errors.New("consumer_name is required"), 422)
+	}
+	var pauseReq map[string]any
+	err = c.BodyParser(&pauseReq)
+	action, ok := pauseReq["action"].(string)
+	if !ok {
+		return a.logAndFiberError(c, errors.New("action is required"), 422)
+	}
+	switch action {
+	case "pause":
+		pauseUntil, ok := pauseReq["pause_until"].(string)
+		if !ok {
+			return a.logAndFiberError(c, errors.New("pause_until field string required"), 422)
+		}
+		pauseTime, err := time.Parse(time.RFC3339, pauseUntil)
+		if err != nil {
+			return a.logAndFiberError(c, err, 422)
+		}
+		_, err = js.PauseConsumer(ctx, streamName, c.Params("consumer_name"), pauseTime)
+		if err != nil {
+			return a.logAndFiberError(c, err, 500)
+		}
+	case "resume":
+		_, err = js.ResumeConsumer(ctx, streamName, c.Params("consumer_name"))
+		if err != nil {
+			return a.logAndFiberError(c, err, 500)
+		}
+	}
+	consumer, err := js.Consumer(ctx, streamName, consumerName)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	info, err := consumer.Info(ctx)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.JSON(info)
 }
