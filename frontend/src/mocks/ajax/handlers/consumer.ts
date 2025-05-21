@@ -73,6 +73,23 @@ const handlers = [
         return res(ctx.status(204))
     }),
 
+    rest.post('/api/connection/:cnnId/stream/:streamName/consumer/:consumerName/pause_resume', async (req, res, ctx) => {
+        const {consumerName} = req.params
+        const {action, pauseUntil} = await req.json()
+        const consumerIndex = consumers.findIndex(c => c.name === consumerName)
+        if (consumerIndex === -1) return res(ctx.status(404))
+        if (action === "pause") {
+            consumers[consumerIndex].paused = true
+            consumers[consumerIndex].config.pauseUntil = pauseUntil
+        } else {
+            consumers[consumerIndex].paused = false
+            consumers[consumerIndex].config.pauseUntil = null
+        }
+        return res(
+            ctx.status(200),
+            ctx.json(consumers[consumerIndex]),
+        )
+    })
 
 ]
 

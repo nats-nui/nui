@@ -29,6 +29,10 @@ function remove(connectionId: string, streamName:string, consumerName:string, op
 	return ajax.delete(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, null, opt)
 }
 
+/** PAUSE and RESUME */
+function pauseResume(connectionId: string, streamName:string, consumerName:string, action: string, pauseUntil?: string, opt?: CallOptions): Promise<void> {
+	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}/${action}`, {action, pauseUntil }, opt)
+}
 function updateConsumerConfig(consumerConfig: ConsumerConfig) {
 	// update datetime field to match the required API format
 	convertDateFieldToISO(consumerConfig, "optStartTime")
