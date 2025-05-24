@@ -35,8 +35,9 @@
 	display: flex;
 }
 
-.jack-title {
-	font-size: 16px;
-    font-weight: 800;
-    font-family: 'Darker Grotesque';
+.lbl-dialog-text {
+	font-size: 14px;
+	font-weight: 600;
+	color: rgba(0, 0, 0, 0.8);
+	padding: 10px 5px;
 }
