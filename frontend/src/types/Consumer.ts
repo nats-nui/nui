@@ -27,6 +27,8 @@ export interface StreamConsumer {
 	cluster?: ClusterInfo
 	/** Whether the consumer is bound to a push subscription */
 	pushBound?: boolean
+	/** Whether the consumer is currently paused - Read only */
+	paused?: boolean
 }
 
 export interface ConsumerConfig {

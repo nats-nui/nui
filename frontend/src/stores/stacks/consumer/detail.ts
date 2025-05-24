@@ -25,6 +25,9 @@ const setup = {
 
 		editState: EDIT_STATE.READ,
 
+		/** DIALOG PAUSE aperta */
+		pauseOpen: false,
+
 		//#region VIEWBASE
 		width: 230,
 		//#endregion
@@ -132,6 +135,7 @@ const setup = {
 		setConsumer: (consumer: StreamConsumer) => ({ consumer }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setConsumerConfig: (config: ConsumerConfig, store?: ConsumerStore) => ({ consumer: { ...store.state.consumer, config } }),
+		setPauseOpen: (pauseOpen: boolean) => ({ pauseOpen }),
 	},
 }
 

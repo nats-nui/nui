@@ -338,8 +338,6 @@ const Form: FunctionComponent<Props> = ({
 
 		</TitleAccordion>
 
-
-
 		{/*<TitleAccordion title="PUSH OPTIONS (legacy)">
 			<div className="jack-lbl-prop">Read only section</div>
 			<div className="lyt-v">
@@ -398,13 +396,15 @@ const Form: FunctionComponent<Props> = ({
 
 		</TitleAccordion>*/}
 
-		<TitleAccordion title="PAUSE"  style={{marginBottom: 20}}>
+		<TitleAccordion title="PAUSE">
+
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">PAUSED</div>
 				<div className="jack-lbl-readonly">
-					{consumer.paused ? "Yes" : "No"}
+					{!!consumer.paused ? "YES" : "NO"}
 				</div>
 			</div>
+
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">PAUSE UNTIL</div>
 				<DateTimeInput
@@ -413,10 +413,10 @@ const Form: FunctionComponent<Props> = ({
 					readOnly={inRead}
 				/>
 			</div>
+
 		</TitleAccordion>
 
 		<TitleAccordion title="ADVANCED" style={{ marginBottom: 20 }}>
-
 
 			<MaxNumberCmp
 				readOnly={inRead}

@@ -1,0 +1,9 @@
+.sbj_row {
+	display: flex;
+	align-items: baseline;
+	flex: 1;
+	justify-content: space-between;
+}
+.sbj_row_counter {
+	opacity: .7;
+}
