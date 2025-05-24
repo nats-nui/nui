@@ -109,7 +109,8 @@ const setup = {
 		/** change the pause/resume value */
 		async updatePause({ pause, until }: { pause: boolean, until: string }, store?: ConsumerStore) {
 			const action = pause ? "pause" : "resume"
-			await cnsApi.pauseResume(
+			let consumerSaved: StreamConsumer = null
+			consumerSaved = await cnsApi.pauseResume(
 				store.state.connectionId,
 				store.state.streamName,
 				store.state.consumer.config.name,
@@ -117,9 +118,8 @@ const setup = {
 				until,
 				{ store }
 			)
-			store.state.consumer.config.pauseUntil = until
-			store.state.consumer.paused = pause
-			store._update()
+			store.setConsumer(consumerSaved)
+
 			//store.state.consumer.config.pauseUntil
 			store.setSnackbar({
 				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
