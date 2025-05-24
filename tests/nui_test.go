@@ -232,6 +232,7 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	// create new consumer
 	_, err := stream.CreateOrUpdateConsumer(s.ctx, jetstream.ConsumerConfig{
 		Name:          "consumer1",
+		Durable:       "consumer1",
 		DeliverPolicy: jetstream.DeliverAllPolicy,
 	})
 	s.NoError(err)
@@ -249,7 +250,7 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	// create a new consumer
 	consumerConfig, _ := json.Marshal(jetstream.ConsumerConfig{
 		Name:          "new_consumer",
-		Durable:       "",
+		Durable:       "new_consumer",
 		Description:   "",
 		DeliverPolicy: 0,
 		OptStartSeq:   0,
@@ -286,6 +287,16 @@ func (s *NuiTestSuite) TestStreamConsumerRest() {
 	// check list of consumers
 	e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(1)
+
+	// pause the consumer
+	ro = e.POST("/api/connection/" + connId + "/stream/stream1/consumer/consumer1/pause_resume").
+		WithBytes([]byte(`{"action": "pause", "pause_until": "2123-10-01T00:00:00Z"}`)).Expect().Status(200).JSON().Object()
+	ro.Value("paused").Boolean().IsEqual(true)
+
+	// resume the consumer
+	ro = e.POST("/api/connection/" + connId + "/stream/stream1/consumer/consumer1/pause_resume").
+		WithBytes([]byte(`{"action": "resume"}`)).Expect().Status(200).JSON().Object()
+	ro.NotContainsKey("paused")
 
 }
 

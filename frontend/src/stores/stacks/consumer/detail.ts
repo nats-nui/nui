@@ -25,6 +25,9 @@ const setup = {
 
 		editState: EDIT_STATE.READ,
 
+		/** DIALOG PAUSE aperta */
+		pauseOpen: false,
+
 		//#region VIEWBASE
 		width: 230,
 		//#endregion
@@ -86,7 +89,7 @@ const setup = {
 			if (store.state.editState == EDIT_STATE.NEW) {
 				consumerSaved = await cnsApi.create(store.state.connectionId, store.state.streamName, store.state.consumer.config, { store })
 			} else {
-				consumerSaved = await cnsApi.update(store.state.connectionId, store.state.streamName, store.state.consumer.config.name,  store.state.consumer.config, { store })
+				consumerSaved = await cnsApi.update(store.state.connectionId, store.state.streamName, store.state.consumer.config.name, store.state.consumer.config, { store })
 			}
 			store.setConsumer(consumerSaved)
 			store.getParentList()?.update(consumerSaved)
@@ -102,6 +105,27 @@ const setup = {
 		restore: (_: void, store?: ConsumerStore) => {
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
+		},
+		/** change the pause/resume value */
+		async updatePause({ pause, until }: { pause: boolean, until: string }, store?: ConsumerStore) {
+			const action = pause ? "pause" : "resume"
+			await cnsApi.pauseResume(
+				store.state.connectionId,
+				store.state.streamName,
+				store.state.consumer.config.name,
+				action,
+				until,
+				{ store }
+			)
+			store.state.consumer.config.pauseUntil = until
+			store.state.consumer.paused = pause
+			store._update()
+			//store.state.consumer.config.pauseUntil
+			store.setSnackbar({
+				open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
+				title: "PAUSED",
+				body: pause ? "it is now PAUSED" : "it is now RESUMED",
+			})
 		},
 
 
@@ -132,6 +156,7 @@ const setup = {
 		setConsumer: (consumer: StreamConsumer) => ({ consumer }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setConsumerConfig: (config: ConsumerConfig, store?: ConsumerStore) => ({ consumer: { ...store.state.consumer, config } }),
+		setPauseOpen: (pauseOpen: boolean) => ({ pauseOpen }),
 	},
 }
 

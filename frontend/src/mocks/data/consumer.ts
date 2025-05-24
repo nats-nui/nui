@@ -68,7 +68,8 @@ const consumers: any[] = [
 		"num_redelivered": 0,
 		"num_waiting": 0,
 		"num_pending": 0,
-		"push_bound": true
+		"push_bound": true,
+		"paused": true
 	}
 ]
 export default consumers

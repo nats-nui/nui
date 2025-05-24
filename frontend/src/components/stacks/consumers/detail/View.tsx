@@ -7,6 +7,8 @@ import ActionsCmp from "./Actions"
 import Form from "./Form"
 import ConsumerIcon from "@/icons/cards/ConsumerIcon"
 import clsCard from "../../CardFuchsia.module.css"
+import { AlertDialog } from "@priolo/jack"
+import PauseDialog from "./PauseDialog"
 
 
 interface Props {
@@ -38,6 +40,11 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 		actionsRender={<ActionsCmp store={store} />}
 	>
 		<Form store={store} />
+
+		<PauseDialog store={store} />
+
+		<AlertDialog store={store} />
+
 	</FrameworkCard>
 }
 
