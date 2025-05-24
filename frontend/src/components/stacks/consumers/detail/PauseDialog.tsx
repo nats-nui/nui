@@ -22,7 +22,7 @@ const PauseDialog: FunctionComponent<Props> = ({
 	useEffect(() => {
 		if (!store.state.pauseOpen) return
 		setDateUntilTmp(store.state.consumer.config.pauseUntil)
-		setInPauseTmp(inPause)
+		setInPauseTmp(!inPause)
 	}, [store.state.pauseOpen])
 	const [dateUntilTmp, setDateUntilTmp] = useState<string>("")
 	const [inPauseTmp, setInPauseTmp] = useState<boolean>(false)
@@ -43,7 +43,7 @@ const PauseDialog: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inPause = store.state.consumer.paused
-	const title = inPause ? "IT'S IN PAUSE NOW" : "IT'S RUNNING NOW"
+	const title = inPause ? "CURRENT STATUS: PAUSED" : "CURRENT STATUS: RUNNING"
 	const updateDisabled = !!inPauseTmp && !dateUntilTmp
 
 	return (
