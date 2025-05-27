@@ -1,14 +1,14 @@
-import {rest} from 'msw'
+import { rest } from 'msw'
 import consumers from "../../data/consumer"
-import {snakeToCamel} from "@/utils/object.ts";
-import {StreamConsumer} from "@/types/Consumer.ts";
+import { snakeToCamel } from "@/utils/object.ts";
+import { StreamConsumer } from "@/types/Consumer.ts";
 
 
 const handlers = [
 
     /** INDEX */
     rest.get('/api/connection/:connId/stream/:streamName/consumer', async (req, res, ctx) => {
-        const {cnnId, streamName} = req.params
+        const { cnnId, streamName } = req.params
         return res(
             ctx.status(200),
             ctx.json(consumers),
@@ -17,7 +17,7 @@ const handlers = [
 
     /** GET */
     rest.get('/api/connection/:connId/stream/:streamName/consumer/:consumerName', async (req, res, ctx) => {
-        const {cnnId, streamName, consumerName} = req.params
+        const { cnnId, streamName, consumerName } = req.params
         const consumer = consumers.find(c => c.name = consumerName)
         if (!consumer) return res(ctx.status(404))
         return res(
@@ -27,7 +27,7 @@ const handlers = [
     }),
 
     rest.post('/api/connection/:cnnId/stream/:streamName/consumer', async (req, res, ctx) => {
-        const {streamName} = req.params
+        const { streamName } = req.params
         const consumerConfig_S = await req.json()
         if (!consumerConfig_S) return res(ctx.status(500))
         const consumerInfo_C: StreamConsumer = {
@@ -50,7 +50,7 @@ const handlers = [
     }),
 
     rest.post('/api/connection/:cnnId/stream/:streamName/consumer/:consumerName', async (req, res, ctx) => {
-        const {consumerName} = req.params
+        const { consumerName } = req.params
         const updatedConsumerConfig_S = await req.json()
         const consumerIndex = consumers.findIndex(c => c.name === consumerName)
         if (consumerIndex === -1) return res(ctx.status(404))
@@ -66,13 +66,30 @@ const handlers = [
     }),
 
     rest.delete('/api/connection/:cnnId/stream/:streamName/consumer/:consumerName', async (req, res, ctx) => {
-        const {consumerName} = req.params
+        const { consumerName } = req.params
         const consumerIndex = consumers.findIndex(c => c.name === consumerName)
         if (consumerIndex === -1) return res(ctx.status(404))
         consumers.splice(consumerIndex, 1)
         return res(ctx.status(204))
     }),
 
+    rest.post('/api/connection/:cnnId/stream/:streamName/consumer/:consumerName/pause_resume', async (req, res, ctx) => {
+        const { consumerName } = req.params
+        const { action, pauseUntil } = await req.json()
+        const consumerIndex = consumers.findIndex(c => c.name === consumerName)
+        if (consumerIndex === -1) return res(ctx.status(404))
+        if (action === "pause") {
+            consumers[consumerIndex].paused = true
+            consumers[consumerIndex].config.pauseUntil = pauseUntil
+        } else {
+            consumers[consumerIndex].paused = false
+            consumers[consumerIndex].config.pauseUntil = null
+        }
+        return res(
+            ctx.status(200),
+            ctx.json(consumers[consumerIndex]),
+        )
+    })
 
 ]
 
