@@ -3,9 +3,10 @@
 
 # Backwards compatibility for docker version that run NUI as root user
 # Change ownership of /db if it exists
-if [ -d "/db" ]; then
-  chown -R nui:nui /db
+if [ ! -d "/db" ]; then
+  mkdir -p /db
 fi
+chown -R nui:nui /db
 
 ARGS="--db-path=/db ${@}"
 
