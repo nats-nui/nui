@@ -25,6 +25,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	const handleCancelClick = () => store.restore()
 	const handleSaveClick = async () => store.save()
 	const handleConfigClick = () => store.openJsonConfig()
+	const handlePauseClick = (e: React.MouseEvent, select: boolean) => store.setPauseOpen(!select)
 
 	// RENDER
 	if (state.consumer == null) return null
@@ -51,6 +52,11 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			<Button
 				children="EDIT"
 				onClick={handleEditClick}
+			/>
+			<Button
+				select={store.state.pauseOpen}
+				children={state.consumer.paused ? "RESUME" : "PAUSE"}
+				onClick={handlePauseClick}
 			/>
 		</>
 	}

@@ -1,34 +1,40 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
-import {ConsumerConfig, StreamConsumer} from "@/types/Consumer"
+import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
 import dayjs from "dayjs";
 
 /** INDEX */
-function index(connectionId: string, streamName:string, opt?: CallOptions): Promise<StreamConsumer[]> {
+function index(connectionId: string, streamName: string, opt?: CallOptions): Promise<StreamConsumer[]> {
 	return ajax.get(`connection/${connectionId}/stream/${streamName}/consumer`, null, opt)
 }
 
 /** GET */
-function get(connectionId: string, streamName:string, consumerName:string, opt?: CallOptions): Promise<StreamConsumer> {
+function get(connectionId: string, streamName: string, consumerName: string, opt?: CallOptions): Promise<StreamConsumer> {
 	return ajax.get(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, null, opt)
 }
 
 /** CREATE */
-function  create(connectionId: string, streamName:string, consumerConfig: ConsumerConfig, opt?: CallOptions): Promise<StreamConsumer> {
+function create(connectionId: string, streamName: string, consumerConfig: ConsumerConfig, opt?: CallOptions): Promise<StreamConsumer> {
 	updateConsumerConfig(consumerConfig)
 	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer`, consumerConfig, opt)
 }
 
 /** UPDATE */
-function  update(connectionId: string, streamName:string, consumerName:string, consumerConfig: ConsumerConfig, opt?: CallOptions): Promise<StreamConsumer> {
+function update(connectionId: string, streamName: string, consumerName: string, consumerConfig: ConsumerConfig, opt?: CallOptions): Promise<StreamConsumer> {
 	updateConsumerConfig(consumerConfig)
 	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, consumerConfig, opt)
 }
 
 /** DELETE */
-function remove(connectionId: string, streamName:string, consumerName:string, opt?: CallOptions): Promise<void> {
+function remove(connectionId: string, streamName: string, consumerName: string, opt?: CallOptions): Promise<void> {
 	return ajax.delete(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}`, null, opt)
 }
 
+/** PAUSE and RESUME */
+function pauseResume(connectionId: string, streamName: string, consumerName: string, action: string, pauseUntil?: string, opt?: CallOptions): Promise<void> {
+	const param = { action, pauseUntil }
+	convertDateFieldToISO(param, "pauseUntil")
+	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}/pause_resume`, param, opt)
+}
 function updateConsumerConfig(consumerConfig: ConsumerConfig) {
 	// update datetime field to match the required API format
 	convertDateFieldToISO(consumerConfig, "optStartTime")
@@ -55,6 +61,7 @@ const api = {
 	get,
 	create,
 	update,
-	remove
+	remove,
+	pauseResume,
 }
 export default api
