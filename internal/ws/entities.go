@@ -3,10 +3,15 @@ package ws
 import "time"
 
 const (
-	subReqType           = "subscriptions_req"
-	natsMsgType          = "nats_msg"
+	subReqType  = "subscriptions_req"
+	natsMsgType = "nats_msg"
+
 	connectionStatusType = "connection_status"
-	errorType            = "error"
+
+	metricsReqType = "metrics_req"
+	metricsMsg     = "metrics_resp"
+
+	errorType = "error"
 )
 
 type Payload interface {
@@ -69,4 +74,20 @@ type SubsReq struct {
 
 func (s SubsReq) GetType() string {
 	return subReqType
+}
+
+type MetricsReq struct {
+	enabled bool `json:"enabled" mapstructure:"enabled"`
+}
+
+func (s MetricsReq) GetType() string {
+	return metricsReqType
+}
+
+type MetricsResp struct {
+	Nats map[string]any `json:"nats" mapstructure:"nats"`
+}
+
+func (s MetricsResp) GetType() string {
+	return metricsMsg
 }
