@@ -1,13 +1,17 @@
 package ws
 
-import "sync"
+import (
+	"context"
+	"sync"
+)
 
 type ClientConn[S Subscription] struct {
-	ConnectionId string
-	Req          <-chan *Request
-	Messages     chan<- Payload
-	Subs         []ClientSub[S]
-	l            sync.Mutex
+	ConnectionId  string
+	Req           <-chan *Request
+	Messages      chan<- Payload
+	Subs          []ClientSub[S]
+	l             sync.Mutex
+	MetricsCancel context.CancelFunc
 }
 
 func (c *ClientConn[S]) UnsubscribeAll() {
