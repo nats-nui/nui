@@ -1,6 +1,6 @@
 package metrics
 
-import "github.com/nats-nui/nui/internal/connection"
+import "time"
 
 const (
 	SourceHttp = "source_http"
@@ -8,11 +8,11 @@ const (
 )
 
 type ServiceCfg struct {
-	serverAddr string
-	source     string
-	SysAccount connection.Auth
+	ConnectionId      string `json:"connection_id"`
+	PollingIntervalMs int    `json:"polling_interval"`
 }
 
 type Metrics struct {
-	Nats map[string]any `json:"nats,omitempty"`
+	RetrievedAt time.Time      `json:"retrieved_at"`
+	Nats        map[string]any `json:"nats,omitempty"`
 }
