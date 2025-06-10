@@ -2,6 +2,7 @@ package nui
 
 import (
 	"github.com/nats-nui/nui/internal/connection"
+	"github.com/nats-nui/nui/internal/metrics"
 	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
@@ -9,11 +10,12 @@ import (
 )
 
 type Nui struct {
-	ConnRepo        connection.ConnRepo
-	ConnPool        connection.Pool[*connection.NatsConn]
-	CliConnImporter clicontext.Importer[clicontext.ImportedContextEntry]
-	Hub             ws.IHub
-	l               logging.Slogger
+	ConnRepo         connection.ConnRepo
+	ConnPool         connection.Pool[*connection.NatsConn]
+	CliConnImporter  clicontext.Importer[clicontext.ImportedContextEntry]
+	MetricsCollector metrics.MetricsCollector
+	Hub              ws.IHub
+	l                logging.Slogger
 }
 
 func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {
@@ -25,7 +27,8 @@ func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {
 	n.ConnRepo = connection.NewDocStoreConnRepo(store)
 	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
 	n.CliConnImporter = clicontext.NewImporter(logger)
-	n.Hub = ws.NewNatsHub(n.ConnPool, logger)
+	n.MetricsCollector = metrics.NewCollector(n.ConnRepo)
+	n.Hub = ws.NewNatsHub(n.ConnPool, n.MetricsCollector, logger)
 	n.l = logger
 	return n, nil
 }
