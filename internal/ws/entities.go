@@ -77,7 +77,7 @@ func (s SubsReq) GetType() string {
 }
 
 type MetricsReq struct {
-	enabled bool `json:"enabled" mapstructure:"enabled"`
+	Enabled bool `json:"enabled" mapstructure:"enabled"`
 }
 
 func (s MetricsReq) GetType() string {

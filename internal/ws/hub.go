@@ -5,7 +5,8 @@ import (
 	"errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
-	connection2 "github.com/nats-nui/nui/internal/connection"
+	natsConn "github.com/nats-nui/nui/internal/connection"
+	"github.com/nats-nui/nui/internal/metrics"
 	"github.com/nats-nui/nui/pkg/channels"
 	"github.com/nats-nui/nui/pkg/logging"
 	"sync"
@@ -19,9 +20,13 @@ type Subscription interface {
 	Unsubscribe() error
 }
 
+type MetricsService interface {
+	Start(ctx context.Context, cfg metrics.ServiceCfg) (<-chan metrics.Metrics, error)
+}
+
 type Conn[S Subscription] interface {
 	ChanSubscribe(subj string, ch chan *nats.Msg) (S, error)
-	ObserveConnectionEvents(ctx context.Context) <-chan connection2.ConnStatusChanged
+	ObserveConnectionEvents(ctx context.Context) <-chan natsConn.ConnStatusChanged
 	Status() nats.Status
 	LastEvent() (string, error)
 }
@@ -31,22 +36,25 @@ type IHub interface {
 }
 
 type Hub[S Subscription, T Conn[S]] struct {
-	pool            Pool[S, T]
-	reg             map[string]*ClientConn[S]
-	connectionMutex sync.Mutex
-	l               logging.Slogger
+	pool                     Pool[S, T]
+	reg                      map[string]*ClientConn[S]
+	connectionMutex          sync.Mutex
+	l                        logging.Slogger
+	ms                       MetricsService
+	skipLastConnectionStatus bool
 }
 
-func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], l logging.Slogger) *Hub[S, T] {
+func NewHub[S Subscription, T Conn[S]](pool Pool[S, T], ms MetricsService, l logging.Slogger) *Hub[S, T] {
 	return &Hub[S, T]{
 		pool: pool,
 		reg:  make(map[string]*ClientConn[S]),
+		ms:   ms,
 		l:    l,
 	}
 }
 
-func NewNatsHub(pool Pool[*nats.Subscription, *connection2.NatsConn], l logging.Slogger) *Hub[*nats.Subscription, *connection2.NatsConn] {
-	return NewHub[*nats.Subscription, *connection2.NatsConn](pool, l)
+func NewNatsHub(pool Pool[*nats.Subscription, *natsConn.NatsConn], ms MetricsService, l logging.Slogger) *Hub[*nats.Subscription, *natsConn.NatsConn] {
+	return NewHub[*nats.Subscription, *natsConn.NatsConn](pool, ms, l)
 }
 
 func (h *Hub[S, T]) Register(ctx context.Context, clientId, connectionId string, req <-chan *Request, messages chan<- Payload) error {
@@ -65,11 +73,11 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-c
 	for {
 		select {
 		case <-ctx.Done():
-			h.purgeConnection(clientId)
+			h.tearDownClient(clientId)
 			return nil
 		case r, ok := <-req:
 			if !ok {
-				h.purgeConnection(clientId)
+				h.tearDownClient(clientId)
 				return nil
 			}
 			err := h.handleRequestsByType(ctx, clientId, r, messages)
@@ -80,11 +88,19 @@ func (h *Hub[S, T]) HandleRequests(ctx context.Context, clientId string, req <-c
 	}
 }
 
+func (h *Hub[S, T]) tearDownClient(clientId string) {
+	h.disableMetrics(clientId)
+	h.purgeConnection(clientId)
+}
+
 func (h *Hub[S, T]) handleRequestsByType(ctx context.Context, clientId string, r *Request, messages chan<- Payload) error {
 	switch r.Type {
 	case subReqType:
 		subReq := &SubsReq{}
 		return decodeAndHandleRequest(ctx, clientId, subReq, r.Payload, h.HandleSubRequest, messages)
+	case metricsReqType:
+		metricsReq := &MetricsReq{}
+		return decodeAndHandleRequest(ctx, clientId, metricsReq, r.Payload, h.HandleMetricsRequest, messages)
 	}
 	return errors.New("unknown request type")
 }
@@ -194,15 +210,17 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 		return err
 	}
 	events := serverConn.ObserveConnectionEvents(ctx)
-	firstStatus, firstConnErr := serverConn.LastEvent()
 	errMsg := ""
-	if firstConnErr != nil {
-		errMsg = firstConnErr.Error()
-	}
-	cm := &ConnectionStatus{Status: firstStatus, Error: errMsg}
-	select {
-	case clientMgs <- cm:
-	default:
+	if !h.skipLastConnectionStatus {
+		firstStatus, firstConnErr := serverConn.LastEvent()
+		if firstConnErr != nil {
+			errMsg = firstConnErr.Error()
+		}
+		cm := &ConnectionStatus{Status: firstStatus, Error: errMsg}
+		select {
+		case clientMgs <- cm:
+		default:
+		}
 	}
 	for {
 		select {
@@ -219,6 +237,76 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 			}
 			clientMgs <- cm
 		}
+	}
+}
+
+func (h *Hub[S, T]) HandleMetricsRequest(ctx context.Context, id string, req *MetricsReq, messages chan<- Payload) {
+	if req.Enabled {
+		h.l.Debug("requesting metrics for client", "client-id", id)
+		h.enableMetrics(ctx, id, messages)
+		return
+	}
+	h.l.Debug("disabling metrics for client", "client-id", id)
+	h.disableMetrics(id)
+}
+
+func (h *Hub[S, T]) enableMetrics(ctx context.Context, id string, messages chan<- Payload) {
+	h.connectionMutex.Lock()
+	defer h.connectionMutex.Unlock()
+	h.enableMetricsLocked(ctx, id, messages)
+}
+
+func (h *Hub[S, T]) enableMetricsLocked(ctx context.Context, id string, messages chan<- Payload) {
+	clientConn, ok := h.reg[id]
+	if clientConn.MetricsCancel != nil {
+		return
+	}
+	if !ok {
+		h.l.Error("no client connection found for metrics", "client-id", id)
+		return
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	clientConn.MetricsCancel = cancel
+	m, err := h.ms.Start(ctx, metrics.ServiceCfg{})
+	if err != nil {
+		h.l.Error("error starting metrics service", "error", err)
+		return
+	}
+	go relayMetricsToClient(ctx, m, messages)
+}
+
+func relayMetricsToClient(ctx context.Context, m <-chan metrics.Metrics, messages chan<- Payload) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case m, ok := <-m:
+			if !ok {
+				return
+			}
+			select {
+			case messages <- &MetricsResp{Nats: m.Nats}:
+			default:
+			}
+		}
+	}
+}
+
+func (h *Hub[S, T]) disableMetrics(id string) {
+	h.connectionMutex.Lock()
+	defer h.connectionMutex.Unlock()
+	h.disableMetricsLocked(id)
+}
+
+func (h *Hub[S, T]) disableMetricsLocked(id string) {
+	clientConn, ok := h.reg[id]
+	if !ok {
+		h.l.Error("no client connection found for metrics", "client-id", id)
+		return
+	}
+	if clientConn.MetricsCancel != nil {
+		clientConn.MetricsCancel()
+		clientConn.MetricsCancel = nil
 	}
 }
 
