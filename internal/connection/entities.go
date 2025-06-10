@@ -6,8 +6,9 @@ type Connection struct {
 	Hosts         []string          `json:"hosts" `
 	InboxPrefix   string            `json:"inbox_prefix"`
 	Subscriptions []Subscription    `clover:"subscriptions" json:"subscriptions"`
-	Auth          []Auth            `json:"auth" `
+	Auth          []Auth            `json:"auth"`
 	TLSAuth       TLSAuth           `clover:"tls_auth" json:"tls_auth"`
+	Metrics       Metrics           `clover:"metrics" json:"metrics"`
 	Metadata      map[string]string `clover:"metadata" json:"metadata"`
 }
 
@@ -54,6 +55,17 @@ type TLSAuth struct {
 	KeyPath        string `clover:"key_path" json:"key_path"`
 	CaPath         string `clover:"ca_path" json:"ca_path"`
 	HandshakeFirst bool   `clover:"handshake_first" json:"handshake_first"`
+}
+
+type Metrics struct {
+	HttpSource struct {
+		Active bool   `json:"active"`
+		Url    string `json:"url"`
+	}
+	NatsSource struct {
+		Active bool `json:"active"`
+		Auth   Auth `json:"auth"`
+	}
 }
 
 type ConnStatusChanged struct {
