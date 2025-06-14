@@ -22,7 +22,7 @@ const setup = {
 		editState: EDIT_STATE.READ,
 
 		//#region VIEWBASE
-		width: 200,
+		width: 215,
 		//colorVar: COLOR_VAR.GREEN,
 		size: VIEW_SIZE.COMPACT,
 		//#endregion

@@ -1,6 +1,7 @@
 import { AUTH_MODE, Auth } from "@/types"
 import { FunctionComponent, useEffect, useState } from "react"
-import { Button, PasswordInput, StringUpRow, TextInput, TooltipWrapCmp, Options } from "@priolo/jack"
+import { Button, StringUpRow, Options } from "@priolo/jack"
+import AuthCmp from "./AuthCmp"
 
 
 
@@ -47,112 +48,12 @@ const AuthForm: FunctionComponent<Props> = ({
 			/> */}
 		</div>
 
-		{{
-			[AUTH_MODE.USER_PASSWORD]: <>
-				<div className="jack-lyt-form"><div className="jack-lbl-prop">USERNAME</div><TextInput
-					value={authEdit.username}
-					onChange={username => handlePropChange({ username })}
-					readOnly={readOnly}
-				/></div>
-				<div className="jack-lyt-form"><div className="jack-lbl-prop">PASSWORD</div><PasswordInput
-					value={authEdit.password}
-					onChange={password => handlePropChange({ password })}
-					readOnly={readOnly}
-				/></div>
-			</>,
-			[AUTH_MODE.TOKEN]: (
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">TOKEN
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="Client token string specified in authorization config of the server"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.token}
-						onChange={token => handlePropChange({ token })}
-						readOnly={readOnly}
-					/>
-				</div>
-			),
-			[AUTH_MODE.NKEY]: <>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">PUBLIC NKEY
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="NATS public NKEY representing the user. It starts with 'U'"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.username}
-						onChange={username => handlePropChange({ username })}
-						readOnly={readOnly}
-					/></div>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
-						/>
-					</div>
-					<PasswordInput
-						value={authEdit.nKeySeed}
-						onChange={nKeySeed => handlePropChange({ nKeySeed })}
-						readOnly={readOnly}
-					/></div>
-			</>,
-			[AUTH_MODE.JWT]: <>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">JWT
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="User JWT string to couple with private NKEY"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.jwt}
-						onChange={jwt => handlePropChange({ jwt })}
-						readOnly={readOnly}
-					/>
-				</div>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">NKEY SEED
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="Private NKEY seed used to sign server challenge. It starts with 'S'"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.nKeySeed}
-						onChange={nKeySeed => handlePropChange({ nKeySeed })}
-						readOnly={readOnly}
-					/>
-				</div>
-			</>,
-			[AUTH_MODE.BEARER_JWT]: <>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">BEARER JWT
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="NATS user JWT as bearer token (with no nuance)"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.jwt}
-						onChange={jwt => handlePropChange({ jwt })}
-						readOnly={readOnly}
-					/>
-				</div>
-			</>,
-			[AUTH_MODE.CREDS_FILE]: <>
-				<div className="jack-lyt-form">
-					<div className="jack-lbl-prop lbl-info-container">CREDS PATH FILE
-						<TooltipWrapCmp className="lbl-info" children="?"
-							content="Local path of NATS .creds file containing JWT and NKEY seed"
-						/>
-					</div>
-					<TextInput
-						value={authEdit.creds}
-						onChange={creds => handlePropChange({ creds })}
-						readOnly={readOnly}
-					/>
-				</div>
-			</>,
-		}[authEdit.mode]}
+		
+		<AuthCmp
+			auth={authEdit}
+			onPropChange={handlePropChange}
+			readOnly={readOnly}
+		/>
 
 		<div className="cmp-footer">
 			{!readOnly && (
