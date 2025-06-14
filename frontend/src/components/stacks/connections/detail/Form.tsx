@@ -1,10 +1,11 @@
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { Auth, EDIT_STATE } from "@/types"
+import { EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import {EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion, TooltipWrapCmp} from "@priolo/jack"
+import ConnectionMetricsCmp from "./ConnectionMetricsCmp"
 
 
 
@@ -63,13 +64,16 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     const handleChangeTlsCaPath = (caPath: string) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, caPath } })
     }
+
     const handleChangeHandshakeFirst = (handshakeFirst: boolean) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, handshakeFirst } })
     }
 
     // RENDER
+
     const connection = cnnDetailSo.getConnection()
     if (connection == null) return null
+
     const name = connection.name ?? ""
     const hosts = connection.hosts ?? []
     const auths = connection.auth ?? []
@@ -101,7 +105,6 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
                 />
             </div>
         </TitleAccordion>
-
 
         <TitleAccordion title="AUTH">
             <div className="lyt-v">
@@ -136,6 +139,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
                 />
             </div>
         </TitleAccordion>
+
         <TitleAccordion title="CLIENT TLS">
             < div className="jack-cmp-h">
                 <IconToggle
@@ -178,19 +182,25 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
                 />
             </div>
         </TitleAccordion>
+
+        <TitleAccordion title="METRICS">
+            <ConnectionMetricsCmp store={cnnDetailSo} />
+        </TitleAccordion>
+
         <TitleAccordion title="ADVANCED">
             <div className="jack-lbl-prop lbl-info-container">INBOX PREFIX
                 <TooltipWrapCmp className="lbl-info" children="?"
-                                content="The prefix of subject used to receive responses in req /reply"
+                    content="The prefix of subject used to receive responses in req /reply"
                 />
             </div>
             <TextInput autoFocus
-                       value={connection.inboxPrefix}
-                       onChange={handleInboxPrefixChange}
-                       placeholder="eg. _INBOX.>"
-                       readOnly={inRead}
+                value={connection.inboxPrefix}
+                onChange={handleInboxPrefixChange}
+                placeholder="eg. _INBOX.>"
+                readOnly={inRead}
             />
         </TitleAccordion>
+
     </div>
 }
 
