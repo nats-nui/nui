@@ -21,7 +21,20 @@ const connections: any[] = [
 			key_path: "./certs/key.pem",
 			ca_path: "./certs/ca.pem",
 		},
-		inboxPrefix: "_INBOX"
+		inboxPrefix: "_INBOX",
+		metrics: {
+			httpSource: {
+				active: false,
+				url: "http://localhost:3000/metrics"
+			},
+			natsSource: {
+				active: true,
+				auth: {
+					mode: AUTH_MODE.TOKEN,
+					token: "mytoken",
+				},
+			},
+		},
 	},
 	{
 		id: "cnn-2",

@@ -1,11 +1,11 @@
 import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
-import { Auth, AUTH_MODE, EDIT_STATE } from "@/types"
+import { Auth, EDIT_STATE } from "@/types"
+import { EditList, EditStringRow, IconToggle, ListObjects, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthForm from "./AuthForm"
-import { EditList, EditStringRow, IconToggle, ListDialog, ListObjects, StringUpRow, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
-import AuthCmp from "./AuthCmp"
+import ConnectionMetricsCmp from "./ConnectionMetricsCmp"
 
 
 
@@ -64,65 +64,21 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
     const handleChangeTlsCaPath = (caPath: string) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, caPath } })
     }
+
     const handleChangeHandshakeFirst = (handshakeFirst: boolean) => {
         cnnDetailSo.setConnection({ ...cnnDetailSa.connection, tlsAuth: { ...cnnDetailSa.connection.tlsAuth, handshakeFirst } })
     }
 
-    const metricNormalize = () => {
-        if (!!cnnDetailSa.connection.metrics) return
-        cnnDetailSa.connection.metrics = {
-            httpSource: { active: false, url: "" },
-            natsSource: { active: false, auth: { mode: AUTH_MODE.TOKEN } },
-        }
-    }
-
-    //#region METRIC
-    const handleMetricAuthModeChange = (index: number) => {
-        metricNormalize()
-        const mode = Object.values(AUTH_MODE)[index]
-        cnnDetailSa.connection.metrics.natsSource.auth.mode = mode
-        cnnDetailSo._update()
-    }
-    const handleMetricAuthChange = (auth: Auth) => {
-        metricNormalize()
-        const current = cnnDetailSa.connection.metrics.natsSource.auth
-        cnnDetailSa.connection.metrics.natsSource.auth = { ...current, ...auth }
-        cnnDetailSo._update()
-    }
-    const handleMetricHttpSourceChange = (check:boolean) => {
-        metricNormalize()
-        cnnDetailSa.connection.metrics.httpSource.active = check
-        cnnDetailSa.connection.metrics.natsSource.active = !check
-        cnnDetailSo._update()   
-    }
-    const handleMetricNatsSourceChange = (check:boolean) => {
-        metricNormalize()
-        cnnDetailSa.connection.metrics.httpSource.active = !check
-        cnnDetailSa.connection.metrics.natsSource.active = check
-        cnnDetailSo._update()   
-    }
-    const handleMetricUrlChange = (url: string) => {
-        metricNormalize()
-        cnnDetailSa.connection.metrics.httpSource.url = url
-        cnnDetailSo._update()
-    }
-    //#endregion
-
     // RENDER
+
     const connection = cnnDetailSo.getConnection()
     if (connection == null) return null
+
     const name = connection.name ?? ""
     const hosts = connection.hosts ?? []
     const auths = connection.auth ?? []
     const tlsAuth = connection.tlsAuth ?? { enabled: false, certPath: "", keyPath: "", caPath: "", handshakeFirst: false }
     const inRead = cnnDetailSa.editState == EDIT_STATE.READ
-
-    const metricAuthModes = Object.values(AUTH_MODE)
-    const matricAuth = connection.metrics?.natsSource?.auth
-    const metricAuthModeSelected = Object.values(AUTH_MODE).indexOf(matricAuth?.mode ?? AUTH_MODE.TOKEN)
-    const metricHttpActive =  cnnDetailSa.connection.metrics?.httpSource?.active ?? false
-    const metricNatsActive = cnnDetailSa.connection.metrics?.natsSource?.active ?? false
-    const metricUrl = cnnDetailSa.connection.metrics?.httpSource?.url ?? ""
 
     return <div className="jack-lyt-form var-dialog">
 
@@ -228,54 +184,7 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
         </TitleAccordion>
 
         <TitleAccordion title="METRICS">
-
-            <div className="lyt-v">
-                <div className="jack-cmp-h">
-                    <IconToggle
-                        check={!!metricHttpActive}
-                        onChange={handleMetricHttpSourceChange}
-                        readOnly={inRead}
-                    />
-                    <div className="jack-lbl-prop">HTTP SOURCE</div>
-                </div>
-                <div className="lyt-v">
-                    <div className="jack-lbl-prop">URL</div>
-                    <TextInput autoFocus
-                        value={metricUrl}
-                        onChange={handleMetricUrlChange}
-                        readOnly={inRead}
-                    />
-                </div>
-            </div>
-
-            <div className="lyt-v">
-
-                <div className="jack-cmp-h">
-                    <IconToggle
-                        check={!!metricNatsActive}
-                        onChange={handleMetricNatsSourceChange}
-                        readOnly={inRead}
-                    />
-                    <div className="jack-lbl-prop">NATS SOURCE</div>
-                </div>
-
-                <ListDialog
-                    store={cnnDetailSo}
-                    select={metricAuthModeSelected}
-                    items={metricAuthModes}
-                    RenderRow={StringUpRow}
-                    readOnly={inRead}
-                    onSelect={handleMetricAuthModeChange}
-                />
-
-                <AuthCmp
-                    auth={matricAuth}
-                    readOnly={inRead}
-                    onPropChange={handleMetricAuthChange}
-                />
-
-            </div>
-
+            <ConnectionMetricsCmp store={cnnDetailSo} />
         </TitleAccordion>
 
         <TitleAccordion title="ADVANCED">
