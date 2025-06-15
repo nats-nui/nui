@@ -106,7 +106,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		{inRead && <>
 			<RowButton
 				className="jack-focus-1"
-				icon={<MessagesIcon />}
+				icon={<MessagesIcon className="small-icon"/>}
 				label="MESSAGES"
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
@@ -114,28 +114,28 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			/>
 			<RowButton
 				className="jack-focus-2"
-				icon={<SyncIcon />}
+				icon={<SyncIcon className="small-icon"/>}
 				label="REQUEST / REPLY"
 				selected={isSyncOpen}
 				onClick={handleSyncClick}
 			/>
 			<RowButton
 				className="jack-focus-3"
-				icon={<StreamsIcon />}
+				icon={<StreamsIcon className="small-icon"/>}
 				label="STREAMS"
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton
 				className="jack-focus-4"
-				icon={<BucketsIcon />}
+				icon={<BucketsIcon className="small-icon"/>}
 				label="BUCKETS"
 				selected={isBucketsOpen}
 				onClick={handleBucketsClick}
 			/>
 			<RowButton style={{ marginBottom: 12 }}
 				className="jack-focus-5"
-				icon={<MetricsIcon />}
+				icon={<MetricsIcon className="small-icon"/>}
 				label="METRICS"
 				selected={isMetricsOpen}
 				onClick={handleMetricsClick}
