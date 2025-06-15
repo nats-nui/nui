@@ -11,6 +11,7 @@ Connection {
 	subscriptions: Subscription[]
 	auth: Auth[]
 	tls_auth: TLSAuth
+	metrics: Metrics
 	status?: CNN_STATUS
 }
 ```
@@ -70,7 +71,21 @@ TLSAuth {
 }
 ```
 
+## METRICS
+
+Configuration for collecting metrics about the NATS connection
+
 ```typescript
+Metrics {
+    httpSource: {
+        active: boolean
+        url: string
+    }
+    natsSource: {
+        active: boolean
+        auth: Auth
+    }
+}
 ```
 
 ## SUBSCRIPTION
@@ -82,5 +97,3 @@ Subscription {
 	subject: string
 }
 ```
-
-
