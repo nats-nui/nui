@@ -1,0 +1,21 @@
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.label {
+	font-size: 10px;
+	font-weight: 400;
+	opacity: 0.8;
+}
+
+.value {
+	font-size: 20px;
+	font-weight: 800;
+}
+
+.unit {
+	font-size: 15px;
+	font-weight: 500;
+	opacity: 0.8;
+}

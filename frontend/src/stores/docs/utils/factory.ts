@@ -24,6 +24,7 @@ import { ViewState, ViewStore } from "../../stacks/viewBase";
 import jsonConfigSetup from "../../stacks/jsonconfig";
 import cnnImportSetup from "../../stacks/cnnImport";
 import shortcutSetup from "../../stacks/shortcut";
+import cnnMetricsSetup from "@/stores/stacks/connection/metrics";
 
 
 
@@ -33,6 +34,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
 		[DOC_TYPE.CNN_LOADER]: cnnImportSetup,		
+		[DOC_TYPE.CNN_METRICS]: cnnMetricsSetup,		
 
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 		[DOC_TYPE.MESSAGE]: messageSetup,
