@@ -49,7 +49,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	>
 		<RowButton style={{ marginBottom: 15 }}
 			className="jack-focus-1"
-			icon={<MessagesIcon />}
+			icon={<MessagesIcon className="small-icon"/>}
 			label="CLIENTS"
 		// selected={isMessageOpen}
 		// onClick={handleMessagesClick}
