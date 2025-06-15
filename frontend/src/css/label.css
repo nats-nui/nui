@@ -1,7 +1,12 @@
-
+/** Divider vertical and dark **/
 .lbl-divider-v {
 	border-left: 1px solid rgba(0, 0, 0, 0.2);
 }
+/** Divider vertical and light **/
+.lbl-divider-vl {
+	border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 .lbl-divider-h {
 	margin: 3px 0px 3px 0px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.2);

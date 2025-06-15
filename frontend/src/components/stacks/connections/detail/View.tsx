@@ -15,6 +15,7 @@ import SyncIcon from "@/icons/SyncIcon"
 import clsGreen from "../../CardGreen.module.css"
 import ConnectionIcon from "../../../../icons/cards/ConnectionIcon"
 import { IconButton, TooltipWrapCmp } from "@priolo/jack"
+import MetricsIcon from "@/icons/cards/MetricsIcon"
 
 
 interface Props {
@@ -37,6 +38,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const handleSyncClick = () => cnnDetailSo.openSync()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
+	const handleMetricsClick = () => cnnDetailSo.openMetrics()
 	const handleSendClick = (e: React.MouseEvent) => {
 		e.stopPropagation()
 		cnnDetailSo.openMessageSend()
@@ -47,6 +49,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isSyncOpen = cnnDetailSo.getSyncOpen()
 	const isStreamsOpen = cnnDetailSo.getStreamsOpen()
 	const isBucketsOpen = cnnDetailSo.getBucketsOpen()
+	const isMetricsOpen = cnnDetailSo.getMetricsOpen()
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
@@ -90,6 +93,13 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					selected={isBucketsOpen}
 					onClick={handleBucketsClick}
 				/>
+				<LinkButton
+					className="jack-focus-5"
+					icon={<MetricsIcon />}
+					tooltip="METRICS"
+					selected={isMetricsOpen}
+					onClick={handleMetricsClick}
+				/>
 			</div>
 		}
 	>
@@ -116,12 +126,19 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
-			<RowButton style={{ marginBottom: 12 }}
+			<RowButton
 				className="jack-focus-4"
 				icon={<BucketsIcon />}
 				label="BUCKETS"
 				selected={isBucketsOpen}
 				onClick={handleBucketsClick}
+			/>
+			<RowButton style={{ marginBottom: 12 }}
+				className="jack-focus-5"
+				icon={<MetricsIcon />}
+				label="METRICS"
+				selected={isMetricsOpen}
+				onClick={handleMetricsClick}
 			/>
 		</>}
 
