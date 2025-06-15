@@ -7,6 +7,7 @@ export interface Connection {
     auth: Auth[]
     tlsAuth: TLSAuth
     status?: CNN_STATUS
+    metrics: Metric
 }
 
 export interface Auth {
@@ -39,6 +40,17 @@ export interface CliImport {
     path: string
     error: string
     importedContext: { [key: string]: any }
+}
+
+export interface Metric {
+    httpSource: {
+        active: boolean
+        url: string
+    }
+    natsSource: {
+        active: boolean
+        auth: Auth
+    }
 }
 
 
