@@ -59,13 +59,13 @@ type TLSAuth struct {
 
 type Metrics struct {
 	HttpSource struct {
-		Active bool   `json:"active"`
-		Url    string `json:"url"`
-	}
+		Active bool   `clover:"active" json:"active"`
+		Url    string `clover:"url" json:"url"`
+	} `clover:"http_source" json:"http_source"`
 	NatsSource struct {
-		Active bool `json:"active"`
-		Auth   Auth `json:"auth"`
-	}
+		Active bool `clover:"active" json:"active"`
+		Auth   Auth `clover:"auth" json:"auth"`
+	} `clover:"nats_source" json:"nats_source"`
 }
 
 type ConnStatusChanged struct {
