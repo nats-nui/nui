@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws"
 import { Thread } from "./thread.js"
 import url from "url"
 import { sendTestMessages } from "./testMessages.js"
+import { randomInt } from "crypto"
 
 
 
@@ -60,7 +61,7 @@ const onMessage = client => msgRaw => {
 
 	const type = msg.type
 	switch (type) {
-		
+
 		case "subscriptions_req":
 			Thread.Find({ cnnId: client.cnnId })?.stop()
 			const subjects = msg.payload.subjects
@@ -75,14 +76,18 @@ const onMessage = client => msgRaw => {
 		case "metrics_req":
 			Thread.Find({ cnnId: client.cnnId })?.stop()
 			const enabled = msg.payload.enabled
-			console.log(`metrics_req: ${enabled}`)
-			send(client.cws, {
-				"type": "metrics_resp",
-				"payload": {
-					"nats": {
+			if (!enabled) return
+			new Thread(
+				() => send(client.cws, {
+					type: "metrics_resp",
+					payload: {
+						nats: {
+							test: randomInt(1000, 9999),
+						}
 					}
-				}
-			})
+				}),
+				{ cnnId: client.cnnId }
+			).start()
 
 		case "error":
 			break

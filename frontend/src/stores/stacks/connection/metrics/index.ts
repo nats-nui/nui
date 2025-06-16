@@ -13,6 +13,8 @@ const setup = {
 	state: {
 		connectionId: <string>null,
 
+		test: null,
+
 		//#region VIEWBASE
 		width: 340,
 		//#endregion
@@ -46,10 +48,11 @@ const setup = {
 		},
 		//#endregion
 
-		onCreated(_: void, store?: CnnMetricsStore) {
-			const ss = socketPool.getById(`global::${store.state.connectionId}`)
+		async onCreated(_: void, store?: CnnMetricsStore) {
+			const ss = await socketPool.create(`global::${store.state.connectionId}`, store.state.connectionId)
 			ss.emitter.on(MSG_TYPE.METRICS_RESP, (data: any) => {
 				console.log( "METRICS RESP", data)
+				store.setTest(data.payload)
 			})
 			ss.send(JSON.stringify({
 				"type": MSG_TYPE.METRICS_REQ,
@@ -68,6 +71,7 @@ const setup = {
 	},
 
 	mutators: {
+		setTest: (test: any) => ({test}),
 	},
 }
 

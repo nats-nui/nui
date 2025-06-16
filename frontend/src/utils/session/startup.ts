@@ -84,16 +84,14 @@ function buildCards(session: Session) {
 	// DECK
 	const deckStates = session.deckUuids?.map(uuid => session.allStates.find(s => s.uuid == uuid))
 	const deckStores = deckStates?.map(state => {
-		const store: ViewStore = buildStore({ type: state.type, group: deckCardsSo })
-		store?.setSerialization(state)
+		const store: ViewStore = buildStore({ type: state.type, group: deckCardsSo }, state)
 		return store
 	}).filter(s => !!s) ?? []
 
 	// DRAWER
 	const drawerStates = session.drawerUuids?.map(uuid => session.allStates.find(s => s.uuid == uuid))
 	const drawerStores = drawerStates?.map(state => {
-		const store: ViewStore = buildStore({ type: state.type, group: drawerCardsSo })
-		store?.setSerialization(state)
+		const store: ViewStore = buildStore({ type: state.type, group: drawerCardsSo }, state)
 		return store
 	}).filter(s => !!s) ?? []
 
@@ -102,8 +100,7 @@ function buildCards(session: Session) {
 		let store: ViewStore = utils.forEachViews([...deckStores, ...drawerStores], (v) => v.state.uuid == uuid ? v : null)
 		if (!store) {
 			const state = session.allStates.find(s => s.uuid == uuid)
-			store = state ? buildStore({ type: state.type }) : null
-			store?.setSerialization(state)
+			store = state ? buildStore({ type: state.type }, state) : null
 		}
 		return store
 	}).filter(s => !!s) ?? []

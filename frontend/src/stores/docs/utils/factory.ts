@@ -30,7 +30,7 @@ import { ViewState, ViewStore } from "../../stacks/viewBase";
 
 
 /** crea lo STORE adeguato */
-export function buildStore(state: Partial<ViewState>): ViewStore {
+export function buildStore(state: Partial<ViewState>, stateSerializzation?: Partial<ViewState>): ViewStore {
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
@@ -67,6 +67,7 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 	store.state = { ...store.state, ...state };
 	// se non c'e' l'uuid lo creo IO!
 	//if (store.state.uuid == null) store.state.uuid = createUUID()
+	if (stateSerializzation) store.setSerialization(stateSerializzation);
 	(<any>store).onCreated?.()
 	return store
 }
