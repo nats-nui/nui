@@ -39,6 +39,8 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <ConnectionIcon className={className} style={style} />
 		case DOC_TYPE.CNN_METRICS:
 			return <MetricsIcon className={className} style={style} />
+		case DOC_TYPE.CLIENT_METRICS:
+			return <MetricsIcon className={className} style={style} />
 
 		case DOC_TYPE.CNN_LOADER:
 			return <ConnectionIcon className={className} style={style} />

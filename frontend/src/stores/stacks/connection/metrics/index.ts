@@ -1,5 +1,10 @@
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import { DOC_TYPE } from "@/types"
+import { focusSo } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
+import { buildClientMetrics } from "../utils/factory"
+import { socketPool } from "@/plugins/SocketService/pool"
+import { MSG_TYPE } from "@/plugins/SocketService/types"
 
 
 
@@ -27,6 +32,8 @@ const setup = {
 		},
 		//#endregion
 
+		getClientOpen: (_: void, store?: CnnMetricsStore) => store.state.linked?.state.type == DOC_TYPE.CLIENT_METRICS,
+
 	},
 
 	actions: {
@@ -38,6 +45,25 @@ const setup = {
 			state.connectionId = data.connectionId
 		},
 		//#endregion
+
+		onCreated(_: void, store?: CnnMetricsStore) {
+			const ss = socketPool.getById(`global::${store.state.connectionId}`)
+			ss.emitter.on(MSG_TYPE.METRICS_RESP, (data: any) => {
+				console.log( "METRICS RESP", data)
+			})
+			ss.send(JSON.stringify({
+				"type": MSG_TYPE.METRICS_REQ,
+				"payload": { "enabled": true }
+			}))
+		},
+
+		/** apertura della CARD METRICS */
+		openClients(_: void, store?: CnnMetricsStore) {
+			const detached = focusSo.state.shiftKey
+			const isOpen = store.getClientOpen()
+			const view = !isOpen || detached ? buildClientMetrics(store.state.connectionId) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
 
 	},
 

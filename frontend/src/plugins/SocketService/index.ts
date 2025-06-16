@@ -5,6 +5,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils.js";
 import { optionsDefault } from "./utils.js";
 import cnnSo from "@/stores/connections"
 import { CNN_STATUS } from "@/types/Connection.js";
+import { EventEmitter } from "@/utils/EventEmitter.js";
 
 
 
@@ -21,12 +22,15 @@ export class SocketService {
 	cnnId: string = null
 	/** modulo per la riconnessione */
 	reconnect: Reconnect;
+	emitter = new EventEmitter()
 
 	// callback su apertura connessione
 	onOpen: () => void = null
 	// callback su arrivo messaggio
 	onMessage?: (message: PayloadMessage) => void
+	// callback su stato connessione
 	onStatus?: (payload: PayloadStatus) => void
+	// callback su errore
 	onError?: (error: PayloadError) => void
 
 	constructor(options: SocketOptions = {}) {
@@ -64,6 +68,8 @@ export class SocketService {
 		this.websocket.onclose = this.handleClose.bind(this);
 		this.websocket.onmessage = this.handleMessage.bind(this);
 		this.websocket.onerror = this.handleError.bind(this);
+
+		this.emitter.emit("connection", this.websocket.readyState)
 	}
 
 	/** 
@@ -74,6 +80,7 @@ export class SocketService {
 		this.websocket.close()
 		this.websocket = null
 		if (newCnnId) this.cnnId = newCnnId
+		this.emitter.offAll()
 	}
 
 	/** 
@@ -128,6 +135,7 @@ export class SocketService {
 
 	handleOpen(_: Event) {
 		//console.log("socket:open")
+		this.emitter.emit("connection", this.websocket.readyState)
 		this.reconnect.stop()
 		this.reconnect.tryZero()
 		this.onOpen?.()
@@ -136,6 +144,7 @@ export class SocketService {
 
 	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
+		this.emitter.emit("connection", this.websocket.readyState)
 		this.clear()
 		this.reconnect.start()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
@@ -145,6 +154,8 @@ export class SocketService {
 	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
+
+		this.emitter.emit(type, message.payload)
 		
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS: {

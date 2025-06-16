@@ -17,7 +17,7 @@ interface Props {
 }
 
 const CnnMetricsView: FunctionComponent<Props> = ({
-	store: store,
+	store,
 }) => {
 
 	// STORE
@@ -27,8 +27,10 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+	const handleClientsClick = () => store.openClients()
 
 	// RENDER
+	const isClientsOpen = store.getClientOpen()
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -46,19 +48,19 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				/>
 			</div>
 		}
+		actionsRender={<div />}
 	>
 		<RowButton style={{ marginBottom: 15 }}
 			className="jack-focus-1"
-			icon={<MessagesIcon className="small-icon"/>}
+			icon={<MessagesIcon className="small-icon" />}
 			label="CLIENTS"
-		// selected={isMessageOpen}
-		// onClick={handleMessagesClick}
-		// renderEnd={ButtonSend}
+			selected={isClientsOpen}
+			onClick={handleClientsClick}
 		/>
 
 		<TitleAccordion title="SERVER" style={{ marginBottom: 15 }}>
 
-			<div style={{ display: "flex", justifyContent: "space-between",  marginTop: 10 }}>
+			<div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
 				<ValueCmp label="CPU" value={12} unit="%" />
 				<div className="lbl-divider-vl" />
 				<ValueCmp label="MEMORY" value={"95.41"} unit="MiB" />
@@ -99,22 +101,22 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 
 		<TitleAccordion title="CONNECTIONS" style={{ marginBottom: 15 }}>
-			<div style={{ display: "flex", marginTop: 10  }}>
-				<ValueCmp style={{flex: 1}} label="TOTAL" value={12} unit="%" />
-				<ValueCmp style={{flex: 1}} label="SUBSCRIPTION" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{flex: 1}} label="SLOW" value={"95.41"} unit="MiB" />
+			<div style={{ display: "flex", marginTop: 10 }}>
+				<ValueCmp style={{ flex: 1 }} label="TOTAL" value={12} unit="%" />
+				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTION" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="SLOW" value={"95.41"} unit="MiB" />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{flex: 1}} label="CONNECTION" value={12} unit="%" />
-				<ValueCmp style={{flex: 1}} label="PAYLOAD" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{flex: 1}} label="PENDING" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="CONNECTION" value={12} unit="%" />
+				<ValueCmp style={{ flex: 1 }} label="PAYLOAD" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="PENDING" value={"95.41"} unit="MiB" />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{flex: 1}} label="WRITE DEADLINE" value={12} unit="%" />
-				<ValueCmp style={{flex: 1}} label="AUTH.TIMEOUT" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{flex: 1}} label="TLS TIMEOUT" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="WRITE DEADLINE" value={12} unit="%" />
+				<ValueCmp style={{ flex: 1 }} label="AUTH.TIMEOUT" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={"95.41"} unit="MiB" />
 			</div>
 		</TitleAccordion>
 

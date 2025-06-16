@@ -4,6 +4,7 @@ export enum DOC_TYPE {
 	CONNECTIONS = "connectons",
 	CONNECTION = "connecton",
 	CNN_METRICS = "cnn_metrics",
+	CLIENT_METRICS = "client_metrics",
 	CNN_LOADER = "cnn_loader",
 
 	MESSAGES = "messages",
