@@ -1,6 +1,7 @@
 import { debounce } from "@/utils/time";
 import { docsSo, utils } from "@priolo/jack";
 import { SocketService } from ".";
+import { EventMessage } from "@/utils/EventEmitter";
 
 
 
@@ -13,7 +14,7 @@ class SocketPool {
 	}
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
-	create(key: string, cnnId: string) {
+	async create(key: string, cnnId: string): Promise<SocketService | undefined> {
 		if (!key || !cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)
@@ -21,8 +22,43 @@ class SocketPool {
 			ss = new SocketService()
 			ss.connect(cnnId)
 			this.sockets[key] = ss
+			// Wait for the WebSocket to be connected
+			await this.waitForConnection(ss)
 		}
 		return ss
+	}
+
+	/** Wait for the WebSocket connection to be established */
+	private async waitForConnection(ss: SocketService): Promise<void> {
+		return new Promise((resolve, reject) => {
+			// If already connected, resolve immediately
+			if (ss.websocket && ss.websocket.readyState === WebSocket.OPEN) {
+				resolve()
+				return
+			}
+
+			// Set up timeout to avoid waiting indefinitely
+			const timeout = setTimeout(() => {
+				ss.emitter.off("connection", onConnectionChange)
+				reject(new Error("WebSocket connection timeout"))
+			}, 10000) // 10 seconds timeout
+
+			const onConnectionChange = (msg: EventMessage) => {
+				const readyState = msg.payload as number
+				if (readyState === WebSocket.OPEN) {
+					clearTimeout(timeout)
+					ss.emitter.off("connection", onConnectionChange)
+					resolve()
+				} else if (readyState === WebSocket.CLOSED) {
+					clearTimeout(timeout)
+					ss.emitter.off("connection", onConnectionChange)
+					reject(new Error("WebSocket connection failed"))
+				}
+			}
+
+			// Listen for connection state changes
+			ss.emitter.on("connection", onConnectionChange)
+		})
 	}
 
 	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! 

@@ -114,9 +114,9 @@ const setup = {
 		//#endregion
 
 
-		connect(_: void, store?: MessagesStore) {
+		async connect(_: void, store?: MessagesStore) {
 			console.log("CONNECT")
-			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
+			const ss = await socketPool.create(store.getSocketServiceId(), store.state.connectionId)
 			ss.onOpen = () => store.sendSubscriptions()
 			ss.onMessage = message => store.addMessage(message)
 			// ss.onStatus = (payload: PayloadStatus) => {

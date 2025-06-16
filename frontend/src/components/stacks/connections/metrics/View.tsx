@@ -31,6 +31,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isClientsOpen = store.getClientOpen()
+	const test = store.state.test
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -61,7 +62,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 		<TitleAccordion title="SERVER" style={{ marginBottom: 15 }}>
 
 			<div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
-				<ValueCmp label="CPU" value={12} unit="%" />
+				<ValueCmp label="CPU" value={test?.nats?.test ?? "--"} unit="%" />
 				<div className="lbl-divider-vl" />
 				<ValueCmp label="MEMORY" value={"95.41"} unit="MiB" />
 				<div className="lbl-divider-vl" />
