@@ -53,7 +53,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
-	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" style={{ padding: 5 }}>
+	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" >
 		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
 	</TooltipWrapCmp>
 

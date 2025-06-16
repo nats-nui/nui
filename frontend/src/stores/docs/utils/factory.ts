@@ -2,9 +2,11 @@ import aboutSetup from "@/stores/stacks/about";
 import bucketsSetup from "@/stores/stacks/buckets";
 import bucketSetup from "@/stores/stacks/buckets/detail";
 import cnnSetup from "@/stores/stacks/connection";
+import clientMetricsSetup from "@/stores/stacks/connection/clients";
 import servicesSetup from "@/stores/stacks/connection/detail";
 import messageSendSetup from "@/stores/stacks/connection/messageSend";
 import messagesSetup from "@/stores/stacks/connection/messages";
+import cnnMetricsSetup from "@/stores/stacks/connection/metrics";
 import consumersSetup from "@/stores/stacks/consumer";
 import consumerSetup from "@/stores/stacks/consumer/detail";
 import helpSetup from "@/stores/stacks/help";
@@ -20,11 +22,10 @@ import { DOC_TYPE } from "@/types";
 import { Message } from "@/types/Message";
 import { MSG_FORMAT } from "@/utils/editor";
 import { createStore } from "@priolo/jon";
-import { ViewState, ViewStore } from "../../stacks/viewBase";
-import jsonConfigSetup from "../../stacks/jsonconfig";
 import cnnImportSetup from "../../stacks/cnnImport";
+import jsonConfigSetup from "../../stacks/jsonconfig";
 import shortcutSetup from "../../stacks/shortcut";
-import cnnMetricsSetup from "@/stores/stacks/connection/metrics";
+import { ViewState, ViewStore } from "../../stacks/viewBase";
 
 
 
@@ -34,7 +35,8 @@ export function buildStore(state: Partial<ViewState>): ViewStore {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
 		[DOC_TYPE.CNN_LOADER]: cnnImportSetup,		
-		[DOC_TYPE.CNN_METRICS]: cnnMetricsSetup,		
+		[DOC_TYPE.CNN_METRICS]: cnnMetricsSetup,
+		[DOC_TYPE.CLIENT_METRICS]: clientMetricsSetup,
 
 		[DOC_TYPE.MESSAGES]: messagesSetup,
 		[DOC_TYPE.MESSAGE]: messageSetup,
