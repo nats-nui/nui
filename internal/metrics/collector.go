@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"errors"
 	"github.com/nats-nui/nui/internal/connection"
 	"time"
 )
@@ -12,6 +13,10 @@ type Repo interface {
 
 type MetricsCollector interface {
 	Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, error)
+}
+
+type MetricsSource interface {
+	FetchMetrics(ctx context.Context) (map[string]any, error)
 }
 
 type Collector struct {
@@ -26,7 +31,19 @@ func NewCollector(repo Repo) *Collector {
 
 func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, error) {
 	metricsChan := make(chan Metrics, 10)
-	ticker := time.Tick(1 * time.Second)
+	pollingInterval := time.Duration(cfg.PollingIntervalMs) * time.Millisecond
+	if pollingInterval <= 0 {
+		pollingInterval = 1 * time.Second
+	}
+	ticker := time.Tick(pollingInterval)
+	conn, err := s.repo.GetById(cfg.ConnectionId)
+	if err != nil {
+		return nil, err
+	}
+	source, err := buildMetricsSource(conn.Metrics)
+	if err != nil {
+		return nil, err
+	}
 	go func() {
 		for {
 			select {
@@ -34,7 +51,12 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 				close(metricsChan)
 				return
 			case <-ticker:
-				metrics := Metrics{RetrievedAt: time.Now()}
+				rawNatsMetrics, err := source.FetchMetrics(ctx)
+				metrics := Metrics{
+					RetrievedAt: time.Now(),
+					Nats:        rawNatsMetrics,
+					Error:       err.Error(),
+				}
 				select {
 				case metricsChan <- metrics:
 				default:
@@ -43,4 +65,11 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 		}
 	}()
 	return metricsChan, nil
+}
+
+func buildMetricsSource(metrics connection.Metrics) (MetricsSource, error) {
+	if metrics.HttpSource.Active {
+		return NewHTTPSource(metrics.HttpSource.Url), nil
+	}
+	return nil, errors.New("metrics source not implemented")
 }
