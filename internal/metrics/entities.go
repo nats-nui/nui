@@ -15,5 +15,5 @@ type ServiceCfg struct {
 type Metrics struct {
 	RetrievedAt time.Time      `json:"retrieved_at"`
 	Nats        map[string]any `json:"nats,omitempty"`
-	Error       string         `json:"error,omitempty"`
+	Error       error          `json:"error,omitempty"`
 }

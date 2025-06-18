@@ -55,7 +55,7 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 				metrics := Metrics{
 					RetrievedAt: time.Now(),
 					Nats:        rawNatsMetrics,
-					Error:       err.Error(),
+					Error:       err,
 				}
 				select {
 				case metricsChan <- metrics:
