@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
 	natsConn "github.com/nats-nui/nui/internal/connection"
@@ -267,7 +268,11 @@ func (h *Hub[S, T]) enableMetricsLocked(ctx context.Context, id string, messages
 	}
 	ctx, cancel := context.WithCancel(ctx)
 	clientConn.MetricsCancel = cancel
-	m, err := h.ms.Start(ctx, metrics.ServiceCfg{})
+	metricsCfg := metrics.ServiceCfg{
+		ConnectionId:      clientConn.ConnectionId,
+		PollingIntervalMs: 1000, // Default polling interval
+	}
+	m, err := h.ms.Start(ctx, metricsCfg)
 	if err != nil {
 		h.l.Error("error starting metrics service", "error", err)
 		return
@@ -285,7 +290,7 @@ func relayMetricsToClient(ctx context.Context, m <-chan metrics.Metrics, message
 				return
 			}
 			select {
-			case messages <- &MetricsResp{Nats: m.Nats}:
+			case messages <- &MetricsResp{Nats: m.Nats, Error: fmt.Sprint(m.Error)}:
 			default:
 			}
 		}
