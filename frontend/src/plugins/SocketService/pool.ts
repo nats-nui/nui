@@ -1,6 +1,6 @@
 import { debounce } from "@/utils/time";
 import { docsSo, utils } from "@priolo/jack";
-import { SocketService } from ".";
+import { SocketService, SS_EVENTS } from ".";
 import { EventMessage } from "@/utils/EventEmitter";
 
 
@@ -22,9 +22,9 @@ class SocketPool {
 			ss = new SocketService()
 			ss.connect(cnnId)
 			this.sockets[key] = ss
-			// Wait for the WebSocket to be connected
-			await this.waitForConnection(ss)
 		}
+		// Wait for the WebSocket to be connected
+		await this.waitForConnection(ss)
 		return ss
 	}
 
@@ -39,7 +39,7 @@ class SocketPool {
 
 			// Set up timeout to avoid waiting indefinitely
 			const timeout = setTimeout(() => {
-				ss.emitter.off("connection", onConnectionChange)
+				ss.emitter.off(SS_EVENTS.WS_CONNECTION, onConnectionChange)
 				reject(new Error("WebSocket connection timeout"))
 			}, 10000) // 10 seconds timeout
 
@@ -47,17 +47,15 @@ class SocketPool {
 				const readyState = msg.payload as number
 				if (readyState === WebSocket.OPEN) {
 					clearTimeout(timeout)
-					ss.emitter.off("connection", onConnectionChange)
 					resolve()
 				} else if (readyState === WebSocket.CLOSED) {
 					clearTimeout(timeout)
-					ss.emitter.off("connection", onConnectionChange)
 					reject(new Error("WebSocket connection failed"))
 				}
 			}
 
 			// Listen for connection state changes
-			ss.emitter.on("connection", onConnectionChange)
+			ss.emitter.once(SS_EVENTS.WS_CONNECTION, onConnectionChange)
 		})
 	}
 

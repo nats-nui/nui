@@ -25,13 +25,13 @@ export class SocketService {
 	emitter = new EventEmitter()
 
 	// callback su apertura connessione
-	onOpen: () => void = null
+	//onOpen: () => void = null
 	// callback su arrivo messaggio
-	onMessage?: (message: PayloadMessage) => void
+	//onMessage?: (message: PayloadMessage) => void
 	// callback su stato connessione
-	onStatus?: (payload: PayloadStatus) => void
+	//onStatus?: (payload: PayloadStatus) => void
 	// callback su errore
-	onError?: (error: PayloadError) => void
+	//onError?: (error: PayloadError) => void
 
 	constructor(options: SocketOptions = {}) {
 		this.options = { ...optionsDefault, ...options }
@@ -69,7 +69,7 @@ export class SocketService {
 		this.websocket.onmessage = this.handleMessage.bind(this);
 		this.websocket.onerror = this.handleError.bind(this);
 
-		this.emitter.emit("connection", this.websocket.readyState)
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, this.websocket.readyState)
 	}
 
 	/** 
@@ -135,16 +135,16 @@ export class SocketService {
 
 	handleOpen(_: Event) {
 		//console.log("socket:open")
-		this.emitter.emit("connection", this.websocket.readyState)
 		this.reconnect.stop()
 		this.reconnect.tryZero()
-		this.onOpen?.()
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, this.websocket.readyState)
+		//this.onOpen?.()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
 
 	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
-		this.emitter.emit("connection", this.websocket.readyState)
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, WebSocket.CLOSED)
 		this.clear()
 		this.reconnect.start()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
@@ -156,14 +156,17 @@ export class SocketService {
 		const type = message.type
 
 		this.emitter.emit(type, message.payload)
-		
+
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS: {
 				const payload = message.payload as PayloadStatus
-				this.onStatus?.(payload)
+
+				//this.onStatus?.(payload)
+				this.emitter.emit(SS_EVENTS.NATS_STATUS, payload)
 				changeConnectionStatus(this.cnnId, payload.status)
+
 				let body = `${payload.status}`
-				if (payload.error) {body += ` - ${payload.error}`}
+				if (payload.error) { body += ` - ${payload.error}` }
 				logSo.add({
 					type: MESSAGE_TYPE.INFO,
 					title: "CONNECTION STATUS",
@@ -171,16 +174,16 @@ export class SocketService {
 				})
 				break
 			}
-			case MSG_TYPE.NATS_MESSAGE: {
-				if (!this.onMessage) return
-				const payload = message.payload as PayloadMessage
-				this.onMessage({
-					headers: payload.headers,
-					subject: payload.subject,
-					payload: atob(payload.payload),
-				})
-				break
-			}
+			// case MSG_TYPE.NATS_MESSAGE: {
+			// 	if (!this.onMessage) return
+			// 	const payload = message.payload as PayloadMessage
+			// 	this.onMessage({
+			// 		headers: payload.headers,
+			// 		subject: payload.subject,
+			// 		payload: atob(payload.payload),
+			// 	})
+			// 	break
+			// }
 			case MSG_TYPE.ERROR:
 				const error: string = (message.payload as PayloadError)?.error
 				//this.onError?.(message.payload as PayloadError)
@@ -204,9 +207,14 @@ export class SocketService {
 	//#endregion
 }
 
-
 function changeConnectionStatus(cnnId: string, status: CNN_STATUS) {
 	const cnn = cnnSo.getById(cnnId)
 	if (!cnn || cnn.status == status) return
 	cnnSo.update({ id: cnnId, status })
+}
+
+export enum SS_EVENTS {
+	WS_CONNECTION = "ws-connection",
+	ERROR = "error",
+	NATS_STATUS = "nats-status",
 }
