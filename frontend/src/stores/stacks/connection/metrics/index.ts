@@ -50,13 +50,23 @@ const setup = {
 
 		async onCreated(_: void, store?: CnnMetricsStore) {
 			const ss = await socketPool.create(`global::${store.state.connectionId}`, store.state.connectionId)
+			if (!ss) return
 			ss.emitter.on(MSG_TYPE.METRICS_RESP, (data: any) => {
-				console.log( "METRICS RESP", data)
 				store.setTest(data.payload)
 			})
 			ss.send(JSON.stringify({
-				"type": MSG_TYPE.METRICS_REQ,
-				"payload": { "enabled": true }
+				type: MSG_TYPE.METRICS_REQ,
+				payload: { enabled: true }
+			}))
+		},
+
+		onRemoval(_: void, store?: CnnMetricsStore) {
+			const ss = socketPool.getById(`global::${store.state.connectionId}`)
+			if (!ss) return 
+			ss.emitter.offAll()
+			ss.send(JSON.stringify({
+				type: MSG_TYPE.METRICS_REQ,
+				payload: { enabled: false }
 			}))
 		},
 
@@ -71,7 +81,7 @@ const setup = {
 	},
 
 	mutators: {
-		setTest: (test: any) => ({test}),
+		setTest: (test: any) => ({ test }),
 	},
 }
 
@@ -79,7 +89,7 @@ export type CnnMetricsState = typeof setup.state & ViewState
 export type CnnMetricsGetters = typeof setup.getters
 export type CnnMetricsActions = typeof setup.actions
 export type CnnMetricsMutators = typeof setup.mutators
-export interface CnnMetricsStore extends ViewStore, CnnMetricsGetters, CnnMetricsActions, CnnMetricsMutators {
+export interface CnnMetricsStore extends ViewStore, CnnMetricsGetters, CnnMetricsMutators {
 	state: CnnMetricsState
 }
 const cnnMetricsSetup = mixStores(viewSetup, setup)

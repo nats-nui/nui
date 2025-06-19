@@ -8,15 +8,15 @@ function getJsonData(index) {
 	return JSON.stringify(jsonData[index % jsonData.length])
 }
 
-function sendTestMessages(client, subjects) {
-
+export function generateTestMessages(subjects) {
 	const subject = subjects[messagesSend % subjects.length]
+	let msg = null
 
 	// è connesso e quindi manda il messaggio
 	if (messagesSend < numMsg) {
 		const json = getJsonData(messagesSend)
 		const payload = Buffer.from(json, "utf8").toString("base64")
-		send(client.cws, {
+		msg = {
 			type: "nats_msg",
 			payload: {
 				headers: {
@@ -27,40 +27,33 @@ function sendTestMessages(client, subjects) {
 				subject,
 				payload,
 			},
-		})
+		}
 		// manda il messaggio di disconnessione
 	} else if (messagesSend == numMsg) {
-		send(client.cws, {
+		msg = {
 			type: "connection_status",
 			payload: {
 				status: "diconnected"
 			},
-		})
+		}
 		// manda il messaggio che si sta riconnettendo
 	} else if (messagesSend == numMsg + 2) {
-		send(client.cws, {
+		msg = {
 			type: "connection_status",
 			payload: {
 				status: "reconnecting"
 			},
-		})
+		}
 		// manda il messaggio che s'e' riconnesso
 	} else if (messagesSend == numMsg + 5) {
-		send(client.cws, {
+		msg = {
 			type: "connection_status",
 			payload: {
 				status: "connected"
 			},
-		})
+		}
 		messagesSend = 0
 	}
-
 	messagesSend++
+	return msg
 }
-
-function send(cws, msg) {
-	console.log("BE > FE", msg.type)
-	cws.send(JSON.stringify(msg))
-}
-
-export { sendTestMessages }
