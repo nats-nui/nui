@@ -1,10 +1,10 @@
+import metricsSo from "@/stores/connections/metrics"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { focusSo } from "@priolo/jack"
 import { mixStores } from "@priolo/jon"
 import { buildClientMetrics } from "../utils/factory"
-import { socketPool } from "@/plugins/SocketService/pool"
-import { MSG_TYPE } from "@/plugins/SocketService/types"
+import cnnSo from "@/stores/connections"
 
 
 
@@ -12,8 +12,6 @@ const setup = {
 
 	state: {
 		connectionId: <string>null,
-
-		test: null,
 
 		//#region VIEWBASE
 		width: 340,
@@ -24,7 +22,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "METRICS",
-		getSubTitle: (_: void, store?: ViewStore) => "Metrics for connection",
+		getSubTitle: (_: void, store?: ViewStore) =>  cnnSo.getById((<CnnMetricsStore>store).state.connectionId)?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as CnnMetricsState
 			return {
@@ -35,7 +33,6 @@ const setup = {
 		//#endregion
 
 		getClientOpen: (_: void, store?: CnnMetricsStore) => store.state.linked?.state.type == DOC_TYPE.CLIENT_METRICS,
-
 	},
 
 	actions: {
@@ -49,25 +46,11 @@ const setup = {
 		//#endregion
 
 		async onCreated(_: void, store?: CnnMetricsStore) {
-			const ss = await socketPool.create(`global::${store.state.connectionId}`, store.state.connectionId)
-			if (!ss) return
-			ss.emitter.on(MSG_TYPE.METRICS_RESP, (data: any) => {
-				store.setTest(data.payload)
-			})
-			ss.send(JSON.stringify({
-				type: MSG_TYPE.METRICS_REQ,
-				payload: { enabled: true }
-			}))
+			metricsSo.enable(store.state.connectionId)
 		},
 
-		onRemoval(_: void, store?: CnnMetricsStore) {
-			const ss = socketPool.getById(`global::${store.state.connectionId}`)
-			if (!ss) return 
-			ss.emitter.offAll()
-			ss.send(JSON.stringify({
-				type: MSG_TYPE.METRICS_REQ,
-				payload: { enabled: false }
-			}))
+		onRemoval(_: void, store?: ViewStore) {
+			metricsSo.disable((<CnnMetricsStore>store).state.connectionId)
 		},
 
 		/** apertura della CARD METRICS */
@@ -81,7 +64,6 @@ const setup = {
 	},
 
 	mutators: {
-		setTest: (test: any) => ({ test }),
 	},
 }
 
@@ -89,8 +71,8 @@ export type CnnMetricsState = typeof setup.state & ViewState
 export type CnnMetricsGetters = typeof setup.getters
 export type CnnMetricsActions = typeof setup.actions
 export type CnnMetricsMutators = typeof setup.mutators
-export interface CnnMetricsStore extends ViewStore, CnnMetricsGetters, CnnMetricsMutators {
+export interface CnnMetricsStore extends ViewStore, CnnMetricsGetters, CnnMetricsActions, CnnMetricsMutators {
 	state: CnnMetricsState
 }
 const cnnMetricsSetup = mixStores(viewSetup, setup)
-export default cnnMetricsSetup
+export default cnnMetricsSetup 

@@ -9,6 +9,7 @@ import { TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import clsCard from "../../CardGreenDef.module.css"
+import metricsSo from "@/stores/connections/metrics"
 
 
 
@@ -22,6 +23,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 	// STORE
 	useStore(store.state.group)
+	useStore(metricsSo)
 	useStore(store)
 
 	// HOOKs
@@ -31,7 +33,8 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isClientsOpen = store.getClientOpen()
-	const test = store.state.test
+	const metrics = metricsSo.state.all[store.state.connectionId]?.last
+	const varz = metrics?.varz
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -61,25 +64,37 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="SERVER" style={{ marginBottom: 15 }}>
 
-			<div style={{ display: "flex", justifyContent: "space-between", marginTop: 10 }}>
-				<ValueCmp label="CPU" value={test?.nats?.test ?? "--"} unit="%" />
+			<div style={{ display: "flex", marginTop: 10, gap: 15 }}>
+				<ValueCmp style={{ flex: 1 }}
+					label="CPU" 
+					value={varz?.cpu ?? "--"} 
+					unit="%" 
+					decimals={2}
+				/>
 				<div className="lbl-divider-vl" />
-				<ValueCmp label="MEMORY" value={"95.41"} unit="MiB" />
-				<div className="lbl-divider-vl" />
-				<ValueCmp label="MEMORY" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }}
+					label="MEMORY" 
+					value={varz?.mem ?? "--"} 
+					unit="MiB" 
+				/>
+				{/* <div className="lbl-divider-vl" />
+				<ValueCmp style={{ flex: 1 }}
+					label="CONNECTIONS" 
+					value={varz?.connections ?? "--"} 
+				/> */}
 			</div>
 
 			<div className="jack-lbl-prop">SEND</div>
 
 			<div style={{ display: "flex", gap: 15 }}>
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="MESSAGE" value={12} unit="%" />
-					<ValueCmp label="RATE" value={"95.41"} unit="MiB" />
+					<ValueCmp label="MESSAGE" value={varz?.out_msgs} unit="" />
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
 				<div className="lbl-divider-vl" />
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="DATA" value={12} unit="%" />
-					<ValueCmp label="RATE" value={"95.41"} unit="MiB" />
+					<ValueCmp label="DATA" value={varz?.out_bytes} unit="" />
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
 			</div>
 
@@ -87,13 +102,13 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 			<div style={{ display: "flex", gap: 15 }}>
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="MESSAGE" value={12} unit="M" />
-					<ValueCmp label="RATE" value={"95.41"} unit="/s" />
+					<ValueCmp label="MESSAGE" value={varz?.in_msgs} unit="" />
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
 				<div className="lbl-divider-vl" />
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="DATA" value={12} unit="M" />
-					<ValueCmp label="RATE" value={"95.41"} unit="/s" />
+					<ValueCmp label="DATA" value={varz?.in_bytes} unit="" />
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
 			</div>
 
@@ -103,21 +118,21 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="CONNECTIONS" style={{ marginBottom: 15 }}>
 			<div style={{ display: "flex", marginTop: 10 }}>
-				<ValueCmp style={{ flex: 1 }} label="TOTAL" value={12} unit="%" />
-				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTION" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="SLOW" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="TOTAL" value={varz?.connections ?? "--"} />
+				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTION" value={varz?.subscriptions ?? "--"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="SLOW" value={varz?.slow_consumers} unit="MiB" />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{ flex: 1 }} label="CONNECTION" value={12} unit="%" />
-				<ValueCmp style={{ flex: 1 }} label="PAYLOAD" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="PENDING" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="MAX.CONNECTIONS" value={varz?.max_connections ?? "--"} unit="%" />
+				<ValueCmp style={{ flex: 1 }} label="MAX.PAYLOAD" value={varz?.max_payload ?? "--"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="MAX.PENDING" value={varz?.max_pending ?? "--"} unit="MiB" />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{ flex: 1 }} label="WRITE DEADLINE" value={12} unit="%" />
-				<ValueCmp style={{ flex: 1 }} label="AUTH.TIMEOUT" value={"95.41"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={"95.41"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="WRITE DEADLINE" value={varz?.write_deadline ?? "--"} unit="%" />
+				<ValueCmp style={{ flex: 1 }} label="AUTH.TIMEOUT" value={varz?.auth_timeout ?? "--"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={varz?.tls_timeout ?? "--"} unit="MiB" />
 			</div>
 		</TitleAccordion>
 

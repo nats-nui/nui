@@ -1,27 +1,6 @@
 import jsonData from "./jsonData.js";
 
-// Type definitions for the messages
-interface MessageHeaders {
-	[key: string]: string[];
-}
 
-interface NatsMessage {
-	type: "nats_msg";
-	payload: {
-		headers: MessageHeaders;
-		subject: string;
-		payload: string;
-	};
-}
-
-interface ConnectionStatusMessage {
-	type: "connection_status";
-	payload: {
-		status: "connected" | "diconnected" | "reconnecting";
-	};
-}
-
-type TestMessage = NatsMessage | ConnectionStatusMessage | null;
 
 let messagesSend: number = 0;
 /** messaggi dopo i quali deve simulare una disconnessione */
@@ -80,3 +59,29 @@ export function generateTestMessages(subjects: string[]): TestMessage {
 	messagesSend++;
 	return msg;
 }
+
+
+
+
+// Type definitions for the messages
+interface MessageHeaders {
+	[key: string]: string[];
+}
+
+interface NatsMessage {
+	type: "nats_msg";
+	payload: {
+		headers: MessageHeaders;
+		subject: string;
+		payload: string;
+	};
+}
+
+interface ConnectionStatusMessage {
+	type: "connection_status";
+	payload: {
+		status: "connected" | "diconnected" | "reconnecting";
+	};
+}
+
+type TestMessage = NatsMessage | ConnectionStatusMessage | null;
