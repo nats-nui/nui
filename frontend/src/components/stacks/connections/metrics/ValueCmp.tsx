@@ -5,6 +5,7 @@ interface Props {
 	label: string
 	value: string | number
 	unit?: string
+	decimals?: number
 	style?: React.CSSProperties
 	className?: string
 }
@@ -13,9 +14,15 @@ const ValueCmp: FunctionComponent<Props> = ({
 	label,
 	value,
 	unit,
+	decimals,
 	style,
 	className
 }) => {
+
+	if (decimals !== undefined && typeof value === 'number') {
+		value = value.toFixed(decimals)
+	}
+
 	return (
 		<div style={style} className={`${styles.container} ${className || ''}`}>
 			<div className={styles.label}>{label}</div>
