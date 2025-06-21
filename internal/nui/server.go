@@ -40,13 +40,15 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 
 	// wails in linux / mac desktop app is using wails://wails, http://wails.localhost, http://wails.:34115 as origins
 	// that are not supported by fiber anymore, so * wildcard is required to make call to server on 31311
+	// in web app, http://localhost:5273 is needed for vite dev server
+	allowedOrigins := "http://localhost:31311, http://localhost:5173"
 	if isDesktop {
-		allowedOrigins := "*"
-		app.Use(cors.New(cors.Config{
-			AllowOrigins: allowedOrigins,
-			AllowHeaders: "Origin, Content-Type, Accept",
-		}))
+		allowedOrigins = "*"
 	}
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: allowedOrigins,
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 	app.registerHandlers()
 	return app
 }
