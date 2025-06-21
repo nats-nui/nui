@@ -27,7 +27,12 @@ const setup = {
 			if (!!listener) return
 
 			const onMessage = (message: any) => {
-				store.state.all[cnnId].last = message.payload.nats
+				const listener = store.state.all[cnnId]
+				listener.last = message.payload?.nats
+				listener.error = message.payload?.error
+				// if ( !!message.payload?.error) {
+				// 	logStore.addError(new Error(message.payload?.error))
+				// }
 				store.update()
 			}
 			store.state.all[cnnId] = {
@@ -98,5 +103,6 @@ export default metricsSo
 
 export interface MetricsListener {
 	last: Metrics
+	error?: string
 	onMessage: (message: any) => void
 }
