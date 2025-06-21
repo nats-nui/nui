@@ -1,3 +1,5 @@
+import cnnSo from "@/stores/connections"
+import metricsSo from "@/stores/connections/metrics"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { mixStores } from "@priolo/jon"
 
@@ -17,7 +19,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CLIENTS",
-		getSubTitle: (_: void, store?: ViewStore) => "Metrics for clients",
+		getSubTitle: (_: void, store?: ViewStore) =>  cnnSo.getById((<ClientMetricsStore>store).state.connectionId)?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ClientMetricsState
 			return {
@@ -38,6 +40,14 @@ const setup = {
 			state.connectionId = data.connectionId
 		},
 		//#endregion
+
+		async onCreated(_: void, store?: ClientMetricsStore) {
+			metricsSo.enable(store.state.connectionId)
+		},
+
+		onRemoval(_: void, store?: ViewStore) {
+			metricsSo.disable((<ClientMetricsStore>store).state.connectionId)
+		},
 
 	},
 

@@ -1,5 +1,5 @@
 import { MSG_TYPE } from '@/plugins/SocketService/types';
-import { Varz } from '../../types/Metrics';
+import { Varz, Connz, ConnzConnection } from '../../types/Metrics';
 
 
 export function generateMetrics() {
@@ -8,7 +8,7 @@ export function generateMetrics() {
 		payload: {
 			nats: {
 				varz: generateVarz(),
-				//connz: generateConnz(),
+				connz: generateConnz(),
 			}
 		}
 	}
@@ -69,5 +69,62 @@ export function generateVarz(): Varz {
 			gateways: Math.floor(Math.random() * 3),
 			leafs: Math.floor(Math.random() * 3),
 		},
+	};
+}
+
+// Generates a Connz object with random/mock connections
+export function generateConnz(): Connz {
+	const now = new Date();
+	const numConnections = Math.floor(Math.random() * 20) + 1; // 1-20 connections
+	const connections: ConnzConnection[] = [];
+
+	for (let i = 0; i < numConnections; i++) {
+		const startTime = new Date(now.getTime() - Math.floor(Math.random() * 3600000)); // Started within last hour
+		const lastActivity = new Date(now.getTime() - Math.floor(Math.random() * 60000)); // Last activity within last minute
+		
+		const connection: ConnzConnection = {
+			cid: i + 1,
+			kind: 'Client',
+			type: Math.random() > 0.5 ? 'websocket' : 'tcp',
+			ip: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+			port: Math.floor(Math.random() * 65535) + 1024,
+			start: startTime.toISOString(),
+			last_activity: lastActivity.toISOString(),
+			rtt: `${Math.floor(Math.random() * 100)}ms`,
+			uptime: `${Math.floor((now.getTime() - startTime.getTime()) / 1000)}s`,
+			idle: `${Math.floor((now.getTime() - lastActivity.getTime()) / 1000)}s`,
+			pending_bytes: Math.floor(Math.random() * 1024),
+			in_msgs: Math.floor(Math.random() * 1000),
+			out_msgs: Math.floor(Math.random() * 1000),
+			in_bytes: Math.floor(Math.random() * 100000),
+			out_bytes: Math.floor(Math.random() * 100000),
+			subscriptions: Math.floor(Math.random() * 50),
+		};
+
+		// Randomly add optional fields
+		if (Math.random() > 0.5) {
+			connection.name = `client-${Math.random().toString(36).substring(2, 8)}`;
+		}
+		if (Math.random() > 0.5) {
+			connection.lang = Math.random() > 0.5 ? 'javascript' : 'go';
+		}
+		if (Math.random() > 0.5) {
+			connection.version = `${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}.${Math.floor(Math.random() * 10)}`;
+		}
+		if (Math.random() > 0.7) {
+			connection.mqtt_client = `mqtt-client-${Math.random().toString(36).substring(2, 6)}`;
+		}
+
+		connections.push(connection);
+	}
+
+	return {
+		server_id: `srv-${Math.random().toString(36).substring(2, 10)}`,
+		now: now.toISOString(),
+		num_connections: numConnections,
+		total: numConnections,
+		offset: 0,
+		limit: 1024,
+		connections: connections,
 	};
 }
