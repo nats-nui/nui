@@ -4,12 +4,12 @@ import RowButton from "@/components/rows/RowButton"
 import ValueCmp from "@/components/stacks/connections/metrics/ValueCmp"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import MetricsIcon from "@/icons/cards/MetricsIcon"
-import { CnnMetricsStore } from "@/stores/stacks/connection/metrics"
-import { TitleAccordion } from "@priolo/jack"
-import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
-import clsCard from "../../CardGreenDef.module.css"
 import metricsSo from "@/stores/connections/metrics"
+import { CnnMetricsStore } from "@/stores/stacks/connection/metrics"
+import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
+import { useStore } from "@priolo/jon"
+import { FunctionComponent, useEffect } from "react"
+import clsCard from "../../CardGreenDef.module.css"
 
 
 
@@ -21,19 +21,30 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	store,
 }) => {
 
+	const listener = metricsSo.state.all[store.state.connectionId]
+
 	// STORE
 	useStore(store.state.group)
 	useStore(metricsSo)
 	useStore(store)
 
 	// HOOKs
+	useEffect(() => {
+		if ( !listener?.error ) return
+		store.setSnackbar({
+			open: true,
+			title: "ERROR",
+			type: MESSAGE_TYPE.ERROR,
+			body: listener.error,
+		})
+	}, [listener?.error])
 
 	// HANDLER
 	const handleClientsClick = () => store.openClients()
 
 	// RENDER
 	const isClientsOpen = store.getClientOpen()
-	const metrics = metricsSo.state.all[store.state.connectionId]?.last
+	const metrics = listener?.last
 	const varz = metrics?.varz
 
 	return <FrameworkCard
@@ -66,16 +77,16 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 			<div style={{ display: "flex", marginTop: 10, gap: 15 }}>
 				<ValueCmp style={{ flex: 1 }}
-					label="CPU" 
-					value={varz?.cpu ?? "--"} 
-					unit="%" 
+					label="CPU"
+					value={varz?.cpu ?? "--"}
+					unit="%"
 					decimals={2}
 				/>
 				<div className="lbl-divider-vl" />
 				<ValueCmp style={{ flex: 1 }}
-					label="MEMORY" 
-					value={varz?.mem ?? "--"} 
-					unit="MiB" 
+					label="MEMORY"
+					value={varz?.mem ?? "--"}
+					unit="MiB"
 				/>
 				{/* <div className="lbl-divider-vl" />
 				<ValueCmp style={{ flex: 1 }}

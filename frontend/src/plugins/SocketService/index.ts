@@ -109,7 +109,11 @@ export class SocketService {
 			body: `send:FE>BE`,
 			data: msg,
 		})
-		this.websocket.send(msg)
+		try {
+			this.websocket.send(msg)
+		} catch (err) {
+			logSo.addError(err)
+		}
 	}
 
 	sendSubjects(subjects: string[]) {
