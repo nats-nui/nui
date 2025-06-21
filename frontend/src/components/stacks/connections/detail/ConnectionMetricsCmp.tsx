@@ -69,9 +69,9 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 	const metricAuthModes = Object.values(AUTH_MODE)
 	const matricAuth = connection.metrics?.natsSource?.auth
 	const metricAuthModeSelected = Object.values(AUTH_MODE).indexOf(matricAuth?.mode ?? AUTH_MODE.TOKEN)
-	const metricHttpActive = cnnDetailSa.connection.metrics?.httpSource?.active ?? false
-	const metricNatsActive = cnnDetailSa.connection.metrics?.natsSource?.active ?? false
-	const metricUrl = cnnDetailSa.connection.metrics?.httpSource?.url ?? ""
+	const metricHttpActive = connection.metrics?.httpSource?.active ?? false
+	const metricNatsActive = connection.metrics?.natsSource?.active ?? false
+	const metricUrl = connection.metrics?.httpSource?.url ?? ""
 
 	return <>
 
