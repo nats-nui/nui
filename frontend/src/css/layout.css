@@ -1,7 +1,10 @@
+
+/** piu' componenti di solito indicatori in sola lettura in orizzontale **/
 .lyt-h-props {
 	display: flex;
 	text-align: center;
 }
+
 .lyt-h-props .item {
 	flex: 1;
 	display: flex;

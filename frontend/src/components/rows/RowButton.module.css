@@ -13,6 +13,12 @@
 .root:focus {
 	outline: none;
 }
+
+.root:not(.select):hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Adjust opacity for desired darkness */
+}
+
+
 :global(.jack-framework-focus-ctrl) .root:focus {
 	outline: 2px solid var(--cmp-focus);
 }

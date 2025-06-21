@@ -15,6 +15,8 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 		case DOC_TYPE.CONSUMER:
 			return { fg: "#393939", bg: "#f374e6" }
 		case DOC_TYPE.CNN_LOADER:
+		case DOC_TYPE.CNN_METRICS:
+		case DOC_TYPE.CLIENT_METRICS:
 		case DOC_TYPE.CONNECTIONS:
 		case DOC_TYPE.CONNECTION:
 			return { fg: "#393939", bg: "#BBFB35" }

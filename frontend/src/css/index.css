@@ -34,3 +34,8 @@ body {
 input, textarea,  button {
   font-family: 'Inter Variable', sans-serif;
 }
+
+.small-icon {
+  width: 18px;
+  height: 18px;
+}

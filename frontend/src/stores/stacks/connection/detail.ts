@@ -6,7 +6,7 @@ import { mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
-import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionSync } from "./utils/factory"
+import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
 import { focusSo } from "@priolo/jack"
 
 
@@ -18,6 +18,7 @@ const setup = {
 		subOpen: false,
 		/** connection cache per l'edit */
 		connection: <Connection>null,
+		connectionId: <string>null,
 
 		editState: EDIT_STATE.READ,
 
@@ -53,6 +54,7 @@ const setup = {
 		getSyncOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SYNC,
 		getStreamsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.STREAMS,
 		getBucketsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.BUCKETS,
+		getMetricsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.CNN_METRICS,
 
 	},
 
@@ -63,6 +65,7 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnDetailState
 			state.connection = data.connection
+			state.connectionId = data.connection?.id
 		},
 		onLinked: (_: void, store?: ViewStore) => {
 			const cnnStore = store as CnnDetailStore
@@ -127,10 +130,21 @@ const setup = {
 				anim: true,
 			})
 		},
+		/** apertura della CARD METRICS */
+		openMetrics(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
+			const isOpen = store.getMetricsOpen()
+			const view = !isOpen || detached ? buildConnectionMetrics(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
+
 	},
 
 	mutators: {
-		setConnection: (connection: Connection) => ({ connection }),
+		setConnection: (connection: Connection) => {
+			// setto anche connectionId perche' "connectionId" è usato per la pulizia dei WS
+			return { connection, connectionId: connection?.id }
+		},
 		setSubOpen: (subOpen: boolean) => ({ subOpen }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},

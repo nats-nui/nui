@@ -24,7 +24,7 @@ const setup = {
 		purgeOpen: false,
 
 		//#region VIEWBASE
-		width: 310,
+		width: 335,
 		widthMax: 800,
 		//#endregion
 	},
