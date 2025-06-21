@@ -1,21 +1,14 @@
+# Connection WebSocket
+
+See [WebSocket Protocol](./ws.md) for message wrapper and error format.
+
 ## TO SUBSCRIBE TO WEBSOCKET 
 
 ```
 GET /ws/sub?id=<connection-id>
 ```
 
-
 ## WS MESSAGES
-
-#### MESSAGE WRAPPER
-wraps all the messages and events to and from the server.
-```typescript
-{
-  "type": string,
-  "payload": any // based on type
-}
-```
-
 
 #### SUBSCRIPTIONS REQUEST
 send an array of subject the client want to stream from  
@@ -45,16 +38,5 @@ server -> client
 {
 	"type": "connection_status"
   	"status": "connected" |	"reconnecting" | "disconnected",
-}
-```
-
-
-#### ERROR MESSAGE
-client -> server  
-server -> client  
-```typescript
-{
-	"type": "error",
-  	"error": string
 }
 ```

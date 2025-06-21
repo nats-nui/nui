@@ -85,7 +85,8 @@ func (s MetricsReq) GetType() string {
 }
 
 type MetricsResp struct {
-	Nats map[string]any `json:"nats" mapstructure:"nats"`
+	Nats  map[string]any `json:"nats" mapstructure:"nats"`
+	Error string         `json:"error"`
 }
 
 func (s MetricsResp) GetType() string {
