@@ -6,6 +6,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import clsCard from "../../CardPurpleDef.module.css"
 import ClientRow from "./ClientRow"
+import ClientsActions from "./ClientsAction"
 
 
 
@@ -37,7 +38,7 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 		className={clsCard.root}
 		icon={<MetricsIcon />}
 		store={store}
-		actionsRender={<div />}
+		actionsRender={<ClientsActions store={store} />}
 	>
 		{!isVoid ? connz.connections.map((cnn, index) => (
 			<ClientRow key={cnn.cid} cnn={cnn} />
