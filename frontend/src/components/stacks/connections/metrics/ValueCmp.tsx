@@ -1,6 +1,8 @@
 import { FunctionComponent } from "react"
 import styles from "./ValueCmp.module.css"
 
+
+
 interface Props {
 	label: string
 	value: string | number
