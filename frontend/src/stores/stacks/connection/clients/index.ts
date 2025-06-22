@@ -9,6 +9,7 @@ const setup = {
 
 	state: {
 		connectionId: <string>null,
+		textSearch: "",
 
 		//#region VIEWBASE
 		width: 410,
@@ -19,7 +20,7 @@ const setup = {
 
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "CLIENTS",
-		getSubTitle: (_: void, store?: ViewStore) =>  cnnSo.getById((<ClientMetricsStore>store).state.connectionId)?.name ?? "--",
+		getSubTitle: (_: void, store?: ViewStore) => cnnSo.getById((<ClientMetricsStore>store).state.connectionId)?.name ?? "--",
 		getSerialization: (_: void, store?: ViewStore) => {
 			const state = store.state as ClientMetricsState
 			return {
@@ -52,6 +53,7 @@ const setup = {
 	},
 
 	mutators: {
+		setTextSearch: (textSearch: string) => ({ textSearch }),
 	},
 }
 

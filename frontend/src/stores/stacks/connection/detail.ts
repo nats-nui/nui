@@ -18,7 +18,6 @@ const setup = {
 		subOpen: false,
 		/** connection cache per l'edit */
 		connection: <Connection>null,
-		connectionId: <string>null,
 
 		editState: EDIT_STATE.READ,
 
@@ -65,7 +64,6 @@ const setup = {
 			viewSetup.actions.setSerialization(data, store)
 			const state = store.state as CnnDetailState
 			state.connection = data.connection
-			state.connectionId = data.connection?.id
 		},
 		onLinked: (_: void, store?: ViewStore) => {
 			const cnnStore = store as CnnDetailStore
@@ -141,10 +139,7 @@ const setup = {
 	},
 
 	mutators: {
-		setConnection: (connection: Connection) => {
-			// setto anche connectionId perche' "connectionId" è usato per la pulizia dei WS
-			return { connection, connectionId: connection?.id }
-		},
+		setConnection: (connection: Connection) => ({ connection }),
 		setSubOpen: (subOpen: boolean) => ({ subOpen }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 	},
