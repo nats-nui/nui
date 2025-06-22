@@ -20,12 +20,11 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 	const last = lastDjs.format("YYYY-MM-DD HH:mm:ss")
 	const isRecentActivity = dayjs().diff(lastDjs, 'minute') < 1
 
-		// Calculate elapsed time since last activity
+	// Calculate elapsed time since last activity
 	const now = dayjs()
 	const diffSeconds = now.diff(lastDjs, 'second')
-	
 	let lastTime: string
-	if ( diffSeconds < 3 ) {
+	if (diffSeconds < 3) {
 		lastTime = "just now"
 	} else if (diffSeconds < 60) {
 		lastTime = `${diffSeconds}s`
@@ -34,13 +33,13 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 		const hours = Math.floor((diffSeconds % (24 * 60 * 60)) / (60 * 60))
 		const minutes = Math.floor((diffSeconds % (60 * 60)) / 60)
 		const seconds = diffSeconds % 60
-		
+
 		const parts = []
 		if (days > 0) parts.push(`${days}d`)
 		if (hours > 0) parts.push(`${hours}h`)
 		if (minutes > 0) parts.push(`${minutes}m`)
 		if (seconds > 0 && parts.length < 2) parts.push(`${seconds}s`) // Only show seconds if less than 2 other units
-		
+
 		lastTime = parts.join('')
 	}
 
@@ -56,6 +55,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 	let color = {
 		"go": "#10F3F3",
 		"nats.js": "#EBFB35",
+		"nats.ws": "#EBFB35",
 		"python": "#A480FF",
 		"python3": "#A480FF",
 		"java": "#F374E6",
@@ -90,7 +90,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 			<div style={{ marginTop: "4px", display: "flex", flexWrap: "wrap", gap: "0px 10px" }}>
 				<ValueCmp title="START" value={start} />
 				<TooltipWrapCmp content={last}>
-				<ValueCmp title="LAST ACTIVITY" value={lastTime} style={{ color: isRecentActivity ? "var(--cmp-select-bg)" : undefined }} />
+					<ValueCmp title="LAST ACTIVITY" value={lastTime} style={{ color: isRecentActivity ? "var(--cmp-select-bg)" : undefined }} />
 				</TooltipWrapCmp>
 				<ValueCmp title="UPTIME" value={cnn.uptime} />
 				<ValueCmp title="RTT" value={rtt} />
