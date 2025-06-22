@@ -45,26 +45,34 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 		return nil, err
 	}
 	go func() {
+		// relay first metrics immediately
+		s.collectAndRelay(ctx, source, metricsChan)
 		for {
 			select {
 			case <-ctx.Done():
 				close(metricsChan)
 				return
 			case <-ticker:
-				rawNatsMetrics, err := source.FetchMetrics(ctx)
-				metrics := Metrics{
-					RetrievedAt: time.Now(),
-					Nats:        rawNatsMetrics,
-					Error:       err,
-				}
-				select {
-				case metricsChan <- metrics:
-				default:
-				}
+				s.collectAndRelay(ctx, source, metricsChan)
 			}
 		}
 	}()
 	return metricsChan, nil
+}
+
+func (s *Collector) collectAndRelay(ctx context.Context, source MetricsSource, metricsChan chan Metrics) {
+	rawNatsMetrics, err := source.FetchMetrics(ctx)
+	metrics := Metrics{
+		RetrievedAt: time.Now(),
+		Nats:        rawNatsMetrics,
+		Error:       err,
+	}
+	select {
+	case <-ctx.Done():
+		return
+	case metricsChan <- metrics:
+	default:
+	}
 }
 
 func buildMetricsSource(metrics connection.Metrics) (MetricsSource, error) {

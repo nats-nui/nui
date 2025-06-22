@@ -6,6 +6,7 @@ import { AUTH_MODE, Connection, DOC_TYPE, EDIT_STATE } from "@/types";
 import { VIEW_SIZE } from "../../utils";
 import { MessageSendState, MessageSendStore } from "../messageSend";
 import { SyncState, SyncStore } from "../../sync";
+import { CnnMetricsState, CnnMetricsStore } from "../metrics";
 
 
 
@@ -41,10 +42,6 @@ export function buildConnectionNew() {
 			hosts: [],
 			subscriptions: [],
 			auth: [],
-			// metrics: {
-			// 	httpSource: { active: false, url: "" },
-			// 	natsSource: { active: false, auth: { mode: AUTH_MODE.TOKEN } },
-			// },
 		}
 	} as CnnDetailState) as CnnDetailStore;
 	return cnnStore;
@@ -66,4 +63,20 @@ export function buildConnectionMessageSend(connectionId: string, subjects: strin
 		subjects,
 	} as MessageSendState) as MessageSendStore
 	return sendStore;
+}
+
+export function buildConnectionMetrics(connectionId: string) {
+	const store = buildStore({
+		type: DOC_TYPE.CNN_METRICS,
+		connectionId: connectionId,
+	} as CnnMetricsState) as CnnMetricsStore
+	return store;
+}
+
+export function buildClientMetrics(connectionId: string) {
+	const store = buildStore({
+		type: DOC_TYPE.CLIENT_METRICS,
+		connectionId: connectionId,
+	} as CnnMetricsState) as CnnMetricsStore
+	return store;
 }

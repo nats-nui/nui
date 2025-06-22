@@ -16,7 +16,7 @@
 	--cmp-focus: #39393989;
 }
 
-.root  :global(.jack-framework-actions) {
+.root :global(.jack-framework-actions) {
 	--cmp-select-fg: #393939;
 	--cmp-select-bg: #10F3F3;
 }
