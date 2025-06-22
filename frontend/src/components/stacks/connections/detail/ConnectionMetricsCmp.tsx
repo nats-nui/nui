@@ -94,6 +94,7 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 							value={metricUrl}
 							onChange={handleMetricUrlChange}
 							readOnly={inRead}
+							onBlur={() => handleMetricUrlChange(metricUrl.trim())}
 						/>
 					</div>
 				</div>

@@ -67,7 +67,11 @@ class SocketPool {
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
 			// se lo usa qualcun'altro alllora non lo eliminare
-			if (utils.findAll(docsSo.getAllCards(), { connectionId: ss.cnnId }).length > 0) return
+			const result = utils.forEachViews(
+				docsSo.getAllCards(),
+				view => view.state["connectionId"] == ss.cnnId || view.state["connection"]?.id == ss.cnnId,
+			)
+			if (result) return
 			this.destroyForce(key)
 		}, 2000)
 	}

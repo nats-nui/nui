@@ -9,7 +9,8 @@ import { CnnMetricsStore } from "@/stores/stacks/connection/metrics"
 import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCard from "../../CardGreenDef.module.css"
+import clsCard from "../../CardBlue.module.css"
+import { compactByte, getLargestUnit, compactNumber, nsToValue, TIME } from "@/utils/conversion"
 
 
 
@@ -30,7 +31,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 	// HOOKs
 	useEffect(() => {
-		if ( !listener?.error ) return
+		if (!listener?.error) return
 		store.setSnackbar({
 			open: true,
 			title: "ERROR",
@@ -46,6 +47,22 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	const isClientsOpen = store.getClientOpen()
 	const metrics = listener?.last
 	const varz = metrics?.varz
+	const memory = compactByte(varz?.mem)
+	const messageSend = compactNumber(varz?.out_msgs)
+	const dataSend = compactByte(varz?.out_bytes)
+	const messageReceive = compactNumber(varz?.in_msgs)
+	const dataReceive = compactByte(varz?.in_bytes)
+
+	const totalConnections = compactNumber(varz?.total_connections)
+	const substriptions = compactNumber(varz?.subscriptions)
+	const slowConsumers = compactNumber(varz?.slow_consumers)
+
+	const maxConnections = compactNumber(varz?.max_connections)
+	const maxPayload = compactByte(varz?.max_payload)
+	const maxPending = compactByte(varz?.max_pending)
+
+	const writeDeadline = nsToValue(varz?.write_deadline, TIME.SECONDS)
+
 
 	return <FrameworkCard
 		className={clsCard.root}
@@ -85,8 +102,8 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				<div className="lbl-divider-vl" />
 				<ValueCmp style={{ flex: 1 }}
 					label="MEMORY"
-					value={varz?.mem ?? "--"}
-					unit="MiB"
+					value={memory.value ?? "--"}
+					unit={memory.unit}
 				/>
 				{/* <div className="lbl-divider-vl" />
 				<ValueCmp style={{ flex: 1 }}
@@ -95,30 +112,53 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				/> */}
 			</div>
 
-			<div className="jack-lbl-prop">SEND</div>
-
-			<div style={{ display: "flex", gap: 15 }}>
-				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="MESSAGE" value={varz?.out_msgs} unit="" />
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
-				</div>
-				<div className="lbl-divider-vl" />
-				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="DATA" value={varz?.out_bytes} unit="" />
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
-				</div>
+			<div style={{ display: "flex", gap: 20 }}>
+				<div style={{ flex: 1 }} className="jack-lbl-prop">RECEIVE</div>
+				<div style={{ flex: 1 }} className="jack-lbl-prop">SEND</div>
 			</div>
 
-			<div className="jack-lbl-prop">RECEIVE</div>
 
-			<div style={{ display: "flex", gap: 15 }}>
+
+			<div style={{ display: "flex", gap: 20 }}>
+
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="MESSAGE" value={varz?.in_msgs} unit="" />
+					<ValueCmp style={{ flex: 1 }}
+						label="DATA"
+						value={dataReceive.value ?? "--"}
+						unit={dataReceive.unit}
+					/>
 					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
-				<div className="lbl-divider-vl" />
+
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp label="DATA" value={varz?.in_bytes} unit="" />
+					<ValueCmp style={{ flex: 1 }}
+						label="DATA"
+						value={dataSend.value ?? "--"}
+						unit={dataSend.unit}
+					/>
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
+				</div>
+
+			</div>
+
+
+
+			<div style={{ display: "flex", gap: 20 }}>
+				<div style={{ display: "flex", gap: 10, flex: 1 }}>
+					<ValueCmp style={{ flex: 1 }}
+						label="MESSAGE"
+						value={messageReceive.value ?? "--"}
+						unit={messageReceive.unit}
+					/>
+					<ValueCmp label="RATE" value={"???"} unit="/s" />
+				</div>
+
+				<div style={{ display: "flex", gap: 10, flex: 1 }}>
+					<ValueCmp style={{ flex: 1 }}
+						label="MESSAGE"
+						value={messageSend.value ?? "--"}
+						unit={messageSend.unit}
+					/>
 					<ValueCmp label="RATE" value={"???"} unit="/s" />
 				</div>
 			</div>
@@ -129,21 +169,21 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="CONNECTIONS" style={{ marginBottom: 15 }}>
 			<div style={{ display: "flex", marginTop: 10 }}>
-				<ValueCmp style={{ flex: 1 }} label="TOTAL" value={varz?.connections ?? "--"} />
-				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTION" value={varz?.subscriptions ?? "--"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="SLOW" value={varz?.slow_consumers} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="TOTAL CONN." value={totalConnections.value ?? "--"} unit={totalConnections.unit} />
+				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTION" value={substriptions.value ?? "--"} unit={substriptions.unit} />
+				<ValueCmp style={{ flex: 1 }} label="SLOW CONSUMERS" value={slowConsumers.value} unit={slowConsumers.unit} />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{ flex: 1 }} label="MAX.CONNECTIONS" value={varz?.max_connections ?? "--"} unit="%" />
-				<ValueCmp style={{ flex: 1 }} label="MAX.PAYLOAD" value={varz?.max_payload ?? "--"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="MAX.PENDING" value={varz?.max_pending ?? "--"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="MAX.CONNECTIONS" value={maxConnections.value ?? "--"} unit={maxConnections.unit} />
+				<ValueCmp style={{ flex: 1 }} label="MAX.PAYLOAD" value={maxPayload.value ?? "--"} unit={maxPayload.unit} />
+				<ValueCmp style={{ flex: 1 }} label="MAX.PENDING" value={maxPending.value ?? "--"} unit={maxPending.unit} />
 			</div>
 
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{ flex: 1 }} label="WRITE DEADLINE" value={varz?.write_deadline ?? "--"} unit="%" />
-				<ValueCmp style={{ flex: 1 }} label="AUTH.TIMEOUT" value={varz?.auth_timeout ?? "--"} unit="MiB" />
-				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={varz?.tls_timeout ?? "--"} unit="MiB" />
+				<ValueCmp style={{ flex: 1 }} label="WRITE DEADLINE" value={writeDeadline ?? "--"} unit={"s"} />
+				<ValueCmp style={{ flex: 1 }} label="AUTH.TIMEOUT" value={varz?.auth_timeout ?? "--"} unit="s" />
+				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={varz?.tls_timeout ?? "--"} unit="s" />
 			</div>
 		</TitleAccordion>
 

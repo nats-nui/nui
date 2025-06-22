@@ -11,7 +11,7 @@ const setup = {
 		connectionId: <string>null,
 
 		//#region VIEWBASE
-		width: 340,
+		width: 390,
 		//#endregion
 	},
 

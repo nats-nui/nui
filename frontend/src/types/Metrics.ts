@@ -36,8 +36,8 @@ export interface Varz {
 	cores: number;
 	gomaxprocs: number;
 	cpu: number; 	// CPU
-	connections: number; // CONNECTIONS / TOTAL CONNECTIONS
-	total_connections: number;
+	connections: number; 
+	total_connections: number; // CONNECTIONS / TOTAL CONN.
 	routes: number;
 	remotes: number;
 	leafnodes: number;
@@ -45,7 +45,7 @@ export interface Varz {
 	out_msgs: number; // SEND MESSAGE
 	in_bytes: number;  // RECEIVE DATA
 	out_bytes: number; // SEND DATA
-	slow_consumers: number;  // CONNECTIONS / SLOW
+	slow_consumers: number;  // CONNECTIONS / SLOW CONSUMER
 	subscriptions: number; // CONNECTIONS / SUBSCRIPTION
 	http_req_stats: Record<string, number>;
 	config_load_time: string;
