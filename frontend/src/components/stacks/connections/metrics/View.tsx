@@ -6,11 +6,11 @@ import MessagesIcon from "@/icons/cards/MessagesIcon"
 import MetricsIcon from "@/icons/cards/MetricsIcon"
 import metricsSo from "@/stores/connections/metrics"
 import { CnnMetricsStore } from "@/stores/stacks/connection/metrics"
+import { compactByte, compactNumber, nsToValue, TIME } from "@/utils/conversion"
 import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCard from "../../CardBlue.module.css"
-import { compactByte, getLargestUnit, compactNumber, nsToValue, TIME } from "@/utils/conversion"
+import clsCard from "../../CardPurple.module.css"
 
 
 
@@ -63,7 +63,6 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 	const writeDeadline = nsToValue(varz?.write_deadline, TIME.SECONDS)
 
-
 	return <FrameworkCard
 		className={clsCard.root}
 		icon={<MetricsIcon />}
@@ -99,7 +98,6 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 					unit="%"
 					decimals={2}
 				/>
-				<div className="lbl-divider-vl" />
 				<ValueCmp style={{ flex: 1 }}
 					label="MEMORY"
 					value={memory.value ?? "--"}
