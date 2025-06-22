@@ -4,7 +4,7 @@ import metricsSo from "@/stores/connections/metrics"
 import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import clsCard from "../../CardGreenDef.module.css"
+import clsCard from "../../CardPurpleDef.module.css"
 import ClientRow from "./ClientRow"
 
 
