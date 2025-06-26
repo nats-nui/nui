@@ -62,7 +62,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 		".net": "#6AFFAB",
 		"rust": "#ff74a9",
 	}[cnn.lang?.toLowerCase()] || "#A480FF"
-	//color = "var(--cmp-select-bg)"
+	color = "var(--cmp-select-bg)"
 	const lang = `${cnn.lang?.toLowerCase() ?? "--"} v${cnn.version ?? "--"}`
 
 	return (

@@ -10,7 +10,7 @@ import { compactByte, compactNumber, nsToValue, TIME } from "@/utils/conversion"
 import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCard from "../../CardPurple.module.css"
+import clsCard from "../../CardYellowDef.module.css"
 
 
 

@@ -2,6 +2,7 @@ import cnnSo from "@/stores/connections"
 import metricsSo from "@/stores/connections/metrics"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { mixStores } from "@priolo/jon"
+import { SORTABLE_PROPERTIES } from "./types"
 
 
 
@@ -10,6 +11,7 @@ const setup = {
 	state: {
 		connectionId: <string>null,
 		textSearch: "",
+		sort: <SORTABLE_PROPERTIES>null,
 
 		//#region VIEWBASE
 		width: 410,
@@ -54,6 +56,7 @@ const setup = {
 
 	mutators: {
 		setTextSearch: (textSearch: string) => ({ textSearch }),
+		setSort: (sort: SORTABLE_PROPERTIES) => ({ sort }),
 	},
 }
 
