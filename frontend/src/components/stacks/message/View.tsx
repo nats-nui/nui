@@ -39,7 +39,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const autoFormat = msgSa.autoFormat
 	const noHeaders = !msgSa.message.headers || Object.keys(msgSa.message.headers).length == 0
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
-	const haveParent = !!msgSo.state.parent && msgSo.state.parent.state.type == DOC_TYPE.MESSAGES || msgSo.state.parent.state.type == DOC_TYPE.STREAM_MESSAGES
+	const haveParent = msgSo.state.parent?.state?.type == DOC_TYPE.MESSAGES || msgSo.state.parent?.state?.type == DOC_TYPE.STREAM_MESSAGES
 	const linkToLast = haveParent && msgSo.state.linkToLast
 
 	return <FrameworkCard
