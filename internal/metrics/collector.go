@@ -19,6 +19,10 @@ type MetricsSource interface {
 	FetchMetrics(ctx context.Context) (map[string]any, error)
 }
 
+type MetricsDecorator interface {
+	Decorate(metrics map[string]any) (map[string]any, error)
+}
+
 type Collector struct {
 	repo Repo
 }
