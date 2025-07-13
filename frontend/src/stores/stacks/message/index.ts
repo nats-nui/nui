@@ -19,6 +19,7 @@ const setup = {
 
 		/* voglio vedere sepre l'ultimo messaggio arrivato*/
 		linkToLast: false,
+		showDiff: false,
 	},
 
 	getters: {
@@ -71,6 +72,7 @@ const setup = {
 
 	mutators: {
 		setLinkToLast: (linkToLast: boolean) => ({ linkToLast }),
+		setShowDiff: (showDiff: boolean) => ({ showDiff }),
 		setMessage: (message: Message) => ({ message }),
 	},
 }
