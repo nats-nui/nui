@@ -52,6 +52,7 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	}
 
 	go func() {
+		generalRatesDecorater := NewRatesDecorator(ratesMetrics)
 		for {
 			select {
 			case <-ctx.Done():
@@ -63,6 +64,9 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 					RetrievedAt: time.Now(),
 					Nats:        rawNatsMetrics,
 					Error:       err,
+				}
+				if err == nil {
+					generalRatesDecorater.Decorate(rawNatsMetrics["varz"].(map[string]any))
 				}
 				select {
 				case metricsChan <- metrics:
