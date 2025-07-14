@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var ratesMetrics = []string{"in_msgs", "out_msgs", "in_bytes", "out_bytes"}
+
 type Repo interface {
 	GetById(id string) (*connection.Connection, error)
 }
@@ -48,6 +50,7 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	if err != nil {
 		return nil, err
 	}
+
 	go func() {
 		for {
 			select {
@@ -76,4 +79,15 @@ func buildMetricsSource(metrics connection.Metrics) (MetricsSource, error) {
 		return NewHTTPSource(metrics.HttpSource.Url), nil
 	}
 	return nil, errors.New("metrics source not implemented")
+}
+
+func decorateMetrics(metrics map[string]any, decorator MetricsDecorator) (map[string]any, error) {
+	if decorator == nil {
+		return metrics, nil
+	}
+	decoratedMetrics, err := decorator.Decorate(metrics["varz"].(map[string]any))
+	if err != nil {
+		return nil, err
+	}
+	return decoratedMetrics, nil
 }
