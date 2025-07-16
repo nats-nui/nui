@@ -12,11 +12,13 @@ import (
 
 // Endpoint constants
 const (
+	KeyVarz       = "varz"
 	EndpointVarz  = "/varz"
-	EndpointConnz = "/connz"
+	KeyConnz      = "connz"
+	EndpointConnz = "/connz?limit=10000&sort=last"
 )
 
-var AllEndpoints = []string{EndpointVarz, EndpointConnz}
+var AllEndpoints = map[string]string{KeyVarz: EndpointVarz, KeyConnz: EndpointConnz}
 
 type HTTPSource struct {
 	client  *http.Client
@@ -32,18 +34,17 @@ func NewHTTPSource(baseURL string) *HTTPSource {
 	}
 }
 
-func (s *HTTPSource) FetchMetrics(ctx context.Context) (map[string]any, error) {
-	result := make(map[string]any)
+func (s *HTTPSource) FetchMetrics(ctx context.Context) (map[string]map[string]any, error) {
+	result := make(map[string]map[string]any)
 	var fetchError error
 
 	// fetch data from all endpoints in list
-	for _, endpoint := range AllEndpoints {
-		endpointName := endpoint[1:]
+	for key, endpoint := range AllEndpoints {
 		data, err := s.fetchEndpoint(ctx, endpoint)
 		if err != nil {
-			fetchError = errors.Join(fetchError, fmt.Errorf("%s fetch error: %w", endpointName, err))
+			fetchError = errors.Join(fetchError, fmt.Errorf("%s fetch error: %w", key, err))
 		} else {
-			result[endpointName] = data
+			result[key] = data
 		}
 	}
 
