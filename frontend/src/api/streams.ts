@@ -64,7 +64,7 @@ async function messages(connectionId: string, streamName: string, filter: Stream
 	query += (!!filter.subjects && filter.subjects.length > 0) 
 		? `subjects=${filter.subjects.join(",")}` 
 		: ""
-
+	if (!query.endsWith("&")) query += "&"
 	const messages: Message[] = await ajax.get(`connection/${connectionId}/stream/${streamName}/messages?${query}`, null, opt)
 	return messages.map(m => {
 		m.payload = atob(m.payload)
