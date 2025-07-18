@@ -20,7 +20,7 @@ const ClientsActions: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleSortClick = () => {
-		//store.setSortBy((store.state.sortBy === "cid") ? "last_activity" : "cid")
+		store.setSortOpen(!store.state.sortOpen)
 	}
 
 	// RENDER
@@ -30,7 +30,7 @@ const ClientsActions: FunctionComponent<Props> = ({
 			onChange={text => store.setTextSearch(text)}
 		/>
 		<Button
-			children="SORT"
+			children={`SORT: ${store.state.sort}`}
 			onClick={handleSortClick}
 		/>
 	</>

@@ -14,39 +14,26 @@ export interface Varz {
 	go: string;
 	host: string;
 	port: number;
-	max_connections: number; // CONNECTIONS / MAX.CONNECTIONS
+	
 	ping_interval: number;
 	ping_max: number;
 	http_host: string;
 	http_port: number;
 	https_port: number;
-	auth_timeout: number; // CONNECTIONS / WRITE DEADLINE
+	
 	max_control_line: number;
-	max_payload: number; // CONNECTIONS / MAX.PAYLOAD
-	max_pending: number; // CONNECTIONS / MAX.PENDING
 	cluster: Record<string, unknown>;
 	gateway: Record<string, unknown>;
 	leaf: Record<string, unknown>;
-	tls_timeout: number; // CONNECTIONS / TLS TIMEOUT
-	write_deadline: number; // CONNECTIONS / WRITE DEADLINE
 	start: string;
 	now: string;
 	uptime: string;
-	mem: number;	// MEMORY
 	cores: number;
 	gomaxprocs: number;
-	cpu: number; 	// CPU
-	connections: number; 
-	total_connections: number; // CONNECTIONS / TOTAL CONN.
+	connections: number;
 	routes: number;
 	remotes: number;
 	leafnodes: number;
-	in_msgs: number;  // RECEIVE MESSAGE
-	out_msgs: number; // SEND MESSAGE
-	in_bytes: number;  // RECEIVE DATA
-	out_bytes: number; // SEND DATA
-	slow_consumers: number;  // CONNECTIONS / SLOW CONSUMER
-	subscriptions: number; // CONNECTIONS / SUBSCRIPTION
 	http_req_stats: Record<string, number>;
 	config_load_time: string;
 	slow_consumer_stats: {
@@ -55,6 +42,33 @@ export interface Varz {
 		gateways: number;
 		leafs: number;
 	};
+
+	cpu: number; 	// CPU
+	mem: number;	// MEMORY
+
+	in_msgs: number;  // RECEIVE MESSAGE
+	out_msgs: number; // SEND MESSAGE
+	in_bytes: number;  // RECEIVE DATA
+	out_bytes: number; // SEND DATA
+	nui_in_bytes_sec: number, // RATE RECEIVE DATA
+	nui_in_msgs_sec: number, // RATE RECEIVE MESSAGE
+	nui_out_bytes_sec: number, // RATE SEND DATA
+	nui_out_msgs_sec: number, // RATE SEND MESSAGE
+
+	total_connections: number; // CONNECTIONS / TOTAL CONN.
+	subscriptions: number; // CONNECTIONS / SUBSCRIPTION
+	slow_consumers: number;  // CONNECTIONS / SLOW CONSUMER
+
+	max_connections: number; // CONNECTIONS / MAX.CONNECTIONS
+	max_payload: number; // CONNECTIONS / MAX.PAYLOAD
+	max_pending: number; // CONNECTIONS / MAX.PENDING
+
+	write_deadline: number; // CONNECTIONS / WRITE DEADLINE
+	auth_timeout: number; // CONNECTIONS / AUTH.TIMEOUT
+	tls_timeout: number; // CONNECTIONS / TLS TIMEOUT
+
+
+
 }
 
 export interface ConnzConnection {
@@ -78,6 +92,11 @@ export interface ConnzConnection {
 	lang?: string;
 	version?: string;
 	mqtt_client?: string;
+
+	nui_in_bytes_sec: number;
+	nui_in_msgs_sec: number;
+	nui_out_bytes_sec: number;
+	nui_out_msgs_sec: number;
 }
 
 export interface Connz {

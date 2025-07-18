@@ -4,9 +4,10 @@ import metricsSo from "@/stores/connections/metrics"
 import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
-import clsCard from "../../CardYellowDef.module.css"
+import clsCard from "../../CardPurpleDef.module.css"
 import ClientRow from "./ClientRow"
 import ClientsActions from "./ClientsAction"
+import SortDialog from "./SortDialog"
 
 
 
@@ -58,6 +59,9 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 		)) : (
 			<div className="jack-lbl-empty">There are currently no clients connected</div>
 		)}
+
+		<SortDialog store={store} />
+
 	</FrameworkCard>
 }
 

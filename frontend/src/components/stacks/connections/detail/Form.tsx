@@ -183,9 +183,9 @@ const ConnectionDetailForm: FunctionComponent<Props> = ({
             </div>
         </TitleAccordion>
 
-        <TitleAccordion title="METRICS">
-            <ConnectionMetricsCmp store={cnnDetailSo} />
-        </TitleAccordion>
+        {/*<TitleAccordion title="METRICS">*/}
+        {/*    <ConnectionMetricsCmp store={cnnDetailSo} />*/}
+        {/*</TitleAccordion>*/}
 
         <TitleAccordion title="ADVANCED">
             <div className="jack-lbl-prop lbl-info-container">INBOX PREFIX

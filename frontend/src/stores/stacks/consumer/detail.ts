@@ -87,9 +87,20 @@ const setup = {
 		async save(_: void, store?: ConsumerStore) {
 			let consumerSaved: StreamConsumer = null
 			if (store.state.editState == EDIT_STATE.NEW) {
-				consumerSaved = await cnsApi.create(store.state.connectionId, store.state.streamName, store.state.consumer.config, { store })
+				consumerSaved = await cnsApi.create(
+					store.state.connectionId, 
+					store.state.streamName, 
+					store.state.consumer.config, 
+					{ store }
+				)
 			} else {
-				consumerSaved = await cnsApi.update(store.state.connectionId, store.state.streamName, store.state.consumer.config.name, store.state.consumer.config, { store })
+				consumerSaved = await cnsApi.update(
+					store.state.connectionId, 
+					store.state.streamName, 
+					store.state.consumer.config.name ?? store.state.consumer.config.durableName, 
+					store.state.consumer.config, 
+					{ store }
+				)
 			}
 			store.setConsumer(consumerSaved)
 			store.getParentList()?.update(consumerSaved)

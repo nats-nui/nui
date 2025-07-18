@@ -10,7 +10,7 @@ import { compactByte, compactNumber, nsToValue, TIME } from "@/utils/conversion"
 import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCard from "../../CardYellowDef.module.css"
+import clsCard from "../../CardPurple.module.css"
 
 
 
@@ -48,10 +48,20 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	const metrics = listener?.last
 	const varz = metrics?.varz
 	const memory = compactByte(varz?.mem)
-	const messageSend = compactNumber(varz?.out_msgs)
-	const dataSend = compactByte(varz?.out_bytes)
-	const messageReceive = compactNumber(varz?.in_msgs)
+
+	// ------
 	const dataReceive = compactByte(varz?.in_bytes)
+	const dataReceiveRate = compactByte(varz?.nui_in_bytes_sec)
+	const dataSend = compactByte(varz?.out_bytes)
+	const dataSendRate = compactByte(varz?.nui_out_bytes_sec)
+
+	const messageReceive = compactNumber(varz?.in_msgs)
+	const messageReceiveRate = compactByte(varz?.nui_in_msgs_sec)
+	const messageSend = compactNumber(varz?.out_msgs)
+	const messageSendRate = compactByte(varz?.nui_out_msgs_sec)
+	// ------
+
+
 
 	const totalConnections = compactNumber(varz?.total_connections)
 	const substriptions = compactNumber(varz?.subscriptions)
@@ -94,13 +104,13 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 			<div style={{ display: "flex", marginTop: 10, gap: 15 }}>
 				<ValueCmp style={{ flex: 1 }}
 					label="CPU"
-					value={varz?.cpu ?? "--"}
+					value={varz?.cpu}
 					unit="%"
 					decimals={2}
 				/>
 				<ValueCmp style={{ flex: 1 }}
 					label="MEMORY"
-					value={memory.value ?? "--"}
+					value={memory.value}
 					unit={memory.unit}
 				/>
 				{/* <div className="lbl-divider-vl" />
@@ -122,42 +132,64 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
 						label="DATA"
-						value={dataReceive.value ?? "--"}
+						value={dataReceive.value}
 						unit={dataReceive.unit}
+						decimals={1}
 					/>
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE" 
+						value={dataReceiveRate.value} 
+						unit={`${dataReceiveRate.unit}/s`} 
+						decimals={1}
+					/>
 				</div>
 
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
 						label="DATA"
-						value={dataSend.value ?? "--"}
+						value={dataSend.value}
 						unit={dataSend.unit}
+						decimals={1}
 					/>
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE" 
+						value={dataSendRate.value} 
+						unit={`${dataSendRate.unit}/s`}
+						decimals={1}
+					/>
 				</div>
 
 			</div>
-
-
 
 			<div style={{ display: "flex", gap: 20 }}>
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
 						label="MESSAGE"
-						value={messageReceive.value ?? "--"}
+						value={messageReceive.value}
 						unit={messageReceive.unit}
+						decimals={1}
 					/>
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE" 
+						value={messageReceiveRate.value} 
+						unit={`${messageReceiveRate.unit}/s`} 
+						decimals={1}
+					/>
 				</div>
 
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
 						label="MESSAGE"
-						value={messageSend.value ?? "--"}
+						value={messageSend.value}
 						unit={messageSend.unit}
+						decimals={1}
 					/>
-					<ValueCmp label="RATE" value={"???"} unit="/s" />
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE" 
+						value={messageSendRate.value} 
+						unit={`${messageSendRate.unit}/s`} 
+						decimals={1}
+					/>
 				</div>
 			</div>
 

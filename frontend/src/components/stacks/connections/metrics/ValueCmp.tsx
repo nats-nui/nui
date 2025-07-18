@@ -21,6 +21,8 @@ const ValueCmp: FunctionComponent<Props> = ({
 	className
 }) => {
 
+	if ( value == null ) value = "--"
+	
 	if (decimals !== undefined && typeof value === 'number') {
 		value = value.toFixed(decimals)
 	}
