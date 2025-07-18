@@ -1,5 +1,6 @@
 export enum SORTABLE_PROPERTIES {
-	CID = "cid",
-	NAME = "name",
-	LANGUAGE = "language",
+	LAST_ACTION = "LAST ACTION",
+	CID = "CID",
+	NAME = "NAME",
+	LANGUAGE = "LANGUAGE",
 }

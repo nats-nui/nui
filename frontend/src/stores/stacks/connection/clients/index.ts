@@ -11,10 +11,11 @@ const setup = {
 	state: {
 		connectionId: <string>null,
 		textSearch: "",
-		sort: <SORTABLE_PROPERTIES>null,
+		sort: SORTABLE_PROPERTIES.LAST_ACTION,
+		sortOpen: false,
 
 		//#region VIEWBASE
-		width: 410,
+		width: 460,
 		//#endregion
 	},
 
@@ -57,6 +58,7 @@ const setup = {
 	mutators: {
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setSort: (sort: SORTABLE_PROPERTIES) => ({ sort }),
+		setSortOpen: (sortOpen: boolean) => ({ sortOpen }),
 	},
 }
 

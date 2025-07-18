@@ -2,6 +2,7 @@ import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import ArrowUpIcon from "@/icons/ArrowUpIcon"
 import { ConnzConnection } from "@/types/Metrics"
 import { compactByte, compactNumber } from "@/utils/conversion"
+import { getDeltaTime } from "@/utils/timeUtils"
 import { TooltipWrapCmp } from "@priolo/jack"
 import dayjs from "dayjs"
 import { FunctionComponent } from "react"
@@ -14,41 +15,9 @@ interface ClientRowProps {
 
 const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 
-	const start = dayjs(cnn.start).format("YYYY-MM-DD HH:mm:ss")
-
-	const lastDjs = dayjs(cnn.last_activity)
-	const last = lastDjs.format("YYYY-MM-DD HH:mm:ss")
-	const isRecentActivity = dayjs().diff(lastDjs, 'minute') < 1
-
-	// Calculate elapsed time since last activity
-	const now = dayjs()
-	const diffSeconds = now.diff(lastDjs, 'second')
-	let lastTime: string
-	if (diffSeconds < 3) {
-		lastTime = "just now"
-	} else if (diffSeconds < 60) {
-		lastTime = `${diffSeconds}s`
-	} else {
-		const days = Math.floor(diffSeconds / (24 * 60 * 60))
-		const hours = Math.floor((diffSeconds % (24 * 60 * 60)) / (60 * 60))
-		const minutes = Math.floor((diffSeconds % (60 * 60)) / 60)
-		const seconds = diffSeconds % 60
-
-		const parts = []
-		if (days > 0) parts.push(`${days}d`)
-		if (hours > 0) parts.push(`${hours}h`)
-		if (minutes > 0) parts.push(`${minutes}m`)
-		if (seconds > 0 && parts.length < 2) parts.push(`${seconds}s`) // Only show seconds if less than 2 other units
-
-		lastTime = parts.join('')
-	}
-
-
-
-	const msgsIn = compactNumber(cnn?.in_msgs)
-	const msgsOut = compactNumber(cnn?.out_msgs)
-	const bytesOut = compactByte(cnn?.out_bytes)
-	const bytesIn = compactByte(cnn?.in_bytes)
+	const startActivity = dayjs(cnn.start).format("YYYY-MM-DD HH:mm:ss")
+	const lastActivity = dayjs(cnn.last_activity).format("YYYY-MM-DD HH:mm:ss")
+	const [lastActivityDelta, isRecentActivity] = getDeltaTime(cnn.last_activity)
 	const rtt = parseInt(cnn.rtt) + cnn.rtt.slice(-2)
 	const pending = compactByte(cnn?.pending_bytes)
 
@@ -65,6 +34,16 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 	color = "var(--cmp-select-bg)"
 	const lang = `${cnn.lang?.toLowerCase() ?? "--"} v${cnn.version ?? "--"}`
 
+	const msgsIn = compactNumber(cnn?.in_msgs)
+	const msgsInRate = compactByte(cnn?.nui_in_msgs_sec)
+	const msgsOut = compactNumber(cnn?.out_msgs)
+	const msgsOutRate = compactByte(cnn?.nui_out_msgs_sec)
+
+	const bytesOut = compactByte(cnn?.out_bytes)
+	const bytesOutRate = compactByte(cnn?.nui_out_bytes_sec)
+	const bytesIn = compactByte(cnn?.in_bytes)
+	const bytesInRate = compactByte(cnn?.nui_in_bytes_sec)
+
 	return (
 		<div key={cnn.cid} style={{
 			padding: "8px",
@@ -77,39 +56,56 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 
 			{/* IDENTIFIE */}
 			<div style={{ display: "flex", gap: 3 }}>
-				<div style={{ flex: 1 }}> <span style={{ fontWeight: 700 }}>{cnn.cid}</span> / {cnn.ip}:{cnn.port}</div>
+				<div style={{ flex: 1, ...elipsisStyle }}> <span style={{ fontWeight: 700 }}>{cnn.cid}</span> / {cnn.ip}:{cnn.port}</div>
 				<div style={{ backgroundColor: color, padding: "2px 4px", borderRadius: "2px", fontSize: 10, color: "#000" }}>
 					{lang}
 				</div>
 			</div>
 
 			{/* NAME */}
-			{cnn.name && <div style={{ color: "var(--cmp-select-bg)" }}>{cnn.name}</div>}
+			{cnn.name && <div style={{ color: "var(--cmp-select-bg)", ...elipsisStyle }}>{cnn.name}</div>}
 
 			{/* PROPERTIES */}
-			<div style={{ marginTop: "4px", display: "flex", flexWrap: "wrap", gap: "0px 10px" }}>
-				<ValueCmp title="START" value={start} />
-				<TooltipWrapCmp content={last}>
-					<ValueCmp title="LAST ACTIVITY" value={lastTime} style={{ color: isRecentActivity ? "var(--cmp-select-bg)" : undefined }} />
-				</TooltipWrapCmp>
-				<ValueCmp title="UPTIME" value={cnn.uptime} />
-				<ValueCmp title="RTT" value={rtt} />
-				<ValueCmp title="SUB." value={cnn.subscriptions} />
-				<ValueCmp title="PENDING" value={pending.value + pending.unit} />
-				<ValueInOutCmp title="MESSAGES"
-					valueIn={msgsIn.value + msgsIn.unit}
-					valueOut={msgsOut.value + msgsOut.unit}
-				/>
-				<ValueInOutCmp title="BYTES"
-					valueIn={bytesIn.value + bytesIn.unit}
-					valueOut={bytesOut.value + bytesOut.unit}
-				/>
+			<div style={{ marginTop: "4px", display: "flex", flexDirection: "column", gap: "0px" }}>
+
+				<div style={{ display: "flex", gap: "10px" }}>
+					<TooltipWrapCmp content={lastActivity}>
+						<ValueCmp title="LAST ACT." value={lastActivityDelta} style={{ color: isRecentActivity ? "var(--cmp-select-bg)" : undefined }} />
+					</TooltipWrapCmp>
+					<ValueCmp title="START" value={startActivity} />
+					<ValueCmp title="UPTIME" value={cnn.uptime} />
+					<ValueCmp title="RTT" value={rtt} />
+					<ValueCmp title="SUBS." value={cnn.subscriptions} />
+					<ValueCmp title="PENDING" value={pending.value + pending.unit} />
+				</div>
+
+				<div style={{ display: "flex" }}>
+					<Value2Cmp title="MESS. IN" value={msgsIn} rate={msgsInRate} />
+
+					<Value2Cmp title="MESS. OUT" value={msgsOut} rate={msgsOutRate} />
+
+					<Value2Cmp title="DATA IN" value={bytesIn} rate={bytesInRate} />
+
+					<Value2Cmp title="DATA OUT" value={bytesOut} rate={bytesOutRate} />
+				</div>
+
 			</div>
 		</div>
 	)
 }
 
 export default ClientRow
+
+const elipsisStyle: React.CSSProperties = {
+	overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+}
+
+
+function showValueAndUnit({ value, unit }: { value: number, unit: string }): string {
+	if (value === undefined || value === null) return "--"
+	return value.toFixed(1) + unit
+}
+
 
 interface ValueCmpProps {
 	title: string
@@ -119,35 +115,70 @@ interface ValueCmpProps {
 
 const ValueCmp: FunctionComponent<ValueCmpProps> = ({ title, value, style }) => {
 	return (
-		<div style={{ display: "flex", flexDirection: "column", ...style }}>
+		<div style={{ display: "flex", flexDirection: "column", ...style, ...elipsisStyle }}>
 			<div style={{ color: "#888", fontSize: 10 }}>{title}</div>
 			<div>{value}</div>
 		</div>
 	)
 }
 
+interface Value2CmpProps {
+	title: string
+	value: { value: number, unit: string }
+	rate?: { value: number, unit: string }
+	style?: React.CSSProperties
+}
+
+const Value2Cmp: FunctionComponent<Value2CmpProps> = ({ title, value, rate, style }) => {
+	return (
+		<div style={{ display: "flex", flexDirection: "column", flex: 1, ...style }}>
+			<div style={{ color: "#888", fontSize: 10 }}>{title}</div>
+			<div>
+				<span>{value.value?.toFixed(1) ?? "--"}</span><span>{value.unit}</span>
+				<span> / </span>
+				<span>{rate.value?.toFixed(1) ?? "--"}</span><span>{rate.unit}</span>
+			</div>
+		</div>
+	)
+}
 interface ValueInOutCmpProps {
 	title: string
-	valueIn: string | number
-	valueOut: string | number
+	valueIn: string
+	valueInRate: string
+	valueOut: string
+	valueOutRate: string
 }
 
 const ValueInOutCmp: FunctionComponent<ValueInOutCmpProps> = ({
 	title,
 	valueIn,
+	valueInRate,
 	valueOut,
+	valueOutRate,
 }) => {
 	return (
-		<div style={{ display: "flex", flexDirection: "column" }}>
+		<div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 			<div style={{ color: "#888", fontSize: 10 }}>{title}</div>
 			<div style={{ display: "flex" }}>
+
 				<TooltipWrapCmp content="RECEIVE" style={{ marginRight: 3, display: "flex", alignItems: "center" }}>
 					<ArrowUpIcon />
 					<div>{valueIn}</div>
 				</TooltipWrapCmp>
+				<TooltipWrapCmp content="RECEIVE RATE PER SECOND" style={{ display: "flex", alignItems: "center" }}>
+					/
+					<div>{valueInRate}</div>
+				</TooltipWrapCmp>
+
+				<div style={{ flex: 1 }} />
+
 				<TooltipWrapCmp content="SEND" style={{ marginRight: 3, display: "flex", alignItems: "center" }}>
 					<ArrowDownIcon />
-					{valueIn}
+					{valueOut}
+				</TooltipWrapCmp>
+				<TooltipWrapCmp content="SEND RATE PER SECOND" style={{ display: "flex", alignItems: "center" }}>
+					/
+					{valueOutRate}
 				</TooltipWrapCmp>
 			</div>
 		</div>
