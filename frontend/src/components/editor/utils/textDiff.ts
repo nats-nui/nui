@@ -21,14 +21,26 @@ export function calculateTextDifferences(oldText: string, newText: string): IRan
 		const numRC = (change.value.match(/\n/g) || []).length
 
 		if (change.added) {
-			
+
+			let value = change.value
+			let nRC = numRC
+			let lastRC = value.lastIndexOf('\n')
+			if (lastRC == value.length - 1) {
+				value = value.slice(0, -1)
+				lastRC = value.lastIndexOf('\n')
+				nRC--
+			}
+
 			const startLine = line
 			const startColumn = column
-			const endLine = startLine + numRC
-			const returnIndex = change.value.indexOf('\n')
-			const endColumn = returnIndex == -1
-				? startColumn + change.value.length
-				: startColumn + returnIndex - 1
+			const endLine = startLine + nRC
+			let endColumn = startColumn
+			if (nRC == 0) {
+				endColumn += value.length - 1
+			} else {
+				const deltaRC = lastRC - value.length + 1
+				endColumn += deltaRC
+			}
 
 			differences.push({
 				startLineNumber: startLine,
