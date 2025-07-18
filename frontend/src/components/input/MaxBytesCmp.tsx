@@ -1,16 +1,9 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useState } from "react"
 import { Accordion, IconToggle, ListDialog, NumberInput, StringUpRow } from "@priolo/jack"
+import { valueToBytes, bytesToValue, BYTE } from "@/utils/conversion"
 
 
-
-enum BYTE {
-	BYTES = "bytes",
-	KIB = "kib",
-	MIB = "mib",
-	GIB = "gib",
-	TIB = "tib",
-}
 
 interface Props {
 	store?: ViewStore
@@ -80,33 +73,3 @@ const MaxBytesCmp: FunctionComponent<Props> = ({
 }
 
 export default MaxBytesCmp
-
-function bytesToValue(value: number, to: BYTE) {
-	switch (to) {
-		case BYTE.TIB:
-			return Math.round(value / 1099511627776)
-		case BYTE.GIB:
-			return Math.round(value / 1073741824)
-		case BYTE.MIB:
-			return Math.round(value / 1048576)
-		case BYTE.KIB:
-			return Math.round(value / 1024)
-		default:
-			return value
-	}
-}
-
-function valueToBytes(value: number, from: BYTE) {
-	switch (from) {
-		case BYTE.TIB:
-			return value * 1099511627776
-		case BYTE.GIB:
-			return value * 1073741824
-		case BYTE.MIB:
-			return value * 1048576
-		case BYTE.KIB:
-			return value * 1024
-		default:
-			return value
-	}
-}

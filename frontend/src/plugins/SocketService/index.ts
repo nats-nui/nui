@@ -5,6 +5,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils.js";
 import { optionsDefault } from "./utils.js";
 import cnnSo from "@/stores/connections"
 import { CNN_STATUS } from "@/types/Connection.js";
+import { EventEmitter } from "@/utils/EventEmitter.js";
 
 
 
@@ -21,13 +22,16 @@ export class SocketService {
 	cnnId: string = null
 	/** modulo per la riconnessione */
 	reconnect: Reconnect;
+	emitter = new EventEmitter()
 
 	// callback su apertura connessione
-	onOpen: () => void = null
+	//onOpen: () => void = null
 	// callback su arrivo messaggio
-	onMessage?: (message: PayloadMessage) => void
-	onStatus?: (payload: PayloadStatus) => void
-	onError?: (error: PayloadError) => void
+	//onMessage?: (message: PayloadMessage) => void
+	// callback su stato connessione
+	//onStatus?: (payload: PayloadStatus) => void
+	// callback su errore
+	//onError?: (error: PayloadError) => void
 
 	constructor(options: SocketOptions = {}) {
 		this.options = { ...optionsDefault, ...options }
@@ -64,6 +68,8 @@ export class SocketService {
 		this.websocket.onclose = this.handleClose.bind(this);
 		this.websocket.onmessage = this.handleMessage.bind(this);
 		this.websocket.onerror = this.handleError.bind(this);
+
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, this.websocket.readyState)
 	}
 
 	/** 
@@ -74,6 +80,7 @@ export class SocketService {
 		this.websocket.close()
 		this.websocket = null
 		if (newCnnId) this.cnnId = newCnnId
+		this.emitter.offAll()
 	}
 
 	/** 
@@ -102,7 +109,11 @@ export class SocketService {
 			body: `send:FE>BE`,
 			data: msg,
 		})
-		this.websocket.send(msg)
+		try {
+			this.websocket.send(msg)
+		} catch (err) {
+			logSo.addError(err)
+		}
 	}
 
 	sendSubjects(subjects: string[]) {
@@ -130,12 +141,14 @@ export class SocketService {
 		//console.log("socket:open")
 		this.reconnect.stop()
 		this.reconnect.tryZero()
-		this.onOpen?.()
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, this.websocket.readyState)
+		//this.onOpen?.()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
 
 	handleClose(_: CloseEvent) {
 		//console.log("socket:close")
+		this.emitter.emit(SS_EVENTS.WS_CONNECTION, WebSocket.CLOSED)
 		this.clear()
 		this.reconnect.start()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
@@ -145,14 +158,19 @@ export class SocketService {
 	handleMessage(e: MessageEvent) {
 		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
 		const type = message.type
-		
+
+		this.emitter.emit(type, message.payload)
+
 		switch (type) {
 			case MSG_TYPE.CNN_STATUS: {
 				const payload = message.payload as PayloadStatus
-				this.onStatus?.(payload)
+
+				//this.onStatus?.(payload)
+				this.emitter.emit(SS_EVENTS.NATS_STATUS, payload)
 				changeConnectionStatus(this.cnnId, payload.status)
+
 				let body = `${payload.status}`
-				if (payload.error) {body += ` - ${payload.error}`}
+				if (payload.error) { body += ` - ${payload.error}` }
 				logSo.add({
 					type: MESSAGE_TYPE.INFO,
 					title: "CONNECTION STATUS",
@@ -160,16 +178,16 @@ export class SocketService {
 				})
 				break
 			}
-			case MSG_TYPE.NATS_MESSAGE: {
-				if (!this.onMessage) return
-				const payload = message.payload as PayloadMessage
-				this.onMessage({
-					headers: payload.headers,
-					subject: payload.subject,
-					payload: atob(payload.payload),
-				})
-				break
-			}
+			// case MSG_TYPE.NATS_MESSAGE: {
+			// 	if (!this.onMessage) return
+			// 	const payload = message.payload as PayloadMessage
+			// 	this.onMessage({
+			// 		headers: payload.headers,
+			// 		subject: payload.subject,
+			// 		payload: atob(payload.payload),
+			// 	})
+			// 	break
+			// }
 			case MSG_TYPE.ERROR:
 				const error: string = (message.payload as PayloadError)?.error
 				//this.onError?.(message.payload as PayloadError)
@@ -193,9 +211,14 @@ export class SocketService {
 	//#endregion
 }
 
-
 function changeConnectionStatus(cnnId: string, status: CNN_STATUS) {
 	const cnn = cnnSo.getById(cnnId)
 	if (!cnn || cnn.status == status) return
 	cnnSo.update({ id: cnnId, status })
+}
+
+export enum SS_EVENTS {
+	WS_CONNECTION = "ws-connection",
+	ERROR = "error",
+	NATS_STATUS = "nats-status",
 }

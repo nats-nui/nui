@@ -4,15 +4,6 @@ import EditMetadataRow from "@/components/rows/EditMetadataRow.tsx";
 
 
 
-enum TIME {
-	NS = "nano s.",
-	MS = "milli s.",
-	SECONDS = "seconds",
-	MINUTES = "minutes",
-	HOURS = "hours",
-	DAYS = "days",
-}
-
 interface Props {
 	items: { [key: string]: string };
 	readOnly?: boolean

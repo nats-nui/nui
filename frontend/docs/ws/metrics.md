@@ -26,14 +26,40 @@ client -> server
 Server sends metrics updates to the client.  
 server -> client
 ```typescript
-{
-  "type": "metrics_resp",
-  "payload": {
-    "nats": { [key: string]: any },
-    "error": string
+type metric = {
+  type: "metrics_resp",
+  payload: {
+    nats: { 
+      connz: {[key: string]: any },
+      varz: {
+        cpu: number,
+        mem: number,
+        out_msgs: number,
+        out_bytes: number,
+        in_msgs: number,
+        in_bytes: number,
+        total_connections: number,
+        subscriptions: number,
+        slow_consumers: number,
+        max_connections: number,
+        max_payload: number,
+        max_pending: number,
+        write_deadline: number,
+        auth_timeout: number,
+        tls_timeout: number,
+
+        nui_in_bytes_sec: number,
+        nui_in_msgs_sec: number,
+        nui_out_bytes_sec: number,
+        nui_out_msgs_sec: number,
+      },
+    },
+    error: string,
   }
 }
 ```
+
+
 
 ## NATS METRICS STRUCTURE
 
