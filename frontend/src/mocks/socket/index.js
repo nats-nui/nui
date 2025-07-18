@@ -62,15 +62,20 @@ const onMessage = client => msgRaw => {
 	const type = msg.type
 	switch (type) {
 		case "subscriptions_req":
+
 			Thread.Find({ cnnId: client.cnnId })?.stop()
+
 			const subjects = msg.payload.subjects
+			const time = subjects.includes("fido") ? 100 : 1000
+
 			if (Array.isArray(subjects) && subjects.length > 0) {
 				new Thread(
 					() => sendTestMessages(client, subjects),
 					{ cnnId: client.cnnId },
-					100
+					time
 				).start()
 			}
+
 			break
 		case "error":
 			break
