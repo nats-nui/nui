@@ -36,7 +36,7 @@ export function calculateTextDifferences(oldText: string, newText: string): IRan
 			const endLine = startLine + nRC
 			let endColumn = startColumn
 			if (nRC == 0) {
-				endColumn += value.length - 1
+				endColumn += value.length
 			} else {
 				const deltaRC = lastRC - value.length + 1
 				endColumn += deltaRC
