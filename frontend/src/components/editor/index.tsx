@@ -2,11 +2,12 @@ import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import { getEditorLanguage } from "@/stores/stacks/message/utils"
 import { MSG_FORMAT } from "@/utils/editor"
+import { delay } from "@/utils/time"
 import { Editor, Monaco } from "@monaco-editor/react"
-import { editor } from "monaco-editor"
-import { ForwardRefRenderFunction, forwardRef, useEffect, useImperativeHandle, useRef } from "react"
+import { diffJson, diffWords } from "diff"
+import { editor, Range } from "monaco-editor"
+import { forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useRef } from "react"
 import { editorOptionsDefault } from "./utils"
-import { calculateTextDifferences } from "./utils/textDiff"
 
 
 
@@ -48,6 +49,8 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 
 	// HOOKs
 	const editorRef = useRef<editor.IStandaloneCodeEditor>(null)
+	const previousValueRef = useRef<string>("")
+	const changeDecorationRef = useRef<editor.IEditorDecorationsCollection | null>(null)
 
 	useEffect(() => {
 		if (!editorRef.current) return
@@ -57,58 +60,50 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	}, [readOnly])
 
 	useEffect(() => {
-		if (autoFormat && readOnly) setTimeout(formatRun, 20)
+		if (!editorRef.current) return;
+
+		(async function () {
+
+			if (autoFormat && readOnly) {
+				await delay(20)
+				await formatRun()
+			}
+
+			if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64) return
+			const editorModel = editorRef.current.getModel();
+			const valueModel = editorModel.getValue()
+			const valuePrev = previousValueRef.current
+			previousValueRef.current = valueModel
+			if (!valuePrev || valuePrev == valueModel) return
+
+			const changes = format == MSG_FORMAT.JSON && autoFormat ? diffJson(valuePrev, valueModel) : diffWords(valuePrev, valueModel)
+			const decorations: editor.IModelDeltaDecoration[] = [];
+
+			let index = 0;
+			for (const part of changes) {
+				const length = part.value.length;
+				if (part.added) {
+					const start = editorModel.getPositionAt(index);
+					const end = editorModel.getPositionAt(index + length);
+					decorations.push({
+						range: new Range(start.lineNumber, start.column, end.lineNumber, end.column),
+						options: { inlineClassName: 'text-change-highlight' },
+					});
+				}
+				if (!part.removed) {
+					index += length;
+				}
+			}
+
+			// Create decorations collection if it doesn't exist
+			if (!changeDecorationRef.current) {
+				changeDecorationRef.current = editorRef.current.createDecorationsCollection()
+			}
+			changeDecorationRef.current.set(decorations)
+		})()
 	}, [value, readOnly]);
 
-
-
-	//#region HIGHLIGHTING
-
-	const previousValueRef = useRef<string>("")
-	const changeDecorationRef = useRef<editor.IEditorDecorationsCollection | null>(null)
-
-	useEffect(() => {
-
-		// Clear any existing highlights
-		changeDecorationRef.current?.clear()
-		changeDecorationRef.current = null
-		
-		// If no diff or editor is not ready, do nothing
-		if (!diff || !editorRef.current || !value || format === MSG_FORMAT.BASE64 || format === MSG_FORMAT.HEX) {
-			return
-		}
-
-		const previousValue = previousValueRef.current
-
-		// Only highlight if there was a previous value and it's different
-		if (previousValue && previousValue !== value) {
-
-			// Calculate differences and highlight changes
-			const changes = calculateTextDifferences(previousValue, value)
-			if (changes.length > 0) {
-				const decorations = changes.map(change => ({
-					range: change,
-					options: {
-						className: 'text-change-highlight',
-						isWholeLine: false,
-					}
-				}))
-				
-				// Create decorations collection if it doesn't exist
-				if (!changeDecorationRef.current) {
-					changeDecorationRef.current = editorRef.current.createDecorationsCollection()
-				}
-				
-				changeDecorationRef.current.set(decorations)
-			}
-		}
-		// Update previous value
-		previousValueRef.current = value
-
-	}, [diff, value, format])
-
-	//#endregion HIGHLIGHTING
-
+	useImperativeHandle(ref, () => ({ format: formatRun, }), [])
 
 
 	// HANDLER
@@ -137,7 +132,6 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		// 	}
 		// });
 	}
-	useImperativeHandle(ref, () => ({ format: formatRun, }), [])
 
 	// RENDER
 	if (format == MSG_FORMAT.BASE64) {
@@ -150,21 +144,24 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 			text={value}
 		/>
 	}
-	return <Editor
-		className={className}
-		height={"100%"}
-		defaultLanguage="json"
-		language={getEditorLanguage(format)}
-		value={value}
-		theme="vs-dark"
-		onMount={handleEditorDidMount}
-		onChange={onChange}
-		options={{
-			readOnly,
-			formatOnType: true,
-			formatOnPaste: true,
-		}}
-	/>
+	return (
+		<Editor
+			className={className}
+			height={"100%"}
+			defaultLanguage="json"
+			language={getEditorLanguage(format)}
+			value={value}
+			theme="vs-dark"
+			onMount={handleEditorDidMount}
+			onChange={onChange}
+			options={{
+				readOnly,
+				formatOnType: true,
+				formatOnPaste: true,
+			}}
+		/>
+	)
+
 }
 
 const EditorCode = forwardRef(EditorCodeBase)

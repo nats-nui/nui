@@ -4,27 +4,5 @@
 
 /* Text change highlighting */
 .text-change-highlight {
-	background-color: rgba(255, 215, 0, 0.3) !important;
-	border: 1px solid rgba(255, 215, 0, 0.6) !important;
-	border-radius: 3px !important;
-	box-shadow: 0 0 3px rgba(255, 215, 0, 0.4) !important;
-	animation: highlight-pulse 3s ease-out;
-}
-
-@keyframes highlight-pulse {
-	0% {
-		background-color: rgba(255, 215, 0, 0.6) !important;
-		border-color: rgba(255, 215, 0, 0.8) !important;
-		box-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
-	}
-	50% {
-		background-color: rgba(255, 215, 0, 0.4) !important;
-		border-color: rgba(255, 215, 0, 0.7) !important;
-		box-shadow: 0 0 5px rgba(255, 215, 0, 0.5) !important;
-	}
-	100% {
-		background-color: rgba(255, 215, 0, 0.3) !important;
-		border-color: rgba(255, 215, 0, 0.6) !important;
-		box-shadow: 0 0 3px rgba(255, 215, 0, 0.4) !important;
-	}
+	background-color: rgba(255, 154, 23, 0.3);
 }

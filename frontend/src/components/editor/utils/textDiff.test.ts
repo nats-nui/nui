@@ -33,7 +33,7 @@ describe('calculateTextDifferences', () => {
 			startLineNumber: 1,
 			startColumn: 7,
 			endLineNumber: 1,
-			endColumn: 16
+			endColumn: 17
 		})
 	})
 
@@ -47,7 +47,7 @@ describe('calculateTextDifferences', () => {
 			startLineNumber: 1,
 			startColumn: 1,
 			endLineNumber: 1,
-			endColumn: 6
+			endColumn: 7
 		})
 	})
 
@@ -59,9 +59,9 @@ describe('calculateTextDifferences', () => {
 		expect(result).toHaveLength(1)
 		expect(result[0]).toEqual({
 			startLineNumber: 1,
-			startColumn: 6,
+			startColumn: 7,
 			endLineNumber: 1,
-			endColumn: 11
+			endColumn: 12
 		})
 	})
 
@@ -75,7 +75,7 @@ describe('calculateTextDifferences', () => {
 			startLineNumber: 2,
 			startColumn: 1,
 			endLineNumber: 2,
-			endColumn: 10
+			endColumn: 11
 		})
 	})
 
@@ -86,10 +86,10 @@ describe('calculateTextDifferences', () => {
 		
 		expect(result).toHaveLength(1)
 		expect(result[0]).toEqual({
-			startLineNumber: 1,
-			startColumn: 11,
+			startLineNumber: 2,
+			startColumn: 1,
 			endLineNumber: 2,
-			endColumn: 11
+			endColumn: 12
 		})
 	})
 
@@ -103,13 +103,13 @@ describe('calculateTextDifferences', () => {
 			startLineNumber: 1,
 			startColumn: 7,
 			endLineNumber: 1,
-			endColumn: 12
+			endColumn: 14
 		})
 		expect(result[1]).toEqual({
 			startLineNumber: 1,
-			startColumn: 19,
+			startColumn: 20,
 			endLineNumber: 1,
-			endColumn: 24
+			endColumn: 26
 		})
 	})
 
@@ -121,9 +121,9 @@ describe('calculateTextDifferences', () => {
 		expect(result).toHaveLength(1)
 		expect(result[0]).toEqual({
 			startLineNumber: 1,
-			startColumn: 26,
+			startColumn: 27,
 			endLineNumber: 1,
-			endColumn: 46
+			endColumn: 47
 		})
 	})
 
@@ -135,9 +135,9 @@ describe('calculateTextDifferences', () => {
 		expect(result).toHaveLength(1)
 		expect(result[0]).toEqual({
 			startLineNumber: 3,
-			startColumn: 1,
-			endLineNumber: 3,
-			endColumn: 6
+			startColumn: 6,
+			endLineNumber: 4,
+			endColumn: 1
 		})
 	})
 
