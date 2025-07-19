@@ -1,3 +1,8 @@
 .monaco-editor-overlaymessage {
 	display: none !important;
 }
+
+/* Text change highlighting */
+.text-change-highlight {
+	background-color: rgba(255, 154, 23, 0.3);
+}
