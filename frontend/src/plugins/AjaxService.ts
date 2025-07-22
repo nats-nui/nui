@@ -156,7 +156,7 @@ export class AjaxService {
     }
 
     encodeUrl(url: string): string {
-        const regex = /\?[^?/]+=[^?]*&$/g;
+        const regex = /\?[^&?/]+=[^?]*&*$/g;
         let match: RegExpExecArray | null;
         let lastMatchIndex = -1;
         let queryString = "";
