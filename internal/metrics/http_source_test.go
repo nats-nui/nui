@@ -18,7 +18,7 @@ func TestHTTPSource_FetchMetrics(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			switch r.URL.Path {
 			case "/varz":
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
 					"server_id":   "NCZORSF4XMZKLFSJTJRJ72Y3LWQPORS2MCK3Q6YLDPWX6ZJHCGDBJQOD",
 					"server_name": "NCZORSF4XMZK",
 					"version":     "2.9.22",
@@ -29,12 +29,12 @@ func TestHTTPSource_FetchMetrics(t *testing.T) {
 					"connections": 3,
 				})
 			case "/connz":
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
 					"server_id":       "NCZORSF4XMZKLFSJTJRJ72Y3LWQPORS2MCK3Q6YLDPWX6ZJHCGDBJQOD",
 					"now":             time.Now().Format(time.RFC3339),
 					"num_connections": 3,
 					"total":           3,
-					"connections": []map[string]interface{}{
+					"connections": []map[string]any{
 						{
 							"cid":   1,
 							"ip":    "127.0.0.1",
@@ -61,11 +61,11 @@ func TestHTTPSource_FetchMetrics(t *testing.T) {
 		assert.Contains(t, metrics, "varz")
 		assert.Contains(t, metrics, "connz")
 
-		varz, ok := metrics["varz"].(map[string]interface{})
+		varz, ok := metrics["varz"]
 		require.True(t, ok)
 		assert.Equal(t, "2.9.22", varz["version"])
 
-		connz, ok := metrics["connz"].(map[string]interface{})
+		connz, ok := metrics["connz"]
 		require.True(t, ok)
 		assert.Equal(t, float64(3), connz["num_connections"])
 	})
@@ -75,7 +75,7 @@ func TestHTTPSource_FetchMetrics(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			switch r.URL.Path {
 			case "/varz":
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				json.NewEncoder(w).Encode(map[string]any{
 					"server_id":   "NCZORSF4XMZK",
 					"version":     "2.9.22",
 					"connections": 3,
@@ -145,7 +145,7 @@ func TestHTTPSource_FetchMetrics(t *testing.T) {
 		// Setup test server with delay
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			time.Sleep(200 * time.Millisecond)
-			json.NewEncoder(w).Encode(map[string]interface{}{"key": "value"})
+			json.NewEncoder(w).Encode(map[string]any{"key": "value"})
 		}))
 		defer server.Close()
 
