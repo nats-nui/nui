@@ -156,7 +156,10 @@ const setup = {
 			// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
 			const linked = store.state.linked as MessageStore
 			if ( !!linked && linked?.state.type == DOC_TYPE.MESSAGE && linked.state.linkToLast ) {
-				throttle(`msg-last-${store.state.uuid}`, () => linked.setMessage(message), 1000)
+				throttle(`msg-last-${store.state.uuid}`, () => {
+					const lastMessage = msgs[msgs.length - 1]
+					linked.setMessage(lastMessage)
+				}, 1000)
 			}
 		},
 		/** aggiorno i subjects di questo stack messages */

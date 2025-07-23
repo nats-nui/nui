@@ -53,9 +53,9 @@ export function throttle(name: string, callback?: () => void, delay?: number): v
 		let toId = throttleIDs[name];
 		// se è già in esecuzione non faccio nulla
 		if (!!toId) return;
+		callback.apply(this, null);
 		throttleIDs[name] = setTimeout(() => {
 			delete throttleIDs[name];
-			callback.apply(this, null);
 		}, delay);
 	}
 }
