@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws"
 import { Thread } from "./thread.js"
 import url from "url"
 import jsonData from "./jsonData.js"
+import jsonData2 from "./jsonData2.js"
 
 
 
@@ -61,14 +62,20 @@ const onMessage = client => msgRaw => {
 	const type = msg.type
 	switch (type) {
 		case "subscriptions_req":
+
 			Thread.Find({ cnnId: client.cnnId })?.stop()
+
 			const subjects = msg.payload.subjects
+			const time = subjects.includes("fido") ? 100 : 1000
+
 			if (Array.isArray(subjects) && subjects.length > 0) {
 				new Thread(
 					() => sendTestMessages(client, subjects),
-					{ cnnId: client.cnnId }
+					{ cnnId: client.cnnId },
+					time
 				).start()
 			}
+
 			break
 		case "error":
 			break
@@ -90,7 +97,7 @@ function sendTestMessages(client, subjects) {
 
 	// è connesso e quindi manda il messaggio
 	if (messagesSend < numMsg) {
-		const json = getJsonData(messagesSend)
+		const json = getJsonData(messagesSend, subject=="fido" ? 1 : 0)
 		const payload = Buffer.from(json, "utf8").toString("base64")
 		send(client.cws, {
 			type: "nats_msg",
@@ -134,8 +141,12 @@ function sendTestMessages(client, subjects) {
 	messagesSend++
 }
 
-function getJsonData(index) {
-	return JSON.stringify(jsonData[index % jsonData.length])
+
+const jsonDataArray = [jsonData, jsonData2]
+
+function getJsonData(index, count=0) {
+	const data = jsonDataArray[count]
+	return JSON.stringify(data[index % data.length])
 }
 
 //#endregion

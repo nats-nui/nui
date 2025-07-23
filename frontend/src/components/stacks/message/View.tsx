@@ -10,9 +10,10 @@ import FormatDialog from "../../editor/FormatDialog"
 import clsCard from "../CardCyanDef.module.css"
 import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
-import { CopyButton, IconButton, TitleAccordion } from "@priolo/jack"
+import { CopyButton, IconButton, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 import LinkDownIcon from "../../../icons/LinkDownIcon"
 import { DOC_TYPE } from "../../../types"
+import HilightIcon from "@/icons/HilightIcon"
 
 
 
@@ -33,6 +34,7 @@ const MessageView: FunctionComponent<Props> = ({
 	// HANDLER
 	const refEditor = (ref: EditorRefProps) => msgSa.editorRef = ref
 	const handleLinkLastClick = () => msgSo.setLinkToLast(!msgSo.state.linkToLast)
+	const handleShowDiffClick = () => msgSo.setShowDiff(!msgSo.state.showDiff)
 
 	// RENDER
 	const timestamp = dateShow(msgSa.message.receivedAt)
@@ -47,10 +49,21 @@ const MessageView: FunctionComponent<Props> = ({
 		icon={<MessageIcon />}
 		store={msgSo}
 		actionsRender={<>
-			{haveParent && <IconButton
-				select={linkToLast}
-				onClick={handleLinkLastClick}
-			><LinkDownIcon /></IconButton>}
+			{haveParent && <>
+				<TooltipWrapCmp content="FIX TO LAST MESSAGE">
+					<IconButton
+						select={linkToLast}
+						onClick={handleLinkLastClick}
+					><LinkDownIcon /></IconButton>
+				</TooltipWrapCmp>
+				<TooltipWrapCmp content="SHOW THE DIFFERENCES">
+					<IconButton
+						select={msgSo.state.showDiff}
+						onClick={handleShowDiffClick}
+					><HilightIcon /></IconButton>
+				</TooltipWrapCmp>
+			</>}
+
 			<div style={{ flex: 1 }} />
 			<FormatAction store={msgSo} />
 		</>}
@@ -77,6 +90,7 @@ const MessageView: FunctionComponent<Props> = ({
 					autoFormat={autoFormat}
 					ref={refEditor}
 					format={msgSa.format}
+					diff={msgSo.state.showDiff}
 					value={msgSo.getEditorText()}
 				/>
 			</div>

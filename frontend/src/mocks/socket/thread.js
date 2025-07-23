@@ -7,10 +7,12 @@ export class Thread {
 	timeId = null
 	callback = null
 	data = {}
+	delay = 1000
 
-	constructor(callback, data) {
+	constructor(callback, data, delay = 1000) {
 		this.callback = callback
 		this.data = data
+		this.delay = delay
 	}
 
 	static Find(data) {
@@ -22,7 +24,7 @@ export class Thread {
 
 	start() {
 		this.stop()
-		this.timeId = setInterval(this.callback, 1000)
+		this.timeId = setInterval(this.callback, this.delay)
 		Thread.All.push(this)
 	}
 

@@ -14,7 +14,7 @@ export function debounce(name: string, callback?: () => void, delay?: number): v
 	} else {
 		let toId = timeoutIDs[name];
 		if (toId != null) clearTimeout(toId)
-		if ( !callback ) {
+		if (!callback) {
 			delete timeoutIDs[name]
 			return
 		}
@@ -35,9 +35,27 @@ export function delay(millisec: number): Promise<void> {
 }
 
 export function delayAnim(): Promise<void> {
-	return new Promise(res => window.requestAnimationFrame(()=>res()))
+	return new Promise(res => window.requestAnimationFrame(() => res()))
 }
 
-export function dateShow( date?: any ): string {
+export function dateShow(date?: any): string {
 	return dayjs(date).isValid() ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "--"
+}
+
+let throttleIDs = {};
+/**
+ * esegue la funzione con un frame rate differente
+ */
+export function throttle(name: string, callback?: () => void, delay?: number): void {
+	if (delay == 0) {
+		callback?.apply(this, null);
+	} else {
+		let toId = throttleIDs[name];
+		// se è già in esecuzione non faccio nulla
+		if (!!toId) return;
+		callback.apply(this, null);
+		throttleIDs[name] = setTimeout(() => {
+			delete throttleIDs[name];
+		}, delay);
+	}
 }
