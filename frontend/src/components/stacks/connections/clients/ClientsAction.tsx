@@ -30,7 +30,10 @@ const ClientsActions: FunctionComponent<Props> = ({
 			onChange={text => store.setTextSearch(text)}
 		/>
 		<Button
-			children={`SORT: ${store.state.sort}`}
+			children={<>
+				<span style={{ fontWeight: 400, opacity: .8 }}>SORT: </span>
+				<span>{store.state.sort}</span>
+			</>}
 			onClick={handleSortClick}
 		/>
 	</>

@@ -23,23 +23,45 @@ const setup = {
 		async enable(cnnId: string, store?: MetricsStore) {
 			const ss = await socketPool.create(`global::${cnnId}`, cnnId)
 			if (!ss) return
-			let listener = store.state.all[cnnId]
-			if (!!listener) return
+			// let listener = store.state.all[cnnId]
+			// if (!!listener) return
 
-			const onMessage = (message: any) => {
-				const listener = store.state.all[cnnId]
-				listener.last = message.payload?.nats
-				listener.error = message.payload?.error
-				// if ( !!message.payload?.error) {
-				// 	logStore.addError(new Error(message.payload?.error))
-				// }
-				store.update()
-			}
+			store.createListener(cnnId)
+
+			// const onMessage = (message: any) => {
+			// 	const listener = store.state.all[cnnId]
+			// 	listener.last = message.payload?.nats
+			// 	listener.error = message.payload?.error
+			// 	// if ( !!message.payload?.error) {
+			// 	// 	logStore.addError(new Error(message.payload?.error))
+			// 	// }
+			// 	store.update()
+			// }
+			// store.state.all[cnnId] = {
+			// 	last: null,
+			// 	onMessage,
+			// }
+			// ss.emitter.on(MSG_TYPE.METRICS_RESP, onMessage)
+			// ss.send(JSON.stringify({
+			// 	type: MSG_TYPE.METRICS_REQ,
+			// 	payload: { enabled: true }
+			// }))
+		},
+
+		async createListener (cnnId: string, store?: MetricsStore) {
+			if (store.state.all[cnnId]) return
 			store.state.all[cnnId] = {
 				last: null,
-				onMessage,
+				onMessage: (message: any) => {
+					const listener = store.state.all[cnnId]
+					listener.last = message.payload?.nats
+					listener.error = message.payload?.error
+					store.update()
+				}
 			}
-			ss.emitter.on(MSG_TYPE.METRICS_RESP, onMessage)
+			const ss = socketPool.getById(`global::${cnnId}`)
+			if (!ss) return
+			ss.emitter.on(MSG_TYPE.METRICS_RESP, store.state.all[cnnId].onMessage)
 			ss.send(JSON.stringify({
 				type: MSG_TYPE.METRICS_REQ,
 				payload: { enabled: true }

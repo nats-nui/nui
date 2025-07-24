@@ -39,10 +39,10 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 	const msgsOut = compactNumber(cnn?.out_msgs)
 	const msgsOutRate = compactByte(cnn?.nui_out_msgs_sec)
 
-	const bytesOut = compactByte(cnn?.out_bytes)
-	const bytesOutRate = compactByte(cnn?.nui_out_bytes_sec)
-	const bytesIn = compactByte(cnn?.in_bytes)
-	const bytesInRate = compactByte(cnn?.nui_in_bytes_sec)
+	const bytesOut = compactNumber(cnn?.out_bytes)
+	const bytesOutRate = compactNumber(cnn?.nui_out_bytes_sec)
+	const bytesIn = compactNumber(cnn?.in_bytes)
+	const bytesInRate = compactNumber(cnn?.nui_in_bytes_sec)
 
 	return (
 		<div key={cnn.cid} style={{
