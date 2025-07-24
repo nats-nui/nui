@@ -11,7 +11,7 @@ const setup = {
 	state: {
 		connectionId: <string>null,
 		textSearch: "",
-		sort: SORTABLE_PROPERTIES.LAST_ACTION,
+		sort: SORTABLE_PROPERTIES.CID,
 		sortOpen: false,
 
 		//#region VIEWBASE
@@ -48,7 +48,7 @@ const setup = {
 		async onCreated(_: void, store?: ClientMetricsStore) {
 			metricsSo.enable(store.state.connectionId)
 		},
-
+//[ II ] non viene chiamata quando elimino il parent
 		onRemoval(_: void, store?: ViewStore) {
 			metricsSo.disable((<ClientMetricsStore>store).state.connectionId)
 		},

@@ -36,7 +36,7 @@ const SortDialog: FunctionComponent<Props> = ({
 		<Dialog
 			open={store.state.sortOpen}
 			title="SORT BY"
-			width={100}
+			width={145}
 			store={store}
 			onClose={handleClose}
 		>

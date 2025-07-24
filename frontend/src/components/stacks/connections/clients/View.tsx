@@ -1,7 +1,8 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
-import MetricsIcon from "@/icons/cards/MetricsIcon"
+import MetricClientIcon from "@/icons/cards/MetricClientIcon"
 import metricsSo from "@/stores/connections/metrics"
 import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
+import { filterClientsByText, sortClients } from "@/stores/stacks/connection/clients/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
 import clsCard from "../../CardPurpleDef.module.css"
@@ -30,17 +31,9 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 	const clients = useMemo(() => {
 		if (!connz) return
 		const text = store.state.textSearch?.trim().toLowerCase() ?? ""
-		if (text.length == 0) return connz.connections
-		const clients = text.length < 3
-			? connz.connections
-			: connz.connections.filter(cnn => {
-				if (cnn.cid.toString().includes(text)) return true
-				if (!!cnn.name && cnn.name.toLowerCase().includes(text)) return true
-				
-				return false
-			})
+		let clients = filterClientsByText(connz.connections, text)
+		clients = sortClients(clients, store.state.sort)
 		return clients
-		//connz.connections.sort((a, b) => a.cid.localeCompare(b.cid))
 	}, [connz, store.state.textSearch, store.state.sort])
 
 	// HANDLER
@@ -50,7 +43,7 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 
 	return <FrameworkCard
 		className={clsCard.root}
-		icon={<MetricsIcon />}
+		icon={<MetricClientIcon />}
 		store={store}
 		actionsRender={<ClientsActions store={store} />}
 	>

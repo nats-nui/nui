@@ -11,6 +11,7 @@ import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import clsCard from "../../CardPurple.module.css"
+import MetricClientIcon from "@/icons/cards/MetricClientIcon"
 
 
 
@@ -93,7 +94,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	>
 		<RowButton style={{ marginBottom: 15 }}
 			className="jack-focus-1"
-			icon={<MessagesIcon className="small-icon" />}
+			icon={<MetricClientIcon className="small-icon" />}
 			label="CLIENTS"
 			selected={isClientsOpen}
 			onClick={handleClientsClick}
