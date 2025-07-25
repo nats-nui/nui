@@ -59,3 +59,29 @@ export function throttle(name: string, callback?: () => void, delay?: number): v
 		}, delay);
 	}
 }
+
+
+let throttle2IDs = {};
+/**
+ * esegue la funzione con un frame rate differente
+ */
+export async function throttle2(name: string, callback: () => Promise<void>, delay?: number) {
+
+	if (delay == 0) {
+		throttleIDs[name] = 999
+		await callback()
+		delete throttle2IDs[name];
+	} else {
+
+		// se è già in esecuzione non faccio nulla
+		let toId = throttle2IDs[name];
+		if (!!toId) return;
+		throttleIDs[name] = 999
+
+		await callback()
+
+		throttleIDs[name] = setTimeout(() => {
+			delete throttle2IDs[name];
+		}, delay);
+	}
+}

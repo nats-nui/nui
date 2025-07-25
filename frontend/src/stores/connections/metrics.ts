@@ -23,32 +23,37 @@ const setup = {
 		async enable(cnnId: string, store?: MetricsStore) {
 			const ss = await socketPool.create(`global::${cnnId}`, cnnId)
 			if (!ss) return
-			// let listener = store.state.all[cnnId]
-			// if (!!listener) return
 
-			store.createListener(cnnId)
+			let listener = store.state.all[cnnId]
+			if (!listener) {
+				const onMessage = (message: any) => {
+					const listener = store.state.all[cnnId]
+					listener.last = message.payload?.nats
+					listener.error = message.payload?.error
+					// if ( !!message.payload?.error) {
+					// 	logStore.addError(new Error(message.payload?.error))
+					// }
+					store.update()
+				}
+				store.state.all[cnnId] = {
+					last: null,
+					onMessage,
+				}
+				ss.emitter.on(MSG_TYPE.METRICS_RESP, onMessage)
+			}
 
-			// const onMessage = (message: any) => {
-			// 	const listener = store.state.all[cnnId]
-			// 	listener.last = message.payload?.nats
-			// 	listener.error = message.payload?.error
-			// 	// if ( !!message.payload?.error) {
-			// 	// 	logStore.addError(new Error(message.payload?.error))
-			// 	// }
-			// 	store.update()
-			// }
-			// store.state.all[cnnId] = {
-			// 	last: null,
-			// 	onMessage,
-			// }
-			// ss.emitter.on(MSG_TYPE.METRICS_RESP, onMessage)
-			// ss.send(JSON.stringify({
-			// 	type: MSG_TYPE.METRICS_REQ,
-			// 	payload: { enabled: true }
-			// }))
+			ss.send(JSON.stringify({
+				type: MSG_TYPE.METRICS_REQ,
+				payload: { enabled: true }
+			}))
+
+
+			//store.createListener(cnnId)
 		},
 
-		async createListener (cnnId: string, store?: MetricsStore) {
+		async createListener(cnnId: string, store?: MetricsStore) {
+
+			// se non c'e' creo il listener
 			if (store.state.all[cnnId]) return
 			store.state.all[cnnId] = {
 				last: null,
@@ -59,6 +64,8 @@ const setup = {
 					store.update()
 				}
 			}
+
+			// invio la richiesta di ENABLED al BE
 			const ss = socketPool.getById(`global::${cnnId}`)
 			if (!ss) return
 			ss.emitter.on(MSG_TYPE.METRICS_RESP, store.state.all[cnnId].onMessage)
@@ -69,8 +76,9 @@ const setup = {
 		},
 
 		async disable(cnnId: string, store?: MetricsStore) {
+			// se non ci sono altre CARD METRICS che fanno riferimento a questa connessione, rimuovo il listener
 			const result = utils.forEachViews(
-				docsSo.getAllCards(), 
+				docsSo.getAllCards(),
 				(view) => (view.state.type == DOC_TYPE.CNN_METRICS || view.state.type == DOC_TYPE.CLIENT_METRICS) && view.state["connectionId"] == cnnId,
 			)
 			if (result) return
@@ -80,7 +88,7 @@ const setup = {
 
 		async remove(cnnId: string, store?: MetricsStore) {
 			const ss = socketPool.getById(`global::${cnnId}`)
-			if (!ss) return 
+			if (!ss) return
 			const listener = store.state.all[cnnId]
 			if (!listener) return
 			delete store.state.all[cnnId]
@@ -91,8 +99,8 @@ const setup = {
 			}))
 		},
 
-		update (_: void, store?: MetricsStore) {
-			if ( !!store.state.idTimeout ) return
+		update(_: void, store?: MetricsStore) {
+			if (!!store.state.idTimeout) return
 			store.state.idTimeout = setTimeout(() => {
 				store.state.idTimeout = null
 				store._update()
