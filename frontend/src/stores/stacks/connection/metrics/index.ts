@@ -48,7 +48,7 @@ const setup = {
 		async onCreated(_: void, store?: CnnMetricsStore) {
 			metricsSo.enable(store.state.connectionId)
 		},
-//[ II ] non viene chiamata quando elimino il parent
+
 		onRemoval(_: void, store?: ViewStore) {
 			metricsSo.disable((<CnnMetricsStore>store).state.connectionId)
 		},

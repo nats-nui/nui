@@ -14,17 +14,16 @@ export interface Varz {
 	go: string;
 	host: string;
 	port: number;
-	
+
 	ping_interval: number;
 	ping_max: number;
 	http_host: string;
 	http_port: number;
 	https_port: number;
-	
+
 	max_control_line: number;
 	cluster: Record<string, unknown>;
 	gateway: Record<string, unknown>;
-	leaf: Record<string, unknown>;
 	start: string;
 	now: string;
 	uptime: string;
@@ -36,12 +35,6 @@ export interface Varz {
 	leafnodes: number;
 	http_req_stats: Record<string, number>;
 	config_load_time: string;
-	slow_consumer_stats: {
-		clients: number;
-		routes: number;
-		gateways: number;
-		leafs: number;
-	};
 
 	cpu: number; 	// CPU
 	mem: number;	// MEMORY
@@ -67,7 +60,20 @@ export interface Varz {
 	auth_timeout: number; // CONNECTIONS / AUTH.TIMEOUT
 	tls_timeout: number; // CONNECTIONS / TLS TIMEOUT
 
+	slow_consumer_stats: { 
+		clients: number;
+		routes: number;
+		gateways: number;
+		leafs: number;
+	};
 
+	leaf: { // LEAF NODE
+		auth_timeout: number
+		host: string
+		port: number
+		tls_required: boolean
+		tls_timeout: number
+	},
 
 }
 

@@ -5,7 +5,7 @@ import styles from "./ValueCmp.module.css"
 
 interface Props {
 	label: string
-	value: string | number
+	value: string | number | boolean | null
 	unit?: string
 	decimals?: number
 	style?: React.CSSProperties
@@ -21,10 +21,16 @@ const ValueCmp: FunctionComponent<Props> = ({
 	className
 }) => {
 
-	if ( value == null ) value = "--"
-	
-	if (decimals !== undefined && typeof value === 'number') {
-		value = value.toFixed(decimals)
+	if (value == null) {
+		value = "--"
+	} else if (typeof value === 'boolean') {
+		value = value ? "YES" : "NO"
+	} else if (typeof value === 'number') {
+		if (isNaN(value)) {
+			value = "--"
+		} else if (decimals !== undefined) {
+			value = value.toFixed(decimals)
+		}
 	}
 
 	return (
