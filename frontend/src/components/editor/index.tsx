@@ -2,7 +2,7 @@ import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import { getEditorLanguage } from "@/stores/stacks/message/utils"
 import { MSG_FORMAT } from "@/utils/editor"
-import { delay } from "@/utils/time"
+import { delay, throttle } from "@/utils/time"
 import { Editor, Monaco } from "@monaco-editor/react"
 import { diffJson, diffWords } from "diff"
 import { editor, Range } from "monaco-editor"
@@ -62,46 +62,62 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	useEffect(() => {
 		if (!editorRef.current) return;
 
-		(async function () {
 
-			if (autoFormat && readOnly) {
-				await delay(20)
-				await formatRun()
-			}
+		if (autoFormat && readOnly) {
+			throttle(`msg-format-last`, () => formatRun(), 1000);
+		}
 
-			if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64) return
-			const editorModel = editorRef.current.getModel();
-			const valueModel = editorModel.getValue()
-			const valuePrev = previousValueRef.current
-			previousValueRef.current = valueModel
-			if (!valuePrev || valuePrev == valueModel) return
+		if ( diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
+			throttle(`msg-diff-last`, () => decorationDiff(), 2000);
+		}
 
-			const changes = format == MSG_FORMAT.JSON && autoFormat ? diffJson(valuePrev, valueModel) : diffWords(valuePrev, valueModel)
-			const decorations: editor.IModelDeltaDecoration[] = [];
+		// (async function () {
 
-			let index = 0;
-			for (const part of changes) {
-				const length = part.value.length;
-				if (part.added) {
-					const start = editorModel.getPositionAt(index);
-					const end = editorModel.getPositionAt(index + length);
-					decorations.push({
-						range: new Range(start.lineNumber, start.column, end.lineNumber, end.column),
-						options: { inlineClassName: 'text-change-highlight' },
-					});
-				}
-				if (!part.removed) {
-					index += length;
-				}
-			}
-
-			// Create decorations collection if it doesn't exist
-			if (!changeDecorationRef.current) {
-				changeDecorationRef.current = editorRef.current.createDecorationsCollection()
-			}
-			changeDecorationRef.current.set(decorations)
-		})()
+		// 	// 	await delay(20)
+		// 	// 	await formatRun()
+		// 	// }
+		// 	// decorationDiff()
+		// 	// //console.log("render")
+		// })()
 	}, [value, readOnly]);
+
+
+	const decorationDiff = () => {
+		if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64) return
+		const editorModel = editorRef.current.getModel();
+		const valueModel = editorModel.getValue()
+		const valuePrev = previousValueRef.current
+		previousValueRef.current = valueModel
+		if (!valuePrev || valuePrev == valueModel) return
+
+		const changes = format == MSG_FORMAT.JSON && autoFormat ? diffJson(valuePrev, valueModel) : diffWords(valuePrev, valueModel)
+		const decorations: editor.IModelDeltaDecoration[] = [];
+
+		let index = 0;
+		for (const part of changes) {
+			const length = part.value.length;
+			if (part.added) {
+				const start = editorModel.getPositionAt(index);
+				const end = editorModel.getPositionAt(index + length);
+				decorations.push({
+					range: new Range(start.lineNumber, start.column, end.lineNumber, end.column),
+					options: { inlineClassName: 'text-change-highlight' },
+				});
+			}
+			if (!part.removed) {
+				index += length;
+			}
+		}
+
+		// Create decorations collection if it doesn't exist
+		if (!changeDecorationRef.current) {
+			changeDecorationRef.current = editorRef.current.createDecorationsCollection()
+		}
+		changeDecorationRef.current.set(decorations)
+
+		// Apply decorations using deltaDecorations
+		//changeDecorationRef.current = editorRef.current.deltaDecorations(changeDecorationRef.current, decorations)
+	}
 
 	useImperativeHandle(ref, () => ({ format: formatRun, }), [])
 
