@@ -26,12 +26,14 @@ type MetricsDecorator interface {
 }
 
 type Collector struct {
-	repo Repo
+	repo        Repo
+	connBuilder connection.ConnBuilder[*connection.NatsConn]
 }
 
-func NewCollector(repo Repo) *Collector {
+func NewCollector(repo Repo, connBuilder connection.ConnBuilder[*connection.NatsConn]) *Collector {
 	return &Collector{
-		repo: repo,
+		repo:        repo,
+		connBuilder: connBuilder,
 	}
 }
 
@@ -46,13 +48,13 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	if err != nil {
 		return nil, err
 	}
-	source, err := buildMetricsSource(conn.Metrics)
+	source, err := s.buildMetricsSource(conn)
 	if err != nil {
 		return nil, err
 	}
 
 	go func() {
-		generalRatesDecorater := NewRatesDecorator(ratesMetrics)
+		generalRatesDecorator := NewRatesDecorator(ratesMetrics)
 		connzDecorators := make(map[int]MetricsDecorator)
 		for {
 			select {
@@ -67,7 +69,7 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 					Error:       err,
 				}
 				if err == nil {
-					generalRatesDecorater.Decorate(rawNatsMetrics["varz"])
+					generalRatesDecorator.Decorate(rawNatsMetrics["varz"])
 					for _, connMetrics := range rawNatsMetrics["connz"]["connections"].([]any) {
 						c := connMetrics.(map[string]any)
 						c["now"] = rawNatsMetrics["varz"]["now"]
@@ -107,20 +109,13 @@ func (s *Collector) collectAndRelay(ctx context.Context, source MetricsSource, m
 	}
 }
 
-func buildMetricsSource(metrics connection.Metrics) (MetricsSource, error) {
+func (s *Collector) buildMetricsSource(conn *connection.Connection) (MetricsSource, error) {
+	metrics := conn.Metrics
 	if metrics.HttpSource.Active {
 		return NewHTTPSource(metrics.HttpSource.Url), nil
 	}
+	if metrics.NatsSource.Active {
+		return NewNatsSource(conn, s.connBuilder)
+	}
 	return nil, errors.New("metrics source not implemented")
-}
-
-func decorateMetrics(metrics map[string]any, decorator MetricsDecorator) (map[string]any, error) {
-	if decorator == nil {
-		return metrics, nil
-	}
-	decoratedMetrics, err := decorator.Decorate(metrics["varz"].(map[string]any))
-	if err != nil {
-		return nil, err
-	}
-	return decoratedMetrics, nil
 }
