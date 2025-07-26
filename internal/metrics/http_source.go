@@ -12,13 +12,13 @@ import (
 
 // Endpoint constants
 const (
-	KeyVarz       = "varz"
-	EndpointVarz  = "/varz"
-	KeyConnz      = "connz"
-	EndpointConnz = "/connz?limit=10000&sort=last"
+	keyVarz       = "varz"
+	endpointVarz  = "/varz"
+	keyConnz      = "connz"
+	endpointConnz = "/connz?limit=10000&sort=last"
 )
 
-var AllEndpoints = map[string]string{KeyVarz: EndpointVarz, KeyConnz: EndpointConnz}
+var AllEndpoints = map[string]string{keyVarz: endpointVarz, keyConnz: endpointConnz}
 
 type HTTPSource struct {
 	client  *http.Client
