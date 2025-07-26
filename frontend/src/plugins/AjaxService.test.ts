@@ -1,4 +1,39 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Mock all problematic imports before importing AjaxService
+vi.mock('@/stores/log', () => ({
+  default: {
+    add: vi.fn(),
+  }
+}));
+
+vi.mock('@/stores/log/utils', () => ({
+  MESSAGE_TYPE: {
+    ERROR: 'error',
+  }
+}));
+
+vi.mock('@/stores/stacks/viewBase', () => ({
+  ViewStore: class ViewStore {}
+}));
+
+vi.mock('@/stores/stacks/utils', () => ({
+  LOAD_STATE: {
+    LOADING: 'loading',
+    IDLE: 'idle',
+    ERROR: 'error',
+  }
+}));
+
+vi.mock('@/utils/object', () => ({
+  camelToSnake: vi.fn((obj) => obj),
+  snakeToCamel: vi.fn((obj) => obj),
+}));
+
+vi.mock('@/stores/stacks/loadBase', () => ({
+  LoadBaseStore: class LoadBaseStore {}
+}));
+
 import { AjaxService } from './AjaxService';
 
 describe('AjaxService', () => {
