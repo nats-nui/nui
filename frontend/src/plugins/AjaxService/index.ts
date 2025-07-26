@@ -4,6 +4,7 @@ import {ViewStore} from "@/stores/stacks/viewBase"
 import {LOAD_STATE} from "@/stores/stacks/utils"
 import {camelToSnake, snakeToCamel} from "@/utils/object"
 import {LoadBaseStore} from "@/stores/stacks/loadBase"
+import { encodeUrl } from "./utils"
 
 
 enum METHOD {
@@ -93,7 +94,7 @@ export class AjaxService {
         }
 
         // ENCODE URL PATH COMPONENTS
-        const encodedUrl = this.encodeUrl(url)
+        const encodedUrl = encodeUrl(url)
 
         // SEND REQUEST
         let response = null
@@ -155,33 +156,7 @@ export class AjaxService {
         return ret
     }
 
-    encodeUrl(url: string): string {
-        const regex = /\?[^&?/]+=[^?]*&*$/g;
-        let match: RegExpExecArray | null;
-        let lastMatchIndex = -1;
-        let queryString = "";
-
-        // find the last match to avoid errors in case of ? special chars
-        // in stream names
-        while ((match = regex.exec(url)) !== null) {
-            lastMatchIndex = match.index;
-        }
-
-        if (lastMatchIndex !== -1) {
-            queryString = url.substring(lastMatchIndex)
-            url = url.substring(0, lastMatchIndex)
-        }
-
-        return url.split('/')
-            .map((segment, index) => {
-                // Don't encode the empty segments that appear when the path starts or ends with /
-                // or when there are consecutive slashes
-                return segment === '' ? segment : encodeURIComponent(segment);
-            })
-            .join('/').concat(queryString);
-
-    }
-
+    
 }
 
 export default new AjaxService()
