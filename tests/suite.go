@@ -84,7 +84,7 @@ func (s *NuiTestSuite) startNatsServer() {
 	w.Add(1)
 	go func() {
 		s.NatsServer.Start()
-		for _ = range time.Tick(20) {
+		for _ = range time.Tick(20 * time.Millisecond) {
 			if s.NatsServer.Running() {
 				w.Done()
 				return
