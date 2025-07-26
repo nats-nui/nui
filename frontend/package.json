@@ -17,7 +17,7 @@
     "@fontsource-variable/inter": "^5.2.6",
     "@fontsource/darker-grotesque": "^5.2.6",
     "@monaco-editor/react": "^4.7.0",
-    "@priolo/jack": "C:/Users/ivano.iorio/Documents/jack",
+    "@priolo/jack": "^0.2.10",
     "@priolo/jon": "^0.7.7",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.12",
