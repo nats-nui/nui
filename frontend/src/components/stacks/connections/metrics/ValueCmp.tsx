@@ -1,0 +1,49 @@
+import React, { FunctionComponent } from "react"
+import styles from "./ValueCmp.module.css"
+
+
+
+interface Props {
+	label: string
+	value: string | number | boolean | null
+	unit?: string
+	decimals?: number
+	style?: React.CSSProperties
+	className?: string
+	valueSty?: React.CSSProperties
+}
+
+const ValueCmp: FunctionComponent<Props> = ({
+	label,
+	value,
+	unit,
+	decimals,
+	style,
+	className,
+	valueSty,
+}) => {
+
+	if (value == null) {
+		value = "--"
+	} else if (typeof value === 'boolean') {
+		value = value ? "YES" : "NO"
+	} else if (typeof value === 'number') {
+		if (isNaN(value)) {
+			value = "--"
+		} else if (decimals !== undefined) {
+			value = value.toFixed(decimals)
+		}
+	}
+
+	return (
+		<div style={style} className={`${styles.container} ${className ?? ''}`}>
+			<div className={styles.label}>{label}</div>
+			<div className={styles.value} style={valueSty}>
+				{value}
+				{unit && <span className={styles.unit}>{unit}</span>}
+			</div>
+		</div>
+	)
+}
+
+export default ValueCmp

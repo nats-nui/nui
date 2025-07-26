@@ -43,6 +43,10 @@ import { JsonConfigStore } from "../../stores/stacks/jsonconfig"
 import { CnnImportStore } from "../../stores/stacks/cnnImport"
 import CnnLoaderView from "../stacks/cnnImport/View"
 import { ShortcutStore } from "../../stores/stacks/shortcut"
+import CnnMetricsView from "../stacks/connections/metrics/View"
+import { CnnMetricsStore } from "@/stores/stacks/connection/metrics"
+import ClientMetricsView from "../stacks/connections/clients/View"
+import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
 
 
 
@@ -63,6 +67,10 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 				return <CnnDetailView store={view as CnnDetailStore} />
 			case DOC_TYPE.CNN_LOADER:
 				return <CnnLoaderView store={view as CnnImportStore} />
+			case DOC_TYPE.CNN_METRICS:
+				return <CnnMetricsView store={view as CnnMetricsStore} />
+			case DOC_TYPE.CLIENT_METRICS:
+				return <ClientMetricsView store={view as ClientMetricsStore} />
 
 			case DOC_TYPE.MESSAGES:
 				return <MessagesView store={view as MessagesStore} />

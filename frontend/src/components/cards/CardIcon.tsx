@@ -15,6 +15,8 @@ import StreamsIcon from "@/icons/cards/StreamsIcon"
 import { DOC_TYPE } from "@/types"
 import { FunctionComponent } from "react"
 import ConfigIcon from "../../icons/cards/ConfigIcon"
+import MetricsIcon from "@/icons/cards/MetricsIcon"
+import MetricClientIcon from "@/icons/cards/MetricClientIcon"
 
 
 
@@ -36,6 +38,11 @@ const CardIcon: FunctionComponent<Props> = ({
 			return <ConnectionsIcon className={className} style={style} />
 		case DOC_TYPE.CONNECTION:
 			return <ConnectionIcon className={className} style={style} />
+		case DOC_TYPE.CNN_METRICS:
+			return <MetricsIcon className={className} style={style} />
+		case DOC_TYPE.CLIENT_METRICS:
+			return <MetricClientIcon className={className} style={style} />
+
 		case DOC_TYPE.CNN_LOADER:
 			return <ConnectionIcon className={className} style={style} />
 

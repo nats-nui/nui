@@ -17,8 +17,7 @@ viewSetup.actions.setSerialization = (state: any, store?: ViewStore) => {
 	const linkedState = state.linked
 	if (!!state.linked) delete state.linked
 	if (linkedState) {
-		const linkedStore = buildStore({ type: linkedState.type, group: store.state.group })
-		linkedStore.setSerialization(linkedState)
+		const linkedStore = buildStore({ type: linkedState.type, group: store.state.group }, linkedState)
 		store.setLinked(linkedStore)
 		linkedStore.onLinked()
 	}

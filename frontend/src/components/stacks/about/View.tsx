@@ -2,15 +2,12 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import GitHubIcon from "@/icons/GitHubIcon"
 import HelpIcon from "@/icons/HelpIcon"
 import { AboutStore } from "@/stores/stacks/about"
-import { Button, TitleAccordion } from "@priolo/jack"
+import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
+import KeyboardIcon from "../../../icons/KeyboardIcon"
 import clsCard from "../CardWhiteDef.module.css"
 import cls from "./View.module.css"
-import { buildStore } from "../../../stores/docs/utils/factory"
-import { DOC_TYPE } from "../../../types"
-import { ShortcutStore } from "../../../stores/stacks/shortcut"
-import KeyboardIcon from "../../../icons/KeyboardIcon"
 
 
 

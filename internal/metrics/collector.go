@@ -92,6 +92,21 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	return metricsChan, nil
 }
 
+func (s *Collector) collectAndRelay(ctx context.Context, source MetricsSource, metricsChan chan Metrics) {
+	rawNatsMetrics, err := source.FetchMetrics(ctx)
+	metrics := Metrics{
+		RetrievedAt: time.Now(),
+		Nats:        rawNatsMetrics,
+		Error:       err,
+	}
+	select {
+	case <-ctx.Done():
+		return
+	case metricsChan <- metrics:
+	default:
+	}
+}
+
 func buildMetricsSource(metrics connection.Metrics) (MetricsSource, error) {
 	if metrics.HttpSource.Active {
 		return NewHTTPSource(metrics.HttpSource.Url), nil

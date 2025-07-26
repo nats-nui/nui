@@ -1,8 +1,7 @@
 .root {
 	display: flex;
 	flex-direction: column;
-	padding: 0px 7px 0px 10px;
-	margin: 20px 0px;
+	padding: 5px 7px;
 }
 
 .bg1 {

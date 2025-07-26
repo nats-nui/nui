@@ -1,26 +1,9 @@
 import { ViewStore } from "@/stores/stacks/viewBase"
 import { FunctionComponent, useEffect, useState } from "react"
 import { Accordion, IconToggle, ListDialog, NumberInput, StringUpRow } from "@priolo/jack"
+import { getLargestUnit, nsToValue, TIME, valueToNs } from "@/utils/conversion";
 
 
-
-export enum TIME {
-	NS = "nano s.",
-	MS = "milli s.",
-	SECONDS = "seconds",
-	MINUTES = "minutes",
-	HOURS = "hours",
-	DAYS = "days",
-}
-
-const unitsInNs = {
-	[TIME.NS]: 1,
-	[TIME.MS]: 1e6,
-	[TIME.SECONDS]: 1e9,
-	[TIME.MINUTES]: 60 * 1e9,
-	[TIME.HOURS]: 60 * 60 * 1e9,
-	[TIME.DAYS]: 60 * 60 * 24 * 1e9
-};
 
 interface Props {
 	store?: ViewStore
@@ -116,27 +99,4 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 
 export default MaxTimeCmp
 
-function nsToValue(value: number, from: TIME) {
-	return value / unitsInNs[from];
-}
-
-function valueToNs(value: number, from: TIME) {
-	return value * unitsInNs[from];
-}
-
-function getLargestUnit(valueInNs: number, defaultUnit: TIME): TIME {
-	let largestUnit = TIME.NS;
-	if (valueInNs == 0) {
-		return defaultUnit;
-	}
-	for (const [unit, ns] of Object.entries(unitsInNs)) {
-		if (valueInNs % ns == 0) {
-			largestUnit = unit as TIME;
-		} else {
-			break;
-		}
-	}
-
-	return largestUnit;
-}
 
