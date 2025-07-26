@@ -77,6 +77,8 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	const pingInterval = nsToValue(varz?.ping_interval, TIME.SECONDS)
 	const maxControlLine = compactByte(varz?.max_control_line)
 
+	const slowConsumers = compactNumber(varz?.slow_consumers)
+
 	return <FrameworkCard
 		className={clsCard.root}
 		icon={<MetricsIcon />}
@@ -103,7 +105,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 			onClick={handleClientsClick}
 		/>
 
-		<TitleAccordion title="SERVER" style={{ marginBottom: 15 }}>
+		<TitleAccordion title="GENERAL" style={{ marginBottom: 15 }}>
 
 			<div style={{ display: "flex", marginTop: 10, gap: 15 }}>
 				<ValueCmp style={{ flex: 1 }}
@@ -118,7 +120,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 					unit={memory.unit}
 				/>
 			</div>
-			
+
 
 			<div style={{ display: "flex", gap: 20 }}>
 				<div style={{ flex: 1 }} className="jack-lbl-prop">RECEIVE</div>
@@ -195,7 +197,6 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 		</TitleAccordion>
 
-
 		<TitleAccordion title="CONNECTIONS" style={{ marginBottom: 15 }}>
 
 			<div style={{ display: "flex", marginTop: 10 }}>
@@ -210,7 +211,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				<ValueCmp style={{ flex: 1 }} label="REMOTES" value={varz?.remotes} />
 			</div>
 
-			<div style={{ display: "flex", marginTop: 10 }}>
+			<div style={{ display: "flex" }}>
 				<ValueCmp style={{ flex: 1 }} label="SUBSCRIPTIONS" value={substriptions.value} unit={substriptions.unit} />
 				<ValueCmp style={{ flex: 1 }} label="MAX.PAYLOAD" value={maxPayload.value} unit={maxPayload.unit} />
 				<ValueCmp style={{ flex: 1 }} label="MAX.PENDING" value={maxPending.value} unit={maxPending.unit} />
@@ -228,6 +229,11 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				<ValueCmp style={{ flex: 1 }} label="MAX PING OUT" value={varz?.ping_max} />
 			</div>
 
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="SLOW CONSUMERS" value={slowConsumers.value} unit={slowConsumers.unit} />
+				<ValueCmp style={{ flex: 2 }} label="MAX SUBSCRIPTIONS" value={compactNumber(varz?.max_subscriptions).value} unit={compactNumber(varz?.max_subscriptions).unit} />
+			</div>
+
 		</TitleAccordion>
 
 		<TitleAccordion title="SLOW CONSUMER" style={{ marginBottom: 15 }}>
@@ -239,9 +245,55 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 			</div>
 		</TitleAccordion>
 
-		<TitleAccordion title="LEAF NODE" style={{ marginBottom: 15 }}>
+		<TitleAccordion title="SERVER" open={false} style={{ marginBottom: 15 }}>
 			<div style={{ display: "flex" }}>
-				<ValueCmp style={{ flex: 1 }} label="HOST" value={varz?.leaf?.host} />
+				<ValueCmp style={{ flex: 1 }} label="HOST" value={varz?.host} />
+				<ValueCmp style={{ flex: 1 }} label="PORT" value={varz?.port} />
+				<ValueCmp style={{ flex: 1 }} label="CORES" value={varz?.cores} />
+
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 2 }} label="UPTIME" value={varz?.uptime} />
+				<ValueCmp style={{ flex: 1 }} label="VERSION" value={varz?.version} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="GOMAXPROCS" value={varz?.gomaxprocs} />
+				<ValueCmp style={{ flex: 1 }} label="GO VERSION" value={varz?.go} />
+				<ValueCmp style={{ flex: 1 }} label="PROTOC.V." value={varz?.proto} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="SYSTEM ACCOUNT" value={varz?.system_account} />
+				<ValueCmp style={{ flex: 1 }} label="AUTH REQUIRED" value={varz?.auth_required} />
+				<ValueCmp style={{ flex: 1 }} label="GIT COMMIT" value={varz?.git_commit} />
+			</div>
+
+			<ValueCmp style={{ flex: 60 }} label="SERVER NAME" value={varz?.server_name}
+				valueSty={{ fontSize: "14px" }}
+			/>
+			<ValueCmp style={{ flex: 1 }} label="SERVER ID" value={varz?.server_id}
+				valueSty={{ fontSize: "14px" }}
+			/>
+			<ValueCmp style={{ flex: 1 }} label="CONFIG DIGEST" value={varz?.config_digest}
+				valueSty={{ fontSize: "14px" }}
+			/>
+
+		</TitleAccordion>
+
+		<TitleAccordion title="HTTP" open={false} style={{ marginBottom: 15 }}>
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="HTTP HOST" value={varz?.http_host} />
+				<ValueCmp style={{ flex: 1 }} label="HTTP PORT" value={varz?.http_port} />
+				<ValueCmp style={{ flex: 1 }} label="HTTPS PORT" value={varz?.https_port} />
+			</div>
+			<ValueCmp style={{ flex: 1 }} label="HTTP BASE PATH" value={varz?.http_base_path} />
+		</TitleAccordion>
+
+		<TitleAccordion title="LEAF NODE" open={false} style={{ marginBottom: 15 }}>
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 2 }} label="HOST" value={varz?.leaf?.host} />
 				<ValueCmp style={{ flex: 1 }} label="PORT" value={varz?.leaf?.port} />
 			</div>
 
@@ -250,6 +302,64 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				<ValueCmp style={{ flex: 1 }} label="TLS REQUIRED" value={varz?.leaf?.tls_required} />
 				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={varz?.leaf?.tls_timeout} />
 			</div>
+		</TitleAccordion>
+
+		<TitleAccordion title="MQTT" open={false} style={{ marginBottom: 15 }}>
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="HOST" value={varz?.mqtt?.host} />
+				<ValueCmp style={{ flex: 1 }} label="PORT" value={varz?.mqtt?.port} />
+				<ValueCmp style={{ flex: 1 }} label="NO AUTH USER" value={varz?.mqtt?.no_auth_user} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="ACK WAIT" value={nsToValue(varz?.mqtt?.ack_wait, TIME.SECONDS)} unit="s" />
+				<ValueCmp style={{ flex: 1 }} label="MAX ACK PENDING" value={varz?.mqtt?.max_ack_pending} />
+				<ValueCmp style={{ flex: 1 }} label="TLS TIMEOUT" value={varz?.mqtt?.tls_timeout} unit="s" />
+			</div>
+		</TitleAccordion>
+
+		<TitleAccordion title="WEBSOCKET" open={false} style={{ marginBottom: 15 }}>
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="HOST" value={varz?.websocket?.host} />
+				<ValueCmp style={{ flex: 1 }} label="PORT" value={varz?.websocket?.port} />
+				<ValueCmp style={{ flex: 1 }} label="NO AUTH USER" value={varz?.websocket?.no_auth_user} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="COMPRESSION" value={varz?.websocket?.compression} />
+				<ValueCmp style={{ flex: 2 }} label="HANDSHAKE TIMEOUT" value={nsToValue(varz?.websocket?.handshake_timeout, TIME.SECONDS)} unit="s" />
+			</div>
+		</TitleAccordion>
+
+		<TitleAccordion title="JETSTREAM" open={false} style={{ marginBottom: 15 }}>
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="ACCOUNTS" value={varz?.jetstream?.stats?.accounts} />
+				<ValueCmp style={{ flex: 1 }} label="HA ASSETS" value={varz?.jetstream?.stats?.ha_assets} />
+				<ValueCmp style={{ flex: 1 }} label="SYNC INTERVAL" value={nsToValue(varz?.jetstream?.config?.sync_interval, TIME.SECONDS)} unit="s" />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="API TOTAL" value={compactNumber(varz?.jetstream?.stats?.api?.total).value} unit={compactNumber(varz?.jetstream?.stats?.api?.total).unit} />
+				<ValueCmp style={{ flex: 1 }} label="API ERRORS" value={compactNumber(varz?.jetstream?.stats?.api?.errors).value} unit={compactNumber(varz?.jetstream?.stats?.api?.errors).unit} />
+				<ValueCmp style={{ flex: 1 }} label="COMPRESS OK" value={varz?.jetstream?.config?.compress_ok} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="MEMORY" value={compactByte(varz?.jetstream?.stats?.memory).value} unit={compactByte(varz?.jetstream?.stats?.memory).unit} />
+				<ValueCmp style={{ flex: 1 }} label="RESERVED MEMORY" value={compactByte(varz?.jetstream?.stats?.reserved_memory).value} unit={compactByte(varz?.jetstream?.stats?.reserved_memory).unit} />
+				<ValueCmp style={{ flex: 1 }} label="MAX MEMORY" value={compactByte(varz?.jetstream?.config?.max_memory).value} unit={compactByte(varz?.jetstream?.config?.max_memory).unit} />
+			</div>
+
+			<div style={{ display: "flex" }}>
+				<ValueCmp style={{ flex: 1 }} label="STORAGE" value={compactByte(varz?.jetstream?.stats?.storage).value} unit={compactByte(varz?.jetstream?.stats?.storage).unit} />
+				<ValueCmp style={{ flex: 1 }} label="RESERVED STORAGE" value={compactByte(varz?.jetstream?.stats?.reserved_storage).value} unit={compactByte(varz?.jetstream?.stats?.reserved_storage).unit} />
+				<ValueCmp style={{ flex: 1 }} label="MAX STORAGE" value={compactByte(varz?.jetstream?.config?.max_storage).value} unit={compactByte(varz?.jetstream?.config?.max_storage).unit} />
+			</div>
+
+			<ValueCmp style={{ flex: 1 }} label="STORE DIR" value={varz?.jetstream?.config?.store_dir}
+				valueSty={{ fontSize: "14px" }}
+			/>
+
 		</TitleAccordion>
 
 	</FrameworkCard>
