@@ -1,20 +1,22 @@
 version: "3"
 services:
   nats:
-    image: nats:2.10
+    image: nats:2.11
     ports:
       - "4222:4222"
       - "8222:8222"
+    command: ["--config", "/etc/nats/nats-server.conf"]
+    volumes:
+      - ./tests/nats.conf:/etc/nats/nats-server.conf
   secured_nats:
-    image: nats:2.10
+    image: nats:2.11
     ports:
       - "4223:4222"
       - "8223:8222"
-    #command: ["--tls", "--tlscert", "/tests/certs_insecure/server-cert.pem", "--tlskey", "/tests/certs_insecure/server-key.pem --tlshandshake"]
     command: ["--config", "/etc/nats/nats-server.conf"]
     volumes:
       - ./tests/certs_insecure:/tests/certs_insecure
-      - ./tests/nats.conf:/etc/nats/nats-server.conf
+      - ./tests/nats_secured.conf:/etc/nats/nats-server.conf
   nui:
     image: ghcr.io/nats-nui/nui:edge
     volumes:
