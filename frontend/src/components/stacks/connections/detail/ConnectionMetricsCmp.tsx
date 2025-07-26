@@ -4,6 +4,7 @@ import { Accordion, IconToggle, ListDialog, StringUpRow, TextInput } from "@prio
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthCmp from "./AuthCmp"
+import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 
 
 
@@ -82,6 +83,7 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 					check={metricHttpActive}
 					onChange={handleMetricHttpSourceChange}
 					readOnly={inRead}
+					trueIcon={<CheckRadioOnIcon />}
 				/>
 				<div className="jack-lbl-prop">HTTP SOURCE</div>
 			</div>
@@ -109,6 +111,7 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 					check={metricNatsActive}
 					onChange={handleMetricNatsSourceChange}
 					readOnly={inRead}
+					trueIcon={<CheckRadioOnIcon />}
 				/>
 				<div className="jack-lbl-prop">NATS SOURCE</div>
 			</div>
