@@ -166,7 +166,7 @@ const setup = {
 				throttle(`msg-last-${store.state.uuid}`, () => {
 					const lastMessage = msgs[msgs.length - 1]
 					linked.setMessage(lastMessage)
-				}, 500)
+				}, 1000)
 			}
 		},
 		/** aggiorno i subjects di questo stack messages */

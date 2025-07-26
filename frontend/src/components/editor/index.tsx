@@ -2,12 +2,13 @@ import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
 import { getEditorLanguage } from "@/stores/stacks/message/utils"
 import { MSG_FORMAT } from "@/utils/editor"
-import { delay, throttle } from "@/utils/time"
+import { delay, throttle, throttle2 } from "@/utils/time"
 import { Editor, Monaco } from "@monaco-editor/react"
-import { diffJson, diffWords } from "diff"
+import { diffJson, diffWords, diffWordsWithSpace } from "diff"
 import { editor, Range } from "monaco-editor"
 import { forwardRef, ForwardRefRenderFunction, useEffect, useImperativeHandle, useRef } from "react"
 import { editorOptionsDefault } from "./utils"
+
 
 
 
@@ -59,38 +60,65 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		})
 	}, [readOnly])
 
+
 	useEffect(() => {
 		if (!editorRef.current) return;
 
 
-		if (autoFormat && readOnly) {
-			throttle(`msg-format-last`, () => formatRun(), 1000);
-		}
+		// if (autoFormat && readOnly) {
+		// 	//formatRun()
+		// 	throttle2(`msg-format-last`, async () => {
+		// 		await formatRun()
+		// 		if (diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
+		// 			//decorationDiff()
+		// 			throttle(`msg-diff-last`, () => decorationDiff(), 300);
+		// 		}
+		// 	}, 100);
+		// } else if (diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
+		// 	//decorationDiff()
+		// 	throttle(`msg-diff-last`, () => decorationDiff(), 300);
+		// }
 
-		if ( diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
-			throttle(`msg-diff-last`, () => decorationDiff(), 2000);
-		}
 
-		// (async function () {
 
-		// 	// 	await delay(20)
-		// 	// 	await formatRun()
-		// 	// }
-		// 	// decorationDiff()
-		// 	// //console.log("render")
-		// })()
+
+		(async function () {
+			if (autoFormat && readOnly) {
+				await formatRun()
+				await delay(100)
+			}
+			if (diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
+				decorationDiff()
+			}
+		})();
+
+
+
 	}, [value, readOnly]);
+
 
 
 	const decorationDiff = () => {
 		if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64) return
+
 		const editorModel = editorRef.current.getModel();
 		const valueModel = editorModel.getValue()
 		const valuePrev = previousValueRef.current
 		previousValueRef.current = valueModel
-		if (!valuePrev || valuePrev == valueModel) return
+		if (!valuePrev || valuePrev == valueModel) {
+			return
+		}
 
-		const changes = format == MSG_FORMAT.JSON && autoFormat ? diffJson(valuePrev, valueModel) : diffWords(valuePrev, valueModel)
+		//let changes = format == MSG_FORMAT.JSON && autoFormat ? diffJson(valuePrev, valueModel) : diffWords(valuePrev, valueModel)
+		let changes = diffWords(valuePrev, valueModel)
+
+		// se ci sono troppe modifiche non faccio nulla altrimenti il browser si blocca
+		//changes = changes.slice(0, 1000)
+		if (changes.length > 1000) {
+			//changeDecorationRef.current?.clear()
+			return
+		}
+
 		const decorations: editor.IModelDeltaDecoration[] = [];
 
 		let index = 0;
@@ -115,8 +143,11 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		}
 		changeDecorationRef.current.set(decorations)
 
+		
+
 		// Apply decorations using deltaDecorations
 		//changeDecorationRef.current = editorRef.current.deltaDecorations(changeDecorationRef.current, decorations)
+
 	}
 
 	useImperativeHandle(ref, () => ({ format: formatRun, }), [])

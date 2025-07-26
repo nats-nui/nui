@@ -12,6 +12,10 @@
 .value {
 	font-size: 18px;
 	font-weight: 700;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
+	overflow: hidden;
 }
 
 .unit {
