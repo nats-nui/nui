@@ -1,7 +1,7 @@
 .root {
 	--card-fg:  #000000;
-	--card-bg: #A480FF; /* #808AFF; 859dff;*/
-	--card-bg: #808AFF; /* #808AFF; 859dff;*/
+	--card-bg: #859dff; /* #808AFF; 859dff;*/
+	
 	
 	/* button icon button */
 	--cmp-select-fg: #808AFF;
