@@ -87,11 +87,10 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 			<div className="lyt-v lyt-v-btts">
 				<LinkButton
 					className="jack-focus-1"
-					icon={<MessagesIcon />}
+					icon={<MetricClientIcon />}
 					tooltip="CLIENTS"
-				// selected={isMessageOpen}
-				// onClick={handleMessagesClick}
-				// renderExtra={ButtonSend}
+					selected={isClientsOpen}
+					onClick={handleClientsClick}
 				/>
 			</div>
 		}
