@@ -9,7 +9,7 @@
     "build": "cross-env VITE_TARGET=web vite build",
     "build-desktop": "cross-env VITE_TARGET=desktop vite build",
     "typescript": "tsc",
-    "start:socket:mock": "node ./src/mocks/socket/index.js",
+    "start:socket:mock": "tsx ./src/mocks/socket/index.ts",
     "preview": "vite preview",
     "test": "vitest watch"
   },
@@ -33,6 +33,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "msw": "^1",
+    "tsx": "^4.20.3",
     "typescript": "^5.5.4",
     "vite": "^6.0.7",
     "vitest": "^3.0.2"

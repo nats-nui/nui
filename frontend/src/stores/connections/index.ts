@@ -31,7 +31,7 @@ const setup = {
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <ConnectionStore>store
 			const cnnStore = utils.findAll(docsSo.getAllCards(), { type: DOC_TYPE.CONNECTIONS })?.[0]
-			socketPool.closeAll()
+			//socketPool.closeAll()
 			const cnn = await cnnApi.index({ store: cnnStore })
 			s.setAll(cnn)
 			await loadBaseSetup.actions.fetch(_, store)
@@ -48,6 +48,8 @@ const setup = {
 			await cnnApi.remove(id)
 			store.setAll(store.state.all.filter(c => c.id != id))
 		},
+
+		/** salva la CONNECTION passata come parametro */
 		async save(cnn: Connection, store?: ConnectionStore) {
 			const cnnSaved = await cnnApi.save(cnn)
 			store.update(cnnSaved)
@@ -58,6 +60,7 @@ const setup = {
 
 			return cnnSaved
 		},
+		
 		/** inserisce o aggiorna la CONNECTION passata come paramnetro */
 		update(cnn: Partial<Connection>, store?: ConnectionStore) {
 			if (!cnn?.id) return
