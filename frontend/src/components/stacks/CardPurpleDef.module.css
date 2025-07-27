@@ -4,19 +4,19 @@
 	
 	/* button icon button */
 	--cmp-select-fg: #393939;
-	--cmp-select-bg: #859dff;
+	--cmp-select-bg: #a195ff;
 	
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
 	/* tooltip drag dialog float-button*/
 	--dialog-fg: #393939;
-	--dialog-bg: #808AFF;
+	--dialog-bg: #a195ff;
 
-	--cmp-focus: #808AFF89;
+	--cmp-focus: #a195ff89;
 }
 
 .root :global(.jack-framework-actions) {
 	--cmp-select-fg: #393939;
-	--cmp-select-bg: #808AFF;
+	--cmp-select-bg: #a195ff;
 }
