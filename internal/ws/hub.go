@@ -3,7 +3,6 @@ package ws
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
 	natsConn "github.com/nats-nui/nui/internal/connection"
@@ -211,13 +210,9 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 		return err
 	}
 	events := serverConn.ObserveConnectionEvents(ctx)
-	errMsg := ""
 	if !h.skipLastConnectionStatus {
 		firstStatus, firstConnErr := serverConn.LastEvent()
-		if firstConnErr != nil {
-			errMsg = firstConnErr.Error()
-		}
-		cm := &ConnectionStatus{Status: firstStatus, Error: errMsg}
+		cm := &ConnectionStatus{Status: firstStatus, Error: errorString(firstConnErr)}
 		select {
 		case clientMgs <- cm:
 		default:
@@ -229,12 +224,9 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 			if !ok {
 				return nil
 			}
-			if msg.Err != nil {
-				errMsg = msg.Err.Error()
-			}
 			cm := &ConnectionStatus{
 				Status: msg.Status,
-				Error:  errMsg,
+				Error:  errorString(msg.Err),
 			}
 			clientMgs <- cm
 		}
@@ -290,7 +282,7 @@ func relayMetricsToClient(ctx context.Context, m <-chan metrics.Metrics, message
 				return
 			}
 			select {
-			case messages <- &MetricsResp{Nats: m.Nats, Error: fmt.Sprint(m.Error)}:
+			case messages <- &MetricsResp{Nats: m.Nats, Error: errorString(m.Error)}:
 			default:
 			}
 		}
@@ -330,4 +322,11 @@ func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
 			clientMgs <- cm
 		}
 	}
+}
+
+func errorString(err error) string {
+	if err != nil {
+		return err.Error()
+	}
+	return ""
 }
