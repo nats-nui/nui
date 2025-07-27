@@ -4,9 +4,7 @@ import (
 	"errors"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nkeys"
-	"strings"
 	"sync"
-	"time"
 )
 
 type Conn interface {
@@ -26,7 +24,7 @@ type ConnPool[T Conn] struct {
 	build func(connection *Connection) (T, error)
 }
 
-func NewConnPool[T Conn](repo ConnRepo, builder func(connection *Connection) (T, error)) *ConnPool[T] {
+func NewConnPool[T Conn](repo ConnRepo, builder ConnBuilder[T]) *ConnPool[T] {
 	return &ConnPool[T]{
 		conns: make(map[string]T),
 		repo:  repo,
@@ -35,7 +33,7 @@ func NewConnPool[T Conn](repo ConnRepo, builder func(connection *Connection) (T,
 }
 
 func NewNatsConnPool(repo ConnRepo) *ConnPool[*NatsConn] {
-	return NewConnPool[*NatsConn](repo, natsBuilder)
+	return NewConnPool[*NatsConn](repo, NatsBuilder)
 }
 
 func (p *ConnPool[T]) Get(id string) (T, error) {
@@ -83,51 +81,6 @@ func (p *ConnPool[T]) refreshLocked(id string) error {
 	}
 	p.conns[id] = conn
 	return nil
-}
-
-func natsBuilder(connection *Connection) (*NatsConn, error) {
-	options := []nats.Option{
-		nats.RetryOnFailedConnect(true),
-		nats.MaxReconnects(-1),
-		nats.PingInterval(2 * time.Second),
-		nats.MaxPingsOutstanding(3),
-	}
-	options = appendAuthOption(connection, options)
-	options = appendTLSAuthOptions(connection, options)
-	options = appendInboxPrefixOption(connection, options)
-	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
-}
-
-func appendAuthOption(connection *Connection, options []nats.Option) []nats.Option {
-	var activeAuth *Auth
-	for _, auth := range connection.Auth {
-		if auth.Active {
-			activeAuth = &auth
-			break
-		}
-	}
-	if activeAuth == nil {
-		return options
-	}
-	switch activeAuth.Mode {
-	case "":
-		return options
-	case AuthModeNone:
-		return options
-	case AuthModeToken:
-		return append(options, nats.Token(activeAuth.Token))
-	case AuthModeUserPassword:
-		return append(options, nats.UserInfo(activeAuth.Username, activeAuth.Password))
-	case AuthModeNKey:
-		return append(options, buildNkeyOption(activeAuth))
-	case AuthModeJwt:
-		return append(options, nats.UserJWTAndSeed(activeAuth.Jwt, activeAuth.NKeySeed))
-	case AuthModeJwtBearer:
-		return append(options, buildJwtBearerOption(activeAuth))
-	case AuthModeCredsFile:
-		return append(options, nats.UserCredentials(activeAuth.Creds))
-	}
-	return options
 }
 
 func appendTLSAuthOptions(connection *Connection, options []nats.Option) []nats.Option {
