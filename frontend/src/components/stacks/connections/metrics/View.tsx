@@ -58,9 +58,9 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	const dataSendRate = compactByte(varz?.nui_out_bytes_sec)
 
 	const messageReceive = compactNumber(varz?.in_msgs)
-	const messageReceiveRate = compactByte(varz?.nui_in_msgs_sec)
+	const messageReceiveRate = compactNumber(varz?.nui_in_msgs_sec)
 	const messageSend = compactNumber(varz?.out_msgs)
-	const messageSendRate = compactByte(varz?.nui_out_msgs_sec)
+	const messageSendRate = compactNumber(varz?.nui_out_msgs_sec)
 	// ------
 
 
@@ -164,7 +164,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 			<div style={{ display: "flex", gap: 20 }}>
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
-						label="MESSAGE"
+						label="MESSAGES"
 						value={messageReceive.value}
 						unit={messageReceive.unit}
 						decimals={1}
@@ -179,7 +179,7 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 				<div style={{ display: "flex", gap: 10, flex: 1 }}>
 					<ValueCmp style={{ flex: 1 }}
-						label="MESSAGE"
+						label="MESSAGES"
 						value={messageSend.value}
 						unit={messageSend.unit}
 						decimals={1}
