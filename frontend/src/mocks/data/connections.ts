@@ -76,6 +76,11 @@ const connections: any[] = [
 			{ mode: AUTH_MODE.CREDS_FILE, creds: "myfle.cred" }
 		],
 	},
+	{
+		id: "27026b6d-40f6-4fa3-bf80-9b30c9313ebd",
+		name: "demo",
+		hosts: ["demo.nats.io"],
+	},
 ]
 
 export default connections

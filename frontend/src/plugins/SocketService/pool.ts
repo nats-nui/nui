@@ -1,6 +1,7 @@
 import { debounce } from "@/utils/time";
 import { docsSo, utils } from "@priolo/jack";
-import { SocketService } from ".";
+import { SocketService, SS_EVENTS } from ".";
+import { EventMessage } from "@/utils/EventEmitter";
 
 
 
@@ -13,7 +14,7 @@ class SocketPool {
 	}
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
-	create(key: string, cnnId: string) {
+	async create(key: string, cnnId: string): Promise<SocketService | undefined> {
 		if (!key || !cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)
@@ -22,7 +23,40 @@ class SocketPool {
 			ss.connect(cnnId)
 			this.sockets[key] = ss
 		}
+		// Wait for the WebSocket to be connected
+		await this.waitForConnection(ss)
 		return ss
+	}
+
+	/** Wait for the WebSocket connection to be established */
+	private async waitForConnection(ss: SocketService): Promise<void> {
+		return new Promise((resolve, reject) => {
+			// If already connected, resolve immediately
+			if (ss.websocket && ss.websocket.readyState === WebSocket.OPEN) {
+				resolve()
+				return
+			}
+
+			// Set up timeout to avoid waiting indefinitely
+			const timeout = setTimeout(() => {
+				ss.emitter.off(SS_EVENTS.WS_CONNECTION, onConnectionChange)
+				reject(new Error("WebSocket connection timeout"))
+			}, 10000) // 10 seconds timeout
+
+			const onConnectionChange = (msg: EventMessage) => {
+				const readyState = msg.payload as number
+				if (readyState === WebSocket.OPEN) {
+					clearTimeout(timeout)
+					resolve()
+				} else if (readyState === WebSocket.CLOSED) {
+					clearTimeout(timeout)
+					reject(new Error("WebSocket connection failed"))
+				}
+			}
+
+			// Listen for connection state changes
+			ss.emitter.once(SS_EVENTS.WS_CONNECTION, onConnectionChange)
+		})
 	}
 
 	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! 
@@ -33,7 +67,11 @@ class SocketPool {
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
 			// se lo usa qualcun'altro alllora non lo eliminare
-			if (utils.findAll(docsSo.getAllCards(), { connectionId: ss.cnnId }).length > 0) return
+			const result = utils.forEachViews(
+				docsSo.getAllCards(),
+				view => view.state["connectionId"] == ss.cnnId || view.state["connection"]?.id == ss.cnnId,
+			)
+			if (result) return
 			this.destroyForce(key)
 		}, 2000)
 	}

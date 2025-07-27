@@ -1,18 +1,18 @@
+import KeyValueMap from "@/components/input/KeyValueMap.tsx"
 import MaxBytesCmp from "@/components/input/MaxBytesCmp"
 import MaxNumberCmp from "@/components/input/MaxNumberCmp"
 import MaxTimeCmp from "@/components/input/MaxTimeCmp"
+import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx"
+import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { COMPRESSION, DISCARD, RETENTION, Source, STORAGE } from "@/types/Stream"
+import { formatNumber } from "@/utils/string"
 import { dateShow } from "@/utils/time"
+import { Accordion, Component, EditList, EditStringRow, ElementDialog, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
 import SourcesCmp from "./cmp/SourcesCmp"
-import { Accordion, Component, EditList, EditStringRow, ElementDialog, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
-import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx";
-import KeyValueMap from "@/components/input/KeyValueMap.tsx";
-import ArrowRightIcon from "@/icons/ArrowRightIcon"
-import { formatNumber } from "@/utils/string"
 
 
 interface Props {

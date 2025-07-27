@@ -2,7 +2,8 @@ import {Dialog} from "@priolo/jack"
 import {useStore} from "@priolo/jon"
 import {FunctionComponent} from "react"
 import {SyncState, SyncStore} from "@/stores/stacks/sync";
-import MaxTimeCmp, {TIME} from "@/components/input/MaxTimeCmp.tsx";
+import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx";
+import { TIME } from "@/utils/conversion";
 
 
 interface Props {

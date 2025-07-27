@@ -8,12 +8,11 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-nui/nui/internal/nui"
 	"github.com/nats-nui/nui/pkg/logging"
+	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/suite"
 	"math/rand"
 	"net/http"
 	"strconv"
-	"sync"
-	"time"
 )
 
 type NuiTestSuite struct {
@@ -25,25 +24,19 @@ type NuiTestSuite struct {
 	nuiServerPort       string
 	NuiServerCancelFunc context.CancelFunc
 	natsServerOpts      *server.Options
+	testServer          *testserver.TestServer
 	e                   *httpexpect.Expect
 	nc                  *nats.Conn
 	js                  jetstream.JetStream
 }
 
 func (s *NuiTestSuite) SetupSuite() {
-	s.natsServerOpts = &server.Options{
-		Host:               "localhost",
-		JetStream:          true,
-		NoLog:              false,
-		NoSigs:             false,
-		JetStreamMaxMemory: 1024 * 1024,
-		JetStreamMaxStore:  -1,
-	}
 }
 
 func (s *NuiTestSuite) SetupTest() {
 	s.ctx = context.Background()
-	s.natsServerOpts.Port = rand.Intn(1000) + 4000
+	s.testServer = testserver.Build(testserver.WithPort(8080))
+	s.natsServerOpts = s.testServer.Options
 	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 3000)
 	s.e = s.newE()
 	s.startNatsServer()
@@ -77,21 +70,9 @@ func (s *NuiTestSuite) startNuiServer() {
 }
 
 func (s *NuiTestSuite) startNatsServer() {
-	natsServer, err := server.NewServer(s.natsServerOpts)
+	natsServer, _, err := s.testServer.Run()
 	s.NoError(err)
 	s.NatsServer = natsServer
-	w := sync.WaitGroup{}
-	w.Add(1)
-	go func() {
-		s.NatsServer.Start()
-		for _ = range time.Tick(20) {
-			if s.NatsServer.Running() {
-				w.Done()
-				return
-			}
-		}
-	}()
-	w.Wait()
 }
 
 func (s *NuiTestSuite) newE() *httpexpect.Expect {
@@ -103,7 +84,7 @@ func (s *NuiTestSuite) newE() *httpexpect.Expect {
 }
 
 func (s *NuiTestSuite) TearDownTest() {
-	s.NatsServer.Shutdown()
+	s.testServer.TearDown()
 	s.NuiServerCancelFunc()
 	s.nc.Close()
 }
