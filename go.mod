@@ -1,6 +1,8 @@
 module github.com/nats-nui/nui
 
-go 1.23.0
+go 1.23.2
+
+toolchain go1.24.4
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
@@ -22,6 +24,8 @@ require (
 
 require (
 	github.com/google/go-tpm v0.9.3 // indirect
+	github.com/synadia-io/orbit.go/natsext v0.1.0 // indirect
+	github.com/synadia-io/orbit.go/natssysclient v0.1.1 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 )
 

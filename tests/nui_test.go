@@ -671,7 +671,7 @@ func (s *NuiTestSuite) TestHeadersOnSub() {
 }
 
 func (s *NuiTestSuite) TestConnectionEventsWs() {
-	s.NatsServer.Shutdown()
+	s.testServer.TearDown()
 	time.Sleep(10 * time.Millisecond)
 	connId := s.defaultConn()
 
@@ -693,7 +693,7 @@ func (s *NuiTestSuite) TestConnectionEventsWs() {
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("connected")
 
 	// shutdown the server and check that both ws receive the disconnected event
-	s.NatsServer.Shutdown()
+	s.testServer.TearDown()
 	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 }
