@@ -13,57 +13,76 @@ export function filterClientsByText(clients: ConnzConnection[], text: string): C
 	});
 }
 
-export function sortClients(clients: ConnzConnection[], sort: string): ConnzConnection[] {
+export function sortClients(clients: ConnzConnection[], sort: string, isDesc:boolean=true): ConnzConnection[] {
 	if (!clients || clients.length === 0) return clients;
 
 	return [...clients].sort((a, b) => {
+		let result = 0;
+
 		switch (sort) {
 			case SORTABLE_PROPERTIES.CID:
-				return a.cid - b.cid;
+				result = a.cid - b.cid;
+				break;
 
 			case SORTABLE_PROPERTIES.RTT:
 				const rttA = parseFloat(a.rtt) || 0;
 				const rttB = parseFloat(b.rtt) || 0;
-				return rttA - rttB;
+				result = rttA - rttB;
+				break;
 
 			case SORTABLE_PROPERTIES.UPTIME:
-				return a.uptime.localeCompare(b.uptime);
+				result = a.uptime.localeCompare(b.uptime);
+				break;
 
 			case SORTABLE_PROPERTIES.LAST_ACTIVITY:
-				return new Date(b.last_activity).getTime() - new Date(a.last_activity).getTime();
+				result = new Date(a.last_activity).getTime() - new Date(b.last_activity).getTime();
+				break;
 
 			case SORTABLE_PROPERTIES.IDLE_TIME:
-				return a.idle.localeCompare(b.idle);
+				result = a.idle.localeCompare(b.idle);
+				break;
 
 			case SORTABLE_PROPERTIES.SUBSCRIPTIONS:
-				return b.subscriptions - a.subscriptions;
+				result = a.subscriptions - b.subscriptions;
+				break;
 
 			case SORTABLE_PROPERTIES.MESSAGES_OUT:
-				return b.out_msgs - a.out_msgs;
+				result = a.out_msgs - b.out_msgs;
+				break;
 
 			case SORTABLE_PROPERTIES.MESSAGES_IN:
-				return b.in_msgs - a.in_msgs;
+				result = a.in_msgs - b.in_msgs;
+				break;
 
 			case SORTABLE_PROPERTIES.DATA_SIZE_OUT:
-				return b.out_bytes - a.out_bytes;
+				result = a.out_bytes - b.out_bytes;
+				break;
 
 			case SORTABLE_PROPERTIES.DATA_SIZE_IN:
-				return b.in_bytes - a.in_bytes;
+				result = a.in_bytes - b.in_bytes;
+				break;
 
 			case SORTABLE_PROPERTIES.PENDING_DATA:
-				return b.pending_bytes - a.pending_bytes;
+				result = a.pending_bytes - b.pending_bytes;
+				break;
 
 			case SORTABLE_PROPERTIES.CONNECTION_START:
-				return new Date(b.start).getTime() - new Date(a.start).getTime();
+				result = new Date(a.start).getTime() - new Date(b.start).getTime();
+				break;
 
 			case SORTABLE_PROPERTIES.NAME:
-				return (a.name ?? "").localeCompare(b.name ?? "");
+				result = (a.name ?? "").localeCompare(b.name ?? "");
+				break;
 
 			case SORTABLE_PROPERTIES.LANGUAGE:
-				return (a.lang ?? "").localeCompare(b.lang ?? "");
+				result = (a.lang ?? "").localeCompare(b.lang ?? "");
+				break;
 
 			default:
-				return 0;
+				result = 0;
 		}
+
+		// Applica l'ordinamento ascendente o discendente in base a isDesc
+		return isDesc ? -result : result;
 	});
 }
