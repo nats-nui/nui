@@ -48,7 +48,7 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	if err != nil {
 		return nil, err
 	}
-	source, err := s.buildMetricsSource(conn)
+	source, err := s.buildMetricsSource(ctx, conn)
 	if err != nil {
 		return nil, err
 	}
@@ -56,42 +56,53 @@ func (s *Collector) Start(ctx context.Context, cfg ServiceCfg) (<-chan Metrics, 
 	go func() {
 		generalRatesDecorator := NewRatesDecorator(ratesMetrics)
 		connzDecorators := make(map[int]MetricsDecorator)
+		metrics := fetchMetrics(ctx, source, generalRatesDecorator, connzDecorators)
+		sendMetrics(metricsChan, metrics)
 		for {
 			select {
 			case <-ctx.Done():
 				close(metricsChan)
 				return
 			case <-ticker:
-				rawNatsMetrics, err := source.FetchMetrics(ctx)
-				metrics := Metrics{
-					RetrievedAt: time.Now(),
-					Nats:        rawNatsMetrics,
-					Error:       err,
-				}
-				if err == nil {
-					generalRatesDecorator.Decorate(rawNatsMetrics["varz"])
-					for _, connMetrics := range rawNatsMetrics["connz"]["connections"].([]any) {
-						c := connMetrics.(map[string]any)
-						c["now"] = rawNatsMetrics["varz"]["now"]
-						cid, ok := c["cid"].(float64)
-						if !ok {
-							continue
-						}
-						intCid := int(cid)
-						if _, ok := connzDecorators[intCid]; !ok {
-							connzDecorators[intCid] = NewRatesDecorator(ratesMetrics)
-						}
-						connzDecorators[intCid].Decorate(c)
-					}
-				}
-				select {
-				case metricsChan <- metrics:
-				default:
-				}
+				metrics := fetchMetrics(ctx, source, generalRatesDecorator, connzDecorators)
+				sendMetrics(metricsChan, metrics)
 			}
 		}
 	}()
 	return metricsChan, nil
+}
+
+func fetchMetrics(ctx context.Context, source MetricsSource, generalRatesDecorator *RatesDecorator, connzDecorators map[int]MetricsDecorator) Metrics {
+	rawNatsMetrics, err := source.FetchMetrics(ctx)
+	metrics := Metrics{
+		RetrievedAt: time.Now(),
+		Nats:        rawNatsMetrics,
+		Error:       err,
+	}
+	if err == nil {
+		generalRatesDecorator.Decorate(rawNatsMetrics["varz"])
+		for _, connMetrics := range rawNatsMetrics["connz"]["connections"].([]any) {
+			c := connMetrics.(map[string]any)
+			c["now"] = rawNatsMetrics["varz"]["now"]
+			cid, ok := c["cid"].(float64)
+			if !ok {
+				continue
+			}
+			intCid := int(cid)
+			if _, ok := connzDecorators[intCid]; !ok {
+				connzDecorators[intCid] = NewRatesDecorator(ratesMetrics)
+			}
+			connzDecorators[intCid].Decorate(c)
+		}
+	}
+	return metrics
+}
+
+func sendMetrics(metricsChan chan Metrics, metrics Metrics) {
+	select {
+	case metricsChan <- metrics:
+	default:
+	}
 }
 
 func (s *Collector) collectAndRelay(ctx context.Context, source MetricsSource, metricsChan chan Metrics) {
@@ -109,13 +120,13 @@ func (s *Collector) collectAndRelay(ctx context.Context, source MetricsSource, m
 	}
 }
 
-func (s *Collector) buildMetricsSource(conn *connection.Connection) (MetricsSource, error) {
+func (s *Collector) buildMetricsSource(ctx context.Context, conn *connection.Connection) (MetricsSource, error) {
 	metrics := conn.Metrics
 	if metrics.HttpSource.Active {
 		return NewHTTPSource(metrics.HttpSource.Url), nil
 	}
 	if metrics.NatsSource.Active {
-		return NewNatsSource(conn, s.connBuilder)
+		return NewNatsSource(ctx, conn, s.connBuilder)
 	}
 	return nil, errors.New("metrics source not implemented")
 }
