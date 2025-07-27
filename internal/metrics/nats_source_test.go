@@ -24,7 +24,7 @@ func TestNatsSource_FetchMetrics_WithRealServer(t *testing.T) {
 	defer nc.Close()
 
 	// Create NatsSource
-	source := NewWithNatsConnection(nc)
+	source, _ := NewWithNatsConnection(nc)
 
 	// Test fetching metrics
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -80,7 +80,7 @@ func TestNatsSource_FetchMetrics_WithConnections(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 
 	// Create NatsSource and fetch metrics
-	source := NewWithNatsConnection(sysNC)
+	source, _ := NewWithNatsConnection(sysNC)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
