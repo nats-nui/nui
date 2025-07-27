@@ -9,8 +9,10 @@ import (
 type Option func(*TestServer)
 
 type TestServer struct {
-	options []func(*TestServer)
-	Options *server.Options
+	options  []func(*TestServer)
+	Options  *server.Options
+	Server   *server.Server
+	tearDown TearDownFunc
 }
 
 func Build(opts ...Option) *TestServer {
@@ -49,9 +51,9 @@ func WithSysAccount(userpass string) Option {
 	}
 }
 
-type TearDown func()
+type TearDownFunc func()
 
-func (ts *TestServer) Run() (*server.Server, TearDown, error) {
+func (ts *TestServer) Run() (*server.Server, TearDownFunc, error) {
 	natsServer, err := server.NewServer(ts.Options)
 	if err != nil {
 		return nil, nil, err
@@ -65,8 +67,16 @@ func (ts *TestServer) Run() (*server.Server, TearDown, error) {
 			return nil, nil, errors.New("timeout waiting for NATS server to start")
 		case <-tick:
 			if natsServer.Running() {
-				return natsServer, func() { natsServer.Shutdown() }, nil
+				ts.tearDown = func() { natsServer.Shutdown() }
+				return natsServer, ts.tearDown, nil
 			}
 		}
 	}
+}
+
+func (ts *TestServer) TearDown() {
+	if ts.tearDown != nil {
+		ts.tearDown()
+	}
+	ts.Server = nil
 }
