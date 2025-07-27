@@ -1,8 +1,7 @@
-import ArrowDownIcon from "@/icons/ArrowDownIcon"
 import SortDownIcon from "@/icons/SortDownIcon"
 import SortUpIcon from "@/icons/SortUpIcon"
 import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
-import { Button, FindInputHeader, IconButton, IconToggle } from "@priolo/jack"
+import { Button, FindInputHeader, IconButton } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -35,6 +34,7 @@ const ClientsActions: FunctionComponent<Props> = ({
 		<FindInputHeader style={{ marginLeft: 10, marginRight: 15 }}
 			value={store.state.textSearch}
 			onChange={text => store.setTextSearch(text)}
+			placeholder="Search by CID or Name"
 		/>
 
 		<IconButton effect
