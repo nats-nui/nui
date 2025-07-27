@@ -19,9 +19,13 @@ type NatsSource struct {
 	sys      *natssysclient.System
 }
 
-func NewNatsSource(conn *connection.Connection, builder connection.ConnBuilder[*connection.NatsConn]) (*NatsSource, error) {
+func NewNatsSource(ctx context.Context, conn *connection.Connection, builder connection.ConnBuilder[*connection.NatsConn]) (*NatsSource, error) {
 	adminConn := makeAdminConn(conn)
 	natsConn, err := builder(&adminConn)
+	go func(natsConn *nats.Conn) {
+		<-ctx.Done()
+		natsConn.Close()
+	}(natsConn.Conn)
 	if err != nil {
 		return nil, err
 	}
