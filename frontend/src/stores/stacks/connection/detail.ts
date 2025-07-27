@@ -8,6 +8,7 @@ import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
 import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
 import { focusSo } from "@priolo/jack"
+import { cloneDeep } from "@/utils/object"
 
 
 
@@ -83,7 +84,7 @@ const setup = {
 		/** ripristino la CONNECTION visualizzata da quella contenuta nelle CONNECTIONS */
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
-			store.setConnection({ ...cnn })
+			store.setConnection(cloneDeep(cnn))
 		},
 
 		/** apertura della CARD MESSAGES */

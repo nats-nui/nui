@@ -67,12 +67,13 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
+	const metricHttpActive = connection.metrics?.httpSource?.active ?? false
+	const metricUrl = connection.metrics?.httpSource?.url ?? ""
+
+	const metricNatsActive = connection.metrics?.natsSource?.active ?? false
 	const metricAuthModes = Object.values(AUTH_MODE)
 	const matricAuth = connection.metrics?.natsSource?.auth
 	const metricAuthModeSelected = Object.values(AUTH_MODE).indexOf(matricAuth?.mode ?? AUTH_MODE.TOKEN)
-	const metricHttpActive = connection.metrics?.httpSource?.active ?? false
-	const metricNatsActive = connection.metrics?.natsSource?.active ?? false
-	const metricUrl = connection.metrics?.httpSource?.url ?? ""
 
 	return <>
 
