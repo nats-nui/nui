@@ -32,7 +32,7 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 		if (!connz) return
 		const text = store.state.textSearch?.trim().toLowerCase() ?? ""
 		let clients = filterClientsByText(connz.connections, text)
-		clients = sortClients(clients, store.state.sort)
+		clients = sortClients(clients, store.state.sort, store.state.sortIsDesc)
 		return clients
 	}, [connz, store.state.textSearch, store.state.sort])
 
