@@ -6,7 +6,7 @@ import { mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
-import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionSync } from "./utils/factory"
+import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
 import { focusSo } from "@priolo/jack"
 
 
@@ -53,6 +53,7 @@ const setup = {
 		getSyncOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SYNC,
 		getStreamsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.STREAMS,
 		getBucketsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.BUCKETS,
+		getMetricsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.CNN_METRICS,
 
 	},
 
@@ -127,6 +128,14 @@ const setup = {
 				anim: true,
 			})
 		},
+		/** apertura della CARD METRICS */
+		openMetrics(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
+			const isOpen = store.getMetricsOpen()
+			const view = !isOpen || detached ? buildConnectionMetrics(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
+
 	},
 
 	mutators: {

@@ -1,18 +1,19 @@
 import messagesApi from "@/api/messages"
 import { socketPool } from "@/plugins/SocketService/pool"
-import { PayloadMessage } from "@/plugins/SocketService/types"
+import { MSG_TYPE, PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
 import { buildMessageDetail } from "@/stores/docs/utils/factory"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
+import { throttle } from "@/utils/time"
 import { LISTENER_CHANGE, mixStores } from "@priolo/jon"
 import dayjs from "dayjs"
-import { debounce } from "../../../../utils/time"
 import { MessageStore } from "../../message"
 import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
+import { SS_EVENTS } from "@/plugins/SocketService"
 
 
 
@@ -114,14 +115,20 @@ const setup = {
 		//#endregion
 
 
-		connect(_: void, store?: MessagesStore) {
+		async connect(_: void, store?: MessagesStore) {
 			console.log("CONNECT")
-			const ss = socketPool.create(store.getSocketServiceId(), store.state.connectionId)
-			ss.onOpen = () => store.sendSubscriptions()
-			ss.onMessage = message => store.addMessage(message)
-			// ss.onStatus = (payload: PayloadStatus) => {
-			// 	cnnSo.update({ id: store.state.connectionId, status: payload.status })
-			// }
+			const ss = await socketPool.create(store.getSocketServiceId(), store.state.connectionId)
+			//ss.onOpen = () => store.sendSubscriptions()
+			//ss.onMessage = message => store.addMessage(message)
+			ss.emitter.on(MSG_TYPE.NATS_MESSAGE, msg => {
+				const payload = msg.payload as PayloadMessage
+				store.addMessage({
+					headers: payload.headers,
+					subject: payload.subject,
+					payload: atob(payload.payload),
+				})
+			})
+			store.sendSubscriptions()
 		},
 		disconnect(_: void, store?: MessagesStore) {
 			console.log("DISCONNECT")
@@ -156,7 +163,10 @@ const setup = {
 			// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
 			const linked = store.state.linked as MessageStore
 			if ( !!linked && linked?.state.type == DOC_TYPE.MESSAGE && linked.state.linkToLast ) {
-				debounce(`msg-last-${store.state.uuid}`, () => linked.setMessage(message), 300)
+				throttle(`msg-last-${store.state.uuid}`, () => {
+					const lastMessage = msgs[msgs.length - 1]
+					linked.setMessage(lastMessage)
+				}, 1000)
 			}
 		},
 		/** aggiorno i subjects di questo stack messages */

@@ -42,13 +42,18 @@ const MessagesList: FunctionComponent<Props> = ({
 
 	// HOOKs
 	const virtuoso = useRef<VirtuosoHandle>(null)
-	// devo evitare che carichi alla CDC allo startup
+
+	/** 
+	 * devo evitare che carichi alla CDC allo startup quindi uso un debounce per disabilitare il caricamento
+	 */
 	const loadingDisabled = useRef(false)
 	useEffect(() => {
+		if (!onLoading) return
 		loadingDisabled.current = true
 		debounce(`messages-list`, () => loadingDisabled.current = false, 1000)
 	}, [messages])
-	// indica che dee automaticamente scrollare in basso se arriva un nuovo messaggio
+
+	// indica che deve automaticamente scrollare in basso se arriva un nuovo messaggio
 	const [showKeepDown, setShowKeepDown] = useState(true)
 
 	// HANDLER
@@ -62,12 +67,14 @@ const MessagesList: FunctionComponent<Props> = ({
 	// if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
 	//}
 	const handleBottomChange = (bottom: boolean) => setShowKeepDown(!bottom)
+
+	/**
+	 * se top è true allora sono arrivato in cima alla lista e devo EVENTUALMENTE caricare nuovi messaggi
+	 */
 	const handleTopChange = async (top: boolean) => {
-		if (loadingDisabled.current) return
-		if (top) {
-			const newItems = await onLoading?.(false)
-			if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
-		}
+		if (!onLoading || loadingDisabled.current || !top) return
+		const newItems = await onLoading?.(false)
+		if (newItems > 0) virtuoso.current.scrollToIndex({ index: newItems })
 	}
 
 	// RENDER

@@ -15,6 +15,10 @@ export enum MSG_TYPE {
     NATS_MESSAGE = "nats_msg",
     /** CONNECTION STATUS - server */
     CNN_STATUS = "connection_status",
+    /** METRICS - client*/
+    METRICS_REQ = "metrics_req",
+    /** METRICS - server*/
+    METRICS_RESP = "metrics_resp",
     /** ERROR MESSAGE - client server */
     ERROR = "error",
 }
@@ -44,4 +48,7 @@ export type PayloadError = {
     error: string
 }
 
-export type Payload = PayloadSub | PayloadMessage | PayloadStatus | PayloadError
+export type PayloadMetrics = any
+
+
+export type Payload = PayloadSub | PayloadMessage | PayloadStatus | PayloadError | PayloadMetrics
