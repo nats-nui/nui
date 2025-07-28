@@ -13,7 +13,7 @@
 	--dialog-fg: #393939;
 	--dialog-bg: #85bbff;
 
-	--cmp-focus: #a195ff89;
+	--cmp-focus: #85bbff89;
 }
 
 .root :global(.jack-framework-actions) {
