@@ -191,4 +191,26 @@ export const unitsInNs = {
 	[TIME.DAYS]: 60 * 60 * 24 * 1e9
 };
 
+
+/**
+ * Converts uptime string (e.g., "9d18h21m18s", "8h50m22s", "50m22s") to total seconds
+ */
+export function parseUptimeToSeconds(uptime: string): number {
+	const timeUnits = {
+		d: 86400, // 24 * 60 * 60
+		h: 3600, // 60 * 60
+		m: 60,
+		s: 1
+	};
+	let totalSeconds = 0;
+	// Single regex to match all time units at once
+	const matches = uptime.matchAll(/(\d+)([dhms])/g);
+	for (const match of matches) {
+		const value = parseInt(match[1]);
+		const unit = match[2] as keyof typeof timeUnits;
+		totalSeconds += value * timeUnits[unit];
+	}
+	return totalSeconds;
+}
+
 //#endregion
