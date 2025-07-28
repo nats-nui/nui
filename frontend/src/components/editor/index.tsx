@@ -105,7 +105,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 		const valueModel = editorModel.getValue()
 		const valuePrev = previousValueRef.current
 		previousValueRef.current = valueModel
-		if (!valuePrev || valuePrev == valueModel) {
+		if (!valuePrev || valuePrev == valueModel || valuePrev.length > 30000 || valueModel.length > 30000) {
 			return
 		}
 
