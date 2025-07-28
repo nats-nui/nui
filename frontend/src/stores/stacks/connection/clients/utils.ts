@@ -1,5 +1,6 @@
 import { ConnzConnection } from "@/types/Metrics";
 import { SORTABLE_PROPERTIES } from "./types";
+import { parseUptimeToSeconds } from "@/utils/conversion";
 
 
 
@@ -21,17 +22,19 @@ export function sortClients(clients: ConnzConnection[], sort: string, isDesc:boo
 
 		switch (sort) {
 			case SORTABLE_PROPERTIES.CID:
-				result = a.cid - b.cid;
+				result = b.cid - a.cid;
 				break;
 
 			case SORTABLE_PROPERTIES.RTT:
 				const rttA = parseFloat(a.rtt) || 0;
 				const rttB = parseFloat(b.rtt) || 0;
-				result = rttA - rttB;
+				result = rttB - rttA;
 				break;
 
 			case SORTABLE_PROPERTIES.UPTIME:
-				result = a.uptime.localeCompare(b.uptime);
+				const uptimeSecondsA = parseUptimeToSeconds(a.uptime);
+				const uptimeSecondsB = parseUptimeToSeconds(b.uptime);
+				result = uptimeSecondsB - uptimeSecondsA;
 				break;
 
 			case SORTABLE_PROPERTIES.LAST_ACTIVITY:
@@ -39,43 +42,43 @@ export function sortClients(clients: ConnzConnection[], sort: string, isDesc:boo
 				break;
 
 			case SORTABLE_PROPERTIES.IDLE_TIME:
-				result = a.idle.localeCompare(b.idle);
+				result = b.idle.localeCompare(a.idle);
 				break;
 
 			case SORTABLE_PROPERTIES.SUBSCRIPTIONS:
-				result = a.subscriptions - b.subscriptions;
+				result = b.subscriptions - a.subscriptions;
 				break;
 
 			case SORTABLE_PROPERTIES.MESSAGES_OUT:
-				result = a.out_msgs - b.out_msgs;
+				result = b.out_msgs - a.out_msgs;
 				break;
 
 			case SORTABLE_PROPERTIES.MESSAGES_IN:
-				result = a.in_msgs - b.in_msgs;
+				result = b.in_msgs - a.in_msgs;
 				break;
 
 			case SORTABLE_PROPERTIES.DATA_SIZE_OUT:
-				result = a.out_bytes - b.out_bytes;
+				result = b.out_bytes - a.out_bytes;
 				break;
 
 			case SORTABLE_PROPERTIES.DATA_SIZE_IN:
-				result = a.in_bytes - b.in_bytes;
+				result = b.in_bytes - a.in_bytes;
 				break;
 
 			case SORTABLE_PROPERTIES.PENDING_DATA:
-				result = a.pending_bytes - b.pending_bytes;
+				result = b.pending_bytes - a.pending_bytes;
 				break;
 
 			case SORTABLE_PROPERTIES.CONNECTION_START:
-				result = new Date(a.start).getTime() - new Date(b.start).getTime();
+				result = new Date(b.start).getTime() - new Date(a.start).getTime();
 				break;
 
 			case SORTABLE_PROPERTIES.NAME:
-				result = (a.name ?? "").localeCompare(b.name ?? "");
+				result = (b.name ?? "").localeCompare(a.name ?? "");
 				break;
 
 			case SORTABLE_PROPERTIES.LANGUAGE:
-				result = (a.lang ?? "").localeCompare(b.lang ?? "");
+				result = (b.lang ?? "").localeCompare(a.lang ?? "");
 				break;
 
 			default:

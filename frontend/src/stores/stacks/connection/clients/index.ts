@@ -13,7 +13,7 @@ const setup = {
 		textSearch: "",
 
 		/** sorting type */
-		sort: SORTABLE_PROPERTIES.CID,
+		sort: SORTABLE_PROPERTIES.LAST_ACTIVITY,
 		/** if SORT dialog is open */
 		sortOpen: false,
 		/** sorting order */

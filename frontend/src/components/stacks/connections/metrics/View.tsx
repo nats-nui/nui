@@ -122,8 +122,40 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 
 
 			<div style={{ display: "flex", gap: 20 }}>
-				<div style={{ flex: 1 }} className="jack-lbl-prop">RECEIVE</div>
-				<div style={{ flex: 1 }} className="jack-lbl-prop">SEND</div>
+				<div style={{ flex: 1, fontSize: 18, fontWeight: 700 }}>IN</div>
+				<div style={{ flex: 1, fontSize: 18, fontWeight: 700 }}>OUT</div>
+			</div>
+
+			<div style={{ display: "flex", gap: 20 }}>
+				<div style={{ display: "flex", gap: 10, flex: 1 }}>
+					<ValueCmp style={{ flex: 1 }}
+						label="MESSAGES"
+						value={messageReceive.value}
+						unit={messageReceive.unit}
+						decimals={1}
+					/>
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE"
+						value={messageReceiveRate.value}
+						unit={`${messageReceiveRate.unit}/s`}
+						decimals={1}
+					/>
+				</div>
+
+				<div style={{ display: "flex", gap: 10, flex: 1 }}>
+					<ValueCmp style={{ flex: 1 }}
+						label="MESSAGES"
+						value={messageSend.value}
+						unit={messageSend.unit}
+						decimals={1}
+					/>
+					<ValueCmp style={{ flex: 1 }}
+						label="RATE"
+						value={messageSendRate.value}
+						unit={`${messageSendRate.unit}/s`}
+						decimals={1}
+					/>
+				</div>
 			</div>
 
 			<div style={{ display: "flex", gap: 20, marginTop: -5 }}>
@@ -159,40 +191,6 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 				</div>
 
 			</div>
-
-			<div style={{ display: "flex", gap: 20 }}>
-				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp style={{ flex: 1 }}
-						label="MESSAGES"
-						value={messageReceive.value}
-						unit={messageReceive.unit}
-						decimals={1}
-					/>
-					<ValueCmp style={{ flex: 1 }}
-						label="RATE"
-						value={messageReceiveRate.value}
-						unit={`${messageReceiveRate.unit}/s`}
-						decimals={1}
-					/>
-				</div>
-
-				<div style={{ display: "flex", gap: 10, flex: 1 }}>
-					<ValueCmp style={{ flex: 1 }}
-						label="MESSAGES"
-						value={messageSend.value}
-						unit={messageSend.unit}
-						decimals={1}
-					/>
-					<ValueCmp style={{ flex: 1 }}
-						label="RATE"
-						value={messageSendRate.value}
-						unit={`${messageSendRate.unit}/s`}
-						decimals={1}
-					/>
-				</div>
-			</div>
-
-
 
 		</TitleAccordion>
 
