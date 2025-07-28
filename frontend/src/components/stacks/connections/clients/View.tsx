@@ -34,7 +34,7 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 		let clients = filterClientsByText(connz.connections, text)
 		clients = sortClients(clients, store.state.sort, store.state.sortIsDesc)
 		return clients
-	}, [connz, store.state.textSearch, store.state.sort])
+	}, [connz, store.state.textSearch, store.state.sort, store.state.sortIsDesc])
 
 	// HANDLER
 
