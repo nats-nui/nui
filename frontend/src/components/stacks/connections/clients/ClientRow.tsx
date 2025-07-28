@@ -62,7 +62,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 			{cnn.name && <div style={{ color: "var(--cmp-select-bg)", ...elipsisStyle }}>{cnn.name}</div>}
 
 			{/* PROPERTIES */}
-			<div style={{ marginTop: "4px", display: "flex", flexDirection: "column", gap: "0px" }}>
+			<div style={{  display: "flex", flexDirection: "column", gap: "0px" }}>
 
 				<div style={{ display: "flex", gap: "10px" }}>
 					<TooltipWrapCmp content={lastActivity}>

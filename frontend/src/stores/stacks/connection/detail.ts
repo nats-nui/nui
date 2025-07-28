@@ -131,7 +131,7 @@ const setup = {
 		},
 		/** apertura della CARD METRICS */
 		openMetrics(_: void, store?: CnnDetailStore) {
-			const metrics = store.state.connection?.metrics
+			const metrics = store.getConnection()?.metrics
 			if (!metrics?.httpSource?.active && !metrics?.natsSource?.active) {
 				store.setSnackbar({
 					open: true, type: MESSAGE_TYPE.WARNING, timeout: 5000,
