@@ -123,11 +123,13 @@ const CnnListView: FunctionComponent<Props> = ({
 export default CnnListView
 
 
-const ConnectionIcon = ({ cnn }) => <div className={`${cls.icon} ${cls[cnn.status ?? CNN_STATUS.UNDEFINED]}`}>
-	{{
-		[CNN_STATUS.UNDEFINED]: <div style={{ width: 14, height: 14 }} />,
-		[CNN_STATUS.CONNECTED]: <DoneIcon />,
-		[CNN_STATUS.RECONNECTING]: <AlertIcon />,
-		[CNN_STATUS.DISCONNECTED]: <CloseIcon />,
-	}[cnn.status]}
-</div>
+const ConnectionIcon = ({ cnn }: { cnn: Connection }) => (
+	<div className={`${cls.icon} ${cls[cnn.status ?? CNN_STATUS.UNDEFINED]}`}>
+		{{
+			[CNN_STATUS.UNDEFINED]: <div style={{ width: 14, height: 14 }} />,
+			[CNN_STATUS.CONNECTED]: <DoneIcon />,
+			[CNN_STATUS.RECONNECTING]: <AlertIcon />,
+			[CNN_STATUS.DISCONNECTED]: <CloseIcon />,
+		}[cnn.status]}
+	</div>
+)
