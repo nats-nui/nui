@@ -20,8 +20,8 @@ class SocketPool {
 		let ss = this.getById(key)
 		if (!ss) {
 			ss = new SocketService()
-			ss.connect(cnnId)
 			this.sockets[key] = ss
+			ss.connect(cnnId)
 		}
 		// Wait for the WebSocket to be connected
 		await this.waitForConnection(ss)
