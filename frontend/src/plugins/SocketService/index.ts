@@ -213,7 +213,7 @@ export class SocketService {
 
 function changeConnectionStatus(cnnId: string, status: CNN_STATUS) {
 	const cnn = cnnSo.getById(cnnId)
-	if (!cnn || cnn.status == status) return
+	if (cnn?.status == status) return
 	cnnSo.update({ id: cnnId, status })
 }
 

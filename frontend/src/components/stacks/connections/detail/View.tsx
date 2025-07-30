@@ -4,6 +4,7 @@ import RowButton from "@/components/rows/RowButton"
 import SendIcon from "@/icons/SendIcon"
 import SyncIcon from "@/icons/SyncIcon"
 import BucketsIcon from "@/icons/cards/BucketsIcon"
+import ConnectionIcon from "@/icons/cards/ConnectionIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import MetricsIcon from "@/icons/cards/MetricsIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
@@ -12,7 +13,6 @@ import { EDIT_STATE } from "@/types"
 import { IconButton, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import ConnectionIcon from "../../../../icons/cards/ConnectionIcon"
 import clsGreen from "../../CardGreen.module.css"
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
@@ -107,7 +107,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 		{inRead && <>
 			<RowButton
 				className="jack-focus-1"
-				icon={<MessagesIcon className="small-icon"/>}
+				icon={<MessagesIcon className="small-icon" />}
 				label="MESSAGES"
 				selected={isMessageOpen}
 				onClick={handleMessagesClick}
@@ -115,28 +115,28 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			/>
 			<RowButton
 				className="jack-focus-2"
-				icon={<SyncIcon className="small-icon"/>}
+				icon={<SyncIcon className="small-icon" />}
 				label="REQUEST / REPLY"
 				selected={isSyncOpen}
 				onClick={handleSyncClick}
 			/>
 			<RowButton
 				className="jack-focus-3"
-				icon={<StreamsIcon className="small-icon"/>}
+				icon={<StreamsIcon className="small-icon" />}
 				label="STREAMS"
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton
 				className="jack-focus-4"
-				icon={<BucketsIcon className="small-icon"/>}
+				icon={<BucketsIcon className="small-icon" />}
 				label="BUCKETS"
 				selected={isBucketsOpen}
 				onClick={handleBucketsClick}
 			/>
 			<RowButton style={{ marginBottom: 12 }}
 				className="jack-focus-5"
-				icon={<MetricsIcon className="small-icon"/>}
+				icon={<MetricsIcon className="small-icon" />}
 				label="METRICS"
 				selected={isMetricsOpen}
 				onClick={handleMetricsClick}

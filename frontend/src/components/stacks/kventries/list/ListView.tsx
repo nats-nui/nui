@@ -1,15 +1,15 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
+import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import { KVEntriesStore } from "@/stores/stacks/kventry"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { KVEntry } from "@/types/KVEntry"
+import { formatNumber } from "@/utils/string"
 import { dateShow } from "@/utils/time"
 import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
-import KvEntriesIcon from "../../../../icons/cards/KvEntriesIcon"
-import { formatNumber } from "../../../../utils/string"
 import clsCard from "../../CardMintDef.module.css"
 
 

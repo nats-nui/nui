@@ -14,17 +14,16 @@ export interface Varz {
 	go: string;
 	host: string;
 	port: number;
-	
+
 	ping_interval: number;
 	ping_max: number;
 	http_host: string;
 	http_port: number;
 	https_port: number;
-	
+
 	max_control_line: number;
 	cluster: Record<string, unknown>;
 	gateway: Record<string, unknown>;
-	leaf: Record<string, unknown>;
 	start: string;
 	now: string;
 	uptime: string;
@@ -36,12 +35,15 @@ export interface Varz {
 	leafnodes: number;
 	http_req_stats: Record<string, number>;
 	config_load_time: string;
-	slow_consumer_stats: {
-		clients: number;
-		routes: number;
-		gateways: number;
-		leafs: number;
-	};
+
+	// Authentication and configuration
+	auth_required: boolean;
+	config_digest: string;
+	git_commit: string;
+	http_base_path: string;
+	max_subscriptions: number;
+	server_name: string;
+	system_account: string;
 
 	cpu: number; 	// CPU
 	mem: number;	// MEMORY
@@ -50,10 +52,10 @@ export interface Varz {
 	out_msgs: number; // SEND MESSAGE
 	in_bytes: number;  // RECEIVE DATA
 	out_bytes: number; // SEND DATA
-	nui_in_bytes_sec: number, // RATE RECEIVE DATA
-	nui_in_msgs_sec: number, // RATE RECEIVE MESSAGE
-	nui_out_bytes_sec: number, // RATE SEND DATA
-	nui_out_msgs_sec: number, // RATE SEND MESSAGE
+	nui_in_bytes_sec: number | null, // RATE RECEIVE DATA
+	nui_in_msgs_sec: number | null, // RATE RECEIVE MESSAGE
+	nui_out_bytes_sec: number | null, // RATE SEND DATA
+	nui_out_msgs_sec: number | null, // RATE SEND MESSAGE
 
 	total_connections: number; // CONNECTIONS / TOTAL CONN.
 	subscriptions: number; // CONNECTIONS / SUBSCRIPTION
@@ -67,7 +69,64 @@ export interface Varz {
 	auth_timeout: number; // CONNECTIONS / AUTH.TIMEOUT
 	tls_timeout: number; // CONNECTIONS / TLS TIMEOUT
 
+	slow_consumer_stats: {
+		clients: number;
+		routes: number;
+		gateways: number;
+		leafs: number;
+	};
 
+	leaf: { // LEAF NODE
+		auth_timeout: number
+		host: string
+		port: number
+		tls_required: boolean
+		tls_timeout: number
+	},
+
+	// JetStream configuration and stats
+	jetstream: {
+		config: {
+			compress_ok: boolean;
+			max_memory: number;
+			max_storage: number;
+			store_dir: string;
+			sync_interval: number;
+		};
+		limits: Record<string, unknown>;
+		stats: {
+			accounts: number;
+			api: {
+				errors: number;
+				level: number;
+				total: number;
+			};
+			ha_assets: number;
+			memory: number;
+			reserved_memory: number;
+			reserved_storage: number;
+			storage: number;
+		};
+	};
+
+	// MQTT configuration
+	mqtt: {
+		ack_wait: number;
+		host: string;
+		max_ack_pending: number;
+		no_auth_user: string;
+		port: number;
+		tls_timeout: number;
+	};
+
+	// WebSocket configuration
+	websocket: {
+		compression: boolean;
+		handshake_timeout: number;
+		host: string;
+		no_auth_user: string;
+		port: number;
+	};
 
 }
 
@@ -93,10 +152,10 @@ export interface ConnzConnection {
 	version?: string;
 	mqtt_client?: string;
 
-	nui_in_bytes_sec: number;
-	nui_in_msgs_sec: number;
-	nui_out_bytes_sec: number;
-	nui_out_msgs_sec: number;
+	nui_in_bytes_sec: number | null;
+	nui_in_msgs_sec: number | null;
+	nui_out_bytes_sec: number | null;
+	nui_out_msgs_sec: number | null;
 }
 
 export interface Connz {
