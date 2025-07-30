@@ -1,5 +1,7 @@
+import SortDownIcon from "@/icons/SortDownIcon"
+import SortUpIcon from "@/icons/SortUpIcon"
 import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
-import { Button, FindInputHeader } from "@priolo/jack"
+import { Button, FindInputHeader, IconButton } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 
@@ -22,20 +24,33 @@ const ClientsActions: FunctionComponent<Props> = ({
 	const handleSortClick = () => {
 		store.setSortOpen(!store.state.sortOpen)
 	}
+	const handleSortOrderClick = () => {
+		store.setSortIsDesc(!store.state.sortIsDesc)
+	}
 
 	// RENDER
 	return <>
-		<FindInputHeader style={{ marginLeft: 10 }}
+
+		<FindInputHeader style={{ marginLeft: 10, marginRight: 15 }}
 			value={store.state.textSearch}
 			onChange={text => store.setTextSearch(text)}
+			placeholder="Search by CID or Name"
 		/>
-		<Button
+
+		<IconButton effect
+			onClick={handleSortOrderClick}
+		>
+			{store.state.sortIsDesc ? <SortDownIcon /> : <SortUpIcon />}
+		</IconButton>
+
+		<Button select={store.state.sortOpen}
 			children={<>
 				<span style={{ fontWeight: 400, opacity: .8 }}>SORT: </span>
 				<span>{store.state.sort}</span>
 			</>}
 			onClick={handleSortClick}
 		/>
+		
 	</>
 }
 

@@ -21,28 +21,17 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 	const rtt = parseInt(cnn.rtt) + cnn.rtt.slice(-2)
 	const pending = compactByte(cnn?.pending_bytes)
 
-	let color = {
-		"go": "#10F3F3",
-		"nats.js": "#EBFB35",
-		"nats.ws": "#EBFB35",
-		"python": "#A480FF",
-		"python3": "#A480FF",
-		"java": "#F374E6",
-		".net": "#6AFFAB",
-		"rust": "#ff74a9",
-	}[cnn.lang?.toLowerCase()] || "#A480FF"
-	color = "var(--cmp-select-bg)"
 	const lang = `${cnn.lang?.toLowerCase() ?? "--"} v${cnn.version ?? "--"}`
 
 	const msgsIn = compactNumber(cnn?.in_msgs)
-	const msgsInRate = compactByte(cnn?.nui_in_msgs_sec)
+	const msgsInRate = compactNumber(cnn?.nui_in_msgs_sec)
 	const msgsOut = compactNumber(cnn?.out_msgs)
-	const msgsOutRate = compactByte(cnn?.nui_out_msgs_sec)
+	const msgsOutRate = compactNumber(cnn?.nui_out_msgs_sec)
 
-	const bytesOut = compactNumber(cnn?.out_bytes)
-	const bytesOutRate = compactNumber(cnn?.nui_out_bytes_sec)
-	const bytesIn = compactNumber(cnn?.in_bytes)
-	const bytesInRate = compactNumber(cnn?.nui_in_bytes_sec)
+	const bytesOut = compactByte(cnn?.out_bytes)
+	const bytesOutRate = compactByte(cnn?.nui_out_bytes_sec)
+	const bytesIn = compactByte(cnn?.in_bytes)
+	const bytesInRate = compactByte(cnn?.nui_in_bytes_sec)
 
 	return (
 		<div key={cnn.cid} style={{
@@ -55,9 +44,16 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 		}}>
 
 			{/* IDENTIFIE */}
-			<div style={{ display: "flex", gap: 3 }}>
+			<div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+				<div style={{
+					width: "8px",
+					height: "8px",
+					borderRadius: "50%",
+					backgroundColor: isRecentActivity ? "var(--color-mint)" : "#575757ff",
+					marginRight: "4px",
+				}} />
 				<div style={{ flex: 1, ...elipsisStyle }}> <span style={{ fontWeight: 700 }}>{cnn.cid}</span> / {cnn.ip}:{cnn.port}</div>
-				<div style={{ backgroundColor: color, padding: "2px 4px", borderRadius: "2px", fontSize: 10, color: "#000" }}>
+				<div style={{ backgroundColor: "var(--cmp-select-bg)", padding: "2px 4px", borderRadius: "2px", fontSize: 10, color: "#000" }}>
 					{lang}
 				</div>
 			</div>
@@ -66,7 +62,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 			{cnn.name && <div style={{ color: "var(--cmp-select-bg)", ...elipsisStyle }}>{cnn.name}</div>}
 
 			{/* PROPERTIES */}
-			<div style={{ marginTop: "4px", display: "flex", flexDirection: "column", gap: "0px" }}>
+			<div style={{  display: "flex", flexDirection: "column", gap: "0px" }}>
 
 				<div style={{ display: "flex", gap: "10px" }}>
 					<TooltipWrapCmp content={lastActivity}>

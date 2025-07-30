@@ -11,8 +11,13 @@ const setup = {
 	state: {
 		connectionId: <string>null,
 		textSearch: "",
-		sort: SORTABLE_PROPERTIES.CID,
+
+		/** sorting type */
+		sort: SORTABLE_PROPERTIES.LAST_ACTIVITY,
+		/** if SORT dialog is open */
 		sortOpen: false,
+		/** sorting order */
+		sortIsDesc: true,
 
 		//#region VIEWBASE
 		width: 460,
@@ -48,7 +53,7 @@ const setup = {
 		async onCreated(_: void, store?: ClientMetricsStore) {
 			metricsSo.enable(store.state.connectionId)
 		},
-//[ II ] non viene chiamata quando elimino il parent
+
 		onRemoval(_: void, store?: ViewStore) {
 			metricsSo.disable((<ClientMetricsStore>store).state.connectionId)
 		},
@@ -57,8 +62,10 @@ const setup = {
 
 	mutators: {
 		setTextSearch: (textSearch: string) => ({ textSearch }),
+		
 		setSort: (sort: SORTABLE_PROPERTIES) => ({ sort }),
 		setSortOpen: (sortOpen: boolean) => ({ sortOpen }),
+		setSortIsDesc: (sortIsDesc: boolean) => ({ sortIsDesc }),
 	},
 }
 

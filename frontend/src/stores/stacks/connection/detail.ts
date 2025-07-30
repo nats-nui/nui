@@ -7,7 +7,8 @@ import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
 import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
-import { focusSo } from "@priolo/jack"
+import { focusSo, MESSAGE_TYPE } from "@priolo/jack"
+import { cloneDeep } from "@/utils/object"
 
 
 
@@ -83,7 +84,7 @@ const setup = {
 		/** ripristino la CONNECTION visualizzata da quella contenuta nelle CONNECTIONS */
 		restore(_: void, store?: CnnDetailStore) {
 			const cnn = cnnSo.getById(store.state.connection.id)
-			store.setConnection({ ...cnn })
+			store.setConnection(cloneDeep(cnn))
 		},
 
 		/** apertura della CARD MESSAGES */
@@ -130,6 +131,15 @@ const setup = {
 		},
 		/** apertura della CARD METRICS */
 		openMetrics(_: void, store?: CnnDetailStore) {
+			const metrics = store.getConnection()?.metrics
+			if (!metrics?.httpSource?.active && !metrics?.natsSource?.active) {
+				store.setSnackbar({
+					open: true, type: MESSAGE_TYPE.WARNING, timeout: 5000,
+					title: "WAIT WAIT....",
+					body: "You need to configure the METRICS section first!",
+				})
+				return
+			}
 			const detached = focusSo.state.shiftKey
 			const isOpen = store.getMetricsOpen()
 			const view = !isOpen || detached ? buildConnectionMetrics(store.state.connection?.id) : null

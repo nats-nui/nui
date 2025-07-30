@@ -17,6 +17,7 @@ export function snakeToCamel(obj: any): any {
 		return obj;
 	}
 }
+
 // [CHAT.GPT]
 export function camelToSnake(obj: any): any {
 	if (Array.isArray(obj)) {
@@ -35,7 +36,9 @@ export function camelToSnake(obj: any): any {
 	}
 }
 
-// Confronto due oggetti solo al primo livello
+/** 
+ * Confronto due oggetti solo al primo livello
+ * */
 export function compare(objFind: any, obj: any): boolean {
 	for (let key of Object.keys(objFind)) {
 		if (objFind[key] !== obj[key]) {
@@ -45,6 +48,9 @@ export function compare(objFind: any, obj: any): boolean {
 	return true;
 }
 
+/**
+ * Confronta due oggetti in modo ricorsivo.
+ */
 export function deepEqual(obj1: any, obj2: any): boolean {
 	const typeObj1 = typeof obj1
 	const typeObj2 = typeof obj2
@@ -55,4 +61,13 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 		return true
 	}
 	return obj1 == obj2
+}
+/**
+ * Fa un clone "deep" di un oggetto
+ * @param obj oggetto da clonare
+ * > ATTENZIONE: gli `undefined` vengono trasformati in `null`
+ */
+ export function cloneDeep(obj:any):any {
+    if (obj == undefined) return undefined;
+    return JSON.parse(JSON.stringify(obj));
 }

@@ -4,6 +4,7 @@ import { Accordion, IconToggle, ListDialog, StringUpRow, TextInput } from "@prio
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import AuthCmp from "./AuthCmp"
+import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 
 
 
@@ -66,12 +67,13 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
 
+	const metricHttpActive = connection.metrics?.httpSource?.active ?? false
+	const metricUrl = connection.metrics?.httpSource?.url ?? ""
+
+	const metricNatsActive = connection.metrics?.natsSource?.active ?? false
 	const metricAuthModes = Object.values(AUTH_MODE)
 	const matricAuth = connection.metrics?.natsSource?.auth
 	const metricAuthModeSelected = Object.values(AUTH_MODE).indexOf(matricAuth?.mode ?? AUTH_MODE.TOKEN)
-	const metricHttpActive = connection.metrics?.httpSource?.active ?? false
-	const metricNatsActive = connection.metrics?.natsSource?.active ?? false
-	const metricUrl = connection.metrics?.httpSource?.url ?? ""
 
 	return <>
 
@@ -82,6 +84,7 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 					check={metricHttpActive}
 					onChange={handleMetricHttpSourceChange}
 					readOnly={inRead}
+					trueIcon={<CheckRadioOnIcon />}
 				/>
 				<div className="jack-lbl-prop">HTTP SOURCE</div>
 			</div>
@@ -109,6 +112,7 @@ const ConnectionMetricsCmp: FunctionComponent<Props> = ({
 					check={metricNatsActive}
 					onChange={handleMetricNatsSourceChange}
 					readOnly={inRead}
+					trueIcon={<CheckRadioOnIcon />}
 				/>
 				<div className="jack-lbl-prop">NATS SOURCE</div>
 			</div>
