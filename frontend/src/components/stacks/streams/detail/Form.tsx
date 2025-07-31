@@ -1,7 +1,7 @@
 import KeyValueMap from "@/components/input/KeyValueMap.tsx"
-import MaxBytesCmp from "@/components/input/MaxBytesCmp"
-import MaxNumberCmp from "@/components/input/MaxNumberCmp"
-import MaxTimeCmp from "@/components/input/MaxTimeCmp"
+import ToggleMaxBytesCmp from "@/components/input/ToggleMaxBytesCmp"
+import ToggleMaxNumberCmp from "@/components/input/ToggleMaxNumberCmp"
+import ToggleMaxTimeCmp from "@/components/input/ToggleMaxTimeCmp"
 import EditSourceCmp from "@/components/stacks/streams/detail/cmp/EditSourceCmp.tsx"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { StreamStore } from "@/stores/stacks/streams/detail"
@@ -337,7 +337,7 @@ const Form: FunctionComponent<Props> = ({
 
 
         <TitleAccordion title="LIMIT" open={!inRead}>
-            <MaxTimeCmp store={streamSo}
+            <ToggleMaxTimeCmp store={streamSo}
                 readOnly={inRead}
                 label="MAX AGE"
                 value={config.maxAge}
@@ -345,31 +345,31 @@ const Form: FunctionComponent<Props> = ({
                 initDefault={null}
                 onChange={maxAge => streamSo.setStreamConfig({ ...streamSa.stream.config, maxAge })}
             />
-            <MaxBytesCmp store={streamSo}
+            <ToggleMaxBytesCmp store={streamSo}
                 readOnly={inRead}
                 label="MAX BYTES"
                 value={config.maxBytes}
                 onChange={maxBytes => streamSo.setStreamConfig({ ...streamSa.stream.config, maxBytes })}
             />
-            <MaxNumberCmp
+            <ToggleMaxNumberCmp
                 readOnly={inRead || !inNew}
                 label="MAX CONSUMERS"
                 value={config.maxConsumers}
                 onChange={maxConsumers => streamSo.setStreamConfig({ ...streamSa.stream.config, maxConsumers })}
             />
-            <MaxBytesCmp store={streamSo}
+            <ToggleMaxBytesCmp store={streamSo}
                 readOnly={inRead}
                 label="MAX MSG SIZE"
                 value={config.maxMsgSize}
                 onChange={maxMsgSize => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgSize })}
             />
-            <MaxNumberCmp
+            <ToggleMaxNumberCmp
                 readOnly={inRead}
                 label="MAX MESSAGES"
                 value={config.maxMsgs}
                 onChange={maxMsgs => streamSo.setStreamConfig({ ...streamSa.stream.config, maxMsgs })}
             />
-            <MaxNumberCmp
+            <ToggleMaxNumberCmp
                 readOnly={inRead}
                 label="MAX MSGS PER SUBJECT"
                 value={config.maxMsgsPerSubject}
@@ -518,7 +518,7 @@ const Form: FunctionComponent<Props> = ({
             </div>
 
             <div className="lyt-v">
-                <MaxTimeCmp store={streamSo}
+                <ToggleMaxTimeCmp store={streamSo}
                             readOnly={inRead}
                             label="SUBJECT DELETE MARKER TTL"
                             value={config.subjectDeleteMarkerTtl}
@@ -594,7 +594,7 @@ const Form: FunctionComponent<Props> = ({
                 <Accordion open={consumerLimitsIsSet}>
                     <div className="jack-lyt-quote">
                         <div className="lyt-v">
-                            <MaxTimeCmp store={streamSo}
+                            <ToggleMaxTimeCmp store={streamSo}
                                 label="INACTIVE THRESHOLD"
                                 value={config.consumerLimits?.inactiveThreshold}
                                 desiredDefault={0}

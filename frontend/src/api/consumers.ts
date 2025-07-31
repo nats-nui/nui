@@ -30,7 +30,7 @@ function remove(connectionId: string, streamName: string, consumerName: string, 
 }
 
 /** PAUSE and RESUME */
-function pauseResume(connectionId: string, streamName: string, consumerName: string, action: string, pauseUntil?: string, opt?: CallOptions): Promise<void> {
+function pauseResume(connectionId: string, streamName: string, consumerName: string, action: string, pauseUntil?: string, opt?: CallOptions): Promise<StreamConsumer> {
 	const param = { action, pauseUntil }
 	convertDateFieldToISO(param, "pauseUntil")
 	return ajax.post(`connection/${connectionId}/stream/${streamName}/consumer/${consumerName}/pause_resume`, param, opt)
