@@ -1,10 +1,12 @@
 import KeyValueMap from "@/components/input/KeyValueMap.tsx"
-import MaxBytesCmp from "@/components/input/MaxBytesCmp.tsx"
-import MaxNumberCmp from "@/components/input/MaxNumberCmp.tsx"
-import MaxTimeCmp from "@/components/input/MaxTimeCmp.tsx"
+import MaxTimeCmp from "@/components/input/MaxTimeCmp"
+import ToggleMaxBytesCmp from "@/components/input/ToggleMaxBytesCmp"
+import ToggleMaxNumberCmp from "@/components/input/ToggleMaxNumberCmp"
+import ToggleMaxTimeCmp from "@/components/input/ToggleMaxTimeCmp"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
-import {EDIT_STATE} from "@/types"
+import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
+import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
 import {
 	DateTimeInput,
@@ -13,8 +15,8 @@ import {
 	EditStringRow,
 	IconToggle,
 	ListDialog,
-	ListObjects,
 	NumberInput,
+	RenderRowBaseProps,
 	StringUpRow,
 	TextInput,
 	TitleAccordion
@@ -37,7 +39,10 @@ const Form: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => store.setConsumerConfig({ ...state.consumer.config, ...prop })
-	const handleBackoffChange = (backoff: number[]) => store.setConsumerConfig({ ...state.consumer.config, backoff })
+	const handleBackoffChange = (backoff: number[]) => {
+		console.log("handleBackoffChange", backoff)
+		store.setConsumerConfig({ ...state.consumer.config, backoff })
+	}
 	const handleDeliverPolicyChange = (index: number) => {
 		const deliverPolicy = Object.values(DeliverPolicy)[index]
 		if (deliverPolicy == DeliverPolicy.DeliverByStartSequencePolicy) {
@@ -48,7 +53,7 @@ const Form: FunctionComponent<Props> = ({
 			handlePropChange({ deliverPolicy, optStartSeq: 0 })
 			return
 		}
-		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null})
+		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null })
 	}
 	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
@@ -253,16 +258,16 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<MaxTimeCmp store={store}
-						readOnly={inRead}
-						label="ACK WAIT"
-						value={consumer.config.ackWait}
-						desiredDefault={0}
-						initDefault={1}
-						onChange={ackWait => handlePropChange({ ackWait })}
+			<ToggleMaxTimeCmp store={store}
+				readOnly={inRead}
+				label="ACK WAIT"
+				value={consumer.config.ackWait}
+				desiredDefault={0}
+				initDefault={1}
+				onChange={ackWait => handlePropChange({ ackWait })}
 			/>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="MAX DELIVER"
 				value={consumer.config.maxDeliver}
@@ -271,7 +276,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxDeliver => handlePropChange({ maxDeliver })}
 			/>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead || !inNew}
 				label="MAX WAITING"
 				value={consumer.config.maxWaiting}
@@ -280,7 +285,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxWaiting => handlePropChange({ maxWaiting })}
 			/>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="MAX ACK PENDING"
 				value={consumer.config.maxAckPending}
@@ -289,7 +294,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxAckPending => handlePropChange({ maxAckPending })}
 			/>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="SAMPLE FREQ"
 				value={parseInt(consumer.config.sampleFreq?.length > 0 ? consumer.config.sampleFreq : "0")}
@@ -304,11 +309,20 @@ const Form: FunctionComponent<Props> = ({
 				<EditList<number>
 					items={consumer.config.backoff}
 					onItemsChange={handleBackoffChange}
-					readOnly={inRead}
-					placeholder="ex. 10"
+					readOnly={false}
+					//placeholder="ex. 10"
 					onNewItem={() => 0}
-					fnIsVoid={h => h == null}
-					RenderRow={EditNumberRow}
+					//fnIsVoid={h => h == null}
+					RenderRow={({ item, isSelect, readOnly, placeholder, onChange, onSelect }: RenderRowBaseProps<number>) => {
+						return <MaxTimeCmp
+							store={store}
+							value={item}
+							readOnly={false}
+							inputUnit={TIME.SECONDS}
+							onChange={onChange}
+						/>
+					}}
+				
 				/>
 			</div>
 
@@ -317,7 +331,7 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="PULL OPTIONS">
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="MAX REQUEST BATCH"
 				value={consumer.config.maxBatch}
@@ -326,7 +340,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxBatch => handlePropChange({ maxBatch })}
 			/>
 
-			<MaxTimeCmp
+			<ToggleMaxTimeCmp
 				store={store}
 				readOnly={inRead}
 				label="MAX REQUEST EXPIRES"
@@ -336,7 +350,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={maxExpires => handlePropChange({ maxExpires })}
 			/>
 
-			<MaxBytesCmp
+			<ToggleMaxBytesCmp
 				store={store}
 				readOnly={inRead}
 				label="MAX REQUEST BYTES"
@@ -428,7 +442,7 @@ const Form: FunctionComponent<Props> = ({
 
 		<TitleAccordion title="ADVANCED" style={{ marginBottom: 20 }}>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="NUM REPLICAS"
 				value={consumer.config.numReplicas}
@@ -437,7 +451,7 @@ const Form: FunctionComponent<Props> = ({
 				onChange={numReplicas => handlePropChange({ numReplicas })}
 			/>
 
-			<MaxNumberCmp
+			<ToggleMaxNumberCmp
 				readOnly={inRead}
 				label="INACTIVE THRESHOLD"
 				value={consumer.config.inactiveThreshold}

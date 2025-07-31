@@ -120,8 +120,7 @@ const setup = {
 		/** change the pause/resume value */
 		async updatePause({ pause, until }: { pause: boolean, until: string }, store?: ConsumerStore) {
 			const action = pause ? "pause" : "resume"
-			let consumerSaved: StreamConsumer = null
-			consumerSaved = await cnsApi.pauseResume(
+			const consumerSaved: StreamConsumer = await cnsApi.pauseResume(
 				store.state.connectionId,
 				store.state.streamName,
 				store.state.consumer.config.name,
