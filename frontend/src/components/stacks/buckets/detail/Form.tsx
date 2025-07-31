@@ -6,8 +6,8 @@ import { Source, STORAGE } from "@/types/Stream"
 import { Accordion, Component, EditList, EditStringRow, ElementDialog, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import MaxBytesCmp from "../../../input/MaxBytesCmp"
-import MaxTimeCmp from "../../../input/MaxTimeCmp"
+import ToggleMaxBytesCmp from "../../../input/ToggleMaxBytesCmp"
+import ToggleMaxTimeCmp from "../../../input/ToggleMaxTimeCmp"
 import EditSourceCmp from "../../streams/detail/cmp/EditSourceCmp"
 import SourcesCmp from "../../streams/detail/cmp/SourcesCmp"
 import { formatNumber } from "../../../../utils/string"
@@ -228,7 +228,7 @@ const Form: FunctionComponent<Props> = ({
 				/>
 			</div>
 
-			<MaxTimeCmp store={bucketSo}
+			<ToggleMaxTimeCmp store={bucketSo}
 				label="TTL"
 				value={bucket.ttl}
 				desiredDefault={0}
@@ -236,13 +236,13 @@ const Form: FunctionComponent<Props> = ({
 				onChange={ttl => handlePropChange({ ttl })}
 				readOnly={inRead}
 			/>
-			<MaxBytesCmp store={bucketSo}
+			<ToggleMaxBytesCmp store={bucketSo}
 				label="MAX VALUE SIZE"
 				value={bucket.maxValueSize}
 				onChange={maxValueSize => handlePropChange({ maxValueSize })}
 				readOnly={inRead}
 			/>
-			<MaxBytesCmp store={bucketSo}
+			<ToggleMaxBytesCmp store={bucketSo}
 				label="MAX BYTES"
 				value={bucket.maxBytes}
 				onChange={maxBytes => handlePropChange({ maxBytes })}
