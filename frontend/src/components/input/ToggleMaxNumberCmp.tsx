@@ -17,14 +17,15 @@ interface Props {
 }
 
 const ToggleMaxNumberCmp: FunctionComponent<Props> = ({
+	min,
+	max,
+
 	value,
 	label,
 	readOnly,
-	min,
-	max,
-	onChange,
 	desiredDefault = -1,
 	initDefault = 0,
+	onChange,
 }) => {
 
 	// STORE
@@ -41,7 +42,7 @@ const ToggleMaxNumberCmp: FunctionComponent<Props> = ({
 		open={isOpen}
 		label={label}
 		readOnly={readOnly}
-		onChange={handleEnabledCheck}
+		onOpenChange={handleEnabledCheck}
 	>
 		<NumberInput
 			style={{ flex: 1 }}

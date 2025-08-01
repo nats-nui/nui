@@ -7,7 +7,7 @@ interface Props {
 	open?: boolean
 	label?: string
 	readOnly?: boolean
-	onChange?: (check: boolean, e?: React.MouseEvent) => void
+	onOpenChange?: (open: boolean, e?: React.MouseEvent) => void
 	children?: React.ReactNode
 }
 
@@ -15,7 +15,7 @@ const ToggleAccordion: FunctionComponent<Props> = ({
 	open,
 	label,
 	readOnly,
-	onChange,
+	onOpenChange,
 	children,
 }) => {
 
@@ -31,7 +31,7 @@ const ToggleAccordion: FunctionComponent<Props> = ({
 		<div className="jack-cmp-h">
 			<IconToggle
 				check={open}
-				onChange={onChange}
+				onChange={onOpenChange}
 				readOnly={readOnly}
 			/>
 			<div className="jack-lbl-prop">{label}</div>

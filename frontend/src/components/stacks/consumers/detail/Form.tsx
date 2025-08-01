@@ -3,26 +3,19 @@ import MaxTimeCmp from "@/components/input/MaxTimeCmp"
 import ToggleMaxBytesCmp from "@/components/input/ToggleMaxBytesCmp"
 import ToggleMaxNumberCmp from "@/components/input/ToggleMaxNumberCmp"
 import ToggleMaxTimeCmp from "@/components/input/ToggleMaxTimeCmp"
+import AddIcon from "@/icons/AddIcon"
+import ClearIcon from "@/icons/ClearIcon"
+import CloseIcon from "@/icons/CloseIcon"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
-import {
-	DateTimeInput,
-	EditList,
-	EditNumberRow,
-	EditStringRow,
-	IconToggle,
-	ListDialog,
-	NumberInput,
-	RenderRowBaseProps,
-	StringUpRow,
-	TextInput,
-	TitleAccordion
-} from "@priolo/jack"
+import { Button, DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+
+
 
 interface Props {
 	store?: ConsumerStore
@@ -58,6 +51,8 @@ const Form: FunctionComponent<Props> = ({
 	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
 	}
+
+
 
 	// RENDER
 	const consumer = state.consumer
@@ -117,6 +112,7 @@ const Form: FunctionComponent<Props> = ({
 			)}
 
 		</TitleAccordion>
+
 
 		{inRead && <>
 			<TitleAccordion title="MESSAGES">
@@ -181,7 +177,6 @@ const Form: FunctionComponent<Props> = ({
 
 			</TitleAccordion>
 		</>}
-
 
 
 		<TitleAccordion title="DELIVERY POLICY">
@@ -306,24 +301,51 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">BACKOFF</div>
-				<EditList<number>
-					items={consumer.config.backoff}
-					onItemsChange={handleBackoffChange}
-					readOnly={false}
-					//placeholder="ex. 10"
-					onNewItem={() => 0}
-					//fnIsVoid={h => h == null}
-					RenderRow={({ item, isSelect, readOnly, placeholder, onChange, onSelect }: RenderRowBaseProps<number>) => {
-						return <MaxTimeCmp
-							store={store}
-							value={item}
-							readOnly={false}
-							inputUnit={TIME.SECONDS}
-							onChange={onChange}
-						/>
-					}}
-				
-				/>
+				<div
+					style={{ display: "flex", flexDirection: "column", gap: 5 }}
+					className={inRead ? "jack-lyt-quote" : null}
+				>
+					{consumer.config.backoff?.map((backoff, index) => (
+						<div style={{ display: "flex", alignItems: "center", gap: "3px" }} key={index}>
+
+							{!inRead && (
+								<IconButton effect
+									onClick={() => {
+										const newBackoff = [...consumer.config.backoff]
+										newBackoff.splice(index, 1)
+										handleBackoffChange(newBackoff)
+									}}
+								><CloseIcon /></IconButton>
+							)}
+
+							<MaxTimeCmp autoFocus
+								store={store}
+								value={backoff}
+								onChange={value => {
+									const newBackoff = [...consumer.config.backoff]
+									newBackoff[index] = value
+									handleBackoffChange(newBackoff)
+								}}
+								readOnly={inRead}
+								inputUnit={TIME.NS}
+							/>
+
+						</div>
+					))}
+				</div>
+
+				{(!consumer.config.backoff || consumer.config.backoff.length == 0) && (
+					<div className="jack-lbl-empty">NO BACKOFF</div>
+				)}
+
+				{!inRead && (
+					<IconButton effect
+						onClick={() => {
+							const newBackoff = [...(consumer.config.backoff ?? []), 0]
+							handleBackoffChange(newBackoff)
+						}} style={{ marginTop: 5 }}
+					><AddIcon /></IconButton>
+				)}
 			</div>
 
 		</TitleAccordion>
@@ -485,3 +507,6 @@ const Form: FunctionComponent<Props> = ({
 }
 
 export default Form
+
+
+

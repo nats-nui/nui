@@ -17,12 +17,13 @@ interface Props {
 
 const ToggleMaxBytesCmp: FunctionComponent<Props> = ({
 	store,
+
 	value,
 	label,
 	readOnly,
-	onChange,
 	desiredDefault = -1,
 	initDefault = 0,
+	onChange,
 }) => {
 
 	// STORE
@@ -33,13 +34,13 @@ const ToggleMaxBytesCmp: FunctionComponent<Props> = ({
 	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
 
 	// RENDER
-	const isOpen = value != null && value != desiredDefault
+	const isOpen = (value != null || initDefault == null) && value !== desiredDefault
 
 	return <ToggleAccordion
 		open={isOpen}
 		label={label}
 		readOnly={readOnly}
-		onChange={handleEnabledCheck}
+		onOpenChange={handleEnabledCheck}
 	>
 		<MaxBytesCmp
 			store={store}
