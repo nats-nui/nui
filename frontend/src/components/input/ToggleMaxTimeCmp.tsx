@@ -19,13 +19,14 @@ interface Props {
 
 const ToggleMaxTimeCmp: FunctionComponent<Props> = ({
 	store,
+	inputUnit = TIME.NS,
+
 	value,
 	label,
 	readOnly,
+	onChange,
 	desiredDefault = -1,
 	initDefault = 0,
-	inputUnit = TIME.NS,
-	onChange,
 }) => {
 
 	// STORE
@@ -33,7 +34,7 @@ const ToggleMaxTimeCmp: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)
+	const handleEnabledCheck = (check: boolean) => onChange?.(check ? initDefault : desiredDefault)	
 
 	// RENDER
 	const isOpen = (value != null || initDefault == null) && value !== desiredDefault
@@ -42,7 +43,7 @@ const ToggleMaxTimeCmp: FunctionComponent<Props> = ({
 		open={isOpen}
 		label={label}
 		readOnly={readOnly}
-		onChange={handleEnabledCheck}
+		onOpenChange={handleEnabledCheck}
 	>
 		<MaxTimeCmp
 			store={store}
