@@ -43,7 +43,7 @@ ConsumerConfig {
     maxAckPending?: number; // The maximum number of unacknowledged messages - Editable
     // default checkbox - 0 (from 0 to 100)
     sampleFreq?: string; // The sampling frequency for metrics - Editable
-    // ok
+    // ok nanoseconds
     backoff?: number[]; // The backoff strategy for redelivery - Editable
 
 

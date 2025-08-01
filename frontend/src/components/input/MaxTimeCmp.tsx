@@ -2,15 +2,15 @@ import { ViewStore } from "@/stores/stacks/viewBase";
 import { getLargestUnit, nsToValue, TIME, valueToNs } from "@/utils/conversion";
 import { ListDialog, NumberInput, StringUpRow } from "@priolo/jack";
 import { FunctionComponent, useEffect, useState } from "react";
-import ToggleAccordion from "./ToggleAccordion";
 
 
 
 interface Props {
-	store?: ViewStore
+	store: ViewStore
 	value: number
 	readOnly?: boolean
 	inputUnit?: TIME
+	autoFocus?: boolean
 	onChange?: (valueNew: number) => void
 }
 
@@ -19,6 +19,7 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	value,
 	readOnly,
 	inputUnit = TIME.NS,
+	autoFocus,
 	onChange,
 }) => {
 
@@ -47,8 +48,8 @@ const MaxTimeCmp: FunctionComponent<Props> = ({
 	const valueShow = nsToValue(valueInNs, unit)
 
 	return <div className="jack-cmp-h" style={{ minHeight: 22 }}>
-		<NumberInput
-			style={{ flex: 1 }}
+		<NumberInput autoFocus={autoFocus}
+			style={{ flex: 1, width: 0 }}
 			value={valueShow}
 			onChange={handlePropChange}
 			readOnly={readOnly}
