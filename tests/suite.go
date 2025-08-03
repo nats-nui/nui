@@ -35,7 +35,7 @@ func (s *NuiTestSuite) SetupSuite() {
 
 func (s *NuiTestSuite) SetupTest() {
 	s.ctx = context.Background()
-	s.testServer = testserver.Build(testserver.WithPort(8080))
+	s.testServer = testserver.Build(testserver.WithPort(8080), testserver.WithDefaultAccount(), testserver.WithSysAccount("sys"))
 	s.natsServerOpts = s.testServer.Options
 	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 3000)
 	s.e = s.newE()
