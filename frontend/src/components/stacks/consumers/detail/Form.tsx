@@ -1,19 +1,15 @@
 import KeyValueMap from "@/components/input/KeyValueMap.tsx"
-import MaxTimeCmp from "@/components/input/MaxTimeCmp"
 import ToggleMaxBytesCmp from "@/components/input/ToggleMaxBytesCmp"
 import ToggleMaxNumberCmp from "@/components/input/ToggleMaxNumberCmp"
 import ToggleMaxTimeCmp from "@/components/input/ToggleMaxTimeCmp"
-import AddIcon from "@/icons/AddIcon"
-import ClearIcon from "@/icons/ClearIcon"
-import CloseIcon from "@/icons/CloseIcon"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
-import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
-import { Button, DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import { DateTimeInput, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
+import BackoffCmp from "./BackoffCmp"
 
 
 
@@ -32,10 +28,7 @@ const Form: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handlePropChange = (prop: { [name: string]: any }) => store.setConsumerConfig({ ...state.consumer.config, ...prop })
-	const handleBackoffChange = (backoff: number[]) => {
-		console.log("handleBackoffChange", backoff)
-		store.setConsumerConfig({ ...state.consumer.config, backoff })
-	}
+
 	const handleDeliverPolicyChange = (index: number) => {
 		const deliverPolicy = Object.values(DeliverPolicy)[index]
 		if (deliverPolicy == DeliverPolicy.DeliverByStartSequencePolicy) {
@@ -48,6 +41,7 @@ const Form: FunctionComponent<Props> = ({
 		}
 		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null })
 	}
+	
 	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
 	}
@@ -298,54 +292,15 @@ const Form: FunctionComponent<Props> = ({
 				min={1} max={100}
 				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq == 0 ? "" : sampleFreq.toString() })}
 			/>
-
+			
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">BACKOFF</div>
-				<div
-					style={{ display: "flex", flexDirection: "column", gap: 5 }}
-					className={inRead ? "jack-lyt-quote" : null}
-				>
-					{consumer.config.backoff?.map((backoff, index) => (
-						<div style={{ display: "flex", alignItems: "center", gap: "3px" }} key={index}>
-
-							{!inRead && (
-								<IconButton effect
-									onClick={() => {
-										const newBackoff = [...consumer.config.backoff]
-										newBackoff.splice(index, 1)
-										handleBackoffChange(newBackoff)
-									}}
-								><CloseIcon /></IconButton>
-							)}
-
-							<MaxTimeCmp autoFocus
-								store={store}
-								value={backoff}
-								onChange={value => {
-									const newBackoff = [...consumer.config.backoff]
-									newBackoff[index] = value
-									handleBackoffChange(newBackoff)
-								}}
-								readOnly={inRead}
-								inputUnit={TIME.NS}
-							/>
-
-						</div>
-					))}
-				</div>
-
-				{(!consumer.config.backoff || consumer.config.backoff.length == 0) && (
-					<div className="jack-lbl-empty">NO BACKOFF</div>
-				)}
-
-				{!inRead && (
-					<IconButton effect
-						onClick={() => {
-							const newBackoff = [...(consumer.config.backoff ?? []), 0]
-							handleBackoffChange(newBackoff)
-						}} style={{ marginTop: 5 }}
-					><AddIcon /></IconButton>
-				)}
+				<BackoffCmp
+					store={store}
+					backoff={consumer.config.backoff}
+					onChange={backoff => handlePropChange({ backoff })}
+					readOnly={inRead}
+				/>
 			</div>
 
 		</TitleAccordion>
@@ -383,64 +338,6 @@ const Form: FunctionComponent<Props> = ({
 			/>
 
 		</TitleAccordion>
-
-		{/*<TitleAccordion title="PUSH OPTIONS (legacy)">
-			<div className="jack-lbl-prop">Read only section</div>
-			<div className="lyt-v">
-				<div className="jack-lbl-prop">DELIVER SUBJECT</div>
-				<TextInput
-					value={consumer.config.deliverSubject}
-					onChange={deliverSubject => handlePropChange({ deliverSubject })}
-					readOnly={true}
-				/>
-			</div>
-
-			<div className="lyt-v">
-				<div className="jack-lbl-prop">DELIVER GROUP</div>
-				<TextInput
-					value={consumer.config.deliverGroup}
-					onChange={deliverGroup => handlePropChange({ deliverGroup })}
-					readOnly={true}
-				/>
-			</div>
-
-			<div className="jack-cmp-h">
-				<IconToggle
-					check={consumer.config.flowControl}
-					onChange={flowControl => handlePropChange({ flowControl })}
-					readOnly={true}
-				/>
-				<div className="jack-lbl-prop">FLOW CONTROL</div>
-			</div>
-
-			<div className="lyt-v">
-				<div className="jack-lbl-prop">IDLE HEARTBEAT</div>
-				<NumberInput
-					value={consumer.config.idleHeartbeat}
-					onChange={idleHeartbeat => handlePropChange({ idleHeartbeat })}
-					readOnly={true}
-				/>
-			</div>
-
-			<div className="jack-cmp-h">
-				<IconToggle
-					check={consumer.config.headersOnly}
-					onChange={headersOnly => handlePropChange({ headersOnly })}
-					readOnly={true}
-				/>
-				<div className="jack-lbl-prop">HEADERS ONLY</div>
-			</div>
-
-			<MaxNumberCmp
-				readOnly={inRead}
-				label="RATE LIMIT BPS"
-				value={consumer.config.ackWait}
-				desiredDefault={0}
-				initDefault={100}
-				onChange={rateLimitBps => handlePropChange({ rateLimitBps })}
-			/>
-
-		</TitleAccordion>*/}
 
 		<TitleAccordion title="PAUSE">
 
