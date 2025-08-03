@@ -9,19 +9,25 @@ import (
 	"time"
 )
 
+// newConnection creates a new connection with the given JSON payload.
+// the string must contain a [%s] placeholder for the that will be replaced with nats test server url.
+func (s *NuiTestSuite) newConnection(jsonPayload string) string {
+	r := s.e.POST("/api/connection").
+		WithBytes([]byte(fmt.Sprintf(jsonPayload, "localhost:"+strconv.Itoa(s.natsServerOpts.Port)))).
+		Expect()
+
+	r.Status(http.StatusOK)
+	r.JSON().Object().Value("id").String().NotEmpty()
+	return r.JSON().Object().Value("id").String().Raw()
+}
+
 func (s *NuiTestSuite) defaultConn() string {
 	newConn := `{
 		"name": "default",
 		"hosts": ["%s"],
 		"subscriptions": []
 	}`
-	r := s.e.POST("/api/connection").
-		WithBytes([]byte(fmt.Sprintf(newConn, "localhost:"+strconv.Itoa(s.natsServerOpts.Port)))).
-		Expect()
-
-	r.Status(http.StatusOK)
-	r.JSON().Object().Value("id").String().NotEmpty()
-	return r.JSON().Object().Value("id").String().Raw()
+	return s.newConnection(newConn)
 }
 
 func (s *NuiTestSuite) filledStream(name string, subjects ...string) jetstream.Stream {

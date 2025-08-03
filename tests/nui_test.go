@@ -698,6 +698,43 @@ func (s *NuiTestSuite) TestConnectionEventsWs() {
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 }
 
+func (s *NuiTestSuite) TestMetrics() {
+
+	metricsConnPayload := `{
+			"name": "sys", 
+			"hosts": ["%s"], 
+			"metrics": {
+				"nats_source": {
+					"active": true,
+					"auth": {
+						"active": true,
+						"mode": "auth_user_password",
+						"username": "sys",
+						"password": "sys"
+					}
+				}
+			}
+		}`
+
+	metricsConnId := s.newConnection(metricsConnPayload)
+
+	// open the ws
+	ws := s.ws("/ws/sub", "id="+metricsConnId)
+	defer ws.Disconnect()
+
+	// read first connected event
+	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("connected")
+	time.Sleep(10 * time.Millisecond)
+
+	// ws subscribe to sub1
+	ws.WriteText(`{"type": "metrics_req", "payload": {"enabled": true}}`)
+	wr := ws.WithReadTimeout(2 * time.Second).Expect()
+
+	wr.Body().Contains("varz")
+	wr.Body().Contains("connz")
+
+}
+
 func TestNuiTestSuite(t *testing.T) {
 	suite.Run(t, new(NuiTestSuite))
 }
