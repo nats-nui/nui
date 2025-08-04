@@ -43,22 +43,38 @@ const ProtobufCmp: FunctionComponent<Props> = ({
 
     setIsLoadingSchema(true)
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const content = e.target?.result as string
-        // For now, just store the raw content - proper parsing will be implemented
-        const newSchema: ProtoSchema = {
-          name: file.name,
-          content,
-          root: null,
-          lastModified: new Date(),
-          error: "Schema parsing not yet implemented - Phase 1 basic version"
-        }
         
-        setSchemas(prev => [...prev, newSchema])
+        // Import parseProtoSchema dynamically to avoid bundle issues
+        const { parseProtoSchema } = await import('@/utils/protobuf')
+        const newSchema = parseProtoSchema(content, file.name)
+        
+        setSchemas(prev => {
+          // Remove existing schema with same name
+          const filtered = prev.filter(s => s.name !== file.name)
+          return [...filtered, newSchema]
+        })
         setSelectedSchema(file.name)
+        
+        // Auto-select first message type if available
+        if (!newSchema.error) {
+          const messageTypes = getMessageTypes(newSchema)
+          if (messageTypes.length > 0) {
+            setSelectedMessageType(messageTypes[0])
+          }
+        }
       } catch (error) {
         console.error('Failed to load schema:', error)
+        const errorSchema: ProtoSchema = {
+          name: file.name,
+          content: e.target?.result as string || '',
+          root: null,
+          lastModified: new Date(),
+          error: `Failed to load file: ${error instanceof Error ? error.message : 'Unknown error'}`
+        }
+        setSchemas(prev => [...prev, errorSchema])
       } finally {
         setIsLoadingSchema(false)
       }
@@ -136,6 +152,15 @@ const ProtobufCmp: FunctionComponent<Props> = ({
       {decodedData?.error && (
         <div style={cssError}>
           Error: {decodedData.error}
+          {text && (
+            <details style={{ marginTop: '10px', fontSize: '11px' }}>
+              <summary>Debug Info</summary>
+              <div>Payload length: {text.length}</div>
+              <div>First 50 chars: {text.substring(0, 50)}</div>
+              <div>Binary string (expected for protobuf)</div>
+              <div>Hex preview: {Array.from(text.substring(0, 16)).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ')}</div>
+            </details>
+          )}
         </div>
       )}
 
