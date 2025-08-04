@@ -11,6 +11,9 @@ export default defineConfig (( ) => {
     console.log(isDesktop)
     return {
         plugins: [react()],
+        server: {
+            cors: false
+        },
         build: {
             outDir: isDesktop ? './dist-app' : 'dist',
             sourcemap: true,
