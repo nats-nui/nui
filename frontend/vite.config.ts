@@ -8,7 +8,6 @@ import path from 'path'
 export default defineConfig (( ) => {
     const isDesktop = process.env.VITE_TARGET == "desktop"
     console.log(isDesktop)
-
     return {
         plugins: [react()],
         base: "./",
