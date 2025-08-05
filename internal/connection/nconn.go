@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+const (
+	CONNECTION_NAME_NUI_PREFIX = "NUI-"
+)
+
 type NatsConn struct {
 	*nats.Conn
 	connectionEventsSubs []*subscriber
