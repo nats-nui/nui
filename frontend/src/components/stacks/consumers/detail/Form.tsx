@@ -9,9 +9,9 @@ import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
-import { DateTimeInput, EditList, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import { DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 
 
 
@@ -49,7 +49,6 @@ const Form: FunctionComponent<Props> = ({
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
 	}
 
-	const [numbers, setNumbers] = useState<number[]>([1, 2, 3, 4, 5])
 
 	// RENDER
 	const consumer = state.consumer
@@ -213,7 +212,7 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">FILTER SUBJECTS</div>
-				{/* <EditList<string>
+				<EditList<string>
 					items={consumer.config.filterSubjects}
 					onItemsChange={filterSubjects => handlePropChange({ filterSubjects })}
 					placeholder="ex. orders.* or telemetry.>"
@@ -221,7 +220,7 @@ const Form: FunctionComponent<Props> = ({
 					onNewItem={() => ""}
 					fnIsVoid={i => !i || i.trim().length == 0}
 					RenderRow={EditStringRow}
-				/> */}
+				/>
 			</div>
 
 			<div className="lyt-v">
@@ -352,6 +351,7 @@ const Form: FunctionComponent<Props> = ({
 
 		</TitleAccordion>
 
+
 		<TitleAccordion title="PAUSE">
 
 			<div className="lyt-v">
@@ -371,6 +371,7 @@ const Form: FunctionComponent<Props> = ({
 			</div>
 
 		</TitleAccordion>
+
 
 		<TitleAccordion title="ADVANCED" style={{ marginBottom: 20 }}>
 
