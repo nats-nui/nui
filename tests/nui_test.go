@@ -309,6 +309,12 @@ func (s *NuiTestSuite) TestStreamMessagesOnEmptyStream() {
 	r := e.GET("/api/connection/" + connId + "/stream/empty_stream/messages").
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(0)
+
+	//get messages with seq and interval query
+	r = e.GET("/api/connection/" + connId + "/stream/empty_stream/messages").
+		WithQueryString("seq_start=0&interval=1").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(0)
 }
 
 func (s *NuiTestSuite) TestStreamMessagesIndex() {

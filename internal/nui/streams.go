@@ -203,6 +203,17 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 422)
 	}
 
+	info, err := stream.Info(c.Context())
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+
+	// If there are no messages in the stream, return an empty array without further processing
+	if info.State.Msgs == 0 {
+		return c.JSON([]ws.NatsMsg{})
+	}
+
+	// Stream has messages, ,so proceed with consumer configuration based on query parameters
 	config := jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverByStartSequencePolicy,
 		MemoryStorage: true,
@@ -254,7 +265,7 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 			querySeq = max(querySeq, 1)
 		}
 		var seekFromSeq uint64
-		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, config, querySeq, interval)
+		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, info, config, querySeq, interval)
 		if err != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
@@ -333,14 +344,11 @@ func (a *App) HandleDeleteStreamMessage(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func findSeekSeq(ctx context.Context, stream jetstream.Stream, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, int, error) {
+func findSeekSeq(ctx context.Context, stream jetstream.Stream, info *jetstream.StreamInfo, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, int, error) {
 	if interval >= 0 {
 		return uint64(startSeq), interval, nil
 	}
-	info, err := stream.Info(ctx)
-	if err != nil {
-		return 0, 0, err
-	}
+
 	if uint64(startSeq) < info.State.FirstSeq {
 		return info.State.FirstSeq, 0, nil
 	}
