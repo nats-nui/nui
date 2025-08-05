@@ -1,5 +1,6 @@
 import Base64Cmp from "@/components/formatters/base64/Base64Cmp"
 import HexTable from "@/components/formatters/hex/HexTable"
+import ProtobufCmp from "@/components/formatters/protobuf/ProtobufCmp"
 import { getEditorLanguage } from "@/stores/stacks/message/utils"
 import { MSG_FORMAT } from "@/utils/editor"
 import { delay, throttle, throttle2 } from "@/utils/time"
@@ -87,7 +88,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 				await formatRun()
 				await delay(100)
 			}
-			if (diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64) {
+			if (diff && format !== MSG_FORMAT.HEX && format !== MSG_FORMAT.BASE64 && format !== MSG_FORMAT.PROTOBUF) {
 				decorationDiff()
 			}
 		})();
@@ -99,7 +100,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 
 
 	const decorationDiff = () => {
-		if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64) return
+		if (!diff || format === MSG_FORMAT.HEX || format == MSG_FORMAT.BASE64 || format == MSG_FORMAT.PROTOBUF) return
 
 		const editorModel = editorRef.current.getModel();
 		const valueModel = editorModel.getValue()
@@ -188,6 +189,11 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	}
 	if (format == MSG_FORMAT.HEX) {
 		return <HexTable style={{ flex: 1, overflowY: "auto" }}
+			text={value}
+		/>
+	}
+	if (format == MSG_FORMAT.PROTOBUF) {
+		return <ProtobufCmp style={{ flex: 1, overflowY: "auto" }}
 			text={value}
 		/>
 	}
