@@ -1,18 +1,17 @@
 import KeyValueMap from "@/components/input/KeyValueMap.tsx"
+import MaxTimeCmp from "@/components/input/MaxTimeCmp"
 import ToggleMaxBytesCmp from "@/components/input/ToggleMaxBytesCmp"
 import ToggleMaxNumberCmp from "@/components/input/ToggleMaxNumberCmp"
 import ToggleMaxTimeCmp from "@/components/input/ToggleMaxTimeCmp"
+import CloseIcon from "@/icons/CloseIcon"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
+import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
-import { DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, ListObjects, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import { DateTimeInput, EditList, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useState } from "react"
-import BackoffCmp from "./BackoffCmpCopy"
-import MaxTimeCmp from "@/components/input/MaxTimeCmp"
-import { TIME } from "@/utils/conversion"
-import CloseIcon from "@/icons/CloseIcon"
 
 
 
@@ -299,20 +298,12 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">BACKOFF</div>
-
-				{/* <BackoffCmp
-					store={store}
-					backoff={consumer.config.backoff}
-					onChange={backoff => handlePropChange({ backoff })}
-					readOnly={inRead}
-				/> */}
-
 				<EditList<number>
 					items={consumer.config.backoff}
 					onItemsChange={backoff => handlePropChange({ backoff })}
 					onNewItem={() => 0}
 					readOnly={inRead}
-					//fnIsVoid={m => m == null }
+					fnIsVoid={m => false }
 					RenderRow={({ item, readOnly, index, onChange }) => <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
 						{!readOnly && <IconButton effect onClick={() => onChange(null)}><CloseIcon /></IconButton>}
 						<MaxTimeCmp key={index} autoFocus
@@ -323,7 +314,6 @@ const Form: FunctionComponent<Props> = ({
 						/>
 					</div>}
 				/>
-
 			</div>
 
 		</TitleAccordion>
