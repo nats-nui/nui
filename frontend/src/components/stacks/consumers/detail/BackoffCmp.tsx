@@ -4,7 +4,7 @@ import CloseIcon from "@/icons/CloseIcon"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { TIME } from "@/utils/conversion"
 import { IconButton } from "@priolo/jack"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
 
 
 
@@ -23,9 +23,12 @@ const BackoffCmp: FunctionComponent<Props> = ({
 }) => {
 
 	// HANDLER
-	const handleBackoffChange = (newBackoff: number[]) => {
-		onChange(newBackoff)
+	const handleBackoffChange = (values: any[]) => {
+		onChange(values.map(n => n.value))
+		setValuesId(values)
 	}
+	const [valuesId, setValuesId] = useState<any[]>(backoff?.map(n => ({ value: n, id: InstaceCount++ })) ?? [])
+	
 
 	// RENDER
 	return <>
@@ -34,13 +37,13 @@ const BackoffCmp: FunctionComponent<Props> = ({
 			style={{ display: "flex", flexDirection: "column", gap: 5 }}
 			className={readOnly ? "jack-lyt-quote" : null}
 		>
-			{backoff?.map((backoffValue, index) => (
-				<div style={{ display: "flex", alignItems: "center", gap: "3px" }} key={index}>
+			{valuesId?.map((v, index) => (
+				<div style={{ display: "flex", alignItems: "center", gap: "3px" }} key={v.id}>
 
 					{!readOnly && (
 						<IconButton effect
 							onClick={() => {
-								const newBackoff = [...backoff]
+								const newBackoff = [...valuesId]
 								newBackoff.splice(index, 1)
 								handleBackoffChange(newBackoff)
 							}}
@@ -49,10 +52,10 @@ const BackoffCmp: FunctionComponent<Props> = ({
 
 					<MaxTimeCmp autoFocus
 						store={store}
-						value={backoffValue}
+						value={v.value}
 						onChange={value => {
-							const newBackoff = [...backoff]
-							newBackoff[index] = value
+							const newBackoff = [...valuesId]
+							newBackoff[index].value = value
 							handleBackoffChange(newBackoff)
 						}}
 						readOnly={readOnly}
@@ -63,14 +66,14 @@ const BackoffCmp: FunctionComponent<Props> = ({
 			))}
 		</div>
 
-		{(!backoff || backoff.length == 0) && (
+		{(!valuesId || valuesId.length == 0) && (
 			<div className="jack-lbl-empty">NO BACKOFF</div>
 		)}
 
 		{!readOnly && (
 			<IconButton effect
 				onClick={() => {
-					const newBackoff = [...(backoff ?? []), 0]
+					const newBackoff = [...(valuesId ?? []), { value: 0, id: InstaceCount++ }]
 					handleBackoffChange(newBackoff)
 				}} style={{ marginTop: 5 }}
 			><AddIcon /></IconButton>
@@ -79,3 +82,5 @@ const BackoffCmp: FunctionComponent<Props> = ({
 }
 
 export default BackoffCmp
+
+let InstaceCount = 0

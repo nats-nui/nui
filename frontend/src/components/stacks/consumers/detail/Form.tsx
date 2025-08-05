@@ -6,10 +6,14 @@ import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { EDIT_STATE } from "@/types"
 import { AckPolicy, DeliverPolicy, ReplayPolicy } from "@/types/Consumer"
 import { dateShow } from "@/utils/time"
-import { DateTimeInput, EditList, EditStringRow, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
+import { DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, ListObjects, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
-import BackoffCmp from "./BackoffCmp"
+import { FunctionComponent, useState } from "react"
+import BackoffCmp from "./BackoffCmpCopy"
+import MaxTimeCmp from "@/components/input/MaxTimeCmp"
+import { TIME } from "@/utils/conversion"
+import CloseIcon from "@/icons/CloseIcon"
+
 
 
 
@@ -41,12 +45,12 @@ const Form: FunctionComponent<Props> = ({
 		}
 		handlePropChange({ deliverPolicy, optStartSeq: 0, optStartTime: null })
 	}
-	
+
 	const handleMetadataPropChange = (metadata: { [name: string]: any }) => {
 		store.setConsumerConfig({ ...state.consumer.config, metadata })
 	}
 
-
+	const [numbers, setNumbers] = useState<number[]>([1, 2, 3, 4, 5])
 
 	// RENDER
 	const consumer = state.consumer
@@ -210,7 +214,7 @@ const Form: FunctionComponent<Props> = ({
 
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">FILTER SUBJECTS</div>
-				<EditList<string>
+				{/* <EditList<string>
 					items={consumer.config.filterSubjects}
 					onItemsChange={filterSubjects => handlePropChange({ filterSubjects })}
 					placeholder="ex. orders.* or telemetry.>"
@@ -218,7 +222,7 @@ const Form: FunctionComponent<Props> = ({
 					onNewItem={() => ""}
 					fnIsVoid={i => !i || i.trim().length == 0}
 					RenderRow={EditStringRow}
-				/>
+				/> */}
 			</div>
 
 			<div className="lyt-v">
@@ -292,15 +296,34 @@ const Form: FunctionComponent<Props> = ({
 				min={1} max={100}
 				onChange={sampleFreq => handlePropChange({ sampleFreq: sampleFreq == 0 ? "" : sampleFreq.toString() })}
 			/>
-			
+
 			<div className="lyt-v">
 				<div className="jack-lbl-prop">BACKOFF</div>
-				<BackoffCmp
+
+				{/* <BackoffCmp
 					store={store}
 					backoff={consumer.config.backoff}
 					onChange={backoff => handlePropChange({ backoff })}
 					readOnly={inRead}
+				/> */}
+
+				<EditList<number>
+					items={consumer.config.backoff}
+					onItemsChange={backoff => handlePropChange({ backoff })}
+					onNewItem={() => 0}
+					readOnly={inRead}
+					//fnIsVoid={m => m == null }
+					RenderRow={({ item, readOnly, index, onChange }) => <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+						{!readOnly && <IconButton effect onClick={() => onChange(null)}><CloseIcon /></IconButton>}
+						<MaxTimeCmp key={index} autoFocus
+							store={store}
+							value={item}
+							onChange={(value) => onChange(value)}
+							inputUnit={TIME.NS}
+						/>
+					</div>}
 				/>
+
 			</div>
 
 		</TitleAccordion>
