@@ -15,10 +15,15 @@ func NatsBuilder(connection *Connection) (*NatsConn, error) {
 		nats.PingInterval(2 * time.Second),
 		nats.MaxPingsOutstanding(3),
 	}
+	options = appendConnectionNameOption(connection, options)
 	options = appendAuthOption(connection, options)
 	options = appendTLSAuthOptions(connection, options)
 	options = appendInboxPrefixOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
+}
+
+func appendConnectionNameOption(connection *Connection, options []nats.Option) []nats.Option {
+	return append(options, nats.Name(CONNECTION_NAME_NUI_PREFIX+connection.Name))
 }
 
 func appendAuthOption(connection *Connection, options []nats.Option) []nats.Option {
