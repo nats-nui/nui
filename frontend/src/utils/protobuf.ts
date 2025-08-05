@@ -6,7 +6,6 @@ export function parseProtoSchema(schemaContent: string, schemaName: string): Pro
     name: schemaName,
     content: schemaContent,
     root: null,
-    lastModified: new Date(),
   }
 
   try {
