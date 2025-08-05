@@ -1,10 +1,12 @@
 import { Root } from "protobufjs"
 
 export interface ProtoSchema {
+  id?: string
   name: string
   content: string
-  root: Root | null
-  lastModified: Date
+  description?: string
+  // Client-side only fields
+  root?: Root | null
   error?: string
 }
 

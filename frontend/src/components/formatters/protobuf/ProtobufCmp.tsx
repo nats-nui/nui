@@ -1,6 +1,7 @@
 import { FunctionComponent, useState, useMemo, useEffect } from "react"
 import { ProtoSchema, ProtobufDecodedData } from "@/types/Protobuf"
 import { decodeProtobufMessage, getMessageTypes, autoDetectMessageType } from "@/utils/protobuf"
+import protoApi from "@/api/proto"
 import TextCmp from "../text/TextCmp"
 import { JsonPropsCmp } from "../json/JsonCmp"
 
@@ -17,12 +18,64 @@ const ProtobufCmp: FunctionComponent<Props> = ({
   const [selectedSchema, setSelectedSchema] = useState<string>("")
   const [selectedMessageType, setSelectedMessageType] = useState<string>("")
   const [decodedData, setDecodedData] = useState<ProtobufDecodedData | null>(null)
-  const [isLoadingSchema, setIsLoadingSchema] = useState(false)
+  const [isLoadingBackendSchemas, setIsLoadingBackendSchemas] = useState(false)
 
   const availableMessageTypes = useMemo(() => {
-    const schema = schemas.find(s => s.name === selectedSchema)
+    const schema = schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)
     return schema ? getMessageTypes(schema) : []
   }, [schemas, selectedSchema])
+
+  // Load schemas from backend on component mount
+  useEffect(() => {
+    loadBackendSchemas()
+  }, [])
+
+  const loadBackendSchemas = async () => {
+    setIsLoadingBackendSchemas(true)
+    try {
+      const backendSchemas = await protoApi.index()
+      
+      // Parse backend schemas
+      const parsedSchemas = await Promise.all(
+        backendSchemas.map(async (schema) => {
+          try {
+            const { parseProtoSchema } = await import('@/utils/protobuf')
+            const parsed = parseProtoSchema(schema.content, schema.name)
+            return {
+              ...schema,
+              root: parsed.root,
+              error: parsed.error
+            }
+          } catch (error) {
+            return {
+              ...schema,
+              root: null,
+              error: `Failed to parse: ${error instanceof Error ? error.message : 'Unknown error'}`
+            }
+          }
+        })
+      )
+
+      setSchemas(parsedSchemas)
+      
+      // Auto-select first schema if available
+      if (parsedSchemas.length > 0 && !selectedSchema) {
+        const firstSchema = parsedSchemas[0]
+        setSelectedSchema(firstSchema.id || firstSchema.name)
+        
+        if (!firstSchema.error) {
+          const messageTypes = getMessageTypes(firstSchema)
+          if (messageTypes.length > 0) {
+            setSelectedMessageType(messageTypes[0])
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load backend schemas:', error)
+    } finally {
+      setIsLoadingBackendSchemas(false)
+    }
+  }
 
   useEffect(() => {
     if (!text || !selectedSchema || !selectedMessageType) {
@@ -30,62 +83,18 @@ const ProtobufCmp: FunctionComponent<Props> = ({
       return
     }
 
-    const schema = schemas.find(s => s.name === selectedSchema)
+    const schema = schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)
     if (!schema) return
 
     const result = decodeProtobufMessage(text, schema, selectedMessageType)
     setDecodedData(result)
   }, [text, selectedSchema, selectedMessageType, schemas])
 
-  const handleSchemaUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    setIsLoadingSchema(true)
-    const reader = new FileReader()
-    reader.onload = async (e) => {
-      try {
-        const content = e.target?.result as string
-        
-        // Import parseProtoSchema dynamically to avoid bundle issues
-        const { parseProtoSchema } = await import('@/utils/protobuf')
-        const newSchema = parseProtoSchema(content, file.name)
-        
-        setSchemas(prev => {
-          // Remove existing schema with same name
-          const filtered = prev.filter(s => s.name !== file.name)
-          return [...filtered, newSchema]
-        })
-        setSelectedSchema(file.name)
-        
-        // Auto-select first message type if available
-        if (!newSchema.error) {
-          const messageTypes = getMessageTypes(newSchema)
-          if (messageTypes.length > 0) {
-            setSelectedMessageType(messageTypes[0])
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load schema:', error)
-        const errorSchema: ProtoSchema = {
-          name: file.name,
-          content: e.target?.result as string || '',
-          root: null,
-          lastModified: new Date(),
-          error: `Failed to load file: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }
-        setSchemas(prev => [...prev, errorSchema])
-      } finally {
-        setIsLoadingSchema(false)
-      }
-    }
-    reader.readAsText(file)
-  }
 
   const handleAutoDetect = () => {
     if (!text || !selectedSchema) return
     
-    const schema = schemas.find(s => s.name === selectedSchema)
+    const schema = schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)
     if (!schema) return
 
     const detectedType = autoDetectMessageType(text, schema)
@@ -102,28 +111,33 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     <div style={{ ...cssBody, ...style }}>
       <div style={cssControls}>
         <div style={cssControlGroup}>
-          <label>
-            Schema:
-            <input
-              type="file"
-              accept=".proto"
-              onChange={handleSchemaUpload}
-              disabled={isLoadingSchema}
-            />
-          </label>
-          {schemas.length > 0 && (
+          <label>Schema:</label>
+          {isLoadingBackendSchemas && <span>Loading schemas...</span>}
+          {schemas.length > 0 ? (
             <select
               value={selectedSchema}
               onChange={(e) => setSelectedSchema(e.target.value)}
+              disabled={isLoadingBackendSchemas}
             >
               <option value="">Select schema...</option>
               {schemas.map(schema => (
-                <option key={schema.name} value={schema.name}>
+                <option key={schema.id || schema.name} value={schema.id || schema.name}>
                   {schema.name} {schema.error && "(Error)"}
                 </option>
               ))}
             </select>
+          ) : (
+            <span style={{ color: '#666', fontStyle: 'italic' }}>
+              No schemas found. Place .proto files in the proto-schemas directory.
+            </span>
           )}
+          <button 
+            onClick={loadBackendSchemas}
+            disabled={isLoadingBackendSchemas}
+            style={{ marginLeft: '10px', padding: '4px 8px', fontSize: '12px' }}
+          >
+            Refresh
+          </button>
         </div>
 
         {selectedSchema && availableMessageTypes.length > 0 && (
@@ -164,9 +178,9 @@ const ProtobufCmp: FunctionComponent<Props> = ({
         </div>
       )}
 
-      {schemas.find(s => s.name === selectedSchema)?.error && (
+      {schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)?.error && (
         <div style={cssError}>
-          Schema Error: {schemas.find(s => s.name === selectedSchema)?.error}
+          Schema Error: {schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)?.error}
         </div>
       )}
 
@@ -184,7 +198,9 @@ const ProtobufCmp: FunctionComponent<Props> = ({
       ) : (
         <div style={cssFallback}>
           <div style={cssPlaceholder}>
-            Protobuf format requires schema and message type selection
+            Protobuf format requires schema and message type selection.
+            <br />
+            Place .proto files in the proto-schemas directory to make them available.
           </div>
           <TextCmp text={text} />
         </div>
