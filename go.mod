@@ -19,14 +19,13 @@ require (
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
 	github.com/samber/slog-fiber v1.11.0
 	github.com/stretchr/testify v1.10.0
+	github.com/synadia-io/orbit.go/natssysclient v0.1.1
 	github.com/wailsapp/wails/v2 v2.9.1
 )
 
 require (
 	github.com/google/go-tpm v0.9.3 // indirect
 	github.com/synadia-io/orbit.go/natsext v0.1.0 // indirect
-	github.com/synadia-io/orbit.go/natssysclient v0.1.1 // indirect
-	go.uber.org/automaxprocs v1.6.0 // indirect
 )
 
 require (
