@@ -13,6 +13,7 @@ export interface ProtoSchema {
 export interface ProtobufDecodedData {
   success: boolean
   data?: any
+  dataJson?: string
   error?: string
   schemaUsed?: string
   messageType?: string

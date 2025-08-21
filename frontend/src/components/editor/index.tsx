@@ -42,8 +42,10 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 
 	const formatRun = async () => {
 		if (!editorRef.current) return
+		const formatAction = editorRef.current.getAction('editor.action.formatDocument')
+		if (!formatAction) return
 		if (readOnly) editorRef.current.updateOptions({ readOnly: false })
-		await editorRef.current.getAction('editor.action.formatDocument').run()
+		await formatAction.run()
 		if (readOnly) editorRef.current.updateOptions({ readOnly: true })
 	}
 
