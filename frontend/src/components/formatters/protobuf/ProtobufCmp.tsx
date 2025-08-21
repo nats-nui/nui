@@ -15,8 +15,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
   text,
   style,
 }) => {
-  // Feature flag for analysis results (enable only with URL param)
-  const showAnalysisResults = new URLSearchParams(window.location.search).has('proto-analysis')
   const [schemas, setSchemas] = useState<ProtoSchema[]>([])
   const [selectedSchema, setSelectedSchema] = useState<string>("")
   const [selectedMessageType, setSelectedMessageType] = useState<string>("")
@@ -60,18 +58,13 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     // Always run smart detection
     const autoDetect = async () => {
       if (text && text.length > 0 && schemas.length > 0 && !isDiscovering) {
-        if (showAnalysisResults) {
-          console.log('🔄 Auto-detecting protobuf schema...')
-        }
         
         setIsDiscovering(true)
         
         try {
           // Trigger analysis of all schemas
           const allMessages = await schemaDiscovery.discoverMessageTypes()
-          if (showAnalysisResults) {
-            setDiscoveredMessages(allMessages)
-          }
+          setDiscoveredMessages(allMessages)
           
           // Find best matching messages for the binary data
           const matchingMessages = await schemaDiscovery.findMatchingMessageTypes(text)
@@ -80,14 +73,8 @@ const ProtobufCmp: FunctionComponent<Props> = ({
             const firstMatch = matchingMessages[0]
             setSelectedSchema(firstMatch.schemaId)
             setSelectedMessageType(firstMatch.messageType)
-            if (showAnalysisResults) {
-              console.log(`✅ Auto-selected: ${firstMatch.schemaName} → ${firstMatch.messageType}`)
-            }
           }
         } catch (error) {
-          if (showAnalysisResults) {
-            console.error('Failed to perform auto-detection:', error)
-          }
         } finally {
           setIsDiscovering(false)
         }
@@ -97,7 +84,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     if (text && schemas.length > 0) {
       autoDetect()
     }
-  }, [text, schemas.length, showAnalysisResults])
+  }, [text, schemas.length])
 
   const loadBackendSchemas = async () => {
     setIsLoadingBackendSchemas(true)
@@ -229,7 +216,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
         </div>
       ) : (
         <div style={cssControls}>
-          {showAnalysisResults && (isDiscovering || isLoadingBackendSchemas) && (
+          {(isDiscovering || isLoadingBackendSchemas) && (
             <div style={{ ...cssControlGroup, marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
               {isLoadingBackendSchemas ? '📁 Loading proto schemas...' : '🔍 Auto-detecting best proto file + message type combination...'}
             </div>
@@ -281,84 +268,23 @@ const ProtobufCmp: FunctionComponent<Props> = ({
                   ))}
                 </select>
               </label>
-              {showAnalysisResults && (
-                <>
-                  <button 
-                    onClick={handleAutoDetect} 
-                    disabled={isDiscovering}
-                  >
-                    Auto-detect
-                  </button>
-                  <button 
-                    onClick={handleSmartDetect} 
-                    disabled={isDiscovering}
-                    style={{ marginLeft: '5px' }}
-                  >
-                    {isDiscovering ? 'Analyzing...' : 'Smart Detect'}
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-
-          {showAnalysisResults && discoveredMessages.length > 0 && (
-            <div style={cssControlGroup}>
-              <label>Analysis Results ({discoveredMessages.length} combinations tested):</label>
-              <select
-                onChange={(e) => {
-                  const [schemaId, messageType] = e.target.value.split('::')
-                  if (schemaId && messageType) {
-                    setSelectedSchema(schemaId)
-                    setSelectedMessageType(messageType)
-                  }
-                }}
-                style={{ maxWidth: '500px' }}
+              <button 
+                onClick={handleAutoDetect} 
+                disabled={isDiscovering}
               >
-                <option value="">Select from compatible proto file + message type combinations...</option>
-                {discoveredMessages.map(msg => (
-                  <option key={`${msg.schemaId}::${msg.messageType}`} value={`${msg.schemaId}::${msg.messageType}`}>
-                    {msg.schemaName} → {msg.messageType} 
-                    {msg.score && ` (score: ${msg.score})`}
-                    {msg.decodeResult?.success && msg.decodeResult.fieldCount && ` - ${msg.decodeResult.fieldCount} fields`}
-                  </option>
-                ))}
-              </select>
+                Auto-detect
+              </button>
+              <button 
+                onClick={handleSmartDetect} 
+                disabled={isDiscovering}
+                style={{ marginLeft: '5px' }}
+              >
+                {isDiscovering ? 'Analyzing...' : 'Smart Detect'}
+              </button>
             </div>
           )}
 
-          {showAnalysisResults && discoveredMessages.length > 0 && discoveredMessages[0]?.decodeResult && (
-            <div style={cssAnalysisResults}>
-              <details>
-                <summary style={{ cursor: 'pointer', fontWeight: 'bold' }}>
-                  Analysis Details ({discoveredMessages.filter(m => m.decodeResult?.success).length} successful matches)
-                </summary>
-                <div style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '10px' }}>
-                  {discoveredMessages.slice(0, 10).map((msg, i) => (
-                    <div key={`${msg.schemaId}::${msg.messageType}`} style={{
-                      padding: '5px',
-                      margin: '2px 0',
-                      backgroundColor: msg.decodeResult?.success ? '#e8f5e8' : '#f5e8e8',
-                      borderRadius: '3px',
-                      fontSize: '12px'
-                    }}>
-                      <strong>{i + 1}. {msg.schemaName} → {msg.messageType}</strong>
-                      {msg.score && <span style={{ color: '#666' }}> (score: {msg.score})</span>}
-                      <br />
-                      {msg.decodeResult?.success ? (
-                        <span style={{ color: '#006600' }}>
-                          ✅ Success - {msg.decodeResult.fieldCount} fields decoded
-                        </span>
-                      ) : (
-                        <span style={{ color: '#cc0000' }}>
-                          ❌ {msg.decodeResult?.error}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </details>
-            </div>
-          )}
+
         </div>
       )}
 
@@ -448,12 +374,6 @@ const cssDecodedData: React.CSSProperties = {
   padding: "10px",
 }
 
-const cssMetadata: React.CSSProperties = {
-  fontSize: "12px",
-  color: "#666",
-  marginBottom: "10px",
-  fontStyle: "italic",
-}
 
 const cssPlaceholder: React.CSSProperties = {
   padding: "20px",
@@ -467,13 +387,6 @@ const cssFallback: React.CSSProperties = {
   flexDirection: "column",
 }
 
-const cssAnalysisResults: React.CSSProperties = {
-  margin: "10px 0",
-  padding: "10px",
-  backgroundColor: "#f9f9f9",
-  borderRadius: "4px",
-  border: "1px solid #ddd",
-}
 
 
 const cssSchemaText: React.CSSProperties = {
