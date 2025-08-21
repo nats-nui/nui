@@ -1,6 +1,6 @@
 import protoApi from "@/api/proto"
 import { ProtoSchema } from "@/types/Protobuf"
-import { parseProtoSchema, getMessageTypes } from "@/utils/protobuf"
+import { parseProtoSchema, getMessageTypes, createUnifiedProtoRoot } from "@/utils/protobuf"
 
 /**
  * Represents a discovered protobuf message type from schema analysis
@@ -47,6 +47,7 @@ const SCORING = {
 class ProtoSchemaDiscoveryService {
   private schemaCache: ProtoSchema[] | null = null
   private parsedSchemaCache: Map<string, ProtoSchema & { root: any }> = new Map()
+  private unifiedRoot: any = null
 
   /**
    * Clears all internal caches (schema list and parsed schemas).
@@ -55,6 +56,7 @@ class ProtoSchemaDiscoveryService {
   clearCache(): void {
     this.schemaCache = null
     this.parsedSchemaCache.clear()
+    this.unifiedRoot = null
   }
 
   /**
@@ -70,7 +72,20 @@ class ProtoSchemaDiscoveryService {
   }
 
   /**
-   * Retrieves and caches a parsed protobuf schema by ID.
+   * Gets or creates the unified protobuf root with all schemas loaded
+   * @returns Promise resolving to unified root with all schemas and resolved imports
+   * @private
+   */
+  private async getUnifiedRoot(): Promise<any> {
+    if (!this.unifiedRoot) {
+      const schemas = await this.getCachedSchemas()
+      this.unifiedRoot = createUnifiedProtoRoot(schemas)
+    }
+    return this.unifiedRoot
+  }
+
+  /**
+   * Retrieves and caches a parsed protobuf schema by ID with import resolution.
    * @param schemaId - Unique identifier of the schema to retrieve
    * @returns Promise resolving to parsed schema with protobuf root, or null if not found/invalid
    * @private
@@ -84,55 +99,56 @@ class ProtoSchemaDiscoveryService {
     const schema = schemas.find(s => s.id === schemaId)
     if (!schema) return null
 
-    const parsed = parseProtoSchema(schema.content, schema.name)
-    if (!parsed.error && parsed.root) {
-      const parsedSchema = { ...schema, root: parsed.root }
-      this.parsedSchemaCache.set(schemaId, parsedSchema)
-      return parsedSchema
-    }
-
-    return null
+    // Use the unified root for import resolution
+    const unifiedRoot = await this.getUnifiedRoot()
+    const parsedSchema = { ...schema, root: unifiedRoot }
+    this.parsedSchemaCache.set(schemaId, parsedSchema)
+    return parsedSchema
   }
 
   /**
    * Discovers all available message types across all protobuf schemas.
-   * Parses each schema and extracts message type definitions without analyzing compatibility.
+   * Uses unified root for proper import resolution.
    * @returns Promise resolving to array of discovered message types with basic metadata
    */
   async discoverMessageTypes(): Promise<DiscoveredMessage[]> {
-    // Get all available schemas from cache
+    // Get unified root with all schemas loaded
+    const unifiedRoot = await this.getUnifiedRoot()
     const schemas = await this.getCachedSchemas()
     
-    // Parse all schemas in parallel for better performance
-    const schemaResults = await Promise.all(
-      schemas.map(async (schema) => {
-        try {
-          if (!schema.id) {
-            console.warn(`Schema ${schema.name} has no ID, skipping`)
-            return []
-          }
-
-          const parsed = parseProtoSchema(schema.content, schema.name)
-          if (!parsed.error && parsed.root) {
-            const messageTypes = getMessageTypes({ ...schema, root: parsed.root })
-            
-            return messageTypes.map(messageType => ({
+    // Get all message types from the unified root
+    const allMessageTypes = getMessageTypes({ 
+      name: 'unified', 
+      content: '', 
+      root: unifiedRoot 
+    })
+    
+    // Map message types to their original schemas
+    const discoveredMessages: DiscoveredMessage[] = []
+    
+    for (const messageType of allMessageTypes) {
+      // Try to find which schema this message type belongs to
+      for (const schema of schemas) {
+        if (!schema.id) continue
+        
+        // Check if this schema contains the message type
+        const parsed = parseProtoSchema(schema.content, schema.name)
+        if (parsed.root) {
+          const schemaTypes = getMessageTypes(parsed)
+          if (schemaTypes.includes(messageType)) {
+            discoveredMessages.push({
               schemaId: schema.id,
               schemaName: schema.name,
               messageType,
               fullPath: messageType
-            }))
+            })
+            break
           }
-          return []
-        } catch (error) {
-          console.warn(`Failed to analyze schema ${schema.name}:`, error)
-          return []
         }
-      })
-    )
+      }
+    }
     
-    // Flatten the array of arrays into a single array
-    return schemaResults.flat()
+    return discoveredMessages
   }
 
 
