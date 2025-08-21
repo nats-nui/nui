@@ -81,7 +81,12 @@ export function createUnifiedProtoRoot(schemas: ProtoSchema[]): Root {
     })
     
     // Resolve all references after loading all files
-    root.resolveAll()
+    try {
+      root.resolveAll()
+    } catch (resolveError) {
+      // Schemas may have missing dependencies - log but don't fail
+      console.warn('Protobuf types could not be resolved:', resolveError)
+    }
   } catch (error) {
     console.error('Failed to create unified root:', error)
   }
@@ -191,9 +196,11 @@ export function decodeProtobufMessage(
       oneofs: true
     })
 
+    const objectJsonString = JSON.stringify(object, null, 2)
     return {
       success: true,
       data: object,
+      dataJson: objectJsonString,
       schemaUsed: schema.name,
       messageType: messageTypeName
     }
