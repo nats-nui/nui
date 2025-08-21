@@ -2,9 +2,10 @@ import { FunctionComponent, useState, useMemo, useEffect } from "react"
 import { ProtoSchema, ProtobufDecodedData } from "@/types/Protobuf"
 import { decodeProtobufMessage, getMessageTypes, autoDetectMessageType } from "@/utils/protobuf"
 import protoApi from "@/api/proto"
-import { schemaDiscovery, DiscoveredMessage } from "@/services/ProtoSchemaDiscovery"
+import { schemaDiscovery } from "@/services/ProtoSchemaDiscovery"
 import TextCmp from "../text/TextCmp"
-import { JsonPropsCmp } from "../json/JsonCmp"
+import { Editor } from "@monaco-editor/react"
+import SchemaControls from "./SchemaControls"
 
 interface Props {
   text?: string
@@ -20,7 +21,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
   const [selectedMessageType, setSelectedMessageType] = useState<string>("")
   const [decodedData, setDecodedData] = useState<ProtobufDecodedData | null>(null)
   const [isLoadingBackendSchemas, setIsLoadingBackendSchemas] = useState(false)
-  const [discoveredMessages, setDiscoveredMessages] = useState<DiscoveredMessage[]>([])
   const [isDiscovering, setIsDiscovering] = useState(false)
   const [showSchemaControls, setShowSchemaControls] = useState(false)
 
@@ -39,7 +39,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     // Reset state
     setSelectedSchema("")
     setSelectedMessageType("")
-    setDiscoveredMessages([])
     setShowSchemaControls(false)
     
     // Auto-select first schema if available and no text-specific analysis needed
@@ -63,8 +62,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
         
         try {
           // Trigger analysis of all schemas
-          const allMessages = await schemaDiscovery.discoverMessageTypes()
-          setDiscoveredMessages(allMessages)
+          await schemaDiscovery.discoverMessageTypes()
           
           // Find best matching messages for the binary data
           const matchingMessages = await schemaDiscovery.findMatchingMessageTypes(text)
@@ -157,7 +155,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     setIsDiscovering(true)
     try {
       const matchingMessages = await schemaDiscovery.findMatchingMessageTypes(text)
-      setDiscoveredMessages(matchingMessages)
       
       if (matchingMessages.length > 0) {
         // Auto-select first matching message
@@ -178,8 +175,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     setIsDiscovering(true)
     try {
       // Trigger lazy analysis of all schemas
-      const allMessages = await schemaDiscovery.discoverMessageTypes()
-      setDiscoveredMessages(allMessages)
+      await schemaDiscovery.discoverMessageTypes()
       
       // Find best matching messages for the binary data
       const matchingMessages = await schemaDiscovery.findMatchingMessageTypes(text)
@@ -201,7 +197,8 @@ const ProtobufCmp: FunctionComponent<Props> = ({
   }
 
   return (
-    <div style={{ ...cssBody, ...style }}>
+    <div style={{ ...style, display: "flex", flexDirection: "column", height: "100%" }}>
+      {/* Top section - always shows, toggles between compact header and full controls */}
       {!showSchemaControls && selectedSchema && selectedMessageType ? (
         <div style={cssSchemaHeader}>
           <span style={cssSchemaText}>
@@ -215,79 +212,24 @@ const ProtobufCmp: FunctionComponent<Props> = ({
           </button>
         </div>
       ) : (
-        <div style={cssControls}>
-          {(isDiscovering || isLoadingBackendSchemas) && (
-            <div style={{ ...cssControlGroup, marginBottom: '10px', fontStyle: 'italic', color: '#666' }}>
-              {isLoadingBackendSchemas ? '📁 Loading proto schemas...' : '🔍 Auto-detecting best proto file + message type combination...'}
-            </div>
-          )}
-          
-          <div style={cssControlGroup}>
-            <label>Schema:</label>
-            {isLoadingBackendSchemas && <span>Loading schemas...</span>}
-            {schemas.length > 0 ? (
-              <select
-                value={selectedSchema}
-                onChange={(e) => setSelectedSchema(e.target.value)}
-                disabled={isLoadingBackendSchemas}
-              >
-                <option value="">Select schema...</option>
-                {schemas.map(schema => (
-                  <option key={schema.id || schema.name} value={schema.id || schema.name}>
-                    {schema.name} {schema.error && "(Error)"}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span style={{ color: '#666', fontStyle: 'italic' }}>
-                No schemas found. Place .proto files in the proto-schemas directory.
-              </span>
-            )}
-            <button 
-              onClick={loadBackendSchemas}
-              disabled={isLoadingBackendSchemas}
-              style={{ marginLeft: '10px', padding: '4px 8px', fontSize: '12px' }}
-            >
-              Refresh
-            </button>
-          </div>
-
-          {selectedSchema && availableMessageTypes.length > 0 && (
-            <div style={cssControlGroup}>
-              <label>
-                Message Type:
-                <select
-                  value={selectedMessageType}
-                  onChange={(e) => setSelectedMessageType(e.target.value)}
-                >
-                  <option value="">Select message type...</option>
-                  {availableMessageTypes.map(type => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button 
-                onClick={handleAutoDetect} 
-                disabled={isDiscovering}
-              >
-                Auto-detect
-              </button>
-              <button 
-                onClick={handleSmartDetect} 
-                disabled={isDiscovering}
-                style={{ marginLeft: '5px' }}
-              >
-                {isDiscovering ? 'Analyzing...' : 'Smart Detect'}
-              </button>
-            </div>
-          )}
-
-
-        </div>
+        <SchemaControls
+          schemas={schemas}
+          selectedSchema={selectedSchema}
+          selectedMessageType={selectedMessageType}
+          availableMessageTypes={availableMessageTypes}
+          isLoadingBackendSchemas={isLoadingBackendSchemas}
+          isDiscovering={isDiscovering}
+          onSchemaChange={setSelectedSchema}
+          onMessageTypeChange={setSelectedMessageType}
+          onRefreshSchemas={loadBackendSchemas}
+          onAutoDetect={handleAutoDetect}
+          onSmartDetect={handleSmartDetect}
+          onDone={selectedSchema && selectedMessageType ? () => setShowSchemaControls(false) : undefined}
+          showDoneButton={!!(selectedSchema && selectedMessageType)}
+        />
       )}
 
+      {/* Error messages */}
       {decodedData?.error && (
         <div style={cssError}>
           Error: {decodedData.error}
@@ -309,9 +251,22 @@ const ProtobufCmp: FunctionComponent<Props> = ({
         </div>
       )}
 
+      {/* Data display - only show when successfully decoded */}
       {decodedData?.success && decodedData.data ? (
-        <div style={cssDecodedData}>
-          <JsonPropsCmp json={decodedData.data} deep={0} />
+        <div style={{ flex: 1 }}>
+          <Editor
+            height="100%"
+            language="json"
+            value={decodedData.dataJson || JSON.stringify(decodedData.data, null, 2)}
+            theme="vs-dark"
+            options={{
+              readOnly: true,
+              formatOnType: true,
+              formatOnPaste: true,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+            }}
+          />
         </div>
       ) : !decodedData?.error && selectedSchema && selectedMessageType ? (
         <div style={cssPlaceholder}>
@@ -333,20 +288,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
 
 export default ProtobufCmp
 
-const cssBody: React.CSSProperties = {
-  fontFamily: "monospace",
-  display: "flex",
-  flexDirection: "column",
-}
-
-const cssControls: React.CSSProperties = {
-  padding: "10px",
-  borderBottom: "1px solid #ccc",
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-}
-
 const cssSchemaHeader: React.CSSProperties = {
   padding: "8px 10px",
   borderBottom: "1px solid #e0e0e0",
@@ -354,12 +295,6 @@ const cssSchemaHeader: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   backgroundColor: "rgba(0,0,0,0.02)",
-}
-
-const cssControlGroup: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
 }
 
 const cssError: React.CSSProperties = {
@@ -370,9 +305,6 @@ const cssError: React.CSSProperties = {
   borderRadius: "4px",
 }
 
-const cssDecodedData: React.CSSProperties = {
-  padding: "10px",
-}
 
 
 const cssPlaceholder: React.CSSProperties = {
