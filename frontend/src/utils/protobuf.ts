@@ -30,6 +30,91 @@ export function parseProtoSchema(schemaContent: string, schemaName: string): Pro
   return schema
 }
 
+/**
+ * Creates a unified protobuf root with all schemas loaded for import resolution
+ * @param schemas Array of all available proto schemas
+ * @returns Root with all schemas loaded and imports resolved
+ */
+export function createUnifiedProtoRoot(schemas: ProtoSchema[]): Root {
+  const root = new Root()
+  
+  // Create a virtual file system for import resolution
+  const fileMap = new Map<string, string>()
+  
+  schemas.forEach(schema => {
+    // Schema.name now contains the full path (e.g., "opentelemetry/proto/common/v1/common.proto")
+    // This directly matches import paths!
+    fileMap.set(schema.name, schema.content)
+    
+    // Also map without .proto extension for flexibility
+    const withoutExt = schema.name.replace(/\.proto$/, '')
+    fileMap.set(withoutExt, schema.content)
+  })
+  
+  // Set up custom fetch function for imports
+  root.fetch = (filename, callback) => {
+    if (fileMap.has(filename)) {
+      callback(null, fileMap.get(filename)!)
+    } else {
+      callback(new Error(`Import not found: ${filename}`), null)
+    }
+  }
+  
+  // Load all schemas into the root
+  try {
+    schemas.forEach(schema => {
+      if (!schema.content.trim().startsWith('{')) {
+        try {
+          const parsed = parse(schema.content, { keepCase: true })
+          if (parsed.root && parsed.root.nested) {
+            // Merge the parsed content into our unified root
+            Object.keys(parsed.root.nested).forEach(key => {
+              if (parsed.root.nested[key]) {
+                root.add(parsed.root.nested[key])
+              }
+            })
+          }
+        } catch (parseError) {
+          console.warn(`Failed to parse schema ${schema.name}:`, parseError)
+        }
+      }
+    })
+    
+    // Resolve all references after loading all files
+    root.resolveAll()
+  } catch (error) {
+    console.error('Failed to create unified root:', error)
+  }
+  
+  return root
+}
+
+/**
+ * Parses multiple proto schemas with import resolution
+ * @param schemas Array of all available proto schemas
+ * @param targetSchemaName Name of the main schema to parse
+ * @returns Parsed schema with resolved imports
+ */
+export function parseProtoSchemaWithImports(schemas: ProtoSchema[], targetSchemaName: string): ProtoSchema {
+  const targetSchema = schemas.find(s => s.name === targetSchemaName)
+  if (!targetSchema) {
+    return {
+      name: targetSchemaName,
+      content: '',
+      root: null,
+      error: 'Schema not found'
+    }
+  }
+  
+  const unifiedRoot = createUnifiedProtoRoot(schemas)
+  
+  return {
+    name: targetSchemaName,
+    content: targetSchema.content,
+    root: unifiedRoot,
+  }
+}
+
 export function decodeProtobufMessage(
   payload: string, 
   schema: ProtoSchema, 
