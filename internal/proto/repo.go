@@ -38,10 +38,16 @@ func (r *FileSystemProtoRepo) All() (map[string]*ProtoSchema, error) {
 			return nil
 		}
 		
-		// Generate ID from filename (without extension)
-		id := strings.TrimSuffix(d.Name(), ".proto")
+		// Get relative path from base directory (e.g., "opentelemetry/proto/common/v1/common.proto")
+		relPath, err := filepath.Rel(r.baseDir, path)
+		if err != nil {
+			return nil
+		}
 		
-		schema, err := r.loadSchemaFromFile(path, id)
+		// Use relative path as ID (without extension)
+		id := strings.TrimSuffix(relPath, ".proto")
+		
+		schema, err := r.loadSchemaFromFile(path, id, relPath)
 		if err != nil {
 			// Skip malformed files but log the error
 			return nil
@@ -58,39 +64,34 @@ func (r *FileSystemProtoRepo) All() (map[string]*ProtoSchema, error) {
 	return schemas, nil
 }
 
-// GetById returns a protobuf schema by ID (filename without extension)
+// GetById returns a protobuf schema by ID (relative path without extension)
 func (r *FileSystemProtoRepo) GetById(id string) (*ProtoSchema, error) {
 	if id == "" {
 		return nil, errors.New("schema ID cannot be empty")
 	}
 	
 	filePath := filepath.Join(r.baseDir, id+".proto")
+	relPath := id + ".proto"
 	
 	// Check if file exists
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return nil, errors.New("schema not found")
 	}
 	
-	return r.loadSchemaFromFile(filePath, id)
+	return r.loadSchemaFromFile(filePath, id, relPath)
 }
 
 
 // loadSchemaFromFile loads a ProtoSchema from a file
-func (r *FileSystemProtoRepo) loadSchemaFromFile(filePath, id string) (*ProtoSchema, error) {
+func (r *FileSystemProtoRepo) loadSchemaFromFile(filePath, id, relPath string) (*ProtoSchema, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read proto file %s: %w", filePath, err)
 	}
 	
-	// Get file info for metadata
-	info, err := os.Stat(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get file info for %s: %w", filePath, err)
-	}
-	
 	schema := &ProtoSchema{
 		ID:      id,
-		Name:    info.Name(),
+		Name:    relPath, // Use relative path as name for proper import resolution
 		Content: string(content),
 	}
 	

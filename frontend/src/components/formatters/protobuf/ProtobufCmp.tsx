@@ -106,26 +106,28 @@ const ProtobufCmp: FunctionComponent<Props> = ({
       schemaDiscovery.clearCache()
       const backendSchemas = await protoApi.index()
       
-      // Parse backend schemas
-      const parsedSchemas = await Promise.all(
-        backendSchemas.map(async (schema) => {
-          try {
-            const { parseProtoSchema } = await import('@/utils/protobuf')
-            const parsed = parseProtoSchema(schema.content, schema.name)
-            return {
-              ...schema,
-              root: parsed.root,
-              error: parsed.error
-            }
-          } catch (error) {
-            return {
-              ...schema,
-              root: null,
-              error: `Failed to parse: ${error instanceof Error ? error.message : 'Unknown error'}`
-            }
+      // Import the unified root creation function
+      const { createUnifiedProtoRoot } = await import('@/utils/protobuf')
+      
+      // Create unified root with all schemas for import resolution
+      const unifiedRoot = createUnifiedProtoRoot(backendSchemas)
+      
+      // Parse backend schemas with unified root for import resolution
+      const parsedSchemas = backendSchemas.map(schema => {
+        try {
+          return {
+            ...schema,
+            root: unifiedRoot, // All schemas share the same unified root
+            error: undefined
           }
-        })
-      )
+        } catch (error) {
+          return {
+            ...schema,
+            root: null,
+            error: `Failed to parse: ${error instanceof Error ? error.message : 'Unknown error'}`
+          }
+        }
+      })
 
       setSchemas(parsedSchemas)
     } catch (error) {
