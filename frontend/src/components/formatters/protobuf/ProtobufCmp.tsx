@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useMemo, useEffect } from "react"
 import { ProtoSchema, ProtobufDecodedData } from "@/types/Protobuf"
-import { decodeProtobufMessage, getMessageTypes, autoDetectMessageType } from "@/utils/protobuf"
+import { decodeProtobufMessage, getAllMessageTypes, getMessageTypesFromSchema, autoDetectMessageType } from "@/utils/protobuf"
 import protoApi from "@/api/proto"
 import { schemaDiscovery } from "@/services/ProtoSchemaDiscovery"
 import TextCmp from "../text/TextCmp"
@@ -26,7 +26,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
 
   const availableMessageTypes = useMemo(() => {
     const schema = schemas.find(s => s.name === selectedSchema || s.id === selectedSchema)
-    return schema ? getMessageTypes(schema) : []
+    return schema ? getMessageTypesFromSchema(schema) : []
   }, [schemas, selectedSchema])
 
   // Load schemas from backend on component mount
@@ -47,7 +47,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
       setSelectedSchema(firstSchema.id || firstSchema.name)
       
       if (!firstSchema.error) {
-        const messageTypes = getMessageTypes(firstSchema)
+        const messageTypes = getMessageTypesFromSchema(firstSchema)
         if (messageTypes.length > 0) {
           setSelectedMessageType(messageTypes[0])
         }
