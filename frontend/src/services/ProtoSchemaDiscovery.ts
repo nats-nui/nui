@@ -1,6 +1,6 @@
 import protoApi from "@/api/proto"
 import { ProtoSchema } from "@/types/Protobuf"
-import { parseProtoSchema, getMessageTypes, createUnifiedProtoRoot } from "@/utils/protobuf"
+import { parseProtoSchema, getAllMessageTypes, createUnifiedProtoRoot } from "@/utils/protobuf"
 
 /**
  * Represents a discovered protobuf message type from schema analysis
@@ -117,7 +117,7 @@ class ProtoSchemaDiscoveryService {
     const schemas = await this.getCachedSchemas()
     
     // Get all message types from the unified root
-    const allMessageTypes = getMessageTypes({ 
+    const allMessageTypes = getAllMessageTypes({ 
       name: 'unified', 
       content: '', 
       root: unifiedRoot 
@@ -134,7 +134,7 @@ class ProtoSchemaDiscoveryService {
         // Check if this schema contains the message type
         const parsed = parseProtoSchema(schema.content, schema.name)
         if (parsed.root) {
-          const schemaTypes = getMessageTypes(parsed)
+          const schemaTypes = getAllMessageTypes(parsed)
           if (schemaTypes.includes(messageType)) {
             discoveredMessages.push({
               schemaId: schema.id,

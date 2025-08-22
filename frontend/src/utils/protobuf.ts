@@ -214,7 +214,7 @@ export function decodeProtobufMessage(
   }
 }
 
-export function getMessageTypes(schema: ProtoSchema): string[] {
+export function getAllMessageTypes(schema: ProtoSchema): string[] {
   if (!schema.root) return []
   
   const types: string[] = []
@@ -237,11 +237,50 @@ export function getMessageTypes(schema: ProtoSchema): string[] {
   return types
 }
 
+/**
+ * Gets only the message types defined in the specific schema file,
+ * not including imported types from other files
+ */
+export function getMessageTypesFromSchema(schema: ProtoSchema): string[] {
+  if (!schema.content) return []
+  
+  const types: string[] = []
+  
+  try {
+    // Parse only this schema's content without imports
+    const parsed = parse(schema.content, { keepCase: true })
+    if (!parsed.root) return []
+    
+    function collectTypes(namespace: any, prefix = '') {
+      if (!namespace || typeof namespace !== 'object' || !namespace.nested) return
+      
+      for (const [name, nested] of Object.entries(namespace.nested)) {
+        const fullName = prefix ? `${prefix}.${name}` : name
+        // Check if this is a Type using instanceof check with protobufjs Type
+        if (nested instanceof Type) {
+          types.push(fullName)
+        }
+        if (nested && typeof nested === 'object' && 'nested' in nested) {
+          collectTypes(nested, fullName)
+        }
+      }
+    }
+    
+    collectTypes(parsed.root)
+  } catch (error) {
+    console.error('Failed to parse schema for message types:', error)
+    // Fallback to getAllMessageTypes if parsing individual schema fails
+    return getAllMessageTypes(schema)
+  }
+  
+  return types
+}
+
 export function autoDetectMessageType(
   payloadBase64: string, 
   schema: ProtoSchema
 ): string | null {
-  const messageTypes = getMessageTypes(schema)
+  const messageTypes = getAllMessageTypes(schema)
   
   for (const messageType of messageTypes) {
     const result = decodeProtobufMessage(payloadBase64, schema, messageType)
