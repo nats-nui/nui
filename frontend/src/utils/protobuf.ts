@@ -193,7 +193,7 @@ export function decodeProtobufMessage(
       bytes: String,
       arrays: true,
       objects: true,
-      oneofs: true
+      oneofs: false  // Don't include oneof field indicators to avoid duplicate fields
     })
 
     const objectJsonString = JSON.stringify(object, null, 2)
