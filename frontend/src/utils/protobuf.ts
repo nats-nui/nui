@@ -75,7 +75,7 @@ export function createUnifiedProtoRoot(schemas: ProtoSchema[]): Root {
             })
           }
         } catch (parseError) {
-          console.warn(`Failed to parse schema ${schema.name}:`, parseError)
+          console.warn(`Failed to parse schema ${schema.name}:`, parseError.message || parseError)
         }
       }
     })
@@ -85,10 +85,10 @@ export function createUnifiedProtoRoot(schemas: ProtoSchema[]): Root {
       root.resolveAll()
     } catch (resolveError) {
       // Schemas may have missing dependencies - log but don't fail
-      console.warn('Protobuf types could not be resolved:', resolveError)
+      console.warn('Protobuf types could not be resolved:', resolveError.message || resolveError)
     }
   } catch (error) {
-    console.error('Failed to create unified root:', error)
+    console.error('Failed to create unified root:', error.message || error)
   }
   
   return root
@@ -268,7 +268,7 @@ export function getMessageTypesFromSchema(schema: ProtoSchema): string[] {
     
     collectTypes(parsed.root)
   } catch (error) {
-    console.error('Failed to parse schema for message types:', error)
+    console.warn('Failed to parse schema for message types:', error.message || error)
     // Fallback to getAllMessageTypes if parsing individual schema fails
     return getAllMessageTypes(schema)
   }

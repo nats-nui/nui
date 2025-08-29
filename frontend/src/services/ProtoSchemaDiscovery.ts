@@ -165,7 +165,7 @@ class ProtoSchemaDiscoveryService {
       return allMessages
     }
 
-    console.log(`🔍 Testing ${allMessages.length} proto file + message type combinations...`)
+    // Testing protobuf combinations...
 
     // Score messages based on potential compatibility
     const scoredMessages = await Promise.all(
@@ -180,10 +180,6 @@ class ProtoSchemaDiscoveryService {
       .filter(item => item.score && item.score > 0)
       .sort((a, b) => (b.score || 0) - (a.score || 0))
 
-    console.log(`✅ Found ${validMatches.length} compatible combinations:`)
-    validMatches.slice(0, 5).forEach((match, i) => {
-      console.log(`  ${i + 1}. ${match.schemaName} → ${match.messageType} (score: ${match.score})`)
-    })
 
     return validMatches
   }
