@@ -540,7 +540,7 @@ func (s *NuiTestSuite) TestKvRest() {
 		WithBytes(request).Expect().Status(http.StatusOK)
 
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusOK)
-	time.Sleep(1 * time.Second)
+	time.Sleep(1500 * time.Millisecond)
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusNotFound)
 
 	//purge entire bucket

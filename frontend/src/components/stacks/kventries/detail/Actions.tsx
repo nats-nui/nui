@@ -4,8 +4,9 @@ import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import { KVEntryStore } from "@/stores/stacks/kventry/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import React, { FunctionComponent } from "react"
 import { Button, IconButton, OptionsCmp } from "@priolo/jack"
+import OptionsDialog from "@/components/stacks/kventries/detail/OptionsDialog.tsx";
 
 
 
@@ -30,6 +31,7 @@ const ActionsCmp: FunctionComponent<Props> = ({
 		//kventrySo.fetch()
 		kventrySo.setHistoryOpen(true)
 	}
+	const handleOptionsOpen = () => kventrySo.setOptionsOpen(true)
 	const handleRevisionNextChange = () => kventrySo.revisionOffset(+1)
 	const handleRevisionPrevChange = () => kventrySo.revisionOffset(-1)
 
@@ -82,6 +84,10 @@ const ActionsCmp: FunctionComponent<Props> = ({
 	return (<>
 		<FormatAction store={kventrySo} />
 		<div style={{ height: "20px", width: "2px", backgroundColor: "rgba(255,255,255,.3)" }} />
+		<Button
+			children={"OPTIONS"}
+			onClick={handleOptionsOpen}
+		/>
 		{!inNew && (
 			<Button
 				children="CANCEL"
@@ -92,6 +98,8 @@ const ActionsCmp: FunctionComponent<Props> = ({
 			children={label}
 			onClick={handleSave}
 		/>
+		<OptionsDialog store={kventrySo}/>
+
 	</>)
 }
 
