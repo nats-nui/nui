@@ -31,6 +31,8 @@ const setup = {
 		//#region VIEWBASE
 		width: 420,
 		//#endregion
+
+		optionsOpen: false,
 	},
 
 	getters: {
@@ -99,9 +101,9 @@ const setup = {
 			await store.fetch()
 		},
 
-		/** crea un nuovo KVENTRY */
+		/** create new KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
-			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, { store })
+			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, store.state.kventry.ttl, { store })
 
 			const current = store.state.kventry
 			if ( !current.history ) current.history = []
@@ -152,6 +154,7 @@ const setup = {
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setHistoryOpen: (historyOpen: boolean) => ({ historyOpen }),
 		setRevisionSelected: (revisionSelected: number) => ({ revisionSelected }),
+		setOptionsOpen: (optionsOpen: boolean) => ({ optionsOpen }),
 	},
 }
 
