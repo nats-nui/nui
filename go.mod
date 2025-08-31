@@ -19,14 +19,13 @@ require (
 	github.com/ostafen/clover/v2 v2.0.0-alpha.3.0.20240131202429-e6a58d6d36bf
 	github.com/samber/slog-fiber v1.11.0
 	github.com/stretchr/testify v1.10.0
+	github.com/synadia-io/orbit.go/natssysclient v0.1.1
 	github.com/wailsapp/wails/v2 v2.10.2
 )
 
 require (
 	github.com/google/go-tpm v0.9.3 // indirect
 	github.com/synadia-io/orbit.go/natsext v0.1.0 // indirect
-	github.com/synadia-io/orbit.go/natssysclient v0.1.1 // indirect
-	go.uber.org/automaxprocs v1.6.0 // indirect
 )
 
 require (
@@ -100,7 +99,6 @@ require (
 	go.opentelemetry.io/otel v1.19.0 // indirect
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect; indirectgo mod why

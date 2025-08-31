@@ -533,6 +533,16 @@ func (s *NuiTestSuite) TestKvRest() {
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().
 		JSON().Object().Value("history").Array().Length().IsEqual(1)
 
+	// create key with TTL
+	ttl := 1 * time.Second
+	request := []byte(fmt.Sprintf(`{"payload": "dmFsdWUy", "ttl": %d}`, ttl))
+	r = e.POST("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").
+		WithBytes(request).Expect().Status(http.StatusOK)
+
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusOK)
+	time.Sleep(1 * time.Second)
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusNotFound)
+
 	//purge entire bucket
 	e.POST("/api/connection/" + connId + "/kv/bucket1/purge_deleted").Expect().Status(http.StatusNoContent)
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusNotFound)

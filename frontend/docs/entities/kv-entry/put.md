@@ -21,6 +21,7 @@ key to get the value for
 ```typescript
 {
   "payload": string // value to set encoded in base64
+  "ttl"?: number // optional ttl in nanoseconds
 }
 ```
 
