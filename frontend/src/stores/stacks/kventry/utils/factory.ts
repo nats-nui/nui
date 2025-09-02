@@ -67,7 +67,7 @@ export function buildKVEntryNew(connectionId: string, bucket: Partial<BucketStat
 		editState: EDIT_STATE.NEW,
 		connectionId,
 		bucket,
-		kventry: { key: "", payload: "" },
+		kventry: { key: "", payload: "", ttl: null },
 	} as KVEntryState) as KVEntryStore;
 	return store;
 }

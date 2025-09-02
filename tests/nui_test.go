@@ -309,6 +309,12 @@ func (s *NuiTestSuite) TestStreamMessagesOnEmptyStream() {
 	r := e.GET("/api/connection/" + connId + "/stream/empty_stream/messages").
 		Expect().Status(http.StatusOK).JSON().Array()
 	r.Length().IsEqual(0)
+
+	//get messages with seq and interval query
+	r = e.GET("/api/connection/" + connId + "/stream/empty_stream/messages").
+		WithQueryString("seq_start=0&interval=1").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(0)
 }
 
 func (s *NuiTestSuite) TestStreamMessagesIndex() {
@@ -526,6 +532,16 @@ func (s *NuiTestSuite) TestKvRest() {
 	e.POST("/api/connection/" + connId + "/kv/bucket1/key/key1/purge").Expect().Status(http.StatusNoContent)
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().
 		JSON().Object().Value("history").Array().Length().IsEqual(1)
+
+	// create key with TTL
+	ttl := 1 * time.Second
+	request := []byte(fmt.Sprintf(`{"payload": "dmFsdWUy", "ttl": %d}`, ttl))
+	r = e.POST("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").
+		WithBytes(request).Expect().Status(http.StatusOK)
+
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusOK)
+	time.Sleep(1500 * time.Millisecond)
+	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusNotFound)
 
 	//purge entire bucket
 	e.POST("/api/connection/" + connId + "/kv/bucket1/purge_deleted").Expect().Status(http.StatusNoContent)

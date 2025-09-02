@@ -16,8 +16,8 @@ async function get(connectionId: string, bucketName: string, key: string, opt?: 
 }
 
 /** PUT */
-async function put(connectionId: string, bucketName: string, key: string, payload: string, opt?: CallOptions): Promise<KVEntry> {
-	const data = { payload: btoa(payload) }
+async function put(connectionId: string, bucketName: string, key: string, payload: string, ttl?: number, opt?: CallOptions): Promise<KVEntry> {
+	const data = { payload: btoa(payload), ttl: ttl}
 	const kventry: KVEntry = await ajax.post(`connection/${connectionId}/kv/${bucketName}/key/${key}`, data, opt)
 	kventry.payload = atob(kventry.payload)
 	return kventry
