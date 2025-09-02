@@ -8,7 +8,7 @@ import CloseIcon from "@/icons/CloseIcon"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT, toFormat } from "@/utils/editor"
 import { dateShow } from "@/utils/time"
-import { FunctionComponent, useMemo } from "react"
+import { FunctionComponent, useMemo, memo } from "react"
 import cls from "./MessageRow.module.css"
 import { CopyButton, IconButton, TooltipWrapCmp } from "@priolo/jack"
 
@@ -91,7 +91,7 @@ const MessageRow: FunctionComponent<Props> = ({
 				[MSG_FORMAT.TEXT]: <TextRow text={message.payload} />,
 				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.payload} maxChar={80} />,
 				[MSG_FORMAT.HEX]: <HexTable text={message.payload} maxRows={10} />,
-				[MSG_FORMAT.PROTOBUF]: <ProtobufRow text={message.payload} />,
+				[MSG_FORMAT.PROTOBUF]: <ProtobufRow text={message.payload} subject={message.subject} />,
 			}[format]}
 
 			{time && (
@@ -101,4 +101,4 @@ const MessageRow: FunctionComponent<Props> = ({
 	)
 }
 
-export default MessageRow
+export default memo(MessageRow)

@@ -9,11 +9,13 @@ import { styles } from "./protobuf.styles"
 interface Props {
   text?: string
   style?: React.CSSProperties
+  subject?: string
 }
 
 const ProtobufCmp: FunctionComponent<Props> = ({
   text,
   style,
+  subject,
 }) => {
   const {
     schemas,
@@ -30,7 +32,7 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     setShowSchemaControls,
     refreshSchemas,
     autoDetectMessageType,
-  } = useProtobufSchema(text)
+  } = useProtobufSchema(text, subject)
 
   if (!text) {
     return <div style={style}>No data to display</div>
