@@ -83,10 +83,11 @@ func (s *NuiTestSuite) filledKvs(name string) jetstream.KeyValue {
 
 func (s *NuiTestSuite) emptyKvs(name string) jetstream.KeyValue {
 	config := jetstream.KeyValueConfig{
-		Bucket:      name,
-		Description: "",
-		History:     5,
-		Storage:     jetstream.MemoryStorage,
+		Bucket:         name,
+		Description:    "",
+		History:        5,
+		Storage:        jetstream.MemoryStorage,
+		LimitMarkerTTL: 1 * time.Second,
 	}
 
 	kv, err := s.js.CreateKeyValue(s.ctx, config)

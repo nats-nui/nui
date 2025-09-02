@@ -6,6 +6,7 @@ export interface KVEntry {
     revision: number;
     isDeleted: boolean;
     history: KVEntry[];
+    ttl?: number;
 }
 
 export enum OPERATION {

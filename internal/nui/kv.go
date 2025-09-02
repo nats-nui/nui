@@ -263,7 +263,8 @@ func (a *App) HandleShowKey(c *fiber.Ctx) error {
 }
 
 type PutRequest struct {
-	Payload []byte `json:"payload"`
+	Payload []byte        `json:"payload"`
+	TTL     time.Duration `json:"ttl,omitempty"`
 }
 
 func (a *App) HandlePutKey(c *fiber.Ctx) error {
@@ -280,7 +281,20 @@ func (a *App) HandlePutKey(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	rev, err := kv.Put(c.Context(), key, req.Payload)
+	entry, err := kv.Get(c.Context(), key)
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return a.logAndFiberError(c, err, 500)
+	}
+	rev := uint64(0)
+	if err != nil {
+		var options []jetstream.KVCreateOpt
+		if req.TTL > 0 {
+			options = append(options, jetstream.KeyTTL(req.TTL))
+		}
+		rev, err = kv.Create(c.Context(), key, req.Payload, options...)
+	} else {
+		rev, err = kv.Update(c.Context(), key, req.Payload, entry.Revision())
+	}
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
