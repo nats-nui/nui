@@ -1,9 +1,9 @@
 import logSo from "@/stores/log"
-import {MESSAGE_TYPE} from "@/stores/log/utils"
-import {ViewStore} from "@/stores/stacks/viewBase"
-import {LOAD_STATE} from "@/stores/stacks/utils"
-import {camelToSnake, snakeToCamel} from "@/utils/object"
-import {LoadBaseStore} from "@/stores/stacks/loadBase"
+import { MESSAGE_TYPE } from "@/stores/log/utils"
+import { ViewStore } from "@/stores/stacks/viewBase"
+import { LOAD_STATE } from "@/stores/stacks/utils"
+import { camelToSnake, snakeToCamel } from "@/utils/object"
+import { LoadBaseStore } from "@/stores/stacks/loadBase"
 import { encodeUrl } from "./utils"
 
 
@@ -35,8 +35,11 @@ export interface CallOptions {
 }
 
 const httpUrlBuilder = () => {
-    if (import.meta.env.VITE_TARGET == "desktop") return "http://localhost:31311/api/"
-    return import.meta.env.DEV || !import.meta.env.VITE_API_URL ? "/api/" : import.meta.env.VITE_API_URL
+    if (import.meta.env.VITE_TARGET == "desktop") {
+        const pathname = window.location.pathname
+        return `${window.location.origin}${pathname}${pathname.endsWith('/') ? "" : "/"}api/`
+    }
+    return "./api/"
 }
 
 const optionsParamDefault: CallOptions = {
@@ -45,6 +48,7 @@ const optionsParamDefault: CallOptions = {
     noError: false,
     store: null,
 }
+
 const optionsDefault: Options = {
     baseUrl: httpUrlBuilder(),
 }
@@ -55,7 +59,7 @@ export class AjaxService {
     options: Options
 
     constructor(options: Options = optionsDefault) {
-        this.options = {...optionsDefault, ...options}
+        this.options = { ...optionsDefault, ...options }
     }
 
     async post(url: string, data?: any, options?: CallOptions) {
@@ -82,7 +86,7 @@ export class AjaxService {
      * Send a ajax to server
      */
     async send(url: string, method: METHOD, data?: any, options: CallOptions = {}) {
-        options = {...optionsParamDefault, ...options}
+        options = { ...optionsParamDefault, ...options }
 
         // PREPARE DATA
         if (!options.noSnake) {
@@ -156,7 +160,7 @@ export class AjaxService {
         return ret
     }
 
-    
+
 }
 
 export default new AjaxService()
