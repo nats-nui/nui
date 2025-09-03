@@ -6,11 +6,12 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig (( ) => {
-    const target = process.env.VITE_TARGET
-    const isDesktop = target == "desktop"
+    const isDesktop = process.env.VITE_TARGET == "desktop"
     console.log(isDesktop)
+
     return {
         plugins: [react()],
+        base: "./",
         build: {
             outDir: isDesktop ? './dist-app' : 'dist',
             sourcemap: true,
