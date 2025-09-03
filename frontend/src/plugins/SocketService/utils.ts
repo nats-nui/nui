@@ -11,7 +11,7 @@ const wsOptionBuilder = () => {
 		protocol: window.location.protocol == "http:" ? "ws:" : "wss:",
 		host: window.location.hostname,
 		port: import.meta.env.VITE_API_WS_PORT ?? window.location.port,
-		base: "",
+		base: window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname,
 	};
 };
 
