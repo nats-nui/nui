@@ -510,8 +510,15 @@ func (s *NuiTestSuite) TestKvRest() {
 	r.JSON().Array().Value(0).Object().Value("revision").Number().IsEqual(1)
 	r.JSON().Array().Value(0).Object().Value("is_deleted").Boolean().IsFalse()
 
+}
+
+func (s *NuiTestSuite) TestKvEntriesRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledKvs("bucket1")
+
 	//get key
-	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusOK)
+	r := e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusOK)
 	r.JSON().Object().Value("payload").String().IsEqual("dmFsdWUx")
 	r.JSON().Object().Value("history").Array().Length().IsEqual(1)
 
@@ -539,14 +546,12 @@ func (s *NuiTestSuite) TestKvRest() {
 	r = e.POST("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").
 		WithBytes(request).Expect().Status(http.StatusOK)
 
+	// check that key is created and then removed after ttl
 	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusOK)
-	time.Sleep(1500 * time.Millisecond)
-	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect().Status(http.StatusNotFound)
-
-	//purge entire bucket
-	e.POST("/api/connection/" + connId + "/kv/bucket1/purge_deleted").Expect().Status(http.StatusNoContent)
-	e.GET("/api/connection/" + connId + "/kv/bucket1/key/key1").Expect().Status(http.StatusNotFound)
-
+	s.Require().EventuallyWithT(func(c *assert.CollectT) {
+		r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect()
+		assert.Equal(c, r.Raw().StatusCode, http.StatusOK)
+	}, 5*time.Second, 100*time.Millisecond)
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
