@@ -12,6 +12,8 @@ import { ViewState } from "../viewBase"
 import { StreamMessagesFilter } from "./utils/filter"
 import { DOC_TYPE } from "../../docs/types"
 import { debounce } from "../../../utils/time"
+import { getStreamFormat, setStreamFormat } from "@/utils/streamFormatCache"
+import { MSG_FORMAT } from "@/utils/editor"
 
 
 
@@ -86,7 +88,13 @@ const setup = {
 			const state = store.state as StreamMessagesState
 			state.connectionId = data.connectionId
 			state.stream = data.stream
-			state.format = data.format
+			
+			// Load format from cache first, fallback to default
+			const cachedFormat = data.connectionId && data.stream?.config?.name 
+				? getStreamFormat(data.connectionId, data.stream.config.name)
+				: null
+			state.format = cachedFormat || MSG_FORMAT.JSON
+			
 			state.textSearch = data.textSearch
 			state.filter = data.filter
 		},
@@ -102,6 +110,14 @@ const setup = {
 				console.error("no params")
 				return
 			}
+
+			// Load format from cache when we have stream info
+			const cachedFormat = getStreamFormat(store.state.connectionId, store.state.stream.config.name)
+			if (cachedFormat) {
+				store.state.format = cachedFormat
+				store._update()
+			}
+
 			store.state.rangeTop = null
 			store.state.filter.interval = globalInterval
 			store.state.filter.startSeq = store.state.stream.state.lastSeq
@@ -116,6 +132,16 @@ const setup = {
 
 		async fetchIfVoid(_: void, store?: StreamMessagesStore) {
 			if (!!store.state.messages) return
+
+			// Also try to load format from cache if we have stream info
+			if (store.state.connectionId && store.state.stream?.config?.name) {
+				const cachedFormat = getStreamFormat(store.state.connectionId, store.state.stream.config.name)
+				if (cachedFormat) {
+					store.state.format = cachedFormat
+					store._update()
+				}
+			}
+
 			await store.fetchInit()
 		},
 
@@ -204,7 +230,7 @@ const setup = {
 				}
 				// se invece è chiuso...
 			} else {
-				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat ?? false)
 				store.state.group.addLink({ view, parent: store, anim: true })
 			}
 			store._update()
@@ -224,6 +250,8 @@ const setup = {
 				body: "it is gone forever",
 			})
 		},
+
+
 	},
 
 	mutators: {
@@ -235,6 +263,13 @@ const setup = {
 		},
 		setSubjectsCustom: (subjectsCustom: string[]) => ({ subjectsCustom }),
 		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
+		setFormat: (format: MSG_FORMAT, store?: StreamMessagesStore) => {
+			// Save to cache if we have stream info
+			if (store?.state.connectionId && store?.state.stream?.config?.name) {
+				setStreamFormat(store.state.connectionId, store.state.stream.config.name, format)
+			}
+			return { format }
+		},
 	},
 }
 

@@ -95,7 +95,7 @@ const setup = {
 		openMessageDetail(message: Message, store?: SyncStore) {
 			const storeMsg = (store.state.linked as MessageStore)
 			const msgOld = storeMsg?.state.message
-			const view = msgOld?.payload==message?.payload ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+			const view = msgOld?.payload==message?.payload ? null : buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat ?? false)
 			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 	},

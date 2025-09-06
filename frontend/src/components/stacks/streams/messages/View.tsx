@@ -16,6 +16,7 @@ import FilterDialog from "./FilterDialog"
 import { AlertDialog, Button, CircularLoadingCmp, FindInputHeader, OptionsCmp } from "@priolo/jack"
 import { MessageStore } from "../../../../stores/stacks/message"
 import { DOC_TYPE } from "../../../../types"
+import { getStreamFormat } from "@/utils/streamFormatCache"
 
 
 
@@ -36,6 +37,16 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 	useEffect(() => {
 		strMsgSo.fetchIfVoid()
 	}, [])
+
+	// Load cached format when stream info changes
+	useEffect(() => {
+		if (strMsgSa.connectionId && strMsgSa.stream?.config?.name) {
+			const cachedFormat = getStreamFormat(strMsgSa.connectionId, strMsgSa.stream.config.name)
+			if (cachedFormat && strMsgSa.format !== cachedFormat) {
+				strMsgSo.setFormat(cachedFormat)
+			}
+		}
+	}, [strMsgSa.connectionId, strMsgSa.stream?.config?.name, strMsgSa.format])
 
 	// HANDLER
 	const handleFilterClick = (e: React.MouseEvent, select: boolean) => strMsgSo.setFiltersOpen(!select)

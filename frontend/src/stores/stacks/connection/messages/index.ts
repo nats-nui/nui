@@ -211,7 +211,7 @@ const setup = {
 				}
 			// se invece è chiuso...
 			} else {
-				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat)
+				const view = buildMessageDetail(message, store.state.format, storeMsg?.state.autoFormat ?? false)
 				store.state.group.addLink({ view, parent: store, anim: true })
 			}
 			store._update()

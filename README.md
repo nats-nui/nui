@@ -17,7 +17,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 
 - Core NATS Pub/Sub: view and send NATS messages
 - Request / reply: send requests and easily view related response
-- Multiple format visualization (text, json, hex and much more supported)
+- Multiple format visualization (text, json, hex, protobuf and much more supported)
 - Streams management: view, create adn tweak stream configs
 - Stream messages: view, filter and operate with stream messages
 - Stream operations like purge and message deletion
@@ -46,6 +46,9 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 - Right-click the PKG and select **Open** (to bypass macOS quarantine, [see Apple documentation](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)).
 - If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
 ---
+
+# Documentation
+- **[Protobuf Message Decoding Guide](PROTOBUF_USAGE.md)** - How to decode protobuf messages with your own schemas
 
 # Build and run Locally
 The projects uses Go and Wails.io as to run the BE and React on Vite on FE.
