@@ -58,6 +58,7 @@ func (a *App) registerHandlers() {
 	a.Get("/health", a.handleHealth)
 
 	a.Get("/api/about", a.handleAbout)
+	a.Get("/api/github-apps", a.handleGitHubApps)
 
 	a.Get("/api/connection", a.HandleIndexConnections)
 	a.Get("/api/connection/:id", a.HandleGetConnection)
