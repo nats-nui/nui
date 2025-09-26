@@ -24,6 +24,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 - KV Store management: View and create KV buckets
 - KV entries: view, filter and edit entries
 - KV entries history: acces each entry history to see past updates / deletes
+- GitHub integration: view repository information and webhook detection in About section
 ---
 ### UI :computer:
 
