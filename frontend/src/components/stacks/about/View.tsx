@@ -38,6 +38,7 @@ const AboutView: FunctionComponent<Props> = ({
 	// RENDER
 	const current = aboutSa.about?.currentVersion ?? "--"
 	const latest = aboutSa.about?.latestVersion ?? "--"
+	const githubRepo = aboutSa.about?.githubRepo
 	return <FrameworkCard
 		className={clsCard.root}
 		icon={<div style={{ fontSize: 16, fontWeight: 700 }}>?</div>}
@@ -73,6 +74,33 @@ const AboutView: FunctionComponent<Props> = ({
 				<div className="jack-lbl-prop">LAST</div>
 				<div className="jack-lbl-readonly">{latest}</div>
 			</div>
+
+			{githubRepo && (
+				<>
+					<div className={cls.divider} />
+					
+					<div className="lyt-v">
+						<div className="jack-lbl-prop">GITHUB REPO</div>
+						<div className="jack-lbl-readonly">{githubRepo.repository}</div>
+					</div>
+
+					<div className="lyt-v">
+						<div className="jack-lbl-prop">WEBHOOKS</div>
+						<div className="jack-lbl-readonly" style={{ color: githubRepo.hasWebhooks ? '#4caf50' : '#f44336' }}>
+							{githubRepo.hasWebhooks ? '✓ Detected' : '✗ Not Found'}
+						</div>
+					</div>
+
+					{githubRepo.hasWebhooks && githubRepo.webhookURL && (
+						<div className="lyt-v">
+							<div className="jack-lbl-prop">WEBHOOK URL</div>
+							<div className="jack-lbl-readonly" style={{ fontSize: '0.8em', wordBreak: 'break-all' }}>
+								{githubRepo.webhookURL}
+							</div>
+						</div>
+					)}
+				</>
+			)}
 
 			{aboutSa.about?.shouldUpdate && <>
 
