@@ -48,8 +48,7 @@ export class SocketService {
 		const { protocol, host, port, base } = this.options
 		this.reconnect.enabled = true
 		try {
-			let url = `${protocol}//${host}:${port}/ws/sub`
-			if (base) url = `${url}/${base}`
+			let url = `${protocol}//${host}:${port}${base}/ws/sub`
 			if (connId) url = `${url}?id=${connId}`
 			logSo.add({
 				type: MESSAGE_TYPE.INFO,
