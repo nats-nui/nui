@@ -27,7 +27,6 @@ require (
 	github.com/antithesishq/antithesis-sdk-go v0.4.3-default-no-op // indirect
 	github.com/google/go-tpm v0.9.5 // indirect
 	github.com/synadia-io/orbit.go/natsext v0.1.0 // indirect
-	go.uber.org/automaxprocs v1.6.0 // indirect
 )
 
 require (
