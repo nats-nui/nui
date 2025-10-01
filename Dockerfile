@@ -1,5 +1,5 @@
 ## be build
-FROM golang:1.23 AS build_be
+FROM golang:1.24 AS build_be
 ARG VERSION
 WORKDIR /src
 COPY . .
