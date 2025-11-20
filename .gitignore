@@ -32,3 +32,6 @@ build/*
 !build/appicon.png
 
 cmd/test
+
+proto-schemas/*
+!proto-schemas/.gitkeep

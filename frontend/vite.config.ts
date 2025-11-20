@@ -11,6 +11,9 @@ export default defineConfig (( ) => {
 
     return {
         plugins: [react()],
+        server: {
+            cors: false
+        },
         base: "./",
         build: {
             outDir: isDesktop ? './dist-app' : 'dist',
