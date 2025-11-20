@@ -75,7 +75,7 @@ jobs:
           - name: 'nui-app'
             platform_name: 'windows-amd64'
             platform:  'windows/amd64'
-            os: 'windows-latest'
+            os: 'windows-2022'
             build_tags:
             nsis: true
           - name: 'nui-app'
