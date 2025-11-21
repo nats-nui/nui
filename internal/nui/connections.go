@@ -8,7 +8,7 @@ import (
 func (a *App) HandleIndexConnections(c *fiber.Ctx) error {
 	connections, err := a.nui.ConnRepo.All()
 	if err != nil {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	connArray := make([]*connection.Connection, 0)
 	for _, conn := range connections {
