@@ -67,9 +67,6 @@ func (a *App) HandleIndexBuckets(c *fiber.Ctx) error {
 		return err
 	}
 	kvLister := js.KeyValueStores(c.Context())
-	if err != nil {
-		return err
-	}
 	var statuses []BucketState
 	for status := range kvLister.Status() {
 		if kvLister.Error() != nil {

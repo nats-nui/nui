@@ -3,6 +3,7 @@ package nui
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"
@@ -277,7 +278,7 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 
 	msgs, err = a.fetchMessages(c, err, stream, config, batch, msgs, msgCount)
 	if err != nil {
-		return err
+		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(msgs)
 }
@@ -285,22 +286,22 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 func (a *App) fetchMessages(c *fiber.Ctx, err error, stream jetstream.Stream, config jetstream.ConsumerConfig, batch int, msgs []ws.NatsMsg, msgCount int) ([]ws.NatsMsg, error) {
 	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
 	if err != nil {
-		return nil, a.logAndFiberError(c, err, 500)
+		return nil, err
 	}
 	msgBatch, err := consumer.FetchNoWait(batch)
 	if err != nil {
-		return nil, a.logAndFiberError(c, err, 500)
+		return nil, err
 	}
 	for msg := range msgBatch.Messages() {
 		if len(msgs) == msgCount {
 			break
 		}
 		if msgBatch.Error() != nil {
-			return nil, c.Status(500).JSON(msgBatch.Error().Error())
+			return nil, fmt.Errorf("failed to fetch message: %w", msgBatch.Error())
 		}
 		metadata, err := msg.Metadata()
 		if err != nil {
-			return nil, a.logAndFiberError(c, err, 500)
+			return nil, err
 		}
 		msgs = append(msgs, ws.NatsMsg{
 			Subject:    msg.Subject(),
