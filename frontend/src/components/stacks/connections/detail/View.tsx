@@ -13,9 +13,12 @@ import { EDIT_STATE } from "@/types"
 import { IconButton, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
-import clsGreen from "../../CardGreen.module.css"
+import clsCardA from "../../CardGreen.module.css"
+import clsCardB from "../../CardBoringDef.module.css"
+
 import ActionsCmp from "./Actions"
 import ConnectionDetailForm from "./Form"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -30,6 +33,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	// STORE
 	useStore(cnnDetailSo.state.group)
 	const cnnDetailSa = useStore(cnnDetailSo)
+	useStore(layoutSo)
 	//const cnnSa = useStore(cnnSo)
 
 	// HOOKs
@@ -53,13 +57,14 @@ const CnnDetailView: FunctionComponent<Props> = ({
 	const isMetricsOpen = cnnDetailSo.getMetricsOpen()
 	const isNew = cnnDetailSa.editState == EDIT_STATE.NEW
 	const inRead = cnnDetailSa.editState == EDIT_STATE.READ
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardA : clsCardB
 
 	const ButtonSend = <TooltipWrapCmp content="SEND A MESSAGE" >
 		<IconButton onClick={handleSendClick}><SendIcon /></IconButton>
 	</TooltipWrapCmp>
 
 	return <FrameworkCard
-		className={clsGreen.root}
+		className={clsCard.root}
 		icon={<ConnectionIcon />}
 		store={cnnDetailSo}
 		actionsRender={<ActionsCmp store={cnnDetailSo} />}
