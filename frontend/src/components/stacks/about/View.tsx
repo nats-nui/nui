@@ -1,6 +1,7 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import GitHubIcon from "@/icons/GitHubIcon"
 import HelpIcon from "@/icons/HelpIcon"
+import BigEyeIcon from "@/icons/BigEyeIcon"
 import { AboutStore } from "@/stores/stacks/about"
 import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
@@ -8,6 +9,7 @@ import React, { FunctionComponent, useEffect } from "react"
 import KeyboardIcon from "../../../icons/KeyboardIcon"
 import clsCard from "../CardWhiteDef.module.css"
 import cls from "./View.module.css"
+import ThemeDialog from "./ThemeDialog"
 
 
 
@@ -34,6 +36,7 @@ const AboutView: FunctionComponent<Props> = ({
 	const handleGitHubClick = () => window.open("https://github.com/nats-nui/nui")
 	const handleHelpClick = () => window.open("https://natsnui.app/help/")
 	const handleShortcutClick = () => aboutSo.openShortcut()
+	const handleThemeClick = () => aboutSo.setThemeOpen(true)
 
 	// RENDER
 	const current = aboutSa.about?.currentVersion ?? "--"
@@ -60,6 +63,10 @@ const AboutView: FunctionComponent<Props> = ({
 					onClick={handleHelpClick}
 				><HelpIcon style={{ width: 24, height: 24 }} />Help</div>
 
+				<div className={`${cls.link} jack-focus-4`}
+					onClick={handleThemeClick}
+				><BigEyeIcon style={{ width: 24, height: 24 }} />Theme</div>
+
 			</div>
 
 			<div className={cls.divider} />
@@ -76,12 +83,14 @@ const AboutView: FunctionComponent<Props> = ({
 
 			{aboutSa.about?.shouldUpdate && <>
 
-				<Button className={`${cls.btt} jack-focus-4`}
+				<Button className={`${cls.btt} jack-focus-5`}
 					onClick={handleUpdateClick}
 				>UPDATE</Button>
 			</>}
 
 		</div>
+
+		<ThemeDialog store={aboutSo} />
 
 	</FrameworkCard>
 }
