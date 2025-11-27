@@ -4,6 +4,7 @@ import ConnectionsIcon from "@/icons/cards/ConnectionsIcon"
 import CloseIcon from "@/icons/CloseIcon"
 import DoneIcon from "@/icons/DoneIcon"
 import cnnSo from "@/stores/connections"
+import layoutSo from "@/stores/layout"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
@@ -13,7 +14,8 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo } from "react"
 import ConfigIcon from "../../../icons/cards/ConfigIcon"
 import ElementRow from "../../rows/ElementRow"
-import clsCard from "../CardGreenDef.module.css"
+import clsCardBoring from "../CardBoringDef.module.css"
+import clsCardRedeye from "../CardGreenDef.module.css"
 import cls from "./ListView.module.css"
 
 
@@ -34,6 +36,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	const cnnListSa = useStore(cnnListSo)
 	const cnnSa = useStore(cnnSo)
 	useStore(cnnListSo.state.group)
+	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -72,6 +75,7 @@ const CnnListView: FunctionComponent<Props> = ({
 	const isSelected = (cnn: Connection) => cnn.id == selectId
 	const isVoid = !(connections?.length > 0)
 	const loaderOpen = cnnListSa.linked?.state.type == DOC_TYPE.CNN_LOADER
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}

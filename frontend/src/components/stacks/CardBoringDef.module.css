@@ -1,10 +1,10 @@
 .root {
-	--card-fg: #DEDEDE;
+	--card-fg: #dedede;
 	--card-bg: #3E3E3E;
 	
 	/* button icon button */
 	--cmp-select-fg: #393939;
-	--cmp-select-bg: #DEDEDE;
+	--cmp-select-bg: #96a6eb;
 
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);

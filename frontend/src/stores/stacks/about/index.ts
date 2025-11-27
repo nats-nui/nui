@@ -14,7 +14,6 @@ const setup = {
 	state: {
 
 		about: <About>null,
-		themeOpen: false,
 
 		//#region VIEWBASE
 		width: 150,
@@ -63,7 +62,6 @@ const setup = {
 
 	mutators: {
 		setAbout: (about: About) => ({ about }),
-		setThemeOpen: (themeOpen: boolean) => ({ themeOpen }),
 	},
 }
 
