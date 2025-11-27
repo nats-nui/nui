@@ -16,7 +16,10 @@ const setup = {
 	},
 
 	mutators: {
-		setTheme: (theme: ThemeType) => ({ theme }),
+		setTheme: (theme: ThemeType) => {
+			localStorage.setItem('theme', theme)
+			return { theme }
+		},
 	},
 }
 
@@ -38,3 +41,4 @@ export const THEMES: { label: string, value: ThemeType }[] = [
 ]
 
 
+layoutSo.state.theme = (localStorage.getItem('theme') ?? 'redeye') as ThemeType

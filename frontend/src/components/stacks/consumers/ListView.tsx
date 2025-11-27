@@ -6,8 +6,10 @@ import { FunctionComponent, useEffect } from "react"
 import ConsumersIcon from "../../../icons/cards/ConsumersIcon"
 import { ConsumerStore } from "../../../stores/stacks/consumer/detail"
 import { DOC_TYPE, EDIT_STATE } from "../../../types"
-import clsCard from "../CardFuchsiaDef.module.css"
+import clsCardRedeye from "../CardFuchsiaDef.module.css"
+import clsCardBoring from "../CardBoringDef.module.css"
 import { AlertDialog, Button, FindInputHeader, OptionsCmp, Table } from "@priolo/jack"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -22,6 +24,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	// STORE
 	const consumersSa = useStore(consumersSo)
 	useStore(consumersSo.state.group)
+	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -37,6 +40,7 @@ const ConsumersListView: FunctionComponent<Props> = ({
 	const consumers = consumersSo.getFiltered() ?? []
 	const selected = consumersSa.select
 	const isNewSelect = consumersSa.linked?.state.type == DOC_TYPE.CONSUMER && (consumersSa.linked as ConsumerStore).state.editState == EDIT_STATE.NEW
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}

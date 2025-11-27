@@ -8,8 +8,8 @@ import { StreamStore } from "@/stores/stacks/streams/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCardA from "../../CardYellow.module.css"
-import clsCardB from "../../CardBoringDef.module.css"
+import clsCardRedeye from "../../CardYellow.module.css"
+import clsCardBoring from "../../CardBoringDef.module.css"
 import ActionsCmp from "./Actions"
 import Form from "./Form"
 import layoutSo from "@/stores/layout"
@@ -42,7 +42,7 @@ const StreamDetailView: FunctionComponent<Props> = ({
 	const inRead = streamSa.editState == EDIT_STATE.READ
 	const isConsumersSelect = streamSo.getConsumerOpen()
 	const isMessagesSelect = streamSo.getMessagesOpen()
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardA : clsCardB
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}

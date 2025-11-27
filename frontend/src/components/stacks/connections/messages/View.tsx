@@ -9,7 +9,9 @@ import { debounce } from "@/utils/time"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect, useMemo, useState } from "react"
 import FormatDialog from "../../../editor/FormatDialog"
-import clsCard from "../../CardCyanDef.module.css"
+import clsCardRedeye from "../../CardCyanDef.module.css"
+import clsCardBoring from "../../CardBoringDef.module.css"
+import layoutSo from "@/stores/layout"
 import MessagesList from "../../messages/MessagesList"
 import SubjectsDialog from "./SubjectsDialog"
 import { Button, FindInputHeader, FloatButton } from "@priolo/jack"
@@ -28,6 +30,7 @@ const MessagesView: FunctionComponent<Props> = ({
 	// STORE
 	useStore(msgSo.state.group)
 	const msgSa = useStore(msgSo) as MessagesState
+	useStore(layoutSo)
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(msgSa.textSearch ?? "")
@@ -73,6 +76,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			}
 			return null
 		}, [storeMsg?.state?.message?.receivedAt])
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}
