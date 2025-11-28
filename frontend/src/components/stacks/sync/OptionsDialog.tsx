@@ -32,7 +32,7 @@ const OptionsDialog: FunctionComponent<Props> = ({
     return <Dialog
         open={syncSa.optionsOpen}
         title="TIMEOUT"
-        width={150}
+        width={200}
         store={syncSo}
         noCloseOnClickParent={true}
         onClose={handleOptionsClose}

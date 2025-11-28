@@ -7,9 +7,11 @@ import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCard from "../../CardYellowDef.module.css"
+import clsCardRedeye from "../../CardYellowDef.module.css"
+import clsCardBoring from "../../CardBoringDef.module.css"
 import { AlertDialog, Button, FindInputHeader, OptionsCmp, Table } from "@priolo/jack"
 import { formatNumber } from "../../../../utils/string"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -24,6 +26,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	// STORE
 	const streamsSa = useStore(streamsSo)
 	useStore(streamsSo.state.group)
+	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -41,6 +44,7 @@ const StreamsListView: FunctionComponent<Props> = ({
 	const nameSelected = streamsSa.select
 	const isNewSelect = streamsSa.linked?.state.type == DOC_TYPE.STREAM 
 		&& (streamsSa.linked as StreamStore).state.editState == EDIT_STATE.NEW
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}
