@@ -6,11 +6,13 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import KvEntryIcon from "../../../../icons/cards/KvEntryIcon"
 import FormatDialog from "../../../editor/FormatDialog"
-import clsCard from "../../CardMintDef.module.css"
+import clsCardRedeye from "../../CardMintDef.module.css"
+import clsCardBoring from "../../CardBoringDef.module.css"
 import ActionsCmp from "./Actions"
 import DetailForm from "./DetailForm"
 import { Dialog, List } from "@priolo/jack"
 import { RenderRowBaseProps } from "@priolo/jack"
+import layoutSo from "@/stores/layout"
 
 
 
@@ -24,6 +26,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 
 	// STORE
 	const kventrySa = useStore(kventrySo)
+	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -37,6 +40,7 @@ const KVEntryDetailView: FunctionComponent<Props> = ({
 	// RENDER
 	const history = kventrySa.kventry.history?.sort((h1, h2) => h2.revision - h1.revision)
 	const historySelected = kventrySo.getKVSelectIndex()
+	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
 		className={clsCard.root}

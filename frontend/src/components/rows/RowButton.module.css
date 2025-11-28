@@ -24,8 +24,8 @@
 }
 
 .root.select {
-	color: var(--card-bg);
-	background-color: var(--card-fg);
+	color: var(--cmp-select-fg);
+	background-color: var(--cmp-select-bg);
 }
 
 .label {

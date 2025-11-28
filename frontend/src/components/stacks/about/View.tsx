@@ -7,6 +7,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import KeyboardIcon from "../../../icons/KeyboardIcon"
 import clsCard from "../CardWhiteDef.module.css"
+import ThemeDialog from "./ThemeDialog"
 import cls from "./View.module.css"
 
 
@@ -60,6 +61,8 @@ const AboutView: FunctionComponent<Props> = ({
 					onClick={handleHelpClick}
 				><HelpIcon style={{ width: 24, height: 24 }} />Help</div>
 
+				<ThemeDialog store={aboutSo}/>
+
 			</div>
 
 			<div className={cls.divider} />
@@ -75,13 +78,13 @@ const AboutView: FunctionComponent<Props> = ({
 			</div>
 
 			{aboutSa.about?.shouldUpdate && <>
-
-				<Button className={`${cls.btt} jack-focus-4`}
+				<Button className={`${cls.btt} jack-focus-5`}
 					onClick={handleUpdateClick}
 				>UPDATE</Button>
 			</>}
 
 		</div>
+
 
 	</FrameworkCard>
 }
