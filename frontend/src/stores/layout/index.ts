@@ -40,5 +40,9 @@ export const THEMES: { label: string, value: ThemeType }[] = [
 	{ label: "BORING", value: "boring" },
 ]
 
-
-layoutSo.state.theme = (localStorage.getItem('theme') ?? 'redeye') as ThemeType
+async function loadConfig() {
+	const res = await fetch("/config.json")
+	const config:any = await res.json()
+	layoutSo.state.theme = (localStorage.getItem('theme') ?? config.theme ?? 'redeye') as ThemeType
+}
+loadConfig();
