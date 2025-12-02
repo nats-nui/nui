@@ -152,10 +152,11 @@ func parseFromCliContext(name string, cliContext clicontext.CliConnectionContext
 		InboxPrefix: cliContext.InboxPrefix,
 		Auth:        auths,
 		TLSAuth: connection.TLSAuth{
-			Enabled:  cliContext.Cert != "" && cliContext.Key != "",
-			CertPath: cliContext.Cert,
-			KeyPath:  cliContext.Key,
-			CaPath:   cliContext.CA,
+			Enabled:        cliContext.Cert != "" && cliContext.Key != "",
+			CertPath:       cliContext.Cert,
+			KeyPath:        cliContext.Key,
+			CaPath:         cliContext.CA,
+			HandshakeFirst: cliContext.TLSFirst,
 		},
 	}
 }
