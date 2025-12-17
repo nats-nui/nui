@@ -50,7 +50,7 @@ const setup = {
 
 		getEditorText: (_: void, store?: ViewStore) => (<MessageSendStore>store).state.text ?? "",
 
-		getCanEdit: (_: void, store?: MessageSendStore) => store.state.subject?.length > 0 && store.state.text?.length > 0 && store.state.loadingState != LOAD_STATE.LOADING,
+		getCanEdit: (_: void, store?: MessageSendStore) => store.state.subject?.length > 0 && store.state.loadingState != LOAD_STATE.LOADING,
 	},
 
 	actions: {
