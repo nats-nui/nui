@@ -2,14 +2,14 @@ package nui
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/nats-nui/nui/internal/proto"
 	"github.com/nats-nui/nui/pkg/logging"
 	slogfiber "github.com/samber/slog-fiber"
-	"log/slog"
 )
 
 type App struct {
@@ -105,10 +105,9 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key/purge", a.HandlePurgeKey)
 
 	// Proto schema read-only routes (schemas are loaded from filesystem)
-	protoHandlers := proto.NewHandlers(a.nui.ProtoRepo)
-	a.Get("/api/proto", protoHandlers.HandleIndexProtoSchemas)
-	a.Get("/api/proto/:id", protoHandlers.HandleGetProtoSchema)
-	a.Get("/api/proto/:id/content", protoHandlers.HandleServeProtoContent)
+	a.Get("/api/proto", a.HandleIndexProtoSchemas)
+	a.Get("/api/proto/:id", a.HandleGetProtoSchema)
+	a.Get("/api/proto/:id/content", a.HandleServeProtoContent)
 
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
