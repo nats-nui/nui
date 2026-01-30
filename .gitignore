@@ -33,5 +33,5 @@ build/*
 
 cmd/test
 
-proto-schemas/*
-!proto-schemas/.gitkeep
+protoschemas/*
+!protoschemas/.gitkeep
