@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package simple;
+
+option go_package = "github.com/nats-nui/nui/protoschema-schemas/gen/simple";
+
+// A simple user message
+message User {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  int64 created_at = 4;
+  bool is_active = 5;
+}
+
+// A simple event message
+message UserEvent {
+  enum EventType {
+    UNKNOWN = 0;
+    CREATED = 1;
+    UPDATED = 2;
+    DELETED = 3;
+    LOGIN = 4;
+    LOGOUT = 5;
+  }
+
+  string event_id = 1;
+  EventType type = 2;
+  User user = 3;
+  int64 timestamp = 4;
+  map<string, string> metadata = 5;
+}
+
