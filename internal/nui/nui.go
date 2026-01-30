@@ -1,7 +1,6 @@
 package nui
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/nats-nui/nui/internal/connection"
@@ -23,21 +22,15 @@ type Nui struct {
 	l                logging.Slogger
 }
 
-func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {
+func Setup(dbPath, protoschemasPath string, logger logging.Slogger) (*Nui, error) {
 	n := &Nui{}
 	store, err := docstore.NewDocStore(dbPath)
 	if err != nil {
 		return nil, err
 	}
 
-	// Configure proto schemas directory
-	protoDir := os.Getenv("PROTO_SCHEMAS_DIR")
-	if protoDir == "" {
-		protoDir = "./proto-schemas"
-	}
-
 	// Convert to absolute path
-	protoDir, err = filepath.Abs(protoDir)
+	protoDir, err := filepath.Abs(protoschemasPath)
 	if err != nil {
 		return nil, err
 	}
