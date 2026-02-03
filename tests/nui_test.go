@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"testing"
+	"time"
+
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"testing"
-	"time"
 )
 
 func (s *NuiTestSuite) TestConnectionsRest() {
@@ -754,6 +755,30 @@ func (s *NuiTestSuite) TestMetrics() {
 	wr.Body().Contains("varz")
 	wr.Body().Contains("connz")
 
+}
+
+func (s *NuiTestSuite) TestProtoschemas() {
+	e := s.e
+	// get list of schemas
+	r := e.GET("/api/proto").Expect().Status(http.StatusOK)
+	array := r.JSON().Array()
+	array.Length().Ge(2)
+
+	// verify simple and simple2 are present
+	schemaIDs := make([]string, 0)
+	for _, val := range array.Iter() {
+		schemaIDs = append(schemaIDs, val.Object().Value("id").String().Raw())
+	}
+	s.Contains(schemaIDs, "simple")
+	s.Contains(schemaIDs, "simple2")
+
+	// Get specific schema
+	e.GET("/api/proto/simple").Expect().Status(http.StatusOK).
+		JSON().Object().Value("id").String().Equal("simple")
+
+	// Get schema content
+	content := e.GET("/api/proto/simple/content").Expect().Status(http.StatusOK).Body().Raw()
+	s.Contains(content, "package simple;")
 }
 
 func TestNuiTestSuite(t *testing.T) {

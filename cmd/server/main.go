@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/internal/app"
 	"github.com/nats-nui/nui/internal/version"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var Version string
@@ -20,9 +21,10 @@ func main() {
 	version.Set(Version)
 
 	logLevel := flag.String("log-level", "info", "log level")
-	logOutput := flag.String("log-output", "", "log output")
+	logOutput := flag.String("log-output", "./logs.log", "log output")
 	dbPath := flag.String("db-path", ":memory:", "path to the database")
-	cliContextsStr := flag.String("nats-cli-contexts", "", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
+	protoSchemasPath := flag.String("proto-schemas-path", "./protoschemas/default", "path to the protobuf schemas directory")
+	cliContextsStr := flag.String("nats-cli-contexts", "./clicontexts", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
 
 	flag.Parse()
 	logger, err := logging.NewSlogger(*logLevel, *logOutput)
@@ -37,6 +39,7 @@ func main() {
 		app.WithTarget(app.TargetWeb),
 		app.WithVersion(Version),
 		app.WithDb(*dbPath),
+		app.WithProtoSchemasPath(*protoSchemasPath),
 		app.WithLogger(logger),
 		app.WithNatsCliContexts(clicontext.SanitizePaths(*cliContextsStr)),
 	)

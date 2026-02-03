@@ -2,6 +2,10 @@ package tests
 
 import (
 	"context"
+	"math/rand"
+	"net/http"
+	"strconv"
+
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
@@ -10,9 +14,6 @@ import (
 	"github.com/nats-nui/nui/pkg/logging"
 	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/suite"
-	"math/rand"
-	"net/http"
-	"strconv"
 )
 
 type NuiTestSuite struct {
@@ -56,7 +57,7 @@ func (s *NuiTestSuite) connectNatsClient() {
 func (s *NuiTestSuite) startNuiServer() {
 
 	mockedLogger := &logging.NullLogger{}
-	nuiSvc, err := nui.Setup(":memory:", mockedLogger)
+	nuiSvc, err := nui.Setup(":memory:", "./protoschemas/default", mockedLogger)
 	s.NoError(err)
 
 	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
