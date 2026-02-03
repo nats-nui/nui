@@ -4,19 +4,29 @@ Decode binary protobuf messages in NATS UI using your own schemas.
 
 ## Setup
 
-1. **Add your .proto files** to the `proto-schemas/` directory:
+1. **Locate the schemas directory**:
+
+   **Desktop App:**
+   - **Windows**: `%LOCALAPPDATA%\nui-app\protoschemas\default`
+   - **Linux**: `~/.local/share/nui-app/protoschemas/default`
+   - **macOS**: `~/Library/Application Support/nui-app/protoschemas/default`
+
+   **Docker/Container:**
+   - Path inside container: `/protoschemas/default`
+   - Usage: Mount your local schemas folder to this path.
+
+2. **Add your .proto files** to this directory:
 ```
-nui/
-├── proto-schemas/
-│   ├── user_events.proto
-│   ├── order.proto
-│   └── common/
-│       └── types.proto
+default/
+├── user_events.proto
+├── order.proto
+└── common/
+    └── types.proto
 ```
 
-2. **Example schema**:
+3. **Example schema**:
 ```protobuf
-// proto-schemas/user_events.proto
+// default/user_events.proto
 syntax = "proto3";
 
 message UserCreated {
@@ -44,8 +54,8 @@ If auto-detection fails, manually select schema and message type.
 
 ## Troubleshooting
 
-- **No decode**: Check if .proto files are in `proto-schemas/` directory
-- **Import errors**: Verify import paths relative to `proto-schemas/`
+- **No decode**: Check if .proto files are in the correct directory (see Setup)
+- **Import errors**: Verify import paths relative to the schema directory root
 - **Wrong data**: Try manual schema selection
 
 That's it! The system handles the complexity automatically.
