@@ -52,7 +52,7 @@ const setup = {
 		},
 		//#endregion
 
-		getCanSend: (_: void, store?: SyncStore) => store.state.subject?.length > 0 && store.state.messageSend?.length > 0 && store.state.loadingState != LOAD_STATE.LOADING,
+		getCanSend: (_: void, store?: SyncStore) => store.state.subject?.length > 0 && store.state.loadingState != LOAD_STATE.LOADING,
 	},
 
 	actions: {
