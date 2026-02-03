@@ -1,12 +1,11 @@
 package nui
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
-	"github.com/nats-nui/nui/internal/proto"
+	"github.com/nats-nui/nui/internal/protoschema"
 	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
@@ -16,34 +15,29 @@ import (
 type Nui struct {
 	ConnRepo         connection.ConnRepo
 	ConnPool         connection.Pool[*connection.NatsConn]
-	ProtoRepo        proto.ProtoRepo
+	ProtoRepo        protoschema.ProtoRepo
 	CliConnImporter  clicontext.Importer[clicontext.ImportedContextEntry]
 	MetricsCollector metrics.MetricsCollector
 	Hub              ws.IHub
 	l                logging.Slogger
 }
 
-func Setup(dbPath string, logger logging.Slogger) (*Nui, error) {
+func Setup(dbPath, protoschemasPath string, logger logging.Slogger) (*Nui, error) {
 	n := &Nui{}
 	store, err := docstore.NewDocStore(dbPath)
 	if err != nil {
 		return nil, err
 	}
-	
-	// Configure proto schemas directory
-	protoDir := os.Getenv("PROTO_SCHEMAS_DIR")
-	if protoDir == "" {
-		protoDir = "./proto-schemas"
-	}
+
 	// Convert to absolute path
-	protoDir, err = filepath.Abs(protoDir)
+	protoDir, err := filepath.Abs(protoschemasPath)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	n.ConnRepo = connection.NewDocStoreConnRepo(store)
 	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
-	n.ProtoRepo, err = proto.NewFileSystemProtoRepo(protoDir)
+	n.ProtoRepo, err = protoschema.NewFileSystemProtoRepo(protoDir)
 	if err != nil {
 		return nil, err
 	}

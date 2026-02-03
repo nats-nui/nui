@@ -4,6 +4,8 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/nats-nui/nui/desktop/mapping"
 	"github.com/nats-nui/nui/internal/app"
@@ -16,7 +18,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
-	"os"
 )
 
 //go:embed all:frontend/dist-app
@@ -34,11 +35,13 @@ func main() {
 	var logLevel string
 	var logsOutput string
 	var dbPath string
+	var protoSchemasPath string
 	var cliContextsStr string
 
 	flag.StringVar(&logLevel, "log-level", "info", "log level")
 	flag.StringVar(&logsOutput, "log-output", "", "log output")
 	flag.StringVar(&dbPath, "db-path", "", "path to the database")
+	flag.StringVar(&protoSchemasPath, "proto-schemas-path", "", "path to the protobuf schemas directory")
 	flag.StringVar(&cliContextsStr, "nats-cli-contexts", "", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
 
 	flag.Parse()
@@ -60,6 +63,14 @@ func main() {
 		dbPath = dbp
 	}
 
+	if protoSchemasPath == "" {
+		psp, err := ospaths.ProtoSchemasPath()
+		if err != nil {
+			log.Fatal("error getting proto schemas path: " + err.Error())
+		}
+		protoSchemasPath = psp
+	}
+
 	logger, err := logging.NewSlogger(logLevel, logsOutput)
 	if err != nil {
 		log.Fatal("error creating logger: " + err.Error())
@@ -70,6 +81,7 @@ func main() {
 		app.WithTarget(app.TargetDesktop),
 		app.WithVersion(Version),
 		app.WithDb(dbPath),
+		app.WithProtoSchemasPath(protoSchemasPath),
 		app.WithLogger(logger),
 		app.WithNatsCliContexts(clicontext.SanitizePaths(cliContextsStr)),
 	)

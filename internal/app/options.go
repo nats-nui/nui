@@ -40,6 +40,12 @@ func WithDb(path string) AppOption {
 	}
 }
 
+func WithProtoSchemasPath(path string) AppOption {
+	return func(a *App) {
+		a.protoschemasPath = path
+	}
+}
+
 func WithNatsCliContexts(paths []string) AppOption {
 	return func(a *App) {
 		a.natsCliContextDirs = paths

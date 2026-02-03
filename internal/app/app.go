@@ -3,9 +3,10 @@ package app
 import (
 	"context"
 	"errors"
+	"os"
+
 	"github.com/nats-nui/nui/internal/nui"
 	"github.com/nats-nui/nui/pkg/logging"
-	"os"
 )
 
 // App struct
@@ -15,6 +16,7 @@ type App struct {
 	target             Target
 	l                  logging.Slogger
 	dbPath             string
+	protoschemasPath   string
 	serverPort         string
 	natsCliContextDirs []string
 }
@@ -22,11 +24,12 @@ type App struct {
 // NewApp creates a new App application struct
 func NewApp(opts ...AppOption) (*App, error) {
 	app := &App{
-		ctx:        context.Background(),
-		target:     TargetDesktop,
-		l:          &logging.NullLogger{},
-		dbPath:     ":memory:",
-		serverPort: "31311",
+		ctx:              context.Background(),
+		target:           TargetDesktop,
+		l:                &logging.NullLogger{},
+		dbPath:           ":memory:",
+		protoschemasPath: "",
+		serverPort:       "31311",
 	}
 	for _, o := range opts {
 		o(app)
@@ -49,7 +52,7 @@ func (a *App) Startup(ctx context.Context) {
 	a.l.Info("Version: " + a.version)
 	a.l.Info("database path: " + a.dbPath)
 
-	nuiSvc, err := nui.Setup(a.dbPath, a.l)
+	nuiSvc, err := nui.Setup(a.dbPath, a.protoschemasPath, a.l)
 	if err != nil {
 		a.l.Error("fatal error setting up app nui service: " + err.Error())
 		os.Exit(1)
