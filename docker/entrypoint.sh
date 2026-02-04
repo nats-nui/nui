@@ -8,7 +8,7 @@ if [ ! -d "/db" ]; then
 fi
 chown -R nui:nui /db
 
-ARGS="--db-path=/db --protoschemas=/protoschemas/default {@}"
+ARGS="--db-path=/db --proto-schemas-path=/protoschemas/default {@}"
 
 # Check if the current user UID is 1001 to support running as a different as non-root user
 # also the entrypoint

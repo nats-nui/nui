@@ -21,7 +21,7 @@ func main() {
 	version.Set(Version)
 
 	logLevel := flag.String("log-level", "info", "log level")
-	logOutput := flag.String("log-output", "./logs.log", "log output")
+	logOutput := flag.String("log-output", "", "log output")
 	dbPath := flag.String("db-path", ":memory:", "path to the database")
 	protoSchemasPath := flag.String("proto-schemas-path", "./protoschemas/default", "path to the protobuf schemas directory")
 	cliContextsStr := flag.String("nats-cli-contexts", "./clicontexts", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
