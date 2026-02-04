@@ -1,5 +1,7 @@
 credentials
 db
 protoschemas
+logs.log
+logs
 .idea
 Dockerfile
