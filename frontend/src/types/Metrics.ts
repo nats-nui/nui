@@ -130,6 +130,15 @@ export interface Varz {
 
 }
 
+export interface ConnzSubscription {
+	subject: string;
+	qgroup?: string;
+	sid: string;
+	msgs: number;
+	max?: number;
+	cid: number;
+}
+
 export interface ConnzConnection {
 	cid: number;
 	kind: string;
@@ -151,6 +160,7 @@ export interface ConnzConnection {
 	lang?: string;
 	version?: string;
 	mqtt_client?: string;
+	subscriptions_list_detail?: ConnzSubscription[];
 
 	nui_in_bytes_sec: number | null;
 	nui_in_msgs_sec: number | null;
