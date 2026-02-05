@@ -27,7 +27,12 @@ func (c *Connection) SetMetadata(key, value string) {
 }
 
 type Subscription struct {
-	Subject string `json:"subject"`
+	Subject      string `json:"subject"`
+	Disabled     bool   `json:"disabled,omitempty"`
+	Favorite     bool   `json:"favorite,omitempty"`
+	TTLMinutes   int    `json:"ttl_minutes,omitempty"`
+	MaxMessages  int    `json:"max_messages,omitempty"`
+	SessionBased bool   `json:"session_based,omitempty"`
 }
 
 type Auth struct {

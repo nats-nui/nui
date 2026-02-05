@@ -1,3 +1,5 @@
+import CloseIcon from "@/icons/CloseIcon"
+import { IconButton, TooltipWrapCmp } from "@priolo/jack"
 import { FunctionComponent } from "react"
 import cls from "./DividerRow.module.css"
 
@@ -15,6 +17,7 @@ interface Props {
 	children?: React.ReactNode
 	time?: string
 	onClick?: () => void
+	onDelete?: () => void
 	variant?: DIVIDER_VARIANT
 
 	style?: React.CSSProperties,
@@ -26,6 +29,7 @@ const DividerRow: FunctionComponent<Props> = ({
 	children,
 	time,
 	onClick,
+	onDelete,
 	variant = DIVIDER_VARIANT.BORDER_UP,
 
 	style,
@@ -37,10 +41,15 @@ const DividerRow: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
+	const handleDeleteClick = (e: React.MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+		onDelete?.()
+	}
 
 	// RENDER
 	const clsSelected = !!onClick ? cls.selected : ""
-	const clsRoot = `${cls.root} ${clsSelected} ${className}`
+	const clsRoot = `${cls.root} ${clsSelected} ${className} jack-hover-container`
 
 	return <div
 		className={clsRoot}
@@ -50,7 +59,16 @@ const DividerRow: FunctionComponent<Props> = ({
 		{(variant == DIVIDER_VARIANT.BORDER_UP || variant == DIVIDER_VARIANT.BORDER_BOTH) && (
 			<div className="jack-bars-alert-bg" style={{ height: 10 }} />
 		)}
-		<div className={cls.title}>{title}</div>
+		<div className={cls.title} style={{ display: 'flex', alignItems: 'center' }}>
+			<span style={{ flex: 1 }}>{title}</span>
+			{onDelete && (
+				<TooltipWrapCmp content="REMOVE">
+					<IconButton className="jack-hover-hide" onClick={handleDeleteClick}>
+						<CloseIcon style={{ width: 12, height: 12 }} />
+					</IconButton>
+				</TooltipWrapCmp>
+			)}
+		</div>
 		<div className={cls.body}>{children}</div>
 		<div className={cls.footer}>{time}</div>
 		{(variant == DIVIDER_VARIANT.BORDER_DOWN || variant == DIVIDER_VARIANT.BORDER_BOTH) && (
