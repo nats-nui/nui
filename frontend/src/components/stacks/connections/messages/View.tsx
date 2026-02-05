@@ -55,6 +55,10 @@ const MessagesView: FunctionComponent<Props> = ({
 		}
 	}
 	const hendleMessageClick = (message: Message) => msgSo.openMessageDetail(message)
+	const handleMessageDelete = (message: Message) => {
+		const filtered = msgSa.messages.filter(m => m !== message)
+		msgSo.setMessages(filtered)
+	}
 	const handleClear = () => msgSo.setMessages([])
 	const handleSearchChange = (value: string) => {
 		setTextFind(value)
@@ -111,6 +115,7 @@ const MessagesView: FunctionComponent<Props> = ({
 			selectedIndex={selectedIndex}
 			format={msgSa.format}
 			onMessageClick={hendleMessageClick}
+			onMessageDelete={handleMessageDelete}
 			onClear={handleClear}
 			style={{ marginLeft: '-10px', marginRight: '-10px' }}
 			extraActions={<FloatButton onClick={handlePause}>
