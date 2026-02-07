@@ -60,6 +60,7 @@ const MessageRow: FunctionComponent<Props> = ({
 		title={message.subject}
 		children={message.payload}
 		time={time}
+		onDelete={onDelete ? () => onDelete(message) : undefined}
 	/>
 
 	return (
