@@ -169,7 +169,7 @@ export namespace nats {
 	    inactive_threshold?: number;
 	    num_replicas: number;
 	    mem_storage?: boolean;
-	    metadata?: {[key: string]: string};
+	    metadata?: Record<string, string>;
 	
 	    static createFrom(source: any = {}) {
 	        return new ConsumerConfig(source);
@@ -328,6 +328,7 @@ export namespace nats {
 	        this.deliver = source["deliver"];
 	    }
 	}
+	
 	export class Placement {
 	    cluster: string;
 	    tags?: string[];
@@ -359,6 +360,22 @@ export namespace nats {
 	    }
 	}
 	
+	export class StreamAlternate {
+	    name: string;
+	    domain?: string;
+	    cluster: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StreamAlternate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.domain = source["domain"];
+	        this.cluster = source["cluster"];
+	    }
+	}
 	export class StreamConsumerLimits {
 	    inactive_threshold?: number;
 	    max_ack_pending?: number;
@@ -459,8 +476,10 @@ export namespace nats {
 	    allow_direct: boolean;
 	    mirror_direct: boolean;
 	    consumer_limits?: StreamConsumerLimits;
-	    metadata?: {[key: string]: string};
+	    metadata?: Record<string, string>;
 	    template_owner?: string;
+	    allow_msg_ttl: boolean;
+	    subject_delete_marker_ttl?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamConfig(source);
@@ -500,6 +519,8 @@ export namespace nats {
 	        this.consumer_limits = this.convertValues(source["consumer_limits"], StreamConsumerLimits);
 	        this.metadata = source["metadata"];
 	        this.template_owner = source["template_owner"];
+	        this.allow_msg_ttl = source["allow_msg_ttl"];
+	        this.subject_delete_marker_ttl = source["subject_delete_marker_ttl"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -521,22 +542,6 @@ export namespace nats {
 		}
 	}
 	
-	export class StreamAlternate {
-	    name: string;
-	    domain?: string;
-	    cluster: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new StreamAlternate(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.name = source["name"];
-	        this.domain = source["domain"];
-	        this.cluster = source["cluster"];
-	    }
-	}
 	export class StreamSourceInfo {
 	    name: string;
 	    lag: number;
@@ -592,7 +597,7 @@ export namespace nats {
 	    deleted: number[];
 	    num_deleted: number;
 	    num_subjects: number;
-	    subjects: {[key: string]: number};
+	    subjects: Record<string, number>;
 	
 	    static createFrom(source: any = {}) {
 	        return new StreamState(source);
