@@ -1,6 +1,6 @@
 import logSo from "@/stores/log/index.js";
 import { Reconnect } from "./reconnect.js";
-import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, SocketMessage, SocketOptions } from "./types.js";
+import { MSG_TYPE, Payload, PayloadError, PayloadMessage, PayloadStatus, PayloadSubExpired, SocketMessage, SocketOptions } from "./types.js";
 import { MESSAGE_TYPE } from "@/stores/log/utils.js";
 import { optionsDefault } from "./utils.js";
 import cnnSo from "@/stores/connections"
@@ -115,16 +115,40 @@ export class SocketService {
 		}
 	}
 
-	sendSubjects(subjects: string[]) {
+	sendSubjects(subjects: string[], options?: { ttlMinutes?: number; maxMessages?: number; sessionBased?: boolean }) {
 		logSo.add({
 			type: MESSAGE_TYPE.INFO,
 			title: "WS-CONNECTIONS",
 			body: `send:FE>BE`,
-			data: subjects
+			data: { subjects, ...options }
 		})
 		const msg: SocketMessage = {
 			type: MSG_TYPE.SUB_REQUEST,
-			payload: { subjects },
+			payload: {
+				subjects,
+				ttl_minutes: options?.ttlMinutes,
+				max_messages: options?.maxMessages,
+				session_based: options?.sessionBased,
+			},
+		}
+		try {
+			const msgStr = JSON.stringify(msg)
+			this.send(msgStr)
+		} catch (err) {
+			logSo.addError(err)
+		}
+	}
+
+	/** Send disconnect request to server before closing */
+	sendDisconnect() {
+		logSo.add({
+			type: MESSAGE_TYPE.INFO,
+			title: "WS-CONNECTIONS",
+			body: `send:FE>BE disconnect`,
+		})
+		const msg: SocketMessage = {
+			type: MSG_TYPE.DISCONNECT_REQ,
+			payload: {},
 		}
 		try {
 			const msgStr = JSON.stringify(msg)
@@ -187,6 +211,21 @@ export class SocketService {
 			// 	})
 			// 	break
 			// }
+			case MSG_TYPE.SUB_EXPIRED: {
+				const payload = message.payload as PayloadSubExpired
+				const reasonText = {
+					ttl: "TTL expired",
+					max_messages: "Max messages reached",
+					disconnect: "Disconnected",
+					limit: "Subscription limit exceeded"
+				}[payload.reason] || payload.reason
+				logSo.add({
+					type: MESSAGE_TYPE.WARN,
+					title: "SUBSCRIPTION EXPIRED",
+					body: `${payload.subject}: ${reasonText}`,
+				})
+				break
+			}
 			case MSG_TYPE.ERROR:
 				const error: string = (message.payload as PayloadError)?.error
 				//this.onError?.(message.payload as PayloadError)

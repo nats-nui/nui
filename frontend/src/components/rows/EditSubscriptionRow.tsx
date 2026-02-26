@@ -51,10 +51,9 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 
 	return <Box className={cls.root}
 		readOnly={readOnly}
-		enterRender={<IconButton onClick={handleDelete}><CloseIcon /></IconButton>}
 	>
 		{!noDisable && (
-			<IconToggle 
+			<IconToggle
 				//style={{ marginTop: '5px' }}
 				check={!item.disabled}
 				onChange={handleChangeEnabled}
@@ -62,7 +61,7 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 			/>
 		)}
 		{!noFavorite && (
-			<IconToggle 
+			<IconToggle
 				//style={{ marginTop: '5px' }}
 				check={item.favorite}
 				onChange={handleChangeFavorite}
@@ -81,6 +80,14 @@ const EditSubscriptionRow: FunctionComponent<Props> = ({
 			onKeyDown={handleKeyDown}
 			onFocus={onSelect}
 		/>
+		{!readOnly && (
+			<IconButton
+				style={{ marginLeft: 4, opacity: 0.7 }}
+				onClick={handleDelete}
+			>
+				<CloseIcon style={{ width: 14, height: 14 }} />
+			</IconButton>
+		)}
 	</Box>
 }
 

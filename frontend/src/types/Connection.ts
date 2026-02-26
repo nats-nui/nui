@@ -33,6 +33,10 @@ export interface Subscription {
     subject: string
     disabled?: boolean
     favorite?: boolean
+    // Advanced options for auto-cleanup
+    ttlMinutes?: number      // Time-to-live in minutes (default: 15)
+    maxMessages?: number     // Max messages before auto-unsubscribe (default: 1000)
+    sessionBased?: boolean   // Remove when WebSocket disconnects (default: true)
 }
 
 export interface CliImport {
