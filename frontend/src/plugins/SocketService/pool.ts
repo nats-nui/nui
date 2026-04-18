@@ -62,7 +62,7 @@ class SocketPool {
 	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! 
 	 * inoltre controlla che non sia gia' utilizzata da qualcun'altro
 	*/
-	destroy(key: string) {
+	destroy(key: string, delay: number = 2000) {
 		const ss = this.getById(key)
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
@@ -73,7 +73,7 @@ class SocketPool {
 			)
 			if (result) return
 			this.destroyForce(key)
-		}, 2000)
+		}, delay)
 	}
 	/** forza la chiusura, utile per quando c'e' una modifica */
 	destroyForce(key: string) {
