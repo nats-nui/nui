@@ -3,8 +3,9 @@ package testserver
 import (
 	"errors"
 	"fmt"
-	"github.com/nats-io/nats-server/v2/server"
 	"time"
+
+	"github.com/nats-io/nats-server/v2/server"
 )
 
 type Option func(*TestServer)
@@ -98,7 +99,7 @@ func (ts *TestServer) enableJetstreamOnAccounts(natsServer *server.Server) {
 		if err != nil {
 			fmt.Errorf("failed to lookup account %s: %v", a.Name, err)
 		}
-		err = acc.EnableJetStream(nil)
+		err = acc.EnableJetStream(nil, nil)
 		if err != nil {
 			fmt.Errorf("failed to enable JetStream for account %s: %v", a.Name, err)
 		}

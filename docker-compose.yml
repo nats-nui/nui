@@ -21,6 +21,8 @@ services:
     image: ghcr.io/nats-nui/nui:edge
     volumes:
       - ./db:/db
+      - ./tests/clicontext:/subpath/clicontexts
+    command: ["--nats-cli-contexts", "/subpath/clicontexts"]
     ports:
       - "31312:31311" 
     depends_on:
