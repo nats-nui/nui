@@ -116,7 +116,6 @@ const setup = {
 
 
 		async connect(_: void, store?: MessagesStore) {
-			console.log("CONNECT FROM " + store.state.uuid)
 			const ss = await socketPool.getOrCreate(store.getSocketServiceId(), store.state.connectionId)
 			//ss.onOpen = () => store.sendSubscriptions()
 			//ss.onMessage = message => store.addMessage(message)
@@ -133,7 +132,7 @@ const setup = {
 			store.sendSubscriptions()
 		},
 		disconnect(_: void, store?: MessagesStore) {
-			console.log("DISCONNECT FROM " + store.state.uuid)
+			socketPool.getById(store.getSocketServiceId())?.emitter.off(MSG_TYPE.NATS_MESSAGE, null)
 			socketPool.destroy(store.getSocketServiceId())
 		},
 

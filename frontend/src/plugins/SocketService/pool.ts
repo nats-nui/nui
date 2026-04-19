@@ -66,12 +66,12 @@ class SocketPool {
 		const ss = this.getById(key)
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
-			// se lo usa qualcun'altro alllora non lo eliminare
+			// se lo usa qualcun'altro allora non lo eliminare
 			const result = utils.forEachViews(
 				docsSo.getAllCards(),
 				view => view.state["connectionId"] == ss.cnnId || view.state["connection"]?.id == ss.cnnId,
 			)
-			if (result) return
+			if (!!result) return
 			this.destroyForce(key)
 		}, delay)
 	}
