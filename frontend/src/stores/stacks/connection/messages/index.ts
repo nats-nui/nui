@@ -117,7 +117,7 @@ const setup = {
 
 		async connect(_: void, store?: MessagesStore) {
 			console.log("CONNECT FROM " + store.state.uuid)
-			const ss = await socketPool.create(store.getSocketServiceId(), store.state.connectionId)
+			const ss = await socketPool.getOrCreate(store.getSocketServiceId(), store.state.connectionId)
 			//ss.onOpen = () => store.sendSubscriptions()
 			//ss.onMessage = message => store.addMessage(message)
 			// remove existing handlers and adds the new one

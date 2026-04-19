@@ -14,7 +14,7 @@ class SocketPool {
 	}
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
-	async create(key: string, cnnId: string): Promise<SocketService | undefined> {
+	async getOrCreate(key: string, cnnId: string): Promise<SocketService | undefined> {
 		if (!key || !cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)

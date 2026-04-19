@@ -56,7 +56,7 @@ const setup = {
 
 			const key = `global::${cnnSaved.id}`
 			socketPool.destroyForce(key)
-			socketPool.create(key, cnnSaved.id)
+			socketPool.getOrCreate(key, cnnSaved.id)
 
 			return cnnSaved
 		},

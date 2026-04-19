@@ -21,7 +21,7 @@ const setup = {
 	actions: {
 
 		async enable(cnnId: string, store?: MetricsStore) {
-			const ss = await socketPool.create(`global::${cnnId}`, cnnId)
+			const ss = await socketPool.getOrCreate(`global::${cnnId}`, cnnId)
 			if (!ss) return
 
 			let listener = store.state.all[cnnId]
