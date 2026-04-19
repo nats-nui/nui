@@ -116,10 +116,11 @@ const setup = {
 
 
 		async connect(_: void, store?: MessagesStore) {
-			console.log("CONNECT")
-			const ss = await socketPool.create(store.getSocketServiceId(), store.state.connectionId)
+			const ss = await socketPool.getOrCreate(store.getSocketServiceId(), store.state.connectionId)
 			//ss.onOpen = () => store.sendSubscriptions()
 			//ss.onMessage = message => store.addMessage(message)
+			// remove existing handlers and adds the new one
+			ss.emitter.off(MSG_TYPE.NATS_MESSAGE, null)
 			ss.emitter.on(MSG_TYPE.NATS_MESSAGE, msg => {
 				const payload = msg.payload as PayloadMessage
 				store.addMessage({
@@ -131,7 +132,7 @@ const setup = {
 			store.sendSubscriptions()
 		},
 		disconnect(_: void, store?: MessagesStore) {
-			console.log("DISCONNECT")
+			socketPool.getById(store.getSocketServiceId())?.emitter.off(MSG_TYPE.NATS_MESSAGE, null)
 			socketPool.destroy(store.getSocketServiceId())
 		},
 
@@ -248,7 +249,7 @@ const setup = {
 		setPause: (pause: boolean) => ({ pause }),
 	},
 
-	onListenerChange: (store: MessagesStore, type: LISTENER_CHANGE) => {
+	onListenerChange: async (store: MessagesStore, type: LISTENER_CHANGE) => {
 		if (store._listeners.size == 1 && type == LISTENER_CHANGE.ADD) {
 			store.connect()
 		} else if (store._listeners.size == 0) {

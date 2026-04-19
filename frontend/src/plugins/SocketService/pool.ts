@@ -14,7 +14,7 @@ class SocketPool {
 	}
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
-	async create(key: string, cnnId: string): Promise<SocketService | undefined> {
+	async getOrCreate(key: string, cnnId: string): Promise<SocketService | undefined> {
 		if (!key || !cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)
@@ -62,18 +62,18 @@ class SocketPool {
 	/** chiude la connessione ma non subito. Aspetta 2 secondi prima di farlo: non si sa mai! 
 	 * inoltre controlla che non sia gia' utilizzata da qualcun'altro
 	*/
-	destroy(key: string) {
+	destroy(key: string, delay: number = 2000) {
 		const ss = this.getById(key)
 		if (!ss) return
 		debounce(`ss::destroy::${key}`, () => {
-			// se lo usa qualcun'altro alllora non lo eliminare
+			// se lo usa qualcun'altro allora non lo eliminare
 			const result = utils.forEachViews(
 				docsSo.getAllCards(),
 				view => view.state["connectionId"] == ss.cnnId || view.state["connection"]?.id == ss.cnnId,
 			)
-			if (result) return
+			if (!!result) return
 			this.destroyForce(key)
-		}, 2000)
+		}, delay)
 	}
 	/** forza la chiusura, utile per quando c'e' una modifica */
 	destroyForce(key: string) {
