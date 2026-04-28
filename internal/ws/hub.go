@@ -101,6 +101,9 @@ func (h *Hub[S, T]) handleRequestsByType(ctx context.Context, clientId string, r
 	case metricsReqType:
 		metricsReq := &MetricsReq{}
 		return decodeAndHandleRequest(ctx, clientId, metricsReq, r.Payload, h.HandleMetricsRequest, messages)
+	case consumerClientsReqType:
+		consumerClientsReq := &ConsumerClientsReq{}
+		return decodeAndHandleRequest(ctx, clientId, consumerClientsReq, r.Payload, h.HandleConsumerClientsRequest, messages)
 	}
 	return errors.New("unknown request type")
 }
@@ -269,10 +272,10 @@ func (h *Hub[S, T]) enableMetricsLocked(ctx context.Context, id string, messages
 		h.l.Error("error starting metrics service", "error", err)
 		return
 	}
-	go relayMetricsToClient(ctx, m, messages)
+	go relayMetricsToClient(ctx, m, messages, clientConn)
 }
 
-func relayMetricsToClient(ctx context.Context, m <-chan metrics.Metrics, messages chan<- Payload) {
+func relayMetricsToClient[S Subscription](ctx context.Context, m <-chan metrics.Metrics, messages chan<- Payload, clientConn *ClientConn[S]) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -280,6 +283,10 @@ func relayMetricsToClient(ctx context.Context, m <-chan metrics.Metrics, message
 		case m, ok := <-m:
 			if !ok {
 				return
+			}
+			// Cache metrics for consumer client queries
+			if m.Nats != nil {
+				clientConn.UpdateMetricsCache(m.Nats)
 			}
 			select {
 			case messages <- &MetricsResp{Nats: m.Nats, Error: errorString(m.Error)}:
@@ -305,6 +312,177 @@ func (h *Hub[S, T]) disableMetricsLocked(id string) {
 		clientConn.MetricsCancel()
 		clientConn.MetricsCancel = nil
 	}
+}
+
+func (h *Hub[S, T]) HandleConsumerClientsRequest(_ context.Context, clientId string, req *ConsumerClientsReq, messages chan<- Payload) {
+	h.l.Debug("handling consumer clients request", "client-id", clientId, "stream", req.StreamName, "consumer", req.ConsumerName)
+
+	clientConn, ok := h.reg[clientId]
+	if !ok {
+		h.sendErr(messages, errors.New("no client connection found"))
+		return
+	}
+
+	cachedMetrics := clientConn.GetCachedMetrics()
+	if cachedMetrics == nil {
+		messages <- &ConsumerClientsResp{
+			StreamName:   req.StreamName,
+			ConsumerName: req.ConsumerName,
+			Clients:      nil,
+			Error:        "no metrics available - enable metrics first",
+		}
+		return
+	}
+
+	connz, ok := cachedMetrics["connz"]
+	if !ok {
+		messages <- &ConsumerClientsResp{
+			StreamName:   req.StreamName,
+			ConsumerName: req.ConsumerName,
+			Clients:      nil,
+			Error:        "no connection data available",
+		}
+		return
+	}
+
+	connectionsRaw, ok := connz["connections"]
+	if !ok {
+		messages <- &ConsumerClientsResp{
+			StreamName:   req.StreamName,
+			ConsumerName: req.ConsumerName,
+			Clients:      nil,
+			Error:        "no connections found",
+		}
+		return
+	}
+
+	connections, ok := connectionsRaw.([]any)
+	if !ok {
+		messages <- &ConsumerClientsResp{
+			StreamName:   req.StreamName,
+			ConsumerName: req.ConsumerName,
+			Clients:      nil,
+			Error:        "invalid connections format",
+		}
+		return
+	}
+
+	// Convert to []map[string]any for matching
+	connMaps := make([]map[string]any, 0, len(connections))
+	for _, c := range connections {
+		if cm, ok := c.(map[string]any); ok {
+			connMaps = append(connMaps, cm)
+		}
+	}
+
+	// Find matching clients by subscription
+	subject := req.DeliverSubject
+	if subject == "" {
+		subject = req.FilterSubject
+	}
+
+	var matchingClients []map[string]any
+	if subject != "" {
+		matchingClients = findMatchingClientsBySubject(connMaps, subject)
+	}
+
+	messages <- &ConsumerClientsResp{
+		StreamName:   req.StreamName,
+		ConsumerName: req.ConsumerName,
+		Clients:      matchingClients,
+	}
+}
+
+// findMatchingClientsBySubject finds clients with subscriptions matching the given subject
+func findMatchingClientsBySubject(connections []map[string]any, subject string) []map[string]any {
+	var matches []map[string]any
+
+	for _, conn := range connections {
+		subsRaw, ok := conn["subscriptions_list_detail"]
+		if !ok {
+			continue
+		}
+
+		subs, ok := subsRaw.([]any)
+		if !ok {
+			continue
+		}
+
+		for _, subRaw := range subs {
+			sub, ok := subRaw.(map[string]any)
+			if !ok {
+				continue
+			}
+
+			subSubject, ok := sub["subject"].(string)
+			if !ok {
+				continue
+			}
+
+			if matchSubject(subSubject, subject) || matchSubject(subject, subSubject) {
+				matches = append(matches, conn)
+				break
+			}
+		}
+	}
+
+	return matches
+}
+
+// matchSubject checks if a subscription subject matches a target subject with NATS wildcards
+func matchSubject(subscription, target string) bool {
+	if subscription == target {
+		return true
+	}
+
+	subTokens := splitSubject(subscription)
+	targetTokens := splitSubject(target)
+
+	return matchTokens(subTokens, targetTokens)
+}
+
+func splitSubject(subject string) []string {
+	if subject == "" {
+		return nil
+	}
+	result := make([]string, 0)
+	start := 0
+	for i := 0; i < len(subject); i++ {
+		if subject[i] == '.' {
+			result = append(result, subject[start:i])
+			start = i + 1
+		}
+	}
+	result = append(result, subject[start:])
+	return result
+}
+
+func matchTokens(subTokens, targetTokens []string) bool {
+	subIdx := 0
+	targetIdx := 0
+
+	for subIdx < len(subTokens) && targetIdx < len(targetTokens) {
+		subToken := subTokens[subIdx]
+
+		if subToken == ">" {
+			return targetIdx < len(targetTokens)
+		}
+
+		if subToken == "*" {
+			subIdx++
+			targetIdx++
+			continue
+		}
+
+		if subToken != targetTokens[targetIdx] {
+			return false
+		}
+
+		subIdx++
+		targetIdx++
+	}
+
+	return subIdx == len(subTokens) && targetIdx == len(targetTokens)
 }
 
 func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
