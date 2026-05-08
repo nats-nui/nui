@@ -29,19 +29,31 @@ interface SerializedNode {
 
 export class ProtobufTopicCache {
   private trie = new TopicTrie()
+  private dirty = false
   private saveOnUnload = () => this.save()
+  private onStorageChange = (event: StorageEvent) => {
+    // Re-sync if another tab cleared or modified our key, so the unload
+    // handler does not silently overwrite that change.
+    if (event.storageArea !== localStorage) return
+    if (event.key !== null && event.key !== STORAGE_KEY) return
+    this.trie = new TopicTrie()
+    this.dirty = false
+    this.load()
+  }
   
   constructor() {
     this.load()
     
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', this.saveOnUnload)
+      window.addEventListener('storage', this.onStorageChange)
     }
   }
   
   dispose(): void {
     if (typeof window !== 'undefined') {
       window.removeEventListener('beforeunload', this.saveOnUnload)
+      window.removeEventListener('storage', this.onStorageChange)
     }
   }
   
@@ -66,6 +78,7 @@ export class ProtobufTopicCache {
     try {
       this.trie.insert(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
       this.learnPatterns(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
+      this.dirty = true
       this.save()
     } catch (error) {
       console.warn('Failed to cache successful decode:', error)
@@ -80,6 +93,7 @@ export class ProtobufTopicCache {
     }
     
     this.trie.updateConfidence(topic, false)
+    this.dirty = true
     this.save()
   }
   
@@ -100,6 +114,7 @@ export class ProtobufTopicCache {
     this.trie.updateConfidence(sanitizedTopic, false)
     this.trie.insert(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
     
+    this.dirty = true
     this.save()
   }
   
@@ -160,6 +175,7 @@ export class ProtobufTopicCache {
   
   clear(): void {
     this.trie = new TopicTrie()
+    this.dirty = false
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY)
     }
@@ -167,10 +183,12 @@ export class ProtobufTopicCache {
   
   private save(): void {
     if (typeof localStorage === 'undefined') return
+    if (!this.dirty) return
     
     try {
       const data = this.serialize(this.trie.getRoot())
       localStorage.setItem(STORAGE_KEY, data)
+      this.dirty = false
     } catch (error) {
       if (error instanceof Error && error.name === 'QuotaExceededError') {
         this.handleStorageOverflow()
