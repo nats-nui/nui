@@ -107,13 +107,15 @@ export class ProtobufValidator {
 
   /**
    * Sanitizes an identifier (schema/messageType) by removing invalid characters.
-   * Keeps only word characters and hyphens.
-   * 
+   * Keeps word characters, hyphens, dots, and forward slashes so that
+   * fully-qualified protobuf type names (e.g. "my.package.MyMessage") and
+   * schema paths (e.g. "opentelemetry/proto/common/v1/common") survive.
+   *
    * @param identifier - The identifier to sanitize
    * @returns Sanitized identifier string
    */
   static sanitizeIdentifier(identifier: string): string {
-    return identifier.trim().replace(/[^\w\-]/g, '')
+    return identifier.trim().replace(/[^\w\-\.\/]/g, '')
   }
 
   /**
