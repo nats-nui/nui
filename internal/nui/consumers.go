@@ -2,9 +2,10 @@ package nui
 
 import (
 	"errors"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
-	"time"
 )
 
 func (a *App) HandleIndexStreamConsumers(c *fiber.Ctx) error {
@@ -139,6 +140,9 @@ func (a *App) handleDeleteStreamConsumer(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 422)
 	}
 	_, err = stream.Consumer(c.Context(), c.Params("consumer_name"))
+	if errors.Is(err, jetstream.ErrNotPullConsumer) {
+		_, err = stream.PushConsumer(c.Context(), c.Params("consumer_name"))
+	}
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
