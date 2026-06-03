@@ -43,6 +43,18 @@ describe('AjaxService', () => {
 			expect(encodedUrl).toBe('connection/99293a6f-ecf5-4125-97c4-5e375446480c/stream%3Fname%26special/messages?seq_start=22&interval=2');
 		});
 
+		it('should preserve deliberately encoded slashes in path parameters', () => {
+			const url = 'connection/test/kv/bucket/key/foo%2Fbar';
+			const encodedUrl = encodeUrl(url);
+			expect(encodedUrl).toBe('connection/test/kv/bucket/key/foo%2Fbar');
+		});
+
+		it('should preserve literal encoded slash text without treating it as a path separator', () => {
+			const url = 'connection/test/kv/bucket/key/foo%252Fbar';
+			const encodedUrl = encodeUrl(url);
+			expect(encodedUrl).toBe('connection/test/kv/bucket/key/foo%252Fbar');
+		});
+
 		it('should correctly handle a complex example of query string', () => {
 			const url = 'http://127.0.0.1:31311/api/connection/99293a6f-ecf5-4125-97c4-5e375446480c/streamstream_name/messages?seq_start=22&interval=2&subjects=latest_event&';
 			const encodedUrl = encodeUrl(url);
