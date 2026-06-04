@@ -1,10 +1,13 @@
 package tests
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 
@@ -553,6 +556,59 @@ func (s *NuiTestSuite) TestKvEntriesRest() {
 		r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect()
 		assert.Equal(c, r.Raw().StatusCode, http.StatusOK)
 	}, 5*time.Second, 100*time.Millisecond)
+}
+
+func (s *NuiTestSuite) TestKvEntriesWithSlashKeysRest() {
+	connId := s.defaultConn()
+	s.emptyKvs("bucket1")
+
+	slashKey := url.PathEscape("foo/bar")
+
+	doRequest := func(method, path, body string) (int, map[string]any) {
+		req, err := http.NewRequest(method, s.nuiHost()+path, bytes.NewBufferString(body))
+		s.Require().NoError(err)
+		req.Header.Set("Content-Type", "application/json")
+
+		resp, err := http.DefaultClient.Do(req)
+		s.Require().NoError(err)
+		defer resp.Body.Close()
+
+		payload, err := io.ReadAll(resp.Body)
+		s.Require().NoError(err)
+		if len(payload) == 0 {
+			return resp.StatusCode, nil
+		}
+
+		var decoded map[string]any
+		err = json.Unmarshal(payload, &decoded)
+		s.Require().NoError(err)
+		return resp.StatusCode, decoded
+	}
+
+	base := "/api/connection/" + connId + "/kv/bucket1/key/"
+
+	status, body := doRequest(http.MethodPost, base+slashKey, `{"payload": "c2xhc2g="}`)
+	s.Equal(http.StatusOK, status)
+	s.Equal("foo/bar", body["key"])
+
+	status, body = doRequest(http.MethodGet, base+slashKey, "")
+	s.Equal(http.StatusOK, status)
+	s.Equal("foo/bar", body["key"])
+	s.Equal("c2xhc2g=", body["payload"])
+
+	status, _ = doRequest(http.MethodDelete, base+slashKey, "")
+	s.Equal(http.StatusNoContent, status)
+	status, body = doRequest(http.MethodGet, base+slashKey, "")
+	s.Equal(http.StatusOK, status)
+	s.Equal("foo/bar", body["key"])
+	s.Equal("KeyValueDeleteOp", body["operation"])
+
+	status, _ = doRequest(http.MethodPost, base+slashKey+"/purge", "")
+	s.Equal(http.StatusNoContent, status)
+	status, body = doRequest(http.MethodGet, base+slashKey, "")
+	s.Equal(http.StatusOK, status)
+	s.Equal("foo/bar", body["key"])
+	s.Equal("KeyValuePurgeOp", body["operation"])
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
