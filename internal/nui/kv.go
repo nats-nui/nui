@@ -10,6 +10,17 @@ import (
 
 const KV_STREAM_PREFIX = "KV_"
 
+func keyParam(c *fiber.Ctx) string {
+	if key := c.Params("*"); key != "" {
+		return key
+	}
+	return c.Params("key")
+}
+
+func purgeKeyParam(c *fiber.Ctx) string {
+	return strings.TrimSuffix(keyParam(c), "/purge")
+}
+
 type BucketState struct {
 	Bucket       string                    `json:"bucket"`
 	Values       uint64                    `json:"values"`
@@ -236,7 +247,7 @@ func (a *App) HandleShowKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	key := c.Params("key")
+	key := keyParam(c)
 
 	history, err := kv.History(c.Context(), key)
 	if err != nil {
@@ -269,7 +280,7 @@ func (a *App) HandlePutKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	key := c.Params("key")
+	key := keyParam(c)
 	if key == "" {
 		return c.Status(422).JSON("key is required")
 	}
@@ -309,7 +320,7 @@ func (a *App) HandleDeleteKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	err = kv.Delete(c.Context(), c.Params("key"))
+	err = kv.Delete(c.Context(), keyParam(c))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
 			return a.logAndFiberError(c, err, 404)
@@ -324,7 +335,7 @@ func (a *App) HandlePurgeKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	err = kv.Purge(c.Context(), c.Params("key"))
+	err = kv.Purge(c.Context(), purgeKeyParam(c))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
 			return a.logAndFiberError(c, err, 404)

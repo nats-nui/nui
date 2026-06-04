@@ -22,7 +22,7 @@ export function encodeUrl(url: string): string {
 		.map((segment, index) => {
 			// Don't encode the empty segments that appear when the path starts or ends with /
 			// or when there are consecutive slashes
-			return segment === '' ? segment : encodeURIComponent(segment);
+			return segment === '' ? segment : encodeURIComponent(segment).replace(/%25([0-9A-Fa-f]{2})/g, "%$1");
 		})
 		.join('/').concat(queryString);
 }
