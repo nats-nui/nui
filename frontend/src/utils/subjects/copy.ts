@@ -122,7 +122,7 @@ export function emptyCopy(args: {
 		core?.error == "timed out" || js?.error == "timed out"
 		|| core?.truncated || js?.truncated || (js?.failed ?? 0) > 0
 	)
-	if (notFullyRead) return "The list was not fully read. Click LISTEN or REFRESH to try again."
+	if (notFullyRead) return "The list was not fully read. Click LISTEN or reload to try again."
 
 	if (jsEnabled && js?.error == "not enabled on this server") {
 		if (coreEnabled && !core) return "JetStream is not on this server. Click LISTEN to hear live names. Core only sees messages while we look."

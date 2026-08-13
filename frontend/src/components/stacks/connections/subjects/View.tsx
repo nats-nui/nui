@@ -7,7 +7,7 @@ import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, firstListenCopy, LEGEND, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterTree, flattenHits } from "@/utils/subjects/tree"
-import { Button, CircularLoadingCmp, TextInput } from "@priolo/jack"
+import { Button, CircularLoadingCmp, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
@@ -87,9 +87,9 @@ const SubjectsView: FunctionComponent<Props> = ({
 		icon={<SubjectsIcon />}
 		store={subjectsSo}
 		actionsRender={<>
-			<Button
-				children="REFRESH"
-				onClick={() => subjectsSo.fetch()}
+			<OptionsCmp
+				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
+				store={subjectsSo}
 			/>
 			<Button
 				select={subjectsSa.coreEnabled}

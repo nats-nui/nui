@@ -74,6 +74,11 @@ describe("copy", () => {
 			js: { streams: [], truncated: true },
 			search: "", foundCount: 0,
 		})).toMatch(/not fully read/i)
+		expect(emptyCopy({
+			coreEnabled: false, jsEnabled: true,
+			js: { streams: [], truncated: true },
+			search: "", foundCount: 0,
+		})).toMatch(/reload/i)
 	})
 
 	it("invites LISTEN instead of asking for a prefix first", () => {

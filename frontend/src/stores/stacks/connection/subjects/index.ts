@@ -94,7 +94,7 @@ const setup = {
 		},
 
 		async fetchJetStream(_: void, store?: SubjectsStore) {
-			const catalog = await subjectsApi.jetstream(store.state.connectionId, { store, noError: true })
+			const catalog = await subjectsApi.jetstream(store.state.connectionId, { store, manageAbort: true, noError: true })
 			if (!catalog) return
 			if (!Array.isArray(catalog.streams)) {
 				store.setJetstream({ streams: [], error: catalog.error || "could not be read" })
