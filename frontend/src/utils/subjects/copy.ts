@@ -86,7 +86,7 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 	if (!enabled) return "JetStream is off."
 	if (!js) return "Reading stored names…"
 	if (js.error == "not allowed") return "This account cannot read stored names."
-	if (js.error == "timed out") return "Stored names were not fully read."
+	if (js.error == "timed out" && (js.streams?.length ?? 0) == 0) return "Stored names were not fully read."
 	if (js.error && (js.streams?.length ?? 0) == 0) {
 		if (js.error == "not enabled on this server") {
 			return "JetStream is not on this server. That store is optional. Core still works."
@@ -98,6 +98,7 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 	let line = `JetStream has ${names} name${names == 1 ? "" : "s"} to keep in ${streams} stream${streams == 1 ? "" : "s"}.`
 	if (js.failed) line += ` ${js.failed} stream${js.failed == 1 ? "" : "s"} could not be read.`
 	if (js.truncated || js.streams?.some(s => s.truncated)) line += " List was capped."
+	if (js.error == "timed out") line += " Stored names were not fully read."
 	return line
 }
 

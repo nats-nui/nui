@@ -8,10 +8,18 @@ import (
 
 type ConnBuilder[T Conn] func(connection *Connection) (T, error)
 
+// natsConnectTimeout covers Dial plus the first CONNECT.
+// The nats.go default is 2s, which misses public hosts such as
+// demo.nats.io (often just over 2s away). A failed first dial then
+// leaves RetryOnFailedConnect connections in RECONNECTING, so
+// JetStream listing hangs until the catalog budget expires.
+const natsConnectTimeout = 10 * time.Second
+
 func NatsBuilder(connection *Connection) (*NatsConn, error) {
 	options := []nats.Option{
 		nats.RetryOnFailedConnect(true),
 		nats.MaxReconnects(-1),
+		nats.Timeout(natsConnectTimeout),
 		nats.PingInterval(2 * time.Second),
 		nats.MaxPingsOutstanding(3),
 	}
@@ -29,7 +37,7 @@ func DialOnce(connection *Connection) (*nats.Conn, error) {
 	options := []nats.Option{
 		nats.RetryOnFailedConnect(false),
 		nats.MaxReconnects(0),
-		nats.Timeout(3 * time.Second),
+		nats.Timeout(natsConnectTimeout),
 		nats.PingInterval(2 * time.Second),
 		nats.MaxPingsOutstanding(2),
 		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-discover"),

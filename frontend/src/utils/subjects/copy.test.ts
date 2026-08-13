@@ -44,6 +44,18 @@ describe("copy", () => {
 		expect(copy).not.toMatch(/enumerat/i)
 	})
 
+	it("keeps a partial JetStream list when the read timed out", () => {
+		expect(jetStreamStatus(true, {
+			error: "timed out",
+			truncated: true,
+			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }] }],
+		})).toMatch(/1 name.*1 stream/i)
+		expect(jetStreamStatus(true, {
+			error: "timed out",
+			streams: [],
+		})).toMatch(/not fully read/i)
+	})
+
 	it("says JetStream is optional when the server has none", () => {
 		expect(jetStreamStatus(true, {
 			error: "not enabled on this server", streams: [],

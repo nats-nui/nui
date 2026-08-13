@@ -18,13 +18,14 @@ func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
 	}
 	discardSys := queryBoolDefault(c, "discard_sys", true)
 
-	ctx, cancel := context.WithTimeout(c.Context(), jsCatalogTimeout)
-	defer cancel()
-
 	js, ok, err := a.jsOrFailWithID(c)
 	if !ok {
 		return err
 	}
+	// Budget the list, not the WAN dial. A 2s+ public connect used to
+	// consume this window and return zero streams.
+	ctx, cancel := context.WithTimeout(c.Context(), jsCatalogTimeout)
+	defer cancel()
 	out := enumerateJetStreamPatterns(ctx, js, discardSys)
 	return c.JSON(out)
 }
@@ -45,23 +46,29 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 		filter = ">"
 	}
 
-	ctx, cancel := context.WithTimeout(c.Context(), occupiedTimeout)
-	defer cancel()
-
 	js, ok, err := a.jsOrFailWithID(c)
 	if !ok {
 		return err
 	}
+	ctx, cancel := context.WithTimeout(c.Context(), occupiedTimeout)
+	defer cancel()
 	out := occupiedSubjects(ctx, js, streamName, filter, discardSys)
 	return c.JSON(out)
 }
 
 func enumerateJetStreamPatterns(ctx context.Context, js jetstream.JetStream, discardSys bool) *JetStreamCatalog {
-	out := &JetStreamCatalog{Streams: []JetStreamStream{}}
 	infos, err := collectStreamInfos(ctx, js)
-	if err != nil {
-		out.Error = jsUserError(err)
-		return out
+	return catalogFromInfos(infos, err, discardSys)
+}
+
+func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys bool) *JetStreamCatalog {
+	out := &JetStreamCatalog{Streams: []JetStreamStream{}}
+	if listErr != nil {
+		out.Error = jsUserError(listErr)
+		if len(infos) == 0 {
+			return out
+		}
+		out.Truncated = true
 	}
 	if len(infos) > maxJSStreams {
 		out.Truncated = true
@@ -143,7 +150,7 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 		case info, ok := <-listener.Info():
 			if !ok {
 				if err := listener.Err(); err != nil {
-					return nil, err
+					return infos, err
 				}
 				return infos, nil
 			}
@@ -151,7 +158,7 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 				infos = append(infos, info)
 			}
 		case <-ctx.Done():
-			return nil, ctx.Err()
+			return infos, ctx.Err()
 		}
 	}
 }

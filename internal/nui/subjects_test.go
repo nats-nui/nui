@@ -202,6 +202,24 @@ func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {
 	assert.Equal(t, []string{"orders", "returns"}, got)
 }
 
+func TestCatalogFromInfosKeepsPartialOnTimeout(t *testing.T) {
+	infos := []*jetstream.StreamInfo{{
+		Config: jetstream.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.>"}},
+	}}
+	cat := catalogFromInfos(infos, context.DeadlineExceeded, true)
+	require.Equal(t, "timed out", cat.Error)
+	assert.True(t, cat.Truncated)
+	require.Len(t, cat.Streams, 1)
+	assert.Equal(t, "ORDERS", cat.Streams[0].Name)
+	require.Len(t, cat.Streams[0].Subjects, 1)
+	assert.Equal(t, "orders", cat.Streams[0].Subjects[0].Subject)
+
+	empty := catalogFromInfos(nil, context.DeadlineExceeded, true)
+	assert.Equal(t, "timed out", empty.Error)
+	assert.False(t, empty.Truncated)
+	assert.Empty(t, empty.Streams)
+}
+
 func TestOccupiedCapsPerStream(t *testing.T) {
 	ns := startTestNATS(t, jsOpts(t))
 	nc, err := nats.Connect(ns.ClientURL())
