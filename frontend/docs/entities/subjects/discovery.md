@@ -12,7 +12,7 @@ Open a family and you get **one more level**. A normal name stays one child (`or
 
 Open a name with a ▸ (a JetStream pattern, KV bucket, or object store). Stored names load **under that row**, still stacked if they are deep. Click a stored name to see the last message JetStream kept. Core has no last message — `live` means we heard it during a listen.
 
-FIND opens matching families so the leaf is visible. Reload and poll (the same jack control as STREAMS) sample again. Open folders stay open.
+FIND (same header control as STREAMS) opens matching families so the leaf is visible. Reload and poll sample again. Open folders stay open. Names use the same monospace 12px as the STREAMS table.
 
 ## Core vs JetStream
 
