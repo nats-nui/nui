@@ -58,25 +58,27 @@
 }
 
 .chip {
+	font: inherit;
 	padding: 0 4px;
 	border-radius: 3px;
-	max-width: 10ch;
+	max-width: 16ch;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 .core {
-	background-color: rgba(16, 243, 243, .35);
-	color: #111;
+	background-color: rgba(16, 243, 243, .22);
+	color: inherit;
 }
 
 .js {
-	background-color: rgba(235, 251, 53, .45);
-	color: #111;
+	background-color: rgba(235, 251, 53, .28);
+	color: inherit;
 }
 
 .count {
+	font: inherit;
 	opacity: .75;
 }
 

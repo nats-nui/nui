@@ -89,6 +89,9 @@ const SubjectsView: FunctionComponent<Props> = ({
 				value={subjectsSa.textSearch}
 				onChange={text => subjectsSo.setTextSearch(text)}
 			/>
+		</>}
+	>
+		<div className={cls.filter}>
 			<Button
 				select={subjectsSa.coreEnabled}
 				children="CORE"
@@ -99,8 +102,7 @@ const SubjectsView: FunctionComponent<Props> = ({
 				children="JETSTREAM"
 				onClick={() => subjectsSo.toggleJetStream()}
 			/>
-		</>}
-	>
+		</div>
 		{subjectsSa.coreEnabled && (
 			<div className={cls.filter}>
 				<div className="jack-lbl-prop">LISTEN FOR</div>
