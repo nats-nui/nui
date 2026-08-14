@@ -1,7 +1,8 @@
 import { OccupiedCatalog, SubjectNode } from "@/types/Subject"
 import { rowChip } from "@/utils/subjects/chip"
-import { leafTitle } from "@/utils/subjects/copy"
+import { leafTitle, subjectCopyValue } from "@/utils/subjects/copy"
 import { occupiedKey } from "@/utils/subjects/tree"
+import { CopyButton } from "@priolo/jack"
 import { FunctionComponent, memo, useState } from "react"
 import cls from "./Tree.module.css"
 
@@ -79,6 +80,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 			? leafTitle(node.path, node.hit.core?.count, node.hit.streams)
 			: node.path
 	const chip = rowChip(node.hit, node.segment)
+	const copyValue = subjectCopyValue(node)
 
 	const activate = () => {
 		if (node.remainder) return
@@ -93,12 +95,13 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 
 	return (
 		<div>
-			<div className={clsNode} onClick={activate} title={title}>
+			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}>
 				<div className={cls.twist} onClick={e => { e.stopPropagation(); activate() }}>
 					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>
 				<div className={cls.meta}>
+					{copyValue && <CopyButton absolute value={copyValue} label="COPY SUBJECT" />}
 					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && !occ?.error && <span className={cls.count}>none stored</span>}

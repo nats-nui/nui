@@ -133,6 +133,11 @@ export function emptyCopy(args: {
 	return "No stored names. Open a name with a ▸ to see what a stream kept."
 }
 
+export function subjectCopyValue(node: { path: string, remainder?: boolean, hit?: { subject: string } }): string | null {
+	if (node.remainder) return null
+	return node.hit?.subject || node.path || null
+}
+
 export function leafTitle(path: string, heard?: number, streams?: { name: string, count?: number }[]): string {
 	const bits = [path]
 	if (heard) bits.push(`heard ${heard} time${heard == 1 ? "" : "s"} just now`)

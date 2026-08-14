@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, LEGEND, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines } from "./copy"
+import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, LEGEND, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines, subjectCopyValue } from "./copy"
 import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID, FILTER_TOO_BROAD } from "./filter"
 
 describe("copy", () => {
@@ -133,6 +133,12 @@ describe("copy", () => {
 		expect(coreStatus(true, {
 			filter: "orders.>", listenMs: 2000, heard: 2, truncated: false, subjects: [],
 		}, "devices.>")).toMatch(/LISTEN to sample devices\.>/)
+	})
+
+	it("copies the full name from a row, not a leftover stack count", () => {
+		expect(subjectCopyValue({ path: "orders.created", hit: { subject: "orders.created" } })).toBe("orders.created")
+		expect(subjectCopyValue({ path: "orders" })).toBe("orders")
+		expect(subjectCopyValue({ path: "orders.created", remainder: true })).toBeNull()
 	})
 
 	it("describes a leaf without adding live and stored numbers together", () => {
