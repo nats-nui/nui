@@ -85,6 +85,10 @@
 	cursor: default;
 }
 
+.stacked .segment {
+	font-weight: 600;
+}
+
 .empty {
 	white-space: normal;
 	line-height: 1.45;

@@ -4,7 +4,7 @@ import layoutSo from "@/stores/layout"
 import { SubjectsStore } from "@/stores/stacks/connection/subjects"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { SubjectNode } from "@/types/Subject"
-import { emptyCopy, firstListenCopy, LEGEND, listenHintCopy, statusLines } from "@/utils/subjects/copy"
+import { emptyCopy, firstListenCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterTree, flattenHits } from "@/utils/subjects/tree"
 import { Button, CircularLoadingCmp, OptionsCmp, TextInput } from "@priolo/jack"
@@ -103,10 +103,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className={cls.legend}>
-			{LEGEND.map(line => <div key={line}>{line}</div>)}
-		</div>
-
 		{subjectsSa.coreEnabled && (
 			<div className={cls.filter}>
 				<div className="jack-lbl-prop">LISTEN FOR</div>
@@ -162,6 +158,7 @@ const SubjectsView: FunctionComponent<Props> = ({
 					empty={empty}
 					occupied={subjectsSa.occupied}
 					occupiedLoading={subjectsSa.occupiedLoading}
+					reveal={!!subjectsSa.textSearch?.trim()}
 				/>
 			</div>
 		}

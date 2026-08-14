@@ -99,6 +99,23 @@ describe("buildSubjectTree", () => {
 		expect(countLeaves(tree)).toBe(3)
 	})
 
+	it("nests stored names under the folder you opened instead of dumping siblings", () => {
+		const tree = buildSubjectTree([
+			hit("$KV.shop", { kind: "kv", expandable: true, streams: [{ name: "KV_shop", kind: "kv", pattern: "$KV.shop.>" }] }),
+			hit("$KV.shop.item-1", { kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("$KV.shop.orders.created", { kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("cox.dealer", { kind: "pattern", expandable: true, streams: [{ name: "zoom-phone", pattern: "cox.dealer.>" }] }),
+			hit("cox.dealer.inventory.details", { kind: "occupied", streams: [{ name: "zoom-phone", count: 2 }] }),
+		])
+		const kv = tree.find(n => n.segment == "$KV")
+		expect(kv?.children.map(c => c.segment)).toEqual(["shop"])
+		expect(kv?.children[0].children.map(c => c.segment)).toEqual(["item-1", "orders.created"])
+		expect(kv?.children[0].children.find(c => c.segment == "orders.created")?.stacked).toBe(true)
+		const cox = tree.find(n => n.segment == "cox")
+		expect(cox?.children.map(c => c.segment)).toEqual(["dealer"])
+		expect(cox?.children[0].children.map(c => c.segment)).toEqual(["inventory.details"])
+	})
+
 	it("folds extra siblings into a remainder instead of rendering every token", () => {
 		const hits = Array.from({ length: MAX_TREE_CHILDREN + 12 }, (_, i) => hit(`root.n${i.toString().padStart(2, "0")}`))
 		const tree = buildSubjectTree(hits)

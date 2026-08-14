@@ -56,6 +56,8 @@ export function flattenHits(opts: {
 		}
 		for (const occ of Object.values(opts.occupied ?? {})) {
 			for (const item of occ.subjects ?? []) {
+				const already = bySubject.get(item.subject)
+				if (already?.expandable) continue
 				const hit = ensure(item.subject)
 				if (!hit.kind || hit.kind == "live") hit.kind = "occupied"
 				if (!hit.streams.some(s => s.name == occ.stream)) {
@@ -88,7 +90,10 @@ export function buildSubjectTree(hits: SubjectHit[]): SubjectNode[] {
 		let i = 0
 		while (i < segments.length) {
 			const remaining = segments.length - i
-			const stacked = i >= MAX_TREE_DEPTH - 1 && remaining > 1
+			const existing = current.children.get(segments[i])
+			// Prefer an existing folder (the bucket or pattern you opened)
+			// so stored names nest under it instead of dumping as siblings.
+			const stacked = i >= MAX_TREE_DEPTH - 1 && remaining > 1 && !existing
 			const take = stacked ? remaining : 1
 			const segment = segments.slice(i, i + take).join(".")
 			const path = segments.slice(0, i + take).join(".")

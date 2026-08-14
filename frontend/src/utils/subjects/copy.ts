@@ -2,9 +2,7 @@ import { CoreCatalog, JetStreamCatalog } from "@/types/Subject"
 import { FILTER_INVALID, FILTER_REQUIRED, FILTER_TOO_BROAD, canListen, normalizeListenFilter } from "./filter"
 
 export const LEGEND = [
-	"A subject is a name a message travels on, like orders.created.",
-	"Core is live and forgets. JetStream keeps messages. live means we just heard it. ORDERS or KV is the store that kept it.",
-	"ALL listens for every name (>) for a few seconds. Type a prefix like orders.> to narrow. Busy lists are capped.",
+	"A subject is a name a message travels on. Core is live and forgets. JetStream keeps messages.",
 ]
 
 export function coreListenLabel(filter: string): string {
@@ -135,12 +133,12 @@ export function emptyCopy(args: {
 	}
 
 	if (coreEnabled && jsEnabled) {
-		return "Quiet right now. Core forgets anything that happened before we listened. JetStream has no names to keep yet. Publish a message or click LISTEN again."
+		return "Quiet right now. Click LISTEN to hear what is moving, or open a name with a ▸ to see what a stream kept."
 	}
 	if (coreEnabled) {
-		return "Core heard nothing in this listen. It does not remember the past. Click LISTEN to try again, or turn on JetStream to see stored names."
+		return "Core heard nothing in this listen. Click LISTEN to try again."
 	}
-	return "No stored names. JetStream lists the names a stream is set to keep. Click a name with a ▸ to see which messages are in it."
+	return "No stored names. Open a name with a ▸ to see what a stream kept."
 }
 
 export function firstListenCopy(filter: string, listenMs: number): string {

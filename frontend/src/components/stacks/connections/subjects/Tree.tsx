@@ -1,4 +1,4 @@
-import { OccupiedCatalog, SubjectNode } from "@/types/Subject"
+import { OccupiedCatalog, SubjectHit, SubjectNode } from "@/types/Subject"
 import { leafTitle } from "@/utils/subjects/copy"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { FunctionComponent, memo, useState } from "react"
@@ -11,11 +11,18 @@ interface Props {
 	empty?: string
 	occupied?: Record<string, OccupiedCatalog>
 	occupiedLoading?: string
+	reveal?: boolean
 }
 
-const SubjectTree: FunctionComponent<Props> = ({ nodes, select, onSelect, empty, occupied, occupiedLoading }) => {
+const SubjectTree: FunctionComponent<Props> = ({
+	nodes, select, onSelect, empty, occupied, occupiedLoading, reveal,
+}) => {
+	const [openPaths, setOpenPaths] = useState<Record<string, boolean>>({})
 	if (!nodes || nodes.length == 0) {
 		return <div className={`jack-lbl-empty color-fg ${cls.empty}`}>{empty ?? "No names to show."}</div>
+	}
+	const setOpen = (path: string, open: boolean) => {
+		setOpenPaths(prev => (prev[path] == open ? prev : { ...prev, [path]: open }))
 	}
 	return <div className={cls.root}>
 		{nodes.map(node => (
@@ -26,6 +33,9 @@ const SubjectTree: FunctionComponent<Props> = ({ nodes, select, onSelect, empty,
 				onSelect={onSelect}
 				occupied={occupied}
 				occupiedLoading={occupiedLoading}
+				reveal={!!reveal}
+				openPaths={openPaths}
+				setOpen={setOpen}
 			/>
 		))}
 	</div>
@@ -39,6 +49,9 @@ interface NodeProps {
 	onSelect?: (node: SubjectNode) => void
 	occupied?: Record<string, OccupiedCatalog>
 	occupiedLoading?: string
+	reveal: boolean
+	openPaths: Record<string, boolean>
+	setOpen: (path: string, open: boolean) => void
 }
 
 function occKeyFor(node: SubjectNode): string | null {
@@ -47,60 +60,59 @@ function occKeyFor(node: SubjectNode): string | null {
 	return occupiedKey(stream.name, stream.pattern)
 }
 
-const TreeNode: FunctionComponent<NodeProps> = memo(({ node, select, onSelect, occupied, occupiedLoading }) => {
+function rowChip(hit?: SubjectHit): { label: string, kind: "live" | "js", title: string } | null {
+	if (!hit) return null
+	if (hit.core) return { label: "live", kind: "live", title: "heard just now" }
+	if (hit.kind == "kv" || hit.streams.some(s => s.kind == "kv")) {
+		return { label: "KV", kind: "js", title: "key/value bucket" }
+	}
+	if (hit.kind == "object" || hit.streams.some(s => s.kind == "object")) {
+		return { label: "FILES", kind: "js", title: "object store" }
+	}
+	const stream = hit.streams.find(s => s.kind != "kv" && s.kind != "object")
+	if (stream) return { label: stream.name, kind: "js", title: `kept by ${stream.name}` }
+	return null
+}
+
+const TreeNode: FunctionComponent<NodeProps> = memo(({
+	node, select, onSelect, occupied, occupiedLoading, reveal, openPaths, setOpen,
+}) => {
 	const hasChildren = node.children.length > 0
-	const [open, setOpen] = useState(false)
+	const open = reveal || !!openPaths[node.path]
 	const selected = !!node.hit && node.path == select
 	const key = occKeyFor(node)
 	const occ = key ? occupied?.[key] : undefined
 	const loadingOcc = !!key && occupiedLoading == key
 	const loadedEmpty = !!node.hit?.expandable && !!occ && (occ.subjects?.length ?? 0) == 0 && !hasChildren
-	const clsNode = `${cls.node} ${selected ? cls.selected : ""} ${node.remainder ? cls.remainder : ""}`
+	const canOpen = hasChildren || (!!node.hit?.expandable && !loadedEmpty)
+	const clsNode = `${cls.node} ${selected ? cls.selected : ""} ${node.remainder ? cls.remainder : ""} ${node.stacked ? cls.stacked : ""}`
 	const title = node.remainder
 		? node.segment
 		: node.hit
 			? leafTitle(node.path, node.hit.core?.count, node.hit.streams)
 			: node.path
+	const chip = rowChip(node.hit)
 
-	const handleTwist = (e: React.MouseEvent) => {
-		e.stopPropagation()
-		if (hasChildren) {
-			setOpen(!open)
-			return
-		}
-		if (node.hit?.expandable && !loadedEmpty) {
-			setOpen(true)
-			onSelect?.(node)
-		}
-	}
-	const handleClick = () => {
+	const activate = () => {
 		if (node.remainder) return
-		if (node.hit?.expandable) {
-			setOpen(true)
-			if (!loadedEmpty) onSelect?.(node)
+		if (canOpen) {
+			const next = !open
+			if (!reveal) setOpen(node.path, next)
+			if (next && node.hit?.expandable && !occ && !loadingOcc) onSelect?.(node)
 			return
 		}
 		if (node.hit) onSelect?.(node)
-		else if (hasChildren) setOpen(!open)
 	}
-
-	const kindChip = (node.hit?.kind == "kv" || node.hit?.streams.some(s => s.kind == "kv")) ? "KV"
-		: (node.hit?.kind == "object" || node.hit?.streams.some(s => s.kind == "object")) ? "FILES"
-			: null
 
 	return (
 		<div>
-			<div className={clsNode} onClick={handleClick} title={title}>
-				<div className={cls.twist} onClick={handleTwist}>
-					{hasChildren ? (open ? "▾" : "▸") : node.hit?.expandable && !loadedEmpty ? "▸" : ""}
+			<div className={clsNode} onClick={activate} title={title}>
+				<div className={cls.twist} onClick={e => { e.stopPropagation(); activate() }}>
+					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>
 				<div className={cls.meta}>
-					{node.hit?.core && <span className={`${cls.chip} ${cls.core}`}>live</span>}
-					{kindChip && <span className={`${cls.chip} ${cls.js}`} title={kindChip == "KV" ? "key/value bucket" : "object store"}>{kindChip}</span>}
-					{node.hit?.streams.filter(s => s.kind != "kv" && s.kind != "object").map(s => (
-						<span key={s.name} className={`${cls.chip} ${cls.js}`} title={`kept by ${s.name}`}>{s.name}</span>
-					))}
+					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && !occ?.error && <span className={cls.count}>none stored</span>}
 					{occ?.error && <span className={cls.count}>{occ.error}</span>}
@@ -118,6 +130,9 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({ node, select, onSelect, o
 							onSelect={onSelect}
 							occupied={occupied}
 							occupiedLoading={occupiedLoading}
+							reveal={reveal}
+							openPaths={openPaths}
+							setOpen={setOpen}
 						/>
 					))}
 				</div>

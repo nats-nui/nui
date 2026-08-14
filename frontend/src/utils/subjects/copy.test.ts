@@ -4,13 +4,9 @@ import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FIL
 
 describe("copy", () => {
 	it("defines Core and JetStream without assuming the reader knows NATS", () => {
-		expect(LEGEND[0]).toMatch(/name a message travels on/i)
-		expect(LEGEND[1]).toMatch(/forget/i)
-		expect(LEGEND[1]).toMatch(/store/i)
-		expect(LEGEND[1]).toMatch(/live/i)
-		expect(LEGEND[2]).toMatch(/ALL/)
-		expect(LEGEND[2]).toMatch(/>/)
-		expect(LEGEND[2]).toMatch(/capped/i)
+		expect(LEGEND.join(" ")).toMatch(/name a message travels on/i)
+		expect(LEGEND.join(" ")).toMatch(/forget/i)
+		expect(LEGEND.join(" ")).toMatch(/keep/i)
 	})
 
 	it("treats an empty listen as every name", () => {
@@ -39,7 +35,7 @@ describe("copy", () => {
 			search: "",
 			foundCount: 0,
 		})
-		expect(copy).toMatch(/forget/i)
+		expect(copy).toMatch(/LISTEN/)
 		expect(copy).not.toMatch(/snapshot/i)
 		expect(copy).not.toMatch(/enumerat/i)
 	})

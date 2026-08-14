@@ -1,6 +1,8 @@
 ## INDEX
 
-Discovery is two requests. JetStream returns capture names immediately. Core listens on a dedicated connection, then unsubscribes. An empty filter means `>` — that is how you look around. Neither response includes payloads. Busy lists are capped.
+Discovery is two requests. Neither includes payloads. Busy lists are capped.
+
+The SUBJECTS card shows a **family list** (first token), then a **partial stack** — one more level, never a hallway. Stored names load under the row you opened. See [discovery.md](./discovery.md).
 
 ### JETSTREAM PATTERNS
 
@@ -28,4 +30,4 @@ GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 GET /api/connection/:id/subjects/jetstream/:stream/occupied?filter=orders.>
 ```
 
-Names that currently have messages in that stream, capped per stream.
+Names that currently have messages in that stream, capped per stream. The card nests them under the pattern or bucket you opened.
