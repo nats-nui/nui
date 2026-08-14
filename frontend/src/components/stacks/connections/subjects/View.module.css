@@ -27,15 +27,6 @@
 	background: rgba(255, 220, 80, .28);
 }
 
-.banner {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 12px;
-	opacity: .85;
-	margin-bottom: 8px;
-}
-
 .tree {
 	min-height: 120px;
 	overflow: auto;

@@ -4,10 +4,10 @@ import layoutSo from "@/stores/layout"
 import { SubjectsStore } from "@/stores/stacks/connection/subjects"
 import { LOAD_STATE } from "@/stores/stacks/utils"
 import { SubjectNode } from "@/types/Subject"
-import { emptyCopy, firstListenCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
+import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterTree, flattenHits } from "@/utils/subjects/tree"
-import { Button, CircularLoadingCmp, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
+import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
@@ -127,15 +127,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 
 		{hint && <div className={cls.hint}>{hint}</div>}
 
-		{(listening || jsLoading) && (
-			<div className={cls.banner}>
-				<CircularLoadingCmp style={{ width: 14, height: 14 }} />
-				{listening
-					? firstListenCopy(subjectsSa.filter.trim(), subjectsSa.listenMs)
-					: "Reading stored names…"}
-			</div>
-		)}
-
 		{firstPaint
 			? null
 			: <div className={cls.tree}>
@@ -151,9 +142,11 @@ const SubjectsView: FunctionComponent<Props> = ({
 			</div>
 		}
 
-		<div className={cls.status}>
-			{status.map(line => <div key={line}>{line}</div>)}
-		</div>
+		{status.length > 0 && (
+			<div className={cls.status}>
+				{status.map(line => <div key={line}>{line}</div>)}
+			</div>
+		)}
 	</FrameworkCard>
 }
 

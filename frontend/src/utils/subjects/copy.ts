@@ -11,8 +11,7 @@ export function coreListenLabel(filter: string): string {
 
 export function listenHintCopy(hint?: string | null): string | null {
 	if (!hint) return null
-	if (hint == FILTER_REQUIRED) return "Click LISTEN to hear what is moving now."
-	if (hint == FILTER_TOO_BROAD) return "Listening to every name is how discovery works. The list is capped if it is busy."
+	if (hint == FILTER_REQUIRED || hint == FILTER_TOO_BROAD) return null
 	if (hint == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
 	return hint
 }
@@ -26,6 +25,7 @@ export function statusLines(
 	filter?: string,
 ): string[] {
 	const lines = [jetStreamStatus(jsEnabled, js), coreStatus(coreEnabled, core, filter)]
+		.filter((line): line is string => !!line)
 	const occupiedLine = occupiedStatus(occupied)
 	if (occupiedLine) lines.push(occupiedLine)
 	return lines
@@ -50,39 +50,31 @@ export function coreListenStale(core?: CoreCatalog | null, filter?: string): boo
 	return normalizeListenFilter(filter) != core.filter
 }
 
-export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?: string): string {
-	if (!enabled) return "Core is off."
+export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?: string): string | null {
+	if (!enabled) return null
 	if (core?.error == "not allowed") return "This account cannot listen for that name."
 	if (core?.error == "timed out") return "The listen stopped before it finished."
-	if (core?.error == FILTER_REQUIRED || core?.error == FILTER_TOO_BROAD) {
-		return "Click LISTEN to hear what is moving now. Busy lists are capped."
-	}
+	if (core?.error == FILTER_REQUIRED || core?.error == FILTER_TOO_BROAD) return null
 	if (core?.error == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
 	if (core?.error) return `Core could not listen: ${core.error}.`
 	if (!core) {
 		const next = normalizeListenFilter(filter ?? "")
 		if (!canListen(next)) return "That is not a valid name. Use dots, like orders.created or orders.>"
-		if (next == ">") return "Click LISTEN to hear what is moving now."
-		return `Click LISTEN to sample ${next}.`
+		return null
 	}
-	const names = core.heard ?? core.subjects?.length ?? 0
-	const window = `${(core.listenMs / 1000).toFixed(1)}s`
-	const where = core.filter == ">" ? "every name" : core.filter
-	let line = `Core heard ${names} name${names == 1 ? "" : "s"} in ${window}`
-	if (where) line += ` on ${where}`
-	line += "."
-	if (core.truncated) line += " List was capped."
-	if (core.dropped) line += ` ${core.dropped} messages did not fit.`
+	const bits: string[] = []
+	if (core.truncated) bits.push("Core list was capped")
+	if (core.dropped) bits.push(`${core.dropped} messages did not fit`)
 	if (coreListenStale(core, filter)) {
 		const next = normalizeListenFilter(filter ?? "")
-		line += next == ">" ? " Click LISTEN to hear every name." : ` Click LISTEN to sample ${next}.`
+		bits.push(next == ">" ? "Click LISTEN to hear every name" : `Click LISTEN to sample ${next}`)
 	}
-	return line
+	if (bits.length == 0) return null
+	return bits.join(". ") + "."
 }
 
-export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null): string {
-	if (!enabled) return "JetStream is off."
-	if (!js) return "Reading stored names…"
+export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null): string | null {
+	if (!enabled || !js) return null
 	if (js.error == "not allowed") return "This account cannot read stored names."
 	if (js.error == "timed out" && (js.streams?.length ?? 0) == 0) return "Stored names were not fully read."
 	if (js.error && (js.streams?.length ?? 0) == 0) {
@@ -91,13 +83,13 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 		}
 		return `JetStream could not be read: ${js.error}.`
 	}
-	const names = js.streams?.reduce((sum, s) => sum + (s.subjects?.length ?? 0), 0) ?? 0
-	const streams = js.streams?.length ?? 0
-	let line = `JetStream has ${names} name${names == 1 ? "" : "s"} to keep in ${streams} stream${streams == 1 ? "" : "s"}.`
-	if (js.failed) line += ` ${js.failed} stream${js.failed == 1 ? "" : "s"} could not be read.`
-	if (js.truncated || js.streams?.some(s => s.truncated)) line += " List was capped."
-	if (js.error == "timed out") line += " Stored names were not fully read."
-	return line
+	const bits: string[] = []
+	if (js.failed) bits.push(`${js.failed} stream${js.failed == 1 ? "" : "s"} could not be read`)
+	if (js.truncated || js.streams?.some(s => s.truncated)) bits.push("JetStream list was capped")
+	if (js.error == "timed out") bits.push("stored names were not fully read")
+	if (bits.length == 0) return null
+	const line = bits.join("; ")
+	return line.charAt(0).toUpperCase() + line.slice(1) + "."
 }
 
 export function emptyCopy(args: {
@@ -139,12 +131,6 @@ export function emptyCopy(args: {
 		return "Core heard nothing in this listen. Click LISTEN to try again."
 	}
 	return "No stored names. Open a name with a ▸ to see what a stream kept."
-}
-
-export function firstListenCopy(filter: string, listenMs: number): string {
-	const f = normalizeListenFilter(filter)
-	const where = f == ">" ? "every name" : f
-	return `Listening for ${(listenMs / 1000).toFixed(1)}s on ${where}. Core only sees messages that happen during this listen.`
 }
 
 export function leafTitle(path: string, heard?: number, streams?: { name: string, count?: number }[]): string {

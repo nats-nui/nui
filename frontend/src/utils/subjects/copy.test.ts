@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, LEGEND, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, firstListenCopy } from "./copy"
-import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID } from "./filter"
+import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, LEGEND, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines } from "./copy"
+import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID, FILTER_TOO_BROAD } from "./filter"
 
 describe("copy", () => {
 	it("defines Core and JetStream without assuming the reader knows NATS", () => {
@@ -15,15 +15,25 @@ describe("copy", () => {
 	})
 
 	it("does not mix a live listen count with a stored count", () => {
-		expect(coreStatus(true, {
+		const lines = statusLines(true, true, {
 			filter: "orders.>", listenMs: 2000, heard: 4, truncated: false, subjects: [],
-		})).toBe("Core heard 4 names in 2.0s on orders.>.")
+		}, {
+			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }, { subject: "returns", kind: "pattern" }] }],
+		}, {}, "orders.>")
+		expect(lines.join(" ")).not.toMatch(/\b6\b/)
+		expect(lines).toEqual([])
+	})
+
+	it("stays quiet when the catalog is healthy", () => {
 		expect(coreStatus(true, {
 			filter: ">", listenMs: 2000, heard: 4, truncated: false, subjects: [],
-		})).toBe("Core heard 4 names in 2.0s on every name.")
+		})).toBeNull()
 		expect(jetStreamStatus(true, {
-			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }, { subject: "returns", kind: "pattern" }] }],
-		})).toBe("JetStream has 2 names to keep in 1 stream.")
+			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }] }],
+		})).toBeNull()
+		expect(coreStatus(true, null, ">")).toBeNull()
+		expect(coreStatus(false)).toBeNull()
+		expect(jetStreamStatus(false)).toBeNull()
 	})
 
 	it("teaches why an empty listen is not a broken server", () => {
@@ -45,7 +55,7 @@ describe("copy", () => {
 			error: "timed out",
 			truncated: true,
 			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }] }],
-		})).toMatch(/1 name.*1 stream/i)
+		})).toMatch(/capped|not fully read/i)
 		expect(jetStreamStatus(true, {
 			error: "timed out",
 			streams: [],
@@ -79,12 +89,12 @@ describe("copy", () => {
 
 	it("invites LISTEN instead of asking for a prefix first", () => {
 		expect(listenHintCopy(FILTER_INVALID)).toMatch(/valid name/i)
+		expect(listenHintCopy(FILTER_TOO_BROAD)).toBeNull()
 		expect(emptyCopy({
 			coreEnabled: true, jsEnabled: true,
 			js: { streams: [] },
 			search: "", foundCount: 0,
 		})).toMatch(/LISTEN/)
-		expect(firstListenCopy(">", 2000)).toMatch(/every name/)
 	})
 
 	it("says the search missed instead of pretending the catalog is empty", () => {
@@ -103,15 +113,17 @@ describe("copy", () => {
 	})
 
 	it("treats a catch-all as discovery, not a mistake", () => {
-		expect(coreStatus(true, null, ">")).toMatch(/LISTEN to hear what is moving/)
+		expect(coreStatus(true, null, ">")).toBeNull()
 		expect(coreStatus(true, {
 			filter: ">", listenMs: 2000, heard: 12, truncated: true, subjects: [],
 		})).toMatch(/capped/i)
 	})
 
-	it("asks you to click LISTEN when a narrower name is typed", () => {
-		expect(coreStatus(true, null, "orders.>")).toBe("Click LISTEN to sample orders.>.")
-		expect(coreStatus(true, null, "")).toMatch(/LISTEN to hear what is moving/)
+	it("asks you to click LISTEN when a narrower name is typed after a listen", () => {
+		expect(coreStatus(true, {
+			filter: "orders.>", listenMs: 2000, heard: 2, truncated: false, subjects: [],
+		}, "devices.>")).toMatch(/LISTEN to sample devices\.>/)
+		expect(coreStatus(true, null, "orders.>")).toBeNull()
 	})
 
 	it("hides leftover live names when the listen box changes", () => {

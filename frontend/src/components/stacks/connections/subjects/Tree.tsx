@@ -1,4 +1,5 @@
-import { OccupiedCatalog, SubjectHit, SubjectNode } from "@/types/Subject"
+import { OccupiedCatalog, SubjectNode } from "@/types/Subject"
+import { rowChip } from "@/utils/subjects/chip"
 import { leafTitle } from "@/utils/subjects/copy"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { FunctionComponent, memo, useState } from "react"
@@ -60,20 +61,6 @@ function occKeyFor(node: SubjectNode): string | null {
 	return occupiedKey(stream.name, stream.pattern)
 }
 
-function rowChip(hit?: SubjectHit): { label: string, kind: "live" | "js", title: string } | null {
-	if (!hit) return null
-	if (hit.core) return { label: "live", kind: "live", title: "heard just now" }
-	if (hit.kind == "kv" || hit.streams.some(s => s.kind == "kv")) {
-		return { label: "KV", kind: "js", title: "key/value bucket" }
-	}
-	if (hit.kind == "object" || hit.streams.some(s => s.kind == "object")) {
-		return { label: "FILES", kind: "js", title: "object store" }
-	}
-	const stream = hit.streams.find(s => s.kind != "kv" && s.kind != "object")
-	if (stream) return { label: stream.name, kind: "js", title: `kept by ${stream.name}` }
-	return null
-}
-
 const TreeNode: FunctionComponent<NodeProps> = memo(({
 	node, select, onSelect, occupied, occupiedLoading, reveal, openPaths, setOpen,
 }) => {
@@ -91,7 +78,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 		: node.hit
 			? leafTitle(node.path, node.hit.core?.count, node.hit.streams)
 			: node.path
-	const chip = rowChip(node.hit)
+	const chip = rowChip(node.hit, node.segment)
 
 	const activate = () => {
 		if (node.remainder) return
@@ -116,7 +103,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && !occ?.error && <span className={cls.count}>none stored</span>}
 					{occ?.error && <span className={cls.count}>{occ.error}</span>}
-					{!node.hit && !node.remainder && node.names > 0 && !open && <span className={cls.count}>{node.names}</span>}
+					{canOpen && !open && node.names > 1 && <span className={cls.count}>{node.names}</span>}
 					{node.remainder && <span className={cls.count}>{node.names}</span>}
 				</div>
 			</div>

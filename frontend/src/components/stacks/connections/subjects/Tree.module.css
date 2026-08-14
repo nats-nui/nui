@@ -60,7 +60,7 @@
 .chip {
 	padding: 0 4px;
 	border-radius: 3px;
-	max-width: 120px;
+	max-width: 10ch;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
