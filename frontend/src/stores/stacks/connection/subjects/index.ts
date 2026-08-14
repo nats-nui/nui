@@ -36,8 +36,8 @@ const setup = {
 
 		format: MSG_FORMAT.JSON,
 
-		width: 440,
-		widthMax: 900,
+		width: 350,
+		widthMax: 800,
 	},
 
 	getters: {

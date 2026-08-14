@@ -7,9 +7,9 @@ import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, firstListenCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterTree, flattenHits } from "@/utils/subjects/tree"
-import { Button, CircularLoadingCmp, OptionsCmp, TextInput } from "@priolo/jack"
+import { Button, CircularLoadingCmp, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent, useEffect, useMemo, useState } from "react"
+import { FunctionComponent, useEffect, useMemo } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
 import clsCardRedeye from "../../CardCyanDef.module.css"
 import SubjectTree from "./Tree"
@@ -27,16 +27,10 @@ const SubjectsView: FunctionComponent<Props> = ({
 	useStore(subjectsSo.state.group)
 	useStore(layoutSo)
 
-	const [textFind, setTextFind] = useState(subjectsSa.textSearch ?? "")
-
 	useEffect(() => {
 		subjectsSo.fetchIfVoid()
 	}, [])
 
-	const handleSearchChange = (value: string) => {
-		setTextFind(value)
-		subjectsSo.setTextSearch(value)
-	}
 	const handleSelect = (node: SubjectNode) => {
 		if (node.remainder) return
 		if (node.hit) subjectsSo.openHit(node.hit)
@@ -91,6 +85,10 @@ const SubjectsView: FunctionComponent<Props> = ({
 				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
 				store={subjectsSo}
 			/>
+			<FindInputHeader
+				value={subjectsSa.textSearch}
+				onChange={text => subjectsSo.setTextSearch(text)}
+			/>
 			<Button
 				select={subjectsSa.coreEnabled}
 				children="CORE"
@@ -128,16 +126,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 		)}
 
 		{hint && <div className={cls.hint}>{hint}</div>}
-
-		<div className={cls.filter}>
-			<div className="jack-lbl-prop">FIND</div>
-			<TextInput
-				style={{ flex: 1 }}
-				value={textFind}
-				placeholder="type part of a name"
-				onChange={handleSearchChange}
-			/>
-		</div>
 
 		{(listening || jsLoading) && (
 			<div className={cls.banner}>
