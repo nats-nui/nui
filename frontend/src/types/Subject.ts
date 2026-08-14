@@ -59,4 +59,5 @@ export interface SubjectNode {
 	hit?: SubjectHit
 	names: number
 	remainder?: boolean
+	stacked?: boolean
 }

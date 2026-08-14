@@ -69,17 +69,33 @@ describe("flattenHits", () => {
 })
 
 describe("buildSubjectTree", () => {
-	it("splits on dots and keeps a node that is both a name and a parent", () => {
+	it("keeps a family at the first token and a child that is also a name", () => {
 		const tree = buildSubjectTree([
-			hit("devices.sensors.temp", { core: { count: 3 } }),
-			hit("devices.sensors.humidity", { streams: [{ name: "IOT", count: 9 }] }),
+			hit("devices.sensors", { core: { count: 3 } }),
 			hit("devices", { core: { count: 1 } }),
 		])
 		expect(tree).toHaveLength(1)
 		expect(tree[0].segment).toBe("devices")
 		expect(tree[0].hit?.core?.count).toBe(1)
-		expect(tree[0].children[0].children.map(c => c.segment)).toEqual(["humidity", "temp"])
-		expect(tree[0].names).toBe(3)
+		expect(tree[0].children.map(c => c.segment)).toEqual(["sensors"])
+		expect(tree[0].children[0].stacked).toBeFalsy()
+		expect(tree[0].names).toBe(2)
+		expect(countLeaves(tree)).toBe(2)
+	})
+
+	it("stacks anything deeper than a couple of levels instead of opening the whole chain", () => {
+		const tree = buildSubjectTree([
+			hit("devices.sensors.temp", { core: { count: 3 } }),
+			hit("devices.sensors.humidity", { streams: [{ name: "IOT", count: 9 }] }),
+			hit("agents.hb.cc.getbygenius.digimasons-2", { core: { count: 1 } }),
+		])
+		expect(tree.map(n => n.segment)).toEqual(["agents", "devices"])
+		expect(tree[0].children.map(c => c.segment)).toEqual(["hb.cc.getbygenius.digimasons-2"])
+		expect(tree[0].children[0].stacked).toBe(true)
+		expect(tree[0].children[0].path).toBe("agents.hb.cc.getbygenius.digimasons-2")
+		expect(tree[0].children[0].children).toEqual([])
+		expect(tree[1].children.map(c => c.segment)).toEqual(["sensors.humidity", "sensors.temp"])
+		expect(tree[1].children.every(c => c.stacked)).toBe(true)
 		expect(countLeaves(tree)).toBe(3)
 	})
 
@@ -107,7 +123,8 @@ describe("filterTree", () => {
 		])
 		const filtered = filterTree(tree, "login")
 		expect(filtered).toHaveLength(1)
-		expect(filtered[0].children[0].segment).toBe("users")
+		expect(filtered[0].children[0].segment).toBe("users.login")
+		expect(filtered[0].children[0].stacked).toBe(true)
 		expect(countLeaves(filtered)).toBe(1)
 	})
 })

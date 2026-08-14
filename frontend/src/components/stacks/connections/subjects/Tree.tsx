@@ -24,7 +24,6 @@ const SubjectTree: FunctionComponent<Props> = ({ nodes, select, onSelect, empty,
 				node={node}
 				select={select}
 				onSelect={onSelect}
-				depth={0}
 				occupied={occupied}
 				occupiedLoading={occupiedLoading}
 			/>
@@ -38,7 +37,6 @@ interface NodeProps {
 	node: SubjectNode
 	select?: string
 	onSelect?: (node: SubjectNode) => void
-	depth: number
 	occupied?: Record<string, OccupiedCatalog>
 	occupiedLoading?: string
 }
@@ -49,9 +47,9 @@ function occKeyFor(node: SubjectNode): string | null {
 	return occupiedKey(stream.name, stream.pattern)
 }
 
-const TreeNode: FunctionComponent<NodeProps> = memo(({ node, select, onSelect, depth, occupied, occupiedLoading }) => {
+const TreeNode: FunctionComponent<NodeProps> = memo(({ node, select, onSelect, occupied, occupiedLoading }) => {
 	const hasChildren = node.children.length > 0
-	const [open, setOpen] = useState(depth < 2)
+	const [open, setOpen] = useState(false)
 	const selected = !!node.hit && node.path == select
 	const key = occKeyFor(node)
 	const occ = key ? occupied?.[key] : undefined
@@ -118,7 +116,6 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({ node, select, onSelect, d
 							node={child}
 							select={select}
 							onSelect={onSelect}
-							depth={depth + 1}
 							occupied={occupied}
 							occupiedLoading={occupiedLoading}
 						/>
