@@ -2,11 +2,13 @@ package tests
 
 import (
 	"fmt"
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/gavv/httpexpect/v2"
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 // newConnection creates a new connection with the given JSON payload.
@@ -72,6 +74,54 @@ func (s *NuiTestSuite) emptyStream(name string, subjects ...string) (jetstream.S
 	return stream, err
 }
 
+func (s *NuiTestSuite) publishSubjects(subjects ...string) {
+	for _, subject := range subjects {
+		_, err := s.js.Publish(s.ctx, subject, []byte(subject))
+		s.NoError(err)
+	}
+}
+
+func (s *NuiTestSuite) publishN(subject string, n int) {
+	for i := 0; i < n; i++ {
+		_, err := s.js.Publish(s.ctx, subject, []byte(subject))
+		s.NoError(err)
+	}
+}
+
+func (s *NuiTestSuite) deleteSeqs(streamName string, seqs ...uint64) {
+	stream, err := s.js.Stream(s.ctx, streamName)
+	s.NoError(err)
+	for _, seq := range seqs {
+		s.NoError(stream.DeleteMsg(s.ctx, seq))
+	}
+}
+
+func (s *NuiTestSuite) deleteSeqRange(streamName string, from, to uint64) {
+	stream, err := s.js.Stream(s.ctx, streamName)
+	s.Require().NoError(err)
+	s.Require().NotNil(stream)
+	for seq := from; seq <= to; seq++ {
+		s.NoError(stream.DeleteMsg(s.ctx, seq))
+	}
+}
+
+func messageSeqs(arr *httpexpect.Array) []uint64 {
+	n := int(arr.Length().Raw())
+	out := make([]uint64, n)
+	for i := 0; i < n; i++ {
+		out[i] = uint64(arr.Value(i).Object().Value("seq_num").Number().Raw())
+	}
+	return out
+}
+
+func (s *NuiTestSuite) streamMessages(connId, stream, query string) *httpexpect.Array {
+	req := s.e.GET("/api/connection/" + connId + "/stream/" + stream + "/messages")
+	if query != "" {
+		req = req.WithQueryString(query)
+	}
+	return req.Expect().Status(http.StatusOK).JSON().Array()
+}
+
 func (s *NuiTestSuite) filledKvs(name string) jetstream.KeyValue {
 	kv := s.emptyKvs(name)
 	for i := 1; i <= 10; i++ {
@@ -97,6 +147,6 @@ func (s *NuiTestSuite) emptyKvs(name string) jetstream.KeyValue {
 
 func (s *NuiTestSuite) ensureNoNuiConsumersPending(connId, stream string) {
 	time.Sleep(200 * time.Millisecond)
-	s.e.GET("/api/connection/" + connId + "/stream/stream1/consumer").
+	s.e.GET("/api/connection/" + connId + "/stream/" + stream + "/consumer").
 		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(0)
 }
