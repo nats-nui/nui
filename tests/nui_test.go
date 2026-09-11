@@ -670,6 +670,20 @@ func (s *NuiTestSuite) TestKvEntriesRest() {
 		r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/key_with_ttl").Expect()
 		assert.Equal(c, r.Raw().StatusCode, http.StatusOK)
 	}, 5*time.Second, 100*time.Millisecond)
+
+	// keys containing slashes must work (issue #129)
+	slashKey := "bar/foo"
+	r = e.POST("/api/connection/" + connId + "/kv/bucket1/key/"+slashKey).
+		WithBytes([]byte(`{"payload": "MTIz"}`)).Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("key").String().IsEqual(slashKey)
+	r.JSON().Object().Value("payload").String().IsEqual("MTIz")
+
+	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key/"+slashKey).Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("key").String().IsEqual(slashKey)
+	r.JSON().Object().Value("payload").String().IsEqual("MTIz")
+
+	e.DELETE("/api/connection/" + connId + "/kv/bucket1/key/"+slashKey).Expect().Status(http.StatusNoContent)
+	e.POST("/api/connection/" + connId + "/kv/bucket1/key/"+slashKey+"/purge").Expect().Status(http.StatusNoContent)
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
