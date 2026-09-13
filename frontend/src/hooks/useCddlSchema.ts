@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useCallback } from "react"
 import { CborDecodedData, CddlSchema } from "@/types/Cbor"
 import { decodeAndValidateCbor, getRulesFromSchema } from "@/utils/cbor"
 import { getTopicCache, probeSchemas, rememberedFor, resolveCbor } from "@/utils/cbor/resolve"
-import { useCddlSchemas } from "@/contexts/CddlSchemaContext"
+import cddlSo from "@/stores/cddl"
+import { useStore } from "@priolo/jon"
 
 interface UseCddlSchemaReturn {
   schemas: CddlSchema[]
@@ -32,8 +33,8 @@ function idOf(schema: CddlSchema): string {
  * it — they ask `resolveCbor` for the answer and render it.
  */
 export function useCddlSchema(binaryData?: string, subject?: string): UseCddlSchemaReturn {
-  const { schemas, isLoading: isLoadingSchemas, refreshSchemas } = useCddlSchemas()
-
+  
+  const { schemas, isLoading: isLoadingSchemas } = useStore(cddlSo)
   const [selectedSchemaId, setSelectedSchemaId] = useState("")
   const [selectedRule, setSelectedRule] = useState("")
   const [showSchemaControls, setShowSchemaControls] = useState(false)
@@ -146,7 +147,7 @@ export function useCddlSchema(binaryData?: string, subject?: string): UseCddlSch
     setSelectedSchemaId: chooseSchema,
     setSelectedRule: chooseRule,
     setShowSchemaControls,
-    refreshSchemas,
+    refreshSchemas: cddlSo.refresh,
     autoDetectRule,
   }
 }

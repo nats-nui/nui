@@ -1,6 +1,7 @@
 import { FunctionComponent, useMemo, memo } from "react"
-import { useCddlSchemas } from "@/contexts/CddlSchemaContext"
+import cddlSo from "@/stores/cddl"
 import { resolveCbor } from "@/utils/cbor/resolve"
+import { useStore } from "@priolo/jon"
 import JsonRow from "../json/JsonRow"
 import TextRow from "../text/TextRow"
 
@@ -18,7 +19,7 @@ interface Props {
  * and shared with every other row asking the same, and draws it.
  */
 const CborRow: FunctionComponent<Props> = ({ text, style, subject }) => {
-  const { schemas } = useCddlSchemas()
+  const { schemas } = useStore(cddlSo)
 
   const resolution = useMemo(
     () => text ? resolveCbor(text, schemas, subject) : undefined,

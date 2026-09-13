@@ -2,9 +2,9 @@
 import MainMenu from "@/app/mainMenu/MainMenu"
 import docsSo from "@/stores/docs"
 import { ProtobufSchemaProvider } from "@/contexts/ProtobufSchemaContext"
-import { CddlSchemaProvider } from "@/contexts/CddlSchemaContext"
+import cddlSo from "@/stores/cddl"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import cls from "./App.module.css"
 import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
@@ -21,6 +21,9 @@ const App: FunctionComponent = () => {
 	useStore(layoutSo)
 
 	// HOOKS
+	useEffect(() => {
+		cddlSo.load()
+	}, [])
 
 	// HANDLERS
 
@@ -29,22 +32,20 @@ const App: FunctionComponent = () => {
 
 	return (
 		<ProtobufSchemaProvider>
-			<CddlSchemaProvider>
-				<div className={`${cls.root} ${cls[layoutSo.state.theme]}`}>
+			<div className={`${cls.root} ${cls[layoutSo.state.theme]}`}>
 
-					<ZenCard />
+				<ZenCard />
 
-					<MainMenu />
+				<MainMenu />
 
-					<div className={clsContent}>
-						<DeckGroup />
-						<DrawerGroup />
-					</div>
-
-					<DragCmp />
-					<TooltipCmp />
+				<div className={clsContent}>
+					<DeckGroup />
+					<DrawerGroup />
 				</div>
-			</CddlSchemaProvider>
+
+				<DragCmp />
+				<TooltipCmp />
+				</div>
 		</ProtobufSchemaProvider>
 	)
 }
