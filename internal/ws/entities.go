@@ -11,6 +11,9 @@ const (
 	metricsReqType = "metrics_req"
 	metricsMsg     = "metrics_resp"
 
+	consumerClientsReqType  = "consumer_clients_req"
+	consumerClientsRespType = "consumer_clients_resp"
+
 	errorType = "error"
 )
 
@@ -91,4 +94,28 @@ type MetricsResp struct {
 
 func (s MetricsResp) GetType() string {
 	return metricsMsg
+}
+
+// ConsumerClientsReq requests clients matching a consumer's subscription
+type ConsumerClientsReq struct {
+	StreamName     string `json:"stream_name" mapstructure:"stream_name"`
+	ConsumerName   string `json:"consumer_name" mapstructure:"consumer_name"`
+	DeliverSubject string `json:"deliver_subject" mapstructure:"deliver_subject"`
+	FilterSubject  string `json:"filter_subject" mapstructure:"filter_subject"`
+}
+
+func (s ConsumerClientsReq) GetType() string {
+	return consumerClientsReqType
+}
+
+// ConsumerClientsResp returns matching client connections
+type ConsumerClientsResp struct {
+	StreamName   string           `json:"stream_name"`
+	ConsumerName string           `json:"consumer_name"`
+	Clients      []map[string]any `json:"clients"`
+	Error        string           `json:"error"`
+}
+
+func (s ConsumerClientsResp) GetType() string {
+	return consumerClientsRespType
 }
