@@ -17,7 +17,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 
 - Core NATS Pub/Sub: view and send NATS messages
 - Request / reply: send requests and easily view related response
-- Multiple format visualization (text, json, hex, protobuf and much more supported)
+- Multiple format visualization (text, json, hex, protobuf, cbor and much more supported)
 - Streams management: view, create adn tweak stream configs
 - Stream messages: view, filter and operate with stream messages
 - Stream operations like purge and message deletion
@@ -49,6 +49,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 
 # Documentation
 - **[Protobuf Message Decoding Guide](PROTOBUF_USAGE.md)** - How to decode protobuf messages with your own schemas
+- **[CBOR + CDDL Message Guide](CDDL_USAGE.md)** — Read and send CBOR with optional CDDL schemas
 
 # Build and run Locally
 The projects uses Go and Wails.io as to run the BE and React on Vite on FE.

@@ -92,6 +92,7 @@ const MessageView: FunctionComponent<Props> = ({
 					format={msgSa.format}
 					diff={msgSo.state.showDiff}
 					value={msgSo.getEditorText()}
+					subject={msgSa.message?.subject}
 				/>
 			</div>
 

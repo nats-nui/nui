@@ -1,0 +1,9 @@
+; person.cddl — messages on subjects like accounts.>
+;
+; Required name/age, optional email behind a chip. Pick type `person`.
+
+person = {
+  name: tstr,      ; who it is
+  age: uint,       ; in years
+  ? email: tstr,   ; where to reach them, if anywhere
+}

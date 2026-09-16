@@ -11,5 +11,6 @@ export function getEditorLanguage(format: MSG_FORMAT) {
 		[MSG_FORMAT.XML]: "xml",
 		[MSG_FORMAT.HTML]: "html",
 		[MSG_FORMAT.PROTOBUF]: "json",
+		[MSG_FORMAT.CBOR]: "json",
 	}[format]
 }

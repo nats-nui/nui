@@ -3,6 +3,7 @@ package nui
 import (
 	"path/filepath"
 
+	"github.com/nats-nui/nui/internal/cddlschema"
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
 	"github.com/nats-nui/nui/internal/protoschema"
@@ -16,13 +17,14 @@ type Nui struct {
 	ConnRepo         connection.ConnRepo
 	ConnPool         connection.Pool[*connection.NatsConn]
 	ProtoRepo        protoschema.ProtoRepo
+	CddlRepo         cddlschema.CddlRepo
 	CliConnImporter  clicontext.Importer[clicontext.ImportedContextEntry]
 	MetricsCollector metrics.MetricsCollector
 	Hub              ws.IHub
 	l                logging.Slogger
 }
 
-func Setup(dbPath, protoschemasPath string, logger logging.Slogger) (*Nui, error) {
+func Setup(dbPath, protoschemasPath, cddlschemasPath string, logger logging.Slogger) (*Nui, error) {
 	n := &Nui{}
 	store, err := docstore.NewDocStore(dbPath)
 	if err != nil {
@@ -35,9 +37,18 @@ func Setup(dbPath, protoschemasPath string, logger logging.Slogger) (*Nui, error
 		return nil, err
 	}
 
+	cddlDir, err := filepath.Abs(cddlschemasPath)
+	if err != nil {
+		return nil, err
+	}
+
 	n.ConnRepo = connection.NewDocStoreConnRepo(store)
 	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
 	n.ProtoRepo, err = protoschema.NewFileSystemProtoRepo(protoDir)
+	if err != nil {
+		return nil, err
+	}
+	n.CddlRepo, err = cddlschema.NewFileSystemCddlRepo(cddlDir, logger)
 	if err != nil {
 		return nil, err
 	}

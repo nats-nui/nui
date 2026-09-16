@@ -7,7 +7,8 @@ import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { mixStores } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
-import { binaryStringToString, stringToBinaryString } from "../../../utils/string"
+import { toCborNotation } from "../../../utils/cbor"
+import { MSG_FORMAT, toEditorText, toPayload } from "../../../utils/editor"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 
@@ -22,6 +23,9 @@ const setup = {
 		kventry: <KVEntry>null,
 
 		editState: EDIT_STATE.READ,
+
+		/** the text being edited; unset while the stored value is the one on show */
+		editorText: <string>null,
 
 		historyOpen: false,
 		revisionSelected: <number>null,
@@ -52,8 +56,16 @@ const setup = {
 		},
 		//#endregion
 
-		getEditorText: (_: void, store?: ViewStore) => 
-			binaryStringToString((<KVEntryStore>store).getKVSelect()?.payload ?? ""),
+		getEditorText: (_: void, store?: ViewStore) => {
+			const kvSo = <KVEntryStore>store
+			if (kvSo.state.editorText != null) return kvSo.state.editorText
+			const payload = kvSo.getKVSelect()?.payload ?? ""
+			// editing a value means editing its text: CBOR is written as diagnostic notation
+			if (kvSo.state.editState != EDIT_STATE.READ && kvSo.state.format == MSG_FORMAT.CBOR) {
+				return toCborNotation(payload)
+			}
+			return toEditorText(payload, kvSo.state.format)
+		},
 
 
 		// [II] TODO
@@ -72,7 +84,13 @@ const setup = {
 		getKVSelectIndex(_: void, store?: KVEntryStore): number {
 			const current = store.state.revisionSelected ?? store.state.kventry?.revision
 			return store.state.kventry?.history?.findIndex(kve => kve.revision == current) ?? -1
-		}
+		},
+
+		/** the value to store, encoded from the edited text; the stored one when nothing was edited */
+		getPayloadToSave(_: void, store?: KVEntryStore): { payload?: string, error?: string } {
+			if (store.state.editorText == null) return { payload: store.state.kventry?.payload ?? "" }
+			return toPayload(store.state.editorText, store.state.format)
+		},
 	},
 
 	actions: {
@@ -103,13 +121,24 @@ const setup = {
 
 		/** create new KVENTRY */
 		async save(_: void, store?: KVEntryStore) {
-			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, store.state.kventry.payload, store.state.kventry.ttl, { store })
+			const { payload, error } = store.getPayloadToSave()
+			if (error) {
+				store.setSnackbar({
+					open: true, type: MESSAGE_TYPE.ERROR, timeout: 4000,
+					title: "NOT SAVED",
+					body: error,
+				})
+				return
+			}
+			const kventry = await kventryApi.put(store.state.connectionId, store.state.bucket.bucket, store.state.kventry.key, payload, store.state.kventry.ttl, { store })
 
+			store.setEditorText(null)
 			const current = store.state.kventry
 			if ( !current.history ) current.history = []
 			current.history.push({ ...kventry })
 			delete kventry.history
-			store.setKVEntry({ ...current, ...kventry })
+			// the API answers with the new revision, which need not carry the value back
+			store.setKVEntry({ ...current, ...kventry, payload: kventry.payload ?? payload })
 			store.setRevisionSelected(kventry.revision)
 
 			store.getParentList()?.fetch()
@@ -124,6 +153,7 @@ const setup = {
 		},
 		/** reset ENTITY */
 		restore: (_: void, store?: KVEntryStore) => {
+			store.setEditorText(null)
 			store.fetch()
 			store.setEditState(EDIT_STATE.READ)
 		},
@@ -131,6 +161,7 @@ const setup = {
 
 
 		revisionSelect(revision: number, store?: KVEntryStore) {
+			store.setEditorText(null)
 			store.setRevisionSelected(revision)
 			store.setHistoryOpen(false)
 		},
@@ -141,16 +172,11 @@ const setup = {
 			if (!next) return
 			store.revisionSelect(next.revision)
 		},
-		setEditorText(text: string, store?: KVEntryStore) {
-			store.setKVEntry({ 
-				...store.state.kventry, 
-				payload: stringToBinaryString(text) }
-			)
-		}
 	},
 
 	mutators: {
 		setKVEntry: (kventry: KVEntry) => ({ kventry }),
+		setEditorText: (editorText: string) => ({ editorText }),
 		setEditState: (editState: EDIT_STATE) => ({ editState }),
 		setHistoryOpen: (historyOpen: boolean) => ({ historyOpen }),
 		setRevisionSelected: (revisionSelected: number) => ({ revisionSelected }),

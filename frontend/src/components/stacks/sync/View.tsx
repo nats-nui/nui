@@ -129,6 +129,7 @@ const SyncView: FunctionComponent<Props> = ({
 					<EditorCode ref={refSender}
 						format={syncSa.format}
 						value={syncSa.messageSend}
+						subject={syncSa.subject}
 						onChange={handleSendChange}
 					/>
 				</div>
@@ -163,6 +164,7 @@ const SyncView: FunctionComponent<Props> = ({
 					<EditorCode ref={refReceiver}
 						format={syncSa.format}
 						value={syncSa.messageReceived}
+						subject={syncSa.subject}
 						readOnly={true}
 					/>
 				</div>

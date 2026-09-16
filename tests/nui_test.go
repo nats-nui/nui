@@ -898,6 +898,30 @@ func (s *NuiTestSuite) TestProtoschemas() {
 	s.Contains(content, "package simple;")
 }
 
+func (s *NuiTestSuite) TestCddlschemas() {
+	e := s.e
+	r := e.GET("/api/cddl").Expect().Status(http.StatusOK)
+	array := r.JSON().Array()
+	array.Length().Ge(2)
+
+	schemaIDs := make([]string, 0)
+	for _, val := range array.Iter() {
+		schemaIDs = append(schemaIDs, val.Object().Value("id").String().Raw())
+	}
+	s.Contains(schemaIDs, "simple")
+	s.Contains(schemaIDs, "simple2")
+
+	e.GET("/api/cddl/simple").Expect().Status(http.StatusOK).
+		JSON().Object().Value("id").String().Equal("simple")
+
+	res := e.GET("/api/cddl/simple/content").Expect().Status(http.StatusOK)
+	res.Header("Content-Type").Contains("text/plain")
+	s.Contains(res.Body().Raw(), "person")
+
+	e.GET("/api/cddl/unknown").Expect().Status(http.StatusNotFound)
+	e.GET("/api/cddl/unknown/content").Expect().Status(http.StatusNotFound)
+}
+
 func TestNuiTestSuite(t *testing.T) {
 	suite.Run(t, new(NuiTestSuite))
 }
