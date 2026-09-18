@@ -46,6 +46,12 @@ func WithProtoSchemasPath(path string) AppOption {
 	}
 }
 
+func WithCddlSchemasPath(path string) AppOption {
+	return func(a *App) {
+		a.cddlschemasPath = path
+	}
+}
+
 func WithNatsCliContexts(paths []string) AppOption {
 	return func(a *App) {
 		a.natsCliContextDirs = paths

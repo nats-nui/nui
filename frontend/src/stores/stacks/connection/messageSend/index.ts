@@ -5,7 +5,7 @@ import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { StoreCore, mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../../editorBase"
 import { LOAD_STATE } from "../../utils"
-import { stringToBinaryString } from "../../../../utils/string"
+import { toPayload } from "../../../../utils/editor"
 
 
 
@@ -68,11 +68,22 @@ const setup = {
 		//#endregion
 
 		publish: async (_: void, store?: MessageSendStore) => {
+			const { payload, error } = toPayload(store.state.text, store.state.format)
+			if (error) {
+				store.setSnackbar({
+					open: true,
+					type: MESSAGE_TYPE.ERROR,
+					title: "MESSAGE NOT SENT",
+					body: error,
+					timeout: 4000,
+				})
+				return
+			}
 			try {
 				await messagesApi.publish(
 					store.state.connectionId,
 					store.state.subject,
-					stringToBinaryString(store.state.text),
+					payload,
 					store.state.headers,
 					{ store }
 				)

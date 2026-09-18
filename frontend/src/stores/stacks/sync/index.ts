@@ -9,7 +9,8 @@ import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { MessageStore } from "../message"
 import { LOAD_STATE } from "../utils"
 import { ViewState } from "../viewBase"
-import { binaryStringToString, stringToBinaryString } from "../../../utils/string"
+import { binaryStringToString } from "../../../utils/string"
+import { MSG_FORMAT, toPayload } from "../../../utils/editor"
 
 
 
@@ -70,16 +71,31 @@ const setup = {
 		//#endregion
 
 		send: async (_: void, store?: SyncStore) => {
+			const { payload, error } = toPayload(store.state.messageSend, store.state.format)
+			if (error) {
+				store.setSnackbar({
+					open: true,
+					type: MESSAGE_TYPE.ERROR,
+					title: "MESSAGE NOT SENT",
+					body: error,
+					timeout: 4000,
+				})
+				return
+			}
 			try {
 				const resp = await messagesApi.sync(
 					store.state.connectionId,
 					store.state.subject,
-					stringToBinaryString(store.state.messageSend),
+					payload,
 					store.state.headers,
 					store.state.timeoutMs,
 					{ store }
 				)
-				store.setMessageReceived(binaryStringToString(resp.payload))
+				// a CBOR reply is binary: decoding it as UTF-8 text would corrupt it
+				store.setMessageReceived(store.state.format == MSG_FORMAT.CBOR
+					? resp.payload
+					: binaryStringToString(resp.payload)
+				)
 				store.setHeadersReceived(resp.headers)
 				store.setSnackbar({
 					open: true,

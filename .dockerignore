@@ -1,6 +1,7 @@
 credentials
 db
 protoschemas
+cddlschemas
 logs.log
 logs
 .idea

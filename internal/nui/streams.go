@@ -3,9 +3,7 @@ package nui
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-nui/nui/internal/ws"
 	"strconv"
@@ -214,105 +212,233 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 		return c.JSON([]ws.NatsMsg{})
 	}
 
-	// Stream has messages, ,so proceed with consumer configuration based on query parameters
-	config := jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverByStartSequencePolicy,
-		MemoryStorage: true,
-		Name:          "nui-" + uuid.NewString(),
+	// Subjects to filter on. An empty filter matches every subject (">").
+	subjects := strings.Split(c.Query("subjects"), ",")
+	if len(subjects) == 0 || subjects[0] == "" {
+		subjects = []string{">"}
 	}
 
-	subjects := strings.Split(c.Query("subjects"), ",")
-	if len(subjects) > 0 && subjects[0] != "" {
-		if len(subjects) == 1 {
-			config.FilterSubject = subjects[0]
-		} else {
-			config.FilterSubjects = subjects
-		}
-	}
+	// interval is the number of messages to return. A negative value walks
+	// backwards, returning the |interval| messages ending at the start position.
 	interval, err := strconv.Atoi(c.Query("interval"))
 	if err != nil {
 		interval = 25
 	}
-	// batch is the absolute value of the interval
-	batch := interval
-	if batch < 0 {
-		batch = -batch
+	limit := interval
+	if limit < 0 {
+		limit = -limit
+	}
+	if limit == 0 {
+		return c.JSON([]ws.NatsMsg{})
 	}
 
-	var msgCount int
-	msgs := make([]ws.NatsMsg, 0, batch)
-
-	timeStr := c.Query("start_time")
-	if timeStr != "" {
-		config.DeliverPolicy = jetstream.DeliverByStartTimePolicy
+	// Messages are read directly from the stream through the Get Message API
+	// (Stream.GetMsg), so no consumer is created. This is what allows browsing
+	// WorkQueue and Interest streams, where extra or overlapping consumers are
+	// forbidden by the server.
+	var raw []*jetstream.RawStreamMsg
+	if timeStr := c.Query("start_time"); timeStr != "" {
 		t, err := time.Parse(time.RFC3339, timeStr)
 		if err != nil {
 			return a.logAndFiberError(c, err, 422)
 		}
-		config.OptStartTime = &t
-		msgCount = batch
-	} else {
-		querySeq, err := strconv.Atoi(c.Query("seq_start"))
-		if err != nil {
-			info, err := stream.Info(c.Context())
-			if err != nil {
-				return a.logAndFiberError(c, err, 500)
-			}
-			if interval > 0 {
-				querySeq = int(info.State.FirstSeq)
-			} else {
-				querySeq = int(info.State.LastSeq)
-			}
-			querySeq = max(querySeq, 1)
-		}
-		var seekFromSeq uint64
-		seekFromSeq, msgCount, err = findSeekSeq(c.Context(), stream, info, config, querySeq, interval)
+		startSeq, found, err := findSeqByTime(c.Context(), stream, info, t)
 		if err != nil {
 			return a.logAndFiberError(c, err, 500)
 		}
-		if msgCount == 0 {
-			return c.JSON(msgs)
+		if !found {
+			return c.JSON([]ws.NatsMsg{})
 		}
-		config.OptStartSeq = seekFromSeq
+		raw, err = collectForward(c.Context(), stream, startSeq, subjects, 0, limit)
+		if err != nil {
+			return a.logAndFiberError(c, err, 500)
+		}
+		return c.JSON(toNatsMsgs(raw))
 	}
 
-	msgs, err = a.fetchMessages(c, err, stream, config, batch, msgs, msgCount)
+	querySeq, err := strconv.Atoi(c.Query("seq_start"))
+	if err != nil {
+		if interval > 0 {
+			querySeq = int(info.State.FirstSeq)
+		} else {
+			querySeq = int(info.State.LastSeq)
+		}
+	}
+	querySeq = max(querySeq, 1)
+
+	if interval > 0 {
+		raw, err = collectForward(c.Context(), stream, uint64(querySeq), subjects, 0, limit)
+	} else {
+		raw, err = collectBackward(c.Context(), stream, info, uint64(querySeq), subjects, limit)
+	}
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(msgs)
+	return c.JSON(toNatsMsgs(raw))
 }
 
-func (a *App) fetchMessages(c *fiber.Ctx, err error, stream jetstream.Stream, config jetstream.ConsumerConfig, batch int, msgs []ws.NatsMsg, msgCount int) ([]ws.NatsMsg, error) {
-	consumer, err := stream.CreateOrUpdateConsumer(c.Context(), config)
-	if err != nil {
-		return nil, err
+// getNextMsg fetches the first message with a sequence >= fromSeq whose subject
+// matches subject (which may be a wildcard such as ">"). It relies on
+// Stream.GetMsg, which reads directly from the stream and creates no consumer,
+// so it works on any stream regardless of its retention policy. found is false
+// when no matching message exists at or after fromSeq.
+func getNextMsg(ctx context.Context, stream jetstream.Stream, fromSeq uint64, subject string) (*jetstream.RawStreamMsg, bool, error) {
+	if fromSeq < 1 {
+		fromSeq = 1
 	}
-	msgBatch, err := consumer.FetchNoWait(batch)
+	msg, err := stream.GetMsg(ctx, fromSeq, jetstream.WithGetMsgSubject(subject))
 	if err != nil {
-		return nil, err
+		if errors.Is(err, jetstream.ErrMsgNotFound) {
+			return nil, false, nil
+		}
+		return nil, false, err
 	}
-	for msg := range msgBatch.Messages() {
-		if len(msgs) == msgCount {
+	return msg, true, nil
+}
+
+// collectForward returns messages matching one of subjects, in ascending
+// sequence order, starting at startSeq. When maxSeq > 0, messages beyond maxSeq
+// are excluded. When limit > 0, at most limit messages are returned. Gaps left
+// by deleted or expired messages are skipped naturally, since GetMsg jumps to
+// the next existing message. Each subject is only re-queried once its cached
+// candidate is consumed, so a single-subject browse costs one request per
+// returned message.
+func collectForward(ctx context.Context, stream jetstream.Stream, startSeq uint64, subjects []string, maxSeq uint64, limit int) ([]*jetstream.RawStreamMsg, error) {
+	msgs := make([]*jetstream.RawStreamMsg, 0, limit)
+	cursor := startSeq
+	if cursor < 1 {
+		cursor = 1
+	}
+	candidates := make(map[string]*jetstream.RawStreamMsg, len(subjects))
+	exhausted := make(map[string]bool, len(subjects))
+	for {
+		if limit > 0 && len(msgs) >= limit {
 			break
 		}
-		if msgBatch.Error() != nil {
-			return nil, fmt.Errorf("failed to fetch message: %w", msgBatch.Error())
+		var best *jetstream.RawStreamMsg
+		for _, subject := range subjects {
+			if exhausted[subject] {
+				continue
+			}
+			cand := candidates[subject]
+			if cand == nil || cand.Sequence < cursor {
+				m, found, err := getNextMsg(ctx, stream, cursor, subject)
+				if err != nil {
+					return nil, err
+				}
+				if !found {
+					exhausted[subject] = true
+					delete(candidates, subject)
+					continue
+				}
+				cand = m
+				candidates[subject] = m
+			}
+			if best == nil || cand.Sequence < best.Sequence {
+				best = cand
+			}
 		}
-		metadata, err := msg.Metadata()
+		if best == nil {
+			break
+		}
+		if maxSeq > 0 && best.Sequence > maxSeq {
+			break
+		}
+		msgs = append(msgs, best)
+		cursor = best.Sequence + 1
+	}
+	return msgs, nil
+}
+
+// collectBackward returns up to limit messages matching one of subjects whose
+// sequence is <= startSeq, in ascending order (the tail of the match set). It
+// scans forward inside a window that grows until enough matches are found or the
+// beginning of the stream is reached, so it needs no consumer while still
+// honouring gaps and subject filters.
+func collectBackward(ctx context.Context, stream jetstream.Stream, info *jetstream.StreamInfo, startSeq uint64, subjects []string, limit int) ([]*jetstream.RawStreamMsg, error) {
+	firstSeq := info.State.FirstSeq
+	if startSeq < firstSeq {
+		return []*jetstream.RawStreamMsg{}, nil
+	}
+	upper := startSeq
+	if lastSeq := info.State.LastSeq; upper > lastSeq {
+		upper = lastSeq
+	}
+	window := uint64(limit)
+	for {
+		lo := firstSeq
+		if upper+1 > window {
+			if cand := upper + 1 - window; cand > firstSeq {
+				lo = cand
+			}
+		}
+		msgs, err := collectForward(ctx, stream, lo, subjects, upper, 0)
 		if err != nil {
 			return nil, err
 		}
+		if len(msgs) >= limit {
+			return msgs[len(msgs)-limit:], nil
+		}
+		if lo == firstSeq {
+			return msgs, nil
+		}
+		window *= 2
+	}
+}
+
+// findSeqByTime returns the sequence of the first message whose timestamp is at
+// or after t, using a binary search over the stream sequences (message
+// timestamps are monotonic with sequence). found is false when every message
+// predates t. It reads messages directly and creates no consumer.
+func findSeqByTime(ctx context.Context, stream jetstream.Stream, info *jetstream.StreamInfo, t time.Time) (uint64, bool, error) {
+	lo, hi := info.State.FirstSeq, info.State.LastSeq
+	if hi < lo {
+		return 0, false, nil
+	}
+	var result uint64
+	for lo <= hi {
+		mid := lo + (hi-lo)/2
+		msg, found, err := getNextMsg(ctx, stream, mid, ">")
+		if err != nil {
+			return 0, false, err
+		}
+		if !found {
+			// No message exists at or after mid, so any match is lower.
+			if mid == 0 {
+				break
+			}
+			hi = mid - 1
+			continue
+		}
+		if msg.Time.Before(t) {
+			lo = msg.Sequence + 1
+			continue
+		}
+		// This message is a match; look for an earlier one below mid.
+		result = msg.Sequence
+		if mid == 0 {
+			break
+		}
+		hi = mid - 1
+	}
+	if result == 0 {
+		return 0, false, nil
+	}
+	return result, true, nil
+}
+
+func toNatsMsgs(raw []*jetstream.RawStreamMsg) []ws.NatsMsg {
+	msgs := make([]ws.NatsMsg, 0, len(raw))
+	for _, m := range raw {
 		msgs = append(msgs, ws.NatsMsg{
-			Subject:    msg.Subject(),
-			SeqNum:     metadata.Sequence.Stream,
-			ReceivedAt: metadata.Timestamp,
-			Payload:    msg.Data(),
-			Headers:    msg.Headers(),
+			Subject:    m.Subject,
+			SeqNum:     m.Sequence,
+			ReceivedAt: m.Time,
+			Payload:    m.Data,
+			Headers:    m.Header,
 		})
 	}
-	_ = stream.DeleteConsumer(c.Context(), config.Name)
-	return msgs, nil
+	return msgs
 }
 
 func (a *App) HandleDeleteStreamMessage(c *fiber.Ctx) error {
@@ -343,72 +469,4 @@ func (a *App) HandleDeleteStreamMessage(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	return c.SendStatus(200)
-}
-
-func findSeekSeq(ctx context.Context, stream jetstream.Stream, info *jetstream.StreamInfo, consumerConfig jetstream.ConsumerConfig, startSeq int, interval int) (uint64, int, error) {
-	if interval >= 0 {
-		return uint64(startSeq), interval, nil
-	}
-
-	if uint64(startSeq) < info.State.FirstSeq {
-		return info.State.FirstSeq, 0, nil
-	}
-	intervalMultiplier := 1
-	firstSeq := startSeq
-	for {
-		batch := min(10000, -interval*intervalMultiplier)
-		firstSeq -= batch - 1
-		if firstSeq <= 1 || uint64(firstSeq) <= info.State.FirstSeq {
-			return info.State.FirstSeq, int(info.State.FirstSeq - uint64(firstSeq)), nil
-		}
-		if uint64(firstSeq) == info.State.FirstSeq {
-			return info.State.FirstSeq, 1, nil
-		}
-		consumerConfig.OptStartSeq = uint64(firstSeq)
-		consumerConfig.HeadersOnly = true
-		consumer, err := stream.CreateConsumer(ctx, consumerConfig)
-		if err != nil {
-			return 0, 0, err
-		}
-		msgBatch, err := consumer.FetchNoWait(batch)
-		if err != nil {
-			return 0, 0, err
-		}
-		neededSeq, msgsCount, done, err := findSeqInBatch(msgBatch, startSeq, batch)
-		err = stream.DeleteConsumer(context.Background(), consumerConfig.Name)
-		if err != nil {
-			jsErr, ok := err.(jetstream.JetStreamError)
-			if !ok || jsErr.APIError().Code != 404 {
-				return 0, 0, nil
-			}
-		}
-		if done {
-			return neededSeq, msgsCount, nil
-		}
-	}
-}
-
-func findSeqInBatch(msgBatch jetstream.MessageBatch, startSeq int, batch int) (uint64, int, bool, error) {
-	neededSeq := uint64(0)
-	msgsCount := 0
-	for msg := range msgBatch.Messages() {
-		if msgBatch.Error() != nil {
-			return 0, 0, false, msgBatch.Error()
-		}
-		msgsCount++
-		metadata, err := msg.Metadata()
-		if err != nil {
-			return 0, 0, false, err
-		}
-		if neededSeq == 0 {
-			neededSeq = metadata.Sequence.Stream
-		}
-		if metadata.Sequence.Stream > uint64(startSeq) {
-			return 0, 0, false, nil
-		}
-		if msgsCount >= batch {
-			return neededSeq, msgsCount, true, nil
-		}
-	}
-	return 0, 0, false, nil
 }
