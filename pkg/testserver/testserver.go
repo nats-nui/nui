@@ -108,7 +108,10 @@ func (ts *TestServer) Run() (*server.Server, TearDownFunc, error) {
 		case <-tick:
 			if natsServer.Running() {
 				ts.enableJetstreamOnAccounts(natsServer)
-				ts.tearDown = func() { natsServer.Shutdown() }
+				ts.tearDown = func() {
+					natsServer.Shutdown()
+					natsServer.WaitForShutdown()
+				}
 				return natsServer, ts.tearDown, nil
 			}
 		}
