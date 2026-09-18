@@ -117,7 +117,18 @@ func TestDocStore_ReclaimsLeftoverValueLog(t *testing.T) {
 	require.Less(t, maxApparentFile(t, dir), int64(oversizedVlogBytes))
 	require.True(t, log.has("warn", "leftover value log exceeds limit"), "reclaim must be logged")
 	require.True(t, log.has("info", "value log reclaimed"))
-	require.True(t, log.has("info", "opened with nui limits"))
+	require.False(t, log.has("info", "opened with nui limits"))
+}
+
+func TestDocStore_HealthyOpenIsQuiet(t *testing.T) {
+	dir := t.TempDir()
+	log := &memLogger{}
+	db, err := Open(dir, log)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+	require.Empty(t, log.info)
+	require.Empty(t, log.warn)
+	require.Empty(t, log.err)
 }
 
 func maxApparentFile(t *testing.T, dir string) int64 {

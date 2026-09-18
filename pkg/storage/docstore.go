@@ -50,19 +50,7 @@ func Open(path string, l logging.Slogger) (*DB, error) {
 	if err := reclaimOversizedValueLogs(path, opts, l); err != nil {
 		return nil, err
 	}
-	db, err := openClover(opts)
-	if err != nil {
-		return nil, err
-	}
-	l.Info("badger opened with nui limits",
-		"path", path,
-		"value_log_file_size", valueLogFileSize,
-		"value_log_mmap_bytes", valueLogFileSize*2,
-		"memtable_size", memTableSize,
-		"num_memtables", numMemtables,
-		"block_cache_size", blockCacheSize,
-	)
-	return db, nil
+	return openClover(opts)
 }
 
 func nuiBadgerOptions(path string) badger.Options {
@@ -117,16 +105,19 @@ func reclaimOversizedValueLogs(path string, opts badger.Options, l logging.Slogg
 	}
 	db, err := badger.Open(opts)
 	if err != nil {
+		// A leftover 2GiB file must not prevent NUI from starting.
+		// The real open still runs; log that reclaim did not finish.
 		l.Error("badger reclaim open failed", "path", path, "error", err.Error())
-		return err
+		return nil
 	}
 	if err := db.Close(); err != nil {
 		l.Error("badger reclaim close failed", "path", path, "error", err.Error())
-		return err
+		return nil
 	}
 	after, err := maxApparentVlog(path)
 	if err != nil {
-		return err
+		l.Error("badger reclaim stat failed", "path", path, "error", err.Error())
+		return nil
 	}
 	l.Info("badger value log reclaimed", "path", path, "max_bytes", after)
 	return nil
