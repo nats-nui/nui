@@ -1,0 +1,6 @@
+; API / unit-test fixture (rule name matches file stem).
+; Demo schemas for the UI are person.cddl and order.cddl.
+simple = {
+  name: tstr,
+  age: uint,
+}

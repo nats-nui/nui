@@ -114,6 +114,11 @@ func (a *App) registerHandlers() {
 	a.Get("/api/proto/:id", a.HandleGetProtoSchema)
 	a.Get("/api/proto/:id/content", a.HandleServeProtoContent)
 
+	// CDDL schema read-only routes (schemas are loaded from filesystem)
+	a.Get("/api/cddl", a.HandleIndexCddlSchemas)
+	a.Get("/api/cddl/:id", a.HandleGetCddlSchema)
+	a.Get("/api/cddl/:id/content", a.HandleServeCddlContent)
+
 	a.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)

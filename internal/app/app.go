@@ -17,6 +17,7 @@ type App struct {
 	l                  logging.Slogger
 	dbPath             string
 	protoschemasPath   string
+	cddlschemasPath    string
 	serverPort         string
 	natsCliContextDirs []string
 }
@@ -29,6 +30,7 @@ func NewApp(opts ...AppOption) (*App, error) {
 		l:                &logging.NullLogger{},
 		dbPath:           ":memory:",
 		protoschemasPath: "",
+		cddlschemasPath:  "",
 		serverPort:       "31311",
 	}
 	for _, o := range opts {
@@ -52,7 +54,7 @@ func (a *App) Startup(ctx context.Context) {
 	a.l.Info("Version: " + a.version)
 	a.l.Info("database path: " + a.dbPath)
 
-	nuiSvc, err := nui.Setup(a.dbPath, a.protoschemasPath, a.l)
+	nuiSvc, err := nui.Setup(a.dbPath, a.protoschemasPath, a.cddlschemasPath, a.l)
 	if err != nil {
 		a.l.Error("fatal error setting up app nui service: " + err.Error())
 		os.Exit(1)

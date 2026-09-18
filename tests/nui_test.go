@@ -12,6 +12,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -425,6 +426,59 @@ func (s *NuiTestSuite) TestStreamMessagesIndexWithNegativeInterval() {
 
 }
 
+func (s *NuiTestSuite) TestStreamMessagesIndexOnWorkQueueStream() {
+	e := s.e
+	connId := s.defaultConn()
+
+	// A WorkQueue stream only allows a single, non-overlapping consumer per
+	// subject. NUI must therefore read messages directly from the stream
+	// instead of creating a consumer, otherwise listing fails with
+	// "multiple non-filtered consumers not allowed on workqueue stream".
+	stream, err := s.js.CreateStream(s.ctx, jetstream.StreamConfig{
+		Name:      "wq_stream",
+		Subjects:  []string{"wq.>"},
+		Storage:   jetstream.MemoryStorage,
+		Retention: jetstream.WorkQueuePolicy,
+	})
+	s.NoError(err)
+	for i := 1; i <= 10; i++ {
+		_, err = s.js.Publish(s.ctx, "wq.high", []byte(fmt.Sprintf("msg%d", i)))
+		s.NoError(err)
+	}
+
+	// Simulate a worker already bound to the subject: this is exactly what made
+	// the previous consumer-based listing fail.
+	_, err = stream.CreateOrUpdateConsumer(s.ctx, jetstream.ConsumerConfig{
+		Durable:       "worker",
+		FilterSubject: "wq.high",
+		AckPolicy:     jetstream.AckExplicitPolicy,
+	})
+	s.NoError(err)
+
+	// Listing all messages works without disturbing the worker.
+	r := e.GET("/api/connection/" + connId + "/stream/wq_stream/messages").
+		Expect().Status(http.StatusOK).JSON().Array()
+	r.Length().IsEqual(10)
+	r.Value(0).Object().Value("seq_num").IsEqual(1)
+	r.Value(0).Object().Value("payload").NotEqual("")
+
+	// Filtering by the very subject the worker consumes also works.
+	e.GET("/api/connection/" + connId + "/stream/wq_stream/messages").
+		WithQueryString("subjects=wq.high").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+
+	// Negative interval (used to load older messages) works too.
+	rNeg := e.GET("/api/connection/" + connId + "/stream/wq_stream/messages").
+		WithQueryString("interval=-3").
+		Expect().Status(http.StatusOK).JSON().Array()
+	rNeg.Length().IsEqual(3)
+	rNeg.Value(0).Object().Value("seq_num").IsEqual(8)
+
+	// The worker consumer is still present and untouched.
+	e.GET("/api/connection/" + connId + "/stream/wq_stream/consumer").
+		Expect().Status(http.StatusOK).JSON().Array().Length().IsEqual(1)
+}
+
 func (s *NuiTestSuite) TestStreamMessagesWithStartTime() {
 	e := s.e
 	connId := s.defaultConn()
@@ -441,6 +495,70 @@ func (s *NuiTestSuite) TestStreamMessagesWithStartTime() {
 	r.Length().IsEqual(2)
 	r.Value(0).Object().Value("payload").String().IsEqual("bXNnMQ==")
 	r.Value(1).Object().Value("payload").String().IsEqual("bXNnMg==")
+}
+
+func (s *NuiTestSuite) TestStreamMessagesIndexAdvanced() {
+	connId := s.defaultConn()
+
+	// Merge: interleaved subjects, filter merge.a + merge.c.
+	// seq 1 merge.a, 2 merge.b, 3 merge.c, 4 merge.a, 5 merge.b, 6 merge.c
+	s.emptyStream("merge_stream", "merge.a", "merge.b", "merge.c")
+	s.publishSubjects("merge.a", "merge.b", "merge.c", "merge.a", "merge.b", "merge.c")
+	s.Equal([]uint64{1, 3, 4, 6}, messageSeqs(s.streamMessages(connId, "merge_stream", "subjects=merge.a,merge.c")))
+	s.ensureNoNuiConsumersPending(connId, "merge_stream")
+
+	// Holes: seq_start on a deleted sequence jumps to the next existing message.
+	// seq 1-10, delete 4, 5, 6 → remaining 1, 2, 3, 7, 8, 9, 10
+	s.emptyStream("hole_stream", "hole.events")
+	s.publishN("hole.events", 10)
+	s.deleteSeqs("hole_stream", 4, 5, 6)
+	s.Equal([]uint64{7, 8, 9}, messageSeqs(s.streamMessages(connId, "hole_stream", "seq_start=4&interval=3")))
+	s.ensureNoNuiConsumersPending(connId, "hole_stream")
+
+	// Sparse backward: keep only at the ends, noise in between.
+	// seq 1 sparse.keep, 2-21 sparse.noise, 22 sparse.keep
+	// interval=-2 must grow the window past 20 noise messages to return both keeps.
+	s.emptyStream("sparse_stream", "sparse.keep", "sparse.noise")
+	s.publishSubjects("sparse.keep")
+	s.publishN("sparse.noise", 20)
+	s.publishSubjects("sparse.keep")
+	s.Equal([]uint64{1, 22}, messageSeqs(s.streamMessages(connId, "sparse_stream", "subjects=sparse.keep&interval=-2")))
+	s.ensureNoNuiConsumersPending(connId, "sparse_stream")
+
+	// Pagination: 9 messages, pages of 3 (UI fetchNext / fetchPrev).
+	s.emptyStream("page_stream", "page.events")
+	s.publishN("page.events", 9)
+	s.Equal([]uint64{1, 2, 3}, messageSeqs(s.streamMessages(connId, "page_stream", "seq_start=1&interval=3")))
+	s.Equal([]uint64{4, 5, 6}, messageSeqs(s.streamMessages(connId, "page_stream", "seq_start=4&interval=3")))
+	s.Equal([]uint64{1, 2, 3}, messageSeqs(s.streamMessages(connId, "page_stream", "seq_start=3&interval=-3")))
+	s.Equal([]uint64{7, 8, 9}, messageSeqs(s.streamMessages(connId, "page_stream", "interval=-3")))
+	s.ensureNoNuiConsumersPending(connId, "page_stream")
+
+	// start_time edges on a 3-message stream (no sleep needed: times are ±1h).
+	s.emptyStream("time_stream", "time.events")
+	s.publishN("time.events", 3)
+	before := time.Now().UTC().Add(-time.Hour).Format(time.RFC3339)
+	after := time.Now().UTC().Add(time.Hour).Format(time.RFC3339)
+	s.Equal([]uint64{1, 2, 3}, messageSeqs(s.streamMessages(connId, "time_stream", "start_time="+before+"&interval=3")))
+	s.streamMessages(connId, "time_stream", "start_time="+after).Length().IsEqual(0)
+	s.e.GET("/api/connection/"+connId+"/stream/time_stream/messages").
+		WithQuery("start_time", "not-a-time").
+		Expect().Status(http.StatusUnprocessableEntity)
+	s.streamMessages(connId, "time_stream", "interval=0").Length().IsEqual(0)
+	s.streamMessages(connId, "time_stream", "seq_start=100&interval=5").Length().IsEqual(0)
+	s.ensureNoNuiConsumersPending(connId, "time_stream")
+
+	// Binary search by start_time on a large stream with a hole around the midpoint.
+	// 200 messages; delete 80-120 so GetMsg at mid (seq 100) lands in the hole.
+	// Time boundary is after seq 100: first remaining message at/after that time is 121.
+	s.emptyStream("seek_stream", "seek.events")
+	s.publishN("seek.events", 100)
+	time.Sleep(1100 * time.Millisecond)
+	gap := time.Now().UTC().Format(time.RFC3339)
+	s.publishN("seek.events", 100)
+	s.deleteSeqRange("seek_stream", 80, 120)
+	s.Equal([]uint64{121, 122, 123}, messageSeqs(s.streamMessages(connId, "seek_stream", "start_time="+gap+"&interval=3")))
+	s.ensureNoNuiConsumersPending(connId, "seek_stream")
 }
 
 func (s *NuiTestSuite) TestStreamMessagesDelete() {
@@ -694,7 +812,7 @@ func (s *NuiTestSuite) TestHeadersOnSub() {
 }
 
 func (s *NuiTestSuite) TestConnectionEventsWs() {
-	s.testServer.TearDown()
+	s.stopNatsServer()
 	time.Sleep(10 * time.Millisecond)
 	connId := s.defaultConn()
 
@@ -716,7 +834,7 @@ func (s *NuiTestSuite) TestConnectionEventsWs() {
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("connected")
 
 	// shutdown the server and check that both ws receive the disconnected event
-	s.testServer.TearDown()
+	s.stopNatsServer()
 	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 }
@@ -756,6 +874,56 @@ func (s *NuiTestSuite) TestMetrics() {
 	wr.Body().Contains("varz")
 	wr.Body().Contains("connz")
 
+}
+
+// TestMetricsWithTLS verifies metrics nats_source works when the connection uses TLS
+// with handshake_first (regression for https://github.com/nats-nui/nui/issues/138).
+// Server TLS is enabled only in this test; client TLS is set on the connection entity
+// so the metrics admin connection must inherit tls_auth.
+func (s *NuiTestSuite) TestMetricsWithTLS() {
+	s.startNatsServer(testserver.WithTLS(
+		insecureTLSCerts.serverCert,
+		insecureTLSCerts.serverKey,
+		insecureTLSCerts.caPath,
+		true,
+	))
+
+	metricsConnPayload := fmt.Sprintf(`{
+			"name": "sys-tls",
+			"hosts": ["%%s"],
+			"tls_auth": {
+				"enabled": true,
+				"cert_path": %q,
+				"key_path": %q,
+				"ca_path": %q,
+				"handshake_first": true
+			},
+			"metrics": {
+				"nats_source": {
+					"active": true,
+					"auth": {
+						"active": true,
+						"mode": "auth_user_password",
+						"username": "sys",
+						"password": "sys"
+					}
+				}
+			}
+		}`, insecureTLSCerts.clientCert, insecureTLSCerts.clientKey, insecureTLSCerts.caPath)
+
+	metricsConnId := s.newConnection(metricsConnPayload)
+
+	ws := s.ws("/ws/sub", "id="+metricsConnId)
+	defer ws.Disconnect()
+
+	ws.WithReadTimeout(2 * time.Second).Expect().Body().Contains("connected")
+	time.Sleep(10 * time.Millisecond)
+
+	ws.WriteText(`{"type": "metrics_req", "payload": {"enabled": true}}`)
+	wr := ws.WithReadTimeout(3 * time.Second).Expect()
+
+	wr.Body().Contains("varz")
+	wr.Body().Contains("connz")
 }
 
 func (s *NuiTestSuite) TestProtoschemas() {
@@ -886,6 +1054,30 @@ func (s *NuiTestSuite) TestSubjectsCoreCancel() {
 		WithQuery("filter", "probe.>").
 		WithQuery("listen_ms", "200").
 		Expect().Status(http.StatusOK)
+}
+
+func (s *NuiTestSuite) TestCddlschemas() {
+	e := s.e
+	r := e.GET("/api/cddl").Expect().Status(http.StatusOK)
+	array := r.JSON().Array()
+	array.Length().Ge(2)
+
+	schemaIDs := make([]string, 0)
+	for _, val := range array.Iter() {
+		schemaIDs = append(schemaIDs, val.Object().Value("id").String().Raw())
+	}
+	s.Contains(schemaIDs, "simple")
+	s.Contains(schemaIDs, "simple2")
+
+	e.GET("/api/cddl/simple").Expect().Status(http.StatusOK).
+		JSON().Object().Value("id").String().Equal("simple")
+
+	res := e.GET("/api/cddl/simple/content").Expect().Status(http.StatusOK)
+	res.Header("Content-Type").Contains("text/plain")
+	s.Contains(res.Body().Raw(), "person")
+
+	e.GET("/api/cddl/unknown").Expect().Status(http.StatusNotFound)
+	e.GET("/api/cddl/unknown/content").Expect().Status(http.StatusNotFound)
 }
 
 func TestNuiTestSuite(t *testing.T) {
