@@ -68,6 +68,28 @@ func WithSysAccount(userpass string) Option {
 	}
 }
 
+// WithTLS enables TLS on the server with optional client-cert verification and handshake-first.
+func WithTLS(certFile, keyFile, caFile string, handshakeFirst bool) Option {
+	return func(ts *TestServer) {
+		tc := &server.TLSConfigOpts{
+			CertFile:       certFile,
+			KeyFile:        keyFile,
+			CaFile:         caFile,
+			Verify:         true,
+			Timeout:        2.0,
+			HandshakeFirst: handshakeFirst,
+		}
+		tlsConfig, err := server.GenTLSConfig(tc)
+		if err != nil {
+			panic(fmt.Sprintf("failed to build TLS config: %v", err))
+		}
+		ts.Options.TLSConfig = tlsConfig
+		ts.Options.TLSTimeout = tc.Timeout
+		ts.Options.TLSVerify = true
+		ts.Options.TLSHandshakeFirst = handshakeFirst
+	}
+}
+
 type TearDownFunc func()
 
 func (ts *TestServer) Run() (*server.Server, TearDownFunc, error) {

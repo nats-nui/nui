@@ -11,6 +11,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -810,7 +811,7 @@ func (s *NuiTestSuite) TestHeadersOnSub() {
 }
 
 func (s *NuiTestSuite) TestConnectionEventsWs() {
-	s.testServer.TearDown()
+	s.stopNatsServer()
 	time.Sleep(10 * time.Millisecond)
 	connId := s.defaultConn()
 
@@ -832,7 +833,7 @@ func (s *NuiTestSuite) TestConnectionEventsWs() {
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("connected")
 
 	// shutdown the server and check that both ws receive the disconnected event
-	s.testServer.TearDown()
+	s.stopNatsServer()
 	ws.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 	ws2.WithReadTimeout(200 * time.Millisecond).Expect().Body().Contains("disconnected")
 }
@@ -872,6 +873,56 @@ func (s *NuiTestSuite) TestMetrics() {
 	wr.Body().Contains("varz")
 	wr.Body().Contains("connz")
 
+}
+
+// TestMetricsWithTLS verifies metrics nats_source works when the connection uses TLS
+// with handshake_first (regression for https://github.com/nats-nui/nui/issues/138).
+// Server TLS is enabled only in this test; client TLS is set on the connection entity
+// so the metrics admin connection must inherit tls_auth.
+func (s *NuiTestSuite) TestMetricsWithTLS() {
+	s.startNatsServer(testserver.WithTLS(
+		insecureTLSCerts.serverCert,
+		insecureTLSCerts.serverKey,
+		insecureTLSCerts.caPath,
+		true,
+	))
+
+	metricsConnPayload := fmt.Sprintf(`{
+			"name": "sys-tls",
+			"hosts": ["%%s"],
+			"tls_auth": {
+				"enabled": true,
+				"cert_path": %q,
+				"key_path": %q,
+				"ca_path": %q,
+				"handshake_first": true
+			},
+			"metrics": {
+				"nats_source": {
+					"active": true,
+					"auth": {
+						"active": true,
+						"mode": "auth_user_password",
+						"username": "sys",
+						"password": "sys"
+					}
+				}
+			}
+		}`, insecureTLSCerts.clientCert, insecureTLSCerts.clientKey, insecureTLSCerts.caPath)
+
+	metricsConnId := s.newConnection(metricsConnPayload)
+
+	ws := s.ws("/ws/sub", "id="+metricsConnId)
+	defer ws.Disconnect()
+
+	ws.WithReadTimeout(2 * time.Second).Expect().Body().Contains("connected")
+	time.Sleep(10 * time.Millisecond)
+
+	ws.WriteText(`{"type": "metrics_req", "payload": {"enabled": true}}`)
+	wr := ws.WithReadTimeout(3 * time.Second).Expect()
+
+	wr.Body().Contains("varz")
+	wr.Body().Contains("connz")
 }
 
 func (s *NuiTestSuite) TestProtoschemas() {
