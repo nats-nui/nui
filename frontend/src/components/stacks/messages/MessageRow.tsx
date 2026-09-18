@@ -3,6 +3,7 @@ import DividerRow from "@/components/formatters/divider/DividerRow"
 import HexTable from "@/components/formatters/hex/HexTable"
 import JsonRow from "@/components/formatters/json/JsonRow"
 import ProtobufRow from "@/components/formatters/protobuf/ProtobufRow"
+import CborRow from "@/components/formatters/cbor/CborRow"
 import TextRow from "@/components/formatters/text/TextRow"
 import CloseIcon from "@/icons/CloseIcon"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
@@ -92,6 +93,7 @@ const MessageRow: FunctionComponent<Props> = ({
 				[MSG_FORMAT.BASE64]: <Base64Cmp text={message.payload} maxChar={80} />,
 				[MSG_FORMAT.HEX]: <HexTable text={message.payload} maxRows={10} />,
 				[MSG_FORMAT.PROTOBUF]: <ProtobufRow text={message.payload} subject={message.subject} />,
+				[MSG_FORMAT.CBOR]: <CborRow text={message.payload} subject={message.subject} />,
 			}[format]}
 
 			{time && (

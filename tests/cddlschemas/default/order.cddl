@@ -1,0 +1,30 @@
+; order.cddl — messages on subjects like orders.>
+;
+; Pick type `order` (selected automatically when you open this file). The other
+; names below are helpers the form inlines; you can still choose them by hand.
+;
+; Shows: required + optional, string keys, integer-keyed map, byte string,
+; array of a nested type, enums, bounds, pattern, tagged UUID.
+
+order = {
+  id: uuid,                          ; 16-byte id, tagged as UUID on the wire
+  placed: tdate,                     ; when it was placed
+  status: "new" / "paid" / "shipped",
+  lines: [+ line],                   ; at least one line item
+  ? note: tstr .size (0..140),       ; optional customer note
+  ? headers: { * int => tstr },      ; integer keys (NATS-style header codes)
+  * tstr => tstr,                    ; any extra string-keyed fields
+}
+
+line = {
+  sku: tstr .regexp "^[A-Z]{3}-[0-9]{4}$",
+  qty: 1..99,
+  price: amount,
+}
+
+amount = {
+  currency: "USD" / "EUR" / "GBP",
+  cents: uint,                       ; minor unit: 4.20 → 420
+}
+
+uuid = #6.37(bstr .size 16)

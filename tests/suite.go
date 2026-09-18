@@ -36,8 +36,6 @@ func (s *NuiTestSuite) SetupSuite() {
 
 func (s *NuiTestSuite) SetupTest() {
 	s.ctx = context.Background()
-	s.testServer = testserver.Build(testserver.WithPort(8080), testserver.WithDefaultAccount(), testserver.WithSysAccount("sys"))
-	s.natsServerOpts = s.testServer.Options
 	s.nuiServerPort = strconv.Itoa(rand.Intn(1000) + 3000)
 	s.e = s.newE()
 	s.startNatsServer()
@@ -57,7 +55,7 @@ func (s *NuiTestSuite) connectNatsClient() {
 func (s *NuiTestSuite) startNuiServer() {
 
 	mockedLogger := &logging.NullLogger{}
-	nuiSvc, err := nui.Setup(":memory:", "./protoschemas/default", mockedLogger)
+	nuiSvc, err := nui.Setup(":memory:", "./protoschemas/default", "./cddlschemas/default", mockedLogger)
 	s.NoError(err)
 
 	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
@@ -70,7 +68,29 @@ func (s *NuiTestSuite) startNuiServer() {
 	s.e.GET("/health").WithMaxRetries(5).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
 }
 
-func (s *NuiTestSuite) startNatsServer() {
+// stopNatsServer shuts down the NATS test server if one is running.
+func (s *NuiTestSuite) stopNatsServer() {
+	if s.testServer != nil {
+		s.testServer.TearDown()
+	}
+	if s.nc != nil {
+		s.nc.Close()
+		s.nc = nil
+	}
+	s.NatsServer = nil
+}
+
+// startNatsServer stops any running NATS server, then starts one with suite defaults
+// plus any extra opts (e.g. WithTLS).
+func (s *NuiTestSuite) startNatsServer(opts ...testserver.Option) {
+	s.stopNatsServer()
+	base := []testserver.Option{
+		testserver.WithPort(8080),
+		testserver.WithDefaultAccount(),
+		testserver.WithSysAccount("sys"),
+	}
+	s.testServer = testserver.Build(append(base, opts...)...)
+	s.natsServerOpts = s.testServer.Options
 	natsServer, _, err := s.testServer.Run()
 	s.NoError(err)
 	s.NatsServer = natsServer
@@ -85,9 +105,10 @@ func (s *NuiTestSuite) newE() *httpexpect.Expect {
 }
 
 func (s *NuiTestSuite) TearDownTest() {
-	s.testServer.TearDown()
+	s.stopNatsServer()
+	s.testServer = nil
+	s.natsServerOpts = nil
 	s.NuiServerCancelFunc()
-	s.nc.Close()
 }
 
 func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {

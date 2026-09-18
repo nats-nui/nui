@@ -5,6 +5,7 @@ import "github.com/adrg/xdg"
 const APPNAME = "nui-app"
 const DBPATH = APPNAME + "/databases/nui"
 const PROTOSCHEMASPATH = APPNAME + "/protoschemas/default"
+const CDDLSCHEMASPATH = APPNAME + "/cddlschemas/default"
 const LOGSPATH = APPNAME + "/logs/logs.log"
 
 func LogsPath() (string, error) {
@@ -17,4 +18,8 @@ func DbPath() (string, error) {
 
 func ProtoSchemasPath() (string, error) {
 	return xdg.DataFile(PROTOSCHEMASPATH)
+}
+
+func CddlSchemasPath() (string, error) {
+	return xdg.DataFile(CDDLSCHEMASPATH)
 }

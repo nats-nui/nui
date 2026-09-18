@@ -1,8 +1,7 @@
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { mixStores } from "@priolo/jon"
-import { MSG_FORMAT } from "../../../utils/editor"
-import { binaryStringToString } from "../../../utils/string"
+import { toEditorText } from "../../../utils/editor"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 
 
@@ -48,12 +47,7 @@ const setup = {
 
 		getEditorText: (_: void, store?: ViewStore) => {
 			const msgSo = <MessageStore>store
-			const payload = msgSo.state.message?.payload ?? ""
-			const format = msgSo.state.format
-			if (format != MSG_FORMAT.BASE64 && format != MSG_FORMAT.HEX && format != MSG_FORMAT.PROTOBUF) {
-				return binaryStringToString(payload)
-			}
-			return payload
+			return toEditorText(msgSo.state.message?.payload, msgSo.state.format)
 		}
 	},
 

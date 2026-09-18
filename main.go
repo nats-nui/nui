@@ -36,12 +36,14 @@ func main() {
 	var logsOutput string
 	var dbPath string
 	var protoSchemasPath string
+	var cddlSchemasPath string
 	var cliContextsStr string
 
 	flag.StringVar(&logLevel, "log-level", "info", "log level")
 	flag.StringVar(&logsOutput, "log-output", "", "log output")
 	flag.StringVar(&dbPath, "db-path", "", "path to the database")
 	flag.StringVar(&protoSchemasPath, "proto-schemas-path", "", "path to the protobuf schemas directory")
+	flag.StringVar(&cddlSchemasPath, "cddl-schemas-path", "", "path to the CDDL schemas directory")
 	flag.StringVar(&cliContextsStr, "nats-cli-contexts", "", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
 
 	flag.Parse()
@@ -71,6 +73,14 @@ func main() {
 		protoSchemasPath = psp
 	}
 
+	if cddlSchemasPath == "" {
+		csp, err := ospaths.CddlSchemasPath()
+		if err != nil {
+			log.Fatal("error getting cddl schemas path: " + err.Error())
+		}
+		cddlSchemasPath = csp
+	}
+
 	logger, err := logging.NewSlogger(logLevel, logsOutput)
 	if err != nil {
 		log.Fatal("error creating logger: " + err.Error())
@@ -82,6 +92,7 @@ func main() {
 		app.WithVersion(Version),
 		app.WithDb(dbPath),
 		app.WithProtoSchemasPath(protoSchemasPath),
+		app.WithCddlSchemasPath(cddlSchemasPath),
 		app.WithLogger(logger),
 		app.WithNatsCliContexts(clicontext.SanitizePaths(cliContextsStr)),
 	)
