@@ -2,12 +2,29 @@ package tests
 
 import (
 	"fmt"
-	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"time"
+
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
+
+// Static insecure certs used by TLS integration tests (see tests/nats_secured.conf).
+var insecureTLSCerts = struct {
+	caPath     string
+	serverCert string
+	serverKey  string
+	clientCert string
+	clientKey  string
+}{
+	caPath:     filepath.Join("certs_insecure", "tests-ca.pem"),
+	serverCert: filepath.Join("certs_insecure", "tests-server-cert.pem"),
+	serverKey:  filepath.Join("certs_insecure", "tests-server-key.pem"),
+	clientCert: filepath.Join("certs_insecure", "tests-client-cert.pem"),
+	clientKey:  filepath.Join("certs_insecure", "tests-client-key.pem"),
+}
 
 // newConnection creates a new connection with the given JSON payload.
 // the string must contain a [%s] placeholder for the that will be replaced with nats test server url.
