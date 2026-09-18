@@ -6,7 +6,7 @@ import { LOAD_STATE } from "@/stores/stacks/utils"
 import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
-import { buildSubjectTree, filterTree, flattenHits } from "@/utils/subjects/tree"
+import { buildSubjectTree, filterHits, flattenHits } from "@/utils/subjects/tree"
 import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
@@ -54,7 +54,7 @@ const SubjectsView: FunctionComponent<Props> = ({
 		showJetStream: subjectsSa.jetstreamEnabled,
 		filter: subjectsSa.filter,
 	}), [subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.filter])
-	const tree = useMemo(() => filterTree(buildSubjectTree(hits), subjectsSa.textSearch), [hits, subjectsSa.textSearch])
+	const tree = useMemo(() => buildSubjectTree(filterHits(hits, subjectsSa.textSearch)), [hits, subjectsSa.textSearch])
 	const status = useMemo(
 		() => statusLines(subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.filter),
 		[subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.filter],

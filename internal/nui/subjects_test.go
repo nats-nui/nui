@@ -40,6 +40,7 @@ func TestIsInternalSubject(t *testing.T) {
 	assert.False(t, isInternalSubject("orders.created"))
 	assert.False(t, isInternalSubject("$KV.mybucket.key"))
 	assert.False(t, isInternalSubject("$O.files.chunk"))
+	assert.False(t, isInternalSubject("$SYSTEM.not-sys"))
 }
 
 func TestCollapsePattern(t *testing.T) {
@@ -242,10 +243,14 @@ func TestOccupiedCapsPerStream(t *testing.T) {
 	require.Empty(t, out.Error)
 	assert.True(t, out.Truncated)
 	assert.Len(t, out.Subjects, maxOccupiedPerStream)
-	for _, s := range out.Subjects {
+	for i, s := range out.Subjects {
 		assert.Equal(t, kindOccupied, s.Kind)
 		assert.Greater(t, s.Count, uint64(0))
+		if i > 0 {
+			assert.Less(t, out.Subjects[i-1].Subject, s.Subject)
+		}
 	}
+	assert.Equal(t, "n.0", out.Subjects[0].Subject)
 }
 
 func TestKVCatalogCollapsesToBucket(t *testing.T) {

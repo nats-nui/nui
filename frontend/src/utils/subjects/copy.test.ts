@@ -1,14 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, LEGEND, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines, subjectCopyValue } from "./copy"
-import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID, FILTER_TOO_BROAD } from "./filter"
+import { emptyCopy, jetStreamStatus, coreStatus, coreListenLabel, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines, subjectCopyValue } from "./copy"
+import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID } from "./filter"
 
 describe("copy", () => {
-	it("defines Core and JetStream without assuming the reader knows NATS", () => {
-		expect(LEGEND.join(" ")).toMatch(/name a message travels on/i)
-		expect(LEGEND.join(" ")).toMatch(/forget/i)
-		expect(LEGEND.join(" ")).toMatch(/keep/i)
-	})
-
 	it("treats an empty listen as every name", () => {
 		expect(coreListenLabel("")).toBe(">")
 		expect(coreListenLabel("orders.>")).toBe("orders.>")
@@ -36,7 +30,7 @@ describe("copy", () => {
 		expect(jetStreamStatus(false)).toBeNull()
 	})
 
-	it("teaches why an empty listen is not a broken server", () => {
+	it("treats an empty listen as quiet, not a broken server", () => {
 		const copy = emptyCopy({
 			coreEnabled: true,
 			jsEnabled: true,
@@ -45,7 +39,7 @@ describe("copy", () => {
 			search: "",
 			foundCount: 0,
 		})
-		expect(copy).toMatch(/LISTEN/)
+		expect(copy).toMatch(/Quiet/)
 		expect(copy).not.toMatch(/snapshot/i)
 		expect(copy).not.toMatch(/enumerat/i)
 	})
@@ -62,10 +56,10 @@ describe("copy", () => {
 		})).toMatch(/not fully read/i)
 	})
 
-	it("says JetStream is optional when the server has none", () => {
+	it("says JetStream is missing when the server has none", () => {
 		expect(jetStreamStatus(true, {
 			error: "not enabled on this server", streams: [],
-		})).toMatch(/optional/i)
+		})).toMatch(/not on this server/i)
 	})
 
 	it("does not call silence a missing list when the read was capped or refused", () => {
@@ -84,12 +78,11 @@ describe("copy", () => {
 			coreEnabled: false, jsEnabled: true,
 			js: { streams: [], truncated: true },
 			search: "", foundCount: 0,
-		})).toMatch(/reload/i)
+		})).toMatch(/not fully read/i)
 	})
 
 	it("invites LISTEN instead of asking for a prefix first", () => {
 		expect(listenHintCopy(FILTER_INVALID)).toMatch(/valid name/i)
-		expect(listenHintCopy(FILTER_TOO_BROAD)).toBeNull()
 		expect(emptyCopy({
 			coreEnabled: true, jsEnabled: true,
 			js: { streams: [] },
@@ -103,7 +96,7 @@ describe("copy", () => {
 			core: { filter: "orders.>", listenMs: 2000, heard: 1, truncated: false, subjects: [{ subject: "orders.created", count: 1 }] },
 			js: { streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }] }] },
 			search: "zzz", foundCount: 0,
-		})).toMatch(/search/i)
+		})).toMatch(/match/i)
 	})
 
 	it("mentions a capped stored list after expand", () => {

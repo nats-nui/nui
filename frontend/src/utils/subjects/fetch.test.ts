@@ -18,6 +18,7 @@ describe("shouldFetchCore", () => {
 		expect(shouldFetchCore(true, "orders.>", false, "open")).toBe(true)
 		expect(shouldFetchCore(true, "orders..x", false, "open")).toBe(false)
 		expect(shouldFetchCore(true, ">", true, "toggle")).toBe(false)
-		expect(shouldFetchCore(true, ">", true, "refresh")).toBe(true)
+		expect(shouldFetchCore(true, ">", false, "refresh")).toBe(false)
+		expect(shouldFetchCore(true, ">", true, "refresh")).toBe(false)
 	})
 })

@@ -1,9 +1,5 @@
 import { CoreCatalog, JetStreamCatalog } from "@/types/Subject"
-import { FILTER_INVALID, FILTER_REQUIRED, FILTER_TOO_BROAD, canListen, normalizeListenFilter } from "./filter"
-
-export const LEGEND = [
-	"A subject is a name a message travels on. Core is live and forgets. JetStream keeps messages.",
-]
+import { FILTER_INVALID, canListen, normalizeListenFilter } from "./filter"
 
 export function coreListenLabel(filter: string): string {
 	return normalizeListenFilter(filter)
@@ -11,7 +7,6 @@ export function coreListenLabel(filter: string): string {
 
 export function listenHintCopy(hint?: string | null): string | null {
 	if (!hint) return null
-	if (hint == FILTER_REQUIRED || hint == FILTER_TOO_BROAD) return null
 	if (hint == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
 	return hint
 }
@@ -54,7 +49,6 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 	if (!enabled) return null
 	if (core?.error == "not allowed") return "This account cannot listen for that name."
 	if (core?.error == "timed out") return "The listen stopped before it finished."
-	if (core?.error == FILTER_REQUIRED || core?.error == FILTER_TOO_BROAD) return null
 	if (core?.error == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
 	if (core?.error) return `Core could not listen: ${core.error}.`
 	if (!core) {
@@ -79,7 +73,7 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 	if (js.error == "timed out" && (js.streams?.length ?? 0) == 0) return "Stored names were not fully read."
 	if (js.error && (js.streams?.length ?? 0) == 0) {
 		if (js.error == "not enabled on this server") {
-			return "JetStream is not on this server. That store is optional. Core still works."
+			return "JetStream is not on this server."
 		}
 		return `JetStream could not be read: ${js.error}.`
 	}
@@ -101,9 +95,9 @@ export function emptyCopy(args: {
 	foundCount: number
 }): string | null {
 	const { coreEnabled, jsEnabled, core, js, search, foundCount } = args
-	if (!coreEnabled && !jsEnabled) return "Turn on Core or JetStream to look."
+	if (!coreEnabled && !jsEnabled) return "Turn on Core or JetStream."
 	if (foundCount > 0) return null
-	if (search?.trim()) return "No names match that search."
+	if (search?.trim()) return "No names match."
 
 	const notAllowed = core?.error == "not allowed" || js?.error == "not allowed"
 	if (notAllowed) return "This account cannot see those names."
@@ -112,25 +106,15 @@ export function emptyCopy(args: {
 		core?.error == "timed out" || js?.error == "timed out"
 		|| core?.truncated || js?.truncated || (js?.failed ?? 0) > 0
 	)
-	if (notFullyRead) return "The list was not fully read. Click LISTEN or reload to try again."
+	if (notFullyRead) return "The list was not fully read."
 
 	if (jsEnabled && js?.error == "not enabled on this server") {
-		if (coreEnabled && !core) return "JetStream is not on this server. Click LISTEN to hear live names. Core only sees messages while we look."
-		return "JetStream is not on this server. Core heard nothing in this listen — it only sees messages while we look."
+		return "JetStream is not on this server."
 	}
 
-	if (coreEnabled && !core) {
-		if (jsEnabled) return "No stored names yet. Click LISTEN to hear what is moving now. Core forgets anything that happened before we listened."
-		return "Click LISTEN to hear what is moving now. Core does not remember the past."
-	}
-
-	if (coreEnabled && jsEnabled) {
-		return "Quiet right now. Click LISTEN to hear what is moving, or open a name with a ▸ to see what a stream kept."
-	}
-	if (coreEnabled) {
-		return "Core heard nothing in this listen. Click LISTEN to try again."
-	}
-	return "No stored names. Open a name with a ▸ to see what a stream kept."
+	if (coreEnabled && !core) return "Click LISTEN to hear live names."
+	if (coreEnabled) return "Quiet right now."
+	return "No stored names."
 }
 
 export function subjectCopyValue(node: { path: string, remainder?: boolean, hit?: { subject: string } }): string | null {

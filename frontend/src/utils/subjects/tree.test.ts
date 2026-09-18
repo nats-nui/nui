@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { SubjectHit } from "@/types/Subject"
-import { buildSubjectTree, countLeaves, filterTree, flattenHits, MAX_TREE_CHILDREN, occupiedKey } from "./tree"
+import { buildSubjectTree, countLeaves, filterHits, filterTree, flattenHits, MAX_TREE_CHILDREN, occupiedKey } from "./tree"
 
 function hit(subject: string, opts: Partial<SubjectHit> = {}): SubjectHit {
 	return { subject, streams: [], ...opts }
@@ -143,5 +143,20 @@ describe("filterTree", () => {
 		expect(filtered[0].children[0].segment).toBe("users.login")
 		expect(filtered[0].children[0].stacked).toBe(true)
 		expect(countLeaves(filtered)).toBe(1)
+	})
+})
+
+describe("filterHits", () => {
+	it("finds a name that the browse cap would hide behind remainder", () => {
+		const hits = Array.from({ length: MAX_TREE_CHILDREN + 12 }, (_, i) =>
+			hit(`root.n${i.toString().padStart(2, "0")}`),
+		)
+		const hidden = hits[hits.length - 1]
+		const browsed = buildSubjectTree(hits)
+		expect(browsed[0].children.some(c => c.path == hidden.subject)).toBe(false)
+
+		const found = buildSubjectTree(filterHits(hits, hidden.subject))
+		expect(found[0].children.map(c => c.path)).toContain(hidden.subject)
+		expect(found[0].children.some(c => c.remainder)).toBe(false)
 	})
 })

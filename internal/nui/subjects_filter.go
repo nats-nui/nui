@@ -55,9 +55,13 @@ func validateListenFilter(filter string) error {
 }
 
 func isInternalSubject(subject string) bool {
-	return strings.HasPrefix(subject, "$SYS") ||
-		strings.HasPrefix(subject, "$JS.") ||
-		strings.HasPrefix(subject, "_INBOX")
+	return hasSubjectPrefix(subject, "$SYS") ||
+		hasSubjectPrefix(subject, "$JS") ||
+		hasSubjectPrefix(subject, "_INBOX")
+}
+
+func hasSubjectPrefix(subject, prefix string) bool {
+	return subject == prefix || strings.HasPrefix(subject, prefix+".")
 }
 
 func streamKind(name string, subjects []string) string {

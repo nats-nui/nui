@@ -123,26 +123,34 @@ func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, f
 		return out
 	}
 	out.Kind = streamKind(info.Config.Name, info.Config.Subjects)
-	for subject, count := range info.State.Subjects {
+	// The server already paid for the full map. Sort first so a cap is
+	// the same 500 names on every poll, not a random walk of the map.
+	names := make([]string, 0, len(info.State.Subjects))
+	for subject := range info.State.Subjects {
 		if discardSys && isInternalSubject(subject) {
 			continue
 		}
-		next, capped := capAppend(out.Subjects, JetStreamSubject{
+		names = append(names, subject)
+	}
+	sort.Strings(names)
+	if len(names) > maxOccupiedPerStream {
+		out.Truncated = true
+		names = names[:maxOccupiedPerStream]
+	}
+	out.Subjects = make([]JetStreamSubject, 0, len(names))
+	for _, subject := range names {
+		out.Subjects = append(out.Subjects, JetStreamSubject{
 			Subject: subject,
 			Kind:    kindOccupied,
-			Count:   count,
-		}, maxOccupiedPerStream)
-		out.Subjects = next
-		if capped {
-			out.Truncated = true
-			break
-		}
+			Count:   info.State.Subjects[subject],
+		})
 	}
-	sort.Slice(out.Subjects, func(i, j int) bool { return out.Subjects[i].Subject < out.Subjects[j].Subject })
 	return out
 }
 
 func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstream.StreamInfo, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	listener := js.ListStreams(ctx)
 	var infos []*jetstream.StreamInfo
 	for {
@@ -150,14 +158,24 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 		case info, ok := <-listener.Info():
 			if !ok {
 				if err := listener.Err(); err != nil {
+					if errors.Is(err, context.Canceled) && len(infos) >= maxJSStreams {
+						return infos, nil
+					}
 					return infos, err
 				}
 				return infos, nil
 			}
 			if info != nil {
 				infos = append(infos, info)
+				if len(infos) >= maxJSStreams {
+					cancel()
+					return infos, nil
+				}
 			}
 		case <-ctx.Done():
+			if len(infos) >= maxJSStreams {
+				return infos, nil
+			}
 			return infos, ctx.Err()
 		}
 	}

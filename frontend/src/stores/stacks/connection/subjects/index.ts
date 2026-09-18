@@ -109,13 +109,16 @@ const setup = {
 			const gen = store.state.listenGen + 1
 			store.state.listenGen = gen
 			store.setCoreListening(true)
-			store.setCore({
-				filter,
-				listenMs: store.state.listenMs,
-				heard: 0,
-				truncated: false,
-				subjects: [],
-			})
+			const prev = store.state.core
+			if (!prev || prev.filter != filter) {
+				store.setCore({
+					filter,
+					listenMs: store.state.listenMs,
+					heard: 0,
+					truncated: false,
+					subjects: [],
+				})
+			}
 			try {
 				const catalog = await subjectsApi.core(store.state.connectionId, filter, store.state.listenMs, {
 					store, manageAbort: true, noError: true, loading: false,
@@ -181,7 +184,7 @@ const setup = {
 			store.setOccupiedLoading(key)
 			try {
 				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, {
-					store, noError: true, loading: false,
+					store, manageAbort: true, noError: true, loading: false,
 				})
 				if (!catalog || !Array.isArray(catalog.subjects)) {
 					store.setOccupied({

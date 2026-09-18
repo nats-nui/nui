@@ -139,6 +139,15 @@ function freeze(draft: Draft): SubjectNode {
 	}
 }
 
+export function filterHits(hits: SubjectHit[], text: string): SubjectHit[] {
+	const needle = text?.toLocaleLowerCase()?.trim()
+	if (!needle) return hits
+	return hits.filter(hit =>
+		hit.subject.toLowerCase().includes(needle)
+		|| hit.streams.some(s => s.name.toLowerCase().includes(needle)),
+	)
+}
+
 export function filterTree(nodes: SubjectNode[], text: string): SubjectNode[] {
 	const needle = text?.toLocaleLowerCase()?.trim()
 	if (!needle) return nodes

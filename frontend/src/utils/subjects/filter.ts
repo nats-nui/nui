@@ -1,5 +1,3 @@
-export const FILTER_REQUIRED = "type a name to listen, like orders.>"
-export const FILTER_TOO_BROAD = "listening to every name at once is too broad"
 export const FILTER_INVALID = "that is not a valid name"
 
 export function normalizeListenFilter(filter: string): string {

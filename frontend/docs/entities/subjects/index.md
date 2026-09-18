@@ -30,4 +30,4 @@ GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 GET /api/connection/:id/subjects/jetstream/:stream/occupied?filter=orders.>
 ```
 
-Names that currently have messages in that stream, capped per stream. The card nests them under the pattern or bucket you opened.
+Names that currently have messages in that stream, sorted then capped per stream so a busy stream shows the same first page on every poll. The card nests them under the pattern or bucket you opened.
