@@ -50,12 +50,14 @@ export class SocketService {
 		try {
 			let url = `${protocol}//${host}:${port}${base}/ws/sub`
 			if (connId) url = `${url}?id=${connId}`
-			logSo.add({
-				type: MESSAGE_TYPE.INFO,
-				title: "WS-CONNECTIONS",
-				body: `try_connecting`,
-				data: url,
-			})
+			if (this.reconnect.try <= 1) {
+				logSo.add({
+					type: MESSAGE_TYPE.INFO,
+					title: "WS-CONNECTIONS",
+					body: `connecting`,
+					data: url,
+				})
+			}
 			this.websocket = new WebSocket(url);
 		} catch (error) {
 			this.reconnect.start()
