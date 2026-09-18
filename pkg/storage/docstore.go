@@ -17,11 +17,13 @@ const CONN_COLLECTION = "connections"
 // truncates each *.vlog to 2*ValueLogFileSize, so the defaults
 // (ValueLogFileSize=1GiB-1) produce a ~2GiB file the moment the DB
 // opens — nats-nui/nui#125. NUI only stores a handful of connection
-// documents, so we shrink the mmap, memtables, and block cache.
-// These limits are always on; there is no opt-in flag.
+// documents. The sizes below are the ones that change that footprint:
+// value log mmap, memtables (default 64MiB × 5), and block cache
+// (default 256MiB).
 const (
 	valueLogFileSize   = 8 << 20 // 8MiB → 16MiB on-disk mmap
 	memTableSize       = 2 << 20
+	numMemtables       = 2
 	blockCacheSize     = 8 << 20
 	oversizedVlogBytes = 32 << 20
 )
@@ -42,7 +44,6 @@ func Open(path string, l logging.Slogger) (*DB, error) {
 		// Dir/ValueDir must be empty in InMemory mode. Passing ":memory:"
 		// as the path (the old DefaultOptions habit) makes Badger refuse
 		// to open: "Cannot use badger in Disk-less mode with Dir set".
-		l.Info("badger opened in memory")
 		return openClover(nuiBadgerOptions("").WithInMemory(true))
 	}
 	opts := nuiBadgerOptions(path)
@@ -58,6 +59,7 @@ func Open(path string, l logging.Slogger) (*DB, error) {
 		"value_log_file_size", valueLogFileSize,
 		"value_log_mmap_bytes", valueLogFileSize*2,
 		"memtable_size", memTableSize,
+		"num_memtables", numMemtables,
 		"block_cache_size", blockCacheSize,
 	)
 	return db, nil
@@ -67,19 +69,11 @@ func nuiBadgerOptions(path string) badger.Options {
 	return badger.DefaultOptions(path).
 		WithValueLogFileSize(valueLogFileSize).
 		WithMemTableSize(memTableSize).
-		WithNumMemtables(2).
-		WithNumLevelZeroTables(2).
-		WithNumLevelZeroTablesStall(4).
-		WithNumCompactors(2).
+		WithNumMemtables(numMemtables).
 		WithBlockCacheSize(blockCacheSize).
-		WithIndexCacheSize(0).
-		WithValueThreshold(1 << 10).
-		WithNumVersionsToKeep(1).
-		WithDetectConflicts(false).
-		WithCompactL0OnClose(true).
-		WithMetricsEnabled(false).
-		WithLoggingLevel(badger.WARNING).
-		WithNumGoroutines(2)
+		// Default ValueThreshold is 1MiB. Badger rejects that once
+		// MemTableSize is 2MiB (max batch is ~0.3 × memtable).
+		WithValueThreshold(1 << 10)
 }
 
 func openClover(opts badger.Options) (*DB, error) {
