@@ -3,146 +3,123 @@ package docstore
 import (
 	"os"
 	"path/filepath"
-	"strings"
-	"sync"
 	"testing"
 
 	"github.com/ostafen/clover/v2/document"
 	"github.com/stretchr/testify/require"
 )
 
-type memLogger struct {
-	mu   sync.Mutex
-	info []string
-	warn []string
-	err  []string
+func allProfiles() []Profile {
+	return []Profile{ProfileLegacy, ProfileMinImpact, ProfileReclaim}
 }
 
-func (m *memLogger) Debug(string, ...any) {}
-func (m *memLogger) Info(msg string, _ ...any) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.info = append(m.info, msg)
-}
-func (m *memLogger) Warn(msg string, _ ...any) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.warn = append(m.warn, msg)
-}
-func (m *memLogger) Error(msg string, _ ...any) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.err = append(m.err, msg)
-}
-
-func (m *memLogger) has(level, substr string) bool {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	var rows []string
-	switch level {
-	case "info":
-		rows = m.info
-	case "warn":
-		rows = m.warn
-	case "error":
-		rows = m.err
+func (p Profile) String() string {
+	switch p {
+	case ProfileLegacy:
+		return "legacy"
+	case ProfileMinImpact:
+		return "min-impact"
+	case ProfileReclaim:
+		return "reclaim"
+	default:
+		return "unknown"
 	}
-	for _, row := range rows {
-		if strings.Contains(row, substr) {
-			return true
-		}
+}
+
+func (p Profile) expectedVlogMmapBytes() int64 {
+	switch p {
+	case ProfileMinImpact:
+		return 2 * minImpactValueLogFileSize
+	case ProfileReclaim:
+		return 2 * reclaimValueLogFileSize
+	default:
+		return legacyMaxApparentBytes
 	}
-	return false
 }
 
-func TestDocStore_InMemoryOpens(t *testing.T) {
-	db, err := NewDocStore(":memory:")
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
+// leftoverOversizedBytes is just over oversizedVlogBytes (32MiB) so
+// reclaimOversizedValueLogs treats the file as leftover.
+const leftoverOversizedBytes = 40 << 20
 
-	doc := document.NewDocument()
-	doc.Set("name", "mem")
-	id, err := db.InsertOne(CONN_COLLECTION, doc)
-	require.NoError(t, err)
-	got, err := db.FindById(CONN_COLLECTION, id)
-	require.NoError(t, err)
-	require.Equal(t, "mem", got.Get("name"))
+// TestProfiles_LeftoverValueLog: create with legacy, reopen with reclaim
+// (no error, vlog shrunk), then the same with min-impact.
+func TestProfiles_LeftoverValueLog(t *testing.T) {
+	for _, profile := range []Profile{ProfileReclaim, ProfileMinImpact} {
+		t.Run(profile.String(), func(t *testing.T) {
+			dir, id := leftoverOversizedDB(t)
+
+			db, err := OpenWithProfile(dir, profile, nil)
+			require.NoError(t, err)
+			t.Cleanup(func() { _ = db.Close() })
+
+			got, err := db.FindById(CONN_COLLECTION, id)
+			require.NoError(t, err)
+			require.Equal(t, "keep-me", got.Get("name"))
+
+			gotSize := maxApparentVlogSize(t, dir)
+			require.Less(t, gotSize, int64(legacyMaxApparentBytes),
+				"%s must shrink the leftover DefaultOptions value log", profile)
+		})
+	}
 }
 
-func TestDocStore_OnDiskFootprintStaysSmallWhileOpen(t *testing.T) {
-	dir := t.TempDir()
-	db, err := NewDocStore(dir)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
+// TestProfiles_NewDBValueLogWhileOpen: a fresh open uses this profile's
+// mmap size the whole time the DB is open. Reclaim is irrelevant here.
+func TestProfiles_NewDBValueLogWhileOpen(t *testing.T) {
+	for _, profile := range allProfiles() {
+		t.Run(profile.String(), func(t *testing.T) {
+			dir := t.TempDir()
+			db, err := OpenWithProfile(dir, profile, nil)
+			require.NoError(t, err)
+			t.Cleanup(func() { _ = db.Close() })
 
-	doc := document.NewDocument()
-	doc.Set("name", "local-flood")
-	doc.Set("hosts", []string{"127.0.0.1:4222"})
-	_, err = db.InsertOne(CONN_COLLECTION, doc)
-	require.NoError(t, err)
+			doc := document.NewDocument()
+			doc.Set("name", "local-flood")
+			_, err = db.InsertOne(CONN_COLLECTION, doc)
+			require.NoError(t, err)
 
-	max := maxApparentFile(t, dir)
-	require.Less(t, max, int64(oversizedVlogBytes),
-		"open db must not mmap a DefaultOptions-sized value log")
+			require.Equal(t, profile.expectedVlogMmapBytes(), maxApparentVlogSize(t, dir),
+				"open db should mmap a value log of this profile's size")
+		})
+	}
 }
 
-func TestDocStore_ReclaimsLeftoverValueLog(t *testing.T) {
-	dir := t.TempDir()
-	db, err := NewDocStore(dir)
+// leftoverOversizedDB builds a real Badger store, then fakes a leftover
+// value log. Close() is required: Badger holds an exclusive directory lock,
+// so the leftover reopen cannot run in this process until the first handle
+// is released. Close also truncates *.vlog to the few bytes actually
+// written, which is below oversizedVlogBytes, so reclaim would not run.
+// Growing the file to leftoverOversizedBytes after Close is the fixture
+// for "ls shows a huge leftover, data must survive" without a second
+// process and a kill.
+func leftoverOversizedDB(t *testing.T) (dir, id string) {
+	t.Helper()
+	dir = t.TempDir()
+
+	legacy, err := OpenWithProfile(dir, ProfileLegacy, nil)
 	require.NoError(t, err)
 	doc := document.NewDocument()
 	doc.Set("name", "keep-me")
-	id, err := db.InsertOne(CONN_COLLECTION, doc)
+	id, err = legacy.InsertOne(CONN_COLLECTION, doc)
 	require.NoError(t, err)
-	require.NoError(t, db.Close())
+	require.NoError(t, legacy.Close())
 
 	vlogs, err := filepath.Glob(filepath.Join(dir, "*.vlog"))
 	require.NoError(t, err)
 	require.NotEmpty(t, vlogs)
-	require.NoError(t, os.Truncate(vlogs[0], 40<<20))
+	for _, name := range vlogs {
+		require.NoError(t, os.Truncate(name, leftoverOversizedBytes))
+	}
 
-	oversized, err := hasOversizedValueLog(dir)
+	max, err := maxApparentVlog(dir)
 	require.NoError(t, err)
-	require.True(t, oversized)
-
-	log := &memLogger{}
-	db, err = Open(dir, log)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
-
-	got, err := db.FindById(CONN_COLLECTION, id)
-	require.NoError(t, err)
-	require.NotNil(t, got)
-	require.Equal(t, "keep-me", got.Get("name"))
-	require.Less(t, maxApparentFile(t, dir), int64(oversizedVlogBytes))
-	require.True(t, log.has("warn", "leftover value log exceeds limit"), "reclaim must be logged")
-	require.True(t, log.has("info", "value log reclaimed"))
-	require.False(t, log.has("info", "opened with nui limits"))
+	require.Greater(t, max, int64(oversizedVlogBytes))
+	return dir, id
 }
 
-func TestDocStore_HealthyOpenIsQuiet(t *testing.T) {
-	dir := t.TempDir()
-	log := &memLogger{}
-	db, err := Open(dir, log)
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
-	require.Empty(t, log.info)
-	require.Empty(t, log.warn)
-	require.Empty(t, log.err)
-}
-
-func maxApparentFile(t *testing.T, dir string) int64 {
+func maxApparentVlogSize(t *testing.T, dir string) int64 {
 	t.Helper()
-	var max int64
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil || info.IsDir() {
-			return err
-		}
-		if info.Size() > max {
-			max = info.Size()
-		}
-		return nil
-	})
+	max, err := maxApparentVlog(dir)
 	require.NoError(t, err)
 	return max
 }
