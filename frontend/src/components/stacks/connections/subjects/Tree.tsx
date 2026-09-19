@@ -29,7 +29,7 @@ const SubjectTree: FunctionComponent<Props> = ({
 	return <div className={cls.root}>
 		{nodes.map(node => (
 			<TreeNode
-				key={node.path}
+				key={`${node.remainder ? "more" : "subject"}:${node.path}`}
 				node={node}
 				select={select}
 				onSelect={onSelect}
@@ -66,14 +66,14 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 	node, select, onSelect, occupied, occupiedLoading, reveal, openPaths, setOpen,
 }) => {
 	const hasChildren = node.children.length > 0
-	const open = reveal || !!openPaths[node.path]
+	const open = reveal || openPaths[node.path] === true
 	const selected = !!node.hit && node.path == select
 	const key = occKeyFor(node)
 	const occ = key ? occupied?.[key] : undefined
 	const loadingOcc = !!key && occupiedLoading == key
-	const loadedEmpty = !!node.hit?.expandable && !!occ && (occ.subjects?.length ?? 0) == 0 && !hasChildren
+	const loadedEmpty = !!node.hit?.expandable && !!occ && !occ.error && (occ.subjects?.length ?? 0) == 0 && !hasChildren
 	const canOpen = hasChildren || (!!node.hit?.expandable && !loadedEmpty)
-	const clsNode = `${cls.node} ${selected ? cls.selected : ""} ${node.remainder ? cls.remainder : ""} ${node.stacked ? cls.stacked : ""}`
+	const clsNode = `${cls.node} ${selected ? cls.selected : ""} ${node.remainder ? cls.remainder : ""}`
 	const title = node.remainder
 		? node.segment
 		: node.hit
@@ -85,9 +85,13 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 	const activate = () => {
 		if (node.remainder) return
 		if (canOpen) {
+			if (node.hit?.expandable && (!occ || occ.error) && !loadingOcc) {
+				if (!reveal) setOpen(node.path, true)
+				onSelect?.(node)
+				return
+			}
 			const next = !open
 			if (!reveal) setOpen(node.path, next)
-			if (next && node.hit?.expandable && !occ && !loadingOcc) onSelect?.(node)
 			return
 		}
 		if (node.hit) onSelect?.(node)
@@ -95,13 +99,15 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 
 	return (
 		<div>
-			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}>
+			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}
+				role="button" tabIndex={node.remainder ? -1 : 0} aria-expanded={canOpen ? open : undefined}
+				onKeyDown={e => { if (e.key == "Enter" || e.key == " ") { e.preventDefault(); activate() } }}>
 				<div className={cls.twist} onClick={e => { e.stopPropagation(); activate() }}>
 					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>
 				<div className={cls.meta}>
-					{copyValue && <CopyButton absolute value={copyValue} label="COPY SUBJECT" />}
+					{copyValue && <span onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}><CopyButton absolute value={copyValue} label="COPY SUBJECT" /></span>}
 					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && !occ?.error && <span className={cls.count}>none stored</span>}
@@ -114,7 +120,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 				<div className={cls.children}>
 					{node.children.map(child => (
 						<TreeNode
-							key={child.path}
+							key={`${child.remainder ? "more" : "subject"}:${child.path}`}
 							node={child}
 							select={select}
 							onSelect={onSelect}

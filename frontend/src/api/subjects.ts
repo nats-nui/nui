@@ -1,15 +1,7 @@
 import ajax, { CallOptions } from "@/plugins/AjaxService"
 import { Message } from "@/types/Message"
 import { CoreCatalog, JetStreamCatalog, OccupiedCatalog } from "@/types/Subject"
-
-function decodePayload(value?: string): string | undefined {
-	if (!value) return value
-	try {
-		return atob(value)
-	} catch {
-		return value
-	}
-}
+import { snakeToCamel } from "@/utils/object"
 
 function discardSysQuery(noSysMessages: boolean): string {
 	return `discard_sys=${noSysMessages ? "true" : "false"}`
@@ -28,36 +20,40 @@ async function core(cnnId: string, filter: string, listenMs: number, noSysMessag
 	return ajax.get(`connection/${cnnId}/subjects/core?${params}`, null, opt)
 }
 
-async function watch(cnnId: string, filter: string, noSysMessages: boolean, opt?: CallOptions): Promise<CoreCatalog> {
+async function watch(cnnId: string, filter: string, noSysMessages: boolean, session: string, opt?: CallOptions): Promise<CoreCatalog> {
 	const params = [
 		`filter=${encodeURIComponent(filter)}`,
 		`watch=1`,
+		`session=${encodeURIComponent(session)}`,
 		discardSysQuery(noSysMessages),
 	].join("&")
 	return ajax.get(`connection/${cnnId}/subjects/core?${params}`, null, opt)
 }
 
-async function snapshot(cnnId: string, opt?: CallOptions): Promise<CoreCatalog> {
-	return ajax.get(`connection/${cnnId}/subjects/core`, null, opt)
+async function snapshot(cnnId: string, session: string, opt?: CallOptions): Promise<CoreCatalog> {
+	return ajax.get(`connection/${cnnId}/subjects/core?session=${encodeURIComponent(session)}`, null, opt)
 }
 
-async function unwatch(cnnId: string, opt?: CallOptions): Promise<void> {
-	await ajax.delete(`connection/${cnnId}/subjects/core`, null, opt)
+async function unwatch(cnnId: string, session: string, opt?: CallOptions): Promise<void> {
+	await ajax.delete(`connection/${cnnId}/subjects/core?session=${encodeURIComponent(session)}`, null, opt)
 }
 
 async function occupied(cnnId: string, stream: string, filter: string | undefined, noSysMessages: boolean, opt?: CallOptions): Promise<OccupiedCatalog> {
 	const params = [discardSysQuery(noSysMessages)]
 	if (filter) params.push(`filter=${encodeURIComponent(filter)}`)
-	return ajax.get(`connection/${cnnId}/subjects/jetstream/${encodeURIComponent(stream)}/occupied?${params.join("&")}`, null, opt)
+	return ajax.get(`connection/${cnnId}/subjects/jetstream/${stream}/occupied?${params.join("&")}`, null, opt)
 }
 
 async function last(cnnId: string, subject: string, stream: string, opt?: CallOptions): Promise<Message> {
-	const message: Message = await ajax.get(
+	const raw = await ajax.get(
 		`connection/${cnnId}/subjects/last?subject=${encodeURIComponent(subject)}&stream=${encodeURIComponent(stream)}`,
 		null,
-		opt,
+		{ ...opt, noCamel: true },
 	)
-	if (message?.payload) message.payload = decodePayload(message.payload)
+	if (!raw) return
+	const message: Message = snakeToCamel({ ...raw, headers: undefined })
+	message.headers = raw.headers
+	if (message.payload) message.payload = atob(message.payload)
 	return message
 }
 

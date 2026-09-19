@@ -1085,3 +1085,23 @@ func (s *NuiTestSuite) TestCddlschemas() {
 func TestNuiTestSuite(t *testing.T) {
 	suite.Run(t, new(NuiTestSuite))
 }
+
+func (s *NuiTestSuite) TestSubjectsWatchLifecycle() {
+	id := s.defaultConn()
+	path := "/api/connection/" + id + "/subjects/core"
+	s.e.GET(path).Expect().Status(http.StatusOK).JSON().Object().NotContainsKey("watching")
+	s.e.GET(path).WithQuery("watch", "1").WithQuery("filter", "orders.>").WithQuery("session", "first").
+		Expect().Status(http.StatusOK).JSON().Object().Value("watching").Boolean().IsTrue()
+	s.e.GET(path).WithQuery("session", "first").Expect().Status(http.StatusOK).JSON().Object().Value("filter").String().IsEqual("orders.>")
+	// An explicit sample does not return or replace the active listener.
+	s.e.GET(path).WithQuery("filter", "other.>").WithQuery("listen_ms", 200).
+		Expect().Status(http.StatusOK).JSON().Object().Value("filter").String().IsEqual("other.>")
+	s.e.GET(path).WithQuery("session", "first").Expect().Status(http.StatusOK).JSON().Object().Value("filter").String().IsEqual("orders.>")
+	s.e.GET(path).WithQuery("watch", "1").WithQuery("filter", "second.>").WithQuery("session", "second").
+		Expect().Status(http.StatusOK).JSON().Object().Value("watching").Boolean().IsTrue()
+	s.e.DELETE(path).WithQuery("session", "first").Expect().Status(http.StatusOK)
+	s.e.GET(path).WithQuery("session", "first").Expect().Status(http.StatusOK).JSON().Object().NotContainsKey("watching")
+	s.e.GET(path).WithQuery("session", "second").Expect().Status(http.StatusOK).JSON().Object().Value("filter").String().IsEqual("second.>")
+	s.e.DELETE("/api/connection/" + id).Expect().Status(http.StatusOK)
+	s.e.GET(path).WithQuery("session", "second").Expect().Status(http.StatusOK).JSON().Object().NotContainsKey("watching")
+}

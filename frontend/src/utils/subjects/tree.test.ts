@@ -78,7 +78,6 @@ describe("buildSubjectTree", () => {
 		expect(tree[0].segment).toBe("devices")
 		expect(tree[0].hit?.core?.count).toBe(1)
 		expect(tree[0].children.map(c => c.segment)).toEqual(["sensors"])
-		expect(tree[0].children[0].stacked).toBeFalsy()
 		expect(tree[0].names).toBe(2)
 	})
 
@@ -86,33 +85,30 @@ describe("buildSubjectTree", () => {
 		const tree = buildSubjectTree([
 			hit("devices.sensors.temp", { core: { count: 3 } }),
 			hit("devices.sensors.humidity", { streams: [{ name: "IOT", count: 9 }] }),
-			hit("agents.hb.cc.getbygenius.digimasons-2", { core: { count: 1 } }),
+			hit("agents.heartbeat.region.worker", { core: { count: 1 } }),
 		])
 		expect(tree.map(n => n.segment)).toEqual(["agents", "devices"])
-		expect(tree[0].children.map(c => c.segment)).toEqual(["hb.cc.getbygenius.digimasons-2"])
-		expect(tree[0].children[0].stacked).toBe(true)
-		expect(tree[0].children[0].path).toBe("agents.hb.cc.getbygenius.digimasons-2")
+		expect(tree[0].children.map(c => c.segment)).toEqual(["heartbeat.region.worker"])
+		expect(tree[0].children[0].path).toBe("agents.heartbeat.region.worker")
 		expect(tree[0].children[0].children).toEqual([])
 		expect(tree[1].children.map(c => c.segment)).toEqual(["sensors.humidity", "sensors.temp"])
-		expect(tree[1].children.every(c => c.stacked)).toBe(true)
 		expect(tree.reduce((n, node) => n + node.names, 0)).toBe(3)
 	})
 
 	it("nests stored names under the folder you opened instead of dumping siblings", () => {
 		const tree = buildSubjectTree([
 			hit("$KV.shop", { kind: "kv", expandable: true, streams: [{ name: "KV_shop", kind: "kv", pattern: "$KV.shop.>" }] }),
-			hit("$KV.shop.item-1", { kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
-			hit("$KV.shop.orders.created", { kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
-			hit("cox.dealer", { kind: "pattern", expandable: true, streams: [{ name: "zoom-phone", pattern: "cox.dealer.>" }] }),
-			hit("cox.dealer.inventory.details", { kind: "occupied", streams: [{ name: "zoom-phone", count: 2 }] }),
+			hit("$KV.shop.item-1", { parent: "$KV.shop", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("$KV.shop.orders.created", { parent: "$KV.shop", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("inventory.items", { kind: "pattern", expandable: true, streams: [{ name: "INVENTORY", pattern: "inventory.items.>" }] }),
+			hit("inventory.items.inventory.details", { parent: "inventory.items", kind: "occupied", streams: [{ name: "INVENTORY", count: 2 }] }),
 		])
 		const kv = tree.find(n => n.segment == "$KV")
 		expect(kv?.children.map(c => c.segment)).toEqual(["shop"])
 		expect(kv?.children[0].children.map(c => c.segment)).toEqual(["item-1", "orders.created"])
-		expect(kv?.children[0].children.find(c => c.segment == "orders.created")?.stacked).toBe(true)
-		const cox = tree.find(n => n.segment == "cox")
-		expect(cox?.children.map(c => c.segment)).toEqual(["dealer"])
-		expect(cox?.children[0].children.map(c => c.segment)).toEqual(["inventory.details"])
+		const inventory = tree.find(n => n.segment == "inventory")
+		expect(inventory?.children.map(c => c.segment)).toEqual(["items"])
+		expect(inventory?.children[0].children.map(c => c.segment)).toEqual(["inventory.details"])
 	})
 
 	it("folds extra siblings into a remainder instead of rendering every token", () => {
@@ -144,4 +140,37 @@ describe("filterHits", () => {
 		expect(found[0].children.map(c => c.path)).toContain(hidden.subject)
 		expect(found[0].children.some(c => c.remainder)).toBe(false)
 	})
+})
+
+it("nests wildcard matches beneath their capture pattern", () => {
+ const hits = flattenHits({ showCore: false, showJetStream: true,
+  jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.*", pattern: "orders.*", kind: "pattern" }] }] },
+  occupied: { "ORDERS::orders.*": { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
+ })
+ const tree = buildSubjectTree(hits)
+ expect(tree[0].children).toHaveLength(1)
+ expect(tree[0].children[0].path).toBe("orders.*")
+ expect(tree[0].children[0].children[0].path).toBe("orders.created")
+})
+
+it("keeps prefix names shallow regardless of input order", () => {
+ const hits = [hit("a.b"), hit("a.b.c"), hit("a.b.c.d")]
+ const forward = buildSubjectTree(hits)
+ expect(buildSubjectTree([...hits].reverse())).toEqual(forward)
+ expect(forward[0].children.map(n => n.segment)).toEqual(["b", "b.c", "b.c.d"])
+ expect(forward[0].children.every(n => n.children.length == 0)).toBe(true)
+})
+
+it("hides system names immediately without hiding KV and Object names", () => {
+ const hits = flattenHits({ showCore: true, showJetStream: false, noSysMessages: true,
+  core: { filter: ">", listenMs: 0, heard: 5, truncated: false, subjects: ["$SYS.a", "$JS.a", "_INBOX.a", "$KV.a", "$O.a"].map(subject => ({ subject, count: 1 })) },
+ })
+ expect(hits.map(h => h.subject)).toEqual(["$KV.a", "$O.a"])
+})
+
+it("allows an exact capture name to open its last stored message", () => {
+ const hits = flattenHits({ showCore: false, showJetStream: true,
+  jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.created", pattern: "orders.created", kind: "pattern" }] }] },
+ })
+ expect(hits[0].expandable).toBe(false)
 })

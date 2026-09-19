@@ -27,10 +27,12 @@ Opening the SUBJECTS card does not subscribe. Empty filter is not `>`.
 
 Refresh samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot without `watch=1`. Poll will not start or replace one.
 
+The card sends its `session` identifier on start, snapshot, and stop requests so closing an older card cannot stop a newer listener. A listener stops on disconnect, permission failure, overflow, or the name cap. Unused listeners expire after one minute; normal card polling renews that lease.
+
 ### OCCUPIED NAMES
 
 ```
 GET /api/connection/:id/subjects/jetstream/:stream/occupied?filter=orders.>
 ```
 
-Names that currently have messages in that stream, sorted then capped per stream so a busy stream shows the same first page on every poll. The card nests them under the pattern or bucket you opened.
+Names that currently have messages in that stream, sorted then capped per stream. Discovery reads only the first server page and reports incomplete results. Refresh reloads previously expanded lists. The card nests them under the pattern or bucket you opened.

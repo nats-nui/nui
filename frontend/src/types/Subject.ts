@@ -47,6 +47,7 @@ export interface OccupiedCatalog {
 
 export interface SubjectHit {
 	subject: string
+	parent?: string
 	kind?: SubjectKind
 	core?: { count: number }
 	streams: { name: string, kind?: string, count?: number, pattern?: string }[]
@@ -60,5 +61,4 @@ export interface SubjectNode {
 	hit?: SubjectHit
 	names: number
 	remainder?: boolean
-	stacked?: boolean
 }

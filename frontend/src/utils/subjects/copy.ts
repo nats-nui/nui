@@ -17,7 +17,7 @@ export function statusLines(
 ): string[] {
 	const lines = [jetStreamStatus(jsEnabled, js), coreStatus(coreEnabled, core, filter)]
 		.filter((line): line is string => !!line)
-	const occupiedLine = occupiedStatus(occupied)
+	const occupiedLine = jsEnabled ? occupiedStatus(occupied) : null
 	if (occupiedLine) lines.push(occupiedLine)
 	return lines
 }
@@ -78,6 +78,7 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 	if (js.failed) bits.push(`${js.failed} stream${js.failed == 1 ? "" : "s"} could not be read`)
 	if (js.truncated || js.streams?.some(s => s.truncated)) bits.push("JetStream list was capped")
 	if (js.error == "timed out") bits.push("stored names were not fully read")
+	else if (js.error) bits.push("stored names could not be refreshed")
 	if (bits.length == 0) return null
 	const line = bits.join("; ")
 	return line.charAt(0).toUpperCase() + line.slice(1) + "."
@@ -91,7 +92,9 @@ export function emptyCopy(args: {
 	search: string
 	foundCount: number
 }): string | null {
-	const { coreEnabled, jsEnabled, core, js, search, foundCount } = args
+	const { coreEnabled, jsEnabled, search, foundCount } = args
+	const core = coreEnabled ? args.core : null
+	const js = jsEnabled ? args.js : null
 	if (!coreEnabled && !jsEnabled) return "Turn on Core or JetStream."
 	if (foundCount > 0) return null
 	if (search?.trim()) return "No names match."
@@ -108,6 +111,7 @@ export function emptyCopy(args: {
 	if (jsEnabled && js?.error == "not enabled on this server") {
 		return "JetStream is not on this server."
 	}
+	if (core?.error || js?.error) return "The list could not be read."
 
 	if (coreEnabled && !core) return "Click LISTEN to hear live names."
 	if (coreEnabled) return "Quiet right now."

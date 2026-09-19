@@ -34,6 +34,13 @@ const setup = {
 		coreWatching: false,
 		listenGen: 0,
 		coreAbort: <AbortController>null,
+		watchGen: 0,
+		watchFilter: <string>null,
+		watchTask: <Promise<void>>null,
+		watchReading: false,
+		catalogGen: 0,
+		occupiedGen: 0,
+		messageGen: 0,
 
 		textSearch: <string>null,
 		select: <string>null,
@@ -73,12 +80,10 @@ const setup = {
 			state.noSysMessages = data.noSysMessages ?? true
 			state.filter = data.filter ?? ""
 			state.textSearch = data.textSearch
-			state.format = data.format
+			state.format = data.format ?? MSG_FORMAT.JSON
 		},
 
 		fetchAbort(_: void, store?: LoadBaseStore) {
-			const s = <SubjectsStore>store
-			s.abortCore()
 			loadBaseSetup.actions.fetchAbort?.(_, store)
 		},
 
@@ -95,78 +100,103 @@ const setup = {
 		},
 
 		async discover(reason: DiscoverReason, store?: SubjectsStore) {
-			if (shouldFetchJetStream(store.state.jetstreamEnabled, !!store.state.jetstream, reason)) {
-				await store.fetchJetStream()
-			}
-			if (shouldReadWatch(store.state.coreEnabled, store.state.coreWatching)) {
-				await store.readWatch()
-				return
-			}
-			if (shouldFetchCore(store.state.coreEnabled, store.state.filter, reason)) {
-				await store.fetchCore()
-			}
+			await Promise.all([
+				shouldFetchJetStream(store.state.jetstreamEnabled, !!store.state.jetstream, reason) ? store.fetchJetStream() : null,
+				shouldFetchCore(store.state.coreEnabled, store.state.filter, reason) ? store.fetchCore()
+					: shouldReadWatch(store.state.coreEnabled, store.state.coreWatching) ? store.readWatch() : null,
+			])
 		},
 
 		async fetchJetStream(_: void, store?: SubjectsStore) {
+			const gen = ++store.state.catalogGen
 			const catalog = await subjectsApi.jetstream(store.state.connectionId, store.state.noSysMessages, { store, manageAbort: true, noError: true })
-			if (!catalog) return
-			if (!Array.isArray(catalog.streams)) {
-				store.setJetstream({ streams: [], error: catalog.error || "could not be read" })
+			if (gen != store.state.catalogGen) return
+			if (!Array.isArray(catalog?.streams)) {
+				store.setJetstream({ streams: store.state.jetstream?.streams ?? [], error: catalog?.error || "could not be read" })
 				return
 			}
 			store.setJetstream(catalog)
-			const keep: Record<string, OccupiedCatalog> = {}
-			for (const [key, occ] of Object.entries(store.state.occupied)) {
-				if (catalog.streams.some(s => s.name == occ.stream)) keep[key] = occ
+			const loaded = store.state.occupied
+			store.state.occupiedGen++
+			store.setOccupiedLoading(null)
+			for (const stream of catalog.streams) {
+				for (const item of stream.subjects) {
+					if (gen != store.state.catalogGen) return
+					if (!loaded[occupiedKey(stream.name, item.pattern)]) continue
+					await store.loadOccupied({ subject: item.subject, streams: [{ name: stream.name, pattern: item.pattern }], refresh: true })
+				}
 			}
-			if (Object.keys(keep).length != Object.keys(store.state.occupied).length) {
-				store.setOccupied(keep)
-			}
+			if (gen != store.state.catalogGen) return
+			const valid = new Set(catalog.streams.flatMap(s => s.subjects.map(item => occupiedKey(s.name, item.pattern))))
+			store.setOccupied(Object.fromEntries(Object.entries(store.state.occupied).filter(([key]) => valid.has(key))))
 		},
 
 		abortCore(_: void, store?: SubjectsStore) {
+			store.state.listenGen++
 			store.state.coreAbort?.abort()
 			store.state.coreAbort = null
 		},
 
-		async watchCore(_: void, store?: SubjectsStore) {
-			const filter = normalizeListenFilter(store.state.filter)
+		async watchCore(activeFilter?: string, store?: SubjectsStore) {
+			const filter = normalizeListenFilter(activeFilter ?? store.state.filter)
 			if (!canListen(filter)) return
-			if (store.state.filter != filter) store.setFilter(filter)
+			if (activeFilter == null && store.state.filter != filter) store.setFilter(filter)
+			store.abortCore()
+			const gen = ++store.state.watchGen
+			store.state.watchFilter = filter
 			store.setCoreWatching(true)
-			const catalog = await subjectsApi.watch(store.state.connectionId, filter, store.state.noSysMessages, {
-				store, noError: true, loading: false,
-			})
-			if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
-				store.setCoreWatching(false)
-				store.setCore({
-					filter,
-					listenMs: 0,
-					heard: 0,
-					truncated: false,
-					subjects: [],
-					error: catalog?.error || "could not listen",
+			const noSysMessages = store.state.noSysMessages
+			const task = (store.state.watchTask ?? Promise.resolve()).then(async () => {
+				if (gen != store.state.watchGen) return
+				const catalog = await subjectsApi.watch(store.state.connectionId, filter, noSysMessages, store.state.uuid, {
+					store, noError: true, loading: false,
 				})
-				return
-			}
-			store.setCore(catalog)
+				if (gen != store.state.watchGen) return
+				if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
+					store.setCoreWatching(false)
+					store.setCore({
+						filter,
+						listenMs: 0,
+						heard: 0,
+						truncated: false,
+						subjects: [],
+						error: catalog?.error || "could not listen",
+					})
+					return
+				}
+				store.setCore(catalog)
+			})
+			store.state.watchTask = task
+			await task
 		},
 
 		async readWatch(_: void, store?: SubjectsStore) {
-			const catalog = await subjectsApi.snapshot(store.state.connectionId, {
-				store, noError: true, loading: false,
-			})
-			if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
-				store.setCoreWatching(false)
-				return
-			}
-			store.setCore(catalog)
+			if (!store.state.coreWatching || store.state.watchReading) return
+			const gen = store.state.watchGen
+			store.state.watchReading = true
+			try {
+				await store.state.watchTask
+				if (gen != store.state.watchGen) return
+				const catalog = await subjectsApi.snapshot(store.state.connectionId, store.state.uuid, {
+					store, noError: true, loading: false,
+				})
+				if (gen != store.state.watchGen) return
+				if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
+					store.setCoreWatching(false)
+				}
+				if (catalog && Array.isArray(catalog.subjects)) store.setCore(catalog)
+			} finally { store.state.watchReading = false }
 		},
 
 		async stopWatch(_: void, store?: SubjectsStore) {
+			store.state.watchGen++
+			store.abortCore()
 			store.setCoreWatching(false)
 			if (store.state.connectionId) {
-				await subjectsApi.unwatch(store.state.connectionId, { store, noError: true, loading: false })
+				const task = (store.state.watchTask ?? Promise.resolve()).then(() =>
+					subjectsApi.unwatch(store.state.connectionId, store.state.uuid, { store, noError: true, loading: false }))
+				store.state.watchTask = task
+				await task
 			}
 		},
 
@@ -225,10 +255,12 @@ const setup = {
 
 		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
 			store.setNoSysMessages(!store.state.noSysMessages)
-			store.setOccupied({})
+			store.state.occupiedGen++
+			store.setOccupiedLoading(null)
 			if (store.state.jetstreamEnabled) await store.fetchJetStream()
+			else store.setJetstream(null)
 			if (store.state.coreWatching) {
-				await store.watchCore()
+				await store.watchCore(store.state.watchFilter)
 				return
 			}
 			if (store.state.core && canListen(store.state.filter)) await store.fetchCore()
@@ -236,6 +268,10 @@ const setup = {
 
 		async listenNow(_: void, store?: SubjectsStore) {
 			const filter = normalizeListenFilter(store.state.filter)
+			if (store.state.coreWatching && (!filter || filter == store.state.watchFilter)) {
+				await store.stopWatch()
+				return
+			}
 			if (!filter) {
 				store.setListenHint(FILTER_EMPTY)
 				return
@@ -247,10 +283,6 @@ const setup = {
 			}
 			if (store.state.filter != filter) store.setFilter(filter)
 			store.setListenHint(null)
-			if (store.state.coreWatching) {
-				await store.stopWatch()
-				return
-			}
 			await store.watchCore()
 		},
 
@@ -260,17 +292,19 @@ const setup = {
 			await store.watchCore()
 		},
 
-		async loadOccupied(hit: SubjectHit, store?: SubjectsStore) {
+		async loadOccupied(hit: SubjectHit & { refresh?: boolean }, store?: SubjectsStore) {
 			const stream = hit.streams[0]
 			if (!stream) return
 			const pattern = stream.pattern || ">"
 			const key = occupiedKey(stream.name, pattern)
-			if (store.state.occupied[key] || store.state.occupiedLoading == key) return
+			if ((!hit.refresh && store.state.occupied[key] && !store.state.occupied[key].error) || store.state.occupiedLoading == key) return
+			const gen = store.state.occupiedGen
 			store.setOccupiedLoading(key)
 			try {
 				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, store.state.noSysMessages, {
 					store, noError: true, loading: false,
 				})
+				if (gen != store.state.occupiedGen) return
 				if (!catalog || !Array.isArray(catalog.subjects)) {
 					store.setOccupied({
 						...store.state.occupied,
@@ -285,16 +319,17 @@ const setup = {
 		},
 
 		async openHit(hit: SubjectHit, store?: SubjectsStore) {
+			const gen = ++store.state.messageGen
 			store.setSelect(hit.subject)
 			if (hit.expandable && hit.kind != "occupied") {
 				await store.loadOccupied(hit)
 				return
 			}
-			if (hit.kind != "occupied" && !hit.streams.some(s => s.count)) return
+			if (!hit.streams.length) return
 			const stream = hit.streams[0]
 			if (!stream) return
 			const message = await subjectsApi.last(store.state.connectionId, hit.subject, stream.name, { store, loading: false })
-			if (!message) return
+			if (!message || gen != store.state.messageGen) return
 
 			const storeMsg = store.state.linked as MessageStore
 			if (storeMsg?.state.type == DOC_TYPE.MESSAGE) {
@@ -309,6 +344,14 @@ const setup = {
 				store.state.group.addLink({ view, parent: store, anim: true })
 			}
 			store._update()
+		},
+
+		disposeSubjects(_: void, store?: SubjectsStore) {
+			store.state.catalogGen++
+			store.state.occupiedGen++
+			store.state.messageGen++
+			store.fetchAbort()
+			store.stopWatch()
 		},
 	},
 

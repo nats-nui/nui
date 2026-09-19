@@ -2,6 +2,7 @@ package nui
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"sort"
 	"strings"
@@ -23,7 +24,7 @@ func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(c.Context(), jsCatalogTimeout)
 	defer cancel()
-	out := enumerateJetStreamPatterns(ctx, js, queryBoolDefault(c, "discard_sys", true))
+	out := enumerateJetStreamPatterns(ctx, js, c.QueryBool("discard_sys", true))
 	return c.JSON(out)
 }
 
@@ -51,7 +52,7 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(c.Context(), occupiedTimeout)
 	defer cancel()
-	out := occupiedSubjects(ctx, js, streamName, filter, queryBoolDefault(c, "discard_sys", true))
+	out := occupiedSubjects(ctx, js, streamName, filter, c.QueryBool("discard_sys", true))
 	return c.JSON(out)
 }
 
@@ -91,16 +92,18 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 				continue
 			}
 			seen[path] = true
-			next, capped := capAppend(entry.Subjects, JetStreamSubject{
-				Subject: path,
-				Pattern: pattern,
-				Kind:    subKind,
-			}, maxPatternsPerStream)
-			entry.Subjects = next
-			if capped {
+			if len(entry.Subjects) >= maxPatternsPerStream {
 				entry.Truncated = true
 				break
 			}
+			if subKind == kindObject {
+				pattern = path + ".>"
+			}
+			entry.Subjects = append(entry.Subjects, JetStreamSubject{
+				Subject: path,
+				Pattern: pattern,
+				Kind:    subKind,
+			})
 		}
 		sort.Slice(entry.Subjects, func(i, j int) bool { return entry.Subjects[i].Subject < entry.Subjects[j].Subject })
 		out.Streams = append(out.Streams, entry)
@@ -111,16 +114,39 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 
 func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, filter string, discardSys bool) *OccupiedCatalog {
 	out := &OccupiedCatalog{Stream: streamName, Subjects: []JetStreamSubject{}}
-	stream, err := js.Stream(ctx, streamName)
+	_, err := js.Stream(ctx, streamName)
 	if err != nil {
 		out.Error = jsUserError(err)
 		return out
 	}
-	info, err := stream.Info(ctx, jetstream.WithSubjectFilter(filter))
+	// Stream.Info walks every page. Discovery only needs the first page.
+	request, err := json.Marshal(struct {
+		Filter string `json:"subjects_filter"`
+	}{filter})
 	if err != nil {
 		out.Error = jsUserError(err)
 		return out
 	}
+	response, err := js.Conn().RequestWithContext(ctx, "$JS.API.STREAM.INFO."+streamName, request)
+	if err != nil {
+		out.Error = jsUserError(err)
+		return out
+	}
+	var page struct {
+		jetstream.StreamInfo
+		Total int                 `json:"total"`
+		Error *jetstream.APIError `json:"error"`
+	}
+	if err := json.Unmarshal(response.Data, &page); err != nil {
+		out.Error = jsUserError(err)
+		return out
+	}
+	if page.Error != nil {
+		out.Error = jsUserError(page.Error)
+		return out
+	}
+	info := &page.StreamInfo
+	out.Truncated = page.Total > len(info.State.Subjects)
 	out.Kind = streamKind(info.Config.Name, info.Config.Subjects)
 	// Sort before the cap so every poll shows the same first page.
 	names := make([]string, 0, len(info.State.Subjects))
@@ -165,7 +191,7 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 			}
 			if info != nil {
 				infos = append(infos, info)
-				if len(infos) >= maxJSStreams {
+				if len(infos) > maxJSStreams {
 					cancel()
 					return infos, nil
 				}

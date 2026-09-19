@@ -8,7 +8,7 @@ export function normalizeListenFilter(filter: string): string {
 export function validateListenFilter(filter: string): string | null {
 	const value = normalizeListenFilter(filter)
 	if (!value) return FILTER_INVALID
-	if (/\s/.test(value)) return FILTER_INVALID
+	if (/[\s\x00-\x1f\x7f-\x9f]/.test(value)) return FILTER_INVALID
 	const tokens = value.split(".")
 	for (let i = 0; i < tokens.length; i++) {
 		const tok = tokens[i]

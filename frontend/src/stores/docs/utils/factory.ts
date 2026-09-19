@@ -5,7 +5,7 @@ import cnnSetup from "@/stores/stacks/connection";
 import clientMetricsSetup from "@/stores/stacks/connection/clients";
 import servicesSetup from "@/stores/stacks/connection/detail";
 import messageSendSetup from "@/stores/stacks/connection/messageSend";
-import messagesSetup from "@/stores/stacks/connection/messages"
+import messagesSetup from "@/stores/stacks/connection/messages";
 import subjectsSetup from "@/stores/stacks/connection/subjects";
 import cnnMetricsSetup from "@/stores/stacks/connection/metrics";
 import consumersSetup from "@/stores/stacks/consumer";

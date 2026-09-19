@@ -15,6 +15,7 @@ export function flattenHits(opts: {
 	showCore: boolean
 	showJetStream: boolean
 	filter?: string
+	noSysMessages?: boolean
 }): SubjectHit[] {
 	const bySubject = new Map<string, SubjectHit>()
 
@@ -44,7 +45,7 @@ export function flattenHits(opts: {
 			for (const item of stream.subjects ?? []) {
 				const hit = ensure(item.subject)
 				hit.kind = item.kind
-				hit.expandable = item.kind == "pattern" || item.kind == "kv" || item.kind == "object"
+				hit.expandable = item.kind == "kv" || item.kind == "object" || item.kind == "pattern" && /[*>]/.test(item.pattern ?? item.subject)
 				hit.streams.push({
 					name: stream.name,
 					kind: stream.kind,
@@ -53,11 +54,13 @@ export function flattenHits(opts: {
 				})
 			}
 		}
-		for (const occ of Object.values(opts.occupied ?? {})) {
+		for (const [key, occ] of Object.entries(opts.occupied ?? {})) {
+			const parent = Array.from(bySubject.values()).find(hit => hit.expandable && hit.streams.some(s => occupiedKey(s.name, s.pattern) == key))
 			for (const item of occ.subjects ?? []) {
 				const already = bySubject.get(item.subject)
 				if (already?.expandable) continue
 				const hit = ensure(item.subject)
+				if (parent && parent.subject != hit.subject && !hit.parent) hit.parent = parent.subject
 				if (!hit.kind || hit.kind == "live") hit.kind = "occupied"
 				if (!hit.streams.some(s => s.name == occ.stream)) {
 					hit.streams.push({ name: occ.stream, kind: occ.kind, count: item.count })
@@ -69,7 +72,9 @@ export function flattenHits(opts: {
 		}
 	}
 
-	return Array.from(bySubject.values()).sort((a, b) => a.subject.localeCompare(b.subject))
+	return Array.from(bySubject.values())
+		.filter(hit => !opts.noSysMessages || !/^(\$SYS|\$JS|_INBOX)(\.|$)/.test(hit.subject))
+		.sort((a, b) => a.subject.localeCompare(b.subject))
 }
 
 type Draft = {
@@ -77,36 +82,40 @@ type Draft = {
 	path: string
 	children: Map<string, Draft>
 	hit?: SubjectHit
-	stacked?: boolean
 }
 
 export function buildSubjectTree(hits: SubjectHit[]): SubjectNode[] {
 	const root: Draft = { segment: "", path: "", children: new Map() }
-	for (const hit of hits) {
-		const segments = hit.subject.split(".").filter(s => s.length > 0)
-		if (segments.length == 0) continue
+	const nodes = new Map<string, Draft>()
+	const insert = (hit: SubjectHit) => {
+		const segments = hit.subject.split(".")
 		let current = root
-		let i = 0
-		while (i < segments.length) {
-			const remaining = segments.length - i
-			const existing = current.children.get(segments[i])
-			const stacked = i >= MAX_TREE_DEPTH - 1 && remaining > 1 && !existing
-			const take = stacked ? remaining : 1
+		for (let i = 0; i < segments.length;) {
+			const take = i >= MAX_TREE_DEPTH - 1 ? segments.length - i : 1
 			const segment = segments.slice(i, i + take).join(".")
 			const path = segments.slice(0, i + take).join(".")
 			let child = current.children.get(segment)
 			if (!child) {
-				child = { segment, path, children: new Map(), stacked }
+				child = { segment, path, children: new Map() }
 				current.children.set(segment, child)
 			}
 			current = child
 			i += take
 		}
 		current.hit = hit
+		nodes.set(hit.subject, current)
+	}
+	for (const hit of hits) if (!hit.parent) insert(hit)
+	for (const hit of hits) {
+		if (!hit.parent) continue
+		const parent = nodes.get(hit.parent)
+		if (!parent) { insert(hit); continue }
+		const prefix = hit.parent.split(".").filter(s => s != "*" && s != ">").join(".") + "."
+		const segment = hit.subject.startsWith(prefix) ? hit.subject.slice(prefix.length) : hit.subject
+		parent.children.set(hit.subject, { segment, path: hit.subject, children: new Map(), hit })
 	}
 	return freeze(root).children
 }
-
 function freeze(draft: Draft): SubjectNode {
 	const all = Array.from(draft.children.values())
 		.sort((a, b) => a.segment.localeCompare(b.segment))
@@ -132,7 +141,6 @@ function freeze(draft: Draft): SubjectNode {
 		children,
 		hit: draft.hit,
 		names,
-		stacked: draft.stacked,
 	}
 }
 

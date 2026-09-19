@@ -46,6 +46,9 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
+	if a.coreWatches != nil {
+		a.coreWatches.stop(conn.Id)
+	}
 	err = a.nui.ConnPool.Refresh(conn.Id)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
@@ -60,6 +63,9 @@ func (a *App) HandleDeleteConnection(ctx *fiber.Ctx) error {
 	err := a.nui.ConnRepo.Remove(ctx.Params("id"))
 	if err != nil {
 		return ctx.Status(500).JSON(err.Error())
+	}
+	if a.coreWatches != nil {
+		a.coreWatches.stop(ctx.Params("id"))
 	}
 	a.nui.ConnPool.Purge()
 	return ctx.SendStatus(200)

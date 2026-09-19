@@ -55,6 +55,10 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 	app.registerHandlers()
+	app.Hooks().OnShutdown(func() error {
+		app.coreWatches.close()
+		return nil
+	})
 	return app
 }
 

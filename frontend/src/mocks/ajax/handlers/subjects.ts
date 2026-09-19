@@ -22,6 +22,8 @@ const core = {
 	],
 }
 
+const watches = new Map<string, { filter: string, session: string }>()
+
 const handlers = [
 	rest.get('/api/connection/:cnnId/subjects/last', async (req, res, ctx) => {
 		return res(
@@ -48,11 +50,21 @@ const handlers = [
 		return res(ctx.status(200), ctx.json(jetstream))
 	}),
 	rest.get('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
-		const filter = req.url.searchParams.get("filter") || core.filter
-		const watching = req.url.searchParams.get("watch") == "1"
-		return res(ctx.status(200), ctx.json({ ...core, filter, watching: watching || undefined }))
+		const id = String(req.params.cnnId)
+		const session = req.url.searchParams.get("session") ?? ""
+		const filter = req.url.searchParams.get("filter")?.trim()
+		if (req.url.searchParams.get("watch") == "1") {
+			if (!filter) return res(ctx.status(422), ctx.json({ error: "a name is required" }))
+			watches.set(id, { filter, session })
+			return res(ctx.json({ ...core, filter, watching: true }))
+		}
+		if (filter) return res(ctx.json({ ...core, filter }))
+		const watch = watches.get(id)
+		return res(ctx.json(watch?.session == session ? { ...core, filter: watch.filter, watching: true } : { subjects: [] }))
 	}),
 	rest.delete('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
+		const id = String(req.params.cnnId)
+		if (watches.get(id)?.session == (req.url.searchParams.get("session") ?? "")) watches.delete(id)
 		return res(ctx.status(200), ctx.json({}))
 	}),
 ]

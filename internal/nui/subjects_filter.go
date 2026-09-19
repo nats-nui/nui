@@ -25,7 +25,7 @@ func normalizeListenFilter(filter string) string {
 func validateListenFilter(filter string) error {
 	filter = normalizeListenFilter(filter)
 	for _, r := range filter {
-		if unicode.IsSpace(r) {
+		if unicode.IsSpace(r) || unicode.IsControl(r) {
 			return errFilterInvalid
 		}
 	}
@@ -99,11 +99,4 @@ func collapsePattern(subject, kind string) (path, outKind string) {
 		path = subject
 	}
 	return path, kindPattern
-}
-
-func capAppend[T any](dst []T, item T, max int) ([]T, bool) {
-	if max > 0 && len(dst) >= max {
-		return dst, true
-	}
-	return append(dst, item), false
 }

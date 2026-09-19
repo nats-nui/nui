@@ -6,4 +6,4 @@ Last message JetStream still has for that name. Catalogs never include payloads.
 GET /api/connection/:id/subjects/last?subject=:subject&stream=:stream
 ```
 
-Payload is base64.
+The subject must be a literal name. Payload is base64 and is returned in full, with the original message headers.

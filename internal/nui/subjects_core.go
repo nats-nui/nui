@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,18 +12,15 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-// HandleCoreListen is the Core NATS catalog. watch=1 starts or reads
-// the live subscribe. A GET without watch=1 returns that snapshot if
-// one is already running, otherwise it is a time-boxed sample.
-// Empty filter is not `>`.
+// Without a filter, GET only reads the current live snapshot.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
-	id := c.Params("id")
-	watch := queryBoolDefault(c, "watch", false)
-	discardSys := queryBoolDefault(c, "discard_sys", true)
-	filter := normalizeListenFilter(c.Query("filter"))
+	id := strings.Clone(c.Params("id"))
+	watch := c.QueryBool("watch", false)
+	discardSys := c.QueryBool("discard_sys", true)
+	filter := strings.Clone(normalizeListenFilter(c.Query("filter")))
 
 	if watch {
 		if err := validateListenFilter(filter); err != nil {
@@ -32,15 +28,16 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 		}
 		return a.coreWatchSnapshot(c, id, filter, discardSys)
 	}
-	if a.coreWatches != nil && a.coreWatches.watching(id) {
-		if out := a.coreWatches.read(id); out != nil {
+	if filter == "" && c.Query("listen_ms") == "" && a.coreWatches != nil {
+		if out := a.coreWatches.read(id, c.Query("session")); out != nil {
 			return c.JSON(out)
 		}
+		return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
 	}
 	if err := validateListenFilter(filter); err != nil {
 		return c.Status(422).JSON(NewError(err.Error()))
 	}
-	listenMs := queryIntDefault(c, "listen_ms", defaultListenMs)
+	listenMs := c.QueryInt("listen_ms", defaultListenMs)
 	if listenMs < minListenMs {
 		listenMs = minListenMs
 	}
@@ -78,7 +75,7 @@ func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
 		return c.Status(422).JSON("id is required")
 	}
 	if a.coreWatches != nil {
-		a.coreWatches.stop(c.Params("id"))
+		a.coreWatches.stopSession(c.Params("id"), c.Query("session"))
 	}
 	return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
 }
@@ -88,14 +85,7 @@ func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	if a.coreWatches == nil {
-		a.coreWatches = newCoreWatchHub()
-	}
-	return c.JSON(a.coreWatches.snapshot(id, filter, cfg, discardSys))
-}
-
-func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration) *CoreCatalog {
-	return sampleCoreLimited(ctx, conn, filter, listen, maxCoreSubjects, true)
+	return c.JSON(a.coreWatches.snapshot(id, filter, cfg, discardSys, strings.Clone(c.Query("session"))))
 }
 
 func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, nameCap int, discardSys bool) *CoreCatalog {
@@ -114,14 +104,36 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		default:
 		}
 	})
+	conn.SetClosedHandler(func(_ *nats.Conn) {
+		select {
+		case asyncErr <- nats.ErrConnectionClosed:
+		default:
+		}
+	})
 
-	ch := make(chan *nats.Msg, coreSubscribeBuffer)
-	sub, err := conn.ChanSubscribe(filter, ch)
+	ch := make(chan string, coreSubscribeBuffer)
+	sub, err := conn.Subscribe(filter, func(msg *nats.Msg) {
+		if hideInternal(discardSys, msg.Subject) {
+			return
+		}
+		select {
+		case ch <- msg.Subject:
+		default:
+			select {
+			case asyncErr <- nats.ErrSlowConsumer:
+			default:
+			}
+		}
+	})
 	if err != nil {
 		out.Error = coreUserError(err)
 		return out
 	}
-	_ = sub.SetPendingLimits(corePendingMsgs, corePendingBytes)
+	if err := sub.SetPendingLimits(corePendingMsgs, corePendingBytes); err != nil {
+		_ = sub.Unsubscribe()
+		out.Error = coreUserError(err)
+		return out
+	}
 
 	var unsubOnce sync.Once
 	unsubscribe := func() {
@@ -139,7 +151,9 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 	}()
 	defer close(stop)
 
-	if err := conn.Flush(); err != nil {
+	flushCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	if err := conn.FlushWithContext(flushCtx); err != nil {
 		out.Error = coreUserError(err)
 		return out
 	}
@@ -149,14 +163,14 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 	}
 
 	hits := map[string]*CoreSubject{}
-	var extraDropped atomic.Int64
+	extraDropped := 0
 	timer := time.NewTimer(listen)
 	defer timer.Stop()
 
 	finish := func() {
 		pendingDropped, err := sub.Dropped()
 		unsubscribe()
-		dropped := int(extraDropped.Load())
+		dropped := extraDropped
 		if err == nil && pendingDropped > 0 {
 			dropped += pendingDropped
 		}
@@ -169,22 +183,16 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		sortCoreSubjects(out.Subjects)
 	}
 
-	record := func(msg *nats.Msg) {
-		if msg == nil {
-			return
-		}
-		if hideInternal(discardSys, msg.Subject) {
-			return
-		}
-		hit, exists := hits[msg.Subject]
+	record := func(subject string) {
+		hit, exists := hits[subject]
 		if !exists {
 			if nameCap > 0 && len(hits) >= nameCap {
 				out.Truncated = true
-				extraDropped.Add(1)
+				extraDropped++
 				return
 			}
-			hit = &CoreSubject{Subject: msg.Subject}
-			hits[msg.Subject] = hit
+			hit = &CoreSubject{Subject: subject}
+			hits[subject] = hit
 		}
 		hit.Count++
 	}
@@ -210,6 +218,10 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 				return out
 			}
 			record(msg)
+			if out.Truncated {
+				finish()
+				return out
+			}
 		}
 	}
 }
@@ -220,6 +232,12 @@ func coreUserError(err error) string {
 	}
 	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
 		return "timed out"
+	}
+	if errors.Is(err, nats.ErrSlowConsumer) {
+		return "too much traffic"
+	}
+	if errors.Is(err, nats.ErrConnectionClosed) {
+		return "connection closed"
 	}
 	s := strings.ToLower(err.Error())
 	if strings.Contains(s, "permission") || strings.Contains(s, "authorization") || strings.Contains(s, "not permitted") {

@@ -30,8 +30,14 @@ const SubjectsView: FunctionComponent<Props> = ({
 
 	useEffect(() => {
 		subjectsSo.fetchIfVoid()
-		return () => { subjectsSo.stopWatch() }
+		return () => { subjectsSo.disposeSubjects() }
 	}, [])
+
+	useEffect(() => {
+		if (!subjectsSa.coreWatching) return
+		const timer = setInterval(() => subjectsSo.readWatch(), 1000)
+		return () => clearInterval(timer)
+	}, [subjectsSa.coreWatching])
 
 	const handleSelect = (node: SubjectNode) => {
 		if (node.remainder) return
@@ -52,7 +58,8 @@ const SubjectsView: FunctionComponent<Props> = ({
 		showCore: subjectsSa.coreEnabled,
 		showJetStream: subjectsSa.jetstreamEnabled,
 		filter: subjectsSa.filter,
-	}), [subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.filter])
+		noSysMessages: subjectsSa.noSysMessages,
+	}), [subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.filter, subjectsSa.noSysMessages])
 	const tree = useMemo(() => buildSubjectTree(filterHits(hits, subjectsSa.textSearch)), [hits, subjectsSa.textSearch])
 	const status = useMemo(
 		() => statusLines(subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.core, subjectsSa.jetstream, subjectsSa.occupied, subjectsSa.filter),

@@ -3,6 +3,7 @@ package nui
 import (
 	"context"
 	"errors"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -62,20 +63,6 @@ func TestCollapsePattern(t *testing.T) {
 	assert.Equal(t, kindPattern, kind)
 }
 
-func TestCapAppendPerStream(t *testing.T) {
-	var got []int
-	truncated := false
-	for i := 0; i < 8; i++ {
-		var capped bool
-		got, capped = capAppend(got, i, 3)
-		if capped {
-			truncated = true
-		}
-	}
-	assert.Equal(t, []int{0, 1, 2}, got)
-	assert.True(t, truncated)
-}
-
 func TestJsUserError(t *testing.T) {
 	assert.Equal(t, "", jsUserError(nil))
 	assert.Equal(t, "timed out", jsUserError(context.DeadlineExceeded))
@@ -97,7 +84,7 @@ func TestSampleCoreCancelUnsubscribes(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan *CoreCatalog, 1)
 	go func() {
-		done <- sampleCore(ctx, nc, "probe.>", 5*time.Second)
+		done <- sampleCoreLimited(ctx, nc, "probe.>", 5*time.Second, maxCoreSubjects, true)
 	}()
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
 
@@ -126,7 +113,7 @@ func TestSampleCoreHearsLiteralPrefixOnly(t *testing.T) {
 		}
 	}()
 
-	out := sampleCore(context.Background(), nc, "orders.>", 400*time.Millisecond)
+	out := sampleCoreLimited(context.Background(), nc, "orders.>", 400*time.Millisecond, maxCoreSubjects, true)
 	require.Empty(t, out.Error)
 	require.GreaterOrEqual(t, out.Heard, 1)
 	assert.GreaterOrEqual(t, out.Dropped, 0)
@@ -155,11 +142,11 @@ func TestSampleCoreNotAllowed(t *testing.T) {
 	require.NoError(t, err)
 	defer nc.Close()
 
-	out := sampleCore(context.Background(), nc, "secret.>", 200*time.Millisecond)
+	out := sampleCoreLimited(context.Background(), nc, "secret.>", 200*time.Millisecond, maxCoreSubjects, true)
 	assert.Equal(t, "not allowed", out.Error)
 }
 
-func TestSampleCoreCapsCatalogForTheTimeWindow(t *testing.T) {
+func TestSampleCoreStopsAtCatalogCap(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	nc, err := nats.Connect(ns.ClientURL())
 	require.NoError(t, err)
@@ -168,13 +155,13 @@ func TestSampleCoreCapsCatalogForTheTimeWindow(t *testing.T) {
 	const nameCap = 8
 	done := make(chan *CoreCatalog, 1)
 	go func() {
-		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 300*time.Millisecond, nameCap, true)
+		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 5*time.Second, nameCap, true)
 	}()
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
 
 	start := time.Now()
 	for i := 0; i < nameCap+20; i++ {
-		require.NoError(t, nc.Publish("cap."+itoa(i), []byte("x")))
+		require.NoError(t, nc.Publish("cap."+strconv.Itoa(i), []byte("x")))
 	}
 	require.NoError(t, nc.Flush())
 
@@ -182,7 +169,7 @@ func TestSampleCoreCapsCatalogForTheTimeWindow(t *testing.T) {
 	case out := <-done:
 		require.True(t, out.Truncated, "error=%q heard=%d", out.Error, out.Heard)
 		assert.Equal(t, nameCap, out.Heard)
-		assert.GreaterOrEqual(t, time.Since(start), 250*time.Millisecond)
+		assert.Less(t, time.Since(start), time.Second)
 	case <-time.After(2 * time.Second):
 		t.Fatal("time-based listen did not return")
 	}
@@ -209,19 +196,19 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.stop("id")
 
-	first := h.snapshot("id", "w.>", cfg, true)
+	first := h.snapshot("id", "w.>", cfg, true, "")
 	require.Empty(t, first.Error)
 	require.True(t, first.Watching)
-	require.True(t, h.watching("id"))
+	require.NotNil(t, h.read("id", ""))
 
 	require.NoError(t, pub.Publish("w.one", []byte("x")))
 	require.NoError(t, pub.Publish("$SYS.ignore", []byte("x")))
 	require.NoError(t, pub.Flush())
 	require.Eventually(t, func() bool {
-		return h.read("id").Heard >= 1
+		return h.read("id", "").Heard >= 1
 	}, time.Second, 20*time.Millisecond)
 
-	got := h.snapshot("id", "w.>", cfg, true)
+	got := h.snapshot("id", "w.>", cfg, true, "")
 	require.True(t, got.Watching)
 	assert.GreaterOrEqual(t, got.Heard, 1)
 	for _, s := range got.Subjects {
@@ -229,7 +216,7 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	}
 
 	h.stop("id")
-	assert.False(t, h.watching("id"))
+	assert.Nil(t, h.read("id", ""))
 }
 
 func TestDialOnceIsNotPooled(t *testing.T) {
@@ -352,25 +339,25 @@ func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.stop("id")
 
-	hidden := h.snapshot("id", ">", cfg, true)
+	hidden := h.snapshot("id", ">", cfg, true, "")
 	require.Empty(t, hidden.Error)
 	require.True(t, hidden.Watching)
 	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
 	require.NoError(t, pub.Publish("orders.one", []byte("x")))
 	require.NoError(t, pub.Flush())
 	require.Eventually(t, func() bool {
-		return h.read("id").Heard >= 1
+		return h.read("id", "").Heard >= 1
 	}, time.Second, 20*time.Millisecond)
-	for _, s := range h.read("id").Subjects {
+	for _, s := range h.read("id", "").Subjects {
 		assert.False(t, isInternalSubject(s.Subject))
 	}
 
-	shown := h.snapshot("id", ">", cfg, false)
+	shown := h.snapshot("id", ">", cfg, false, "")
 	require.True(t, shown.Watching)
 	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
 	require.NoError(t, pub.Flush())
 	require.Eventually(t, func() bool {
-		out := h.read("id")
+		out := h.read("id", "")
 		for _, s := range out.Subjects {
 			if s.Subject == "_INBOX.keep" {
 				return true
@@ -412,7 +399,7 @@ func TestOccupiedCapsPerStream(t *testing.T) {
 	})
 	require.NoError(t, err)
 	for i := 0; i < maxOccupiedPerStream+25; i++ {
-		_, err = js.Publish(context.Background(), "n."+itoa(i), []byte("x"))
+		_, err = js.Publish(context.Background(), "n."+strconv.Itoa(i), []byte("x"))
 		require.NoError(t, err)
 	}
 
@@ -491,18 +478,4 @@ func jsOpts(t *testing.T) *server.Options {
 		JetStream: true,
 		StoreDir:  t.TempDir(),
 	}
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	var b [12]byte
-	i := len(b)
-	for n > 0 {
-		i--
-		b[i] = byte('0' + n%10)
-		n /= 10
-	}
-	return string(b[i:])
 }
