@@ -3,123 +3,91 @@ package docstore
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/dgraph-io/badger/v4"
+	c "github.com/ostafen/clover/v2"
 	"github.com/ostafen/clover/v2/document"
+	badgerstore "github.com/ostafen/clover/v2/store/badger"
 	"github.com/stretchr/testify/require"
 )
 
-func allProfiles() []Profile {
-	return []Profile{ProfileLegacy, ProfileMinImpact, ProfileReclaim}
-}
-
-func (p Profile) String() string {
-	switch p {
-	case ProfileLegacy:
-		return "legacy"
-	case ProfileMinImpact:
-		return "min-impact"
-	case ProfileReclaim:
-		return "reclaim"
-	default:
-		return "unknown"
-	}
-}
-
-func (p Profile) expectedVlogMmapBytes() int64 {
-	switch p {
-	case ProfileMinImpact:
-		return 2 * minImpactValueLogFileSize
-	case ProfileReclaim:
-		return 2 * reclaimValueLogFileSize
-	default:
-		return legacyMaxApparentBytes
-	}
-}
-
-// leftoverOversizedBytes is just over oversizedVlogBytes (32MiB) so
-// reclaimOversizedValueLogs treats the file as leftover.
-const leftoverOversizedBytes = 40 << 20
-
-// TestProfiles_LeftoverValueLog: create with legacy, reopen with reclaim
-// (no error, vlog shrunk), then the same with min-impact.
-func TestProfiles_LeftoverValueLog(t *testing.T) {
-	for _, profile := range []Profile{ProfileReclaim, ProfileMinImpact} {
-		t.Run(profile.String(), func(t *testing.T) {
-			dir, id := leftoverOversizedDB(t)
-
-			db, err := OpenWithProfile(dir, profile, nil)
+func TestDocStore_InMemoryLargeJWT(t *testing.T) {
+	for _, path := range []string{"", ":memory:"} {
+		t.Run(path, func(t *testing.T) {
+			db, err := NewDocStore(path)
 			require.NoError(t, err)
-			t.Cleanup(func() { _ = db.Close() })
-
+			t.Cleanup(func() { require.NoError(t, db.Close()) })
+			jwt := strings.Repeat("a", 4096)
+			doc := document.NewDocument()
+			doc.Set("jwt", jwt)
+			id, err := db.InsertOne(CONN_COLLECTION, doc)
+			require.NoError(t, err)
 			got, err := db.FindById(CONN_COLLECTION, id)
 			require.NoError(t, err)
-			require.Equal(t, "keep-me", got.Get("name"))
-
-			gotSize := maxApparentVlogSize(t, dir)
-			require.Less(t, gotSize, int64(legacyMaxApparentBytes),
-				"%s must shrink the leftover DefaultOptions value log", profile)
+			require.NotNil(t, got)
+			require.Equal(t, jwt, got.Get("jwt"))
 		})
 	}
 }
 
-// TestProfiles_NewDBValueLogWhileOpen: a fresh open uses this profile's
-// mmap size the whole time the DB is open. Reclaim is irrelevant here.
-func TestProfiles_NewDBValueLogWhileOpen(t *testing.T) {
-	for _, profile := range allProfiles() {
-		t.Run(profile.String(), func(t *testing.T) {
-			dir := t.TempDir()
-			db, err := OpenWithProfile(dir, profile, nil)
-			require.NoError(t, err)
-			t.Cleanup(func() { _ = db.Close() })
-
-			doc := document.NewDocument()
-			doc.Set("name", "local-flood")
-			_, err = db.InsertOne(CONN_COLLECTION, doc)
-			require.NoError(t, err)
-
-			require.Equal(t, profile.expectedVlogMmapBytes(), maxApparentVlogSize(t, dir),
-				"open db should mmap a value log of this profile's size")
-		})
-	}
-}
-
-// leftoverOversizedDB builds a real Badger store, then fakes a leftover
-// value log. Close() is required: Badger holds an exclusive directory lock,
-// so the leftover reopen cannot run in this process until the first handle
-// is released. Close also truncates *.vlog to the few bytes actually
-// written, which is below oversizedVlogBytes, so reclaim would not run.
-// Growing the file to leftoverOversizedBytes after Close is the fixture
-// for "ls shows a huge leftover, data must survive" without a second
-// process and a kill.
-func leftoverOversizedDB(t *testing.T) (dir, id string) {
-	t.Helper()
-	dir = t.TempDir()
-
-	legacy, err := OpenWithProfile(dir, ProfileLegacy, nil)
+func TestDocStore_ValueLogSizeWhileOpen(t *testing.T) {
+	dir := t.TempDir()
+	db, err := NewDocStore(dir)
 	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, db.Close()) })
+	require.Equal(t, int64(64<<20), maxApparentVlogSize(t, dir))
+}
+
+func TestDocStore_ReopensLegacyValueLog(t *testing.T) {
+	dir := t.TempDir()
+	store, err := badgerstore.OpenWithOptions(badger.DefaultOptions(dir))
+	require.NoError(t, err)
+	legacy, err := c.OpenWithStore(store)
+	require.NoError(t, err)
+	require.NoError(t, legacy.CreateCollection(CONN_COLLECTION))
 	doc := document.NewDocument()
 	doc.Set("name", "keep-me")
-	id, err = legacy.InsertOne(CONN_COLLECTION, doc)
+	// Exceed the default value threshold so the data lives in the value log.
+	payload := strings.Repeat("a", 2<<20)
+	doc.Set("payload", payload)
+	id, err := legacy.InsertOne(CONN_COLLECTION, doc)
 	require.NoError(t, err)
 	require.NoError(t, legacy.Close())
 
 	vlogs, err := filepath.Glob(filepath.Join(dir, "*.vlog"))
 	require.NoError(t, err)
 	require.NotEmpty(t, vlogs)
+	// Restore unused trailing space left by an unclean shutdown.
 	for _, name := range vlogs {
-		require.NoError(t, os.Truncate(name, leftoverOversizedBytes))
+		require.NoError(t, os.Truncate(name, 2*(1<<30-1)))
 	}
+	require.Equal(t, int64(2*(1<<30-1)), maxApparentVlogSize(t, dir))
 
-	max, err := maxApparentVlog(dir)
+	db, err := NewDocStore(dir)
 	require.NoError(t, err)
-	require.Greater(t, max, int64(oversizedVlogBytes))
-	return dir, id
+	t.Cleanup(func() { require.NoError(t, db.Close()) })
+	got, err := db.FindById(CONN_COLLECTION, id)
+	require.NoError(t, err)
+	require.NotNil(t, got)
+	require.Equal(t, "keep-me", got.Get("name"))
+	require.Equal(t, payload, got.Get("payload"))
+	require.LessOrEqual(t, maxApparentVlogSize(t, dir), int64(64<<20))
 }
 
 func maxApparentVlogSize(t *testing.T, dir string) int64 {
 	t.Helper()
-	max, err := maxApparentVlog(dir)
+	names, err := filepath.Glob(filepath.Join(dir, "*.vlog"))
 	require.NoError(t, err)
+	require.NotEmpty(t, names)
+	var max int64
+	for _, name := range names {
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		if info.Size() > max {
+			max = info.Size()
+		}
+	}
 	return max
 }

@@ -24,8 +24,6 @@ type NuiTestSuite struct {
 	NuiServer           *nui.App
 	nuiServerPort       string
 	NuiServerCancelFunc context.CancelFunc
-	nuiServerDone       chan struct{}
-	dbPath              string
 	natsServerOpts      *server.Options
 	testServer          *testserver.TestServer
 	e                   *httpexpect.Expect
@@ -55,44 +53,19 @@ func (s *NuiTestSuite) connectNatsClient() {
 }
 
 func (s *NuiTestSuite) startNuiServer() {
-	path := s.dbPath
-	if path == "" {
-		path = ":memory:"
-	}
 
 	mockedLogger := &logging.NullLogger{}
-	nuiSvc, err := nui.Setup(path, "./protoschemas/default", "./cddlschemas/default", mockedLogger)
+	nuiSvc, err := nui.Setup(":memory:", "./protoschemas/default", "./cddlschemas/default", mockedLogger)
 	s.NoError(err)
-	s.NuiService = nuiSvc
 
-	server := nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
-	s.NuiServer = server
+	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
 	ctx, c := context.WithCancel(context.Background())
 	s.NuiServerCancelFunc = c
-	s.nuiServerDone = make(chan struct{})
 	go func() {
-		defer close(s.nuiServerDone)
-		err := server.Start(ctx)
-		if ctx.Err() == nil {
-			s.NoError(err)
-		}
+		err = s.NuiServer.Start(ctx)
+		s.NoError(err)
 	}()
 	s.e.GET("/health").WithMaxRetries(5).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
-}
-
-func (s *NuiTestSuite) stopNuiServer() {
-	if s.NuiServerCancelFunc != nil {
-		s.NuiServerCancelFunc()
-		s.NuiServerCancelFunc = nil
-	}
-	if s.NuiServer != nil {
-		_ = s.NuiServer.Shutdown()
-		s.NuiServer = nil
-	}
-	if s.nuiServerDone != nil {
-		<-s.nuiServerDone
-		s.nuiServerDone = nil
-	}
 }
 
 // stopNatsServer shuts down the NATS test server if one is running.
@@ -135,8 +108,7 @@ func (s *NuiTestSuite) TearDownTest() {
 	s.stopNatsServer()
 	s.testServer = nil
 	s.natsServerOpts = nil
-	s.stopNuiServer()
-	s.dbPath = ""
+	s.NuiServerCancelFunc()
 }
 
 func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {
