@@ -307,21 +307,31 @@ func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
 	require.NoError(t, err)
 	defer nc.Close()
 
-	go func() {
-		for i := 0; i < 20; i++ {
-			_ = nc.Publish("_INBOX.probe", []byte("x"))
-			_ = nc.Publish("orders.created", []byte("y"))
-			time.Sleep(15 * time.Millisecond)
-		}
-	}()
+	sample := func(discardSys bool) *CoreCatalog {
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					_ = nc.Publish("_INBOX.probe", []byte("x"))
+					_ = nc.Publish("orders.created", []byte("y"))
+					time.Sleep(10 * time.Millisecond)
+				}
+			}
+		}()
+		return sampleCoreLimited(context.Background(), nc, ">", 250*time.Millisecond, maxCoreSubjects, discardSys)
+	}
 
-	hidden := sampleCoreLimited(context.Background(), nc, ">", 350*time.Millisecond, maxCoreSubjects, true)
+	hidden := sample(true)
 	require.Empty(t, hidden.Error)
 	for _, s := range hidden.Subjects {
 		assert.False(t, isInternalSubject(s.Subject))
 	}
 
-	shown := sampleCoreLimited(context.Background(), nc, ">", 350*time.Millisecond, maxCoreSubjects, false)
+	shown := sample(false)
 	require.Empty(t, shown.Error)
 	var sawInbox bool
 	for _, s := range shown.Subjects {
@@ -329,7 +339,7 @@ func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
 			sawInbox = true
 		}
 	}
-	assert.True(t, sawInbox)
+	assert.True(t, sawInbox, "subjects=%v", shown.Subjects)
 }
 
 func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
