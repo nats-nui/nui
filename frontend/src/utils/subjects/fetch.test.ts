@@ -13,23 +13,24 @@ describe("shouldFetchJetStream", () => {
 })
 
 describe("shouldFetchCore", () => {
-	it("samples on refresh and never on first connect", () => {
-		expect(shouldFetchCore(true, ">", false, "open")).toBe(false)
-		expect(shouldFetchCore(true, "orders.>", false, "open")).toBe(false)
-		expect(shouldFetchCore(true, ">", false, "toggle")).toBe(false)
-		expect(shouldFetchCore(true, ">", false, "poll")).toBe(false)
-		expect(shouldFetchCore(true, "orders.>", false, "refresh")).toBe(true)
-		expect(shouldFetchCore(true, ">", false, "refresh")).toBe(true)
-		expect(shouldFetchCore(true, "orders..x", false, "refresh")).toBe(false)
+	it("samples a typed name on refresh and never on first connect", () => {
+		expect(shouldFetchCore(true, ">", "open")).toBe(false)
+		expect(shouldFetchCore(true, "orders.>", "open")).toBe(false)
+		expect(shouldFetchCore(true, ">", "toggle")).toBe(false)
+		expect(shouldFetchCore(true, ">", "poll")).toBe(false)
+		expect(shouldFetchCore(true, "", "refresh")).toBe(false)
+		expect(shouldFetchCore(true, "orders.>", "refresh")).toBe(true)
+		expect(shouldFetchCore(true, ">", "refresh")).toBe(true)
+		expect(shouldFetchCore(true, "orders..x", "refresh")).toBe(false)
 	})
 })
 
 describe("shouldWatchCore", () => {
-	it("listens when asked, not because poll opened a catch-all", () => {
-		expect(shouldWatchCore(true, ">", false, true)).toBe(false)
-		expect(shouldWatchCore(true, ">", true, false)).toBe(true)
-		expect(shouldWatchCore(true, "orders.>", false, true)).toBe(true)
-		expect(shouldWatchCore(true, "orders.>", false, false)).toBe(false)
-		expect(shouldWatchCore(false, "orders.>", true, true)).toBe(false)
+	it("reads a live snapshot only after LISTEN, never because poll is on", () => {
+		expect(shouldWatchCore(true, ">", false)).toBe(false)
+		expect(shouldWatchCore(true, ">", true)).toBe(true)
+		expect(shouldWatchCore(true, "orders.>", false)).toBe(false)
+		expect(shouldWatchCore(true, "orders.>", true)).toBe(true)
+		expect(shouldWatchCore(false, "orders.>", true)).toBe(false)
 	})
 })

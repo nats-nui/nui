@@ -115,7 +115,7 @@ describe("copy", () => {
 	it("asks you to click LISTEN when a narrower name is typed after a listen", () => {
 		expect(coreStatus(true, {
 			filter: "orders.>", listenMs: 2000, heard: 2, truncated: false, subjects: [],
-		}, "devices.>")).toMatch(/LISTEN to sample devices\.>/)
+		}, "devices.>")).toMatch(/LISTEN to hear devices\.>/)
 		expect(coreStatus(true, null, "orders.>")).toBeNull()
 	})
 
@@ -125,7 +125,7 @@ describe("copy", () => {
 		}, "devices.>")).toBe(true)
 		expect(coreStatus(true, {
 			filter: "orders.>", listenMs: 2000, heard: 2, truncated: false, subjects: [],
-		}, "devices.>")).toMatch(/LISTEN to sample devices\.>/)
+		}, "devices.>")).toMatch(/LISTEN to hear devices\.>/)
 	})
 
 	it("copies the full name from a row, not a leftover stack count", () => {
@@ -150,7 +150,7 @@ describe("filter", () => {
 		expect(canListen("orders.>")).toBe(true)
 		expect(canListen("")).toBe(true)
 		expect(canListen("orders..x")).toBe(false)
-		expect(isCatchAll("")).toBe(true)
+		expect(isCatchAll("")).toBe(false)
 		expect(isCatchAll(">")).toBe(true)
 		expect(isCatchAll("orders.>")).toBe(false)
 	})

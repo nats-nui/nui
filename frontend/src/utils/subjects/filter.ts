@@ -27,5 +27,5 @@ export function canListen(filter: string): boolean {
 }
 
 export function isCatchAll(filter: string): boolean {
-	return normalizeListenFilter(filter) == ">"
+	return (filter ?? "").trim() == ">"
 }

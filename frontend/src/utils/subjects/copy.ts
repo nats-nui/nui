@@ -61,7 +61,7 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 	if (core.dropped) bits.push(`${core.dropped} messages did not fit`)
 	if (coreListenStale(core, filter)) {
 		const next = normalizeListenFilter(filter ?? "")
-		bits.push(next == ">" ? "Click LISTEN to hear every name" : `Click LISTEN to sample ${next}`)
+		bits.push(next == ">" ? "Click LISTEN to hear every name" : `Click LISTEN to hear ${next}`)
 	}
 	if (bits.length == 0) return null
 	return bits.join(". ") + "."

@@ -50,6 +50,9 @@ const handlers = [
 	rest.get('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
 		return res(ctx.status(200), ctx.json(core))
 	}),
+	rest.delete('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
+		return res(ctx.status(200), ctx.json({}))
+	}),
 ]
 
 export default handlers

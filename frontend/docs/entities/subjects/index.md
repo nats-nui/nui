@@ -10,11 +10,7 @@ The SUBJECTS card shows a **family list** (first token), then a **partial stack*
 GET /api/connection/:id/subjects/jetstream
 ```
 
-| name | default | meaning |
-|---|---|---|
-| `discard_sys` | `true` | system names stay discarded, same default as MESSAGES |
-
-`$KV` and `$O` collapse to one bucket node. Occupied names are a separate call.
+`$KV` and `$O` collapse to one bucket node. Occupied names are a separate call. System names stay discarded.
 
 ### CORE LISTEN
 
@@ -24,7 +20,7 @@ GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 
 Opening a connection does not subscribe. System names stay discarded.
 
-Refresh is a short listen. Continuous update (poll) is one live subscribe; later ticks read the snapshot. LISTEN / ALL start that subscribe. Poll alone does not start ALL.
+Refresh samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot. Poll will not start one.
 
 ### OCCUPIED NAMES
 

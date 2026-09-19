@@ -20,8 +20,7 @@ const setup = {
 
 		coreEnabled: true,
 		jetstreamEnabled: true,
-		noSysMessages: true,
-		filter: ">",
+		filter: "",
 		listenMs: 2000,
 
 		core: <CoreCatalog>null,
@@ -53,7 +52,6 @@ const setup = {
 				connectionId: state.connectionId,
 				coreEnabled: state.coreEnabled,
 				jetstreamEnabled: state.jetstreamEnabled,
-				noSysMessages: state.noSysMessages,
 				filter: state.filter,
 				listenMs: state.listenMs,
 				textSearch: state.textSearch,
@@ -70,8 +68,7 @@ const setup = {
 			state.connectionId = data.connectionId
 			state.coreEnabled = data.coreEnabled ?? true
 			state.jetstreamEnabled = data.jetstreamEnabled ?? true
-			state.noSysMessages = data.noSysMessages ?? true
-			state.filter = data.filter ?? ">"
+			state.filter = data.filter ?? ""
 			state.listenMs = data.listenMs ?? 2000
 			state.textSearch = data.textSearch
 			state.format = data.format
@@ -80,7 +77,6 @@ const setup = {
 		fetchAbort(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.abortCore()
-			s.stopWatch()
 			loadBaseSetup.actions.fetchAbort?.(_, store)
 		},
 
@@ -100,18 +96,17 @@ const setup = {
 			if (shouldFetchJetStream(store.state.jetstreamEnabled, !!store.state.jetstream, reason)) {
 				await store.fetchJetStream()
 			}
-			const polling = (store.state.pollingTime ?? 0) > 0
-			if (shouldWatchCore(store.state.coreEnabled, store.state.filter, store.state.coreWatching, polling)) {
+			if (shouldWatchCore(store.state.coreEnabled, store.state.filter, store.state.coreWatching)) {
 				await store.watchCore()
 				return
 			}
-			if (shouldFetchCore(store.state.coreEnabled, store.state.filter, !!store.state.core, reason)) {
+			if (shouldFetchCore(store.state.coreEnabled, store.state.filter, reason)) {
 				await store.fetchCore()
 			}
 		},
 
 		async fetchJetStream(_: void, store?: SubjectsStore) {
-			const catalog = await subjectsApi.jetstream(store.state.connectionId, store.state.noSysMessages, { store, manageAbort: true, noError: true })
+			const catalog = await subjectsApi.jetstream(store.state.connectionId, { store, manageAbort: true, noError: true })
 			if (!catalog) return
 			if (!Array.isArray(catalog.streams)) {
 				store.setJetstream({ streams: [], error: catalog.error || "could not be read" })
@@ -131,7 +126,7 @@ const setup = {
 			if (store.state.filter != filter) store.setFilter(filter)
 			store.setCoreWatching(true)
 			store.setCoreListening(true)
-			const catalog = await subjectsApi.watch(store.state.connectionId, filter, store.state.noSysMessages, {
+			const catalog = await subjectsApi.watch(store.state.connectionId, filter, {
 				store, noError: true, loading: false,
 			})
 			if (!catalog || !Array.isArray(catalog.subjects)) {
@@ -178,7 +173,7 @@ const setup = {
 				})
 			}
 			try {
-				const catalog = await subjectsApi.core(store.state.connectionId, filter, store.state.listenMs, store.state.noSysMessages, {
+				const catalog = await subjectsApi.core(store.state.connectionId, filter, store.state.listenMs, {
 					store, signal: ac.signal, noError: true, loading: false,
 				})
 				if (store.state.listenGen != gen) return
@@ -215,13 +210,6 @@ const setup = {
 			if (next) await store.discover("toggle")
 		},
 
-		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
-			store.setNoSysMessages(!store.state.noSysMessages)
-			store.setOccupied({})
-			if (store.state.jetstreamEnabled) await store.fetchJetStream()
-			if (store.state.coreWatching) await store.watchCore()
-		},
-
 		async listenNow(_: void, store?: SubjectsStore) {
 			const filter = normalizeListenFilter(store.state.filter)
 			const problem = validateListenFilter(filter)
@@ -244,10 +232,6 @@ const setup = {
 			await store.watchCore()
 		},
 
-		revealCatchAll(_: void, store?: SubjectsStore) {
-			if (!store.state.filter?.trim()) store.setFilter(">")
-		},
-
 		async loadOccupied(hit: SubjectHit, store?: SubjectsStore) {
 			const stream = hit.streams[0]
 			if (!stream) return
@@ -256,8 +240,8 @@ const setup = {
 			if (store.state.occupied[key] || store.state.occupiedLoading == key) return
 			store.setOccupiedLoading(key)
 			try {
-				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, store.state.noSysMessages, {
-					store, manageAbort: true, noError: true, loading: false,
+				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, {
+					store, noError: true, loading: false,
 				})
 				if (!catalog || !Array.isArray(catalog.subjects)) {
 					store.setOccupied({
@@ -303,7 +287,6 @@ const setup = {
 	mutators: {
 		setCoreEnabled: (coreEnabled: boolean) => ({ coreEnabled }),
 		setJetstreamEnabled: (jetstreamEnabled: boolean) => ({ jetstreamEnabled }),
-		setNoSysMessages: (noSysMessages: boolean) => ({ noSysMessages }),
 		setFilter: (filter: string) => ({ filter }),
 		setListenMs: (listenMs: number) => ({ listenMs }),
 		setCore: (core: CoreCatalog) => ({ core }),

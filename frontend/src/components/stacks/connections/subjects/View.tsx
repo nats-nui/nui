@@ -29,6 +29,7 @@ const SubjectsView: FunctionComponent<Props> = ({
 
 	useEffect(() => {
 		subjectsSo.fetchIfVoid()
+		return () => { subjectsSo.stopWatch() }
 	}, [])
 
 	const handleSelect = (node: SubjectNode) => {
@@ -38,9 +39,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 	const handleFilterChange = (value: string) => {
 		subjectsSo.setListenHint(null)
 		subjectsSo.setFilter(value)
-	}
-	const handleFilterBlur = () => {
-		subjectsSo.revealCatchAll()
 	}
 	const handleAll = () => {
 		subjectsSo.listenAll()
@@ -117,7 +115,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 						value={subjectsSa.filter}
 						placeholder="ex. orders.>"
 						onChange={handleFilterChange}
-						onBlur={handleFilterBlur}
 						onKeyEnter={() => subjectsSo.listenNow()}
 					/>
 					<Button

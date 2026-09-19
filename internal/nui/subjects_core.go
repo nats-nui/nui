@@ -16,11 +16,10 @@ import (
 // HandleCoreListen is the Core NATS catalog.
 //
 // A refresh is a time-boxed subscribe (listen_ms). Opening a connection
-// does not do this. Internal names stay discarded unless discard_sys=false.
+// does not do this. Internal names stay discarded.
 //
-// watch=1 is continuous update: one live subscribe, this request only
-// reads the snapshot. If a watch is already running, a refresh also
-// reads that snapshot instead of opening a second DialOnce.
+// watch=1 reads the live snapshot. LISTEN starts that subscribe.
+// A refresh while already watching reads the same snapshot.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")

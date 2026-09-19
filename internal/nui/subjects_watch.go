@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	watchLease      = 45 * time.Second
-	watchSweepEvery = 10 * time.Second
+	watchLease      = 15 * time.Minute
+	watchSweepEvery = 30 * time.Second
 )
 
 // coreWatchHub holds at most one live Core subscribe per configured
