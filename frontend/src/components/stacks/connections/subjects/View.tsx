@@ -8,6 +8,7 @@ import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterHits, flattenHits } from "@/utils/subjects/tree"
 import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
+import FilterDialog from "./FilterDialog"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
@@ -87,6 +88,11 @@ const SubjectsView: FunctionComponent<Props> = ({
 				value={subjectsSa.textSearch}
 				onChange={text => subjectsSo.setTextSearch(text)}
 			/>
+			<Button
+				select={subjectsSa.filtersOpen}
+				children="FILTERS"
+				onClick={() => subjectsSo.setFiltersOpen(!subjectsSa.filtersOpen)}
+			/>
 		</>}
 	>
 		<div className={cls.body}>
@@ -148,6 +154,8 @@ const SubjectsView: FunctionComponent<Props> = ({
 				</div>
 			)}
 		</div>
+
+		<FilterDialog store={subjectsSo} />
 	</FrameworkCard>
 }
 

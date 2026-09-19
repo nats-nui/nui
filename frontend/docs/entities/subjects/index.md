@@ -8,15 +8,17 @@ The SUBJECTS card shows a **family list** (first token), then one more level. St
 
 ```
 GET /api/connection/:id/subjects/jetstream
+GET /api/connection/:id/subjects/jetstream?discard_sys=false
 ```
 
-`$KV` and `$O` collapse to one bucket node. Occupied names are a separate call. System names stay discarded.
+`$KV` and `$O` collapse to one bucket node. Occupied names are a separate call. `$SYS`, `$JS`, and `_INBOX` stay discarded unless FILTERS turns that off.
 
 ### CORE LISTEN
 
 ```
 GET /api/connection/:id/subjects/core?filter=orders.>&listen_ms=2000
 GET /api/connection/:id/subjects/core?filter=orders.>&watch=1
+GET /api/connection/:id/subjects/core?filter=orders.>&watch=1&discard_sys=false
 GET /api/connection/:id/subjects/core
 DELETE /api/connection/:id/subjects/core
 ```

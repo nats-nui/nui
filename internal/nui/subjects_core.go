@@ -23,13 +23,14 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	}
 	id := c.Params("id")
 	watch := queryBoolDefault(c, "watch", false)
+	discardSys := queryBoolDefault(c, "discard_sys", true)
 	filter := normalizeListenFilter(c.Query("filter"))
 
 	if watch {
 		if err := validateListenFilter(filter); err != nil {
 			return c.Status(422).JSON(NewError(err.Error()))
 		}
-		return a.coreWatchSnapshot(c, id, filter)
+		return a.coreWatchSnapshot(c, id, filter, discardSys)
 	}
 	if a.coreWatches != nil && a.coreWatches.watching(id) {
 		if out := a.coreWatches.read(id); out != nil {
@@ -68,7 +69,7 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(parent, budget)
 	defer cancel()
 
-	out := sampleCore(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond)
+	out := sampleCoreLimited(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond, maxCoreSubjects, discardSys)
 	return c.JSON(out)
 }
 
@@ -82,7 +83,7 @@ func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
 	return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
 }
 
-func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string) error {
+func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool) error {
 	cfg, err := a.nui.ConnRepo.GetById(id)
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
@@ -90,14 +91,14 @@ func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string) error {
 	if a.coreWatches == nil {
 		a.coreWatches = newCoreWatchHub()
 	}
-	return c.JSON(a.coreWatches.snapshot(id, filter, cfg))
+	return c.JSON(a.coreWatches.snapshot(id, filter, cfg, discardSys))
 }
 
 func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration) *CoreCatalog {
-	return sampleCoreLimited(ctx, conn, filter, listen, maxCoreSubjects)
+	return sampleCoreLimited(ctx, conn, filter, listen, maxCoreSubjects, true)
 }
 
-func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, nameCap int) *CoreCatalog {
+func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, nameCap int, discardSys bool) *CoreCatalog {
 	out := &CoreCatalog{
 		Filter:   filter,
 		ListenMs: int(listen / time.Millisecond),
@@ -172,7 +173,7 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		if msg == nil {
 			return
 		}
-		if isInternalSubject(msg.Subject) {
+		if hideInternal(discardSys, msg.Subject) {
 			return
 		}
 		hit, exists := hits[msg.Subject]

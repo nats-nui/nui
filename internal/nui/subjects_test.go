@@ -43,6 +43,9 @@ func TestIsInternalSubject(t *testing.T) {
 	assert.False(t, isInternalSubject("$KV.mybucket.key"))
 	assert.False(t, isInternalSubject("$O.files.chunk"))
 	assert.False(t, isInternalSubject("$SYSTEM.not-sys"))
+	assert.True(t, hideInternal(true, "$SYS.SERVER.INFO"))
+	assert.False(t, hideInternal(false, "$SYS.SERVER.INFO"))
+	assert.False(t, hideInternal(true, "$KV.shop.key"))
 }
 
 func TestCollapsePattern(t *testing.T) {
@@ -165,7 +168,7 @@ func TestSampleCoreCapsCatalogForTheTimeWindow(t *testing.T) {
 	const nameCap = 8
 	done := make(chan *CoreCatalog, 1)
 	go func() {
-		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 300*time.Millisecond, nameCap)
+		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 300*time.Millisecond, nameCap, true)
 	}()
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
 
@@ -206,7 +209,7 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.stop("id")
 
-	first := h.snapshot("id", "w.>", cfg)
+	first := h.snapshot("id", "w.>", cfg, true)
 	require.Empty(t, first.Error)
 	require.True(t, first.Watching)
 	require.True(t, h.watching("id"))
@@ -218,7 +221,7 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 		return h.read("id").Heard >= 1
 	}, time.Second, 20*time.Millisecond)
 
-	got := h.snapshot("id", "w.>", cfg)
+	got := h.snapshot("id", "w.>", cfg, true)
 	require.True(t, got.Watching)
 	assert.GreaterOrEqual(t, got.Heard, 1)
 	for _, s := range got.Subjects {
@@ -264,7 +267,7 @@ func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {
 	_, err = js.Publish(context.Background(), "orders.shipped", []byte("2"))
 	require.NoError(t, err)
 
-	cat := enumerateJetStreamPatterns(context.Background(), js)
+	cat := enumerateJetStreamPatterns(context.Background(), js, true)
 	require.Empty(t, cat.Error)
 	require.Len(t, cat.Streams, 1)
 	assert.Equal(t, "ORDERS", cat.Streams[0].Name)
@@ -278,11 +281,100 @@ func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {
 	assert.Equal(t, []string{"orders", "returns"}, got)
 }
 
+func TestCatalogFromInfosDiscardsSystemUnlessAsked(t *testing.T) {
+	infos := []*jetstream.StreamInfo{{
+		Config: jetstream.StreamConfig{Name: "MIXED", Subjects: []string{"$JS.API.>", "orders.>", "$KV.shop.>"}},
+	}}
+	hidden := catalogFromInfos(infos, nil, true)
+	require.Len(t, hidden.Streams, 1)
+	got := []string{}
+	for _, s := range hidden.Streams[0].Subjects {
+		got = append(got, s.Subject)
+	}
+	assert.Equal(t, []string{"$KV.shop", "orders"}, got)
+
+	shown := catalogFromInfos(infos, nil, false)
+	got = nil
+	for _, s := range shown.Streams[0].Subjects {
+		got = append(got, s.Subject)
+	}
+	assert.Equal(t, []string{"$JS.API", "$KV.shop", "orders"}, got)
+}
+
+func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	go func() {
+		for i := 0; i < 20; i++ {
+			_ = nc.Publish("_INBOX.probe", []byte("x"))
+			_ = nc.Publish("orders.created", []byte("y"))
+			time.Sleep(15 * time.Millisecond)
+		}
+	}()
+
+	hidden := sampleCoreLimited(context.Background(), nc, ">", 350*time.Millisecond, maxCoreSubjects, true)
+	require.Empty(t, hidden.Error)
+	for _, s := range hidden.Subjects {
+		assert.False(t, isInternalSubject(s.Subject))
+	}
+
+	shown := sampleCoreLimited(context.Background(), nc, ">", 350*time.Millisecond, maxCoreSubjects, false)
+	require.Empty(t, shown.Error)
+	var sawInbox bool
+	for _, s := range shown.Subjects {
+		if s.Subject == "_INBOX.probe" {
+			sawInbox = true
+		}
+	}
+	assert.True(t, sawInbox)
+}
+
+func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	cfg := &connection.Connection{Name: "watch-sys", Hosts: []string{ns.ClientURL()}}
+	pub, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer pub.Close()
+
+	h := newCoreWatchHub()
+	defer h.stop("id")
+
+	hidden := h.snapshot("id", ">", cfg, true)
+	require.Empty(t, hidden.Error)
+	require.True(t, hidden.Watching)
+	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
+	require.NoError(t, pub.Publish("orders.one", []byte("x")))
+	require.NoError(t, pub.Flush())
+	require.Eventually(t, func() bool {
+		return h.read("id").Heard >= 1
+	}, time.Second, 20*time.Millisecond)
+	for _, s := range h.read("id").Subjects {
+		assert.False(t, isInternalSubject(s.Subject))
+	}
+
+	shown := h.snapshot("id", ">", cfg, false)
+	require.True(t, shown.Watching)
+	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
+	require.NoError(t, pub.Flush())
+	require.Eventually(t, func() bool {
+		out := h.read("id")
+		for _, s := range out.Subjects {
+			if s.Subject == "_INBOX.keep" {
+				return true
+			}
+		}
+		return false
+	}, time.Second, 20*time.Millisecond)
+}
+
 func TestCatalogFromInfosKeepsPartialOnTimeout(t *testing.T) {
 	infos := []*jetstream.StreamInfo{{
 		Config: jetstream.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.>"}},
 	}}
-	cat := catalogFromInfos(infos, context.DeadlineExceeded)
+	cat := catalogFromInfos(infos, context.DeadlineExceeded, true)
 	require.Equal(t, "timed out", cat.Error)
 	assert.True(t, cat.Truncated)
 	require.Len(t, cat.Streams, 1)
@@ -290,7 +382,7 @@ func TestCatalogFromInfosKeepsPartialOnTimeout(t *testing.T) {
 	require.Len(t, cat.Streams[0].Subjects, 1)
 	assert.Equal(t, "orders", cat.Streams[0].Subjects[0].Subject)
 
-	empty := catalogFromInfos(nil, context.DeadlineExceeded)
+	empty := catalogFromInfos(nil, context.DeadlineExceeded, true)
 	assert.Equal(t, "timed out", empty.Error)
 	assert.False(t, empty.Truncated)
 	assert.Empty(t, empty.Streams)
@@ -314,7 +406,7 @@ func TestOccupiedCapsPerStream(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	out := occupiedSubjects(context.Background(), js, "MANY", "n.>")
+	out := occupiedSubjects(context.Background(), js, "MANY", "n.>", true)
 	require.Empty(t, out.Error)
 	assert.True(t, out.Truncated)
 	assert.Len(t, out.Subjects, maxOccupiedPerStream)
@@ -342,7 +434,7 @@ func TestKVCatalogCollapsesToBucket(t *testing.T) {
 	_, err = kv.Put(context.Background(), "b", []byte("2"))
 	require.NoError(t, err)
 
-	cat := enumerateJetStreamPatterns(context.Background(), js)
+	cat := enumerateJetStreamPatterns(context.Background(), js, true)
 	require.Empty(t, cat.Error)
 	require.NotEmpty(t, cat.Streams)
 	var kvStream *JetStreamStream

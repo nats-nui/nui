@@ -12,7 +12,7 @@ Open a family and you get **one more level**. A normal name stays one child (`or
 
 Open a name with a ▸ (a JetStream pattern, KV bucket, or object store). Stored names load **under that row**. Click a stored name to see the last message JetStream kept. Core has no last message — `live` means we heard it during a listen.
 
-FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card. System names stay discarded. FIND searches the names themselves, so a match past the browse cap still appears. Opening the card lists stored JetStream names only. Reload samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot; it will not start one. Hover a row to copy the full name.
+FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card. FILTERS has the same DISCARDS SYSTEM MESSAGES toggle as MESSAGES, on by default. `$KV` and `$O` stay visible either way. FIND searches the names themselves, so a match past the browse cap still appears. Opening the card lists stored JetStream names only. Reload samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot; it will not start one. Hover a row to copy the full name.
 
 `ALL` / `>` is how you look around. Type `orders.>` to narrow. An empty box is not `>`. Busy lists are capped.
 

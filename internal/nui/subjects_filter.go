@@ -56,6 +56,10 @@ func isInternalSubject(subject string) bool {
 		hasSubjectPrefix(subject, "_INBOX")
 }
 
+func hideInternal(discardSys bool, subject string) bool {
+	return discardSys && isInternalSubject(subject)
+}
+
 func hasSubjectPrefix(subject, prefix string) bool {
 	return subject == prefix || strings.HasPrefix(subject, prefix+".")
 }

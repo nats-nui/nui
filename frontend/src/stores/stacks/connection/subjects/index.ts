@@ -22,6 +22,8 @@ const setup = {
 
 		coreEnabled: true,
 		jetstreamEnabled: true,
+		noSysMessages: true,
+		filtersOpen: false,
 		filter: "",
 
 		core: <CoreCatalog>null,
@@ -52,6 +54,7 @@ const setup = {
 				connectionId: state.connectionId,
 				coreEnabled: state.coreEnabled,
 				jetstreamEnabled: state.jetstreamEnabled,
+				noSysMessages: state.noSysMessages,
 				filter: state.filter,
 				textSearch: state.textSearch,
 				format: state.format,
@@ -67,6 +70,7 @@ const setup = {
 			state.connectionId = data.connectionId
 			state.coreEnabled = data.coreEnabled ?? true
 			state.jetstreamEnabled = data.jetstreamEnabled ?? true
+			state.noSysMessages = data.noSysMessages ?? true
 			state.filter = data.filter ?? ""
 			state.textSearch = data.textSearch
 			state.format = data.format
@@ -104,7 +108,7 @@ const setup = {
 		},
 
 		async fetchJetStream(_: void, store?: SubjectsStore) {
-			const catalog = await subjectsApi.jetstream(store.state.connectionId, { store, manageAbort: true, noError: true })
+			const catalog = await subjectsApi.jetstream(store.state.connectionId, store.state.noSysMessages, { store, manageAbort: true, noError: true })
 			if (!catalog) return
 			if (!Array.isArray(catalog.streams)) {
 				store.setJetstream({ streams: [], error: catalog.error || "could not be read" })
@@ -130,7 +134,7 @@ const setup = {
 			if (!canListen(filter)) return
 			if (store.state.filter != filter) store.setFilter(filter)
 			store.setCoreWatching(true)
-			const catalog = await subjectsApi.watch(store.state.connectionId, filter, {
+			const catalog = await subjectsApi.watch(store.state.connectionId, filter, store.state.noSysMessages, {
 				store, noError: true, loading: false,
 			})
 			if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
@@ -185,7 +189,7 @@ const setup = {
 					subjects: [],
 				})
 			}
-			const catalog = await subjectsApi.core(store.state.connectionId, filter, CORE_SAMPLE_MS, {
+			const catalog = await subjectsApi.core(store.state.connectionId, filter, CORE_SAMPLE_MS, store.state.noSysMessages, {
 				store, signal: ac.signal, noError: true, loading: false,
 			})
 			if (store.state.listenGen != gen) return
@@ -217,6 +221,17 @@ const setup = {
 			const next = !store.state.jetstreamEnabled
 			store.setJetstreamEnabled(next)
 			if (next) await store.discover("toggle")
+		},
+
+		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
+			store.setNoSysMessages(!store.state.noSysMessages)
+			store.setOccupied({})
+			if (store.state.jetstreamEnabled) await store.fetchJetStream()
+			if (store.state.coreWatching) {
+				await store.watchCore()
+				return
+			}
+			if (store.state.core && canListen(store.state.filter)) await store.fetchCore()
 		},
 
 		async listenNow(_: void, store?: SubjectsStore) {
@@ -253,7 +268,7 @@ const setup = {
 			if (store.state.occupied[key] || store.state.occupiedLoading == key) return
 			store.setOccupiedLoading(key)
 			try {
-				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, {
+				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, store.state.noSysMessages, {
 					store, noError: true, loading: false,
 				})
 				if (!catalog || !Array.isArray(catalog.subjects)) {
@@ -300,6 +315,8 @@ const setup = {
 	mutators: {
 		setCoreEnabled: (coreEnabled: boolean) => ({ coreEnabled }),
 		setJetstreamEnabled: (jetstreamEnabled: boolean) => ({ jetstreamEnabled }),
+		setNoSysMessages: (noSysMessages: boolean) => ({ noSysMessages }),
+		setFiltersOpen: (filtersOpen: boolean) => ({ filtersOpen }),
 		setFilter: (filter: string) => ({ filter }),
 		setCore: (core: CoreCatalog) => ({ core }),
 		setJetstream: (jetstream: JetStreamCatalog) => ({ jetstream }),

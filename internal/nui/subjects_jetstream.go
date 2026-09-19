@@ -23,7 +23,7 @@ func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(c.Context(), jsCatalogTimeout)
 	defer cancel()
-	out := enumerateJetStreamPatterns(ctx, js)
+	out := enumerateJetStreamPatterns(ctx, js, queryBoolDefault(c, "discard_sys", true))
 	return c.JSON(out)
 }
 
@@ -51,16 +51,16 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(c.Context(), occupiedTimeout)
 	defer cancel()
-	out := occupiedSubjects(ctx, js, streamName, filter)
+	out := occupiedSubjects(ctx, js, streamName, filter, queryBoolDefault(c, "discard_sys", true))
 	return c.JSON(out)
 }
 
-func enumerateJetStreamPatterns(ctx context.Context, js jetstream.JetStream) *JetStreamCatalog {
+func enumerateJetStreamPatterns(ctx context.Context, js jetstream.JetStream, discardSys bool) *JetStreamCatalog {
 	infos, err := collectStreamInfos(ctx, js)
-	return catalogFromInfos(infos, err)
+	return catalogFromInfos(infos, err, discardSys)
 }
 
-func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error) *JetStreamCatalog {
+func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys bool) *JetStreamCatalog {
 	out := &JetStreamCatalog{Streams: []JetStreamStream{}}
 	if listErr != nil {
 		out.Error = jsUserError(listErr)
@@ -83,7 +83,7 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error) *JetStreamCa
 		entry := JetStreamStream{Name: info.Config.Name, Kind: kind, Subjects: []JetStreamSubject{}}
 		seen := map[string]bool{}
 		for _, pattern := range info.Config.Subjects {
-			if isInternalSubject(pattern) {
+			if hideInternal(discardSys, pattern) {
 				continue
 			}
 			path, subKind := collapsePattern(pattern, kind)
@@ -109,7 +109,7 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error) *JetStreamCa
 	return out
 }
 
-func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, filter string) *OccupiedCatalog {
+func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, filter string, discardSys bool) *OccupiedCatalog {
 	out := &OccupiedCatalog{Stream: streamName, Subjects: []JetStreamSubject{}}
 	stream, err := js.Stream(ctx, streamName)
 	if err != nil {
@@ -125,7 +125,7 @@ func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, f
 	// Sort before the cap so every poll shows the same first page.
 	names := make([]string, 0, len(info.State.Subjects))
 	for subject := range info.State.Subjects {
-		if isInternalSubject(subject) {
+		if hideInternal(discardSys, subject) {
 			continue
 		}
 		names = append(names, subject)

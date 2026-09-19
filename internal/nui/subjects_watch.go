@@ -21,15 +21,16 @@ type coreWatchHub struct {
 }
 
 type coreWatch struct {
-	mu        sync.Mutex
-	filter    string
-	nc        *nats.Conn
-	sub       *nats.Subscription
-	hits      map[string]*CoreSubject
-	truncated bool
-	dropped   int
-	touched   time.Time
-	stop      context.CancelFunc
+	mu         sync.Mutex
+	filter     string
+	discardSys bool
+	nc         *nats.Conn
+	sub        *nats.Subscription
+	hits       map[string]*CoreSubject
+	truncated  bool
+	dropped    int
+	touched    time.Time
+	stop       context.CancelFunc
 }
 
 func newCoreWatchHub() *coreWatchHub {
@@ -42,10 +43,10 @@ func (h *coreWatchHub) watching(id string) bool {
 	return h.byConn[id] != nil
 }
 
-func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection) *CoreCatalog {
+func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection, discardSys bool) *CoreCatalog {
 	h.mu.Lock()
 	w := h.byConn[id]
-	if w != nil && w.filter == filter {
+	if w != nil && w.filter == filter && w.discardSys == discardSys {
 		w.mu.Lock()
 		w.touched = time.Now()
 		out := w.copyCatalog()
@@ -59,7 +60,7 @@ func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection) *
 	}
 	h.mu.Unlock()
 
-	next, err := startCoreWatch(filter, cfg)
+	next, err := startCoreWatch(filter, cfg, discardSys)
 	if err != nil {
 		return &CoreCatalog{Filter: filter, Subjects: []CoreSubject{}, Error: coreUserError(err)}
 	}
@@ -141,7 +142,7 @@ func (h *coreWatchHub) startJanitor(ctx context.Context) {
 	}()
 }
 
-func startCoreWatch(filter string, cfg *connection.Connection) (*coreWatch, error) {
+func startCoreWatch(filter string, cfg *connection.Connection, discardSys bool) (*coreWatch, error) {
 	nc, err := connection.DialOnce(cfg)
 	if err != nil {
 		return nil, err
@@ -160,12 +161,13 @@ func startCoreWatch(filter string, cfg *connection.Connection) (*coreWatch, erro
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	w := &coreWatch{
-		filter:  filter,
-		nc:      nc,
-		sub:     sub,
-		hits:    map[string]*CoreSubject{},
-		touched: time.Now(),
-		stop:    cancel,
+		filter:     filter,
+		discardSys: discardSys,
+		nc:         nc,
+		sub:        sub,
+		hits:       map[string]*CoreSubject{},
+		touched:    time.Now(),
+		stop:       cancel,
 	}
 	go w.loop(ctx, ch)
 	return w, nil
@@ -193,7 +195,7 @@ func (w *coreWatch) record(msg *nats.Msg) {
 	if msg == nil {
 		return
 	}
-	if isInternalSubject(msg.Subject) {
+	if hideInternal(w.discardSys, msg.Subject) {
 		return
 	}
 	w.mu.Lock()
