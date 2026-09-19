@@ -31,6 +31,10 @@ async function watch(cnnId: string, filter: string, opt?: CallOptions): Promise<
 	return ajax.get(`connection/${cnnId}/subjects/core?${params}`, null, opt)
 }
 
+async function snapshot(cnnId: string, opt?: CallOptions): Promise<CoreCatalog> {
+	return ajax.get(`connection/${cnnId}/subjects/core`, null, opt)
+}
+
 async function unwatch(cnnId: string, opt?: CallOptions): Promise<void> {
 	await ajax.delete(`connection/${cnnId}/subjects/core`, null, opt)
 }
@@ -51,5 +55,5 @@ async function last(cnnId: string, subject: string, stream: string, opt?: CallOp
 	return message
 }
 
-const api = { jetstream, core, watch, unwatch, occupied, last }
+const api = { jetstream, core, watch, snapshot, unwatch, occupied, last }
 export default api

@@ -48,7 +48,9 @@ const handlers = [
 		return res(ctx.status(200), ctx.json(jetstream))
 	}),
 	rest.get('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
-		return res(ctx.status(200), ctx.json(core))
+		const filter = req.url.searchParams.get("filter") || core.filter
+		const watching = req.url.searchParams.get("watch") == "1"
+		return res(ctx.status(200), ctx.json({ ...core, filter, watching: watching || undefined }))
 	}),
 	rest.delete('/api/connection/:cnnId/subjects/core', async (req, res, ctx) => {
 		return res(ctx.status(200), ctx.json({}))

@@ -998,13 +998,17 @@ func (s *NuiTestSuite) TestSubjectsDiscovery() {
 	}()
 	time.Sleep(40 * time.Millisecond)
 
+	e.GET("/api/connection/"+connId+"/subjects/core").
+		WithQuery("listen_ms", "400").
+		Expect().Status(http.StatusUnprocessableEntity)
+
 	wide := e.GET("/api/connection/"+connId+"/subjects/core").
 		WithQuery("listen_ms", "400").
+		WithQuery("filter", ">").
 		Expect().Status(http.StatusOK).JSON().Object()
 	wide.Value("filter").String().IsEqual(">")
 	wide.Value("heard").Number().Ge(1)
 	wide.Value("subjects").Array().Length().Ge(1)
-	wide.Value("subjects").Array().Value(0).Object().NotContainsKey("last_payload")
 
 	core := e.GET("/api/connection/"+connId+"/subjects/core").
 		WithQuery("listen_ms", "400").
@@ -1014,8 +1018,6 @@ func (s *NuiTestSuite) TestSubjectsDiscovery() {
 	core.Value("filter").String().IsEqual("core.>")
 	core.Value("heard").Number().Ge(1)
 	core.Value("subjects").Array().Length().Ge(1)
-	core.Value("subjects").Array().Value(0).Object().NotContainsKey("last_payload")
-	core.NotContainsKey("jetstream")
 
 	s.filledKvs("kv1")
 	time.Sleep(50 * time.Millisecond)

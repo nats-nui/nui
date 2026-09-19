@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { emptyCopy, jetStreamStatus, coreStatus, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines, subjectCopyValue } from "./copy"
-import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_INVALID } from "./filter"
+import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_EMPTY, FILTER_INVALID } from "./filter"
 
 describe("copy", () => {
 	it("stays quiet when core and jetstream are healthy", () => {
@@ -17,6 +17,7 @@ describe("copy", () => {
 			streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", kind: "pattern" }] }],
 		})).toBeNull()
 		expect(coreStatus(true, null, ">")).toBeNull()
+		expect(coreStatus(true, null, "")).toBeNull()
 		expect(coreStatus(false)).toBeNull()
 		expect(jetStreamStatus(false)).toBeNull()
 	})
@@ -66,6 +67,7 @@ describe("copy", () => {
 
 	it("asks to click LISTEN when Core is on and empty", () => {
 		expect(listenHintCopy(FILTER_INVALID)).toMatch(/valid name/i)
+		expect(listenHintCopy(FILTER_EMPTY)).toBe(FILTER_EMPTY)
 		expect(emptyCopy({
 			coreEnabled: true, jsEnabled: true,
 			js: { streams: [] },
@@ -118,13 +120,14 @@ describe("copy", () => {
 })
 
 describe("filter", () => {
-	it("accepts empty and > and rejects broken names", () => {
-		expect(normalizeListenFilter("")).toBe(">")
-		expect(validateListenFilter("")).toBeNull()
+	it("treats empty as no listen and rejects broken names", () => {
+		expect(normalizeListenFilter("")).toBe("")
+		expect(normalizeListenFilter("  orders.>  ")).toBe("orders.>")
+		expect(validateListenFilter("")).toBe(FILTER_INVALID)
 		expect(validateListenFilter(">")).toBeNull()
 		expect(validateListenFilter("*.>")).toBeNull()
 		expect(canListen("orders.>")).toBe(true)
-		expect(canListen("")).toBe(true)
+		expect(canListen("")).toBe(false)
 		expect(canListen("orders..x")).toBe(false)
 		expect(isCatchAll("")).toBe(false)
 		expect(isCatchAll(">")).toBe(true)

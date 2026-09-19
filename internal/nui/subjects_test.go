@@ -16,9 +16,10 @@ import (
 )
 
 func TestValidateListenFilter(t *testing.T) {
-	assert.Equal(t, ">", normalizeListenFilter(""))
-	assert.Equal(t, ">", normalizeListenFilter("   "))
-	assert.NoError(t, validateListenFilter(""))
+	assert.Equal(t, "", normalizeListenFilter(""))
+	assert.Equal(t, "", normalizeListenFilter("   "))
+	assert.ErrorIs(t, validateListenFilter(""), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("   "), errFilterInvalid)
 	assert.NoError(t, validateListenFilter(">"))
 	assert.NoError(t, validateListenFilter("*"))
 	assert.NoError(t, validateListenFilter("*.>"))

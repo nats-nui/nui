@@ -13,13 +13,29 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-// HandleCoreListen is the Core NATS catalog. watch=1 is the live
-// subscribe. Otherwise this is a time-boxed sample.
+// HandleCoreListen is the Core NATS catalog. watch=1 starts or reads
+// the live subscribe. A GET without watch=1 returns that snapshot if
+// one is already running, otherwise it is a time-boxed sample.
+// Empty filter is not `>`.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
+	id := c.Params("id")
+	watch := queryBoolDefault(c, "watch", false)
 	filter := normalizeListenFilter(c.Query("filter"))
+
+	if watch {
+		if err := validateListenFilter(filter); err != nil {
+			return c.Status(422).JSON(NewError(err.Error()))
+		}
+		return a.coreWatchSnapshot(c, id, filter)
+	}
+	if a.coreWatches != nil && a.coreWatches.watching(id) {
+		if out := a.coreWatches.read(id); out != nil {
+			return c.JSON(out)
+		}
+	}
 	if err := validateListenFilter(filter); err != nil {
 		return c.Status(422).JSON(NewError(err.Error()))
 	}
@@ -29,17 +45,6 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	}
 	if listenMs > maxListenMs {
 		listenMs = maxListenMs
-	}
-	watch := queryBoolDefault(c, "watch", false)
-	id := c.Params("id")
-
-	if watch {
-		return a.coreWatchSnapshot(c, id, filter)
-	}
-	if a.coreWatches != nil && a.coreWatches.watching(id) {
-		if out := a.coreWatches.read(id); out != nil {
-			return c.JSON(out)
-		}
 	}
 
 	var parent context.Context = c.Context()

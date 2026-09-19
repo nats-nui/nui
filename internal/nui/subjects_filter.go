@@ -19,11 +19,7 @@ const (
 )
 
 func normalizeListenFilter(filter string) string {
-	filter = strings.TrimSpace(filter)
-	if filter == "" {
-		return ">"
-	}
-	return filter
+	return strings.TrimSpace(filter)
 }
 
 func validateListenFilter(filter string) error {

@@ -1,12 +1,13 @@
 export const FILTER_INVALID = "that is not a valid name"
+export const FILTER_EMPTY = "Type a name or click ALL"
 
 export function normalizeListenFilter(filter: string): string {
-	const value = filter?.trim() ?? ""
-	return value || ">"
+	return filter?.trim() ?? ""
 }
 
 export function validateListenFilter(filter: string): string | null {
 	const value = normalizeListenFilter(filter)
+	if (!value) return FILTER_INVALID
 	if (/\s/.test(value)) return FILTER_INVALID
 	const tokens = value.split(".")
 	for (let i = 0; i < tokens.length; i++) {

@@ -74,7 +74,7 @@ type OccupiedCatalog struct {
 }
 
 // HandleSubjectLast returns the last stored JetStream message for a subject.
-// Core has no stored last message. Discovery snapshots never include payloads.
+// Core has no stored last message. Catalogs never include payloads.
 func (a *App) HandleSubjectLast(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")

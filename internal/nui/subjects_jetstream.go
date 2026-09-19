@@ -38,6 +38,9 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 		return c.Status(422).JSON("stream is required")
 	}
 	filter := normalizeListenFilter(c.Query("filter"))
+	if filter == "" {
+		filter = ">"
+	}
 	if err := validateListenFilter(filter); err != nil {
 		return c.Status(422).JSON(NewError(err.Error()))
 	}

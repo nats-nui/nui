@@ -31,17 +31,16 @@ func NatsBuilder(connection *Connection) (*NatsConn, error) {
 }
 
 // DialOnce opens a short-lived NATS connection that is not pooled and does
-// not reconnect. Callers must Close it. Used for Discovery listens so a
-// catch-all subscribe cannot stall the shared MESSAGES connection.
+// not reconnect. Callers must Close it. SUBJECTS uses this so a Core
+// subscribe cannot stall the shared MESSAGES connection.
 func DialOnce(connection *Connection) (*nats.Conn, error) {
 	options := []nats.Option{
 		nats.RetryOnFailedConnect(false),
 		nats.MaxReconnects(0),
 		nats.Timeout(natsConnectTimeout),
-		// A sample lasts at most 10s. Do not ping the server for that.
 		nats.PingInterval(30 * time.Second),
 		nats.MaxPingsOutstanding(1),
-		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-discover"),
+		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-subjects"),
 	}
 	options = appendAuthOption(connection, options)
 	options = appendTLSAuthOptions(connection, options)

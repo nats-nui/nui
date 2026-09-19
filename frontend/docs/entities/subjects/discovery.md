@@ -6,30 +6,15 @@ This card answers one question: **what names exist right now?** Same idea as MQT
 
 ## What you see
 
-The first paint is a **family list** — the first token of each name (`orders`, `$KV`). Folders start closed. That is the stream-shaped view. Deep notification leaves stay behind a door until you open one.
+The first paint is a **family list** — the first token of each name (`orders`, `$KV`). Folders start closed.
 
-Open a family and you get **one more level**. A normal name stays one child (`orders` → `created`). Anything deeper is a **partial stack** on one row (`hb.cc.getbygenius.digimasons-2`), never a hallway of folders.
+Open a family and you get **one more level**. A normal name stays one child (`orders` → `created`). Anything deeper is one stacked row.
 
-Open a name with a ▸ (a JetStream pattern, KV bucket, or object store). Stored names load **under that row**, still stacked if they are deep. Click a stored name to see the last message JetStream kept. Core has no last message — `live` means we heard it during a listen.
+Open a name with a ▸ (a JetStream pattern, KV bucket, or object store). Stored names load **under that row**. Click a stored name to see the last message JetStream kept. Core has no last message — `live` means we heard it during a listen.
 
-FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card, not header actions. System names stay discarded — that is not a row on this card. FIND searches the names themselves, so a match past the browse cap still appears. Opening the card lists stored JetStream names only. Reload samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot; it will not start one. Open folders stay open. Hover a row to copy the full name, same control as MESSAGES. Names use the same monospace 12px as the STREAMS table. A chip appears only when it adds a fact (`live`, `KV`, `FILES`, or a stream whose name is not the row). The footer stays quiet unless something failed or was capped.
+FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card. System names stay discarded. FIND searches the names themselves, so a match past the browse cap still appears. Opening the card lists stored JetStream names only. Reload samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot; it will not start one. Hover a row to copy the full name.
 
-## Core vs JetStream
-
-| | Core | JetStream |
-|---|---|---|
-| How we know | Listen for a few seconds | Read stream capture names |
-| Memory | Forgets anything before the listen | Keeps what the stream is set to keep |
-| Empty | Quiet, not broken | No capture names, or none stored yet |
-
-`ALL` / `>` is how you look around. Type `orders.>` to narrow. Busy lists are capped.
-
-## What this card will not do
-
-- It will not open the whole tree for you.
-- It will not treat a catch-all as a mistake.
-- It will not show payloads in the catalog. Last message is a separate click.
-- It will not invent MQTT, KV, or Object as a third mode. Those are JetStream stores with a small chip.
+`ALL` / `>` is how you look around. Type `orders.>` to narrow. An empty box is not `>`. Busy lists are capped.
 
 ## API
 

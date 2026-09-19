@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { shouldFetchCore, shouldFetchJetStream, shouldWatchCore } from "./fetch"
+import { shouldFetchCore, shouldFetchJetStream, shouldReadWatch } from "./fetch"
 
 describe("shouldFetchJetStream", () => {
 	it("loads once on open and not again on toggle", () => {
@@ -25,12 +25,10 @@ describe("shouldFetchCore", () => {
 	})
 })
 
-describe("shouldWatchCore", () => {
+describe("shouldReadWatch", () => {
 	it("reads a live snapshot only while LISTEN is on", () => {
-		expect(shouldWatchCore(true, ">", false)).toBe(false)
-		expect(shouldWatchCore(true, ">", true)).toBe(true)
-		expect(shouldWatchCore(true, "orders.>", false)).toBe(false)
-		expect(shouldWatchCore(true, "orders.>", true)).toBe(true)
-		expect(shouldWatchCore(false, "orders.>", true)).toBe(false)
+		expect(shouldReadWatch(true, false)).toBe(false)
+		expect(shouldReadWatch(true, true)).toBe(true)
+		expect(shouldReadWatch(false, true)).toBe(false)
 	})
 })

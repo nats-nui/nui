@@ -49,7 +49,7 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 	if (core?.error) return `Core could not listen: ${core.error}.`
 	if (!core) {
 		const next = normalizeListenFilter(filter ?? "")
-		if (!canListen(next)) return "That is not a valid name. Use dots, like orders.created or orders.>"
+		if (next && !canListen(next)) return "That is not a valid name. Use dots, like orders.created or orders.>"
 		return null
 	}
 	const bits: string[] = []
@@ -57,7 +57,8 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 	if (core.dropped) bits.push(`${core.dropped} messages did not fit`)
 	if (coreListenStale(core, filter)) {
 		const next = normalizeListenFilter(filter ?? "")
-		bits.push(next == ">" ? "Click LISTEN to hear every name" : `Click LISTEN to hear ${next}`)
+		if (next == ">") bits.push("Click LISTEN to hear every name")
+		else if (next) bits.push(`Click LISTEN to hear ${next}`)
 	}
 	if (bits.length == 0) return null
 	return bits.join(". ") + "."

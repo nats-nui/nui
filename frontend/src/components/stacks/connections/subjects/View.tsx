@@ -69,7 +69,7 @@ const SubjectsView: FunctionComponent<Props> = ({
 		[subjectsSa.coreEnabled, subjectsSa.jetstreamEnabled, subjectsSa.core, subjectsSa.jetstream, subjectsSa.textSearch, tree],
 	)
 	const jsLoading = subjectsSa.loadingState == LOAD_STATE.LOADING
-	const listening = subjectsSa.coreWatching || subjectsSa.coreListening
+	const listening = subjectsSa.coreWatching
 	const firstPaint = jsLoading && !subjectsSa.jetstream && !subjectsSa.core
 	const hint = listenHintCopy(subjectsSa.listenHint)
 	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring

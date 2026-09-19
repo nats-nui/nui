@@ -1,8 +1,8 @@
 ## INDEX
 
-Discovery is two requests. Neither includes payloads. Busy lists are capped.
+Catalogs do not include payloads. Busy lists are capped.
 
-The SUBJECTS card shows a **family list** (first token), then a **partial stack** — one more level, never a hallway. Stored names load under the row you opened. See [discovery.md](./discovery.md).
+The SUBJECTS card shows a **family list** (first token), then one more level. Stored names load under the row you opened. See [discovery.md](./discovery.md).
 
 ### JETSTREAM PATTERNS
 
@@ -15,12 +15,15 @@ GET /api/connection/:id/subjects/jetstream
 ### CORE LISTEN
 
 ```
-GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
+GET /api/connection/:id/subjects/core?filter=orders.>&listen_ms=2000
+GET /api/connection/:id/subjects/core?filter=orders.>&watch=1
+GET /api/connection/:id/subjects/core
+DELETE /api/connection/:id/subjects/core
 ```
 
-Opening a connection does not subscribe. System names stay discarded.
+Opening the SUBJECTS card does not subscribe. Empty filter is not `>`.
 
-Refresh samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot. Poll will not start one.
+Refresh samples a name you typed. LISTEN / ALL start a live subscribe. Poll reads that snapshot without `watch=1`. Poll will not start or replace one.
 
 ### OCCUPIED NAMES
 
