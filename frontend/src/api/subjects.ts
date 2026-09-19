@@ -23,6 +23,18 @@ async function core(cnnId: string, filter: string, listenMs: number, opt?: CallO
 	return ajax.get(`connection/${cnnId}/subjects/core?${params}`, null, opt)
 }
 
+async function watch(cnnId: string, filter: string, opt?: CallOptions): Promise<CoreCatalog> {
+	const params = [
+		`filter=${encodeURIComponent(filter)}`,
+		`watch=1`,
+	].join("&")
+	return ajax.get(`connection/${cnnId}/subjects/core?${params}`, null, opt)
+}
+
+async function unwatch(cnnId: string, opt?: CallOptions): Promise<void> {
+	await ajax.delete(`connection/${cnnId}/subjects/core`, null, opt)
+}
+
 async function occupied(cnnId: string, stream: string, filter?: string, opt?: CallOptions): Promise<OccupiedCatalog> {
 	const q = filter ? `?filter=${encodeURIComponent(filter)}` : ""
 	return ajax.get(`connection/${cnnId}/subjects/jetstream/${encodeURIComponent(stream)}/occupied${q}`, null, opt)
@@ -38,5 +50,5 @@ async function last(cnnId: string, subject: string, stream: string, opt?: CallOp
 	return message
 }
 
-const api = { jetstream, core, occupied, last }
+const api = { jetstream, core, watch, unwatch, occupied, last }
 export default api

@@ -26,6 +26,7 @@ export interface CoreCatalog {
 	truncated: boolean
 	dropped?: number
 	error?: string
+	watching?: boolean
 	subjects: CoreSubjectHit[]
 }
 

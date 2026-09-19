@@ -3,6 +3,7 @@ package nui
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -154,7 +155,7 @@ func TestSampleCoreNotAllowed(t *testing.T) {
 	assert.Equal(t, "not allowed", out.Error)
 }
 
-func TestSampleCoreStopsOnceCapped(t *testing.T) {
+func TestSampleCoreCapsCatalogForTheTimeWindow(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	nc, err := nats.Connect(ns.ClientURL())
 	require.NoError(t, err)
@@ -163,7 +164,7 @@ func TestSampleCoreStopsOnceCapped(t *testing.T) {
 	const nameCap = 8
 	done := make(chan *CoreCatalog, 1)
 	go func() {
-		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 5*time.Second, true, nameCap)
+		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 300*time.Millisecond, true, nameCap)
 	}()
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
 
@@ -177,19 +178,17 @@ func TestSampleCoreStopsOnceCapped(t *testing.T) {
 	case out := <-done:
 		require.True(t, out.Truncated, "error=%q heard=%d", out.Error, out.Heard)
 		assert.Equal(t, nameCap, out.Heard)
-		assert.Less(t, time.Since(start), 2*time.Second)
-	case <-time.After(5 * time.Second):
-		t.Fatal("listen did not stop after the name cap")
+		assert.GreaterOrEqual(t, time.Since(start), 250*time.Millisecond)
+	case <-time.After(2 * time.Second):
+		t.Fatal("time-based listen did not return")
 	}
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 0 }, time.Second, 10*time.Millisecond)
 }
 
 func TestCoreListenGateTakeoverCancelsPrevious(t *testing.T) {
-	g := newCoreListenGate(2)
-	ctx1, release1, err := g.tryTakeover("c1", context.Background())
-	require.NoError(t, err)
-	ctx2, release2, err := g.tryTakeover("c1", context.Background())
-	require.NoError(t, err)
+	g := newCoreListenGate()
+	ctx1, release1 := g.takeover("c1", context.Background())
+	ctx2, release2 := g.takeover("c1", context.Background())
 	defer release2()
 	<-ctx1.Done()
 	release1()
@@ -197,17 +196,37 @@ func TestCoreListenGateTakeoverCancelsPrevious(t *testing.T) {
 	require.NoError(t, ctx2.Err())
 }
 
-func TestCoreListenGateRejectsWhenFull(t *testing.T) {
-	g := newCoreListenGate(2)
-	_, r1, err := g.tryTakeover("a", context.Background())
+func TestCoreWatchReusesOneSubscribe(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	cfg := &connection.Connection{Name: "watch", Hosts: []string{ns.ClientURL()}}
+	pub, err := nats.Connect(ns.ClientURL())
 	require.NoError(t, err)
-	_, r2, err := g.tryTakeover("b", context.Background())
-	require.NoError(t, err)
-	defer r1()
-	defer r2()
-	_, _, err = g.tryTakeover("c", context.Background())
-	assert.ErrorIs(t, err, errListenBusy)
-	assert.Equal(t, 2, g.active())
+	defer pub.Close()
+
+	h := newCoreWatchHub()
+	defer h.stop("id")
+
+	first := h.snapshot("id", "w.>", true, cfg)
+	require.Empty(t, first.Error)
+	require.True(t, first.Watching)
+	require.True(t, h.watching("id"))
+
+	require.NoError(t, pub.Publish("w.one", []byte("x")))
+	require.NoError(t, pub.Publish("$SYS.ignore", []byte("x")))
+	require.NoError(t, pub.Flush())
+	require.Eventually(t, func() bool {
+		return h.read("id").Heard >= 1
+	}, time.Second, 20*time.Millisecond)
+
+	got := h.snapshot("id", "w.>", true, cfg)
+	require.True(t, got.Watching)
+	assert.GreaterOrEqual(t, got.Heard, 1)
+	for _, s := range got.Subjects {
+		assert.False(t, strings.HasPrefix(s.Subject, "$SYS"))
+	}
+
+	h.stop("id")
+	assert.False(t, h.watching("id"))
 }
 
 func TestDialOnceIsNotPooled(t *testing.T) {

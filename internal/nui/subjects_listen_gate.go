@@ -2,36 +2,28 @@ package nui
 
 import (
 	"context"
-	"errors"
 	"sync"
 )
-
-var errListenBusy = errors.New("busy")
 
 type listenSlot struct {
 	gen    uint64
 	cancel context.CancelFunc
 }
 
-// coreListenGate keeps NUI from stacking catch-all samples.
-// One in-flight listen per configured connection. A second click
-// cancels the first. A small global cap covers two open cards
-// without opening a DialOnce per click.
+// coreListenGate keeps overlapping time-based samples from stacking
+// DialOnce connections. A second refresh cancels the first. Continuous
+// watches live in coreWatchHub, not here.
 type coreListenGate struct {
 	mu      sync.Mutex
-	max     int
 	nextGen uint64
 	byConn  map[string]*listenSlot
 }
 
-func newCoreListenGate(max int) *coreListenGate {
-	if max < 1 {
-		max = 1
-	}
-	return &coreListenGate{max: max, byConn: map[string]*listenSlot{}}
+func newCoreListenGate() *coreListenGate {
+	return &coreListenGate{byConn: map[string]*listenSlot{}}
 }
 
-func (g *coreListenGate) tryTakeover(id string, parent context.Context) (context.Context, context.CancelFunc, error) {
+func (g *coreListenGate) takeover(id string, parent context.Context) (context.Context, context.CancelFunc) {
 	if parent == nil {
 		parent = context.Background()
 	}
@@ -43,9 +35,6 @@ func (g *coreListenGate) tryTakeover(id string, parent context.Context) (context
 	defer g.mu.Unlock()
 	if existing := g.byConn[id]; existing != nil {
 		existing.cancel()
-	} else if len(g.byConn) >= g.max {
-		cancel()
-		return nil, nil, errListenBusy
 	}
 	g.nextGen++
 	gen := g.nextGen
@@ -57,7 +46,7 @@ func (g *coreListenGate) tryTakeover(id string, parent context.Context) (context
 			delete(g.byConn, id)
 		}
 		g.mu.Unlock()
-	}, nil
+	}
 }
 
 func (g *coreListenGate) active() int {

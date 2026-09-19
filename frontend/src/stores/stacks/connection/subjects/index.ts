@@ -6,7 +6,7 @@ import { DOC_TYPE } from "@/types"
 import { OccupiedCatalog, SubjectHit, CoreCatalog, JetStreamCatalog } from "@/types/Subject"
 import { MSG_FORMAT } from "@/utils/editor"
 import { canListen, normalizeListenFilter, validateListenFilter } from "@/utils/subjects/filter"
-import { shouldFetchCore, shouldFetchJetStream, DiscoverReason } from "@/utils/subjects/fetch"
+import { shouldFetchCore, shouldFetchJetStream, shouldWatchCore, DiscoverReason } from "@/utils/subjects/fetch"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../../loadBase"
@@ -29,6 +29,7 @@ const setup = {
 		occupiedLoading: <string>null,
 		listenHint: <string>null,
 		coreListening: false,
+		coreWatching: false,
 		listenGen: 0,
 		coreAbort: <AbortController>null,
 
@@ -76,13 +77,15 @@ const setup = {
 		fetchAbort(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.abortCore()
+			s.stopWatch()
 			loadBaseSetup.actions.fetchAbort?.(_, store)
 		},
 
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.setListenHint(null)
-			await s.discover("refresh")
+			const polling = (s.state.pollingTime ?? 0) > 0
+			await s.discover(polling ? "poll" : "refresh")
 			await loadBaseSetup.actions.fetch(_, store)
 		},
 
@@ -93,6 +96,11 @@ const setup = {
 		async discover(reason: DiscoverReason, store?: SubjectsStore) {
 			if (shouldFetchJetStream(store.state.jetstreamEnabled, !!store.state.jetstream, reason)) {
 				await store.fetchJetStream()
+			}
+			const polling = (store.state.pollingTime ?? 0) > 0
+			if (shouldWatchCore(store.state.coreEnabled, store.state.filter, store.state.coreWatching, polling)) {
+				await store.watchCore()
+				return
 			}
 			if (shouldFetchCore(store.state.coreEnabled, store.state.filter, !!store.state.core, reason)) {
 				await store.fetchCore()
@@ -112,6 +120,38 @@ const setup = {
 		abortCore(_: void, store?: SubjectsStore) {
 			store.state.coreAbort?.abort()
 			store.state.coreAbort = null
+		},
+
+		async watchCore(_: void, store?: SubjectsStore) {
+			const filter = normalizeListenFilter(store.state.filter)
+			if (!canListen(filter)) return
+			if (store.state.filter != filter) store.setFilter(filter)
+			store.setCoreWatching(true)
+			store.setCoreListening(true)
+			const catalog = await subjectsApi.watch(store.state.connectionId, filter, {
+				store, noError: true, loading: false,
+			})
+			if (!catalog || !Array.isArray(catalog.subjects)) {
+				store.setCore({
+					filter,
+					listenMs: 0,
+					heard: 0,
+					truncated: false,
+					watching: true,
+					subjects: [],
+					error: catalog?.error || "could not listen",
+				})
+				return
+			}
+			store.setCore(catalog)
+		},
+
+		async stopWatch(_: void, store?: SubjectsStore) {
+			store.setCoreWatching(false)
+			store.setCoreListening(false)
+			if (store.state.connectionId) {
+				await subjectsApi.unwatch(store.state.connectionId, { store, noError: true, loading: false })
+			}
 		},
 
 		async fetchCore(_: void, store?: SubjectsStore) {
@@ -159,7 +199,11 @@ const setup = {
 		async toggleCore(_: void, store?: SubjectsStore) {
 			const next = !store.state.coreEnabled
 			store.setCoreEnabled(next)
-			if (next) await store.discover("toggle")
+			if (!next) {
+				await store.stopWatch()
+				return
+			}
+			await store.discover("toggle")
 		},
 
 		async toggleJetStream(_: void, store?: SubjectsStore) {
@@ -177,13 +221,17 @@ const setup = {
 			}
 			if (store.state.filter != filter) store.setFilter(filter)
 			store.setListenHint(null)
-			await store.fetchCore()
+			if (store.state.coreWatching) {
+				await store.stopWatch()
+				return
+			}
+			await store.watchCore()
 		},
 
 		async listenAll(_: void, store?: SubjectsStore) {
 			store.setFilter(">")
 			store.setListenHint(null)
-			await store.fetchCore()
+			await store.watchCore()
 		},
 
 		revealCatchAll(_: void, store?: SubjectsStore) {
@@ -253,6 +301,7 @@ const setup = {
 		setOccupiedLoading: (occupiedLoading: string) => ({ occupiedLoading }),
 		setListenHint: (listenHint: string) => ({ listenHint }),
 		setCoreListening: (coreListening: boolean) => ({ coreListening }),
+		setCoreWatching: (coreWatching: boolean) => ({ coreWatching }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setSelect: (select: string) => ({ select }),
 		setFormat: (format: MSG_FORMAT) => ({ format }),

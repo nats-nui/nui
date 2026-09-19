@@ -13,11 +13,14 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-// HandleCoreListen samples Core NATS on a dedicated short-lived connection.
-// It never uses the pooled connection. One in-flight sample per connection:
-// a second request cancels the first. An empty filter means ">". The
-// subscribe is dropped as soon as the name cap is hit or the server starts
-// dropping this client. Payloads are not returned.
+// HandleCoreListen is the Core NATS catalog.
+//
+// A refresh is a time-boxed subscribe (listen_ms). Opening a connection
+// does not do this. Internal names stay discarded unless discard_sys=false.
+//
+// watch=1 is continuous update: one live subscribe, this request only
+// reads the snapshot. If a watch is already running, a refresh also
+// reads that snapshot instead of opening a second DialOnce.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
@@ -34,24 +37,26 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 		listenMs = maxListenMs
 	}
 	discardSys := queryBoolDefault(c, "discard_sys", true)
+	watch := queryBoolDefault(c, "watch", false)
+	id := c.Params("id")
+
+	if watch {
+		return a.coreWatchSnapshot(c, id, filter, discardSys)
+	}
+	if a.coreWatches != nil && a.coreWatches.watching(id) {
+		if out := a.coreWatches.read(id); out != nil {
+			return c.JSON(out)
+		}
+	}
 
 	var parent context.Context = c.Context()
 	release := func() {}
 	if a.coreListens != nil {
-		var err error
-		parent, release, err = a.coreListens.tryTakeover(c.Params("id"), parent)
-		if err != nil {
-			return c.JSON(&CoreCatalog{
-				Filter:   filter,
-				ListenMs: listenMs,
-				Error:    "busy",
-				Subjects: []CoreSubject{},
-			})
-		}
+		parent, release = a.coreListens.takeover(id, parent)
 	}
 	defer release()
 
-	cfg, err := a.nui.ConnRepo.GetById(c.Params("id"))
+	cfg, err := a.nui.ConnRepo.GetById(id)
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
@@ -67,6 +72,27 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 
 	out := sampleCore(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond, discardSys)
 	return c.JSON(out)
+}
+
+func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
+	if c.Params("id") == "" {
+		return c.Status(422).JSON("id is required")
+	}
+	if a.coreWatches != nil {
+		a.coreWatches.stop(c.Params("id"))
+	}
+	return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
+}
+
+func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool) error {
+	cfg, err := a.nui.ConnRepo.GetById(id)
+	if err != nil {
+		return a.logAndFiberError(c, err, 404)
+	}
+	if a.coreWatches == nil {
+		a.coreWatches = newCoreWatchHub()
+	}
+	return c.JSON(a.coreWatches.snapshot(id, filter, discardSys, cfg))
 }
 
 func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, discardSys bool) *CoreCatalog {
@@ -125,8 +151,6 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 
 	hits := map[string]*CoreSubject{}
 	var extraDropped atomic.Int64
-	var seen atomic.Int64
-	stopEarly := false
 	timer := time.NewTimer(listen)
 	defer timer.Stop()
 
@@ -158,20 +182,12 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 			if nameCap > 0 && len(hits) >= nameCap {
 				out.Truncated = true
 				extraDropped.Add(1)
-				stopEarly = true
 				return
 			}
 			hit = &CoreSubject{Subject: msg.Subject}
 			hits[msg.Subject] = hit
 		}
 		hit.Count++
-		n := seen.Add(1)
-		if n%32 == 0 {
-			if dropped, err := sub.Dropped(); err == nil && dropped >= coreSlowConsumerStop {
-				out.Truncated = true
-				stopEarly = true
-			}
-		}
 	}
 
 	for {
@@ -195,10 +211,6 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 				return out
 			}
 			record(msg)
-			if stopEarly {
-				finish()
-				return out
-			}
 		}
 	}
 }

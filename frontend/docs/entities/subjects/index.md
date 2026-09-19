@@ -22,7 +22,9 @@ GET /api/connection/:id/subjects/jetstream
 GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 ```
 
-`filter` defaults to `>`. Catch-alls are allowed. Uses a short-lived connection, not the pooled MESSAGES connection. One in-flight listen per connection; a second request cancels the first. Unsubscribes as soon as the name cap is hit or the server starts dropping this client. Name count and listen window are capped.
+Opening a connection does not subscribe. Internal names (`$SYS`, `$JS.`, `_INBOX`) stay discarded unless `discard_sys=false`.
+
+Refresh (`listen_ms`) is a time-boxed sample. Continuous update (`watch=1`) is one live subscribe; later requests only read the snapshot. `DELETE` stops the watch. Catch-alls are allowed when asked (LISTEN / ALL / refresh). Poll alone does not start `>`.
 
 ### OCCUPIED NAMES
 

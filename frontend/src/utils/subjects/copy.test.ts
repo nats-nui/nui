@@ -18,18 +18,6 @@ describe("copy", () => {
 		expect(lines).toEqual([])
 	})
 
-	it("says a stacked listen is busy instead of starting another", () => {
-		expect(coreStatus(true, {
-			filter: ">", listenMs: 2000, heard: 0, truncated: false, subjects: [], error: "busy",
-		})).toMatch(/already running/i)
-		expect(emptyCopy({
-			coreEnabled: true, jsEnabled: true,
-			core: { filter: ">", listenMs: 2000, heard: 0, truncated: false, subjects: [], error: "busy" },
-			js: { streams: [] },
-			search: "", foundCount: 0,
-		})).toMatch(/already running/i)
-	})
-
 	it("stays quiet when the catalog is healthy", () => {
 		expect(coreStatus(true, {
 			filter: ">", listenMs: 2000, heard: 4, truncated: false, subjects: [],

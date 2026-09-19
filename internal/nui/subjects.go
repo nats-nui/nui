@@ -21,15 +21,11 @@ const (
 	maxPatternsPerStream = 500
 	maxOccupiedPerStream = 500
 	maxPayloadBytes      = 4096
-	coreSubscribeBuffer  = 256
-	corePendingMsgs      = 256
-	corePendingBytes     = 256 * 1024
-	// Leave as soon as the server is already dropping us. Staying
-	// subscribed after that is how a GUI becomes a slow consumer.
-	coreSlowConsumerStop     = 64
-	maxConcurrentCoreListens = 2
-	jsCatalogTimeout         = 8 * time.Second
-	occupiedTimeout          = 8 * time.Second
+	coreSubscribeBuffer = 256
+	corePendingMsgs     = 256
+	corePendingBytes    = 256 * 1024
+	jsCatalogTimeout    = 8 * time.Second
+	occupiedTimeout     = 8 * time.Second
 )
 
 type CoreCatalog struct {
@@ -39,6 +35,7 @@ type CoreCatalog struct {
 	Truncated bool          `json:"truncated"`
 	Dropped   int           `json:"dropped,omitempty"`
 	Error     string        `json:"error,omitempty"`
+	Watching  bool          `json:"watching,omitempty"`
 	Subjects  []CoreSubject `json:"subjects"`
 }
 
