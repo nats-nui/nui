@@ -13,7 +13,7 @@ describe("shouldFetchJetStream", () => {
 })
 
 describe("shouldFetchCore", () => {
-	it("samples a typed name on refresh and never on first connect", () => {
+	it("samples a typed name on refresh only", () => {
 		expect(shouldFetchCore(true, ">", "open")).toBe(false)
 		expect(shouldFetchCore(true, "orders.>", "open")).toBe(false)
 		expect(shouldFetchCore(true, ">", "toggle")).toBe(false)
@@ -26,7 +26,7 @@ describe("shouldFetchCore", () => {
 })
 
 describe("shouldWatchCore", () => {
-	it("reads a live snapshot only after LISTEN, never because poll is on", () => {
+	it("reads a live snapshot only while LISTEN is on", () => {
 		expect(shouldWatchCore(true, ">", false)).toBe(false)
 		expect(shouldWatchCore(true, ">", true)).toBe(true)
 		expect(shouldWatchCore(true, "orders.>", false)).toBe(false)

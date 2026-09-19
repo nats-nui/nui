@@ -13,13 +13,8 @@ import (
 	"github.com/nats-nui/nui/internal/connection"
 )
 
-// HandleCoreListen is the Core NATS catalog.
-//
-// A refresh is a time-boxed subscribe (listen_ms). Opening a connection
-// does not do this. Internal names stay discarded.
-//
-// watch=1 reads the live snapshot. LISTEN starts that subscribe.
-// A refresh while already watching reads the same snapshot.
+// HandleCoreListen is the Core NATS catalog. watch=1 is the live
+// subscribe. Otherwise this is a time-boxed sample.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
@@ -35,12 +30,11 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if listenMs > maxListenMs {
 		listenMs = maxListenMs
 	}
-	discardSys := queryBoolDefault(c, "discard_sys", true)
 	watch := queryBoolDefault(c, "watch", false)
 	id := c.Params("id")
 
 	if watch {
-		return a.coreWatchSnapshot(c, id, filter, discardSys)
+		return a.coreWatchSnapshot(c, id, filter)
 	}
 	if a.coreWatches != nil && a.coreWatches.watching(id) {
 		if out := a.coreWatches.read(id); out != nil {
@@ -69,7 +63,7 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(parent, budget)
 	defer cancel()
 
-	out := sampleCore(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond, discardSys)
+	out := sampleCore(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond)
 	return c.JSON(out)
 }
 
@@ -83,7 +77,7 @@ func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
 	return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
 }
 
-func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool) error {
+func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string) error {
 	cfg, err := a.nui.ConnRepo.GetById(id)
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
@@ -91,14 +85,14 @@ func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool
 	if a.coreWatches == nil {
 		a.coreWatches = newCoreWatchHub()
 	}
-	return c.JSON(a.coreWatches.snapshot(id, filter, discardSys, cfg))
+	return c.JSON(a.coreWatches.snapshot(id, filter, cfg))
 }
 
-func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, discardSys bool) *CoreCatalog {
-	return sampleCoreLimited(ctx, conn, filter, listen, discardSys, maxCoreSubjects)
+func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration) *CoreCatalog {
+	return sampleCoreLimited(ctx, conn, filter, listen, maxCoreSubjects)
 }
 
-func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, discardSys bool, nameCap int) *CoreCatalog {
+func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, nameCap int) *CoreCatalog {
 	out := &CoreCatalog{
 		Filter:   filter,
 		ListenMs: int(listen / time.Millisecond),
@@ -173,7 +167,7 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		if msg == nil {
 			return
 		}
-		if discardSys && isInternalSubject(msg.Subject) {
+		if isInternalSubject(msg.Subject) {
 			return
 		}
 		hit, exists := hits[msg.Subject]

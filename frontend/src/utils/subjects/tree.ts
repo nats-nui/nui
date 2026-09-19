@@ -1,8 +1,7 @@
 import { CoreCatalog, JetStreamCatalog, OccupiedCatalog, SubjectHit, SubjectNode } from "@/types/Subject"
 
 export const MAX_TREE_CHILDREN = 50
-// Family at the first token. Anything deeper is one stacked name, not a
-// nested inbox of heartbeats, keys, and notification leaves.
+// First token is the family. Anything deeper is one stacked name.
 export const MAX_TREE_DEPTH = 2
 
 export function occupiedKey(stream: string, pattern?: string): string {
@@ -91,8 +90,6 @@ export function buildSubjectTree(hits: SubjectHit[]): SubjectNode[] {
 		while (i < segments.length) {
 			const remaining = segments.length - i
 			const existing = current.children.get(segments[i])
-			// Prefer an existing folder (the bucket or pattern you opened)
-			// so stored names nest under it instead of dumping as siblings.
 			const stacked = i >= MAX_TREE_DEPTH - 1 && remaining > 1 && !existing
 			const take = stacked ? remaining : 1
 			const segment = segments.slice(i, i + take).join(".")
@@ -146,26 +143,4 @@ export function filterHits(hits: SubjectHit[], text: string): SubjectHit[] {
 		hit.subject.toLowerCase().includes(needle)
 		|| hit.streams.some(s => s.name.toLowerCase().includes(needle)),
 	)
-}
-
-export function filterTree(nodes: SubjectNode[], text: string): SubjectNode[] {
-	const needle = text?.toLocaleLowerCase()?.trim()
-	if (!needle) return nodes
-	const keep = (node: SubjectNode): SubjectNode | null => {
-		if (node.remainder) return null
-		const children = node.children.map(keep).filter(Boolean) as SubjectNode[]
-		const selfMatch = node.path.toLowerCase().includes(needle)
-			|| node.hit?.streams.some(s => s.name.toLowerCase().includes(needle))
-		if (!selfMatch && children.length == 0) return null
-		let names = node.hit ? 1 : 0
-		for (const child of children) names += child.names
-		return { ...node, children, names }
-	}
-	return nodes.map(keep).filter(Boolean) as SubjectNode[]
-}
-
-export function countLeaves(nodes: SubjectNode[]): number {
-	let n = 0
-	for (const node of nodes) n += node.names
-	return n
 }

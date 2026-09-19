@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { SubjectHit } from "@/types/Subject"
-import { buildSubjectTree, countLeaves, filterHits, filterTree, flattenHits, MAX_TREE_CHILDREN, occupiedKey } from "./tree"
+import { buildSubjectTree, filterHits, flattenHits, MAX_TREE_CHILDREN, occupiedKey } from "./tree"
 
 function hit(subject: string, opts: Partial<SubjectHit> = {}): SubjectHit {
 	return { subject, streams: [], ...opts }
@@ -80,7 +80,6 @@ describe("buildSubjectTree", () => {
 		expect(tree[0].children.map(c => c.segment)).toEqual(["sensors"])
 		expect(tree[0].children[0].stacked).toBeFalsy()
 		expect(tree[0].names).toBe(2)
-		expect(countLeaves(tree)).toBe(2)
 	})
 
 	it("stacks anything deeper than a couple of levels instead of opening the whole chain", () => {
@@ -96,7 +95,7 @@ describe("buildSubjectTree", () => {
 		expect(tree[0].children[0].children).toEqual([])
 		expect(tree[1].children.map(c => c.segment)).toEqual(["sensors.humidity", "sensors.temp"])
 		expect(tree[1].children.every(c => c.stacked)).toBe(true)
-		expect(countLeaves(tree)).toBe(3)
+		expect(tree.reduce((n, node) => n + node.names, 0)).toBe(3)
 	})
 
 	it("nests stored names under the folder you opened instead of dumping siblings", () => {
@@ -129,20 +128,6 @@ describe("occupiedKey", () => {
 	it("matches the expand cache key used by the store", () => {
 		expect(occupiedKey("ORDERS", "orders.>")).toBe("ORDERS::orders.>")
 		expect(occupiedKey("ORDERS")).toBe("ORDERS::>")
-	})
-})
-
-describe("filterTree", () => {
-	it("keeps ancestors of a matching leaf", () => {
-		const tree = buildSubjectTree([
-			hit("shop.orders.created"),
-			hit("shop.users.login"),
-		])
-		const filtered = filterTree(tree, "login")
-		expect(filtered).toHaveLength(1)
-		expect(filtered[0].children[0].segment).toBe("users.login")
-		expect(filtered[0].children[0].stacked).toBe(true)
-		expect(countLeaves(filtered)).toBe(1)
 	})
 })
 

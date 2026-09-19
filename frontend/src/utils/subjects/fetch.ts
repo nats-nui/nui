@@ -8,8 +8,6 @@ export function shouldFetchJetStream(enabled: boolean, hasCatalog: boolean, reas
 	return !hasCatalog
 }
 
-// Refresh is a time-boxed Core sample of a name the user typed.
-// Opening the card never starts one. An empty box is not `>`.
 export function shouldFetchCore(enabled: boolean, filter: string, reason: DiscoverReason): boolean {
 	if (!enabled) return false
 	if (!(filter ?? "").trim()) return false
@@ -17,7 +15,6 @@ export function shouldFetchCore(enabled: boolean, filter: string, reason: Discov
 	return reason == "refresh"
 }
 
-// Poll reads a live snapshot only if LISTEN already started it.
 export function shouldWatchCore(enabled: boolean, filter: string, watching: boolean): boolean {
 	if (!enabled) return false
 	if (!canListen(filter)) return false

@@ -10,9 +10,8 @@ type listenSlot struct {
 	cancel context.CancelFunc
 }
 
-// coreListenGate keeps overlapping time-based samples from stacking
-// DialOnce connections. A second refresh cancels the first. Continuous
-// watches live in coreWatchHub, not here.
+// coreListenGate cancels an in-flight sample when another starts
+// for the same connection.
 type coreListenGate struct {
 	mu      sync.Mutex
 	nextGen uint64
@@ -47,10 +46,4 @@ func (g *coreListenGate) takeover(id string, parent context.Context) (context.Co
 		}
 		g.mu.Unlock()
 	}
-}
-
-func (g *coreListenGate) active() int {
-	g.mu.Lock()
-	defer g.mu.Unlock()
-	return len(g.byConn)
 }

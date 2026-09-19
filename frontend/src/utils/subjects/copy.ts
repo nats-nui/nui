@@ -1,10 +1,6 @@
 import { CoreCatalog, JetStreamCatalog } from "@/types/Subject"
 import { FILTER_INVALID, canListen, normalizeListenFilter } from "./filter"
 
-export function coreListenLabel(filter: string): string {
-	return normalizeListenFilter(filter)
-}
-
 export function listenHintCopy(hint?: string | null): string | null {
 	if (!hint) return null
 	if (hint == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"

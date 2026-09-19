@@ -21,7 +21,6 @@ const setup = {
 		coreEnabled: true,
 		jetstreamEnabled: true,
 		filter: "",
-		listenMs: 2000,
 
 		core: <CoreCatalog>null,
 		jetstream: <JetStreamCatalog>null,
@@ -53,7 +52,6 @@ const setup = {
 				coreEnabled: state.coreEnabled,
 				jetstreamEnabled: state.jetstreamEnabled,
 				filter: state.filter,
-				listenMs: state.listenMs,
 				textSearch: state.textSearch,
 				format: state.format,
 			}
@@ -69,7 +67,6 @@ const setup = {
 			state.coreEnabled = data.coreEnabled ?? true
 			state.jetstreamEnabled = data.jetstreamEnabled ?? true
 			state.filter = data.filter ?? ""
-			state.listenMs = data.listenMs ?? 2000
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},
@@ -166,21 +163,21 @@ const setup = {
 			if (!prev || prev.filter != filter) {
 				store.setCore({
 					filter,
-					listenMs: store.state.listenMs,
+					listenMs: 2000,
 					heard: 0,
 					truncated: false,
 					subjects: [],
 				})
 			}
 			try {
-				const catalog = await subjectsApi.core(store.state.connectionId, filter, store.state.listenMs, {
+				const catalog = await subjectsApi.core(store.state.connectionId, filter, 2000, {
 					store, signal: ac.signal, noError: true, loading: false,
 				})
 				if (store.state.listenGen != gen) return
 				if (!catalog || !Array.isArray(catalog.subjects)) {
 					store.setCore({
 						filter,
-						listenMs: store.state.listenMs,
+						listenMs: 2000,
 						heard: 0,
 						truncated: false,
 						subjects: [],
@@ -288,7 +285,6 @@ const setup = {
 		setCoreEnabled: (coreEnabled: boolean) => ({ coreEnabled }),
 		setJetstreamEnabled: (jetstreamEnabled: boolean) => ({ jetstreamEnabled }),
 		setFilter: (filter: string) => ({ filter }),
-		setListenMs: (listenMs: number) => ({ listenMs }),
 		setCore: (core: CoreCatalog) => ({ core }),
 		setJetstream: (jetstream: JetStreamCatalog) => ({ jetstream }),
 		setOccupied: (occupied: Record<string, OccupiedCatalog>) => ({ occupied }),

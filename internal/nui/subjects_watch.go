@@ -14,26 +14,22 @@ const (
 	watchSweepEvery = 30 * time.Second
 )
 
-// coreWatchHub holds at most one live Core subscribe per configured
-// connection. Continuous update reads this snapshot. It is not a
-// DialOnce per poll tick.
+// coreWatchHub holds at most one live Core subscribe per connection.
 type coreWatchHub struct {
 	mu     sync.Mutex
 	byConn map[string]*coreWatch
 }
 
 type coreWatch struct {
-	mu         sync.Mutex
-	filter     string
-	discardSys bool
-	nc         *nats.Conn
-	sub        *nats.Subscription
-	hits       map[string]*CoreSubject
-	truncated  bool
-	dropped    int
-	listenErr  string
-	touched    time.Time
-	stop       context.CancelFunc
+	mu        sync.Mutex
+	filter    string
+	nc        *nats.Conn
+	sub       *nats.Subscription
+	hits      map[string]*CoreSubject
+	truncated bool
+	dropped   int
+	touched   time.Time
+	stop      context.CancelFunc
 }
 
 func newCoreWatchHub() *coreWatchHub {
@@ -46,10 +42,10 @@ func (h *coreWatchHub) watching(id string) bool {
 	return h.byConn[id] != nil
 }
 
-func (h *coreWatchHub) snapshot(id, filter string, discardSys bool, cfg *connection.Connection) *CoreCatalog {
+func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection) *CoreCatalog {
 	h.mu.Lock()
 	w := h.byConn[id]
-	if w != nil && w.filter == filter && w.discardSys == discardSys {
+	if w != nil && w.filter == filter {
 		w.mu.Lock()
 		w.touched = time.Now()
 		out := w.copyCatalog()
@@ -63,7 +59,7 @@ func (h *coreWatchHub) snapshot(id, filter string, discardSys bool, cfg *connect
 	}
 	h.mu.Unlock()
 
-	next, err := startCoreWatch(filter, discardSys, cfg)
+	next, err := startCoreWatch(filter, cfg)
 	if err != nil {
 		return &CoreCatalog{Filter: filter, Subjects: []CoreSubject{}, Error: coreUserError(err)}
 	}
@@ -145,7 +141,7 @@ func (h *coreWatchHub) startJanitor(ctx context.Context) {
 	}()
 }
 
-func startCoreWatch(filter string, discardSys bool, cfg *connection.Connection) (*coreWatch, error) {
+func startCoreWatch(filter string, cfg *connection.Connection) (*coreWatch, error) {
 	nc, err := connection.DialOnce(cfg)
 	if err != nil {
 		return nil, err
@@ -164,13 +160,12 @@ func startCoreWatch(filter string, discardSys bool, cfg *connection.Connection) 
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	w := &coreWatch{
-		filter:     filter,
-		discardSys: discardSys,
-		nc:         nc,
-		sub:        sub,
-		hits:       map[string]*CoreSubject{},
-		touched:    time.Now(),
-		stop:       cancel,
+		filter:  filter,
+		nc:      nc,
+		sub:     sub,
+		hits:    map[string]*CoreSubject{},
+		touched: time.Now(),
+		stop:    cancel,
 	}
 	go w.loop(ctx, ch)
 	return w, nil
@@ -198,7 +193,7 @@ func (w *coreWatch) record(msg *nats.Msg) {
 	if msg == nil {
 		return
 	}
-	if w.discardSys && isInternalSubject(msg.Subject) {
+	if isInternalSubject(msg.Subject) {
 		return
 	}
 	w.mu.Lock()
@@ -225,7 +220,6 @@ func (w *coreWatch) copyCatalog() *CoreCatalog {
 		ListenMs:  0,
 		Truncated: w.truncated,
 		Dropped:   w.dropped,
-		Error:     w.listenErr,
 		Watching:  true,
 		Subjects:  make([]CoreSubject, 0, len(w.hits)),
 	}

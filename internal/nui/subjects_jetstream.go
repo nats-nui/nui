@@ -16,22 +16,19 @@ func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
-	discardSys := queryBoolDefault(c, "discard_sys", true)
 
 	js, ok, err := a.jsOrFailWithID(c)
 	if !ok {
 		return err
 	}
-	// Budget the list, not the WAN dial. A 2s+ public connect used to
-	// consume this window and return zero streams.
 	ctx, cancel := context.WithTimeout(c.Context(), jsCatalogTimeout)
 	defer cancel()
-	out := enumerateJetStreamPatterns(ctx, js, discardSys)
+	out := enumerateJetStreamPatterns(ctx, js)
 	return c.JSON(out)
 }
 
 // HandleJetStreamOccupied lists names that currently have messages in one
-// stream. Per-stream cap. KV/Object are allowed but still capped.
+// stream. Per-stream cap.
 func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
@@ -40,7 +37,6 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 	if streamName == "" {
 		return c.Status(422).JSON("stream is required")
 	}
-	discardSys := queryBoolDefault(c, "discard_sys", true)
 	filter := normalizeListenFilter(c.Query("filter"))
 	if err := validateListenFilter(filter); err != nil {
 		return c.Status(422).JSON(NewError(err.Error()))
@@ -52,16 +48,16 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 	}
 	ctx, cancel := context.WithTimeout(c.Context(), occupiedTimeout)
 	defer cancel()
-	out := occupiedSubjects(ctx, js, streamName, filter, discardSys)
+	out := occupiedSubjects(ctx, js, streamName, filter)
 	return c.JSON(out)
 }
 
-func enumerateJetStreamPatterns(ctx context.Context, js jetstream.JetStream, discardSys bool) *JetStreamCatalog {
+func enumerateJetStreamPatterns(ctx context.Context, js jetstream.JetStream) *JetStreamCatalog {
 	infos, err := collectStreamInfos(ctx, js)
-	return catalogFromInfos(infos, err, discardSys)
+	return catalogFromInfos(infos, err)
 }
 
-func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys bool) *JetStreamCatalog {
+func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error) *JetStreamCatalog {
 	out := &JetStreamCatalog{Streams: []JetStreamStream{}}
 	if listErr != nil {
 		out.Error = jsUserError(listErr)
@@ -84,7 +80,7 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 		entry := JetStreamStream{Name: info.Config.Name, Kind: kind, Subjects: []JetStreamSubject{}}
 		seen := map[string]bool{}
 		for _, pattern := range info.Config.Subjects {
-			if discardSys && isInternalSubject(pattern) {
+			if isInternalSubject(pattern) {
 				continue
 			}
 			path, subKind := collapsePattern(pattern, kind)
@@ -110,7 +106,7 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 	return out
 }
 
-func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, filter string, discardSys bool) *OccupiedCatalog {
+func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, filter string) *OccupiedCatalog {
 	out := &OccupiedCatalog{Stream: streamName, Subjects: []JetStreamSubject{}}
 	stream, err := js.Stream(ctx, streamName)
 	if err != nil {
@@ -123,11 +119,10 @@ func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, f
 		return out
 	}
 	out.Kind = streamKind(info.Config.Name, info.Config.Subjects)
-	// The server already paid for the full map. Sort first so a cap is
-	// the same 500 names on every poll, not a random walk of the map.
+	// Sort before the cap so every poll shows the same first page.
 	names := make([]string, 0, len(info.State.Subjects))
 	for subject := range info.State.Subjects {
-		if discardSys && isInternalSubject(subject) {
+		if isInternalSubject(subject) {
 			continue
 		}
 		names = append(names, subject)

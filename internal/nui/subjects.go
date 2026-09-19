@@ -21,11 +21,11 @@ const (
 	maxPatternsPerStream = 500
 	maxOccupiedPerStream = 500
 	maxPayloadBytes      = 4096
-	coreSubscribeBuffer = 256
-	corePendingMsgs     = 256
-	corePendingBytes    = 256 * 1024
-	jsCatalogTimeout    = 8 * time.Second
-	occupiedTimeout     = 8 * time.Second
+	coreSubscribeBuffer  = 256
+	corePendingMsgs      = 256
+	corePendingBytes     = 256 * 1024
+	jsCatalogTimeout     = 8 * time.Second
+	occupiedTimeout      = 8 * time.Second
 )
 
 type CoreCatalog struct {
