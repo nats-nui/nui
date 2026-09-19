@@ -7,7 +7,7 @@ import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterHits, flattenHits } from "@/utils/subjects/tree"
-import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
+import { Button, FindInputHeader, IconToggle, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
@@ -102,6 +102,13 @@ const SubjectsView: FunctionComponent<Props> = ({
 				children="JETSTREAM"
 				onClick={() => subjectsSo.toggleJetStream()}
 			/>
+		</div>
+		<div className="jack-cmp-h" style={{ margin: "0 0 8px" }}>
+			<IconToggle
+				check={subjectsSa.noSysMessages}
+				onChange={() => subjectsSo.toggleNoSysMessages()}
+			/>
+			<div className="jack-lbl-prop">DISCARDS SYSTEM MESSAGES</div>
 		</div>
 		{subjectsSa.coreEnabled && (
 			<div className={cls.filter}>
