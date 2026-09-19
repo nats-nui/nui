@@ -7,7 +7,7 @@ import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterHits, flattenHits } from "@/utils/subjects/tree"
-import { Button, FindInputHeader, IconToggle, OptionsCmp, TextInput } from "@priolo/jack"
+import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
 import clsCardBoring from "../../CardBoringDef.module.css"
@@ -91,71 +91,66 @@ const SubjectsView: FunctionComponent<Props> = ({
 			/>
 		</>}
 	>
-		<div className={cls.filter}>
-			<Button
-				select={subjectsSa.coreEnabled}
-				children="CORE"
-				onClick={() => subjectsSo.toggleCore()}
-			/>
-			<Button
-				select={subjectsSa.jetstreamEnabled}
-				children="JETSTREAM"
-				onClick={() => subjectsSo.toggleJetStream()}
-			/>
-		</div>
-		<div className="jack-cmp-h" style={{ margin: "0 0 8px" }}>
-			<IconToggle
-				check={subjectsSa.noSysMessages}
-				onChange={() => subjectsSo.toggleNoSysMessages()}
-			/>
-			<div className="jack-lbl-prop">DISCARDS SYSTEM MESSAGES</div>
-		</div>
-		{subjectsSa.coreEnabled && (
+		<div className={cls.body}>
 			<div className={cls.filter}>
-				<div className="jack-lbl-prop">LISTEN FOR</div>
 				<Button
-					select={isCatchAll(subjectsSa.filter)}
-					children="ALL"
-					onClick={handleAll}
-				/>
-				<TextInput
-					style={{ flex: 1 }}
-					value={subjectsSa.filter}
-					placeholder="ex. orders.>"
-					onChange={handleFilterChange}
-					onBlur={handleFilterBlur}
-					onKeyEnter={() => subjectsSo.listenNow()}
+					select={subjectsSa.coreEnabled}
+					children="CORE"
+					onClick={() => subjectsSo.toggleCore()}
 				/>
 				<Button
-					select={listening}
-					children={listening ? "LISTENING" : "LISTEN"}
-					onClick={() => subjectsSo.listenNow()}
+					select={subjectsSa.jetstreamEnabled}
+					children="JETSTREAM"
+					onClick={() => subjectsSo.toggleJetStream()}
 				/>
 			</div>
-		)}
+			{subjectsSa.coreEnabled && (
+				<div className={cls.filter}>
+					<div className="jack-lbl-prop">LISTEN FOR</div>
+					<Button
+						select={isCatchAll(subjectsSa.filter)}
+						children="ALL"
+						onClick={handleAll}
+					/>
+					<TextInput
+						style={{ flex: 1 }}
+						value={subjectsSa.filter}
+						placeholder="ex. orders.>"
+						onChange={handleFilterChange}
+						onBlur={handleFilterBlur}
+						onKeyEnter={() => subjectsSo.listenNow()}
+					/>
+					<Button
+						select={listening}
+						children={listening ? "LISTENING" : "LISTEN"}
+						onClick={() => subjectsSo.listenNow()}
+					/>
+				</div>
+			)}
 
-		{hint && <div className={cls.hint}>{hint}</div>}
+			{hint && <div className={cls.hint}>{hint}</div>}
 
-		{firstPaint
-			? null
-			: <div className={cls.tree}>
-				<SubjectTree
-					nodes={tree}
-					select={subjectsSa.select}
-					onSelect={handleSelect}
-					empty={empty}
-					occupied={subjectsSa.occupied}
-					occupiedLoading={subjectsSa.occupiedLoading}
-					reveal={!!subjectsSa.textSearch?.trim()}
-				/>
-			</div>
-		}
+			{firstPaint
+				? null
+				: <div className={cls.tree}>
+					<SubjectTree
+						nodes={tree}
+						select={subjectsSa.select}
+						onSelect={handleSelect}
+						empty={empty}
+						occupied={subjectsSa.occupied}
+						occupiedLoading={subjectsSa.occupiedLoading}
+						reveal={!!subjectsSa.textSearch?.trim()}
+					/>
+				</div>
+			}
 
-		{status.length > 0 && (
-			<div className={cls.status}>
-				{status.map(line => <div key={line}>{line}</div>)}
-			</div>
-		)}
+			{status.length > 0 && (
+				<div className={cls.status}>
+					{status.map(line => <div key={line}>{line}</div>)}
+				</div>
+			)}
+		</div>
 	</FrameworkCard>
 }
 

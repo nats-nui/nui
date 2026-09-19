@@ -12,7 +12,7 @@ GET /api/connection/:id/subjects/jetstream
 
 | name | default | meaning |
 |---|---|---|
-| `discard_sys` | `true` | DISCARDS SYSTEM MESSAGES — same control as MESSAGES |
+| `discard_sys` | `true` | system names stay discarded, same default as MESSAGES |
 
 `$KV` and `$O` collapse to one bucket node. Occupied names are a separate call.
 
@@ -22,7 +22,7 @@ GET /api/connection/:id/subjects/jetstream
 GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 ```
 
-Opening a connection does not subscribe. DISCARDS SYSTEM MESSAGES is on, same toggle as MESSAGES.
+Opening a connection does not subscribe. System names stay discarded.
 
 Refresh is a short listen. Continuous update (poll) is one live subscribe; later ticks read the snapshot. LISTEN / ALL start that subscribe. Poll alone does not start ALL.
 
