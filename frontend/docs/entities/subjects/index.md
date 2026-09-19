@@ -22,7 +22,7 @@ GET /api/connection/:id/subjects/jetstream
 GET /api/connection/:id/subjects/core?filter=>&listen_ms=2000
 ```
 
-`filter` defaults to `>`. Catch-alls are allowed. Uses a short-lived connection, not the pooled MESSAGES connection. Name count and listen window are capped.
+`filter` defaults to `>`. Catch-alls are allowed. Uses a short-lived connection, not the pooled MESSAGES connection. One in-flight listen per connection; a second request cancels the first. Unsubscribes as soon as the name cap is hit or the server starts dropping this client. Name count and listen window are capped.
 
 ### OCCUPIED NAMES
 

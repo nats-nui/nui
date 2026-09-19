@@ -12,12 +12,11 @@ describe("shouldFetchJetStream", () => {
 })
 
 describe("shouldFetchCore", () => {
-	it("starts discovery on open, including a catch-all", () => {
-		expect(shouldFetchCore(true, ">", false, "open")).toBe(true)
-		expect(shouldFetchCore(true, "", false, "open")).toBe(true)
-		expect(shouldFetchCore(true, "orders.>", false, "open")).toBe(true)
-		expect(shouldFetchCore(true, "orders..x", false, "open")).toBe(false)
-		expect(shouldFetchCore(true, ">", true, "toggle")).toBe(false)
+	it("never auto-subscribes — LISTEN is the only sample", () => {
+		expect(shouldFetchCore(true, ">", false, "open")).toBe(false)
+		expect(shouldFetchCore(true, "", false, "open")).toBe(false)
+		expect(shouldFetchCore(true, "orders.>", false, "open")).toBe(false)
+		expect(shouldFetchCore(true, ">", false, "toggle")).toBe(false)
 		expect(shouldFetchCore(true, ">", false, "refresh")).toBe(false)
 		expect(shouldFetchCore(true, ">", true, "refresh")).toBe(false)
 	})

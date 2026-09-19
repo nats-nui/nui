@@ -38,8 +38,9 @@ func DialOnce(connection *Connection) (*nats.Conn, error) {
 		nats.RetryOnFailedConnect(false),
 		nats.MaxReconnects(0),
 		nats.Timeout(natsConnectTimeout),
-		nats.PingInterval(2 * time.Second),
-		nats.MaxPingsOutstanding(2),
+		// A sample lasts at most 10s. Do not ping the server for that.
+		nats.PingInterval(30 * time.Second),
+		nats.MaxPingsOutstanding(1),
 		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-discover"),
 	}
 	options = appendAuthOption(connection, options)

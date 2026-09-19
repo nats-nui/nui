@@ -41,9 +41,9 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 		return c.Status(422).JSON("stream is required")
 	}
 	discardSys := queryBoolDefault(c, "discard_sys", true)
-	filter := strings.TrimSpace(c.Query("filter"))
-	if filter == "" {
-		filter = ">"
+	filter := normalizeListenFilter(c.Query("filter"))
+	if err := validateListenFilter(filter); err != nil {
+		return c.Status(422).JSON(NewError(err.Error()))
 	}
 
 	js, ok, err := a.jsOrFailWithID(c)

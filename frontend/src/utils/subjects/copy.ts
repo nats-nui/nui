@@ -48,6 +48,7 @@ export function coreListenStale(core?: CoreCatalog | null, filter?: string): boo
 export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?: string): string | null {
 	if (!enabled) return null
 	if (core?.error == "not allowed") return "This account cannot listen for that name."
+	if (core?.error == "busy") return "A listen is already running."
 	if (core?.error == "timed out") return "The listen stopped before it finished."
 	if (core?.error == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
 	if (core?.error) return `Core could not listen: ${core.error}.`
@@ -99,6 +100,7 @@ export function emptyCopy(args: {
 	if (foundCount > 0) return null
 	if (search?.trim()) return "No names match."
 
+	if (core?.error == "busy") return "A listen is already running."
 	const notAllowed = core?.error == "not allowed" || js?.error == "not allowed"
 	if (notAllowed) return "This account cannot see those names."
 

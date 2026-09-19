@@ -154,6 +154,62 @@ func TestSampleCoreNotAllowed(t *testing.T) {
 	assert.Equal(t, "not allowed", out.Error)
 }
 
+func TestSampleCoreStopsOnceCapped(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	const nameCap = 8
+	done := make(chan *CoreCatalog, 1)
+	go func() {
+		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 5*time.Second, true, nameCap)
+	}()
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
+
+	start := time.Now()
+	for i := 0; i < nameCap+20; i++ {
+		require.NoError(t, nc.Publish("cap."+itoa(i), []byte("x")))
+	}
+	require.NoError(t, nc.Flush())
+
+	select {
+	case out := <-done:
+		require.True(t, out.Truncated, "error=%q heard=%d", out.Error, out.Heard)
+		assert.Equal(t, nameCap, out.Heard)
+		assert.Less(t, time.Since(start), 2*time.Second)
+	case <-time.After(5 * time.Second):
+		t.Fatal("listen did not stop after the name cap")
+	}
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 0 }, time.Second, 10*time.Millisecond)
+}
+
+func TestCoreListenGateTakeoverCancelsPrevious(t *testing.T) {
+	g := newCoreListenGate(2)
+	ctx1, release1, err := g.tryTakeover("c1", context.Background())
+	require.NoError(t, err)
+	ctx2, release2, err := g.tryTakeover("c1", context.Background())
+	require.NoError(t, err)
+	defer release2()
+	<-ctx1.Done()
+	release1()
+	assert.Equal(t, 1, g.active())
+	require.NoError(t, ctx2.Err())
+}
+
+func TestCoreListenGateRejectsWhenFull(t *testing.T) {
+	g := newCoreListenGate(2)
+	_, r1, err := g.tryTakeover("a", context.Background())
+	require.NoError(t, err)
+	_, r2, err := g.tryTakeover("b", context.Background())
+	require.NoError(t, err)
+	defer r1()
+	defer r2()
+	_, _, err = g.tryTakeover("c", context.Background())
+	assert.ErrorIs(t, err, errListenBusy)
+	assert.Equal(t, 2, g.active())
+}
+
 func TestDialOnceIsNotPooled(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	cfg := &connection.Connection{Name: "demo", Hosts: []string{ns.ClientURL()}}

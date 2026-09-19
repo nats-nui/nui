@@ -12,7 +12,7 @@ Open a family and you get **one more level**. A normal name stays one child (`or
 
 Open a name with a ▸ (a JetStream pattern, KV bucket, or object store). Stored names load **under that row**, still stacked if they are deep. Click a stored name to see the last message JetStream kept. Core has no last message — `live` means we heard it during a listen.
 
-FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card, not header actions. FIND searches the names themselves, so a match past the browse cap still appears. Reload and poll refresh stored JetStream names. LISTEN samples Core. Open folders stay open. Hover a row to copy the full name, same control as MESSAGES. Names use the same monospace 12px as the STREAMS table. A chip appears only when it adds a fact (`live`, `KV`, `FILES`, or a stream whose name is not the row). The footer stays quiet unless something failed or was capped.
+FIND and reload sit in the header, same as STREAMS. CORE / JETSTREAM are view filters in the card, not header actions. FIND searches the names themselves, so a match past the browse cap still appears. Opening the card lists stored JetStream names only. Reload and poll refresh that list. LISTEN is the only Core sample — one in-flight subscribe, cancelled if you click again or close the card, gone from the server as soon as the name cap is hit. Open folders stay open. Hover a row to copy the full name, same control as MESSAGES. Names use the same monospace 12px as the STREAMS table. A chip appears only when it adds a fact (`live`, `KV`, `FILES`, or a stream whose name is not the row). The footer stays quiet unless something failed or was capped.
 
 ## Core vs JetStream
 

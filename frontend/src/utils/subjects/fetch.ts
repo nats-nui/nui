@@ -1,5 +1,3 @@
-import { canListen } from "./filter"
-
 export type DiscoverReason = "open" | "toggle" | "refresh"
 
 export function shouldFetchJetStream(enabled: boolean, hasCatalog: boolean, reason: DiscoverReason): boolean {
@@ -8,11 +6,8 @@ export function shouldFetchJetStream(enabled: boolean, hasCatalog: boolean, reas
 	return !hasCatalog
 }
 
-export function shouldFetchCore(enabled: boolean, filter: string, hasCatalog: boolean, reason: DiscoverReason): boolean {
-	if (!enabled) return false
-	if (!canListen(filter)) return false
-	// Reload/poll is the STREAMS list: cheap JetStream names.
-	// A Core sample opens a dedicated connection and listens — LISTEN does that.
-	if (reason == "refresh") return false
-	return !hasCatalog
+export function shouldFetchCore(_enabled: boolean, _filter: string, _hasCatalog: boolean, _reason: DiscoverReason): boolean {
+	// Core is a subscribe. Opening the card, toggling, or polling must
+	// not start one. LISTEN is the only way a sample starts.
+	return false
 }

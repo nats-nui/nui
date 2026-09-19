@@ -24,8 +24,12 @@ const (
 	coreSubscribeBuffer  = 256
 	corePendingMsgs      = 256
 	corePendingBytes     = 256 * 1024
-	jsCatalogTimeout     = 8 * time.Second
-	occupiedTimeout      = 8 * time.Second
+	// Leave as soon as the server is already dropping us. Staying
+	// subscribed after that is how a GUI becomes a slow consumer.
+	coreSlowConsumerStop     = 64
+	maxConcurrentCoreListens = 2
+	jsCatalogTimeout         = 8 * time.Second
+	occupiedTimeout          = 8 * time.Second
 )
 
 type CoreCatalog struct {

@@ -30,6 +30,7 @@ const setup = {
 		listenHint: <string>null,
 		coreListening: false,
 		listenGen: 0,
+		coreAbort: <AbortController>null,
 
 		textSearch: <string>null,
 		select: <string>null,
@@ -72,6 +73,12 @@ const setup = {
 			state.format = data.format
 		},
 
+		fetchAbort(_: void, store?: LoadBaseStore) {
+			const s = <SubjectsStore>store
+			s.abortCore()
+			loadBaseSetup.actions.fetchAbort?.(_, store)
+		},
+
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.setListenHint(null)
@@ -102,10 +109,18 @@ const setup = {
 			store.setJetstream(catalog)
 		},
 
+		abortCore(_: void, store?: SubjectsStore) {
+			store.state.coreAbort?.abort()
+			store.state.coreAbort = null
+		},
+
 		async fetchCore(_: void, store?: SubjectsStore) {
 			const filter = normalizeListenFilter(store.state.filter)
 			if (!canListen(filter)) return
 			if (store.state.filter != filter) store.setFilter(filter)
+			store.abortCore()
+			const ac = new AbortController()
+			store.state.coreAbort = ac
 			const gen = store.state.listenGen + 1
 			store.state.listenGen = gen
 			store.setCoreListening(true)
@@ -121,7 +136,7 @@ const setup = {
 			}
 			try {
 				const catalog = await subjectsApi.core(store.state.connectionId, filter, store.state.listenMs, {
-					store, manageAbort: true, noError: true, loading: false,
+					store, signal: ac.signal, noError: true, loading: false,
 				})
 				if (store.state.listenGen != gen) return
 				if (!catalog || !Array.isArray(catalog.subjects)) {

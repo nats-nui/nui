@@ -14,10 +14,11 @@ import (
 
 type App struct {
 	*fiber.App
-	l    logging.Slogger
-	Port string
-	nui  *Nui
-	ctx  context.Context
+	l           logging.Slogger
+	Port        string
+	nui         *Nui
+	ctx         context.Context
+	coreListens *coreListenGate
 }
 
 func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
@@ -27,9 +28,10 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 			fiber.Config{
 				UnescapePath: true,
 			}),
-		Port: port,
-		nui:  nui,
-		l:    l,
+		Port:        port,
+		nui:         nui,
+		l:           l,
+		coreListens: newCoreListenGate(maxConcurrentCoreListens),
 	}
 	sLog, ok := l.(*slog.Logger)
 	if ok {

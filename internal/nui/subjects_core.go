@@ -14,9 +14,10 @@ import (
 )
 
 // HandleCoreListen samples Core NATS on a dedicated short-lived connection.
-// It never uses the pooled connection. An empty filter means ">" — that is
-// how discovery looks around. A short window and name cap keep it bounded.
-// Payloads are not returned.
+// It never uses the pooled connection. One in-flight sample per connection:
+// a second request cancels the first. An empty filter means ">". The
+// subscribe is dropped as soon as the name cap is hit or the server starts
+// dropping this client. Payloads are not returned.
 func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
@@ -34,6 +35,22 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	}
 	discardSys := queryBoolDefault(c, "discard_sys", true)
 
+	var parent context.Context = c.Context()
+	release := func() {}
+	if a.coreListens != nil {
+		var err error
+		parent, release, err = a.coreListens.tryTakeover(c.Params("id"), parent)
+		if err != nil {
+			return c.JSON(&CoreCatalog{
+				Filter:   filter,
+				ListenMs: listenMs,
+				Error:    "busy",
+				Subjects: []CoreSubject{},
+			})
+		}
+	}
+	defer release()
+
 	cfg, err := a.nui.ConnRepo.GetById(c.Params("id"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
@@ -45,7 +62,7 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 	defer nc.Close()
 
 	budget := time.Duration(listenMs)*time.Millisecond + 2*time.Second
-	ctx, cancel := context.WithTimeout(c.Context(), budget)
+	ctx, cancel := context.WithTimeout(parent, budget)
 	defer cancel()
 
 	out := sampleCore(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond, discardSys)
@@ -53,6 +70,10 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 }
 
 func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, discardSys bool) *CoreCatalog {
+	return sampleCoreLimited(ctx, conn, filter, listen, discardSys, maxCoreSubjects)
+}
+
+func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, discardSys bool, nameCap int) *CoreCatalog {
 	out := &CoreCatalog{
 		Filter:   filter,
 		ListenMs: int(listen / time.Millisecond),
@@ -104,6 +125,8 @@ func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time
 
 	hits := map[string]*CoreSubject{}
 	var extraDropped atomic.Int64
+	var seen atomic.Int64
+	stopEarly := false
 	timer := time.NewTimer(listen)
 	defer timer.Stop()
 
@@ -132,15 +155,23 @@ func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time
 		}
 		hit, exists := hits[msg.Subject]
 		if !exists {
-			if len(hits) >= maxCoreSubjects {
+			if nameCap > 0 && len(hits) >= nameCap {
 				out.Truncated = true
 				extraDropped.Add(1)
+				stopEarly = true
 				return
 			}
 			hit = &CoreSubject{Subject: msg.Subject}
 			hits[msg.Subject] = hit
 		}
 		hit.Count++
+		n := seen.Add(1)
+		if n%32 == 0 {
+			if dropped, err := sub.Dropped(); err == nil && dropped >= coreSlowConsumerStop {
+				out.Truncated = true
+				stopEarly = true
+			}
+		}
 	}
 
 	for {
@@ -164,6 +195,10 @@ func sampleCore(ctx context.Context, conn *nats.Conn, filter string, listen time
 				return out
 			}
 			record(msg)
+			if stopEarly {
+				finish()
+				return out
+			}
 		}
 	}
 }
