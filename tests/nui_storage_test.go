@@ -22,6 +22,7 @@ func (s *NuiTestSuite) TestStorage() {
 	s.Require().NoError(err)
 	legacy, err := c.OpenWithStore(store)
 	s.Require().NoError(err)
+	s.T().Cleanup(func() { s.NoError(legacy.Close()) })
 	s.Require().NoError(legacy.CreateCollection(docstore.CONN_COLLECTION))
 
 	newApp := func(db *docstore.DB) *nui.App {
@@ -63,6 +64,7 @@ func (s *NuiTestSuite) TestStorage() {
 
 	db, err := docstore.NewDocStore(dir)
 	s.Require().NoError(err)
+	defer db.Close()
 	app := newApp(db)
 	got := request(app, http.MethodGet, "/api/connection/"+saved.Id, nil)
 	s.Equal(saved, got)

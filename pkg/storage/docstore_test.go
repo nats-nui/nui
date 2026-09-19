@@ -46,6 +46,7 @@ func TestDocStore_ReopensLegacyValueLog(t *testing.T) {
 	require.NoError(t, err)
 	legacy, err := c.OpenWithStore(store)
 	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, legacy.Close()) })
 	require.NoError(t, legacy.CreateCollection(CONN_COLLECTION))
 	doc := document.NewDocument()
 	doc.Set("name", "keep-me")
@@ -74,6 +75,36 @@ func TestDocStore_ReopensLegacyValueLog(t *testing.T) {
 	require.Equal(t, "keep-me", got.Get("name"))
 	require.Equal(t, payload, got.Get("payload"))
 	require.LessOrEqual(t, maxApparentVlogSize(t, dir), int64(64<<20))
+}
+
+func TestDocStore_ValueLogRotation(t *testing.T) {
+	dir := t.TempDir()
+	db, err := NewDocStore(dir)
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, db.Close()) })
+	payload := strings.Repeat("x", 4<<20)
+	var ids []string
+	for i := 0; i < 10; i++ {
+		doc := document.NewDocument()
+		doc.Set("payload", payload)
+		id, err := db.InsertOne(CONN_COLLECTION, doc)
+		require.NoError(t, err)
+		ids = append(ids, id)
+	}
+	vlogs, err := filepath.Glob(filepath.Join(dir, "*.vlog"))
+	require.NoError(t, err)
+	require.Greater(t, len(vlogs), 1)
+	require.LessOrEqual(t, maxApparentVlogSize(t, dir), int64(64<<20))
+	require.NoError(t, db.Close())
+	reopened, err := NewDocStore(dir)
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, reopened.Close()) })
+	for _, id := range ids {
+		doc, err := reopened.FindById(CONN_COLLECTION, id)
+		require.NoError(t, err)
+		require.NotNil(t, doc)
+		require.Equal(t, payload, doc.Get("payload"))
+	}
 }
 
 func maxApparentVlogSize(t *testing.T, dir string) int64 {
