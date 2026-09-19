@@ -7,6 +7,7 @@ import { VIEW_SIZE } from "../../utils";
 import { MessageSendState, MessageSendStore } from "../messageSend";
 import { SyncState, SyncStore } from "../../sync";
 import { CnnMetricsState, CnnMetricsStore } from "../metrics";
+import { SubjectsState, SubjectsStore } from "../subjects";
 
 
 
@@ -63,6 +64,15 @@ export function buildConnectionMessageSend(connectionId: string, subjects: strin
 		subjects,
 	} as MessageSendState) as MessageSendStore
 	return sendStore;
+}
+
+export function buildConnectionSubjects(connectionId: string) {
+	const cnn = cnnSo.getById(connectionId);
+	if (!cnn) { console.error("no param"); return null; }
+	return buildStore({
+		type: DOC_TYPE.SUBJECTS,
+		connectionId: cnn.id,
+	} as SubjectsState) as SubjectsStore
 }
 
 export function buildConnectionMetrics(connectionId: string) {

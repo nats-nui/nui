@@ -1,0 +1,101 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	padding: 0 0 8px;
+	font-family: monospace;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.node {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	gap: 6px;
+	padding: 3px 5px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.node:hover {
+	background-color: rgba(255, 255, 255, .08);
+}
+
+.selected {
+	background-color: var(--cmp-select-bg);
+	color: var(--cmp-select-fg);
+}
+
+.twist {
+	width: 16px;
+	height: 16px;
+	flex: 0 0 16px;
+	opacity: .9;
+	font-family: sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.segment {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+	gap: 6px;
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+.chip {
+	font: inherit;
+	padding: 0 4px;
+	border-radius: 3px;
+	max-width: 16ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.core {
+	background-color: rgba(16, 243, 243, .22);
+	color: inherit;
+}
+
+.js {
+	background-color: rgba(235, 251, 53, .28);
+	color: inherit;
+}
+
+.count {
+	font: inherit;
+	opacity: .75;
+}
+
+.remainder {
+	opacity: .65;
+	cursor: default;
+}
+
+.empty {
+	white-space: normal;
+	line-height: 1.45;
+	padding: 8px 2px 12px;
+}
+
+.children {
+	margin-left: 14px;
+	border-left: 2px solid rgba(255, 255, 255, .22);
+	padding-left: 8px;
+}
