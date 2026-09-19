@@ -30,7 +30,7 @@ const DetailForm: FunctionComponent<Props> = ({
 	const inRead = kventrySa.editState == EDIT_STATE.READ
 	const inEdit = kventrySa.editState == EDIT_STATE.EDIT
 	const autoFormat = kventrySa.autoFormat
-	const refEditor = (ref: EditorRefProps) => kventrySa.editorRef = ref
+	const refEditor = (ref: EditorRefProps) => { kventrySa.editorRef = ref }
 	const payload = kventrySo.getEditorText()
 
 	return <div className="jack-lyt-form" style={{ height: "100%" }}>

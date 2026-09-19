@@ -1,5 +1,5 @@
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { mixStores, StoreCore } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import { ViewState } from "../viewBase"
 
 
@@ -37,7 +37,7 @@ export type ShortcutState = typeof setup.state & ViewState
 type ShortcutGetters = typeof setup.getters
 type ShortcutActions = typeof setup.actions
 type ShortcutMutators = typeof setup.mutators
-export interface ShortcutStore extends ViewStore, StoreCore<ShortcutState>, ShortcutGetters, ShortcutActions, ShortcutMutators {
+export interface ShortcutStore extends ViewStore, ShortcutGetters, ShortcutActions, ShortcutMutators {
 	state: ShortcutState
 }
 const shortcutSetup = mixStores(viewSetup, setup)

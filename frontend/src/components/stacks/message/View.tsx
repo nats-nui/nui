@@ -32,7 +32,7 @@ const MessageView: FunctionComponent<Props> = ({
 	// HOOKs
 
 	// HANDLER
-	const refEditor = (ref: EditorRefProps) => msgSa.editorRef = ref
+	const refEditor = (ref: EditorRefProps) => { msgSa.editorRef = ref }
 	const handleLinkLastClick = () => msgSo.setLinkToLast(!msgSo.state.linkToLast)
 	const handleShowDiffClick = () => msgSo.setShowDiff(!msgSo.state.showDiff)
 

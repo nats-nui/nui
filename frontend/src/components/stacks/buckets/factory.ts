@@ -32,7 +32,7 @@ export function buildNewConfig(): BucketConfig {
 		storage: STORAGE.MEMORY,
 		replicas: 0,
 		placement: null,
-		rePublish: null,
+		republish: null,
 		mirror: null,
 		sources: [],
 		compression: false,

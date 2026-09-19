@@ -4,7 +4,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { MessageStore } from "../message"
@@ -277,7 +277,7 @@ export type StreamMessagesState = typeof setup.state & ViewState & LoadBaseState
 export type StreamMessagesGetters = typeof setup.getters
 export type StreamMessagesActions = typeof setup.actions
 export type StreamMessagesMutators = typeof setup.mutators
-export interface StreamMessagesStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
+export interface StreamMessagesStore extends ViewStore, LoadBaseStore, Omit<EditorStore, "setFormat">, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
 	state: StreamMessagesState
 }
 const streamMessagesSetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)

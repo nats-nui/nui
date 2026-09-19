@@ -1,6 +1,7 @@
 import { Log } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
+import { focusSo } from "@priolo/jack"
 import { ViewState } from "../viewBase"
 
 
@@ -34,7 +35,7 @@ const setup = {
 		//#endregion
 
 		select (log:Log, store?:ViewLogStore ) {
-			store.state.group.focus(store.state.group.getById(log.targetId))
+			focusSo.focus(store.state.group.getById(log.targetId))
 		},
 	},
 

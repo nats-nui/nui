@@ -4,7 +4,7 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
 import { Message } from "@/types/Message"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores } from "@priolo/jon"
 import editorSetup, { EditorState, EditorStore } from "../editorBase"
 import { MessageStore } from "../message"
 import { LOAD_STATE } from "../utils"
@@ -117,7 +117,7 @@ export type SyncState = typeof setup.state & ViewState & EditorState
 export type SyncGetters = typeof setup.getters
 export type SyncActions = typeof setup.actions
 export type SyncMutators = typeof setup.mutators
-export interface SyncStore extends ViewStore, EditorStore, StoreCore<SyncState>, SyncGetters, SyncActions, SyncMutators {
+export interface SyncStore extends ViewStore, EditorStore, SyncGetters, SyncActions, SyncMutators {
 	state: SyncState
 }
 const syncSetup = mixStores(viewSetup, editorSetup, setup)

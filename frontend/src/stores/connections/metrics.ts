@@ -126,7 +126,7 @@ export interface MetricsStore extends LoadBaseStore, MetricsGetters, MetricsActi
 	state: MetricsState
 }
 
-const metricsSo = createStore(setup as StoreSetup<any>) as MetricsStore
+const metricsSo = createStore(setup) as MetricsStore
 
 export default metricsSo
 

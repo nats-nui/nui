@@ -96,7 +96,7 @@ const MessageSendView: FunctionComponent<Props> = ({
 
 			<div style={{ flex: 1, height: 0 }} >
 				<EditorCode
-					ref={ref => sendSa.editorRef = ref}
+					ref={ref => { sendSa.editorRef = ref }}
 					format={sendSa.format}
 					value={sendSo.getEditorText()}
 					onChange={handleValueChange}

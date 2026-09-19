@@ -56,8 +56,8 @@ const FilterDialog: FunctionComponent<Props> = ({
 
 	// RENDER
 	const [subjects, counters] = useMemo(() => [
-		Object.keys(strMsgSa.stream?.state?.subjects ?? {}),
-		Object.values(strMsgSa.stream?.state?.subjects ?? {})
+		Object.keys(strMsgSa.stream?.state?.subjects ?? {}) as string[],
+		Object.values(strMsgSa.stream?.state?.subjects ?? {}) as string[]
 	], [strMsgSa.stream?.state?.subjects])
 
 	if (!filter) return null
@@ -128,7 +128,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 						onChangeSelects={(subjects: string[]) => handleFilterPropChange({ subjects })}
 						renderRow={(item, index) => <div className={cls.sbj_row}>
 							<div className="jack-lbl-prop">{item}</div>
-							<div className={cls.sbj_row_counter}>{counters[index]}</div>
+							<div className={cls.sbj_row_counter}>{counters[index] ?? 0}</div>
 						</div>}
 					/>
 				</TitleAccordion>

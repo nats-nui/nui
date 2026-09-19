@@ -93,6 +93,6 @@ export interface ConnectionStore extends LoadBaseStore, ConnectionGetters, Conne
 }
 
 const cnnSetup = mixStores(loadBaseSetup, setup)
-const cnnSo = createStore(cnnSetup) as ConnectionStore
+const cnnSo = createStore(cnnSetup!) as unknown as ConnectionStore
 
 export default cnnSo

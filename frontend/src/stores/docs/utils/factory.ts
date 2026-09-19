@@ -63,7 +63,7 @@ export function buildStore(state: Partial<ViewState>, stateSerializzation?: Part
 		[DOC_TYPE.SHORTCUT]: shortcutSetup,
 	}[state?.type]
 	if (!setup) return
-	const store: ViewStore = <ViewStore>createStore(setup)
+	const store: ViewStore = createStore(setup) as unknown as ViewStore
 	store.state = { ...store.state, ...state };
 	// se non c'e' l'uuid lo creo IO!
 	//if (store.state.uuid == null) store.state.uuid = createUUID()
