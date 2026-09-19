@@ -2,7 +2,7 @@
 
 A subject is a name a message travels on, like `orders.created`.
 
-This card answers one question: **what names exist right now?** It is not MESSAGES and it is not STREAMS. Core vs JetStream is the only split.
+This card answers one question: **what names exist right now?** Same idea as MQTT Explorer — a topic tree for discovery. MESSAGES stays the firehose. Core vs JetStream is the only split.
 
 ## What you see
 
