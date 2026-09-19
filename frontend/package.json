@@ -8,7 +8,7 @@
     "dev-desktop": "cross-env VITE_TARGET=desktop vite",
     "build": "cross-env VITE_TARGET=web vite build",
     "build-desktop": "cross-env VITE_TARGET=desktop vite build",
-    "typescript": "tsc",
+    "typecheck": "tsc --noEmit",
     "start:socket:mock": "tsx ./src/mocks/socket/index.ts",
     "preview": "vite preview",
     "test": "vitest watch"
@@ -18,7 +18,7 @@
     "@fontsource/darker-grotesque": "^5.2.6",
     "@monaco-editor/react": "^4.7.0",
     "@priolo/jack": "file:../../jack",
-    "@priolo/jon": "^1.1.0",
+    "@priolo/jon": "file:../../jon",
     "@types/protobufjs": "^6.0.0",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.12",

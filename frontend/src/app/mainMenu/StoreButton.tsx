@@ -24,7 +24,7 @@ const StoreButton: FunctionComponent<Props> = ({
 }) => {
 
 	// STORE
-	const state = useStore(store)
+	useStore(store)
 
 	// HOOKs
 
