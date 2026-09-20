@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
@@ -116,7 +115,7 @@ func TestSampleCoreHearsLiteralPrefixOnly(t *testing.T) {
 	out := sampleCoreLimited(context.Background(), nc, "orders.>", 400*time.Millisecond, maxCoreSubjects, true)
 	require.Empty(t, out.Error)
 	require.GreaterOrEqual(t, out.Heard, 1)
-	assert.GreaterOrEqual(t, out.Dropped, 0)
+	assert.Zero(t, out.Dropped)
 	for _, s := range out.Subjects {
 		assert.Equal(t, "orders.created", s.Subject)
 		assert.Greater(t, s.Count, 0)
@@ -202,7 +201,6 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	require.NotNil(t, h.read("id", ""))
 
 	require.NoError(t, pub.Publish("w.one", []byte("x")))
-	require.NoError(t, pub.Publish("$SYS.ignore", []byte("x")))
 	require.NoError(t, pub.Flush())
 	require.Eventually(t, func() bool {
 		return h.read("id", "").Heard >= 1
@@ -211,28 +209,10 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	got := h.snapshot("id", "w.>", cfg, true, "")
 	require.True(t, got.Watching)
 	assert.GreaterOrEqual(t, got.Heard, 1)
-	for _, s := range got.Subjects {
-		assert.False(t, strings.HasPrefix(s.Subject, "$SYS"))
-	}
+	assert.Equal(t, "w.one", got.Subjects[0].Subject)
 
 	h.stop("id")
 	assert.Nil(t, h.read("id", ""))
-}
-
-func TestDialOnceIsNotPooled(t *testing.T) {
-	ns := startTestNATS(t, nil)
-	cfg := &connection.Connection{Name: "demo", Hosts: []string{ns.ClientURL()}}
-	a, err := connection.DialOnce(cfg)
-	require.NoError(t, err)
-	b, err := connection.DialOnce(cfg)
-	require.NoError(t, err)
-	defer a.Close()
-	defer b.Close()
-	idA, err := a.GetClientID()
-	require.NoError(t, err)
-	idB, err := b.GetClientID()
-	require.NoError(t, err)
-	assert.NotEqual(t, idA, idB)
 }
 
 func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {

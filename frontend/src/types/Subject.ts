@@ -32,7 +32,6 @@ export interface CoreCatalog {
 
 export interface JetStreamCatalog {
 	error?: string
-	failed?: number
 	truncated?: boolean
 	streams: JetStreamStreamHit[]
 }

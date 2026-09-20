@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-nui/nui/internal/ws"
 )
 
@@ -43,7 +42,6 @@ type CoreSubject struct {
 
 type JetStreamCatalog struct {
 	Error     string            `json:"error,omitempty"`
-	Failed    int               `json:"failed,omitempty"`
 	Truncated bool              `json:"truncated,omitempty"`
 	Streams   []JetStreamStream `json:"streams"`
 }
@@ -71,9 +69,8 @@ type OccupiedCatalog struct {
 }
 
 // HandleSubjectLast returns the last stored JetStream message for a subject.
-// Core has no stored last message. Catalogs never include payloads.
 func (a *App) HandleSubjectLast(c *fiber.Ctx) error {
-	if c.Params("id") == "" {
+	if c.Params("connection_id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
 	subject := strings.TrimSpace(c.Query("subject"))
@@ -85,7 +82,7 @@ func (a *App) HandleSubjectLast(c *fiber.Ctx) error {
 		return c.Status(422).JSON("stream is required")
 	}
 
-	js, ok, err := a.jsOrFailWithID(c)
+	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
 	}
@@ -106,16 +103,4 @@ func (a *App) HandleSubjectLast(c *fiber.Ctx) error {
 		ReceivedAt: raw.Time,
 		Headers:    raw.Header,
 	})
-}
-
-func (a *App) jsOrFailWithID(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
-	conn, err := a.nui.ConnPool.Get(c.Params("id"))
-	if err != nil {
-		return nil, false, a.logAndFiberError(c, err, 422)
-	}
-	js, err := jetstream.New(conn.Conn)
-	if err != nil {
-		return nil, false, a.logAndFiberError(c, err, 422)
-	}
-	return js, true, nil
 }

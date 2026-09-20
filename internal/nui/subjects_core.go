@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +27,7 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 		}
 		return a.coreWatchSnapshot(c, id, filter, discardSys)
 	}
-	if filter == "" && c.Query("listen_ms") == "" && a.coreWatches != nil {
+	if filter == "" && c.Query("listen_ms") == "" {
 		if out := a.coreWatches.read(id, c.Query("session")); out != nil {
 			return c.JSON(out)
 		}
@@ -45,11 +44,7 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 		listenMs = maxListenMs
 	}
 
-	var parent context.Context = c.Context()
-	release := func() {}
-	if a.coreListens != nil {
-		parent, release = a.coreListens.takeover(id, parent)
-	}
+	parent, release := a.coreListens.takeover(id, c.Context())
 	defer release()
 
 	cfg, err := a.nui.ConnRepo.GetById(id)
@@ -74,9 +69,7 @@ func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
-	if a.coreWatches != nil {
-		a.coreWatches.stopSession(c.Params("id"), c.Query("session"))
-	}
+	a.coreWatches.stopSession(c.Params("id"), c.Query("session"))
 	return c.JSON(&CoreCatalog{Subjects: []CoreSubject{}})
 }
 
@@ -135,21 +128,7 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		return out
 	}
 
-	var unsubOnce sync.Once
-	unsubscribe := func() {
-		unsubOnce.Do(func() { _ = sub.Unsubscribe() })
-	}
-	defer unsubscribe()
-
-	stop := make(chan struct{})
-	go func() {
-		select {
-		case <-ctx.Done():
-			unsubscribe()
-		case <-stop:
-		}
-	}()
-	defer close(stop)
+	defer sub.Unsubscribe()
 
 	flushCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
@@ -169,7 +148,6 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 
 	finish := func() {
 		pendingDropped, err := sub.Dropped()
-		unsubscribe()
 		dropped := extraDropped
 		if err == nil && pendingDropped > 0 {
 			dropped += pendingDropped
@@ -212,12 +190,8 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		case <-timer.C:
 			finish()
 			return out
-		case msg, ok := <-ch:
-			if !ok {
-				finish()
-				return out
-			}
-			record(msg)
+		case subject := <-ch:
+			record(subject)
 			if out.Truncated {
 				finish()
 				return out

@@ -1,7 +1,6 @@
 import { CoreCatalog, JetStreamCatalog, OccupiedCatalog, SubjectHit, SubjectNode } from "@/types/Subject"
 
 export const MAX_TREE_CHILDREN = 50
-// First token is the family. Anything deeper is one stacked name.
 export const MAX_TREE_DEPTH = 2
 
 export function occupiedKey(stream: string, pattern?: string): string {

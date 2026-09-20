@@ -11,7 +11,6 @@ function echoes(label: string, ...names: (string | undefined)[]): boolean {
 	return names.some(name => !!name && norm(name) == want)
 }
 
-/** One chip, and only when it says something the name does not. */
 export function rowChip(hit?: SubjectHit, segment?: string): RowChip | null {
 	if (!hit) return null
 	if (hit.core) return { label: "live", kind: "live", title: "heard just now" }

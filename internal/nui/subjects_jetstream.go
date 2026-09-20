@@ -11,14 +11,13 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-// HandleJetStreamCatalog lists stream capture patterns. It does not walk
-// occupied subject maps. KV and Object stores collapse to one bucket node.
+// HandleJetStreamCatalog lists stream capture patterns and buckets.
 func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
-	if c.Params("id") == "" {
+	if c.Params("connection_id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
 
-	js, ok, err := a.jsOrFailWithID(c)
+	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
 	}
@@ -28,10 +27,9 @@ func (a *App) HandleJetStreamCatalog(c *fiber.Ctx) error {
 	return c.JSON(out)
 }
 
-// HandleJetStreamOccupied lists names that currently have messages in one
-// stream. Per-stream cap.
+// HandleJetStreamOccupied lists subjects with stored messages in a stream.
 func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
-	if c.Params("id") == "" {
+	if c.Params("connection_id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
 	streamName := strings.TrimSpace(c.Params("stream"))
@@ -46,7 +44,7 @@ func (a *App) HandleJetStreamOccupied(c *fiber.Ctx) error {
 		return c.Status(422).JSON(NewError(err.Error()))
 	}
 
-	js, ok, err := a.jsOrFailWithID(c)
+	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
 	}
@@ -76,10 +74,6 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 	}
 
 	for _, info := range infos {
-		if info == nil {
-			out.Failed++
-			continue
-		}
 		kind := streamKind(info.Config.Name, info.Config.Subjects)
 		entry := JetStreamStream{Name: info.Config.Name, Kind: kind, Subjects: []JetStreamSubject{}}
 		seen := map[string]bool{}
@@ -182,9 +176,6 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 		case info, ok := <-listener.Info():
 			if !ok {
 				if err := listener.Err(); err != nil {
-					if errors.Is(err, context.Canceled) && len(infos) >= maxJSStreams {
-						return infos, nil
-					}
 					return infos, err
 				}
 				return infos, nil
@@ -197,9 +188,6 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 				}
 			}
 		case <-ctx.Done():
-			if len(infos) >= maxJSStreams {
-				return infos, nil
-			}
 			return infos, ctx.Err()
 		}
 	}

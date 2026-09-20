@@ -6,7 +6,6 @@ import { DOC_TYPE } from "@/types"
 import { OccupiedCatalog, SubjectHit, CoreCatalog, JetStreamCatalog } from "@/types/Subject"
 import { MSG_FORMAT } from "@/utils/editor"
 import { canListen, FILTER_EMPTY, normalizeListenFilter, validateListenFilter } from "@/utils/subjects/filter"
-import { shouldFetchCore, shouldFetchJetStream, shouldReadWatch, DiscoverReason } from "@/utils/subjects/fetch"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { mixStores } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../../loadBase"
@@ -83,10 +82,6 @@ const setup = {
 			state.format = data.format ?? MSG_FORMAT.JSON
 		},
 
-		fetchAbort(_: void, store?: LoadBaseStore) {
-			loadBaseSetup.actions.fetchAbort?.(_, store)
-		},
-
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.setListenHint(null)
@@ -99,11 +94,12 @@ const setup = {
 			await store.discover("open")
 		},
 
-		async discover(reason: DiscoverReason, store?: SubjectsStore) {
+		async discover(reason: "open" | "toggle" | "refresh" | "poll", store?: SubjectsStore) {
+			const state = store.state
 			await Promise.all([
-				shouldFetchJetStream(store.state.jetstreamEnabled, !!store.state.jetstream, reason) ? store.fetchJetStream() : null,
-				shouldFetchCore(store.state.coreEnabled, store.state.filter, reason) ? store.fetchCore()
-					: shouldReadWatch(store.state.coreEnabled, store.state.coreWatching) ? store.readWatch() : null,
+				state.jetstreamEnabled && (!state.jetstream || reason == "refresh" || reason == "poll") ? store.fetchJetStream() : null,
+				state.coreEnabled && reason == "refresh" && canListen(state.filter) ? store.fetchCore()
+					: state.coreEnabled && state.coreWatching ? store.readWatch() : null,
 			])
 		},
 

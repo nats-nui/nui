@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { emptyCopy, jetStreamStatus, coreStatus, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines, subjectCopyValue } from "./copy"
+import { emptyCopy, jetStreamStatus, coreStatus, leafTitle, listenHintCopy, occupiedStatus, coreListenStale, statusLines } from "./copy"
 import { canListen, isCatchAll, normalizeListenFilter, validateListenFilter, FILTER_EMPTY, FILTER_INVALID } from "./filter"
 
 describe("copy", () => {
@@ -106,11 +106,6 @@ describe("copy", () => {
 		expect(coreStatus(true, null, "orders.>")).toBeNull()
 	})
 
-	it("copies the full name from a row", () => {
-		expect(subjectCopyValue({ path: "orders.created", hit: { subject: "orders.created" } })).toBe("orders.created")
-		expect(subjectCopyValue({ path: "orders" })).toBe("orders")
-		expect(subjectCopyValue({ path: "orders.created", remainder: true })).toBeNull()
-	})
 
 	it("describes a leaf without adding live and stored numbers together", () => {
 		expect(leafTitle("orders.created", 3, [{ name: "ORDERS", count: 40 }])).toBe(

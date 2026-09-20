@@ -75,7 +75,6 @@ export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null):
 		return `JetStream could not be read: ${js.error}.`
 	}
 	const bits: string[] = []
-	if (js.failed) bits.push(`${js.failed} stream${js.failed == 1 ? "" : "s"} could not be read`)
 	if (js.truncated || js.streams?.some(s => s.truncated)) bits.push("JetStream list was capped")
 	if (js.error == "timed out") bits.push("stored names were not fully read")
 	else if (js.error) bits.push("stored names could not be refreshed")
@@ -104,7 +103,7 @@ export function emptyCopy(args: {
 
 	const notFullyRead = !!(
 		core?.error == "timed out" || js?.error == "timed out"
-		|| core?.truncated || js?.truncated || (js?.failed ?? 0) > 0
+		|| core?.truncated || js?.truncated
 	)
 	if (notFullyRead) return "The list was not fully read."
 
@@ -116,11 +115,6 @@ export function emptyCopy(args: {
 	if (coreEnabled && !core) return "Click LISTEN to hear live names."
 	if (coreEnabled) return "Quiet right now."
 	return "No stored names."
-}
-
-export function subjectCopyValue(node: { path: string, remainder?: boolean, hit?: { subject: string } }): string | null {
-	if (node.remainder) return null
-	return node.hit?.subject || node.path || null
 }
 
 export function leafTitle(path: string, heard?: number, streams?: { name: string, count?: number }[]): string {

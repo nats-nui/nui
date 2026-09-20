@@ -22,9 +22,7 @@ func NatsBuilder(connection *Connection) (*NatsConn, error) {
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
 }
 
-// DialOnce opens a short-lived NATS connection that is not pooled and does
-// not reconnect. Callers must Close it. SUBJECTS uses this so a Core
-// subscribe cannot stall the shared MESSAGES connection.
+// DialOnce opens an unpooled connection without reconnecting. The caller must close it.
 func DialOnce(connection *Connection) (*nats.Conn, error) {
 	options := []nats.Option{
 		nats.NoReconnect(),

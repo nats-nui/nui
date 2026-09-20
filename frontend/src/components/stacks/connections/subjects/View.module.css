@@ -40,9 +40,3 @@
 	min-height: 120px;
 	overflow: auto;
 }
-
-.empty {
-	white-space: normal;
-	line-height: 1.45;
-	padding: 8px 2px 12px;
-}

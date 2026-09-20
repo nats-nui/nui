@@ -16,7 +16,7 @@ function deferred<T>() {
 	return { promise, resolve: (value: T) => resolve(value) }
 }
 function store() {
-	const s: any = { state: { ...setup.state, connectionId: "connection", uuid: "card", occupied: {}, filter: "orders.>" }, _update: vi.fn() }
+	const s: any = { state: { ...setup.state, connectionId: "connection", uuid: "card", occupied: {}, filter: "orders.>" }, _update: vi.fn(), fetchAbort: vi.fn() }
 	for (const [key, action] of Object.entries(setup.actions)) s[key] = (value?: unknown) => action(value as never, s)
 	for (const [key, mutator] of Object.entries(setup.mutators)) s[key] = (value: unknown) => Object.assign(s.state, mutator(value as never))
 	return s

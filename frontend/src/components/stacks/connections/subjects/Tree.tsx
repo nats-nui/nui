@@ -1,6 +1,6 @@
 import { OccupiedCatalog, SubjectNode } from "@/types/Subject"
 import { rowChip } from "@/utils/subjects/chip"
-import { leafTitle, subjectCopyValue } from "@/utils/subjects/copy"
+import { leafTitle } from "@/utils/subjects/copy"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { CopyButton } from "@priolo/jack"
 import { FunctionComponent, memo, useState } from "react"
@@ -80,7 +80,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 			? leafTitle(node.path, node.hit.core?.count, node.hit.streams)
 			: node.path
 	const chip = rowChip(node.hit, node.segment)
-	const copyValue = subjectCopyValue(node)
+	const copyValue = node.remainder ? null : node.path
 
 	const activate = () => {
 		if (node.remainder) return
@@ -102,7 +102,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}
 				role="button" tabIndex={node.remainder ? -1 : 0} aria-expanded={canOpen ? open : undefined}
 				onKeyDown={e => { if (e.key == "Enter" || e.key == " ") { e.preventDefault(); activate() } }}>
-				<div className={cls.twist} onClick={e => { e.stopPropagation(); activate() }}>
+				<div className={cls.twist}>
 					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>
@@ -110,7 +110,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 					{copyValue && <span onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}><CopyButton absolute value={copyValue} label="COPY SUBJECT" /></span>}
 					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
-					{loadedEmpty && !occ?.error && <span className={cls.count}>none stored</span>}
+					{loadedEmpty && <span className={cls.count}>none stored</span>}
 					{occ?.error && <span className={cls.count}>{occ.error}</span>}
 					{canOpen && !open && node.names > 1 && <span className={cls.count}>{node.names}</span>}
 					{node.remainder && <span className={cls.count}>{node.names}</span>}

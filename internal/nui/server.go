@@ -82,9 +82,9 @@ func (a *App) registerHandlers() {
 	a.Post("/api/connection/:id/messages/publish", a.HandlePublish)
 	a.Post("/api/connection/:id/request", a.HandleRequest)
 
-	a.Get("/api/connection/:id/subjects/last", a.HandleSubjectLast)
-	a.Get("/api/connection/:id/subjects/jetstream/:stream/occupied", a.HandleJetStreamOccupied)
-	a.Get("/api/connection/:id/subjects/jetstream", a.HandleJetStreamCatalog)
+	a.Get("/api/connection/:connection_id/subjects/last", a.HandleSubjectLast)
+	a.Get("/api/connection/:connection_id/subjects/jetstream/:stream/occupied", a.HandleJetStreamOccupied)
+	a.Get("/api/connection/:connection_id/subjects/jetstream", a.HandleJetStreamCatalog)
 	a.Get("/api/connection/:id/subjects/core", a.HandleCoreListen)
 	a.Delete("/api/connection/:id/subjects/core", a.HandleCoreWatchStop)
 
@@ -144,9 +144,7 @@ func (a *App) registerHandlers() {
 
 func (a *App) Start(ctx context.Context) error {
 	a.ctx = ctx
-	if a.coreWatches != nil {
-		a.coreWatches.startJanitor(ctx)
-	}
+	a.coreWatches.startJanitor(ctx)
 	go func() {
 		select {
 		case <-ctx.Done():

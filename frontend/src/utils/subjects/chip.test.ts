@@ -3,7 +3,7 @@ import { rowChip } from "./chip"
 
 describe("rowChip", () => {
 	it("marks a live name and nothing else", () => {
-		expect(rowChip({ subject: "ghost.bd.gga", core: { count: 1 }, streams: [] }, "bd.gga")?.label).toBe("live")
+		expect(rowChip({ subject: "orders.created", core: { count: 1 }, streams: [] }, "created")?.label).toBe("live")
 	})
 
 	it("keeps KV and FILES and hides occupied children", () => {
@@ -23,9 +23,9 @@ describe("rowChip", () => {
 
 	it("hides a stream chip that only repeats the row", () => {
 		expect(rowChip({
-			subject: "_NAIVE", kind: "pattern", expandable: true,
-			streams: [{ name: "NAIVE" }],
-		}, "_NAIVE")).toBeNull()
+			subject: "_ORDERS", kind: "pattern", expandable: true,
+			streams: [{ name: "ORDERS" }],
+		}, "_ORDERS")).toBeNull()
 		expect(rowChip({
 			subject: "close", kind: "pattern",
 			streams: [{ name: "close" }],
@@ -34,8 +34,8 @@ describe("rowChip", () => {
 
 	it("keeps a stream chip when the keeper has a different name", () => {
 		expect(rowChip({
-			subject: "foo", kind: "pattern",
-			streams: [{ name: "chaz" }],
-		}, "foo")).toEqual({ label: "chaz", kind: "js", title: "kept by chaz" })
+			subject: "orders.created", kind: "pattern",
+			streams: [{ name: "ORDERS" }],
+		}, "created")).toEqual({ label: "ORDERS", kind: "js", title: "kept by ORDERS" })
 	})
 })
