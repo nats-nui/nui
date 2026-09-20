@@ -963,7 +963,7 @@ func (s *NuiTestSuite) TestCddlschemas() {
 	s.Contains(schemaIDs, "simple2")
 
 	e.GET("/api/cddl/simple").Expect().Status(http.StatusOK).
-		JSON().Object().Value("id").String().Equal("simple")
+		JSON().Object().Value("id").String().IsEqual("simple")
 
 	res := e.GET("/api/cddl/simple/content").Expect().Status(http.StatusOK)
 	res.Header("Content-Type").Contains("text/plain")

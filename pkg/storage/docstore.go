@@ -15,7 +15,9 @@ type DB struct {
 
 func NewDocStore(path string) (*DB, error) {
 
-	opts := badger.DefaultOptions(path)
+	opts := badger.DefaultOptions(path).
+		WithValueLogFileSize(32 << 20). // Badger maps twice this size: 64 MiB.
+		WithBlockCacheSize(16 << 20)
 	if path == "" || path == ":memory:" {
 		opts = badger.DefaultOptions("").WithInMemory(true)
 	}

@@ -10,7 +10,6 @@ import (
 	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
-	docstore "github.com/nats-nui/nui/pkg/storage"
 )
 
 type Nui struct {
@@ -24,37 +23,62 @@ type Nui struct {
 	l                logging.Slogger
 }
 
+func New(opts ...Option) (*Nui, error) {
+	cfg, err := newConfig(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	store, err := cfg.openStore()
+	if err != nil {
+		return nil, err
+	}
+	connRepo := connection.NewDocStoreConnRepo(store)
+	connPool := connection.NewConnPool(connRepo, cfg.connBuilder())
+
+	protoRepo, err := newProtoRepo(cfg.protoschemasPath)
+	if err != nil {
+		return nil, err
+	}
+	cddlRepo, err := newCddlRepo(cfg.cddlschemasPath, cfg.logger)
+	if err != nil {
+		return nil, err
+	}
+
+	metricsCollector := metrics.NewCollector(connRepo, cfg.connBuilder())
+	return &Nui{
+		ConnRepo:         connRepo,
+		ConnPool:         connPool,
+		ProtoRepo:        protoRepo,
+		CddlRepo:         cddlRepo,
+		CliConnImporter:  clicontext.NewImporter(cfg.logger),
+		MetricsCollector: metricsCollector,
+		Hub:              ws.NewNatsHub(connPool, metricsCollector, cfg.logger),
+		l:                cfg.logger,
+	}, nil
+}
+
+func newProtoRepo(path string) (protoschema.ProtoRepo, error) {
+	dir, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+	return protoschema.NewFileSystemProtoRepo(dir)
+}
+
+func newCddlRepo(path string, logger logging.Slogger) (cddlschema.CddlRepo, error) {
+	dir, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+	return cddlschema.NewFileSystemCddlRepo(dir, logger)
+}
+
 func Setup(dbPath, protoschemasPath, cddlschemasPath string, logger logging.Slogger) (*Nui, error) {
-	n := &Nui{}
-	store, err := docstore.NewDocStore(dbPath)
-	if err != nil {
-		return nil, err
-	}
-
-	// Convert to absolute path
-	protoDir, err := filepath.Abs(protoschemasPath)
-	if err != nil {
-		return nil, err
-	}
-
-	cddlDir, err := filepath.Abs(cddlschemasPath)
-	if err != nil {
-		return nil, err
-	}
-
-	n.ConnRepo = connection.NewDocStoreConnRepo(store)
-	n.ConnPool = connection.NewNatsConnPool(n.ConnRepo)
-	n.ProtoRepo, err = protoschema.NewFileSystemProtoRepo(protoDir)
-	if err != nil {
-		return nil, err
-	}
-	n.CddlRepo, err = cddlschema.NewFileSystemCddlRepo(cddlDir, logger)
-	if err != nil {
-		return nil, err
-	}
-	n.CliConnImporter = clicontext.NewImporter(logger)
-	n.MetricsCollector = metrics.NewCollector(n.ConnRepo, connection.NatsBuilder)
-	n.Hub = ws.NewNatsHub(n.ConnPool, n.MetricsCollector, logger)
-	n.l = logger
-	return n, nil
+	return New(
+		WithDBPath(dbPath),
+		WithProtoSchemasPath(protoschemasPath),
+		WithCddlSchemasPath(cddlschemasPath),
+		WithLogger(logger),
+	)
 }
