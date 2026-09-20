@@ -52,20 +52,40 @@ func (s *NuiTestSuite) connectNatsClient() {
 	s.js = js
 }
 
-func (s *NuiTestSuite) startNuiServer() {
+func (s *NuiTestSuite) stopNuiServer() {
+	if s.NuiServerCancelFunc != nil {
+		s.NuiServerCancelFunc()
+		s.NuiServerCancelFunc = nil
+	}
+}
 
+func (s *NuiTestSuite) startNuiServer(opts ...nui.Option) {
+	s.stopNuiServer()
 	mockedLogger := &logging.NullLogger{}
-	nuiSvc, err := nui.Setup(":memory:", "./protoschemas/default", "./cddlschemas/default", mockedLogger)
-	s.NoError(err)
-
-	s.NuiServer = nui.NewServer(s.nuiServerPort, nuiSvc, mockedLogger, false)
-	ctx, c := context.WithCancel(context.Background())
-	s.NuiServerCancelFunc = c
+	s.NuiService = s.newNui(opts...)
+	s.NuiServer = nui.NewServer(s.nuiServerPort, s.NuiService, mockedLogger, false)
+	ctx, cancel := context.WithCancel(context.Background())
+	s.NuiServerCancelFunc = cancel
 	go func() {
-		err = s.NuiServer.Start(ctx)
+		err := s.NuiServer.Start(ctx)
 		s.NoError(err)
 	}()
 	s.e.GET("/health").WithMaxRetries(5).WithRetryPolicy(httpexpect.RetryAllErrors).Expect().Status(http.StatusOK)
+}
+
+func (s *NuiTestSuite) defaultNuiOptions() []nui.Option {
+	return []nui.Option{
+		nui.WithDBPath(":memory:"),
+		nui.WithProtoSchemasPath("./protoschemas/default"),
+		nui.WithCddlSchemasPath("./cddlschemas/default"),
+		nui.WithLogger(&logging.NullLogger{}),
+	}
+}
+
+func (s *NuiTestSuite) newNui(opts ...nui.Option) *nui.Nui {
+	nuiSvc, err := nui.New(append(s.defaultNuiOptions(), opts...)...)
+	s.Require().NoError(err)
+	return nuiSvc
 }
 
 // stopNatsServer shuts down the NATS test server if one is running.
@@ -96,19 +116,21 @@ func (s *NuiTestSuite) startNatsServer(opts ...testserver.Option) {
 	s.NatsServer = natsServer
 }
 
-func (s *NuiTestSuite) newE() *httpexpect.Expect {
-	e := httpexpect.Default(s.T(), s.nuiHost())
-	e = e.Builder(func(req *httpexpect.Request) {
+func (s *NuiTestSuite) newExpect(baseURL string) *httpexpect.Expect {
+	return httpexpect.Default(s.T(), baseURL).Builder(func(req *httpexpect.Request) {
 		req.WithHeader("Content-Type", "application/json")
 	})
-	return e
+}
+
+func (s *NuiTestSuite) newE() *httpexpect.Expect {
+	return s.newExpect(s.nuiHost())
 }
 
 func (s *NuiTestSuite) TearDownTest() {
 	s.stopNatsServer()
 	s.testServer = nil
 	s.natsServerOpts = nil
-	s.NuiServerCancelFunc()
+	s.stopNuiServer()
 }
 
 func (s *NuiTestSuite) ws(path, query string) *httpexpect.Websocket {

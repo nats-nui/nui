@@ -1,81 +1,114 @@
 package tests
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 
 	"github.com/dgraph-io/badger/v4"
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/nui"
-	"github.com/nats-nui/nui/pkg/logging"
 	docstore "github.com/nats-nui/nui/pkg/storage"
 	c "github.com/ostafen/clover/v2"
 	badgerstore "github.com/ostafen/clover/v2/store/badger"
 )
 
+// TestStorage verifies backward compatibility when reopening on-disk data written with
+// legacy Badger defaults (badger.DefaultOptions) under the tweaked options used by
+// docstore.NewDocStore (smaller value-log segment and block cache; see pkg/storage/docstore.go).
+//
+// Each phase restarts the NUI server via startNuiServer with custom options because s.e is
+// first wired to the suite's in-memory store from SetupTest, while this test must swap
+// on-disk stores between phases.
 func (s *NuiTestSuite) TestStorage() {
 	dir := s.T().TempDir()
-	store, err := badgerstore.OpenWithOptions(badger.DefaultOptions(dir))
-	s.Require().NoError(err)
-	legacy, err := c.OpenWithStore(store)
-	s.Require().NoError(err)
-	s.T().Cleanup(func() { s.NoError(legacy.Close()) })
-	s.Require().NoError(legacy.CreateCollection(docstore.CONN_COLLECTION))
+	want := s.storageTestConnection()
+	e := s.e
 
-	newApp := func(db *docstore.DB) *nui.App {
-		repo := connection.NewDocStoreConnRepo(db)
-		pool := connection.NewConnPool(repo, func(c *connection.Connection) (*connection.NatsConn, error) {
-			conn, err := connection.NatsBuilder(c)
-			if err == nil {
-				s.T().Cleanup(conn.Close)
-			}
-			return conn, err
-		})
-		return nui.NewServer("", &nui.Nui{ConnRepo: repo, ConnPool: pool}, &logging.NullLogger{}, false)
-	}
-	request := func(app *nui.App, method, path string, conn *connection.Connection) connection.Connection {
-		body, err := json.Marshal(conn)
-		s.Require().NoError(err)
-		req := httptest.NewRequest(method, path, bytes.NewReader(body))
-		req.Header.Set("Content-Type", "application/json")
-		resp, err := app.Test(req, -1)
-		s.Require().NoError(err)
-		defer resp.Body.Close()
-		s.Require().Equal(http.StatusOK, resp.StatusCode)
-		var got connection.Connection
-		s.Require().NoError(json.NewDecoder(resp.Body).Decode(&got))
-		return got
-	}
+	// Simulate a pre-upgrade install: persist a connection with default Badger options.
+	legacy := s.openLegacyDocStore(dir)
+	s.startStorageServer(legacy)
+	wantBody, err := json.Marshal(want)
+	s.Require().NoError(err)
+	var saved connection.Connection
+	e.POST("/api/connection").
+		WithBytes(wantBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().Decode(&saved)
+	s.Require().NotEmpty(saved.Id)
+	s.stopNuiServer()
+	s.Require().NoError(legacy.Close())
 
-	want := &connection.Connection{
+	// Upgrade path: open the same directory with NewDocStore and read the legacy record.
+	db := s.openDocStore(dir)
+	s.startStorageServer(db)
+	var got connection.Connection
+	e.GET("/api/connection/" + saved.Id).
+		Expect().
+		Status(http.StatusOK).
+		JSON().Decode(&got)
+	s.stopNuiServer()
+	s.Equal(saved, got)
+
+	// Mutate through the new store to ensure read/write keeps working after migration.
+	s.startStorageServer(db)
+	got.Name = "updated"
+	updateBody, err := json.Marshal(&got)
+	s.Require().NoError(err)
+	var updated connection.Connection
+	e.POST("/api/connection/" + saved.Id).
+		WithBytes(updateBody).
+		Expect().
+		Status(http.StatusOK).
+		JSON().Decode(&updated)
+	s.stopNuiServer()
+	s.Equal(got, updated)
+	s.Require().NoError(db.Close())
+
+	// Restart with tweaked options and confirm updates survived a close/reopen cycle.
+	db = s.openDocStore(dir)
+	s.startStorageServer(db)
+	defer s.stopNuiServer()
+	e.GET("/api/connection/" + saved.Id).
+		Expect().
+		Status(http.StatusOK).
+		JSON().Decode(&got)
+	s.Equal(updated, got)
+}
+
+func (s *NuiTestSuite) startStorageServer(db *docstore.DB) {
+	s.startNuiServer(
+		nui.WithDocStore(db),
+	)
+}
+
+func (s *NuiTestSuite) storageTestConnection() *connection.Connection {
+	// Large JWT forces auth payload into Badger's value log, matching real user credentials.
+	return &connection.Connection{
 		Name:          "legacy",
 		Hosts:         []string{s.NatsServer.Addr().String()},
 		Auth:          []connection.Auth{{Mode: connection.AuthModeJwt, Jwt: strings.Repeat("a", 4096)}},
 		Subscriptions: []connection.Subscription{{Subject: "orders.>"}},
 		Metadata:      map[string]string{"group": "local"},
 	}
-	oldApp := newApp(&docstore.DB{DB: legacy})
-	saved := request(oldApp, http.MethodPost, "/api/connection", want)
-	s.Require().NotEmpty(saved.Id)
-	s.Require().NoError(legacy.Close())
+}
 
+// openLegacyDocStore opens Badger with unmodified defaults, as older nui releases did.
+func (s *NuiTestSuite) openLegacyDocStore(dir string) *docstore.DB {
+	store, err := badgerstore.OpenWithOptions(badger.DefaultOptions(dir))
+	s.Require().NoError(err)
+	legacy, err := c.OpenWithStore(store)
+	s.Require().NoError(err)
+	s.T().Cleanup(func() { _ = legacy.Close() })
+	s.Require().NoError(legacy.CreateCollection(docstore.CONN_COLLECTION))
+	return &docstore.DB{DB: legacy}
+}
+
+// openDocStore opens the same on-disk path with current production Badger tuning.
+func (s *NuiTestSuite) openDocStore(dir string) *docstore.DB {
 	db, err := docstore.NewDocStore(dir)
 	s.Require().NoError(err)
-	defer db.Close()
-	app := newApp(db)
-	got := request(app, http.MethodGet, "/api/connection/"+saved.Id, nil)
-	s.Equal(saved, got)
-	got.Name = "updated"
-	updated := request(app, http.MethodPost, "/api/connection/"+saved.Id, &got)
-	s.Equal(got, updated)
-	s.Require().NoError(db.Close())
-
-	db, err = docstore.NewDocStore(dir)
-	s.Require().NoError(err)
-	defer db.Close()
-	got = request(newApp(db), http.MethodGet, "/api/connection/"+saved.Id, nil)
-	s.Equal(updated, got)
+	s.T().Cleanup(func() { _ = db.Close() })
+	return db
 }
