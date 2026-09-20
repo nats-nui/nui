@@ -1,11 +1,10 @@
 
-export interface EventMessage { 
-	event: string 
+export interface EventMessage {
+	event: string
 	payload: any
 }
 type CallBack = (msg: EventMessage) => void;
 type EventsDictionary = { [name: string]: CallBack[] }
-
 
 
 /**
@@ -76,10 +75,11 @@ export class EventEmitter {
 	 * Esegue un listener solo una volta
 	 */
 	once(event: string, callback: CallBack) {
-		this.on(event, e => {
+		const wrapper: CallBack = e => {
+			this.off(event, wrapper)
 			callback(e)
-			this.off(event, callback)
-		})
+		}
+		this.on(event, wrapper)
 	}
 
 	/**

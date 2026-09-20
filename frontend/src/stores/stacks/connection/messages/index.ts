@@ -13,7 +13,6 @@ import dayjs from "dayjs"
 import { MessageStore } from "../../message"
 import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
-import { SS_EVENTS } from "@/plugins/SocketService"
 
 
 
