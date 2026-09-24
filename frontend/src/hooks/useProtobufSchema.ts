@@ -4,7 +4,7 @@ import {
   decodeProtobufMessage, 
   getMessageTypesFromSchema
 } from "@/utils/protobuf"
-import { ProtobufTopicCache } from "@/utils/protobuf/ProtobufTopicCache"
+import { detectProtobufMessage, getTopicCache } from "@/utils/protobuf/resolve"
 import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
 
 const CACHE_CONFIDENCE_THRESHOLD = 0.5
@@ -26,15 +26,6 @@ interface UseProtobufSchemaReturn {
   autoDetectMessageType: () => Promise<void>
   resetSelection: () => void
   cacheStats?: { nodes: number, terminals: number, patterns: number }
-}
-
-let topicCache: ProtobufTopicCache | null = null
-
-function getTopicCache(): ProtobufTopicCache {
-  if (!topicCache) {
-    topicCache = new ProtobufTopicCache()
-  }
-  return topicCache
 }
 
 export function useProtobufSchema(binaryData?: string, subject?: string): UseProtobufSchemaReturn {
@@ -76,53 +67,11 @@ export function useProtobufSchema(binaryData?: string, subject?: string): UsePro
     
     setIsAutoDetecting(true)
     try {
-      const { decodeProtobufMessage, getAllMessageTypes } = await import('@/utils/protobuf')
-      
-      const MAX_QUICK_SCHEMAS = 3
-      const schemasToTest = schemas.slice(0, MAX_QUICK_SCHEMAS)
-      
-      let bestMatch: {schemaId: string, messageType: string, score: number} | null = null
-      
-      for (const schema of schemasToTest) {
-        if (schema.error || !schema.root) continue
-        
-        try {
-          const messageTypes = getAllMessageTypes(schema)
-          for (const messageType of messageTypes) {
-            try {
-              const result = decodeProtobufMessage(binaryData, schema, messageType)
-              if (result.success && result.data) {
-                const dataStr = JSON.stringify(result.data)
-                const fieldCount = (dataStr.match(/":"/g) || []).length + (dataStr.match(/":\d/g) || []).length
-                const dataSize = dataStr.length
-                
-                // Scoring: more fields and larger data = better match
-                const score = 50 + Math.min(30, fieldCount * 2) + Math.min(20, dataSize / 50)
-                
-                if (!bestMatch || score > bestMatch.score) {
-                  bestMatch = {
-                    schemaId: schema.id || schema.name,
-                    messageType,
-                    score
-                  }
-                }
-                
-                if (score > 90) break
-              }
-            } catch {
-            }
-          }
-          
-          if (bestMatch && bestMatch.score > 90) break
-        } catch {
-        }
+      const match = detectProtobufMessage(binaryData, schemas)
+      if (match) {
+        setSelectedSchemaId(match.schema.id || match.schema.name)
+        setSelectedMessageType(match.messageType)
       }
-      
-      if (bestMatch) {
-        setSelectedSchemaId(bestMatch.schemaId)
-        setSelectedMessageType(bestMatch.messageType)
-      }
-    } catch (error) {
     } finally {
       setIsAutoDetecting(false)
     }

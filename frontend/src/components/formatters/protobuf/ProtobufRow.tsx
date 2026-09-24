@@ -1,5 +1,6 @@
-import { FunctionComponent, useMemo, memo } from "react"
-import { useProtobufSchema } from "@/hooks/useProtobufSchema"
+import { FunctionComponent, useMemo, memo, useSyncExternalStore } from "react"
+import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
+import { getTopicCacheRevision, resolveProtobuf, subscribeToTopicCache } from "@/utils/protobuf/resolve"
 import JsonRow from "../json/JsonRow"
 import TextRow from "../text/TextRow"
 
@@ -14,12 +15,15 @@ const ProtobufRow: FunctionComponent<Props> = ({
   style,
   subject,
 }) => {
-  const {
-    selectedSchema,
-    selectedMessageType,
-    decodedData,
-    showSchemaControls,
-  } = useProtobufSchema(text, subject)
+  const { schemas } = useProtobufSchemas()
+  const cacheRevision = useSyncExternalStore(subscribeToTopicCache, getTopicCacheRevision, getTopicCacheRevision)
+  const resolution = useMemo(
+    () => text ? resolveProtobuf(text, schemas, subject) : undefined,
+    [text, schemas, subject, cacheRevision],
+  )
+  const selectedSchema = resolution?.schema
+  const selectedMessageType = resolution?.messageType
+  const decodedData = resolution?.decoded
 
   const schemaInfo = useMemo(() => {
     if (!selectedSchema || !selectedMessageType) return null
@@ -57,7 +61,7 @@ const ProtobufRow: FunctionComponent<Props> = ({
     )
   }
 
-  if (showSchemaControls || !selectedSchema || !selectedMessageType) {
+  if (!selectedSchema || !selectedMessageType) {
     return (
       <div style={style}>
         <TextRow text="Protobuf: Schema selection required" error />
