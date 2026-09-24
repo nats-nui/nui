@@ -1,4 +1,3 @@
-
 import { TopicTrie, TrieNode, SchemaMapping } from './TopicTrie'
 import { ProtobufValidator, MAX_TOPIC_LENGTH, MAX_SCHEMA_LENGTH, MAX_MESSAGE_TYPE_LENGTH } from './validation'
 
@@ -30,6 +29,12 @@ interface SerializedNode {
 export class ProtobufTopicCache {
   private trie = new TopicTrie()
   private dirty = false
+  private revision = 0
+  private listeners = new Set<() => void>()
+  private notify = () => {
+    this.revision++
+    this.listeners.forEach(listener => listener())
+  }
   private saveOnUnload = () => this.save()
   private onStorageChange = (event: StorageEvent) => {
     // Re-sync if another tab cleared or modified our key, so the unload
@@ -39,6 +44,7 @@ export class ProtobufTopicCache {
     this.trie = new TopicTrie()
     this.dirty = false
     this.load()
+    this.notify()
   }
   
   constructor() {
@@ -55,6 +61,15 @@ export class ProtobufTopicCache {
       window.removeEventListener('beforeunload', this.saveOnUnload)
       window.removeEventListener('storage', this.onStorageChange)
     }
+  }
+
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener)
+    return () => { this.listeners.delete(listener) }
+  }
+
+  getRevision(): number {
+    return this.revision
   }
   
   lookup(topic: string): SchemaMapping | null {
@@ -80,6 +95,7 @@ export class ProtobufTopicCache {
       this.learnPatterns(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
       this.dirty = true
       this.save()
+      this.notify()
     } catch (error) {
       console.warn('Failed to cache successful decode:', error)
     }
@@ -95,6 +111,7 @@ export class ProtobufTopicCache {
     this.trie.updateConfidence(topic, false)
     this.dirty = true
     this.save()
+    this.notify()
   }
   
   handleConflict(topic: string, correctSchema: string, correctType: string): void {
@@ -116,6 +133,7 @@ export class ProtobufTopicCache {
     
     this.dirty = true
     this.save()
+    this.notify()
   }
   
   private learnPatterns(topic: string, schema: string, messageType: string): void {
@@ -179,6 +197,7 @@ export class ProtobufTopicCache {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY)
     }
+    this.notify()
   }
   
   private save(): void {

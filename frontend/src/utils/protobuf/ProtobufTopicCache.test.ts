@@ -123,6 +123,43 @@ describe('ProtobufTopicCache', () => {
       const newCache = new ProtobufTopicCache()
       expect(localStorageMock.removeItem).toHaveBeenCalledWith('nats-protobuf-patterns')
     })
+
+    test('notifies readers when another tab changes or clears the mapping', () => {
+      const previousWindow = (globalThis as any).window
+      const fakeWindow = new EventTarget()
+      Object.defineProperty(globalThis, 'window', { value: fakeWindow, configurable: true })
+      const reader = new ProtobufTopicCache()
+      const writer = new ProtobufTopicCache()
+      const onChange = vi.fn()
+      const unsubscribe = reader.subscribe(onChange)
+      const initialRevision = reader.getRevision()
+      const storageEvent = (key: string | null) => {
+        const event = new Event('storage')
+        Object.defineProperties(event, {
+          key: { value: key },
+          storageArea: { value: localStorageMock },
+        })
+        fakeWindow.dispatchEvent(event)
+      }
+
+      try {
+        writer.onSuccessfulDecode('external.topic', 'ExternalSchema', 'ExternalType')
+        storageEvent('nats-protobuf-patterns')
+        expect(reader.lookup('external.topic')?.schema).toBe('ExternalSchema')
+        expect(reader.getRevision()).toBe(initialRevision + 1)
+        expect(onChange).toHaveBeenCalledTimes(1)
+
+        localStorageMock.clear()
+        storageEvent(null)
+        expect(reader.lookup('external.topic')).toBeNull()
+        expect(onChange).toHaveBeenCalledTimes(2)
+      } finally {
+        unsubscribe()
+        reader.dispose()
+        writer.dispose()
+        Object.defineProperty(globalThis, 'window', { value: previousWindow, configurable: true })
+      }
+    })
   })
 
   describe('Conflict Handling', () => {

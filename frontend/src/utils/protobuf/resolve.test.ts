@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { parseProtoSchema } from '@/utils/protobuf'
 import { ProtoSchema } from '@/types/Protobuf'
-import { detectProtobufMessage, forgetProtobufResolutions, getTopicCache, resolveProtobuf } from './resolve'
+import { detectProtobufMessage, forgetProtobufResolutions, getTopicCache, getTopicCacheRevision, resolveProtobuf, subscribeToTopicCache } from './resolve'
 
 const storage = (() => {
   let values: Record<string, string> = {}
@@ -50,12 +50,34 @@ describe('protobuf list resolution', () => {
   test('forgets a row answer after the card teaches a subject', () => {
     const schemas = [otherSchema, personSchema]
     const before = resolveProtobuf(person, schemas, 'people.created')
+    const onChange = vi.fn()
+    const unsubscribe = subscribeToTopicCache(onChange)
+    const revision = getTopicCacheRevision()
+
     getTopicCache().onSuccessfulDecode('people.created', 'person.proto', 'Person')
-    forgetProtobufResolutions()
 
     const after = resolveProtobuf(person, schemas, 'people.created')
+    expect(onChange).toHaveBeenCalledOnce()
+    expect(getTopicCacheRevision()).toBeGreaterThan(revision)
     expect(after).not.toBe(before)
     expect(after).toMatchObject({ schema: { name: 'person.proto' }, messageType: 'Person' })
+    unsubscribe()
+  })
+
+  test('invalidates row answers after a conflict or clear', () => {
+    const schemas = [otherSchema, personSchema]
+    getTopicCache().onSuccessfulDecode('people.created', 'person.proto', 'Person')
+    const remembered = resolveProtobuf(person, schemas, 'people.created')
+
+    getTopicCache().handleConflict('people.created', 'other.proto', 'Other')
+    const conflicted = resolveProtobuf(person, schemas, 'people.created')
+    expect(conflicted).not.toBe(remembered)
+    expect(conflicted.schema).toBe(otherSchema)
+
+    getTopicCache().clear()
+    const cleared = resolveProtobuf(person, schemas, 'people.created')
+    expect(cleared).not.toBe(conflicted)
+    expect(cleared.schema).toBe(personSchema)
   })
 
   test('invalidates answers when schema content changes', () => {

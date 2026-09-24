@@ -25,9 +25,18 @@ export function getTopicCache(): ProtobufTopicCache {
   return topicCache
 }
 
+export function subscribeToTopicCache(listener: () => void): () => void {
+  return getTopicCache().subscribe(listener)
+}
+
+export function getTopicCacheRevision(): number {
+  return getTopicCache().getRevision()
+}
+
 const resolved = new Map<string, ProtobufResolution>()
 let resolvedFor: ProtoSchema[] | null = null
 let resolvedSignature: string | null = null
+let resolvedRevision = -1
 
 export function forgetProtobufResolutions(): void {
   resolved.clear()
@@ -88,7 +97,10 @@ export function detectProtobufMessage(binaryData: string, schemas: ProtoSchema[]
 
 /** Share row answers by subject and payload; reading never writes topic mappings. */
 export function resolveProtobuf(binaryData: string, schemas: ProtoSchema[], subject?: string): ProtobufResolution {
-  if (!stillFor(schemas)) resolved.clear()
+  const revision = getTopicCacheRevision()
+  const sameSchemas = stillFor(schemas)
+  if (revision !== resolvedRevision || !sameSchemas) resolved.clear()
+  resolvedRevision = revision
   const key = `${subject ?? ''}\u0000${binaryData}`
   const kept = resolved.get(key)
   if (kept) return kept

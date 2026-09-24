@@ -4,7 +4,7 @@ import {
   decodeProtobufMessage, 
   getMessageTypesFromSchema
 } from "@/utils/protobuf"
-import { detectProtobufMessage, forgetProtobufResolutions, getTopicCache } from "@/utils/protobuf/resolve"
+import { detectProtobufMessage, getTopicCache } from "@/utils/protobuf/resolve"
 import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
 
 const CACHE_CONFIDENCE_THRESHOLD = 0.5
@@ -131,7 +131,6 @@ export function useProtobufSchema(binaryData?: string, subject?: string): UsePro
       } else {
         cache.onDecodeFailed(subject)
       }
-      forgetProtobufResolutions()
     }
   }, [binaryData, selectedSchema, selectedMessageType, subject, isFromCache])
 
