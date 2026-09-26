@@ -58,7 +58,7 @@ func TestCollapsePattern(t *testing.T) {
 	assert.Equal(t, kindObject, kind)
 
 	path, kind = collapsePattern("orders.>", kindStream)
-	assert.Equal(t, "orders", path)
+	assert.Equal(t, "orders.>", path)
 	assert.Equal(t, kindPattern, kind)
 }
 
@@ -67,6 +67,19 @@ func TestJsUserError(t *testing.T) {
 	assert.Equal(t, "timed out", jsUserError(context.DeadlineExceeded))
 	assert.Equal(t, "not enabled on this server", jsUserError(errors.New("nats: JetStream not enabled")))
 	assert.Equal(t, "not allowed", jsUserError(errors.New("nats: permissions violation")))
+}
+
+func TestCatalogPreservesLiteralAndWildcard(t *testing.T) {
+	for _, subjects := range [][]string{{"orders", "orders.>"}, {"orders.>", "orders"}} {
+		catalog := catalogFromInfos([]*jetstream.StreamInfo{{
+			Config: jetstream.StreamConfig{Name: "ORDERS", Subjects: subjects},
+		}}, nil, true)
+		require.Len(t, catalog.Streams, 1)
+		assert.Equal(t, []JetStreamSubject{
+			{Subject: "orders", Pattern: "orders", Kind: kindPattern},
+			{Subject: "orders.>", Pattern: "orders.>", Kind: kindPattern},
+		}, catalog.Streams[0].Subjects)
+	}
 }
 
 func TestCoreUserError(t *testing.T) {
@@ -245,7 +258,7 @@ func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {
 		assert.Equal(t, kindPattern, s.Kind)
 		assert.Zero(t, s.Count)
 	}
-	assert.Equal(t, []string{"orders", "returns"}, got)
+	assert.Equal(t, []string{"orders.>", "returns.>"}, got)
 }
 
 func TestCatalogFromInfosDiscardsSystemUnlessAsked(t *testing.T) {
@@ -258,14 +271,14 @@ func TestCatalogFromInfosDiscardsSystemUnlessAsked(t *testing.T) {
 	for _, s := range hidden.Streams[0].Subjects {
 		got = append(got, s.Subject)
 	}
-	assert.Equal(t, []string{"$KV.shop", "orders"}, got)
+	assert.Equal(t, []string{"$KV.shop", "orders.>"}, got)
 
 	shown := catalogFromInfos(infos, nil, false)
 	got = nil
 	for _, s := range shown.Streams[0].Subjects {
 		got = append(got, s.Subject)
 	}
-	assert.Equal(t, []string{"$JS.API", "$KV.shop", "orders"}, got)
+	assert.Equal(t, []string{"$JS.API.>", "$KV.shop", "orders.>"}, got)
 }
 
 func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
@@ -357,7 +370,7 @@ func TestCatalogFromInfosKeepsPartialOnTimeout(t *testing.T) {
 	require.Len(t, cat.Streams, 1)
 	assert.Equal(t, "ORDERS", cat.Streams[0].Name)
 	require.Len(t, cat.Streams[0].Subjects, 1)
-	assert.Equal(t, "orders", cat.Streams[0].Subjects[0].Subject)
+	assert.Equal(t, "orders.>", cat.Streams[0].Subjects[0].Subject)
 
 	empty := catalogFromInfos(nil, context.DeadlineExceeded, true)
 	assert.Equal(t, "timed out", empty.Error)

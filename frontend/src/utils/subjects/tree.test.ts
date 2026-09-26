@@ -7,6 +7,19 @@ function hit(subject: string, opts: Partial<SubjectHit> = {}): SubjectHit {
 }
 
 describe("flattenHits", () => {
+	it.each([["orders", "orders.>"], ["orders.>", "orders"]])("keeps literal and wildcard capture names distinct (%s, %s)", (first, second) => {
+		const hits = flattenHits({ showCore: false, showJetStream: true,
+			jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [first, second].map(subject => ({ subject, pattern: subject, kind: "pattern" as const })) }] },
+			occupied: { "ORDERS::orders.>": { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
+		})
+		const tree = buildSubjectTree(hits)
+		expect(tree[0].path).toBe("orders")
+		expect(tree[0].hit.expandable).toBe(false)
+		expect(tree[0].children[0].path).toBe("orders.>")
+		expect(tree[0].children[0].hit.expandable).toBe(true)
+		expect(tree[0].children[0].children[0].path).toBe("orders.created")
+	})
+
 	it("merges the same name from core and a stream without adding their counts", () => {
 		const hits = flattenHits({
 			showCore: true,

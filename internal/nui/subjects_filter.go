@@ -94,9 +94,5 @@ func collapsePattern(subject, kind string) (path, outKind string) {
 			return "$O." + parts[1], kindObject
 		}
 	}
-	path = strings.TrimSuffix(subject, ".>")
-	if path == "" {
-		path = subject
-	}
-	return path, kindPattern
+	return subject, kindPattern
 }

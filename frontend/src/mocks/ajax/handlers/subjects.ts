@@ -6,7 +6,7 @@ const jetstream = {
 			name: "ORDERS",
 			kind: "stream",
 			subjects: [
-				{ subject: "shop.orders", pattern: "shop.orders.>", kind: "pattern" },
+				{ subject: "shop.orders.>", pattern: "shop.orders.>", kind: "pattern" },
 			],
 		},
 	],

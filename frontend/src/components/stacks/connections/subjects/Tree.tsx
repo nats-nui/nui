@@ -82,19 +82,20 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 	const chip = rowChip(node.hit, node.segment)
 	const copyValue = node.remainder ? null : node.path
 
-	const activate = () => {
-		if (node.remainder) return
-		if (canOpen) {
-			if (node.hit?.expandable && (!occ || occ.error) && !loadingOcc) {
-				if (!reveal) setOpen(node.path, true)
-				onSelect?.(node)
-				return
-			}
-			const next = !open
-			if (!reveal) setOpen(node.path, next)
+	const expand = () => {
+		if (!canOpen) return
+		if (node.hit?.expandable && (!occ || occ.error) && !loadingOcc) {
+			if (!reveal) setOpen(node.path, true)
+			onSelect?.(node)
 			return
 		}
-		if (node.hit) onSelect?.(node)
+		if (!reveal) setOpen(node.path, !open)
+	}
+	const activate = () => {
+		if (node.remainder) return
+		if (node.hit && !node.hit.expandable && node.hit.streams.length) onSelect?.(node)
+		else if (canOpen) expand()
+		else if (node.hit) onSelect?.(node)
 	}
 
 	return (
@@ -102,7 +103,10 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}
 				role="button" tabIndex={node.remainder ? -1 : 0} aria-expanded={canOpen ? open : undefined}
 				onKeyDown={e => { if (e.key == "Enter" || e.key == " ") { e.preventDefault(); activate() } }}>
-				<div className={cls.twist}>
+				<div className={cls.twist} role={canOpen ? "button" : undefined} tabIndex={canOpen ? 0 : undefined}
+					aria-label={canOpen ? `${open ? "Collapse" : "Expand"} ${node.path}` : undefined}
+					onClick={e => { e.stopPropagation(); expand() }}
+					onKeyDown={e => { e.stopPropagation(); if (e.key == "Enter" || e.key == " ") { e.preventDefault(); expand() } }}>
 					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>

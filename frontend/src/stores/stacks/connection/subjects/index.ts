@@ -180,7 +180,10 @@ const setup = {
 				if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
 					store.setCoreWatching(false)
 				}
-				if (catalog && Array.isArray(catalog.subjects)) store.setCore(catalog)
+				if (catalog && Array.isArray(catalog.subjects)) {
+					const filter = normalizeListenFilter(store.state.filter)
+					if (catalog.filter == filter || store.state.core?.filter != filter) store.setCore(catalog)
+				}
 			} finally { store.state.watchReading = false }
 		},
 
@@ -329,12 +332,7 @@ const setup = {
 
 			const storeMsg = store.state.linked as MessageStore
 			if (storeMsg?.state.type == DOC_TYPE.MESSAGE) {
-				if (storeMsg.state.message?.subject == message.subject && storeMsg.state.message?.payload == message.payload) {
-					store.state.group.addLink({ view: null, parent: store, anim: true })
-					store.setSelect(null)
-				} else {
-					storeMsg.setMessage(message)
-				}
+				storeMsg.setMessage(message)
 			} else {
 				const view = buildMessageDetail(message, store.state.format, false)
 				store.state.group.addLink({ view, parent: store, anim: true })

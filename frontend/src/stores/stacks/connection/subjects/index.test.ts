@@ -9,6 +9,8 @@ vi.mock("@/api/subjects", () => ({ default: { jetstream: vi.fn(), core: vi.fn(),
 
 import setup from "./index"
 import api from "@/api/subjects"
+import { DOC_TYPE } from "@/types"
+import { flattenHits } from "@/utils/subjects/tree"
 
 function deferred<T>() {
 	let resolve: (value: T) => void
@@ -89,11 +91,33 @@ describe("SUBJECTS requests", () => {
 		const s = store()
 		s.state.coreWatching = true
 		s.state.jetstreamEnabled = false
-		vi.mocked(api.core).mockResolvedValue(catalog)
+		s.state.filter = "devices.>"
+		const sample = { ...catalog, filter: "devices.>", watching: false, subjects: [{ subject: "devices.room", count: 1 }] }
+		vi.mocked(api.core).mockResolvedValue(sample)
+		vi.mocked(api.snapshot).mockResolvedValue(catalog)
 		await s.discover("refresh")
+		await s.readWatch()
 		expect(api.core).toHaveBeenCalledOnce()
+		expect(api.snapshot).toHaveBeenCalledOnce()
 		expect(api.watch).not.toHaveBeenCalled()
 		expect(api.unwatch).not.toHaveBeenCalled()
+		expect(s.state.coreWatching).toBe(true)
+		expect(flattenHits({ core: s.state.core, filter: s.state.filter, showCore: true, showJetStream: false }).map(h => h.subject)).toEqual(["devices.room"])
+		s.state.filter = "orders.>"
+		await s.readWatch()
+		expect(s.state.core).toEqual(catalog)
+	})
+
+	it("refreshes message details when only metadata changed", async () => {
+		const s = store()
+		const old = { subject: "orders", payload: "same", seqNum: 1, headers: { version: ["one"] } }
+		const next = { ...old, seqNum: 2, headers: { version: ["two"] } }
+		const detail = { state: { type: DOC_TYPE.MESSAGE, message: old }, setMessage: vi.fn() }
+		s.state.linked = detail
+		vi.mocked(api.last).mockResolvedValue(next)
+		await s.openHit({ subject: "orders", streams: [{ name: "ORDERS" }] })
+		expect(detail.setMessage).toHaveBeenCalledWith(next)
+		expect(s.state.select).toBe("orders")
 	})
 
 	it("discards a sample response after closing", async () => {
@@ -122,7 +146,7 @@ describe("SUBJECTS requests", () => {
 	it("refreshes previously expanded stored names", async () => {
 		const s = store()
 		s.state.occupied = { "ORDERS::orders.>": { stream: "ORDERS", subjects: [{ subject: "orders.old", kind: "occupied" }] } }
-		vi.mocked(api.jetstream).mockResolvedValue({ streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders", pattern: "orders.>", kind: "pattern" }] }] })
+		vi.mocked(api.jetstream).mockResolvedValue({ streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.>", pattern: "orders.>", kind: "pattern" }] }] })
 		vi.mocked(api.occupied).mockResolvedValue({ stream: "ORDERS", subjects: [{ subject: "orders.new", kind: "occupied" }] })
 		await s.fetchJetStream()
 		expect(s.state.occupied["ORDERS::orders.>"].subjects[0].subject).toBe("orders.new")
