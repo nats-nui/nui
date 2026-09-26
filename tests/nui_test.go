@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -953,7 +955,6 @@ func (s *NuiTestSuite) TestSubjectsDiscovery() {
 	e := s.e
 	connId := s.defaultConn()
 	s.filledStreamMultiSub("filled_stream", "js.sub1", "js.sub2")
-	time.Sleep(50 * time.Millisecond)
 
 	e.GET("/api/connection/" + connId + "/subjects").
 		Expect().Status(http.StatusNotFound)
@@ -975,12 +976,22 @@ func (s *NuiTestSuite) TestSubjectsDiscovery() {
 	occupied.Value("subjects").Array().Value(0).Object().Value("kind").String().IsEqual("occupied")
 	occupied.Value("subjects").Array().Value(0).Object().Value("count").Number().Gt(0)
 
-	last := e.GET("/api/connection/"+connId+"/subjects/last").
+	payload := []byte(strings.Repeat("é", 8192))
+	headers := nats.Header{"x_request_id": {"test"}}
+	_, err := s.js.PublishMsg(s.ctx, &nats.Msg{Subject: "js.sub1", Data: payload, Header: headers})
+	s.Require().NoError(err)
+	var last ws.NatsMsg
+	e.GET("/api/connection/"+connId+"/subjects/last").
 		WithQuery("subject", "js.sub1").
 		WithQuery("stream", "filled_stream").
-		Expect().Status(http.StatusOK).JSON().Object()
-	last.Value("subject").String().IsEqual("js.sub1")
-	last.Value("payload").String().NotEmpty()
+		Expect().Status(http.StatusOK).JSON().Decode(&last)
+	s.Equal("js.sub1", last.Subject)
+	s.Equal(payload, last.Payload)
+	s.Equal(map[string][]string(headers), last.Headers)
+	e.GET("/api/connection/"+connId+"/subjects/last").
+		WithQuery("subject", "js.*").
+		WithQuery("stream", "filled_stream").
+		Expect().Status(http.StatusUnprocessableEntity)
 
 	stop := make(chan struct{})
 	defer close(stop)

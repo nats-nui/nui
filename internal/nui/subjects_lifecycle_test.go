@@ -5,9 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net"
-	"net/http/httptest"
 	"strconv"
-	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -16,8 +14,6 @@ import (
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/nats-nui/nui/internal/connection"
-	"github.com/nats-nui/nui/internal/ws"
-	"github.com/nats-nui/nui/pkg/logging"
 	"github.com/stretchr/testify/require"
 )
 
@@ -134,40 +130,6 @@ func TestCoreWatchStopsAtNameCap(t *testing.T) {
 	require.True(t, out.Truncated, out.Error)
 	require.Len(t, out.Subjects, maxCoreSubjects)
 	require.Eventually(t, func() bool { return ns.NumClients() == 1 }, time.Second, time.Millisecond)
-}
-
-func TestSubjectLastPreservesPayloadAndHeaders(t *testing.T) {
-	ns := startTestNATS(t, jsOpts(t))
-	nc, err := nats.Connect(ns.ClientURL())
-	require.NoError(t, err)
-	defer nc.Close()
-	js, err := jetstream.New(nc)
-	require.NoError(t, err)
-	_, err = js.CreateStream(context.Background(), jetstream.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.>"}, Storage: jetstream.MemoryStorage})
-	require.NoError(t, err)
-	payload := []byte(strings.Repeat("\u00e9", 8192))
-	header := nats.Header{"x_request_id": {"test"}}
-	_, err = js.PublishMsg(context.Background(), &nats.Msg{Subject: "orders.created", Data: payload, Header: header})
-	require.NoError(t, err)
-	repo := connection.NewMemConnRepo()
-	cfg, err := repo.Save(&connection.Connection{Hosts: []string{ns.ClientURL()}})
-	require.NoError(t, err)
-	pool := connection.NewConnPool(repo, func(_ *connection.Connection) (*connection.NatsConn, error) {
-		return &connection.NatsConn{Conn: nc}, nil
-	})
-	app := NewServer("", &Nui{ConnRepo: repo, ConnPool: pool}, &logging.NullLogger{}, false)
-	response, err := app.Test(httptest.NewRequest("GET", "/api/connection/"+cfg.Id+"/subjects/last?stream=ORDERS&subject=orders.created", nil))
-	require.NoError(t, err)
-	defer response.Body.Close()
-	require.Equal(t, 200, response.StatusCode)
-	var got ws.NatsMsg
-	require.NoError(t, json.NewDecoder(response.Body).Decode(&got))
-	require.Equal(t, payload, got.Payload)
-	require.Equal(t, map[string][]string(header), got.Headers)
-	response, err = app.Test(httptest.NewRequest("GET", "/api/connection/"+cfg.Id+"/subjects/last?stream=ORDERS&subject=orders.*", nil))
-	require.NoError(t, err)
-	defer response.Body.Close()
-	require.Equal(t, 422, response.StatusCode)
 }
 
 func TestJetStreamCatalogReportsStreamCap(t *testing.T) {
