@@ -253,11 +253,13 @@ const setup = {
 		},
 
 		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
+			const gen = store.state.watchGen
 			store.setNoSysMessages(!store.state.noSysMessages)
 			store.state.occupiedGen++
 			store.setOccupiedLoading(null)
 			if (store.state.jetstreamEnabled) await store.fetchJetStream()
 			else store.setJetstream(null)
+			if (gen != store.state.watchGen || !store.state.coreEnabled) return
 			if (store.state.coreWatching) {
 				await store.watchCore(store.state.watchFilter)
 				return

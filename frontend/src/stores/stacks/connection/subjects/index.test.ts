@@ -87,6 +87,46 @@ describe("SUBJECTS requests", () => {
 		expect(s.state.filter).toBe(filter)
 	})
 
+	it.each(["disposeSubjects", "toggleCore", "stopWatch"])("does not resume a pending filter change after %s", async action => {
+		const s = store()
+		s.state.core = catalog
+		s.state.coreWatching = true
+		s.state.watchFilter = "orders.>"
+		const pending = deferred<{ streams: [] }>()
+		vi.mocked(api.jetstream).mockReturnValue(pending.promise)
+		const toggle = s.toggleNoSysMessages()
+		await s[action]()
+		pending.resolve({ streams: [] })
+		await toggle
+		expect(api.core).not.toHaveBeenCalled()
+		expect(api.watch).not.toHaveBeenCalled()
+	})
+
+	it("does not sample when toggling internals while Core is disabled", async () => {
+		const s = store()
+		s.state.coreEnabled = false
+		s.state.core = catalog
+		vi.mocked(api.jetstream).mockResolvedValue({ streams: [] })
+		await s.toggleNoSysMessages()
+		expect(api.core).not.toHaveBeenCalled()
+		expect(api.watch).not.toHaveBeenCalled()
+	})
+
+	it("applies the internal-message filter to the listener after a concurrent sample", async () => {
+		const s = store()
+		s.state.coreWatching = true
+		s.state.watchFilter = "orders.>"
+		const pending = deferred<{ streams: [] }>()
+		vi.mocked(api.jetstream).mockReturnValue(pending.promise)
+		vi.mocked(api.core).mockResolvedValue({ ...catalog, watching: false })
+		vi.mocked(api.watch).mockResolvedValue(catalog)
+		const toggle = s.toggleNoSysMessages()
+		await s.fetchCore()
+		pending.resolve({ streams: [] })
+		await toggle
+		expect(api.watch).toHaveBeenCalledWith("connection", "orders.>", false, "card", expect.anything())
+	})
+
 	it("refresh samples the typed name without replacing a live listener", async () => {
 		const s = store()
 		s.state.coreWatching = true
