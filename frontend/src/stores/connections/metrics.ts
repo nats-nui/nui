@@ -3,8 +3,7 @@ import { MSG_TYPE } from "@/plugins/SocketService/types"
 import { DOC_TYPE } from "@/types"
 import { Metrics } from "@/types/Metrics"
 import { docsSo, utils } from "@priolo/jack"
-import { createStore, StoreSetup } from "@priolo/jon"
-import { LoadBaseState, LoadBaseStore } from "../stacks/loadBase"
+import { createStore, StoreOf } from "@priolo/jon"
 
 
 
@@ -114,23 +113,9 @@ const setup = {
 	},
 }
 
-export type MetricsState = typeof setup.state & LoadBaseState
-export type MetricsGetters = typeof setup.getters
-export type MetricsActions = typeof setup.actions
-export type MetricsMutators = typeof setup.mutators
-
-/**
- * Gestisce le connessioni disponibili dal BE
- */
-export interface MetricsStore extends LoadBaseStore, MetricsGetters, MetricsActions, MetricsMutators {
-	state: MetricsState
-}
-
-const metricsSo = createStore(setup) as MetricsStore
-
+export interface MetricsStore extends StoreOf<typeof setup> { }
+const metricsSo: MetricsStore = createStore(setup)
 export default metricsSo
-
-
 export interface MetricsListener {
 	last: Metrics
 	error?: string

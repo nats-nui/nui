@@ -19,6 +19,7 @@ import { MessageStore } from "../../../../stores/stacks/message"
 import { DOC_TYPE } from "../../../../types"
 import { getStreamFormat } from "@/utils/streamFormatCache"
 import layoutSo from "@/stores/layout"
+import { EditorStore } from "@/stores/stacks/editorBase"
 
 
 

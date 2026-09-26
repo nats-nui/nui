@@ -1,6 +1,7 @@
 import { EditorRefProps } from "@/components/editor"
 import { MSG_FORMAT } from "@/utils/editor"
 import { ViewState, ViewStore } from "./viewBase"
+import { StoreOf } from "@priolo/jon"
 
 
 
@@ -54,12 +55,15 @@ const editorSetup = {
 }
 
 //export type EditorState = ReturnType<typeof editorSetup.state> & ViewState
-export type EditorState = Partial<typeof editorSetup.state> & ViewState
-export type EditorGetters = typeof editorSetup.getters
-export type EditorActions = typeof editorSetup.actions
-export type EditorMutators = typeof editorSetup.mutators
-export interface EditorStore extends ViewStore, EditorGetters, EditorActions, EditorMutators {
-	state: EditorState
-}
+// export type EditorState = Partial<typeof editorSetup.state> & ViewState
+// export type EditorGetters = typeof editorSetup.getters
+// export type EditorActions = typeof editorSetup.actions
+// // a runtime i mutators restituiscono sempre void
+// export type EditorMutators = { [K in keyof typeof editorSetup.mutators]: (payload: Parameters<typeof editorSetup.mutators[K]>[0]) => void }
+// export interface EditorStore extends ViewStore, EditorGetters, EditorActions, EditorMutators {
+// 	state: EditorState
+// }
 
+export interface EditorStore extends StoreOf<typeof editorSetup> {}
+export type EditorState = EditorStore["state"]
 export default editorSetup

@@ -57,7 +57,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 	// RENDER
 	const [subjects, counters] = useMemo(() => [
 		Object.keys(strMsgSa.stream?.state?.subjects ?? {}) as string[],
-		Object.values(strMsgSa.stream?.state?.subjects ?? {}) as string[]
+		Object.values(strMsgSa.stream?.state?.subjects ?? {}) as number[]
 	], [strMsgSa.stream?.state?.subjects])
 
 	if (!filter) return null

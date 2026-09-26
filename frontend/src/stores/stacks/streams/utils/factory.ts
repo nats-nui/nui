@@ -13,7 +13,7 @@ import {
 import { StreamsState, StreamsStore } from "..";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { StreamState, StreamStore } from "../detail";
-import { StreamMessagesState, StreamMessagesStore } from "../messages";
+import { StreamMessagesStore } from "../messages";
 import { VIEW_SIZE } from "../../utils";
 
 
@@ -58,11 +58,11 @@ export function buildStreamNew(connectionId: string, allStreams: string[]) {
 
 export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
 	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null; }
-	const streamMessagesStore = buildStore({
+	const streamMessagesStore = buildStore<StreamMessagesStore>({
 		type: DOC_TYPE.STREAM_MESSAGES,
 		connectionId,
 		stream,
-	} as StreamMessagesState) as StreamMessagesStore;
+	})
 	return streamMessagesStore;
 }
 

@@ -1,11 +1,11 @@
 import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
-import { BucketsState, BucketsStore } from "@/stores/stacks/buckets";
+import { BucketsStore } from "@/stores/stacks/buckets";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { BucketConfig, BucketState } from "@/types/Bucket";
 import { STORAGE } from "@/types/Stream";
 import { VIEW_SIZE } from "../../utils";
-import { BucketStatus, BucketStore } from "../detail";
+import { BucketStore } from "../detail";
 
 
 
@@ -13,36 +13,36 @@ import { BucketStatus, BucketStore } from "../detail";
 export function buildBuckets(connectionId: string) {
 	const cnn = cnnSo.getById(connectionId);
 	if (!cnn) { console.error("no param"); return null; }
-	const bucketsStore = buildStore({
+	const bucketsStore = buildStore<BucketsStore>({
 		type: DOC_TYPE.BUCKETS,
 		connectionId: cnn.id,
-	} as BucketsState) as BucketsStore;
+	})
 	return bucketsStore;
 }
 
 /** store card dettaglio del parametro "bucket" */
 export function buildBucket(connectionId: string, bucket: Partial<BucketState>) {
 	if (!connectionId) { console.error("no param"); return null; }
-	const bucketStore = buildStore({
+	const bucketStore = buildStore<BucketStore>({
 		type: DOC_TYPE.BUCKET,
 		editState: EDIT_STATE.READ,
 		connectionId,
 		bucket,
-	} as BucketStatus) as BucketStore;
+	})
 	return bucketStore;
 }
 
 /** store card dettaglio di un nuovo bucket */
 export function buildBucketNew(connectionId: string) {
 	if (!connectionId) { console.error("no param"); return null; }
-	const bucketStore = buildStore({
+	const bucketStore = buildStore<BucketStore>({
 		type: DOC_TYPE.BUCKET,
 		editState: EDIT_STATE.NEW,
 		size: VIEW_SIZE.NORMAL,
 		sizeForce: true,
 		connectionId,
 		bucket: buildNewBucketState(),
-	} as BucketStatus) as BucketStore;
+	})
 	return bucketStore;
 }
 
