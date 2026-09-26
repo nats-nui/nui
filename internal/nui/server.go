@@ -14,10 +14,12 @@ import (
 
 type App struct {
 	*fiber.App
-	l    logging.Slogger
-	Port string
-	nui  *Nui
-	ctx  context.Context
+	l           logging.Slogger
+	Port        string
+	nui         *Nui
+	ctx         context.Context
+	coreListens *coreListenGate
+	coreWatches *coreWatchHub
 }
 
 func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
@@ -27,9 +29,11 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 			fiber.Config{
 				UnescapePath: true,
 			}),
-		Port: port,
-		nui:  nui,
-		l:    l,
+		Port:        port,
+		nui:         nui,
+		l:           l,
+		coreListens: newCoreListenGate(),
+		coreWatches: newCoreWatchHub(),
 	}
 	sLog, ok := l.(*slog.Logger)
 	if ok {
@@ -51,6 +55,10 @@ func NewServer(port string, nui *Nui, l logging.Slogger, isDesktop bool) *App {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 	app.registerHandlers()
+	app.Hooks().OnShutdown(func() error {
+		app.coreWatches.close()
+		return nil
+	})
 	return app
 }
 
@@ -73,6 +81,12 @@ func (a *App) registerHandlers() {
 
 	a.Post("/api/connection/:id/messages/publish", a.HandlePublish)
 	a.Post("/api/connection/:id/request", a.HandleRequest)
+
+	a.Get("/api/connection/:connection_id/subjects/last", a.HandleSubjectLast)
+	a.Get("/api/connection/:connection_id/subjects/jetstream/:stream/occupied", a.HandleJetStreamOccupied)
+	a.Get("/api/connection/:connection_id/subjects/jetstream", a.HandleJetStreamCatalog)
+	a.Get("/api/connection/:id/subjects/core", a.HandleCoreListen)
+	a.Delete("/api/connection/:id/subjects/core", a.HandleCoreWatchStop)
 
 	a.Get("/api/connection/:connection_id/stream", a.HandleIndexStreams)
 	a.Get("/api/connection/:connection_id/stream/:stream_name", a.HandleShowStream)
@@ -130,6 +144,7 @@ func (a *App) registerHandlers() {
 
 func (a *App) Start(ctx context.Context) error {
 	a.ctx = ctx
+	a.coreWatches.startJanitor(ctx)
 	go func() {
 		select {
 		case <-ctx.Done():

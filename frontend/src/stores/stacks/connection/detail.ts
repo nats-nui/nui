@@ -6,7 +6,7 @@ import { mixStores } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
-import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
+import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSubjects, buildConnectionSync } from "./utils/factory"
 import { focusSo, MESSAGE_TYPE } from "@priolo/jack"
 import { cloneDeep } from "@/utils/object"
 
@@ -51,6 +51,7 @@ const setup = {
 		},
 
 		getMessagesOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.MESSAGES,
+		getSubjectsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SUBJECTS,
 		getSyncOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SYNC,
 		getStreamsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.STREAMS,
 		getBucketsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.BUCKETS,
@@ -72,6 +73,8 @@ const setup = {
 			store.state.docAniDisabled = true
 			if (options == DOC_TYPE.MESSAGES) {
 				cnnStore.openMessages()
+			} else if (options == DOC_TYPE.SUBJECTS) {
+				cnnStore.openSubjects()
 			} else if (options == DOC_TYPE.STREAMS) {
 				cnnStore.openStreams()
 			} else if (options == DOC_TYPE.BUCKETS) {
@@ -92,6 +95,12 @@ const setup = {
 			const detached = focusSo.state.shiftKey
 			const isOpen = store.getMessagesOpen()
 			const view = !isOpen || detached ? buildConnectionMessages(store.state.connection?.id) : null
+			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
+		openSubjects(_: void, store?: CnnDetailStore) {
+			const detached = focusSo.state.shiftKey
+			const isOpen = store.getSubjectsOpen()
+			const view = !isOpen || detached ? buildConnectionSubjects(store.state.connection?.id) : null
 			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
 		openSync(_: void, store?: CnnDetailStore) {

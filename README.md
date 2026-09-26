@@ -16,6 +16,7 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 ### Features :factory:
 
 - Core NATS Pub/Sub: view and send NATS messages
+- Subject browser: see the names messages travel on — live Core, stored JetStream
 - Request / reply: send requests and easily view related response
 - Multiple format visualization (text, json, hex, protobuf, cbor and much more supported)
 - Streams management: view, create adn tweak stream configs

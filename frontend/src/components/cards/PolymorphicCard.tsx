@@ -1,5 +1,6 @@
 import CnnDetailView from "@/components/stacks/connections/detail/View"
 import MessagesView from "@/components/stacks/connections/messages/View"
+import SubjectsView from "@/components/stacks/connections/subjects/View"
 import { AboutStore } from "@/stores/stacks/about"
 import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
@@ -7,6 +8,7 @@ import { CnnListStore } from "@/stores/stacks/connection"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { MessageSendStore } from "@/stores/stacks/connection/messageSend"
 import { MessagesStore } from "@/stores/stacks/connection/messages"
+import { SubjectsStore } from "@/stores/stacks/connection/subjects"
 import { ConsumersStore } from "@/stores/stacks/consumer"
 import { ConsumerStore } from "@/stores/stacks/consumer/detail"
 import { HelpStore } from "@/stores/stacks/help"
@@ -74,6 +76,8 @@ const PolymorphicCard: FunctionComponent<DocCmpProps> = ({
 
 			case DOC_TYPE.MESSAGES:
 				return <MessagesView store={view as MessagesStore} />
+			case DOC_TYPE.SUBJECTS:
+				return <SubjectsView store={view as SubjectsStore} />
 			case DOC_TYPE.MESSAGE:
 				return <MessageView store={view as MessageStore} />
 			case DOC_TYPE.MESSAGE_SEND:

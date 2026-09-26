@@ -22,6 +22,18 @@ func NatsBuilder(connection *Connection) (*NatsConn, error) {
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
 }
 
+// DialOnce opens an unpooled connection without reconnecting. The caller must close it.
+func DialOnce(connection *Connection) (*nats.Conn, error) {
+	options := []nats.Option{
+		nats.NoReconnect(),
+		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-subjects"),
+	}
+	options = appendAuthOption(connection, options)
+	options = appendTLSAuthOptions(connection, options)
+	options = appendInboxPrefixOption(connection, options)
+	return nats.Connect(strings.Join(connection.Hosts, ", "), options...)
+}
+
 func appendConnectionNameOption(connection *Connection, options []nats.Option) []nats.Option {
 	return append(options, nats.Name(CONNECTION_NAME_NUI_PREFIX+connection.Name))
 }
