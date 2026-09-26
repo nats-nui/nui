@@ -115,7 +115,7 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && <span className={cls.count}>none stored</span>}
-					{occ?.error && <span className={cls.count}>{occ.error}</span>}
+					{occ?.error && <span className={cls.count} title={occ.error}>cannot list</span>}
 					{canOpen && !open && node.names > 1 && <span className={cls.count}>{node.names}</span>}
 					{node.remainder && <span className={cls.count}>{node.names}</span>}
 				</div>

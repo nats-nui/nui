@@ -113,13 +113,13 @@ export function emptyCopy(args: {
 	if (core?.error || js?.error) return "The list could not be read."
 
 	if (coreEnabled && !core) return "Click LISTEN to hear live names."
-	if (coreEnabled) return "Quiet right now."
+	if (coreEnabled) return "No names observed."
 	return "No stored names."
 }
 
 export function leafTitle(path: string, heard?: number, streams?: { name: string, count?: number }[]): string {
 	const bits = [path]
-	if (heard) bits.push(`heard ${heard} time${heard == 1 ? "" : "s"} just now`)
+	if (heard) bits.push(`observed ${heard} time${heard == 1 ? "" : "s"} via Core`)
 	for (const s of streams ?? []) {
 		if (s.count) bits.push(`${s.count} stored in ${s.name}`)
 		else bits.push(`kept by ${s.name}`)

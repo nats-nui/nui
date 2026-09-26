@@ -47,10 +47,11 @@ type JetStreamCatalog struct {
 }
 
 type JetStreamStream struct {
-	Name      string             `json:"name"`
-	Kind      string             `json:"kind"`
-	Truncated bool               `json:"truncated,omitempty"`
-	Subjects  []JetStreamSubject `json:"subjects"`
+	Transformed bool               `json:"transformed,omitempty"`
+	Name        string             `json:"name"`
+	Kind        string             `json:"kind"`
+	Truncated   bool               `json:"truncated,omitempty"`
+	Subjects    []JetStreamSubject `json:"subjects"`
 }
 
 type JetStreamSubject struct {

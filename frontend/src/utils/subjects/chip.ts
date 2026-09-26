@@ -13,7 +13,7 @@ function echoes(label: string, ...names: (string | undefined)[]): boolean {
 
 export function rowChip(hit?: SubjectHit, segment?: string): RowChip | null {
 	if (!hit) return null
-	if (hit.core) return { label: "live", kind: "live", title: "heard just now" }
+	if (hit.core) return { label: "Core", kind: "live", title: "observed via Core" }
 	if (hit.kind == "occupied") return null
 	if (hit.kind == "kv" || hit.streams.some(s => s.kind == "kv")) {
 		return { label: "KV", kind: "js", title: "key/value bucket" }

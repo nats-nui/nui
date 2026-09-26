@@ -15,6 +15,7 @@ export interface JetStreamSubjectHit {
 export interface JetStreamStreamHit {
 	name: string
 	kind: "stream" | "kv" | "object"
+	transformed?: boolean
 	truncated?: boolean
 	subjects: JetStreamSubjectHit[]
 }

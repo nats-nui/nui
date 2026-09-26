@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest"
 import { rowChip } from "./chip"
 
 describe("rowChip", () => {
-	it("marks a live name and nothing else", () => {
-		expect(rowChip({ subject: "orders.created", core: { count: 1 }, streams: [] }, "created")?.label).toBe("live")
+	it("identifies Core observations without claiming they are still live", () => {
+		expect(rowChip({ subject: "orders.created", core: { count: 1 }, streams: [] }, "created")).toEqual({
+			label: "Core", kind: "live", title: "observed via Core",
+		})
 	})
 
 	it("keeps KV and FILES and hides occupied children", () => {

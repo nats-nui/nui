@@ -22,7 +22,7 @@ describe("copy", () => {
 		expect(jetStreamStatus(false)).toBeNull()
 	})
 
-	it("says quiet when a listen heard nothing", () => {
+	it("describes an empty sample without claiming current activity", () => {
 		expect(emptyCopy({
 			coreEnabled: true,
 			jsEnabled: true,
@@ -30,7 +30,7 @@ describe("copy", () => {
 			js: { streams: [] },
 			search: "",
 			foundCount: 0,
-		})).toMatch(/Quiet/)
+		})).toBe("No names observed.")
 	})
 
 	it("keeps a partial JetStream list when the read timed out", () => {
@@ -109,7 +109,7 @@ describe("copy", () => {
 
 	it("describes a leaf without adding live and stored numbers together", () => {
 		expect(leafTitle("orders.created", 3, [{ name: "ORDERS", count: 40 }])).toBe(
-			"orders.created · heard 3 times just now · 40 stored in ORDERS",
+			"orders.created · observed 3 times via Core · 40 stored in ORDERS",
 		)
 	})
 })

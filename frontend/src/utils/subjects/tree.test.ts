@@ -7,6 +7,16 @@ function hit(subject: string, opts: Partial<SubjectHit> = {}): SubjectHit {
 }
 
 describe("flattenHits", () => {
+	it("expands transformed literal captures instead of treating them as stored names", () => {
+		const hits = flattenHits({ showCore: false, showJetStream: true,
+			jetstream: { streams: [{ name: "ORDERS", kind: "stream", transformed: true,
+				subjects: [{ subject: "orders.created", pattern: "orders.created", kind: "pattern" }],
+			}] },
+		})
+		expect(hits[0].subject).toBe("orders.created")
+		expect(hits[0].expandable).toBe(true)
+	})
+
 	it.each([["orders", "orders.>"], ["orders.>", "orders"]])("keeps literal and wildcard capture names distinct (%s, %s)", (first, second) => {
 		const hits = flattenHits({ showCore: false, showJetStream: true,
 			jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [first, second].map(subject => ({ subject, pattern: subject, kind: "pattern" as const })) }] },

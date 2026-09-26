@@ -75,7 +75,7 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 
 	for _, info := range infos {
 		kind := streamKind(info.Config.Name, info.Config.Subjects)
-		entry := JetStreamStream{Name: info.Config.Name, Kind: kind, Subjects: []JetStreamSubject{}}
+		entry := JetStreamStream{Name: info.Config.Name, Kind: kind, Transformed: info.Config.SubjectTransform != nil, Subjects: []JetStreamSubject{}}
 		seen := map[string]bool{}
 		for _, pattern := range info.Config.Subjects {
 			if hideInternal(discardSys, pattern) {
@@ -140,6 +140,11 @@ func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, f
 		return out
 	}
 	info := &page.StreamInfo
+	// Capture patterns cannot reliably filter stored names after a subject transform.
+	if info.Config.SubjectTransform != nil && filter != ">" {
+		out.Error = "Stored names cannot be matched to this pattern because the stream transforms subject names."
+		return out
+	}
 	out.Truncated = page.Total > len(info.State.Subjects)
 	out.Kind = streamKind(info.Config.Name, info.Config.Subjects)
 	// Sort before the cap so every poll shows the same first page.

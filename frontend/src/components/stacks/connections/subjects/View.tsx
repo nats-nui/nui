@@ -1,5 +1,6 @@
 import FrameworkCard from "@/components/cards/FrameworkCard"
 import SubjectsIcon from "@/icons/cards/SubjectsIcon"
+import ReloadIcon from "@/icons/ReloadIcon"
 import layoutSo from "@/stores/layout"
 import { SubjectsStore } from "@/stores/stacks/connection/subjects"
 import { LOAD_STATE } from "@/stores/stacks/utils"
@@ -7,7 +8,7 @@ import { SubjectNode } from "@/types/Subject"
 import { emptyCopy, listenHintCopy, statusLines } from "@/utils/subjects/copy"
 import { isCatchAll } from "@/utils/subjects/filter"
 import { buildSubjectTree, filterHits, flattenHits } from "@/utils/subjects/tree"
-import { Button, FindInputHeader, OptionsCmp, TextInput } from "@priolo/jack"
+import { Button, FindInputHeader, IconButton, TextInput, TooltipWrapCmp } from "@priolo/jack"
 import FilterDialog from "./FilterDialog"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo } from "react"
@@ -87,10 +88,11 @@ const SubjectsView: FunctionComponent<Props> = ({
 		icon={<SubjectsIcon />}
 		store={subjectsSo}
 		actionsRender={<>
-			<OptionsCmp
-				style={{ marginLeft: 5, backgroundColor: "rgba(255,255,255,.4)" }}
-				store={subjectsSo}
-			/>
+			<TooltipWrapCmp content="REFRESH">
+				<IconButton effect onClick={() => subjectsSo.fetch()}>
+					<ReloadIcon />
+				</IconButton>
+			</TooltipWrapCmp>
 			<FindInputHeader
 				value={subjectsSa.textSearch}
 				onChange={text => subjectsSo.setTextSearch(text)}

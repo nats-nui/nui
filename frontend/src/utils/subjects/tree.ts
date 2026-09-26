@@ -44,7 +44,7 @@ export function flattenHits(opts: {
 			for (const item of stream.subjects ?? []) {
 				const hit = ensure(item.subject)
 				hit.kind = item.kind
-				hit.expandable = item.kind == "kv" || item.kind == "object" || item.kind == "pattern" && /[*>]/.test(item.pattern ?? item.subject)
+				hit.expandable = !!stream.transformed || item.kind == "kv" || item.kind == "object" || item.kind == "pattern" && /[*>]/.test(item.pattern ?? item.subject)
 				hit.streams.push({
 					name: stream.name,
 					kind: stream.kind,

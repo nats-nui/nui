@@ -41,11 +41,11 @@ func newCoreWatchHub() *coreWatchHub {
 	return &coreWatchHub{byConn: map[string]*coreWatch{}}
 }
 
-func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection, discardSys bool, owner string) *CoreCatalog {
+func (h *coreWatchHub) snapshot(id, filter string, loadConfig func() (*connection.Connection, error), discardSys bool, owner string) (*CoreCatalog, error) {
 	h.mu.Lock()
 	if h.closed {
 		h.mu.Unlock()
-		return &CoreCatalog{Subjects: []CoreSubject{}, Error: "server stopped"}
+		return &CoreCatalog{Subjects: []CoreSubject{}, Error: "server stopped"}, nil
 	}
 	prev := h.byConn[id]
 	reuse := prev != nil && prev.filter == filter && prev.discardSys == discardSys && prev.owner == owner
@@ -64,7 +64,7 @@ func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection, d
 		prev.mu.Lock()
 		defer prev.mu.Unlock()
 		prev.touched = time.Now()
-		return prev.copyCatalog()
+		return prev.copyCatalog(), nil
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	w := &coreWatch{
@@ -78,11 +78,28 @@ func (h *coreWatchHub) snapshot(id, filter string, cfg *connection.Connection, d
 		prev.stop()
 		<-prev.ready
 	}
-	w.start(ctx, cfg)
+	// Reserve the slot before reading configuration so save/delete can cancel
+	// a request that has read old settings but has not started its listener yet.
+	var loadErr error
+	if ctx.Err() == nil {
+		var cfg *connection.Connection
+		cfg, loadErr = loadConfig()
+		if loadErr == nil {
+			w.start(ctx, cfg)
+		} else {
+			w.err = loadErr
+			cancel()
+			h.mu.Lock()
+			if h.byConn[id] == w {
+				delete(h.byConn, id)
+			}
+			h.mu.Unlock()
+		}
+	}
 	close(w.ready)
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	return w.copyCatalog()
+	return w.copyCatalog(), loadErr
 }
 
 func (h *coreWatchHub) read(id, owner string) *CoreCatalog {
@@ -163,7 +180,7 @@ func (w *coreWatch) start(ctx context.Context, cfg *connection.Connection) {
 	if ctx.Err() != nil {
 		return
 	}
-	nc, err := connection.DialOnce(cfg)
+	nc, err := connection.DialOnce(ctx, cfg)
 	if err != nil {
 		w.mu.Lock()
 		w.err = err

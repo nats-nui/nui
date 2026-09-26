@@ -44,22 +44,24 @@ func (a *App) HandleCoreListen(c *fiber.Ctx) error {
 		listenMs = maxListenMs
 	}
 
-	parent, release := a.coreListens.takeover(id, c.Context())
+	budget := time.Duration(listenMs)*time.Millisecond + 2*time.Second
+	ctx, cancel := context.WithTimeout(c.Context(), budget)
+	defer cancel()
+	ctx, release := a.coreListens.takeover(id, ctx)
 	defer release()
+	if err := ctx.Err(); err != nil {
+		return c.JSON(&CoreCatalog{Filter: filter, ListenMs: listenMs, Subjects: []CoreSubject{}, Error: coreUserError(err)})
+	}
 
 	cfg, err := a.nui.ConnRepo.GetById(id)
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	nc, err := connection.DialOnce(cfg)
+	nc, err := connection.DialOnce(ctx, cfg)
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
 	defer nc.Close()
-
-	budget := time.Duration(listenMs)*time.Millisecond + 2*time.Second
-	ctx, cancel := context.WithTimeout(parent, budget)
-	defer cancel()
 
 	out := sampleCoreLimited(ctx, nc, filter, time.Duration(listenMs)*time.Millisecond, maxCoreSubjects, discardSys)
 	return c.JSON(out)
@@ -74,11 +76,13 @@ func (a *App) HandleCoreWatchStop(c *fiber.Ctx) error {
 }
 
 func (a *App) coreWatchSnapshot(c *fiber.Ctx, id, filter string, discardSys bool) error {
-	cfg, err := a.nui.ConnRepo.GetById(id)
+	out, err := a.coreWatches.snapshot(id, filter, func() (*connection.Connection, error) {
+		return a.nui.ConnRepo.GetById(id)
+	}, discardSys, strings.Clone(c.Query("session")))
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	return c.JSON(a.coreWatches.snapshot(id, filter, cfg, discardSys, strings.Clone(c.Query("session"))))
+	return c.JSON(out)
 }
 
 func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, listen time.Duration, nameCap int, discardSys bool) *CoreCatalog {

@@ -34,7 +34,7 @@ describe("SUBJECTS requests", () => {
 		vi.mocked(api.jetstream).mockResolvedValue({ streams: [] })
 		await s.fetchIfVoid()
 		await s.listenNow()
-		await s.discover("poll")
+		await s.readWatch()
 		expect(api.core).not.toHaveBeenCalled()
 		expect(api.watch).not.toHaveBeenCalled()
 		expect(api.snapshot).not.toHaveBeenCalled()
@@ -69,10 +69,21 @@ describe("SUBJECTS requests", () => {
 		s.state.coreWatching = true
 		s.state.jetstreamEnabled = false
 		vi.mocked(api.snapshot).mockResolvedValue(catalog)
-		await s.discover("poll")
+		await s.readWatch()
 		expect(api.watch).not.toHaveBeenCalled()
 		expect(api.core).not.toHaveBeenCalled()
 		expect(api.snapshot).toHaveBeenCalledOnce()
+	})
+
+	it.each([0, 5000])("manual refresh samples the typed name with pollingTime=%s", async pollingTime => {
+		const s = store()
+		s.state.pollingTime = pollingTime
+		s.state.jetstreamEnabled = false
+		vi.mocked(api.core).mockResolvedValue({ ...catalog, watching: false })
+		await s.fetch()
+		expect(api.core).toHaveBeenCalledWith("connection", "orders.>", 2000, true, expect.anything())
+		expect(api.watch).not.toHaveBeenCalled()
+		expect(api.snapshot).not.toHaveBeenCalled()
 	})
 
 	it.each(["", "devices.>"])("keeps the active listener when toggling internals with %s in the box", async filter => {

@@ -17,6 +17,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func watchSnapshot(t *testing.T, h *coreWatchHub, id, filter string, cfg *connection.Connection, discardSys bool, owner string) *CoreCatalog {
+	t.Helper()
+	out, err := h.snapshot(id, filter, func() (*connection.Connection, error) { return cfg, nil }, discardSys, owner)
+	require.NoError(t, err)
+	return out
+}
+
 func TestCoreWatchConcurrentStart(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}}
@@ -25,7 +32,7 @@ func TestCoreWatchConcurrentStart(t *testing.T) {
 	var wg sync.WaitGroup
 	for i := 0; i < 20; i++ {
 		wg.Add(1)
-		go func() { defer wg.Done(); h.snapshot("id", "orders.>", cfg, true, "card") }()
+		go func() { defer wg.Done(); watchSnapshot(t, h, "id", "orders.>", cfg, true, "card") }()
 	}
 	wg.Wait()
 	require.Equal(t, 1, ns.NumClients())
@@ -60,7 +67,7 @@ func TestCoreWatchStopDuringDial(t *testing.T) {
 	defer h.close()
 	done := make(chan *CoreCatalog, 1)
 	go func() {
-		done <- h.snapshot("id", "orders.>", &connection.Connection{Hosts: []string{proxy.Addr().String()}}, true, "card")
+		done <- watchSnapshot(t, h, "id", "orders.>", &connection.Connection{Hosts: []string{proxy.Addr().String()}}, true, "card")
 	}()
 	select {
 	case <-accepted:
@@ -68,11 +75,11 @@ func TestCoreWatchStopDuringDial(t *testing.T) {
 		t.Fatal("dial did not start")
 	}
 	h.stopSession("id", "card")
-	close(resume)
+	defer close(resume)
 	select {
 	case out := <-done:
 		require.False(t, out.Watching)
-	case <-time.After(3 * time.Second):
+	case <-time.After(500 * time.Millisecond):
 		t.Fatal("stopped dial did not finish")
 	}
 	require.Nil(t, h.read("id", "card"))
@@ -84,13 +91,13 @@ func TestCoreWatchOwnership(t *testing.T) {
 	cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}}
 	h := newCoreWatchHub()
 	defer h.close()
-	require.True(t, h.snapshot("id", "orders.>", cfg, true, "first").Watching)
-	require.True(t, h.snapshot("id", "other.>", cfg, true, "second").Watching)
+	require.True(t, watchSnapshot(t, h, "id", "orders.>", cfg, true, "first").Watching)
+	require.True(t, watchSnapshot(t, h, "id", "other.>", cfg, true, "second").Watching)
 	h.stopSession("id", "first")
 	require.Nil(t, h.read("id", "first"))
 	require.True(t, h.read("id", "second").Watching)
 	h.close()
-	require.False(t, h.snapshot("id", ">", cfg, true, "second").Watching)
+	require.False(t, watchSnapshot(t, h, "id", ">", cfg, true, "second").Watching)
 	require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)
 }
 
@@ -101,9 +108,9 @@ func TestCoreWatchPermissionAndDisconnect(t *testing.T) {
 	cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}, Auth: []connection.Auth{{Active: true, Mode: connection.AuthModeUserPassword, Username: "limited", Password: "test"}}}
 	h := newCoreWatchHub()
 	defer h.close()
-	h.snapshot("id", "secret.>", cfg, true, "")
+	watchSnapshot(t, h, "id", "secret.>", cfg, true, "")
 	require.Eventually(t, func() bool { out := h.read("id", ""); return out.Error == "not allowed" && !out.Watching }, time.Second, time.Millisecond)
-	require.True(t, h.snapshot("id", "orders.>", cfg, true, "").Watching)
+	require.True(t, watchSnapshot(t, h, "id", "orders.>", cfg, true, "").Watching)
 	ns.Shutdown()
 	require.Eventually(t, func() bool { out := h.read("id", ""); return out.Error != "" && !out.Watching }, time.Second, time.Millisecond)
 }
@@ -113,7 +120,7 @@ func TestCoreWatchStopsAtNameCap(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.close()
 	cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}}
-	require.True(t, h.snapshot("id", "cap.>", cfg, true, "").Watching)
+	require.True(t, watchSnapshot(t, h, "id", "cap.>", cfg, true, "").Watching)
 	pub, err := nats.Connect(ns.ClientURL())
 	require.NoError(t, err)
 	defer pub.Close()
@@ -187,7 +194,7 @@ func TestCoreWatchLeaseClosesSubscription(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	h := newCoreWatchHub()
 	defer h.close()
-	require.True(t, h.snapshot("id", "orders.>", &connection.Connection{Hosts: []string{ns.ClientURL()}}, true, "").Watching)
+	require.True(t, watchSnapshot(t, h, "id", "orders.>", &connection.Connection{Hosts: []string{ns.ClientURL()}}, true, "").Watching)
 	h.sweep(time.Now().Add(watchLease + time.Second))
 	require.Nil(t, h.read("id", ""))
 	require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)

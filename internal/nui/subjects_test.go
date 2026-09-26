@@ -191,10 +191,18 @@ func TestSampleCoreStopsAtCatalogCap(t *testing.T) {
 func TestCoreListenGateTakeoverCancelsPrevious(t *testing.T) {
 	g := newCoreListenGate()
 	ctx1, release1 := g.takeover("c1", context.Background())
-	ctx2, release2 := g.takeover("c1", context.Background())
-	defer release2()
+	done := make(chan context.Context, 1)
+	finish := make(chan struct{})
+	go func() {
+		ctx2, release2 := g.takeover("c1", context.Background())
+		defer release2()
+		done <- ctx2
+		<-finish
+	}()
+	defer close(finish)
 	<-ctx1.Done()
 	release1()
+	ctx2 := <-done
 	require.NoError(t, ctx2.Err())
 }
 
@@ -208,7 +216,7 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.stop("id")
 
-	first := h.snapshot("id", "w.>", cfg, true, "")
+	first := watchSnapshot(t, h, "id", "w.>", cfg, true, "")
 	require.Empty(t, first.Error)
 	require.True(t, first.Watching)
 	require.NotNil(t, h.read("id", ""))
@@ -219,7 +227,7 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 		return h.read("id", "").Heard >= 1
 	}, time.Second, 20*time.Millisecond)
 
-	got := h.snapshot("id", "w.>", cfg, true, "")
+	got := watchSnapshot(t, h, "id", "w.>", cfg, true, "")
 	require.True(t, got.Watching)
 	assert.GreaterOrEqual(t, got.Heard, 1)
 	assert.Equal(t, "w.one", got.Subjects[0].Subject)
@@ -332,7 +340,7 @@ func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
 	h := newCoreWatchHub()
 	defer h.stop("id")
 
-	hidden := h.snapshot("id", ">", cfg, true, "")
+	hidden := watchSnapshot(t, h, "id", ">", cfg, true, "")
 	require.Empty(t, hidden.Error)
 	require.True(t, hidden.Watching)
 	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
@@ -345,7 +353,7 @@ func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
 		assert.False(t, isInternalSubject(s.Subject))
 	}
 
-	shown := h.snapshot("id", ">", cfg, false, "")
+	shown := watchSnapshot(t, h, "id", ">", cfg, false, "")
 	require.True(t, shown.Watching)
 	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
 	require.NoError(t, pub.Flush())

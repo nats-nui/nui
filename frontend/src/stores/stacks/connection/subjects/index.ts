@@ -85,8 +85,7 @@ const setup = {
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
 			s.setListenHint(null)
-			const polling = (s.state.pollingTime ?? 0) > 0
-			await s.discover(polling ? "poll" : "refresh")
+			await s.discover("refresh")
 			await loadBaseSetup.actions.fetch(_, store)
 		},
 
@@ -94,10 +93,10 @@ const setup = {
 			await store.discover("open")
 		},
 
-		async discover(reason: "open" | "toggle" | "refresh" | "poll", store?: SubjectsStore) {
+		async discover(reason: "open" | "toggle" | "refresh", store?: SubjectsStore) {
 			const state = store.state
 			await Promise.all([
-				state.jetstreamEnabled && (!state.jetstream || reason == "refresh" || reason == "poll") ? store.fetchJetStream() : null,
+				state.jetstreamEnabled && (!state.jetstream || reason == "refresh") ? store.fetchJetStream() : null,
 				state.coreEnabled && reason == "refresh" && canListen(state.filter) ? store.fetchCore()
 					: state.coreEnabled && state.coreWatching ? store.readWatch() : null,
 			])

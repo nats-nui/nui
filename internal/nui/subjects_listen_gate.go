@@ -6,11 +6,13 @@ import (
 )
 
 type listenSlot struct {
-	cancel context.CancelFunc
+	cancel    context.CancelFunc
+	available chan struct{}
+	users     int
 }
 
 // coreListenGate cancels an in-flight sample when another starts
-// for the same connection.
+// for the same connection, and waits for its resources to be released.
 type coreListenGate struct {
 	mu     sync.Mutex
 	byConn map[string]*listenSlot
@@ -23,18 +25,37 @@ func newCoreListenGate() *coreListenGate {
 func (g *coreListenGate) takeover(id string, parent context.Context) (context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(parent)
 	g.mu.Lock()
-	defer g.mu.Unlock()
-	if existing := g.byConn[id]; existing != nil {
-		existing.cancel()
+	slot := g.byConn[id]
+	if slot == nil {
+		slot = &listenSlot{available: make(chan struct{}, 1)}
+		slot.available <- struct{}{}
+		g.byConn[id] = slot
+	} else {
+		slot.cancel()
 	}
-	slot := &listenSlot{cancel: cancel}
-	g.byConn[id] = slot
+	slot.cancel = cancel
+	slot.users++
+	g.mu.Unlock()
+
+	acquired := false
+	select {
+	case <-slot.available:
+		acquired = true
+	case <-ctx.Done():
+	}
+	var once sync.Once
 	return ctx, func() {
-		cancel()
-		g.mu.Lock()
-		if g.byConn[id] == slot {
-			delete(g.byConn, id)
-		}
-		g.mu.Unlock()
+		once.Do(func() {
+			cancel()
+			if acquired {
+				slot.available <- struct{}{}
+			}
+			g.mu.Lock()
+			slot.users--
+			if slot.users == 0 {
+				delete(g.byConn, id)
+			}
+			g.mu.Unlock()
+		})
 	}
 }
