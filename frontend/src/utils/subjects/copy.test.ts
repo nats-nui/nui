@@ -30,7 +30,7 @@ describe("copy", () => {
 			js: { streams: [] },
 			search: "",
 			foundCount: 0,
-		})).toBe("No names observed.")
+		})).toBe("No subjects observed.")
 	})
 
 	it("keeps a partial JetStream list when the read timed out", () => {
@@ -48,7 +48,7 @@ describe("copy", () => {
 	it("says JetStream is missing when the server has none", () => {
 		expect(jetStreamStatus(true, {
 			error: "not enabled on this server", streams: [],
-		})).toMatch(/not on this server/i)
+		})).toMatch(/not enabled on this server/i)
 	})
 
 	it("does not call a failed or capped read quiet", () => {
@@ -57,7 +57,7 @@ describe("copy", () => {
 			core: { filter: ">", listenMs: 2000, heard: 0, truncated: false, subjects: [], error: "not allowed" },
 			js: { streams: [] },
 			search: "", foundCount: 0,
-		})).toMatch(/cannot see/i)
+		})).toMatch(/cannot access/i)
 		expect(emptyCopy({
 			coreEnabled: false, jsEnabled: true,
 			js: { streams: [], truncated: true },
@@ -66,7 +66,7 @@ describe("copy", () => {
 	})
 
 	it("asks to click LISTEN when Core is on and empty", () => {
-		expect(listenHintCopy(FILTER_INVALID)).toMatch(/valid name/i)
+		expect(listenHintCopy(FILTER_INVALID)).toMatch(/Invalid subject/i)
 		expect(listenHintCopy(FILTER_EMPTY)).toBe(FILTER_EMPTY)
 		expect(emptyCopy({
 			coreEnabled: true, jsEnabled: true,
@@ -86,7 +86,7 @@ describe("copy", () => {
 
 	it("mentions a capped stored list after expand", () => {
 		expect(occupiedStatus({
-			"ORDERS::orders.>": { truncated: true, subjects: [] },
+			stored: { truncated: true, subjects: [] },
 		})).toMatch(/capped/i)
 	})
 
@@ -102,14 +102,14 @@ describe("copy", () => {
 		}, "devices.>")).toBe(true)
 		expect(coreStatus(true, {
 			filter: "orders.>", listenMs: 2000, heard: 2, truncated: false, subjects: [],
-		}, "devices.>")).toMatch(/LISTEN to hear devices\.>/)
+		}, "devices.>")).toMatch(/LISTEN to subscribe to devices\.>/)
 		expect(coreStatus(true, null, "orders.>")).toBeNull()
 	})
 
 
 	it("describes a leaf without adding live and stored numbers together", () => {
 		expect(leafTitle("orders.created", 3, [{ name: "ORDERS", count: 40 }])).toBe(
-			"orders.created · observed 3 times via Core · 40 stored in ORDERS",
+			"orders.created · 3 messages observed via Core · 40 messages stored in ORDERS",
 		)
 	})
 })

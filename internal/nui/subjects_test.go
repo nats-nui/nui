@@ -50,11 +50,11 @@ func TestIsInternalSubject(t *testing.T) {
 
 func TestCollapsePattern(t *testing.T) {
 	path, kind := collapsePattern("$KV.mybucket.>", kindKV)
-	assert.Equal(t, "$KV.mybucket", path)
+	assert.Equal(t, "$KV.mybucket.>", path)
 	assert.Equal(t, kindKV, kind)
 
 	path, kind = collapsePattern("$O.files.C.>", kindObject)
-	assert.Equal(t, "$O.files", path)
+	assert.Equal(t, "$O.files.>", path)
 	assert.Equal(t, kindObject, kind)
 
 	path, kind = collapsePattern("orders.>", kindStream)
@@ -274,14 +274,14 @@ func TestCatalogFromInfosDiscardsSystemUnlessAsked(t *testing.T) {
 	for _, s := range hidden.Streams[0].Subjects {
 		got = append(got, s.Subject)
 	}
-	assert.Equal(t, []string{"$KV.shop", "orders.>"}, got)
+	assert.Equal(t, []string{"$KV.shop.>", "orders.>"}, got)
 
 	shown := catalogFromInfos(infos, nil, false)
 	got = nil
 	for _, s := range shown.Streams[0].Subjects {
 		got = append(got, s.Subject)
 	}
-	assert.Equal(t, []string{"$JS.API.>", "$KV.shop", "orders.>"}, got)
+	assert.Equal(t, []string{"$JS.API.>", "$KV.shop.>", "orders.>"}, got)
 }
 
 func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
@@ -411,36 +411,6 @@ func TestOccupiedCapsPerStream(t *testing.T) {
 		}
 	}
 	assert.Equal(t, "n.0", out.Subjects[0].Subject)
-}
-
-func TestKVCatalogCollapsesToBucket(t *testing.T) {
-	ns := startTestNATS(t, jsOpts(t))
-	nc, err := nats.Connect(ns.ClientURL())
-	require.NoError(t, err)
-	defer nc.Close()
-	js, err := jetstream.New(nc)
-	require.NoError(t, err)
-	kv, err := js.CreateKeyValue(context.Background(), jetstream.KeyValueConfig{Bucket: "shop", Storage: jetstream.MemoryStorage})
-	require.NoError(t, err)
-	_, err = kv.Put(context.Background(), "a", []byte("1"))
-	require.NoError(t, err)
-	_, err = kv.Put(context.Background(), "b", []byte("2"))
-	require.NoError(t, err)
-
-	cat := enumerateJetStreamPatterns(context.Background(), js, true)
-	require.Empty(t, cat.Error)
-	require.NotEmpty(t, cat.Streams)
-	var kvStream *JetStreamStream
-	for i := range cat.Streams {
-		if cat.Streams[i].Kind == kindKV {
-			kvStream = &cat.Streams[i]
-			break
-		}
-	}
-	require.NotNil(t, kvStream)
-	require.Len(t, kvStream.Subjects, 1)
-	assert.Equal(t, "$KV.shop", kvStream.Subjects[0].Subject)
-	assert.Equal(t, kindKV, kvStream.Subjects[0].Kind)
 }
 
 func startTestNATS(t *testing.T, opts *server.Options) *server.Server {

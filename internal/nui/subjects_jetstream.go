@@ -90,12 +90,9 @@ func catalogFromInfos(infos []*jetstream.StreamInfo, listErr error, discardSys b
 				entry.Truncated = true
 				break
 			}
-			if subKind == kindObject {
-				pattern = path + ".>"
-			}
 			entry.Subjects = append(entry.Subjects, JetStreamSubject{
 				Subject: path,
-				Pattern: pattern,
+				Pattern: path,
 				Kind:    subKind,
 			})
 		}
@@ -142,7 +139,7 @@ func occupiedSubjects(ctx context.Context, js jetstream.JetStream, streamName, f
 	info := &page.StreamInfo
 	// Capture patterns cannot reliably filter stored names after a subject transform.
 	if info.Config.SubjectTransform != nil && filter != ">" {
-		out.Error = "Stored names cannot be matched to this pattern because the stream transforms subject names."
+		out.Error = "Stored subjects cannot be matched to this pattern because the stream transforms subject names."
 		return out
 	}
 	out.Truncated = page.Total > len(info.State.Subjects)

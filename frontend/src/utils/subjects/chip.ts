@@ -19,10 +19,10 @@ export function rowChip(hit?: SubjectHit, segment?: string): RowChip | null {
 		return { label: "KV", kind: "js", title: "key/value bucket" }
 	}
 	if (hit.kind == "object" || hit.streams.some(s => s.kind == "object")) {
-		return { label: "FILES", kind: "js", title: "object store" }
+		return { label: "Object Store", kind: "js", title: "object store" }
 	}
 	const stream = hit.streams.find(s => s.kind != "kv" && s.kind != "object")
 	if (!stream) return null
 	if (echoes(stream.name, segment, hit.subject)) return null
-	return { label: stream.name, kind: "js", title: `kept by ${stream.name}` }
+	return { label: stream.name, kind: "js", title: `stream: ${stream.name}` }
 }

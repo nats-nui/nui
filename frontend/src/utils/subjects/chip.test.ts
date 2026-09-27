@@ -8,15 +8,15 @@ describe("rowChip", () => {
 		})
 	})
 
-	it("keeps KV and FILES and hides occupied children", () => {
+	it("keeps KV and Object Store and hides occupied children", () => {
 		expect(rowChip({
-			subject: "$KV.shop", kind: "kv", expandable: true,
+			subject: "$KV.shop.>", kind: "kv", expandable: true,
 			streams: [{ name: "KV_shop", kind: "kv" }],
-		}, "shop")?.label).toBe("KV")
+		}, "shop.>")?.label).toBe("KV")
 		expect(rowChip({
-			subject: "$O.files", kind: "object", expandable: true,
+			subject: "$O.files.>", kind: "object", expandable: true,
 			streams: [{ name: "OBJ_files", kind: "object" }],
-		}, "files")?.label).toBe("FILES")
+		}, "files.>")?.label).toBe("Object Store")
 		expect(rowChip({
 			subject: "$KV.shop.item-1", kind: "occupied",
 			streams: [{ name: "KV_shop", kind: "kv", count: 1 }],
@@ -34,10 +34,10 @@ describe("rowChip", () => {
 		}, "close")).toBeNull()
 	})
 
-	it("keeps a stream chip when the keeper has a different name", () => {
+	it("keeps a stream chip when the stream has a different name", () => {
 		expect(rowChip({
 			subject: "orders.created", kind: "pattern",
 			streams: [{ name: "ORDERS" }],
-		}, "created")).toEqual({ label: "ORDERS", kind: "js", title: "kept by ORDERS" })
+		}, "created")).toEqual({ label: "ORDERS", kind: "js", title: "stream: ORDERS" })
 	})
 })

@@ -20,7 +20,7 @@ const SubjectTree: FunctionComponent<Props> = ({
 }) => {
 	const [openPaths, setOpenPaths] = useState<Record<string, boolean>>({})
 	if (!nodes || nodes.length == 0) {
-		return <div className={`jack-lbl-empty color-fg ${cls.empty}`}>{empty ?? "No names to show."}</div>
+		return <div className={`jack-lbl-empty color-fg ${cls.empty}`}>{empty ?? "No subjects to show."}</div>
 	}
 	const setOpen = (path: string, open: boolean) => {
 		setOpenPaths(prev => (prev[path] == open ? prev : { ...prev, [path]: open }))

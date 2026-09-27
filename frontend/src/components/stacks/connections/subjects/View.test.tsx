@@ -39,9 +39,9 @@ describe("SUBJECTS rendering", () => {
 
 	it("renders a remainder without button semantics or copy controls", () => {
 		const markup = renderToStaticMarkup(<SubjectTree nodes={[{
-			path: "orders.more", segment: "12 more names", names: 12, children: [], remainder: true,
+			path: "orders.more", segment: "… 12 more", names: 12, children: [], remainder: true,
 		}]} />)
-		expect(markup).toContain("12 more names")
+		expect(markup).toContain("… 12 more")
 		expect(markup).not.toMatch(/role="button"|tabindex=|aria-expanded=|<button/)
 	})
 })

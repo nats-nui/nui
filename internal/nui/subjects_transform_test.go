@@ -98,16 +98,36 @@ func TestOccupiedNormalPatternsAndBuckets(t *testing.T) {
 	_, err = objects.PutBytes(ctx, "note", []byte("file"))
 	require.NoError(t, err)
 
-	wantPatterns := map[string]string{"ORDERS": "orders.>", "KV_shop": "$KV.shop.>", "OBJ_files": "$O.files.>"}
+	want := map[string]JetStreamSubject{
+		"ORDERS":    {Subject: "orders.>", Pattern: "orders.>", Kind: kindPattern},
+		"KV_shop":   {Subject: "$KV.shop.>", Pattern: "$KV.shop.>", Kind: kindKV},
+		"OBJ_files": {Subject: "$O.files.>", Pattern: "$O.files.>", Kind: kindObject},
+	}
+	for _, tc := range []struct{ name, pattern, subject string }{
+		{"KV_split", "$KV.split.a.>", "$KV.split.a.one"},
+		{"PART_B", "$KV.split.b.>", "$KV.split.b.one"},
+		{"OBJ_split", "$O.split.C.>", "$O.split.C.one"},
+		{"PART_D", "$O.split.M.>", "$O.split.M.one"},
+		{"KV_PREFIX", "$KV.shop", "$KV.shop"},
+		{"OBJ_PREFIX", "$O.files", "$O.files"},
+	} {
+		_, err = js.CreateStream(ctx, jetstream.StreamConfig{
+			Name: tc.name, Subjects: []string{tc.pattern}, Storage: jetstream.MemoryStorage,
+		})
+		require.NoError(t, err)
+		_, err = js.Publish(ctx, tc.subject, []byte("value"))
+		require.NoError(t, err)
+		want[tc.name] = JetStreamSubject{Subject: tc.pattern, Pattern: tc.pattern, Kind: kindPattern}
+	}
 	catalog := enumerateJetStreamPatterns(ctx, js, true)
 	require.Empty(t, catalog.Error)
-	require.Len(t, catalog.Streams, len(wantPatterns))
+	require.Len(t, catalog.Streams, len(want))
 	for _, stream := range catalog.Streams {
 		require.False(t, stream.Transformed)
-		require.Len(t, stream.Subjects, 1)
-		require.Equal(t, wantPatterns[stream.Name], stream.Subjects[0].Pattern)
+		require.Equal(t, []JetStreamSubject{want[stream.Name]}, stream.Subjects)
 		occupied := occupiedSubjects(ctx, js, stream.Name, stream.Subjects[0].Pattern, true)
 		require.Empty(t, occupied.Error)
+		require.Equal(t, stream.Name, occupied.Stream)
 		require.NotEmpty(t, occupied.Subjects)
 	}
 }

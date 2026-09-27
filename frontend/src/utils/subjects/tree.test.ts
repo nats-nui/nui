@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { SubjectHit } from "@/types/Subject"
-import { buildSubjectTree, filterHits, flattenHits, MAX_TREE_CHILDREN } from "./tree"
+import { buildSubjectTree, filterHits, flattenHits, MAX_TREE_CHILDREN, occupiedKey } from "./tree"
 
 function hit(subject: string, opts: Partial<SubjectHit> = {}): SubjectHit {
 	return { subject, streams: [], ...opts }
@@ -20,7 +20,7 @@ describe("flattenHits", () => {
 	it.each([["orders", "orders.>"], ["orders.>", "orders"]])("keeps literal and wildcard capture names distinct (%s, %s)", (first, second) => {
 		const hits = flattenHits({ showCore: false, showJetStream: true,
 			jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [first, second].map(subject => ({ subject, pattern: subject, kind: "pattern" as const })) }] },
-			occupied: { "ORDERS::orders.>": { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
+			occupied: { [occupiedKey("ORDERS", "orders.>")]: { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
 		})
 		const tree = buildSubjectTree(hits)
 		expect(tree[0].path).toBe("orders")
@@ -60,25 +60,39 @@ describe("flattenHits", () => {
 		expect(hits).toEqual([])
 	})
 
-	it("preserves bucket metadata on stored keys", () => {
+	it("keeps a bucket pattern separate from its literal prefix and preserves stored key metadata", () => {
 		const hits = flattenHits({
-			showCore: false,
+			showCore: true,
 			showJetStream: true,
+			core: { filter: ">", listenMs: 2000, heard: 2, truncated: false, subjects: [{ subject: "$KV.shop", count: 2 }] },
 			jetstream: {
-				streams: [{ name: "KV_shop", kind: "kv", subjects: [{ subject: "$KV.shop", kind: "kv", pattern: "$KV.shop.>" }] }],
+				streams: [
+					{ name: "KV_shop", kind: "kv", subjects: [{ subject: "$KV.shop.>", kind: "kv", pattern: "$KV.shop.>" }] },
+					{ name: "PREFIX", kind: "stream", subjects: [{ subject: "$KV.shop", kind: "pattern", pattern: "$KV.shop" }] },
+				],
 			},
 			occupied: {
-				"KV_shop::$KV.shop.>": {
+				[occupiedKey("KV_shop", "$KV.shop.>")]: {
 					stream: "KV_shop", kind: "kv",
 					subjects: [{ subject: "$KV.shop.item-1", kind: "occupied", count: 1 }],
 				},
 			},
 		})
+		const prefix = hits.find(h => h.subject == "$KV.shop")
+		expect(prefix?.core?.count).toBe(2)
+		expect(prefix?.streams.map(s => s.name)).toEqual(["PREFIX"])
+		expect(prefix?.expandable).toBe(false)
+		const bucket = hits.find(h => h.subject == "$KV.shop.>")
+		expect(bucket?.streams.map(s => s.name)).toEqual(["KV_shop"])
+		expect(bucket?.expandable).toBe(true)
 		const key = hits.find(h => h.subject == "$KV.shop.item-1")
 		expect(key?.streams[0].kind).toBe("kv")
 		expect(key?.kind).toBe("occupied")
 		expect(key?.expandable).toBeFalsy()
-		expect(key?.parent).toBe("$KV.shop")
+		expect(key?.parent).toBe("$KV.shop.>")
+		const tree = buildSubjectTree(hits)
+		expect(tree[0].children.map(n => n.path)).toEqual(["$KV.shop", "$KV.shop.>"])
+		expect(tree[0].children[1].children.map(n => n.segment)).toEqual(["item-1"])
 	})
 
 	it("hides a source when its toggle is off without refetching", () => {
@@ -121,14 +135,14 @@ describe("buildSubjectTree", () => {
 
 	it("nests stored names under their pattern or bucket", () => {
 		const tree = buildSubjectTree([
-			hit("$KV.shop", { kind: "kv", expandable: true, streams: [{ name: "KV_shop", kind: "kv", pattern: "$KV.shop.>" }] }),
-			hit("$KV.shop.item-1", { parent: "$KV.shop", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
-			hit("$KV.shop.orders.created", { parent: "$KV.shop", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("$KV.shop.>", { kind: "kv", expandable: true, streams: [{ name: "KV_shop", kind: "kv", pattern: "$KV.shop.>" }] }),
+			hit("$KV.shop.item-1", { parent: "$KV.shop.>", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
+			hit("$KV.shop.orders.created", { parent: "$KV.shop.>", kind: "occupied", streams: [{ name: "KV_shop", kind: "kv", count: 1 }] }),
 			hit("inventory.items", { kind: "pattern", expandable: true, streams: [{ name: "INVENTORY", pattern: "inventory.items.>" }] }),
 			hit("inventory.items.inventory.details", { parent: "inventory.items", kind: "occupied", streams: [{ name: "INVENTORY", count: 2 }] }),
 		])
 		const kv = tree.find(n => n.segment == "$KV")
-		expect(kv?.children.map(c => c.segment)).toEqual(["shop"])
+		expect(kv?.children.map(c => c.segment)).toEqual(["shop.>"])
 		expect(kv?.children[0].children.map(c => c.segment)).toEqual(["item-1", "orders.created"])
 		const inventory = tree.find(n => n.segment == "inventory")
 		expect(inventory?.children.map(c => c.segment)).toEqual(["items"])
@@ -162,7 +176,7 @@ describe("filterHits", () => {
 it("nests wildcard matches beneath their capture pattern", () => {
 	const hits = flattenHits({ showCore: false, showJetStream: true,
 		jetstream: { streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.*", pattern: "orders.*", kind: "pattern" }] }] },
-		occupied: { "ORDERS::orders.*": { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
+		occupied: { [occupiedKey("ORDERS", "orders.*")]: { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied", count: 1 }] } },
 	})
 	const tree = buildSubjectTree(hits)
 	expect(tree[0].children).toHaveLength(1)
