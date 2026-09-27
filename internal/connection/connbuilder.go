@@ -1,9 +1,12 @@
 package connection
 
 import (
-	"github.com/nats-io/nats.go"
+	"context"
+	"net"
 	"strings"
 	"time"
+
+	"github.com/nats-io/nats.go"
 )
 
 type ConnBuilder[T Conn] func(connection *Connection) (T, error)
@@ -20,6 +23,58 @@ func NatsBuilder(connection *Connection) (*NatsConn, error) {
 	options = appendTLSAuthOptions(connection, options)
 	options = appendInboxPrefixOption(connection, options)
 	return NewNatsConn(strings.Join(connection.Hosts, ", "), options...)
+}
+
+// DialOnce opens an unpooled connection without reconnecting. The caller must close it.
+func DialOnce(ctx context.Context, connection *Connection) (*nats.Conn, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	options := []nats.Option{
+		nats.NoReconnect(),
+		nats.PingInterval(2 * time.Second),
+		nats.MaxPingsOutstanding(3),
+		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-subjects"),
+		nats.SkipHostLookup(), // Let DialContext handle DNS with the same cancellation.
+		nats.SetCustomDialer(&contextDialer{ctx: ctx}),
+	}
+	options = appendAuthOption(connection, options)
+	options = appendTLSAuthOptions(connection, options)
+	options = appendInboxPrefixOption(connection, options)
+	nc, err := nats.Connect(strings.Join(connection.Hosts, ", "), options...)
+	if ctx.Err() != nil {
+		if nc != nil {
+			nc.Close()
+		}
+		return nil, ctx.Err()
+	}
+	return nc, err
+}
+
+// Closing the socket on cancellation also interrupts the NATS/TLS handshake,
+// which happens after DialContext returns.
+type contextDialer struct {
+	ctx context.Context
+}
+
+func (d *contextDialer) Dial(network, address string) (net.Conn, error) {
+	dialer := net.Dialer{Timeout: nats.DefaultTimeout}
+	conn, err := dialer.DialContext(d.ctx, network, address)
+	if err != nil {
+		return nil, err
+	}
+	stop := context.AfterFunc(d.ctx, func() { _ = conn.Close() })
+	return &contextConn{Conn: conn, stop: stop}, nil
+}
+
+type contextConn struct {
+	net.Conn
+	stop func() bool
+}
+
+func (c *contextConn) Close() error {
+	c.stop()
+	return c.Conn.Close()
 }
 
 func appendConnectionNameOption(connection *Connection, options []nats.Option) []nats.Option {
