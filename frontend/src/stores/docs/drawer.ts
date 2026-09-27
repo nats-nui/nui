@@ -30,5 +30,5 @@ const setup = {
 	},
 }
 
-export interface DrawerStore extends StoreOf<typeof setup> {}
 export const setupDrawer = mixStores(cardsSetup, setup)
+export interface DrawerStore extends StoreOf<typeof setupDrawer> {}

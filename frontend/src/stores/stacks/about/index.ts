@@ -66,7 +66,7 @@ const setup = {
 
 const aboutSetup = mixStores(viewSetup, setup)
 export interface AboutStore extends StoreOf<typeof aboutSetup> {}
-export type AboutState = typeof aboutSetup.state
+export type AboutState = AboutStore["state"]
 export default aboutSetup
 
 

@@ -1,7 +1,6 @@
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
-import { mixStores } from "@priolo/jon"
-import { ViewState } from "../viewBase"
+import { mixStores, StoreOf } from "@priolo/jon"
 
 
 
@@ -34,14 +33,9 @@ const setup = {
 	},
 }
 
-export type HelpState = typeof setup.state & ViewState
-export type HelpGetters = typeof setup.getters
-export type HelpActions = typeof setup.actions
-export type HelpMutators = typeof setup.mutators
-export interface HelpStore extends ViewStore, HelpGetters, HelpActions, HelpMutators {
-	state: HelpState
-}
 const helpSetup = mixStores(viewSetup, setup)
+export interface HelpStore extends StoreOf<typeof helpSetup> {}
+export type HelpState = HelpStore["state"]
 export default helpSetup
 
 

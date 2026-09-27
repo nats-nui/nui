@@ -1,5 +1,5 @@
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { mixStores } from "@priolo/jon"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import { mixStores, StoreOf } from "@priolo/jon"
 
 
 
@@ -63,14 +63,9 @@ const setup = {
 	},
 }
 
-export type JsonConfigState = typeof setup.state & ViewState
-export type JsonConfigGetters = typeof setup.getters
-export type JsonConfigActions = typeof setup.actions
-export type JsonConfigMutators = typeof setup.mutators
-export interface JsonConfigStore extends ViewStore, JsonConfigGetters, JsonConfigActions, JsonConfigMutators {
-	state: JsonConfigState
-}
 const jsonConfigSetup = mixStores(viewSetup, setup)
+export interface JsonConfigStore extends StoreOf<typeof jsonConfigSetup> {}
+export type JsonConfigState = JsonConfigStore["state"]
 export default jsonConfigSetup
 
 

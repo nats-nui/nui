@@ -1,14 +1,14 @@
 import cnsApi from "@/api/consumers"
 import { utils } from "@priolo/jack"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { ConsumerConfig, StreamConsumer } from "@/types/Consumer"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { ConsumersState, ConsumersStore } from "."
 import { buildStore } from "../../docs/utils/factory"
 import { MESSAGE_TYPE } from "../../log/utils"
 import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 
 
 
@@ -170,12 +170,7 @@ const setup = {
 	},
 }
 
-export type ConsumerState = typeof setup.state & ViewState & LoadBaseState
-export type ConsumerGetters = typeof setup.getters
-export type ConsumerActions = typeof setup.actions
-export type ConsumerMutators = typeof setup.mutators
-export interface ConsumerStore extends ViewStore, LoadBaseStore, ConsumerGetters, ConsumerActions, ConsumerMutators {
-	state: ConsumerState
-}
 const consumerSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface ConsumerStore extends StoreOf<typeof consumerSetup> {}
+export type ConsumerState = ConsumerStore["state"]
 export default consumerSetup

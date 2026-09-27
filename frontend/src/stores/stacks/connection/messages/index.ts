@@ -8,10 +8,9 @@ import { DOC_TYPE, Subscription } from "@/types"
 import { MESSAGE_TYPE, Message } from "@/types/Message"
 import { MSG_FORMAT } from "@/utils/editor"
 import { throttle } from "@/utils/time"
-import { LISTENER_CHANGE, mixStores } from "@priolo/jon"
+import { LISTENER_CHANGE, mixStores, StoreOf } from "@priolo/jon"
 import dayjs from "dayjs"
 import { MessageStore } from "../../message"
-import { ViewState } from "../../viewBase"
 import { buildConnectionMessageSend } from "../utils/factory"
 
 
@@ -257,14 +256,9 @@ const setup = {
 	}
 }
 
-export type MessagesState = typeof setup.state & ViewState
-export type MessagesGetters = typeof setup.getters
-export type MessagesActions = typeof setup.actions
-export type MessagesMutators = typeof setup.mutators
-export interface MessagesStore extends ViewStore, MessagesGetters, MessagesActions, MessagesMutators {
-	state: MessagesState
-}
 const msgSetup = mixStores(viewSetup, setup)
+export interface MessagesStore extends StoreOf<typeof msgSetup> {}
+export type MessagesState = MessagesStore["state"]
 export default msgSetup
 
 

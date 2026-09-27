@@ -1,12 +1,12 @@
 import strApi from "@/api/streams"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
+import { ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { docsSo, utils } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 import { buildStream, buildStreamNew } from "./utils/factory"
 
 
@@ -154,12 +154,7 @@ const setup = {
 	},
 }
 
-export type StreamsState = typeof setup.state & ViewState & LoadBaseState
-export type StreamsGetters = typeof setup.getters
-export type StreamsActions = typeof setup.actions
-export type StreamsMutators = typeof setup.mutators
-export interface StreamsStore extends ViewStore, LoadBaseStore, StreamsGetters, StreamsActions, StreamsMutators {
-	state: StreamsState
-}
 const streamsSetup = mixStores(docSetup, loadBaseSetup, setup)
+export interface StreamsStore extends StoreOf<typeof streamsSetup> {}
+export type StreamsState = StreamsStore["state"]
 export default streamsSetup

@@ -1,8 +1,8 @@
 import metricsSo from "@/stores/connections/metrics"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { focusSo } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { buildClientMetrics } from "../utils/factory"
 import cnnSo from "@/stores/connections"
 
@@ -67,12 +67,7 @@ const setup = {
 	},
 }
 
-export type CnnMetricsState = typeof setup.state & ViewState
-export type CnnMetricsGetters = typeof setup.getters
-export type CnnMetricsActions = typeof setup.actions
-export type CnnMetricsMutators = typeof setup.mutators
-export interface CnnMetricsStore extends ViewStore, CnnMetricsGetters, CnnMetricsActions, CnnMetricsMutators {
-	state: CnnMetricsState
-}
 const cnnMetricsSetup = mixStores(viewSetup, setup)
+export interface CnnMetricsStore extends StoreOf<typeof cnnMetricsSetup> {}
+export type CnnMetricsState = CnnMetricsStore["state"]
 export default cnnMetricsSetup 

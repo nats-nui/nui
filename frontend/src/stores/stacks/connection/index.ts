@@ -1,7 +1,7 @@
 import cnnSo from "@/stores/connections"
 import viewSetup from "@/stores/stacks/viewBase"
-import { focusSo, VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { focusSo, VIEW_SIZE, ViewStore } from "@priolo/jack"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
 import { CnnImportStore, IMPORT_STATUS } from "../cnnImport"
@@ -126,12 +126,7 @@ const setup = {
 	},
 }
 
-export type CnnListState = typeof setup.state & ViewState
-export type CnnListGetters = typeof setup.getters
-export type CnnListActions = typeof setup.actions
-export type CnnListMutators = typeof setup.mutators
-export interface CnnListStore extends ViewStore, CnnListGetters, CnnListActions, CnnListMutators {
-	state: CnnListState
-}
 const cnnSetup = mixStores(viewSetup, setup)
+export interface CnnListStore extends StoreOf<typeof cnnSetup> {}
+export type CnnListState = CnnListStore["state"]
 export default cnnSetup
