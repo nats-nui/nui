@@ -188,7 +188,6 @@ func collectStreamInfos(ctx context.Context, js jetstream.JetStream) ([]*jetstre
 			if info != nil {
 				infos = append(infos, info)
 				if len(infos) > maxJSStreams {
-					cancel()
 					return infos, nil
 				}
 			}

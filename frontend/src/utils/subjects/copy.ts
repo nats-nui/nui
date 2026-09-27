@@ -24,9 +24,8 @@ export function statusLines(
 
 export function occupiedStatus(occupied?: Record<string, { truncated?: boolean, error?: string, subjects?: unknown[] }>): string | null {
 	const rows = Object.values(occupied ?? {})
-	if (rows.length == 0) return null
-	const failed = rows.filter(r => r.error).length
-	const truncated = rows.filter(r => r.truncated).length
+	const failed = rows.some(r => r.error)
+	const truncated = rows.some(r => r.truncated)
 	const bits: string[] = []
 	if (truncated) bits.push("a stored list was capped")
 	if (failed) bits.push("a stored list could not be read")

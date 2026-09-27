@@ -3,7 +3,7 @@ import { rowChip } from "@/utils/subjects/chip"
 import { leafTitle } from "@/utils/subjects/copy"
 import { occupiedKey } from "@/utils/subjects/tree"
 import { CopyButton } from "@priolo/jack"
-import { FunctionComponent, memo, useState } from "react"
+import { FunctionComponent, useState } from "react"
 import cls from "./Tree.module.css"
 
 interface Props {
@@ -62,7 +62,7 @@ function occKeyFor(node: SubjectNode): string | null {
 	return occupiedKey(stream.name, stream.pattern)
 }
 
-const TreeNode: FunctionComponent<NodeProps> = memo(({
+const TreeNode: FunctionComponent<NodeProps> = ({
 	node, select, onSelect, occupied, occupiedLoading, reveal, openPaths, setOpen,
 }) => {
 	const hasChildren = node.children.length > 0
@@ -139,4 +139,4 @@ const TreeNode: FunctionComponent<NodeProps> = memo(({
 			)}
 		</div>
 	)
-})
+}

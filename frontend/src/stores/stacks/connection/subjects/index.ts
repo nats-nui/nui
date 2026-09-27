@@ -31,7 +31,6 @@ const setup = {
 		occupiedLoading: <string>null,
 		listenHint: <string>null,
 		coreWatching: false,
-		listenGen: 0,
 		coreAbort: <AbortController>null,
 		watchGen: 0,
 		watchFilter: <string>null,
@@ -66,7 +65,6 @@ const setup = {
 				format: state.format,
 			}
 		},
-		getConnection: (_: void, store?: SubjectsStore) => cnnSo.getById(store.state.connectionId),
 	},
 
 	actions: {
@@ -84,21 +82,21 @@ const setup = {
 
 		async fetch(_: void, store?: LoadBaseStore) {
 			const s = <SubjectsStore>store
+			const state = s.state
 			s.setListenHint(null)
-			await s.discover("refresh")
+			await Promise.all([
+				state.jetstreamEnabled ? s.fetchJetStream() : null,
+				state.coreEnabled && canListen(state.filter) ? s.fetchCore()
+					: state.coreEnabled && state.coreWatching ? s.readWatch() : null,
+			])
 			await loadBaseSetup.actions.fetch(_, store)
 		},
 
 		async fetchIfVoid(_: void, store?: SubjectsStore) {
-			await store.discover("open")
-		},
-
-		async discover(reason: "open" | "toggle" | "refresh", store?: SubjectsStore) {
 			const state = store.state
 			await Promise.all([
-				state.jetstreamEnabled && (!state.jetstream || reason == "refresh") ? store.fetchJetStream() : null,
-				state.coreEnabled && reason == "refresh" && canListen(state.filter) ? store.fetchCore()
-					: state.coreEnabled && state.coreWatching ? store.readWatch() : null,
+				state.jetstreamEnabled && !state.jetstream ? store.fetchJetStream() : null,
+				state.coreEnabled && state.coreWatching ? store.readWatch() : null,
 			])
 		},
 
@@ -127,7 +125,6 @@ const setup = {
 		},
 
 		abortCore(_: void, store?: SubjectsStore) {
-			store.state.listenGen++
 			store.state.coreAbort?.abort()
 			store.state.coreAbort = null
 		},
@@ -205,8 +202,6 @@ const setup = {
 			store.abortCore()
 			const ac = new AbortController()
 			store.state.coreAbort = ac
-			const gen = store.state.listenGen + 1
-			store.state.listenGen = gen
 			const prev = store.state.core
 			if (!prev || prev.filter != filter) {
 				store.setCore({
@@ -220,7 +215,7 @@ const setup = {
 			const catalog = await subjectsApi.core(store.state.connectionId, filter, CORE_SAMPLE_MS, store.state.noSysMessages, {
 				store, signal: ac.signal, noError: true, loading: false,
 			})
-			if (store.state.listenGen != gen) return
+			if (ac.signal.aborted) return
 			if (!catalog || !Array.isArray(catalog.subjects)) {
 				store.setCore({
 					filter,
@@ -242,13 +237,13 @@ const setup = {
 				await store.stopWatch()
 				return
 			}
-			await store.discover("toggle")
+			await store.fetchIfVoid()
 		},
 
 		async toggleJetStream(_: void, store?: SubjectsStore) {
 			const next = !store.state.jetstreamEnabled
 			store.setJetstreamEnabled(next)
-			if (next) await store.discover("toggle")
+			if (next) await store.fetchIfVoid()
 		},
 
 		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
@@ -325,7 +320,6 @@ const setup = {
 				await store.loadOccupied(hit)
 				return
 			}
-			if (!hit.streams.length) return
 			const stream = hit.streams[0]
 			if (!stream) return
 			const message = await subjectsApi.last(store.state.connectionId, hit.subject, stream.name, { store, loading: false })

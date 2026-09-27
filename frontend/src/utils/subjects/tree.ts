@@ -56,17 +56,13 @@ export function flattenHits(opts: {
 		for (const [key, occ] of Object.entries(opts.occupied ?? {})) {
 			const parent = Array.from(bySubject.values()).find(hit => hit.expandable && hit.streams.some(s => occupiedKey(s.name, s.pattern) == key))
 			for (const item of occ.subjects ?? []) {
-				const already = bySubject.get(item.subject)
-				if (already?.expandable) continue
 				const hit = ensure(item.subject)
+				if (hit.expandable) continue
 				if (parent && parent.subject != hit.subject && !hit.parent) hit.parent = parent.subject
 				if (!hit.kind || hit.kind == "live") hit.kind = "occupied"
-				if (!hit.streams.some(s => s.name == occ.stream)) {
-					hit.streams.push({ name: occ.stream, kind: occ.kind, count: item.count })
-				} else {
-					const row = hit.streams.find(s => s.name == occ.stream)
-					if (row) row.count = item.count
-				}
+				const row = hit.streams.find(s => s.name == occ.stream)
+				if (row) row.count = item.count
+				else hit.streams.push({ name: occ.stream, kind: occ.kind, count: item.count })
 			}
 		}
 	}

@@ -27,7 +27,7 @@ type coreWatch struct {
 	owner      string
 	discardSys bool
 	sub        *nats.Subscription
-	hits       map[string]*CoreSubject
+	hits       map[string]int
 	truncated  bool
 	dropped    int
 	err        error
@@ -69,7 +69,7 @@ func (h *coreWatchHub) snapshot(id, filter string, loadConfig func() (*connectio
 	ctx, cancel := context.WithCancel(context.Background())
 	w := &coreWatch{
 		filter: filter, owner: owner, discardSys: discardSys,
-		hits: map[string]*CoreSubject{}, touched: time.Now(),
+		hits: map[string]int{}, touched: time.Now(),
 		stop: cancel, ready: make(chan struct{}),
 	}
 	h.byConn[id] = w
@@ -254,18 +254,14 @@ func (w *coreWatch) start(ctx context.Context, cfg *connection.Connection) {
 				return
 			case subject := <-names:
 				w.mu.Lock()
-				hit := w.hits[subject]
-				if hit == nil {
-					if len(w.hits) >= maxCoreSubjects {
-						w.truncated = true
-						w.dropped++
-						w.mu.Unlock()
-						return
-					}
-					hit = &CoreSubject{Subject: subject}
-					w.hits[subject] = hit
+				count, exists := w.hits[subject]
+				if !exists && len(w.hits) >= maxCoreSubjects {
+					w.truncated = true
+					w.dropped++
+					w.mu.Unlock()
+					return
 				}
-				hit.Count++
+				w.hits[subject] = count + 1
 				w.mu.Unlock()
 			}
 		}
@@ -278,8 +274,8 @@ func (w *coreWatch) copyCatalog() *CoreCatalog {
 		Error: coreUserError(w.err), Watching: w.watching,
 		Subjects: make([]CoreSubject, 0, len(w.hits)),
 	}
-	for _, hit := range w.hits {
-		out.Subjects = append(out.Subjects, *hit)
+	for subject, count := range w.hits {
+		out.Subjects = append(out.Subjects, CoreSubject{Subject: subject, Count: count})
 	}
 	out.Heard = len(out.Subjects)
 	sortCoreSubjects(out.Subjects)

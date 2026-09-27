@@ -13,7 +13,6 @@ const jetstream = {
 }
 
 const core = {
-	filter: "shop.>",
 	listen_ms: 2000,
 	heard: 1,
 	truncated: false,

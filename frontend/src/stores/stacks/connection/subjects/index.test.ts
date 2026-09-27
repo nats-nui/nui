@@ -146,7 +146,7 @@ describe("SUBJECTS requests", () => {
 		const sample = { ...catalog, filter: "devices.>", watching: false, subjects: [{ subject: "devices.room", count: 1 }] }
 		vi.mocked(api.core).mockResolvedValue(sample)
 		vi.mocked(api.snapshot).mockResolvedValue(catalog)
-		await s.discover("refresh")
+		await s.fetch()
 		await s.readWatch()
 		expect(api.core).toHaveBeenCalledOnce()
 		expect(api.snapshot).toHaveBeenCalledOnce()
@@ -171,15 +171,34 @@ describe("SUBJECTS requests", () => {
 		expect(s.state.select).toBe("orders")
 	})
 
-	it("discards a sample response after closing", async () => {
+	it.each(["disposeSubjects", "stopWatch", "toggleCore", "watchCore"])("discards a sample response after %s", async action => {
 		const s = store()
 		const pending = deferred<typeof catalog>()
 		vi.mocked(api.core).mockReturnValue(pending.promise)
+		vi.mocked(api.watch).mockResolvedValue(catalog)
 		const fetch = s.fetchCore()
-		s.disposeSubjects()
-		pending.resolve(catalog)
+		await s[action]()
+		const current = s.state.core
+		expect(vi.mocked(api.core).mock.calls[0][4].signal.aborted).toBe(true)
+		pending.resolve({ ...catalog, subjects: [{ subject: "orders.old", count: 99 }] })
 		await fetch
-		expect(s.state.core.heard).toBe(0)
+		expect(s.state.core).toEqual(current)
+	})
+
+	it("keeps the newer sample when an aborted request resolves last", async () => {
+		const s = store()
+		const first = deferred<typeof catalog>()
+		const second = deferred<typeof catalog>()
+		vi.mocked(api.core).mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
+		const oldRequest = s.fetchCore()
+		s.state.filter = "devices.>"
+		const newRequest = s.fetchCore()
+		const current = { ...catalog, filter: "devices.>", subjects: [{ subject: "devices.room", count: 1 }] }
+		second.resolve(current)
+		await newRequest
+		first.resolve(catalog)
+		await oldRequest
+		expect(s.state.core).toEqual(current)
 	})
 
 	it("discards occupied results from an earlier filter", async () => {

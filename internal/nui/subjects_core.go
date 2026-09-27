@@ -145,12 +145,12 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		return out
 	}
 
-	hits := map[string]*CoreSubject{}
+	hits := map[string]int{}
 	extraDropped := 0
 	timer := time.NewTimer(listen)
 	defer timer.Stop()
 
-	finish := func() {
+	defer func() {
 		pendingDropped, err := sub.Dropped()
 		dropped := extraDropped
 		if err == nil && pendingDropped > 0 {
@@ -159,47 +159,32 @@ func sampleCoreLimited(ctx context.Context, conn *nats.Conn, filter string, list
 		out.Dropped = dropped
 		out.Heard = len(hits)
 		out.Subjects = make([]CoreSubject, 0, len(hits))
-		for _, hit := range hits {
-			out.Subjects = append(out.Subjects, *hit)
+		for subject, count := range hits {
+			out.Subjects = append(out.Subjects, CoreSubject{Subject: subject, Count: count})
 		}
 		sortCoreSubjects(out.Subjects)
-	}
-
-	record := func(subject string) {
-		hit, exists := hits[subject]
-		if !exists {
-			if nameCap > 0 && len(hits) >= nameCap {
-				out.Truncated = true
-				extraDropped++
-				return
-			}
-			hit = &CoreSubject{Subject: subject}
-			hits[subject] = hit
-		}
-		hit.Count++
-	}
+	}()
 
 	for {
 		select {
 		case err := <-asyncErr:
 			out.Error = coreUserError(err)
-			finish()
 			return out
 		case <-ctx.Done():
 			if out.Error == "" && errors.Is(ctx.Err(), context.DeadlineExceeded) {
 				out.Error = "timed out"
 			}
-			finish()
 			return out
 		case <-timer.C:
-			finish()
 			return out
 		case subject := <-ch:
-			record(subject)
-			if out.Truncated {
-				finish()
+			count, exists := hits[subject]
+			if !exists && nameCap > 0 && len(hits) >= nameCap {
+				out.Truncated = true
+				extraDropped++
 				return out
 			}
+			hits[subject] = count + 1
 		}
 	}
 }
