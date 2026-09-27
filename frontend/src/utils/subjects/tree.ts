@@ -4,7 +4,7 @@ export const MAX_TREE_CHILDREN = 50
 export const MAX_TREE_DEPTH = 2
 
 export function occupiedKey(stream: string, pattern?: string): string {
-	return `${stream}::${pattern || ">"}`
+	return JSON.stringify([stream, pattern || ">"])
 }
 
 export function flattenHits(opts: {

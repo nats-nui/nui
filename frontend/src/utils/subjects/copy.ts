@@ -3,7 +3,7 @@ import { FILTER_INVALID, canListen, normalizeListenFilter } from "./filter"
 
 export function listenHintCopy(hint?: string | null): string | null {
 	if (!hint) return null
-	if (hint == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
+	if (hint == FILTER_INVALID) return "Invalid subject. Use a subject or wildcard pattern, such as orders.created or orders.>"
 	return hint
 }
 
@@ -42,13 +42,13 @@ export function coreListenStale(core?: CoreCatalog | null, filter?: string): boo
 
 export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?: string): string | null {
 	if (!enabled) return null
-	if (core?.error == "not allowed") return "This account cannot listen for that name."
-	if (core?.error == "timed out") return "The listen stopped before it finished."
-	if (core?.error == FILTER_INVALID) return "That is not a valid name. Use dots, like orders.created or orders.>"
-	if (core?.error) return `Core could not listen: ${core.error}.`
+	if (core?.error == "not allowed") return "This account cannot subscribe to that subject."
+	if (core?.error == "timed out") return "The subscription timed out."
+	if (core?.error == FILTER_INVALID) return listenHintCopy(FILTER_INVALID)
+	if (core?.error) return `Core subscription failed: ${core.error}.`
 	if (!core) {
 		const next = normalizeListenFilter(filter ?? "")
-		if (next && !canListen(next)) return "That is not a valid name. Use dots, like orders.created or orders.>"
+		if (next && !canListen(next)) return listenHintCopy(FILTER_INVALID)
 		return null
 	}
 	const bits: string[] = []
@@ -56,8 +56,8 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 	if (core.dropped) bits.push(`${core.dropped} messages did not fit`)
 	if (coreListenStale(core, filter)) {
 		const next = normalizeListenFilter(filter ?? "")
-		if (next == ">") bits.push("Click LISTEN to hear every name")
-		else if (next) bits.push(`Click LISTEN to hear ${next}`)
+		if (next == ">") bits.push("Click LISTEN to subscribe to all subjects")
+		else if (next) bits.push(`Click LISTEN to subscribe to ${next}`)
 	}
 	if (bits.length == 0) return null
 	return bits.join(". ") + "."
@@ -65,18 +65,18 @@ export function coreStatus(enabled: boolean, core?: CoreCatalog | null, filter?:
 
 export function jetStreamStatus(enabled: boolean, js?: JetStreamCatalog | null): string | null {
 	if (!enabled || !js) return null
-	if (js.error == "not allowed") return "This account cannot read stored names."
-	if (js.error == "timed out" && (js.streams?.length ?? 0) == 0) return "Stored names were not fully read."
+	if (js.error == "not allowed") return "This account cannot read stream subjects."
+	if (js.error == "timed out" && (js.streams?.length ?? 0) == 0) return "Stream subjects were not fully read."
 	if (js.error && (js.streams?.length ?? 0) == 0) {
 		if (js.error == "not enabled on this server") {
-			return "JetStream is not on this server."
+			return "JetStream is not enabled on this server."
 		}
 		return `JetStream could not be read: ${js.error}.`
 	}
 	const bits: string[] = []
 	if (js.truncated || js.streams?.some(s => s.truncated)) bits.push("JetStream list was capped")
-	if (js.error == "timed out") bits.push("stored names were not fully read")
-	else if (js.error) bits.push("stored names could not be refreshed")
+	if (js.error == "timed out") bits.push("stream subjects were not fully read")
+	else if (js.error) bits.push("stream subjects could not be refreshed")
 	if (bits.length == 0) return null
 	const line = bits.join("; ")
 	return line.charAt(0).toUpperCase() + line.slice(1) + "."
@@ -95,10 +95,10 @@ export function emptyCopy(args: {
 	const js = jsEnabled ? args.js : null
 	if (!coreEnabled && !jsEnabled) return "Turn on Core or JetStream."
 	if (foundCount > 0) return null
-	if (search?.trim()) return "No names match."
+	if (search?.trim()) return "No subjects match."
 
 	const notAllowed = core?.error == "not allowed" || js?.error == "not allowed"
-	if (notAllowed) return "This account cannot see those names."
+	if (notAllowed) return "This account cannot access those subjects."
 
 	const notFullyRead = !!(
 		core?.error == "timed out" || js?.error == "timed out"
@@ -107,21 +107,21 @@ export function emptyCopy(args: {
 	if (notFullyRead) return "The list was not fully read."
 
 	if (jsEnabled && js?.error == "not enabled on this server") {
-		return "JetStream is not on this server."
+		return "JetStream is not enabled on this server."
 	}
 	if (core?.error || js?.error) return "The list could not be read."
 
-	if (coreEnabled && !core) return "Click LISTEN to hear live names."
-	if (coreEnabled) return "No names observed."
-	return "No stored names."
+	if (coreEnabled && !core) return "Enter a subject and click LISTEN, or select ALL."
+	if (coreEnabled) return "No subjects observed."
+	return "No stream subjects."
 }
 
 export function leafTitle(path: string, heard?: number, streams?: { name: string, count?: number }[]): string {
 	const bits = [path]
-	if (heard) bits.push(`observed ${heard} time${heard == 1 ? "" : "s"} via Core`)
+	if (heard) bits.push(`${heard} message${heard == 1 ? "" : "s"} observed via Core`)
 	for (const s of streams ?? []) {
-		if (s.count) bits.push(`${s.count} stored in ${s.name}`)
-		else bits.push(`kept by ${s.name}`)
+		if (s.count) bits.push(`${s.count} message${s.count == 1 ? "" : "s"} stored in ${s.name}`)
+		else bits.push(`stream: ${s.name}`)
 	}
 	return bits.join(" · ")
 }

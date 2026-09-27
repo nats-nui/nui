@@ -1,6 +1,6 @@
 ## SUBJECTS
 
-The SUBJECTS card lists JetStream capture patterns and Core subjects observed during a sample or live subscription. It opens without subscribing. Folders start closed; names deeper than two levels share one row. Expanding a JetStream pattern or bucket loads its stored subjects. Selecting a stored subject opens its last message.
+The SUBJECTS card lists JetStream capture patterns and Core subjects observed during a sample or live subscription. It opens without subscribing. Folders start closed; subjects deeper than two levels share one row. Expanding a JetStream pattern or bucket loads its stored subjects. Selecting a stored subject opens its last message.
 
 Refresh samples the typed filter and reloads the JetStream catalog. LISTEN starts a live subscription; ALL selects `>`. An empty filter does not subscribe. Live snapshots update once per second without starting another subscription. FILTERS hides `$SYS`, `$JS`, and `_INBOX` by default; `$KV` and `$O` remain visible.
 
@@ -15,7 +15,7 @@ GET /api/connection/:id/subjects/jetstream/:stream/occupied?filter=orders.>
 
 The catalog contains capture patterns, with KV and Object Store patterns grouped by bucket. Occupied subjects are fetched separately from the first server page, sorted and capped per stream. Responses mark incomplete lists with `truncated`. Catalogs do not include message payloads.
 
-Streams that transform subject names report a limitation when expanding a capture pattern: incoming names cannot reliably identify stored names. A stream-wide occupied request (`filter=>`) remains available. Mirrors and sources without capture patterns are not listed in this catalog.
+Streams that transform subject names report a limitation when expanding a capture pattern: incoming subjects cannot reliably identify stored subjects. A stream-wide occupied request (`filter=>`) remains available. Mirrors and sources without capture patterns are not listed in this catalog.
 
 ### Core discovery
 

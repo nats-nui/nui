@@ -2,12 +2,13 @@ package nui
 
 import (
 	"errors"
+	"slices"
 	"strings"
 	"unicode"
 )
 
 var (
-	errFilterInvalid = errors.New("that is not a valid name")
+	errFilterInvalid = errors.New("that is not a valid subject")
 )
 
 const (
@@ -65,19 +66,14 @@ func hasSubjectPrefix(subject, prefix string) bool {
 }
 
 func streamKind(name string, subjects []string) string {
-	if strings.HasPrefix(name, "KV_") {
+	if bucket, ok := strings.CutPrefix(name, "KV_"); ok && bucket != "" &&
+		len(subjects) == 1 && subjects[0] == "$KV."+bucket+".>" {
 		return kindKV
 	}
-	if strings.HasPrefix(name, "OBJ_") {
+	if bucket, ok := strings.CutPrefix(name, "OBJ_"); ok && bucket != "" &&
+		len(subjects) == 2 && slices.Contains(subjects, "$O."+bucket+".C.>") &&
+		slices.Contains(subjects, "$O."+bucket+".M.>") {
 		return kindObject
-	}
-	for _, s := range subjects {
-		if strings.HasPrefix(s, "$KV.") {
-			return kindKV
-		}
-		if strings.HasPrefix(s, "$O.") {
-			return kindObject
-		}
 	}
 	return kindStream
 }
@@ -87,11 +83,11 @@ func collapsePattern(subject, kind string) (path, outKind string) {
 	switch kind {
 	case kindKV:
 		if len(parts) >= 2 && parts[0] == "$KV" {
-			return "$KV." + parts[1], kindKV
+			return "$KV." + parts[1] + ".>", kindKV
 		}
 	case kindObject:
 		if len(parts) >= 2 && parts[0] == "$O" {
-			return "$O." + parts[1], kindObject
+			return "$O." + parts[1] + ".>", kindObject
 		}
 	}
 	return subject, kindPattern

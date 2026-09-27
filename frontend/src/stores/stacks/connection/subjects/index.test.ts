@@ -13,7 +13,7 @@ vi.mock("@/api/subjects", () => ({ default: { jetstream: vi.fn(), core: vi.fn(),
 import setup from "./index"
 import api from "@/api/subjects"
 import { DOC_TYPE } from "@/types"
-import { flattenHits } from "@/utils/subjects/tree"
+import { flattenHits, occupiedKey } from "@/utils/subjects/tree"
 
 function deferred<T>() {
 	let resolve: (value: T) => void
@@ -225,28 +225,45 @@ describe("SUBJECTS requests", () => {
 
 	it("refreshes previously expanded stored names", async () => {
 		const s = store()
-		s.state.occupied = { "ORDERS::orders.>": { stream: "ORDERS", subjects: [{ subject: "orders.old", kind: "occupied" }] } }
+		const key = occupiedKey("ORDERS", "orders.>")
+		s.state.occupied = { [key]: { stream: "ORDERS", subjects: [{ subject: "orders.old", kind: "occupied" }] } }
 		vi.mocked(api.jetstream).mockResolvedValue({ streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.>", pattern: "orders.>", kind: "pattern" }] }] })
 		vi.mocked(api.occupied).mockResolvedValue({ stream: "ORDERS", subjects: [{ subject: "orders.new", kind: "occupied" }] })
 		await s.fetchJetStream()
-		expect(s.state.occupied["ORDERS::orders.>"].subjects[0].subject).toBe("orders.new")
+		expect(s.state.occupied[key].subjects[0].subject).toBe("orders.new")
 	})
 
 	it("deduplicates each stored expansion while other names are loading", async () => {
 		const s = store()
 		const first = deferred<any>(), second = deferred<any>()
-		const hit = (name: string) => ({ subject: `${name}.>`, streams: [{ name, pattern: `${name}.>` }] })
+		const firstHit = { subject: "C.>", streams: [{ name: "A::B", pattern: "C.>" }] }
+		const secondHit = { subject: "B::C.>", streams: [{ name: "A", pattern: "B::C.>" }] }
+		const firstCatalog = { stream: "A::B", subjects: [{ subject: "C.one", kind: "occupied", count: 3 }] }
+		const secondCatalog = { stream: "A", subjects: [{ subject: "B::C.one", kind: "occupied", count: 9 }] }
 		vi.mocked(api.occupied).mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
-		const a = s.loadOccupied(hit("A")), b = s.loadOccupied(hit("B"))
-		await s.loadOccupied(hit("A"))
+		const a = s.loadOccupied(firstHit), b = s.loadOccupied(secondHit)
+		await s.loadOccupied(firstHit)
 		expect(api.occupied).toHaveBeenCalledTimes(2)
-		second.resolve({ stream: "B", subjects: [] })
+		expect(api.occupied).toHaveBeenNthCalledWith(1, "connection", "A::B", "C.>", true, expect.anything())
+		expect(api.occupied).toHaveBeenNthCalledWith(2, "connection", "A", "B::C.>", true, expect.anything())
+		second.resolve(secondCatalog)
 		await b
-		await s.loadOccupied(hit("A"))
+		await s.loadOccupied(firstHit)
 		expect(api.occupied).toHaveBeenCalledTimes(2)
-		first.resolve({ stream: "A", subjects: [{ subject: "A.one", count: 3 }] })
+		first.resolve(firstCatalog)
 		await a
-		expect(s.state.occupied["A::A.>"].subjects[0].count).toBe(3)
+		expect(s.state.occupied).toEqual({
+			[occupiedKey("A::B", "C.>")]: firstCatalog,
+			[occupiedKey("A", "B::C.>")]: secondCatalog,
+		})
+		const hits = flattenHits({ showCore: false, showJetStream: true, occupied: s.state.occupied,
+			jetstream: { streams: [
+				{ name: "A", kind: "stream", subjects: [{ subject: "B::C.>", pattern: "B::C.>", kind: "pattern" }] },
+				{ name: "A::B", kind: "stream", subjects: [{ subject: "C.>", pattern: "C.>", kind: "pattern" }] },
+			] },
+		})
+		expect(hits.find(h => h.subject == "C.one")?.parent).toBe("C.>")
+		expect(hits.find(h => h.subject == "B::C.one")?.parent).toBe("B::C.>")
 	})
 
 	it.each(["old-first", "new-first"])("keeps only the current stored request after invalidation: %s", async order => {
@@ -265,6 +282,6 @@ describe("SUBJECTS requests", () => {
 		await s.loadOccupied(hit)
 		expect(api.occupied).toHaveBeenCalledTimes(2)
 		if (order == "old-first") { second.resolve(current); await newRequest }
-		expect(s.state.occupied["ORDERS::orders.>"]).toEqual(current)
+		expect(s.state.occupied[occupiedKey("ORDERS", "orders.>")]).toEqual(current)
 	})
 })

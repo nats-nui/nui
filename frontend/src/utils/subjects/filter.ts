@@ -1,5 +1,5 @@
-export const FILTER_INVALID = "that is not a valid name"
-export const FILTER_EMPTY = "Type a name or click ALL"
+export const FILTER_INVALID = "that is not a valid subject"
+export const FILTER_EMPTY = "Enter a subject or select ALL"
 
 export function normalizeListenFilter(filter: string): string {
 	return filter?.trim() ?? ""

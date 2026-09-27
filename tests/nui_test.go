@@ -1038,12 +1038,12 @@ func (s *NuiTestSuite) TestSubjectsDiscovery() {
 			name := sub.Object().Value("subject").String().Raw()
 			kvNames = append(kvNames, name)
 			if kind == "kv" {
-				s.Equal("$KV.kv1", name)
+				s.Equal("$KV.kv1.>", name)
 				s.Equal("kv", sub.Object().Value("kind").String().Raw())
 			}
 		}
 	}
-	s.Contains(kvNames, "$KV.kv1")
+	s.Contains(kvNames, "$KV.kv1.>")
 }
 
 func (s *NuiTestSuite) TestCddlschemas() {

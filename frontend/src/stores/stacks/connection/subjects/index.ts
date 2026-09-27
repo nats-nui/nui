@@ -359,7 +359,6 @@ const setup = {
 		setCoreWatching: (coreWatching: boolean) => ({ coreWatching }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setSelect: (select: string) => ({ select }),
-		setFormat: (format: MSG_FORMAT) => ({ format }),
 	},
 }
 
