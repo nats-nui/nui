@@ -22,6 +22,16 @@ func newCoreListenGate() *coreListenGate {
 	return &coreListenGate{byConn: map[string]*listenSlot{}}
 }
 
+func (g *coreListenGate) stop(id string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if slot := g.byConn[id]; slot != nil {
+		// Keep the slot until its holder and waiters release it. Removing it
+		// here would let a new sample bypass the cancelled holder's cleanup.
+		slot.cancel()
+	}
+}
+
 func (g *coreListenGate) takeover(id string, parent context.Context) (context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(parent)
 	g.mu.Lock()

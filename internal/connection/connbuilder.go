@@ -32,6 +32,8 @@ func DialOnce(ctx context.Context, connection *Connection) (*nats.Conn, error) {
 	}
 	options := []nats.Option{
 		nats.NoReconnect(),
+		nats.PingInterval(2 * time.Second),
+		nats.MaxPingsOutstanding(3),
 		nats.Name(CONNECTION_NAME_NUI_PREFIX + connection.Name + "-subjects"),
 		nats.SkipHostLookup(), // Let DialContext handle DNS with the same cancellation.
 		nats.SetCustomDialer(&contextDialer{ctx: ctx}),

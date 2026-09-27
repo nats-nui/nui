@@ -117,21 +117,28 @@ func TestSampleCoreHearsLiteralPrefixOnly(t *testing.T) {
 	require.NoError(t, err)
 	defer nc.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	done := make(chan *CoreCatalog, 1)
 	go func() {
-		for i := 0; i < 40; i++ {
-			_ = nc.Publish("orders.created", []byte("x"))
-			_ = nc.Publish("other.ignored", []byte("y"))
-			time.Sleep(15 * time.Millisecond)
-		}
+		done <- sampleCoreLimited(ctx, nc, "orders.>", 400*time.Millisecond, maxCoreSubjects, true)
 	}()
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
+	require.NoError(t, nc.Flush())
+	for i := 0; i < 3; i++ {
+		require.NoError(t, nc.Publish("orders.created", []byte("x")))
+		require.NoError(t, nc.Publish("other.ignored", []byte("y")))
+	}
+	require.NoError(t, nc.Flush())
 
-	out := sampleCoreLimited(context.Background(), nc, "orders.>", 400*time.Millisecond, maxCoreSubjects, true)
-	require.Empty(t, out.Error)
-	require.GreaterOrEqual(t, out.Heard, 1)
-	assert.Zero(t, out.Dropped)
-	for _, s := range out.Subjects {
-		assert.Equal(t, "orders.created", s.Subject)
-		assert.Greater(t, s.Count, 0)
+	select {
+	case out := <-done:
+		require.Empty(t, out.Error)
+		assert.Equal(t, 1, out.Heard)
+		assert.Zero(t, out.Dropped)
+		assert.Equal(t, []CoreSubject{{Subject: "orders.created", Count: 3}}, out.Subjects)
+	case <-time.After(time.Second):
+		t.Fatal("sample did not finish")
 	}
 }
 
@@ -221,16 +228,22 @@ func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	require.True(t, first.Watching)
 	require.NotNil(t, h.read("id", ""))
 
-	require.NoError(t, pub.Publish("w.one", []byte("x")))
+	for i := 0; i < 3; i++ {
+		require.NoError(t, pub.Publish("w.one", []byte("x")))
+		require.NoError(t, pub.Publish("other.ignored", []byte("y")))
+	}
 	require.NoError(t, pub.Flush())
-	require.Eventually(t, func() bool {
-		return h.read("id", "").Heard >= 1
+	require.EventuallyWithT(t, func(c *assert.CollectT) {
+		out := h.read("id", "")
+		assert.Equal(c, 1, out.Heard)
+		assert.Equal(c, []CoreSubject{{Subject: "w.one", Count: 3}}, out.Subjects)
 	}, time.Second, 20*time.Millisecond)
 
 	got := watchSnapshot(t, h, "id", "w.>", cfg, true, "")
 	require.True(t, got.Watching)
-	assert.GreaterOrEqual(t, got.Heard, 1)
-	assert.Equal(t, "w.one", got.Subjects[0].Subject)
+	assert.Equal(t, 1, got.Heard)
+	assert.Equal(t, []CoreSubject{{Subject: "w.one", Count: 3}}, got.Subjects)
+	assert.Equal(t, 2, ns.NumClients())
 
 	h.stop("id")
 	assert.Nil(t, h.read("id", ""))

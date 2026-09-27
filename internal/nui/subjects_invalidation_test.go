@@ -44,64 +44,128 @@ func (r *pausedSubjectRepo) GetById(id string) (*connection.Connection, error) {
 	return cfg, err
 }
 
-func TestCoreWatchInvalidatesPendingConfig(t *testing.T) {
-	for _, change := range []string{"delete", "save"} {
-		t.Run(change, func(t *testing.T) {
-			oldServer := startTestNATS(t, nil)
-			newServer := startTestNATS(t, nil)
-			base := connection.NewMemConnRepo()
-			_, err := base.Save(&connection.Connection{Id: "id", Hosts: []string{oldServer.ClientURL()}})
-			require.NoError(t, err)
-			repo := &pausedSubjectRepo{ConnRepo: base, captured: make(chan struct{}), resume: make(chan struct{})}
-			app := NewServer("0", &Nui{ConnRepo: repo, ConnPool: subjectTestPool{}}, slog.New(slog.NewTextHandler(io.Discard, nil)), false)
-			defer app.coreWatches.close()
-			done := make(chan *http.Response, 1)
-			go func() {
-				response, _ := app.Test(httptest.NewRequest(http.MethodGet, "/api/connection/id/subjects/core?watch=true&filter=orders.%3E&session=card", nil), -1)
-				done <- response
-			}()
-			select {
-			case <-repo.captured:
-			case <-time.After(time.Second):
-				t.Fatal("watch did not read config")
-			}
-			var request *http.Request
-			if change == "delete" {
-				request = httptest.NewRequest(http.MethodDelete, "/api/connection/id", nil)
-			} else {
-				body, err := json.Marshal(connection.Connection{Hosts: []string{newServer.ClientURL()}})
+func TestCoreDiscoveryInvalidatesPendingConfig(t *testing.T) {
+	for _, mode := range []string{"watch", "sample"} {
+		for _, change := range []string{"delete", "save"} {
+			t.Run(mode+"/"+change, func(t *testing.T) {
+				oldServer := startTestNATS(t, nil)
+				newServer := startTestNATS(t, nil)
+				base := connection.NewMemConnRepo()
+				_, err := base.Save(&connection.Connection{Id: "id", Hosts: []string{oldServer.ClientURL()}})
 				require.NoError(t, err)
-				request = httptest.NewRequest(http.MethodPost, "/api/connection/id", strings.NewReader(string(body)))
-				request.Header.Set("Content-Type", "application/json")
-			}
-			response, err := app.Test(request, -1)
-			close(repo.resume)
-			require.NoError(t, err)
-			require.Equal(t, http.StatusOK, response.StatusCode)
-			response.Body.Close()
-			select {
-			case response = <-done:
-			case <-time.After(time.Second):
-				t.Fatal("invalidated watch did not finish")
-			}
-			require.NotNil(t, response)
-			defer response.Body.Close()
-			var catalog CoreCatalog
-			require.NoError(t, json.NewDecoder(response.Body).Decode(&catalog))
-			require.False(t, catalog.Watching)
-			require.Nil(t, app.coreWatches.read("id", "card"))
-			require.Eventually(t, func() bool { return oldServer.NumClients() == 0 }, time.Second, time.Millisecond)
-			if change == "save" {
-				response, err := app.Test(httptest.NewRequest(http.MethodGet, "/api/connection/id/subjects/core?watch=true&filter=orders.%3E&session=card", nil), -1)
+				repo := &pausedSubjectRepo{ConnRepo: base, captured: make(chan struct{}), resume: make(chan struct{})}
+				app := NewServer("0", &Nui{ConnRepo: repo, ConnPool: subjectTestPool{}}, slog.New(slog.NewTextHandler(io.Discard, nil)), false)
+				defer app.coreWatches.close()
+				path := "/api/connection/id/subjects/core?filter=orders.%3E&session=card&listen_ms=200"
+				if mode == "watch" {
+					path += "&watch=true"
+				}
+				done := make(chan *http.Response, 1)
+				go func() {
+					response, _ := app.Test(httptest.NewRequest(http.MethodGet, path, nil), -1)
+					done <- response
+				}()
+				select {
+				case <-repo.captured:
+				case <-time.After(time.Second):
+					t.Fatal("discovery did not read config")
+				}
+				var request *http.Request
+				if change == "delete" {
+					request = httptest.NewRequest(http.MethodDelete, "/api/connection/id", nil)
+				} else {
+					body, err := json.Marshal(connection.Connection{Hosts: []string{newServer.ClientURL()}})
+					require.NoError(t, err)
+					request = httptest.NewRequest(http.MethodPost, "/api/connection/id", strings.NewReader(string(body)))
+					request.Header.Set("Content-Type", "application/json")
+				}
+				response, err := app.Test(request, -1)
+				close(repo.resume)
 				require.NoError(t, err)
+				require.Equal(t, http.StatusOK, response.StatusCode)
+				response.Body.Close()
+				select {
+				case response = <-done:
+				case <-time.After(time.Second):
+					t.Fatal("invalidated discovery did not finish")
+				}
+				require.NotNil(t, response)
 				defer response.Body.Close()
+				var catalog CoreCatalog
 				require.NoError(t, json.NewDecoder(response.Body).Decode(&catalog))
-				require.True(t, catalog.Watching)
-				require.Equal(t, 0, oldServer.NumClients())
-				require.Equal(t, 1, newServer.NumClients())
-			}
-		})
+				require.False(t, catalog.Watching)
+				require.Nil(t, app.coreWatches.read("id", "card"))
+				oldStats, err := oldServer.Varz(nil)
+				require.NoError(t, err)
+				require.Zero(t, oldStats.TotalConnections, "invalidated discovery must not connect using old settings")
+				if mode == "sample" {
+					require.Equal(t, http.StatusUnprocessableEntity, response.StatusCode)
+					app.coreListens.mu.Lock()
+					slots := len(app.coreListens.byConn)
+					app.coreListens.mu.Unlock()
+					require.Zero(t, slots)
+				}
+				if change == "save" {
+					response, err := app.Test(httptest.NewRequest(http.MethodGet, path, nil), -1)
+					require.NoError(t, err)
+					defer response.Body.Close()
+					require.Equal(t, http.StatusOK, response.StatusCode)
+					require.NoError(t, json.NewDecoder(response.Body).Decode(&catalog))
+					require.Equal(t, mode == "watch", catalog.Watching)
+					require.Equal(t, 0, oldServer.NumClients())
+					newStats, err := newServer.Varz(nil)
+					require.NoError(t, err)
+					require.EqualValues(t, 1, newStats.TotalConnections)
+				}
+			})
+		}
 	}
+}
+
+func TestCoreWatchDetectsSilentConnectionLoss(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	proxy, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	defer proxy.Close()
+	var silent atomic.Bool
+	go func() {
+		client, err := proxy.Accept()
+		if err != nil {
+			return
+		}
+		defer client.Close()
+		upstream, err := net.Dial("tcp", ns.Addr().String())
+		if err != nil {
+			return
+		}
+		defer upstream.Close()
+		forward := func(dst, src net.Conn) {
+			defer dst.Close()
+			buffer := make([]byte, 4096)
+			for {
+				n, err := src.Read(buffer)
+				if err != nil {
+					return
+				}
+				if !silent.Load() {
+					if _, err := dst.Write(buffer[:n]); err != nil {
+						return
+					}
+				}
+			}
+		}
+		go forward(client, upstream)
+		forward(upstream, client)
+	}()
+	h := newCoreWatchHub()
+	defer h.close()
+	require.True(t, watchSnapshot(t, h, "id", "orders.>", &connection.Connection{Hosts: []string{proxy.Addr().String()}}, true, "card").Watching)
+	// Keep both sockets open but stop forwarding traffic, including PONGs.
+	silent.Store(true)
+	require.Eventually(t, func() bool {
+		out := h.read("id", "card")
+		return !out.Watching && out.Error != ""
+	}, 10*time.Second, 10*time.Millisecond)
 }
 
 func TestCoreListenReplacesStalledDial(t *testing.T) {
@@ -173,42 +237,49 @@ func TestCoreListenReplacesStalledDial(t *testing.T) {
 }
 
 func TestCoreListenGateReplacementWaitsForCleanup(t *testing.T) {
-	g := newCoreListenGate()
-	first, releaseFirst := g.takeover("id", context.Background())
-	defer releaseFirst()
-	second := make(chan context.Context, 1)
-	go func() {
-		ctx, release := g.takeover("id", context.Background())
-		defer release()
-		second <- ctx
-	}()
-	<-first.Done()
-	third := make(chan context.Context, 1)
-	finishThird := make(chan struct{})
-	go func() {
-		ctx, release := g.takeover("id", context.Background())
-		defer release()
-		third <- ctx
-		<-finishThird
-	}()
-	defer close(finishThird)
-	select {
-	case ctx := <-second:
-		require.ErrorIs(t, ctx.Err(), context.Canceled)
-	case <-time.After(time.Second):
-		t.Fatal("superseded waiter did not return")
-	}
-	select {
-	case <-third:
-		t.Fatal("newest sample bypassed cleanup of the first sample")
-	case <-time.After(50 * time.Millisecond):
-	}
-	releaseFirst()
-	select {
-	case ctx := <-third:
-		require.NoError(t, ctx.Err())
-	case <-time.After(time.Second):
-		t.Fatal("newest sample did not acquire the released slot")
+	for _, invalidate := range []string{"replace", "stop"} {
+		t.Run(invalidate, func(t *testing.T) {
+			g := newCoreListenGate()
+			first, releaseFirst := g.takeover("id", context.Background())
+			defer releaseFirst()
+			second := make(chan context.Context, 1)
+			go func() {
+				ctx, release := g.takeover("id", context.Background())
+				defer release()
+				second <- ctx
+			}()
+			<-first.Done()
+			if invalidate == "stop" {
+				g.stop("id")
+			}
+			third := make(chan context.Context, 1)
+			finishThird := make(chan struct{})
+			go func() {
+				ctx, release := g.takeover("id", context.Background())
+				defer release()
+				third <- ctx
+				<-finishThird
+			}()
+			defer close(finishThird)
+			select {
+			case ctx := <-second:
+				require.ErrorIs(t, ctx.Err(), context.Canceled)
+			case <-time.After(time.Second):
+				t.Fatal("superseded waiter did not return")
+			}
+			select {
+			case <-third:
+				t.Fatal("newest sample bypassed cleanup of the first sample")
+			case <-time.After(50 * time.Millisecond):
+			}
+			releaseFirst()
+			select {
+			case ctx := <-third:
+				require.NoError(t, ctx.Err())
+			case <-time.After(time.Second):
+				t.Fatal("newest sample did not acquire the released slot")
+			}
+		})
 	}
 }
 

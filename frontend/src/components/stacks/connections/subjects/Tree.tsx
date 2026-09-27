@@ -12,7 +12,7 @@ interface Props {
 	onSelect?: (node: SubjectNode) => void
 	empty?: string
 	occupied?: Record<string, OccupiedCatalog>
-	occupiedLoading?: string
+	occupiedLoading?: Record<string, symbol>
 	reveal?: boolean
 }
 
@@ -50,7 +50,7 @@ interface NodeProps {
 	select?: string
 	onSelect?: (node: SubjectNode) => void
 	occupied?: Record<string, OccupiedCatalog>
-	occupiedLoading?: string
+	occupiedLoading?: Record<string, symbol>
 	reveal: boolean
 	openPaths: Record<string, boolean>
 	setOpen: (path: string, open: boolean) => void
@@ -70,7 +70,7 @@ const TreeNode: FunctionComponent<NodeProps> = ({
 	const selected = !!node.hit && node.path == select
 	const key = occKeyFor(node)
 	const occ = key ? occupied?.[key] : undefined
-	const loadingOcc = !!key && occupiedLoading == key
+	const loadingOcc = !!key && !!occupiedLoading?.[key]
 	const loadedEmpty = !!node.hit?.expandable && !!occ && !occ.error && (occ.subjects?.length ?? 0) == 0 && !hasChildren
 	const canOpen = hasChildren || (!!node.hit?.expandable && !loadedEmpty)
 	const clsNode = `${cls.node} ${selected ? cls.selected : ""} ${node.remainder ? cls.remainder : ""}`

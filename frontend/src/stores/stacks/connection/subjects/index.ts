@@ -28,7 +28,7 @@ const setup = {
 		core: <CoreCatalog>null,
 		jetstream: <JetStreamCatalog>null,
 		occupied: <Record<string, OccupiedCatalog>>{},
-		occupiedLoading: <string>null,
+		occupiedLoading: <Record<string, symbol>>{},
 		listenHint: <string>null,
 		coreWatching: false,
 		coreAbort: <AbortController>null,
@@ -37,7 +37,6 @@ const setup = {
 		watchTask: <Promise<void>>null,
 		watchReading: false,
 		catalogGen: 0,
-		occupiedGen: 0,
 		messageGen: 0,
 
 		textSearch: <string>null,
@@ -110,8 +109,7 @@ const setup = {
 			}
 			store.setJetstream(catalog)
 			const loaded = store.state.occupied
-			store.state.occupiedGen++
-			store.setOccupiedLoading(null)
+			store.setOccupiedLoading({})
 			for (const stream of catalog.streams) {
 				for (const item of stream.subjects) {
 					if (gen != store.state.catalogGen) return
@@ -145,8 +143,7 @@ const setup = {
 				})
 				if (gen != store.state.watchGen) return
 				if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
-					store.setCoreWatching(false)
-					store.setCore({
+					store.applyWatchCatalog({
 						filter,
 						listenMs: 0,
 						heard: 0,
@@ -156,7 +153,7 @@ const setup = {
 					})
 					return
 				}
-				store.setCore(catalog)
+				store.applyWatchCatalog(catalog)
 			})
 			store.state.watchTask = task
 			await task
@@ -173,14 +170,15 @@ const setup = {
 					store, noError: true, loading: false,
 				})
 				if (gen != store.state.watchGen) return
-				if (!catalog?.watching || !Array.isArray(catalog.subjects)) {
-					store.setCoreWatching(false)
-				}
-				if (catalog && Array.isArray(catalog.subjects)) {
-					const filter = normalizeListenFilter(store.state.filter)
-					if (catalog.filter == filter || store.state.core?.filter != filter) store.setCore(catalog)
-				}
+				store.applyWatchCatalog(catalog)
 			} finally { store.state.watchReading = false }
+		},
+
+		applyWatchCatalog(catalog: CoreCatalog, store?: SubjectsStore) {
+			if (!catalog?.watching || !Array.isArray(catalog.subjects)) store.setCoreWatching(false)
+			if (!Array.isArray(catalog?.subjects)) return
+			const filter = normalizeListenFilter(store.state.filter)
+			if (catalog.filter == filter || store.state.core?.filter != filter) store.setCore(catalog)
 		},
 
 		async stopWatch(_: void, store?: SubjectsStore) {
@@ -249,8 +247,7 @@ const setup = {
 		async toggleNoSysMessages(_: void, store?: SubjectsStore) {
 			const gen = store.state.watchGen
 			store.setNoSysMessages(!store.state.noSysMessages)
-			store.state.occupiedGen++
-			store.setOccupiedLoading(null)
+			store.setOccupiedLoading({})
 			if (store.state.jetstreamEnabled) await store.fetchJetStream()
 			else store.setJetstream(null)
 			if (gen != store.state.watchGen || !store.state.coreEnabled) return
@@ -292,14 +289,14 @@ const setup = {
 			if (!stream) return
 			const pattern = stream.pattern || ">"
 			const key = occupiedKey(stream.name, pattern)
-			if ((!hit.refresh && store.state.occupied[key] && !store.state.occupied[key].error) || store.state.occupiedLoading == key) return
-			const gen = store.state.occupiedGen
-			store.setOccupiedLoading(key)
+			if ((!hit.refresh && store.state.occupied[key] && !store.state.occupied[key].error) || store.state.occupiedLoading[key]) return
+			const request = Symbol()
+			store.setOccupiedLoading({ ...store.state.occupiedLoading, [key]: request })
 			try {
 				const catalog = await subjectsApi.occupied(store.state.connectionId, stream.name, pattern, store.state.noSysMessages, {
 					store, noError: true, loading: false,
 				})
-				if (gen != store.state.occupiedGen) return
+				if (store.state.occupiedLoading[key] != request) return
 				if (!catalog || !Array.isArray(catalog.subjects)) {
 					store.setOccupied({
 						...store.state.occupied,
@@ -309,7 +306,11 @@ const setup = {
 				}
 				store.setOccupied({ ...store.state.occupied, [key]: catalog })
 			} finally {
-				if (store.state.occupiedLoading == key) store.setOccupiedLoading(null)
+				if (store.state.occupiedLoading[key] == request) {
+					const loading = { ...store.state.occupiedLoading }
+					delete loading[key]
+					store.setOccupiedLoading(loading)
+				}
 			}
 		},
 
@@ -337,7 +338,7 @@ const setup = {
 
 		disposeSubjects(_: void, store?: SubjectsStore) {
 			store.state.catalogGen++
-			store.state.occupiedGen++
+			store.setOccupiedLoading({})
 			store.state.messageGen++
 			store.fetchAbort()
 			store.stopWatch()
@@ -353,7 +354,7 @@ const setup = {
 		setCore: (core: CoreCatalog) => ({ core }),
 		setJetstream: (jetstream: JetStreamCatalog) => ({ jetstream }),
 		setOccupied: (occupied: Record<string, OccupiedCatalog>) => ({ occupied }),
-		setOccupiedLoading: (occupiedLoading: string) => ({ occupiedLoading }),
+		setOccupiedLoading: (occupiedLoading: Record<string, symbol>) => ({ occupiedLoading }),
 		setListenHint: (listenHint: string) => ({ listenHint }),
 		setCoreWatching: (coreWatching: boolean) => ({ coreWatching }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),

@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
-vi.mock("@priolo/jon", () => ({ mixStores: (...stores: any[]) => stores[stores.length - 1] }))
+import { createStore } from "@priolo/jon"
+
+// Use the same ESM entry as the application.
+vi.mock("@priolo/jon", () => import("@priolo/jon/dist/index.es.js"))
 
 vi.mock("@/stores/connections", () => ({ default: {} }))
 vi.mock("@/stores/docs/utils/factory", () => ({ buildMessageDetail: vi.fn() }))
@@ -18,9 +21,8 @@ function deferred<T>() {
 	return { promise, resolve: (value: T) => resolve(value) }
 }
 function store() {
-	const s: any = { state: { ...setup.state, connectionId: "connection", uuid: "card", occupied: {}, filter: "orders.>" }, _update: vi.fn(), fetchAbort: vi.fn() }
-	for (const [key, action] of Object.entries(setup.actions)) s[key] = (value?: unknown) => action(value as never, s)
-	for (const [key, mutator] of Object.entries(setup.mutators)) s[key] = (value: unknown) => Object.assign(s.state, mutator(value as never))
+	const s: any = createStore(setup)
+	s.state = { ...s.state, connectionId: "connection", uuid: "card", filter: "orders.>" }
 	return s
 }
 const catalog = { filter: "orders.>", listenMs: 0, heard: 1, truncated: false, subjects: [{ subject: "orders.created", count: 1 }], watching: true }
@@ -75,9 +77,8 @@ describe("SUBJECTS requests", () => {
 		expect(api.snapshot).toHaveBeenCalledOnce()
 	})
 
-	it.each([0, 5000])("manual refresh samples the typed name with pollingTime=%s", async pollingTime => {
+	it("manual refresh samples the typed name", async () => {
 		const s = store()
-		s.state.pollingTime = pollingTime
 		s.state.jetstreamEnabled = false
 		vi.mocked(api.core).mockResolvedValue({ ...catalog, watching: false })
 		await s.fetch()
@@ -138,25 +139,34 @@ describe("SUBJECTS requests", () => {
 		expect(api.watch).toHaveBeenCalledWith("connection", "orders.>", false, "card", expect.anything())
 	})
 
-	it("refresh samples the typed name without replacing a live listener", async () => {
+	it.each([
+		{ source: "watch", watching: true }, { source: "watch", watching: false },
+		{ source: "snapshot", watching: true }, { source: "snapshot", watching: false },
+	] as const)("keeps a newer sample when $source finishes with watching=$watching", async ({ source, watching }) => {
 		const s = store()
 		s.state.coreWatching = true
 		s.state.jetstreamEnabled = false
+		const pending = deferred<typeof catalog>()
+		vi.mocked(api[source]).mockReturnValue(pending.promise)
+		const listener = source == "watch" ? s.watchCore() : s.readWatch()
+		await Promise.resolve()
 		s.state.filter = "devices.>"
 		const sample = { ...catalog, filter: "devices.>", watching: false, subjects: [{ subject: "devices.room", count: 1 }] }
 		vi.mocked(api.core).mockResolvedValue(sample)
-		vi.mocked(api.snapshot).mockResolvedValue(catalog)
 		await s.fetch()
-		await s.readWatch()
+		pending.resolve({ ...catalog, watching })
+		await listener
 		expect(api.core).toHaveBeenCalledOnce()
-		expect(api.snapshot).toHaveBeenCalledOnce()
-		expect(api.watch).not.toHaveBeenCalled()
+		expect(api[source]).toHaveBeenCalledOnce()
 		expect(api.unwatch).not.toHaveBeenCalled()
-		expect(s.state.coreWatching).toBe(true)
+		expect(s.state.coreWatching).toBe(watching)
 		expect(flattenHits({ core: s.state.core, filter: s.state.filter, showCore: true, showJetStream: false }).map(h => h.subject)).toEqual(["devices.room"])
-		s.state.filter = "orders.>"
-		await s.readWatch()
-		expect(s.state.core).toEqual(catalog)
+		if (watching) {
+			s.state.filter = "orders.>"
+			vi.mocked(api.snapshot).mockResolvedValue(catalog)
+			await s.readWatch()
+			expect(s.state.core).toEqual(catalog)
+		}
 	})
 
 	it("refreshes message details when only metadata changed", async () => {
@@ -220,5 +230,41 @@ describe("SUBJECTS requests", () => {
 		vi.mocked(api.occupied).mockResolvedValue({ stream: "ORDERS", subjects: [{ subject: "orders.new", kind: "occupied" }] })
 		await s.fetchJetStream()
 		expect(s.state.occupied["ORDERS::orders.>"].subjects[0].subject).toBe("orders.new")
+	})
+
+	it("deduplicates each stored expansion while other names are loading", async () => {
+		const s = store()
+		const first = deferred<any>(), second = deferred<any>()
+		const hit = (name: string) => ({ subject: `${name}.>`, streams: [{ name, pattern: `${name}.>` }] })
+		vi.mocked(api.occupied).mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
+		const a = s.loadOccupied(hit("A")), b = s.loadOccupied(hit("B"))
+		await s.loadOccupied(hit("A"))
+		expect(api.occupied).toHaveBeenCalledTimes(2)
+		second.resolve({ stream: "B", subjects: [] })
+		await b
+		await s.loadOccupied(hit("A"))
+		expect(api.occupied).toHaveBeenCalledTimes(2)
+		first.resolve({ stream: "A", subjects: [{ subject: "A.one", count: 3 }] })
+		await a
+		expect(s.state.occupied["A::A.>"].subjects[0].count).toBe(3)
+	})
+
+	it.each(["old-first", "new-first"])("keeps only the current stored request after invalidation: %s", async order => {
+		const s = store()
+		s.state.jetstreamEnabled = false
+		const first = deferred<any>(), second = deferred<any>()
+		const hit = { subject: "orders.>", streams: [{ name: "ORDERS", pattern: "orders.>" }] }
+		const current = { stream: "ORDERS", subjects: [{ subject: "orders.new", count: 20 }] }
+		vi.mocked(api.occupied).mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
+		const oldRequest = s.loadOccupied(hit)
+		await s.toggleNoSysMessages()
+		const newRequest = s.loadOccupied(hit)
+		if (order == "new-first") { second.resolve(current); await newRequest }
+		first.resolve({ stream: "ORDERS", subjects: [{ subject: "orders.old", count: 10 }] })
+		await oldRequest
+		await s.loadOccupied(hit)
+		expect(api.occupied).toHaveBeenCalledTimes(2)
+		if (order == "old-first") { second.resolve(current); await newRequest }
+		expect(s.state.occupied["ORDERS::orders.>"]).toEqual(current)
 	})
 })
