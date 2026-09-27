@@ -13,11 +13,10 @@ interface Props {
 	empty?: string
 	occupied?: Record<string, OccupiedCatalog>
 	occupiedLoading?: Record<string, symbol>
-	reveal?: boolean
 }
 
 const SubjectTree: FunctionComponent<Props> = ({
-	nodes, select, onSelect, empty, occupied, occupiedLoading, reveal,
+	nodes, select, onSelect, empty, occupied, occupiedLoading,
 }) => {
 	const [openPaths, setOpenPaths] = useState<Record<string, boolean>>({})
 	if (!nodes || nodes.length == 0) {
@@ -35,7 +34,6 @@ const SubjectTree: FunctionComponent<Props> = ({
 				onSelect={onSelect}
 				occupied={occupied}
 				occupiedLoading={occupiedLoading}
-				reveal={!!reveal}
 				openPaths={openPaths}
 				setOpen={setOpen}
 			/>
@@ -51,7 +49,6 @@ interface NodeProps {
 	onSelect?: (node: SubjectNode) => void
 	occupied?: Record<string, OccupiedCatalog>
 	occupiedLoading?: Record<string, symbol>
-	reveal: boolean
 	openPaths: Record<string, boolean>
 	setOpen: (path: string, open: boolean) => void
 }
@@ -63,10 +60,10 @@ function occKeyFor(node: SubjectNode): string | null {
 }
 
 const TreeNode: FunctionComponent<NodeProps> = ({
-	node, select, onSelect, occupied, occupiedLoading, reveal, openPaths, setOpen,
+	node, select, onSelect, occupied, occupiedLoading, openPaths, setOpen,
 }) => {
 	const hasChildren = node.children.length > 0
-	const open = reveal || openPaths[node.path] === true
+	const open = openPaths[node.path] === true
 	const selected = !!node.hit && node.path == select
 	const key = occKeyFor(node)
 	const occ = key ? occupied?.[key] : undefined
@@ -85,11 +82,11 @@ const TreeNode: FunctionComponent<NodeProps> = ({
 	const expand = () => {
 		if (!canOpen) return
 		if (node.hit?.expandable && (!occ || occ.error) && !loadingOcc) {
-			if (!reveal) setOpen(node.path, true)
+			setOpen(node.path, true)
 			onSelect?.(node)
 			return
 		}
-		if (!reveal) setOpen(node.path, !open)
+		setOpen(node.path, !open)
 	}
 	const activate = () => {
 		if (node.remainder) return
@@ -100,18 +97,18 @@ const TreeNode: FunctionComponent<NodeProps> = ({
 
 	return (
 		<div>
-			<div className={`${clsNode} jack-hover-container`} onClick={activate} title={title}
-				role="button" tabIndex={node.remainder ? -1 : 0} aria-expanded={canOpen ? open : undefined}
-				onKeyDown={e => { if (e.key == "Enter" || e.key == " ") { e.preventDefault(); activate() } }}>
+			<div className={`${clsNode} jack-hover-container`} onClick={node.remainder ? undefined : e => { if (!e.defaultPrevented) activate() }} title={title}
+				role={node.remainder ? undefined : "button"} tabIndex={node.remainder ? undefined : 0} aria-expanded={canOpen ? open : undefined}
+				onKeyDown={node.remainder ? undefined : e => { if (e.key == "Enter" || e.key == " ") { e.preventDefault(); activate() } }}>
 				<div className={cls.twist} role={canOpen ? "button" : undefined} tabIndex={canOpen ? 0 : undefined}
 					aria-label={canOpen ? `${open ? "Collapse" : "Expand"} ${node.path}` : undefined}
-					onClick={e => { e.stopPropagation(); expand() }}
-					onKeyDown={e => { e.stopPropagation(); if (e.key == "Enter" || e.key == " ") { e.preventDefault(); expand() } }}>
+					onClick={e => { e.preventDefault(); expand() }}
+					onKeyDown={e => { if (e.key == "Enter" || e.key == " ") { e.stopPropagation(); e.preventDefault(); expand() } }}>
 					{canOpen ? (open ? "▾" : "▸") : ""}
 				</div>
 				<div className={cls.segment}>{node.segment}</div>
 				<div className={cls.meta}>
-					{copyValue && <span onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}><CopyButton absolute value={copyValue} label="COPY SUBJECT" /></span>}
+					{copyValue && <span onClick={e => e.stopPropagation()} onKeyDown={e => { if (e.key == "Enter" || e.key == " ") e.stopPropagation() }}><CopyButton absolute value={copyValue} label="COPY SUBJECT" /></span>}
 					{chip && <span className={`${cls.chip} ${chip.kind == "live" ? cls.core : cls.js}`} title={chip.title}>{chip.label}</span>}
 					{loadingOcc && <span className={cls.count}>loading</span>}
 					{loadedEmpty && <span className={cls.count}>none stored</span>}
@@ -130,7 +127,6 @@ const TreeNode: FunctionComponent<NodeProps> = ({
 							onSelect={onSelect}
 							occupied={occupied}
 							occupiedLoading={occupiedLoading}
-							reveal={reveal}
 							openPaths={openPaths}
 							setOpen={setOpen}
 						/>

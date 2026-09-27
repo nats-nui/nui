@@ -152,7 +152,6 @@ const SubjectsView: FunctionComponent<Props> = ({
 						empty={empty}
 						occupied={subjectsSa.occupied}
 						occupiedLoading={subjectsSa.occupiedLoading}
-						reveal={!!subjectsSa.textSearch?.trim()}
 					/>
 				</div>
 			}

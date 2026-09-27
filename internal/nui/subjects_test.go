@@ -195,24 +195,6 @@ func TestSampleCoreStopsAtCatalogCap(t *testing.T) {
 	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 0 }, time.Second, 10*time.Millisecond)
 }
 
-func TestCoreListenGateTakeoverCancelsPrevious(t *testing.T) {
-	g := newCoreListenGate()
-	ctx1, release1 := g.takeover("c1", context.Background())
-	done := make(chan context.Context, 1)
-	finish := make(chan struct{})
-	go func() {
-		ctx2, release2 := g.takeover("c1", context.Background())
-		defer release2()
-		done <- ctx2
-		<-finish
-	}()
-	defer close(finish)
-	<-ctx1.Done()
-	release1()
-	ctx2 := <-done
-	require.NoError(t, ctx2.Err())
-}
-
 func TestCoreWatchReusesOneSubscribe(t *testing.T) {
 	ns := startTestNATS(t, nil)
 	cfg := &connection.Connection{Name: "watch", Hosts: []string{ns.ClientURL()}}

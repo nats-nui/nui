@@ -53,8 +53,16 @@ export function flattenHits(opts: {
 				})
 			}
 		}
+		const parents = new Map<string, SubjectHit>()
+		for (const hit of bySubject.values()) {
+			if (!hit.expandable) continue
+			for (const stream of hit.streams) {
+				const key = occupiedKey(stream.name, stream.pattern)
+				if (!parents.has(key)) parents.set(key, hit)
+			}
+		}
 		for (const [key, occ] of Object.entries(opts.occupied ?? {})) {
-			const parent = Array.from(bySubject.values()).find(hit => hit.expandable && hit.streams.some(s => occupiedKey(s.name, s.pattern) == key))
+			const parent = parents.get(key)
 			for (const item of occ.subjects ?? []) {
 				const hit = ensure(item.subject)
 				if (hit.expandable) continue

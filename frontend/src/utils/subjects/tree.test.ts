@@ -78,6 +78,7 @@ describe("flattenHits", () => {
 		expect(key?.streams[0].kind).toBe("kv")
 		expect(key?.kind).toBe("occupied")
 		expect(key?.expandable).toBeFalsy()
+		expect(key?.parent).toBe("$KV.shop")
 	})
 
 	it("hides a source when its toggle is off without refetching", () => {
