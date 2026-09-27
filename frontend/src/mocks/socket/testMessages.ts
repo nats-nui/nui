@@ -1,3 +1,4 @@
+import { CBOR } from "@cbortech/cbor";
 import jsonData from "./jsonData.js";
 
 
@@ -10,14 +11,22 @@ function getJsonData(index: number): string {
 	return JSON.stringify(jsonData[index % jsonData.length]);
 }
 
+/** JSON UTF-8 by default; CBOR bytes when the subject is `fido` (for CborRow). */
+function payloadFor(subject: string, index: number): string {
+	const json: string = getJsonData(index);
+	if (subject === "fido") {
+		return Buffer.from(CBOR.compile(json)).toString("base64");
+	}
+	return Buffer.from(json, "utf8").toString("base64");
+}
+
 export function generateTestMessages(subjects: string[]): TestMessage {
 	const subject: string = subjects[messagesSend % subjects.length];
 	let msg: TestMessage = null;
 
 	// è connesso e quindi manda il messaggio
 	if (messagesSend < numMsg) {
-		const json: string = getJsonData(messagesSend);
-		const payload: string = Buffer.from(json, "utf8").toString("base64");
+		const payload: string = payloadFor(subject, messagesSend);
 		msg = {
 			type: "nats_msg",
 			payload: {

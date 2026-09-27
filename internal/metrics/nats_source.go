@@ -82,7 +82,7 @@ func makeAdminConn(conn *connection.Connection) connection.Connection {
 		InboxPrefix:   "",
 		Subscriptions: nil,
 		Auth:          []connection.Auth{conn.Metrics.NatsSource.Auth},
-		TLSAuth:       connection.TLSAuth{},
+		TLSAuth:       conn.TLSAuth,
 		Metrics:       connection.Metrics{},
 		Metadata:      nil,
 	}

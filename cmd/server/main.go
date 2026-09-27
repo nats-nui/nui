@@ -24,6 +24,7 @@ func main() {
 	logOutput := flag.String("log-output", "", "log output")
 	dbPath := flag.String("db-path", ":memory:", "path to the database")
 	protoSchemasPath := flag.String("proto-schemas-path", "./protoschemas/default", "path to the protobuf schemas directory")
+	cddlSchemasPath := flag.String("cddl-schemas-path", "./cddlschemas/default", "path to the CDDL schemas directory")
 	cliContextsStr := flag.String("nats-cli-contexts", "./clicontexts", "path to the CLI contexts dirs to load at startup. Multiple paths can be separated by a comma.")
 
 	flag.Parse()
@@ -40,6 +41,7 @@ func main() {
 		app.WithVersion(Version),
 		app.WithDb(*dbPath),
 		app.WithProtoSchemasPath(*protoSchemasPath),
+		app.WithCddlSchemasPath(*cddlSchemasPath),
 		app.WithLogger(logger),
 		app.WithNatsCliContexts(clicontext.SanitizePaths(*cliContextsStr)),
 	)

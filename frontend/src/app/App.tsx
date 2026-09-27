@@ -2,8 +2,9 @@
 import MainMenu from "@/app/mainMenu/MainMenu"
 import docsSo from "@/stores/docs"
 import { ProtobufSchemaProvider } from "@/contexts/ProtobufSchemaContext"
+import cddlSo from "@/stores/cddl"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import cls from "./App.module.css"
 import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
@@ -20,6 +21,9 @@ const App: FunctionComponent = () => {
 	useStore(layoutSo)
 
 	// HOOKS
+	useEffect(() => {
+		cddlSo.load()
+	}, [])
 
 	// HANDLERS
 
@@ -41,7 +45,7 @@ const App: FunctionComponent = () => {
 
 				<DragCmp />
 				<TooltipCmp />
-			</div>
+				</div>
 		</ProtobufSchemaProvider>
 	)
 }

@@ -1,0 +1,6 @@
+; Simple product schema for CBOR / CDDL tests
+product = {
+  id: int,
+  name: tstr,
+  price: float64,
+}

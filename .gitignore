@@ -26,7 +26,13 @@ go.work
 db
 db_bak
 credentials
-tests/certs_insecure/*
+# Insecure TLS certs for tests: track only the dedicated set, ignore anything else.
+tests/certs_insecure/**
+!tests/certs_insecure/tests-ca.pem
+!tests/certs_insecure/tests-server-cert.pem
+!tests/certs_insecure/tests-server-key.pem
+!tests/certs_insecure/tests-client-cert.pem
+!tests/certs_insecure/tests-client-key.pem
 build/*
 !build/.gitkeep
 !build/appicon.png
@@ -35,3 +41,5 @@ cmd/test
 
 protoschemas/*
 !protoschemas/.gitkeep
+cddlschemas/*
+!cddlschemas/.gitkeep
