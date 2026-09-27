@@ -87,18 +87,24 @@ func TestCoreWatchStopDuringDial(t *testing.T) {
 }
 
 func TestCoreWatchOwnership(t *testing.T) {
-	ns := startTestNATS(t, nil)
-	cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}}
-	h := newCoreWatchHub()
-	defer h.close()
-	require.True(t, watchSnapshot(t, h, "id", "orders.>", cfg, true, "first").Watching)
-	require.True(t, watchSnapshot(t, h, "id", "other.>", cfg, true, "second").Watching)
-	h.stopSession("id", "first")
-	require.Nil(t, h.read("id", "first"))
-	require.True(t, h.read("id", "second").Watching)
-	h.close()
-	require.False(t, watchSnapshot(t, h, "id", ">", cfg, true, "second").Watching)
-	require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)
+	for _, filter := range []string{"orders.>", "other.>"} {
+		t.Run(filter, func(t *testing.T) {
+			ns := startTestNATS(t, nil)
+			cfg := &connection.Connection{Hosts: []string{ns.ClientURL()}}
+			h := newCoreWatchHub()
+			defer h.close()
+			require.True(t, watchSnapshot(t, h, "id", "orders.>", cfg, true, "first").Watching)
+			require.True(t, watchSnapshot(t, h, "id", filter, cfg, true, "second").Watching)
+			h.stopSession("id", "first")
+			require.Nil(t, h.read("id", "first"))
+			current := h.read("id", "second")
+			require.NotNil(t, current)
+			require.True(t, current.Watching)
+			h.close()
+			require.False(t, watchSnapshot(t, h, "id", ">", cfg, true, "second").Watching)
+			require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)
+		})
+	}
 }
 
 func TestCoreWatchPermissionAndDisconnect(t *testing.T) {

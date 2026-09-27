@@ -4,6 +4,8 @@ The SUBJECTS card lists JetStream capture patterns and Core subjects observed du
 
 Refresh samples the typed filter and reloads the JetStream catalog. LISTEN starts a live subscription; ALL selects `>`. An empty filter does not subscribe. Live snapshots update once per second without starting another subscription. FILTERS hides `$SYS`, `$JS`, and `_INBOX` by default; `$KV` and `$O` remain visible.
 
+Only one live listener can run per saved connection. Starting one in another SUBJECTS card replaces the first card's listener.
+
 ### JetStream catalog
 
 ```
