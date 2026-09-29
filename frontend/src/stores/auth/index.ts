@@ -1,4 +1,4 @@
-import { StoreCore, createStore } from "@priolo/jon"
+import { StoreCore, StoreOf, createStore } from "@priolo/jon"
 
 
 const setup = {
@@ -16,12 +16,6 @@ const setup = {
 	},
 }
 
-export type AuthState = typeof setup.state
-export type AuthGetters = typeof setup.getters
-export type AuthActions = typeof setup.actions
-export type AuthMutators = typeof setup.mutators
-export interface AuthStore extends StoreCore<AuthState>, AuthGetters, AuthActions, AuthMutators {
-	state: AuthState
-}
+interface AuthStore extends StoreOf<typeof setup> {}
 const store = createStore(setup) as AuthStore
 export default store

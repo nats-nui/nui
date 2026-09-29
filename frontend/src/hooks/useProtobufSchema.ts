@@ -23,6 +23,7 @@ interface UseProtobufSchemaReturn {
   setSelectedSchemaId: (id: string) => void
   setSelectedMessageType: (type: string) => void
   setShowSchemaControls: (show: boolean) => void
+  refreshSchemas: () => Promise<void>
   autoDetectMessageType: () => Promise<void>
   resetSelection: () => void
   cacheStats?: { nodes: number, terminals: number, patterns: number }
@@ -38,7 +39,7 @@ function getTopicCache(): ProtobufTopicCache {
 }
 
 export function useProtobufSchema(binaryData?: string, subject?: string): UseProtobufSchemaReturn {
-  const { schemas, isLoading: isLoadingSchemas } = useProtobufSchemas()
+  const { schemas, isLoading: isLoadingSchemas, refreshSchemas } = useProtobufSchemas()
   
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>("")
   const [selectedMessageType, setSelectedMessageType] = useState<string>("")
@@ -207,6 +208,7 @@ export function useProtobufSchema(binaryData?: string, subject?: string): UsePro
     setSelectedSchemaId,
     setSelectedMessageType,
     setShowSchemaControls,
+    refreshSchemas,
     autoDetectMessageType,
     resetSelection,
   }

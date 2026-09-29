@@ -1,5 +1,5 @@
-import { cardsSetup, CardsState, CardsStore } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { cardsSetup } from "@priolo/jack"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { delay } from "../../utils/time"
 
 
@@ -29,12 +29,6 @@ const setup = {
 		setWidth: (width: number) => ({ width }),
 	},
 }
-export type DrawerState = typeof setup.state & CardsState
-type DrawerMutators = typeof setup.mutators
-type DrawerGetters = typeof setup.getters
-type DrawerActions = typeof setup.actions
-export interface DrawerStore extends CardsStore, DrawerGetters, DrawerMutators, DrawerActions { state: DrawerState }
 
 export const setupDrawer = mixStores(cardsSetup, setup)
-
-
+export interface DrawerStore extends StoreOf<typeof setupDrawer> {}

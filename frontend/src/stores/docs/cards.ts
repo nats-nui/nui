@@ -1,6 +1,6 @@
-import { cardsSetup, CardsStore, docsSo } from "@priolo/jack"
+import { cardsSetup, docsSo } from "@priolo/jack"
 import { createStore, mixStores } from "@priolo/jon"
-import { DrawerStore, setupDrawer } from "./drawer"
+import { setupDrawer } from "./drawer"
 
 
 
@@ -10,8 +10,8 @@ export const DECK_INDEX = {
 }
 
 // creo il DECK
-export const deckCardsSo = createStore(cardsSetup) as CardsStore
+export const deckCardsSo = createStore(cardsSetup)
 // creo il DRAWER
-export const drawerCardsSo = createStore(mixStores(cardsSetup, setupDrawer)) as DrawerStore
+export const drawerCardsSo = createStore(mixStores(cardsSetup, setupDrawer)) 
 // creo la lista dei DECK a disposizione
 docsSo.setAllDeck([deckCardsSo, drawerCardsSo])

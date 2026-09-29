@@ -63,20 +63,21 @@ export function createUnifiedProtoRoot(schemas: ProtoSchema[]): Root {
   // Load all schemas into the root
   try {
     schemas.forEach(schema => {
-      if (!schema.content.trim().startsWith('{')) {
-        try {
-          const parsed = parse(schema.content, { keepCase: true })
-          if (parsed.root && parsed.root.nested) {
-            // Merge the parsed content into our unified root
-            Object.keys(parsed.root.nested).forEach(key => {
-              if (parsed.root.nested[key]) {
-                root.add(parsed.root.nested[key])
-              }
-            })
-          }
-        } catch (parseError) {
-          console.warn(`Failed to parse schema ${schema.name}:`, parseError.message || parseError)
+      try {
+        const parsedRoot = schema.content.trim().startsWith('{')
+          ? Root.fromJSON(JSON.parse(schema.content))
+          : parse(schema.content, { keepCase: true }).root
+
+        if (parsedRoot?.nested) {
+          // Merge the parsed content into our unified root
+          Object.keys(parsedRoot.nested).forEach(key => {
+            if (parsedRoot.nested[key]) {
+              root.add(parsedRoot.nested[key])
+            }
+          })
         }
+      } catch (parseError) {
+        console.warn(`Failed to parse schema ${schema.name}:`, parseError instanceof Error ? parseError.message : parseError)
       }
     })
     

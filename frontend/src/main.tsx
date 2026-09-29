@@ -21,7 +21,7 @@ import './css/index.css';
 import './css/layout.css';
 import './css/scrollbar.css';
 import './css/monaco.css';
-import "@priolo/jack/dist/jack.css";
+import "@priolo/jack/style.css";
 import './css/label.css';
 
 (globalThis as any).MonacoEnvironment = {

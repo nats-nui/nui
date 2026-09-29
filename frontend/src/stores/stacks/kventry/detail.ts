@@ -1,16 +1,16 @@
 import kventryApi from "@/api/kventries"
-import { utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
-import { mixStores } from "@priolo/jon"
+import { utils } from "@priolo/jack"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { KVEntriesState, KVEntriesStore } from "."
 import { toCborNotation } from "../../../utils/cbor"
 import { MSG_FORMAT, toEditorText, toPayload } from "../../../utils/editor"
-import editorSetup, { EditorState, EditorStore } from "../editorBase"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import editorSetup from "../editorBase"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 
 
 
@@ -184,12 +184,7 @@ const setup = {
 	},
 }
 
-export type KVEntryState = typeof setup.state & ViewState & LoadBaseState & EditorState
-export type KVEntryGetters = typeof setup.getters
-export type KVEntryActions = typeof setup.actions
-export type KVEntryMutators = typeof setup.mutators
-export interface KVEntryStore extends ViewStore, LoadBaseStore, EditorStore, KVEntryGetters, KVEntryActions, KVEntryMutators {
-	state: KVEntryState
-}
 const kventrySetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)
+export interface KVEntryStore extends StoreOf<typeof kventrySetup> {}
+export type KVEntryState = KVEntryStore["state"]
 export default kventrySetup

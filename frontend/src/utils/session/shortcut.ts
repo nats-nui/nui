@@ -1,5 +1,6 @@
 import { docsSo, FIXED_CARD, focusSo, utils } from "@priolo/jack"
 import { deckCardsSo, drawerCardsSo } from "../../stores/docs/cards"
+import { fixedViews } from "@/stores/docs"
 
 
 
@@ -16,7 +17,7 @@ export function shortcutStart() {
 
 			// OPEN CARD CONNECTIONS
 			case 'KeyC': {
-				const view = docsSo.state.fixedViews[FIXED_CARD.CONNECTIONS]
+				const view = fixedViews[FIXED_CARD.CONNECTIONS]
 				deckCardsSo.add({ view, anim: true }).then(() => focusSo.focus(view))
 				break
 			}
