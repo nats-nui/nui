@@ -1,0 +1,28 @@
+/*
+ * CONTRATTO tra card e temi.
+ * Ogni tema ridefinisce queste variabili sotto [data-theme="<nome>"].
+ * I valori qui sono il fallback se un tema ne dimentica qualcuna.
+ */
+:root {
+	/* colori base delle card */
+	--theme-card-fg: #dedede;
+	--theme-card-bg: #3E3E3E;
+	/* testo sopra un colore di accento */
+	--theme-on-accent: #393939;
+	/* ombra perimetrale inputtext button */
+	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* accento per ruolo (vedi CardAccent in index.ts) */
+	--accent-streams: #EBFB35;
+	--accent-messages: #10F3F3;
+	--accent-buckets: #6AFFAB;
+	--accent-connections: #BBFB35;
+	--accent-consumers: #F374E6;
+	--accent-metrics: #9E7CF5;
+	--accent-neutral: #DEDEDE;
+
+	/* sfondo dell'app */
+	--app-bg-color: #000;
+	--app-bg-image: none;
+	--app-bg-blend: normal;
+}

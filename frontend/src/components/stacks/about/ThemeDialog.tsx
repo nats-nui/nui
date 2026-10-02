@@ -1,5 +1,6 @@
 import BigEyeIcon from "@/icons/BigEyeIcon"
-import layoutSo, { THEMES } from "@/stores/layout"
+import layoutSo from "@/stores/layout"
+import { THEMES } from "@/themes"
 import { AboutStore } from "@/stores/stacks/about"
 import { ElementDialog, List } from "@priolo/jack"
 import { useStore } from "@priolo/jon"

@@ -11,9 +11,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import SyncIcon from "../../../icons/SyncIcon"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import clsCardRedeye from "../CardCyanDef.module.css"
-import clsCardBoring from "../CardBoringDef.module.css"
-import layoutSo from "@/stores/layout"
+import { cardCls } from "@/themes"
 import cls from "./View.module.css"
 import { Button, CircularLoadingCmp, EditList, FloatButton, IconButton, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 import OptionsDialog from "@/components/stacks/sync/OptionsDialog.tsx";
@@ -30,7 +28,6 @@ const SyncView: FunctionComponent<Props> = ({
 
 	// STORE
 	const syncSa = useStore(syncSo)
-	useStore(layoutSo)
 	const refSender = useRef(null)
 	const refReceiver = useRef(null)
 
@@ -63,10 +60,9 @@ const SyncView: FunctionComponent<Props> = ({
 	const inLoading = syncSa.loadingState == LOAD_STATE.LOADING
 	const noHeaders = !syncSa.headersReceived || Object.keys(syncSa.headersReceived).length == 0
 	const headersTitle = noHeaders ? "WITHOUT HEADERS" : "HEADERS"
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("messages")}
 		icon={<SyncIcon />}
 		store={syncSo}
 		actionsRender={<>

@@ -10,9 +10,7 @@ import { compactByte, compactNumber, nsToValue, TIME } from "@/utils/conversion"
 import { MESSAGE_TYPE, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
-import clsCardRedeye from "../../CardPurple.module.css"
-import clsCardBoring from "../../CardBoringDef.module.css"
-import layoutSo from "@/stores/layout"
+import { cardCls } from "@/themes"
 import MetricClientIcon from "@/icons/cards/MetricClientIcon"
 
 
@@ -31,7 +29,6 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	useStore(store.state.group)
 	useStore(metricsSo)
 	useStore(store)
-	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -81,10 +78,9 @@ const CnnMetricsView: FunctionComponent<Props> = ({
 	const maxControlLine = compactByte(varz?.max_control_line)
 
 	const slowConsumers = compactNumber(varz?.slow_consumers)
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("metrics", true)}
 		icon={<MetricsIcon />}
 		store={store}
 		iconizedRender={

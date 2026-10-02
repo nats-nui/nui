@@ -1,0 +1,23 @@
+[data-theme="zero"] {
+	--theme-card-fg: #dedede;
+	--theme-card-bg: #222222;
+	--theme-on-accent: #393939;
+	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
+
+	--accent-streams: #ffc107;
+	--accent-messages: #ffc107;
+	--accent-buckets: #ffc107;
+	--accent-connections: #ffc107;
+	--accent-consumers: #ffc107;
+	--accent-metrics: #ffc107;
+	--accent-neutral: #ffc107;
+
+	--app-bg-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="zero"] .card {
+	border-radius: 15px;
+}
+[data-theme="zero"] .card.jack-framework-linked {
+	border-radius: 5px 15px 15px 5px;
+}

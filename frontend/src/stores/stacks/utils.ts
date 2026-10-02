@@ -19,7 +19,7 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 		case DOC_TYPE.CLIENT_METRICS:
 		case DOC_TYPE.CONNECTIONS:
 		case DOC_TYPE.CONNECTION:
-			return { fg: "#393939", bg: "#BBFB35" }
+			return { fg: "#393939", bg: "var(--accent-connections)" }
 		case DOC_TYPE.BUCKET:
 		case DOC_TYPE.BUCKETS:
 		case DOC_TYPE.KVENTRIES:
@@ -34,6 +34,6 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 		case DOC_TYPE.STREAM:
 		case DOC_TYPE.STREAMS:
 		case DOC_TYPE.STREAM_MESSAGES:
-			return { fg: "#393939", bg: "#EBFB35" }
+			return { fg: "#393939", bg: "var(--accent-streams)" }
 	}
 }

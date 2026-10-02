@@ -10,7 +10,6 @@ import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
 import ZenCard from "./ZenCard"
 import { TooltipCmp, DragCmp } from "@priolo/jack"
-import layoutSo from "@/stores/layout"
 
 
 
@@ -18,7 +17,6 @@ const App: FunctionComponent = () => {
 
 	// STORES
 	const docsSa = useStore(docsSo)
-	useStore(layoutSo)
 
 	// HOOKS
 	useEffect(() => {
@@ -32,7 +30,7 @@ const App: FunctionComponent = () => {
 
 	return (
 		<ProtobufSchemaProvider>
-			<div className={`${cls.root} ${cls[layoutSo.state.theme]}`}>
+			<div className={cls.root}>
 
 				<ZenCard />
 

@@ -3,15 +3,9 @@
 	height: 100%;
 	display: flex;
 	color: var(--text);
-}
-.root.redeye {
-	background-image: url(./../assets/bg4.jpg);
-	background-color: rgba(0, 0, 0, 0.8);
-	background-blend-mode: darken;
-}
-.root.boring {
-	--color-primary-bg: #96a6eb;
-	background-color: #02131c;
+	background-color: var(--app-bg-color);
+	background-image: var(--app-bg-image);
+	background-blend-mode: var(--app-bg-blend);
 }
 
 .content {

@@ -7,7 +7,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import MessageIcon from "../../../icons/cards/MessageIcon"
 import FormatDialog from "../../editor/FormatDialog"
-import clsCard from "../CardCyanDef.module.css"
+import { cardCls } from "@/themes"
 import HeadersCmp from "./HeadersCmp"
 import cls from "./View.module.css"
 import { CopyButton, IconButton, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
@@ -45,7 +45,7 @@ const MessageView: FunctionComponent<Props> = ({
 	const linkToLast = haveParent && msgSo.state.linkToLast
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("messages")}
 		icon={<MessageIcon />}
 		store={msgSo}
 		actionsRender={<>

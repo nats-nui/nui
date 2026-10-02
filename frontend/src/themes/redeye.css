@@ -1,0 +1,18 @@
+[data-theme="redeye"] {
+	--theme-card-fg: #dedede;
+	--theme-card-bg: #3E3E3E;
+	--theme-on-accent: #393939;
+	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
+
+	--accent-streams: #EBFB35;
+	--accent-messages: #10F3F3;
+	--accent-buckets: #6AFFAB;
+	--accent-connections: #BBFB35;
+	--accent-consumers: #F374E6;
+	--accent-metrics: #9E7CF5;
+	--accent-neutral: #DEDEDE;
+
+	--app-bg-color: rgba(0, 0, 0, 0.8);
+	--app-bg-image: url(../assets/bg4.jpg);
+	--app-bg-blend: darken;
+}

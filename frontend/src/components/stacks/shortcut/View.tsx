@@ -3,7 +3,7 @@ import { TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import { ShortcutStore } from "../../../stores/stacks/shortcut"
-import clsCard from "../CardWhiteDef.module.css"
+import { cardCls } from "@/themes"
 import cls from "./View.module.css"
 import ShortcutIcon from "@/assets/Shortcut.svg"
 
@@ -26,7 +26,7 @@ const ShortcutView: FunctionComponent<Props> = ({
 
 	// RENDER
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("neutral")}
 		icon={<div style={{ fontSize: 16, fontWeight: 700 }}>?</div>}
 		store={store}
 	>

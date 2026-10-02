@@ -4,7 +4,7 @@ import { HelpStore } from "@/stores/stacks/help"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import cls from "./View.module.css"
-import clsCard from "../CardWhiteDef.module.css"
+import { cardCls } from "@/themes"
 import HelpIcon from "../../../icons/HelpIcon"
 
 
@@ -29,7 +29,7 @@ const HelpView: FunctionComponent<Props> = ({
 	// RENDER
 	return <FrameworkCard
 		icon={<HelpIcon />}
-		className={clsCard.root}
+		className={cardCls("neutral")}
 		store={helpSo}
 	>
 		<div className={cls.root}>

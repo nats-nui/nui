@@ -11,7 +11,7 @@ import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
 import '@fontsource/darker-grotesque/800.css';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/inter/index.css';
 
 import './css/index.css';
 //import './css/colors.css';
@@ -22,6 +22,7 @@ import './css/layout.css';
 import './css/scrollbar.css';
 import './css/monaco.css';
 import "@priolo/jack/style.css";
+import "@/themes";
 import './css/label.css';
 
 (globalThis as any).MonacoEnvironment = {

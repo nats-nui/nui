@@ -10,16 +10,14 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import MessageIcon from "../../../../icons/cards/MessageIcon"
 import FormatDialog from "../../../editor/FormatDialog"
-import clsCardRedeye from "../../CardCyanDef.module.css"
-import clsCardBoring from "../../CardBoringDef.module.css"
 import MessagesList from "../../messages/MessagesList"
 import FilterDialog from "./FilterDialog"
 import { AlertDialog, Button, CircularLoadingCmp, FindInputHeader, OptionsCmp } from "@priolo/jack"
 import { MessageStore } from "../../../../stores/stacks/message"
 import { DOC_TYPE } from "../../../../types"
 import { getStreamFormat } from "@/utils/streamFormatCache"
-import layoutSo from "@/stores/layout"
 import { EditorStore } from "@/stores/stacks/editorBase"
+import { cardCls } from "@/themes"
 
 
 
@@ -33,7 +31,6 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 
 	// STORE
 	const strMsgSa = useStore(strMsgSo)
-	useStore(layoutSo)
 
 	// HOOKs
 	const [textFind, setTextFind] = useState(strMsgSa.textSearch ?? "")
@@ -81,11 +78,10 @@ const StreamMessagesView: FunctionComponent<Props> = ({
 		}
 		return null
 	}, [storeMsg?.state?.message?.seqNum])
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("messages")}
 		icon={<MessageIcon />}
 		store={strMsgSo}
 		actionsRender={<>

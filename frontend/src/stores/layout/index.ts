@@ -1,4 +1,5 @@
 import { StoreOf, createStore } from "@priolo/jon"
+import { ThemeType, applyTheme } from "@/themes"
 
 
 
@@ -12,31 +13,26 @@ const setup = {
 	},
 
 	actions: {
-
 	},
 
 	mutators: {
 		setTheme: (theme: ThemeType) => {
 			localStorage.setItem('theme', theme)
+			applyTheme(theme)
 			return { theme }
 		},
 	},
 }
 
-export interface LayoutStore extends StoreOf<typeof setup> {}
+export interface LayoutStore extends StoreOf<typeof setup> { }
 const layoutSo = createStore(setup) as LayoutStore
 export default layoutSo
 
-export type ThemeType = "redeye" | "boring"
-
-export const THEMES: { label: string, value: ThemeType }[] = [
-	{ label: "RED EYE", value: "redeye" },
-	{ label: "BORING", value: "boring" },
-]
-
 async function loadConfig() {
 	const res = await fetch("/config.json")
-	const config:any = await res.json()
-	layoutSo.state.theme = (localStorage.getItem('theme') ?? config.theme ?? 'redeye') as ThemeType
+	const config: any = await res.json()
+	const theme = (localStorage.getItem('theme') ?? config.theme ?? 'redeye') as ThemeType
+	layoutSo.state.theme = theme
+	applyTheme(theme)
 }
 loadConfig();

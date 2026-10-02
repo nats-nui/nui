@@ -6,7 +6,7 @@ import { Button } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useEffect } from "react"
 import KeyboardIcon from "../../../icons/KeyboardIcon"
-import clsCard from "../CardWhiteDef.module.css"
+import { cardCls } from "@/themes"
 import ThemeDialog from "./ThemeDialog"
 import cls from "./View.module.css"
 
@@ -40,7 +40,7 @@ const AboutView: FunctionComponent<Props> = ({
 	const current = aboutSa.about?.currentVersion ?? "--"
 	const latest = aboutSa.about?.latestVersion ?? "--"
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("neutral")}
 		icon={<div style={{ fontSize: 16, fontWeight: 700 }}>?</div>}
 		store={aboutSo}
 	>

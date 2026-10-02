@@ -10,7 +10,7 @@ import DoneIcon from "../../../icons/DoneIcon"
 import SkullIcon from "../../../icons/SkullIcon"
 import SuccessIcon from "../../../icons/SuccessIcon"
 import { CliImport } from "../../../types"
-import clsCard from "../CardGreenDef.module.css"
+import { cardCls } from "@/themes"
 import ActionsCmp from "./Actions"
 import cls from "./View.module.css"
 
@@ -52,7 +52,7 @@ const CnnLoaderView: FunctionComponent<Props> = ({
 	</div>
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("connections")}
 		icon={<ConfigIcon />}
 		store={store}
 		actionsRender={<ActionsCmp store={store} />}
