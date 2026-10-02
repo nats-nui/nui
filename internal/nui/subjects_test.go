@@ -1,0 +1,447 @@
+package nui
+
+import (
+	"context"
+	"errors"
+	"strconv"
+	"testing"
+	"time"
+
+	"github.com/nats-io/nats-server/v2/server"
+	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-nui/nui/internal/connection"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestValidateListenFilter(t *testing.T) {
+	assert.Equal(t, "", normalizeListenFilter(""))
+	assert.Equal(t, "", normalizeListenFilter("   "))
+	assert.ErrorIs(t, validateListenFilter(""), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("   "), errFilterInvalid)
+	assert.NoError(t, validateListenFilter(">"))
+	assert.NoError(t, validateListenFilter("*"))
+	assert.NoError(t, validateListenFilter("*.>"))
+	assert.NoError(t, validateListenFilter("*.*"))
+	assert.ErrorIs(t, validateListenFilter("orders.> extra"), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("orders..created"), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter(".orders"), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("orders."), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("foo>bar"), errFilterInvalid)
+	assert.ErrorIs(t, validateListenFilter("a.>.b"), errFilterInvalid)
+	assert.NoError(t, validateListenFilter("orders.>"))
+	assert.NoError(t, validateListenFilter("orders.created"))
+	assert.NoError(t, validateListenFilter("foo.*.bar"))
+}
+
+func TestIsInternalSubject(t *testing.T) {
+	assert.True(t, isInternalSubject("$SYS.SERVER.INFO"))
+	assert.True(t, isInternalSubject("$JS.API.INFO"))
+	assert.True(t, isInternalSubject("_INBOX.abc"))
+	assert.False(t, isInternalSubject("orders.created"))
+	assert.False(t, isInternalSubject("$KV.mybucket.key"))
+	assert.False(t, isInternalSubject("$O.files.chunk"))
+	assert.False(t, isInternalSubject("$SYSTEM.not-sys"))
+	assert.True(t, hideInternal(true, "$SYS.SERVER.INFO"))
+	assert.False(t, hideInternal(false, "$SYS.SERVER.INFO"))
+	assert.False(t, hideInternal(true, "$KV.shop.key"))
+}
+
+func TestCollapsePattern(t *testing.T) {
+	path, kind := collapsePattern("$KV.mybucket.>", kindKV)
+	assert.Equal(t, "$KV.mybucket.>", path)
+	assert.Equal(t, kindKV, kind)
+
+	path, kind = collapsePattern("$O.files.C.>", kindObject)
+	assert.Equal(t, "$O.files.>", path)
+	assert.Equal(t, kindObject, kind)
+
+	path, kind = collapsePattern("orders.>", kindStream)
+	assert.Equal(t, "orders.>", path)
+	assert.Equal(t, kindPattern, kind)
+}
+
+func TestJsUserError(t *testing.T) {
+	assert.Equal(t, "", jsUserError(nil))
+	assert.Equal(t, "timed out", jsUserError(context.DeadlineExceeded))
+	assert.Equal(t, "not enabled on this server", jsUserError(errors.New("nats: JetStream not enabled")))
+	assert.Equal(t, "not allowed", jsUserError(errors.New("nats: permissions violation")))
+}
+
+func TestCatalogPreservesLiteralAndWildcard(t *testing.T) {
+	for _, subjects := range [][]string{{"orders", "orders.>"}, {"orders.>", "orders"}} {
+		catalog := catalogFromInfos([]*jetstream.StreamInfo{{
+			Config: jetstream.StreamConfig{Name: "ORDERS", Subjects: subjects},
+		}}, nil, true)
+		require.Len(t, catalog.Streams, 1)
+		assert.Equal(t, []JetStreamSubject{
+			{Subject: "orders", Pattern: "orders", Kind: kindPattern},
+			{Subject: "orders.>", Pattern: "orders.>", Kind: kindPattern},
+		}, catalog.Streams[0].Subjects)
+	}
+}
+
+func TestCoreUserError(t *testing.T) {
+	assert.Equal(t, "not allowed", coreUserError(errors.New("nats: Permissions Violation for Subscription to \">\"")))
+	assert.Equal(t, "timed out", coreUserError(context.Canceled))
+}
+
+func TestSampleCoreCancelUnsubscribes(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan *CoreCatalog, 1)
+	go func() {
+		done <- sampleCoreLimited(ctx, nc, "probe.>", 5*time.Second, maxCoreSubjects, true)
+	}()
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
+
+	cancel()
+	select {
+	case out := <-done:
+		assert.Empty(t, out.Error)
+		assert.Equal(t, 0, out.Heard)
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("listen did not return after cancel")
+	}
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 0 }, time.Second, 10*time.Millisecond)
+}
+
+func TestSampleCoreHearsLiteralPrefixOnly(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	done := make(chan *CoreCatalog, 1)
+	go func() {
+		done <- sampleCoreLimited(ctx, nc, "orders.>", 400*time.Millisecond, maxCoreSubjects, true)
+	}()
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
+	require.NoError(t, nc.Flush())
+	for i := 0; i < 3; i++ {
+		require.NoError(t, nc.Publish("orders.created", []byte("x")))
+		require.NoError(t, nc.Publish("other.ignored", []byte("y")))
+	}
+	require.NoError(t, nc.Flush())
+
+	select {
+	case out := <-done:
+		require.Empty(t, out.Error)
+		assert.Equal(t, 1, out.Heard)
+		assert.Zero(t, out.Dropped)
+		assert.Equal(t, []CoreSubject{{Subject: "orders.created", Count: 3}}, out.Subjects)
+	case <-time.After(time.Second):
+		t.Fatal("sample did not finish")
+	}
+}
+
+func TestSampleCoreNotAllowed(t *testing.T) {
+	acc := server.NewAccount("A")
+	opts := &server.Options{
+		Host:   "127.0.0.1",
+		Port:   -1,
+		NoLog:  true,
+		NoSigs: true,
+		Users: []*server.User{
+			{Username: "limited", Password: "limited", Account: acc, Permissions: &server.Permissions{
+				Subscribe: &server.SubjectPermission{Allow: []string{"orders.>"}},
+			}},
+		},
+		Accounts: []*server.Account{acc},
+	}
+	ns := startTestNATS(t, opts)
+	nc, err := nats.Connect(ns.ClientURL(), nats.UserInfo("limited", "limited"))
+	require.NoError(t, err)
+	defer nc.Close()
+
+	out := sampleCoreLimited(context.Background(), nc, "secret.>", 200*time.Millisecond, maxCoreSubjects, true)
+	assert.Equal(t, "not allowed", out.Error)
+}
+
+func TestSampleCoreStopsAtCatalogCap(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	const nameCap = 8
+	done := make(chan *CoreCatalog, 1)
+	go func() {
+		done <- sampleCoreLimited(context.Background(), nc, "cap.>", 5*time.Second, nameCap, true)
+	}()
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 1 }, time.Second, 10*time.Millisecond)
+
+	start := time.Now()
+	for i := 0; i < nameCap+20; i++ {
+		require.NoError(t, nc.Publish("cap."+strconv.Itoa(i), []byte("x")))
+	}
+	require.NoError(t, nc.Flush())
+
+	select {
+	case out := <-done:
+		require.True(t, out.Truncated, "error=%q heard=%d", out.Error, out.Heard)
+		assert.Equal(t, nameCap, out.Heard)
+		assert.Less(t, time.Since(start), time.Second)
+	case <-time.After(2 * time.Second):
+		t.Fatal("time-based listen did not return")
+	}
+	require.Eventually(t, func() bool { return nc.NumSubscriptions() == 0 }, time.Second, 10*time.Millisecond)
+}
+
+func TestCoreWatchReusesOneSubscribe(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	cfg := &connection.Connection{Name: "watch", Hosts: []string{ns.ClientURL()}}
+	pub, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer pub.Close()
+
+	h := newCoreWatchHub()
+	defer h.stop("id")
+
+	first := watchSnapshot(t, h, "id", "w.>", cfg, true, "")
+	require.Empty(t, first.Error)
+	require.True(t, first.Watching)
+	require.NotNil(t, h.read("id", ""))
+
+	for i := 0; i < 3; i++ {
+		require.NoError(t, pub.Publish("w.one", []byte("x")))
+		require.NoError(t, pub.Publish("other.ignored", []byte("y")))
+	}
+	require.NoError(t, pub.Flush())
+	require.EventuallyWithT(t, func(c *assert.CollectT) {
+		out := h.read("id", "")
+		assert.Equal(c, 1, out.Heard)
+		assert.Equal(c, []CoreSubject{{Subject: "w.one", Count: 3}}, out.Subjects)
+	}, time.Second, 20*time.Millisecond)
+
+	got := watchSnapshot(t, h, "id", "w.>", cfg, true, "")
+	require.True(t, got.Watching)
+	assert.Equal(t, 1, got.Heard)
+	assert.Equal(t, []CoreSubject{{Subject: "w.one", Count: 3}}, got.Subjects)
+	assert.Equal(t, 2, ns.NumClients())
+
+	h.stop("id")
+	assert.Nil(t, h.read("id", ""))
+}
+
+func TestEnumerateJetStreamPatternsNotOccupied(t *testing.T) {
+	ns := startTestNATS(t, jsOpts(t))
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+	js, err := jetstream.New(nc)
+	require.NoError(t, err)
+
+	_, err = js.CreateStream(context.Background(), jetstream.StreamConfig{
+		Name:     "ORDERS",
+		Subjects: []string{"orders.>", "returns.>"},
+		Storage:  jetstream.MemoryStorage,
+	})
+	require.NoError(t, err)
+	_, err = js.Publish(context.Background(), "orders.created", []byte("1"))
+	require.NoError(t, err)
+	_, err = js.Publish(context.Background(), "orders.shipped", []byte("2"))
+	require.NoError(t, err)
+
+	cat := enumerateJetStreamPatterns(context.Background(), js, true)
+	require.Empty(t, cat.Error)
+	require.Len(t, cat.Streams, 1)
+	assert.Equal(t, "ORDERS", cat.Streams[0].Name)
+	assert.Equal(t, kindStream, cat.Streams[0].Kind)
+	got := []string{}
+	for _, s := range cat.Streams[0].Subjects {
+		got = append(got, s.Subject)
+		assert.Equal(t, kindPattern, s.Kind)
+		assert.Zero(t, s.Count)
+	}
+	assert.Equal(t, []string{"orders.>", "returns.>"}, got)
+}
+
+func TestCatalogFromInfosDiscardsSystemUnlessAsked(t *testing.T) {
+	infos := []*jetstream.StreamInfo{{
+		Config: jetstream.StreamConfig{Name: "MIXED", Subjects: []string{"$JS.API.>", "orders.>", "$KV.shop.>"}},
+	}}
+	hidden := catalogFromInfos(infos, nil, true)
+	require.Len(t, hidden.Streams, 1)
+	got := []string{}
+	for _, s := range hidden.Streams[0].Subjects {
+		got = append(got, s.Subject)
+	}
+	assert.Equal(t, []string{"$KV.shop.>", "orders.>"}, got)
+
+	shown := catalogFromInfos(infos, nil, false)
+	got = nil
+	for _, s := range shown.Streams[0].Subjects {
+		got = append(got, s.Subject)
+	}
+	assert.Equal(t, []string{"$JS.API.>", "$KV.shop.>", "orders.>"}, got)
+}
+
+func TestSampleCoreKeepsInternalWhenDiscardOff(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+
+	sample := func(discardSys bool) *CoreCatalog {
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+					_ = nc.Publish("_INBOX.probe", []byte("x"))
+					_ = nc.Publish("orders.created", []byte("y"))
+					time.Sleep(10 * time.Millisecond)
+				}
+			}
+		}()
+		return sampleCoreLimited(context.Background(), nc, ">", 250*time.Millisecond, maxCoreSubjects, discardSys)
+	}
+
+	hidden := sample(true)
+	require.Empty(t, hidden.Error)
+	for _, s := range hidden.Subjects {
+		assert.False(t, isInternalSubject(s.Subject))
+	}
+
+	shown := sample(false)
+	require.Empty(t, shown.Error)
+	var sawInbox bool
+	for _, s := range shown.Subjects {
+		if s.Subject == "_INBOX.probe" {
+			sawInbox = true
+		}
+	}
+	assert.True(t, sawInbox, "subjects=%v", shown.Subjects)
+}
+
+func TestCoreWatchKeepsInternalWhenDiscardOff(t *testing.T) {
+	ns := startTestNATS(t, nil)
+	cfg := &connection.Connection{Name: "watch-sys", Hosts: []string{ns.ClientURL()}}
+	pub, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer pub.Close()
+
+	h := newCoreWatchHub()
+	defer h.stop("id")
+
+	hidden := watchSnapshot(t, h, "id", ">", cfg, true, "")
+	require.Empty(t, hidden.Error)
+	require.True(t, hidden.Watching)
+	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
+	require.NoError(t, pub.Publish("orders.one", []byte("x")))
+	require.NoError(t, pub.Flush())
+	require.Eventually(t, func() bool {
+		return h.read("id", "").Heard >= 1
+	}, time.Second, 20*time.Millisecond)
+	for _, s := range h.read("id", "").Subjects {
+		assert.False(t, isInternalSubject(s.Subject))
+	}
+
+	shown := watchSnapshot(t, h, "id", ">", cfg, false, "")
+	require.True(t, shown.Watching)
+	require.NoError(t, pub.Publish("_INBOX.keep", []byte("x")))
+	require.NoError(t, pub.Flush())
+	require.Eventually(t, func() bool {
+		out := h.read("id", "")
+		for _, s := range out.Subjects {
+			if s.Subject == "_INBOX.keep" {
+				return true
+			}
+		}
+		return false
+	}, time.Second, 20*time.Millisecond)
+}
+
+func TestCatalogFromInfosKeepsPartialOnTimeout(t *testing.T) {
+	infos := []*jetstream.StreamInfo{{
+		Config: jetstream.StreamConfig{Name: "ORDERS", Subjects: []string{"orders.>"}},
+	}}
+	cat := catalogFromInfos(infos, context.DeadlineExceeded, true)
+	require.Equal(t, "timed out", cat.Error)
+	assert.True(t, cat.Truncated)
+	require.Len(t, cat.Streams, 1)
+	assert.Equal(t, "ORDERS", cat.Streams[0].Name)
+	require.Len(t, cat.Streams[0].Subjects, 1)
+	assert.Equal(t, "orders.>", cat.Streams[0].Subjects[0].Subject)
+
+	empty := catalogFromInfos(nil, context.DeadlineExceeded, true)
+	assert.Equal(t, "timed out", empty.Error)
+	assert.False(t, empty.Truncated)
+	assert.Empty(t, empty.Streams)
+}
+
+func TestOccupiedCapsPerStream(t *testing.T) {
+	ns := startTestNATS(t, jsOpts(t))
+	nc, err := nats.Connect(ns.ClientURL())
+	require.NoError(t, err)
+	defer nc.Close()
+	js, err := jetstream.New(nc)
+	require.NoError(t, err)
+	_, err = js.CreateStream(context.Background(), jetstream.StreamConfig{
+		Name:     "MANY",
+		Subjects: []string{"n.>"},
+		Storage:  jetstream.MemoryStorage,
+	})
+	require.NoError(t, err)
+	for i := 0; i < maxOccupiedPerStream+25; i++ {
+		_, err = js.Publish(context.Background(), "n."+strconv.Itoa(i), []byte("x"))
+		require.NoError(t, err)
+	}
+
+	out := occupiedSubjects(context.Background(), js, "MANY", "n.>", true)
+	require.Empty(t, out.Error)
+	assert.True(t, out.Truncated)
+	assert.Len(t, out.Subjects, maxOccupiedPerStream)
+	for i, s := range out.Subjects {
+		assert.Equal(t, kindOccupied, s.Kind)
+		assert.Greater(t, s.Count, uint64(0))
+		if i > 0 {
+			assert.Less(t, out.Subjects[i-1].Subject, s.Subject)
+		}
+	}
+	assert.Equal(t, "n.0", out.Subjects[0].Subject)
+}
+
+func startTestNATS(t *testing.T, opts *server.Options) *server.Server {
+	t.Helper()
+	if opts == nil {
+		opts = &server.Options{Host: "127.0.0.1", Port: -1, NoLog: true, NoSigs: true}
+	}
+	if opts.Host == "" {
+		opts.Host = "127.0.0.1"
+	}
+	if opts.Port == 0 {
+		opts.Port = -1
+	}
+	ns, err := server.NewServer(opts)
+	require.NoError(t, err)
+	ns.Start()
+	if !ns.ReadyForConnections(5 * time.Second) {
+		t.Fatal("nats server not ready")
+	}
+	t.Cleanup(ns.Shutdown)
+	return ns
+}
+
+func jsOpts(t *testing.T) *server.Options {
+	t.Helper()
+	return &server.Options{
+		Host:      "127.0.0.1",
+		Port:      -1,
+		NoLog:     true,
+		NoSigs:    true,
+		JetStream: true,
+		StoreDir:  t.TempDir(),
+	}
+}

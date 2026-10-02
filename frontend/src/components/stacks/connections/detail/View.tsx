@@ -8,6 +8,7 @@ import ConnectionIcon from "@/icons/cards/ConnectionIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import MetricsIcon from "@/icons/cards/MetricsIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
+import SubjectsIcon from "@/icons/cards/SubjectsIcon"
 import layoutSo from "@/stores/layout"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
@@ -39,6 +40,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
+	const handleSubjectsClick = () => cnnDetailSo.openSubjects()
 	const handleSyncClick = () => cnnDetailSo.openSync()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
@@ -50,6 +52,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isMessageOpen = cnnDetailSo.getMessagesOpen()
+	const isSubjectsOpen = cnnDetailSo.getSubjectsOpen()
 	const isSyncOpen = cnnDetailSo.getSyncOpen()
 	const isStreamsOpen = cnnDetailSo.getStreamsOpen()
 	const isBucketsOpen = cnnDetailSo.getBucketsOpen()
@@ -79,27 +82,34 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				/>
 				<LinkButton
 					className="jack-focus-2"
+					icon={<SubjectsIcon />}
+					tooltip="SUBJECTS"
+					selected={isSubjectsOpen}
+					onClick={handleSubjectsClick}
+				/>
+				<LinkButton
+					className="jack-focus-3"
 					icon={<SyncIcon />}
 					tooltip="REQUEST / REPLY"
 					selected={isSyncOpen}
 					onClick={handleSyncClick}
 				/>
 				<LinkButton
-					className="jack-focus-3"
+					className="jack-focus-4"
 					icon={<StreamsIcon />}
 					tooltip="STREAMS"
 					selected={isStreamsOpen}
 					onClick={handleStreamsClick}
 				/>
 				<LinkButton
-					className="jack-focus-4"
+					className="jack-focus-5"
 					icon={<BucketsIcon />}
 					tooltip="BUCKETS"
 					selected={isBucketsOpen}
 					onClick={handleBucketsClick}
 				/>
 				<LinkButton
-					className="jack-focus-5"
+					className="jack-focus-6"
 					icon={<MetricsIcon />}
 					tooltip="METRICS"
 					selected={isMetricsOpen}
@@ -119,27 +129,34 @@ const CnnDetailView: FunctionComponent<Props> = ({
 			/>
 			<RowButton
 				className="jack-focus-2"
+				icon={<SubjectsIcon className="small-icon" />}
+				label="SUBJECTS"
+				selected={isSubjectsOpen}
+				onClick={handleSubjectsClick}
+			/>
+			<RowButton
+				className="jack-focus-3"
 				icon={<SyncIcon className="small-icon" />}
 				label="REQUEST / REPLY"
 				selected={isSyncOpen}
 				onClick={handleSyncClick}
 			/>
 			<RowButton
-				className="jack-focus-3"
+				className="jack-focus-4"
 				icon={<StreamsIcon className="small-icon" />}
 				label="STREAMS"
 				selected={isStreamsOpen}
 				onClick={handleStreamsClick}
 			/>
 			<RowButton
-				className="jack-focus-4"
+				className="jack-focus-5"
 				icon={<BucketsIcon className="small-icon" />}
 				label="BUCKETS"
 				selected={isBucketsOpen}
 				onClick={handleBucketsClick}
 			/>
 			<RowButton style={{ marginBottom: 12 }}
-				className="jack-focus-5"
+				className="jack-focus-6"
 				icon={<MetricsIcon className="small-icon" />}
 				label="METRICS"
 				selected={isMetricsOpen}

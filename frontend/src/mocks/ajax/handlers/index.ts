@@ -6,11 +6,13 @@ import kventry from "./kventry"
 import bucket from "./bucket"
 import about from "./about"
 import proto from "./proto"
+import subjects from "./subjects"
 
 
 export const handlers = [
 	...connection,
 	...messages,
+	...subjects,
 	...stream,
 	...consumer,
 	...kventry,

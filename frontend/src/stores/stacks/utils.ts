@@ -9,6 +9,7 @@ export function getColorFromViewType(type: DOC_TYPE): ColorVar {
 		case DOC_TYPE.MESSAGES:
 		case DOC_TYPE.MESSAGE:
 		case DOC_TYPE.MESSAGE_SEND:
+		case DOC_TYPE.SUBJECTS:
 		case DOC_TYPE.SYNC:
 			return { fg: "#393939", bg: "#10F3F3" }
 		case DOC_TYPE.CONSUMERS:
