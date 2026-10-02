@@ -63,6 +63,10 @@ func (d *contextDialer) Dial(network, address string) (net.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	if err := conn.SetDeadline(time.Now().Add(nats.DefaultTimeout)); err != nil {
+		_ = conn.Close()
+		return nil, err
+	}
 	stop := context.AfterFunc(d.ctx, func() { _ = conn.Close() })
 	return &contextConn{Conn: conn, stop: stop}, nil
 }

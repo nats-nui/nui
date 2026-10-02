@@ -335,13 +335,16 @@ func TestSubjectDialPreservesTLSAuthAndInbox(t *testing.T) {
 			if websocket {
 				cfg.Hosts = []string{ns.WebsocketURL()}
 			}
-			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 2*nats.DefaultTimeout)
 			defer cancel()
 			nc, err := connection.DialOnce(ctx, cfg)
 			require.NoError(t, err)
 			defer nc.Close()
 			_, err = nc.Subscribe("orders.echo", func(m *nats.Msg) { _ = m.Respond([]byte("ok")) })
 			require.NoError(t, err)
+			if transport == "wss" {
+				time.Sleep(nats.DefaultTimeout + 50*time.Millisecond)
+			}
 			msg, err := nc.RequestWithContext(ctx, "orders.echo", nil)
 			require.NoError(t, err)
 			require.Equal(t, "ok", string(msg.Data))

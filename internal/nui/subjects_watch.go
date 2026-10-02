@@ -182,6 +182,7 @@ func (w *coreWatch) start(ctx context.Context, cfg *connection.Connection) {
 	}
 	nc, err := connection.DialOnce(ctx, cfg)
 	if err != nil {
+		w.stop()
 		w.mu.Lock()
 		w.err = err
 		w.mu.Unlock()
@@ -224,6 +225,7 @@ func (w *coreWatch) start(ctx context.Context, cfg *connection.Connection) {
 		err = nc.LastError()
 	}
 	if err != nil || ctx.Err() != nil {
+		w.stop()
 		nc.Close()
 		w.mu.Lock()
 		w.err = err

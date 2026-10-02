@@ -40,50 +40,66 @@ func TestCoreWatchConcurrentStart(t *testing.T) {
 	require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)
 }
 
-func TestCoreWatchStopDuringDial(t *testing.T) {
-	ns := startTestNATS(t, nil)
-	proxy, err := net.Listen("tcp", "127.0.0.1:0")
-	require.NoError(t, err)
-	defer proxy.Close()
-	accepted := make(chan struct{})
-	resume := make(chan struct{})
-	go func() {
-		client, err := proxy.Accept()
-		if err != nil {
-			return
-		}
-		defer client.Close()
-		close(accepted)
-		<-resume
-		upstream, err := net.Dial("tcp", ns.Addr().String())
-		if err != nil {
-			return
-		}
-		defer upstream.Close()
-		go func() { io.Copy(upstream, client); upstream.Close() }()
-		io.Copy(client, upstream)
-	}()
-	h := newCoreWatchHub()
-	defer h.close()
-	done := make(chan *CoreCatalog, 1)
-	go func() {
-		done <- watchSnapshot(t, h, "id", "orders.>", &connection.Connection{Hosts: []string{proxy.Addr().String()}}, true, "card")
-	}()
-	select {
-	case <-accepted:
-	case <-time.After(time.Second):
-		t.Fatal("dial did not start")
+func TestCoreWatchPendingDial(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		scheme string
+		stop   bool
+		reply  string
+	}{
+		{"stop", "nats://", true, ""},
+		{"timeout", "wss://", false, ""},
+		{"invalid upgrade", "ws://", false, "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			listener, err := net.Listen("tcp", "127.0.0.1:0")
+			require.NoError(t, err)
+			defer listener.Close()
+			accepted := make(chan net.Conn, 1)
+			go func() {
+				client, err := listener.Accept()
+				if err == nil {
+					if tc.reply != "" {
+						_, _ = io.WriteString(client, tc.reply)
+					}
+					accepted <- client
+				}
+			}()
+			h := newCoreWatchHub()
+			defer h.close()
+			done := make(chan *CoreCatalog, 1)
+			go func() {
+				done <- watchSnapshot(t, h, "id", "orders.>", &connection.Connection{Hosts: []string{tc.scheme + listener.Addr().String()}}, true, "card")
+			}()
+			var client net.Conn
+			select {
+			case client = <-accepted:
+				defer client.Close()
+			case <-time.After(time.Second):
+				t.Fatal("dial did not start")
+			}
+			wait := nats.DefaultTimeout + time.Second
+			if tc.stop {
+				h.stopSession("id", "card")
+				wait = 500 * time.Millisecond
+			}
+			select {
+			case out := <-done:
+				require.False(t, out.Watching)
+				if !tc.stop {
+					require.NotEmpty(t, out.Error)
+				}
+			case <-time.After(wait):
+				t.Fatal("pending dial did not finish")
+			}
+			if tc.stop {
+				require.Nil(t, h.read("id", "card"))
+			}
+			require.NoError(t, client.SetReadDeadline(time.Now().Add(time.Second)))
+			_, err = io.Copy(io.Discard, client)
+			require.NoError(t, err)
+		})
 	}
-	h.stopSession("id", "card")
-	defer close(resume)
-	select {
-	case out := <-done:
-		require.False(t, out.Watching)
-	case <-time.After(500 * time.Millisecond):
-		t.Fatal("stopped dial did not finish")
-	}
-	require.Nil(t, h.read("id", "card"))
-	require.Eventually(t, func() bool { return ns.NumClients() == 0 }, time.Second, time.Millisecond)
 }
 
 func TestCoreWatchOwnership(t *testing.T) {
