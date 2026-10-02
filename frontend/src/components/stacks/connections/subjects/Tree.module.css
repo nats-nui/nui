@@ -27,7 +27,7 @@
 	display: flex;
 }
 
-.selected {
+.node.selected {
 	background-color: var(--cmp-select-bg);
 	color: var(--cmp-select-fg);
 }
