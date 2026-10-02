@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+func kvKeyFromCtx(c *fiber.Ctx) string {
+	return strings.TrimPrefix(c.Params("*"), "/")
+}
+
 const KV_STREAM_PREFIX = "KV_"
 
 type BucketState struct {
@@ -236,7 +240,7 @@ func (a *App) HandleShowKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	key := c.Params("key")
+	key := kvKeyFromCtx(c)
 
 	history, err := kv.History(c.Context(), key)
 	if err != nil {
@@ -264,12 +268,19 @@ type PutRequest struct {
 	TTL     time.Duration `json:"ttl,omitempty"`
 }
 
-func (a *App) HandlePutKey(c *fiber.Ctx) error {
+func (a *App) HandlePostKey(c *fiber.Ctx) error {
+	key := kvKeyFromCtx(c)
+	if strings.HasSuffix(key, "/purge") {
+		return a.handlePurgeKey(c, strings.TrimSuffix(key, "/purge"))
+	}
+	return a.handlePutKey(c, key)
+}
+
+func (a *App) handlePutKey(c *fiber.Ctx, key string) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
 	}
-	key := c.Params("key")
 	if key == "" {
 		return c.Status(422).JSON("key is required")
 	}
@@ -309,7 +320,7 @@ func (a *App) HandleDeleteKey(c *fiber.Ctx) error {
 	if !ok {
 		return err
 	}
-	err = kv.Delete(c.Context(), c.Params("key"))
+	err = kv.Delete(c.Context(), kvKeyFromCtx(c))
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
 			return a.logAndFiberError(c, err, 404)
@@ -319,12 +330,12 @@ func (a *App) HandleDeleteKey(c *fiber.Ctx) error {
 	return c.SendStatus(204)
 }
 
-func (a *App) HandlePurgeKey(c *fiber.Ctx) error {
+func (a *App) handlePurgeKey(c *fiber.Ctx, key string) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
 	}
-	err = kv.Purge(c.Context(), c.Params("key"))
+	err = kv.Purge(c.Context(), key)
 	if err != nil {
 		if errors.Is(err, jetstream.ErrKeyNotFound) {
 			return a.logAndFiberError(c, err, 404)
