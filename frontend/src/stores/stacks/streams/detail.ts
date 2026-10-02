@@ -2,13 +2,13 @@ import strApi from "@/api/streams"
 import docSo from "@/stores/docs"
 import { focusSo, utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { StreamConfig, StreamInfo } from "@/types/Stream"
-import { StoreCore, mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { StreamsState, StreamsStore } from "."
 import { buildConsumers } from "../consumer/utils/factory"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 import { VIEW_SIZE } from "../utils"
 import { buildStreamMessages } from "./utils/factory"
 import { buildStore } from "../../docs/utils/factory"
@@ -196,12 +196,7 @@ const setup = {
 	},
 }
 
-export type StreamState = typeof setup.state & ViewState & LoadBaseState
-export type StreamGetters = typeof setup.getters
-export type StreamActions = typeof setup.actions
-export type StreamMutators = typeof setup.mutators
-export interface StreamStore extends ViewStore, LoadBaseStore, StreamGetters, StreamActions, StreamMutators {
-	state: StreamState
-}
 const streamSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface StreamStore extends StoreOf<typeof streamSetup> {}
+export type StreamState = StreamStore["state"]
 export default streamSetup

@@ -1893,7 +1893,7 @@ const data = [
 ]
 
 const historyTest: Message[] = Array.from({ length: 6 }, (_, i) => ({
-	headers: [],
+	headers: {},
 	subject: randomName(200),
 	payload: JSON.stringify(data[i]),
 	size: 10,

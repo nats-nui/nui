@@ -1,12 +1,12 @@
 import conApi from "@/api/consumers"
 import cnnSo from "@/stores/connections"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { StreamConsumer } from "@/types/Consumer"
 import { docsSo, utils } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { MESSAGE_TYPE } from "../../log/utils"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 import { buildConsumer, buildConsumerNew } from "./utils/factory"
 
 
@@ -146,12 +146,7 @@ const setup = {
 	},
 }
 
-export type ConsumersState = typeof setup.state & ViewState & LoadBaseState
-export type ConsumersGetters = typeof setup.getters
-export type ConsumersActions = typeof setup.actions
-export type ConsumersMutators = typeof setup.mutators
-export interface ConsumersStore extends ViewStore, LoadBaseStore, ConsumersGetters, ConsumersActions, ConsumersMutators {
-	state: ConsumersState
-}
 const consumersSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface ConsumersStore extends StoreOf<typeof consumersSetup> {}
+export type ConsumersState = ConsumersStore["state"]
 export default consumersSetup

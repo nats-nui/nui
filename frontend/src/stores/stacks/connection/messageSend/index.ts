@@ -1,9 +1,9 @@
 import messagesApi from "@/api/messages"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
-import editorSetup, { EditorState, EditorStore } from "../../editorBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import editorSetup from "../../editorBase"
 import { LOAD_STATE } from "../../utils"
 import { toPayload } from "../../../../utils/editor"
 
@@ -109,12 +109,7 @@ const setup = {
 	},
 }
 
-export type MessageSendState = typeof setup.state & ViewState & EditorState
-export type MessageSendGetters = typeof setup.getters
-export type MessageSendActions = typeof setup.actions
-export type MessageSendMutators = typeof setup.mutators
-export interface MessageSendStore extends ViewStore, EditorStore, MessageSendGetters, MessageSendActions, MessageSendMutators {
-	state: MessageSendState
-}
 const msgSetup = mixStores(viewSetup, editorSetup, setup)
+export interface MessageSendStore extends StoreOf<typeof msgSetup> {}
+export type MessageSendState = MessageSendStore["state"]
 export default msgSetup

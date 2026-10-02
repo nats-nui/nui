@@ -1,4 +1,4 @@
-import { StoreCore, createStore } from "@priolo/jon"
+import { StoreOf, createStore } from "@priolo/jon"
 
 
 
@@ -23,13 +23,7 @@ const setup = {
 	},
 }
 
-export type LayoutState = typeof setup.state
-export type LayoutGetters = typeof setup.getters
-export type LayoutActions = typeof setup.actions
-export type LayoutMutators = typeof setup.mutators
-export interface LayoutStore extends StoreCore<LayoutState>, LayoutGetters, LayoutActions, LayoutMutators {
-	state: LayoutState
-}
+export interface LayoutStore extends StoreOf<typeof setup> {}
 const layoutSo = createStore(setup) as LayoutStore
 export default layoutSo
 

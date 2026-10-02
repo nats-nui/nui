@@ -33,7 +33,7 @@ export function randomBucketConfig(bucket: string): BucketConfig {
 		storage: randomItem(Object.keys(STORAGE)),
 		replicas: randomInt(3, 1),
 		placement: null,
-		rePublish: null,
+		republish: null,
 		mirror: null,
 		sources: [],
 		compression: randomBool(),

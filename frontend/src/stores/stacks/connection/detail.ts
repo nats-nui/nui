@@ -1,8 +1,8 @@
 import cnnSo from "@/stores/connections"
 import docSo from "@/stores/docs"
-import viewSetup, { ViewMutators, ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
 import { VIEW_SIZE } from "../utils"
@@ -164,12 +164,7 @@ const setup = {
 	},
 }
 
-export type CnnDetailState = typeof setup.state & ViewState
-export type CnnDetailGetters = typeof setup.getters
-export type CnnDetailActions = typeof setup.actions
-export type CnnDetailMutators = typeof setup.mutators & ViewMutators
-export interface CnnDetailStore extends ViewStore, CnnDetailGetters, CnnDetailActions, CnnDetailMutators {
-	state: CnnDetailState
-}
-const connectonSetup = mixStores(viewSetup, setup) as typeof setup
+const connectonSetup = mixStores(viewSetup, setup)
+export interface CnnDetailStore extends StoreOf<typeof connectonSetup> {}
+export type CnnDetailState = CnnDetailStore["state"]
 export default connectonSetup
