@@ -107,9 +107,11 @@ const setup = {
 				store.setJetstream({ streams: store.state.jetstream?.streams ?? [], error: catalog?.error || "could not be read" })
 				return
 			}
+			const valid = new Set(catalog.streams.flatMap(s => s.subjects.map(item => occupiedKey(s.name, item.pattern))))
 			store.setJetstream(catalog)
+			store.setOccupied(Object.fromEntries(Object.entries(store.state.occupied).filter(([key]) => valid.has(key))))
+			store.setOccupiedLoading(Object.fromEntries(Object.entries(store.state.occupiedLoading).filter(([key]) => valid.has(key))))
 			const loaded = store.state.occupied
-			store.setOccupiedLoading({})
 			for (const stream of catalog.streams) {
 				for (const item of stream.subjects) {
 					if (gen != store.state.catalogGen) return
@@ -117,9 +119,6 @@ const setup = {
 					await store.loadOccupied({ subject: item.subject, streams: [{ name: stream.name, pattern: item.pattern }], refresh: true })
 				}
 			}
-			if (gen != store.state.catalogGen) return
-			const valid = new Set(catalog.streams.flatMap(s => s.subjects.map(item => occupiedKey(s.name, item.pattern))))
-			store.setOccupied(Object.fromEntries(Object.entries(store.state.occupied).filter(([key]) => valid.has(key))))
 		},
 
 		abortCore(_: void, store?: SubjectsStore) {
