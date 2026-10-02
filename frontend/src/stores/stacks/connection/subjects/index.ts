@@ -7,10 +7,9 @@ import { OccupiedCatalog, SubjectHit, CoreCatalog, JetStreamCatalog } from "@/ty
 import { MSG_FORMAT } from "@/utils/editor"
 import { canListen, FILTER_EMPTY, normalizeListenFilter, validateListenFilter } from "@/utils/subjects/filter"
 import { occupiedKey } from "@/utils/subjects/tree"
-import { mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../../loadBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseStore } from "../../loadBase"
 import { MessageStore } from "../../message"
-import { ViewState } from "../../viewBase"
 
 const CORE_SAMPLE_MS = 2000
 
@@ -107,9 +106,11 @@ const setup = {
 				store.setJetstream({ streams: store.state.jetstream?.streams ?? [], error: catalog?.error || "could not be read" })
 				return
 			}
+			const valid = new Set(catalog.streams.flatMap(s => s.subjects.map(item => occupiedKey(s.name, item.pattern))))
 			store.setJetstream(catalog)
+			store.setOccupied(Object.fromEntries(Object.entries(store.state.occupied).filter(([key]) => valid.has(key))))
+			store.setOccupiedLoading(Object.fromEntries(Object.entries(store.state.occupiedLoading).filter(([key]) => valid.has(key))))
 			const loaded = store.state.occupied
-			store.setOccupiedLoading({})
 			for (const stream of catalog.streams) {
 				for (const item of stream.subjects) {
 					if (gen != store.state.catalogGen) return
@@ -117,9 +118,6 @@ const setup = {
 					await store.loadOccupied({ subject: item.subject, streams: [{ name: stream.name, pattern: item.pattern }], refresh: true })
 				}
 			}
-			if (gen != store.state.catalogGen) return
-			const valid = new Set(catalog.streams.flatMap(s => s.subjects.map(item => occupiedKey(s.name, item.pattern))))
-			store.setOccupied(Object.fromEntries(Object.entries(store.state.occupied).filter(([key]) => valid.has(key))))
 		},
 
 		abortCore(_: void, store?: SubjectsStore) {
@@ -127,10 +125,9 @@ const setup = {
 			store.state.coreAbort = null
 		},
 
-		async watchCore(activeFilter?: string, store?: SubjectsStore) {
-			const filter = normalizeListenFilter(activeFilter ?? store.state.filter)
+		async watchCore(activeFilter: string, store?: SubjectsStore) {
+			const filter = normalizeListenFilter(activeFilter)
 			if (!canListen(filter)) return
-			if (activeFilter == null && store.state.filter != filter) store.setFilter(filter)
 			store.abortCore()
 			const gen = ++store.state.watchGen
 			store.state.watchFilter = filter
@@ -275,13 +272,13 @@ const setup = {
 			}
 			if (store.state.filter != filter) store.setFilter(filter)
 			store.setListenHint(null)
-			await store.watchCore()
+			await store.watchCore(filter)
 		},
 
 		async listenAll(_: void, store?: SubjectsStore) {
 			store.setFilter(">")
 			store.setListenHint(null)
-			await store.watchCore()
+			await store.watchCore(">")
 		},
 
 		async loadOccupied(hit: SubjectHit & { refresh?: boolean }, store?: SubjectsStore) {
@@ -362,12 +359,7 @@ const setup = {
 	},
 }
 
-export type SubjectsState = typeof setup.state & ViewState & LoadBaseState
-export type SubjectsGetters = typeof setup.getters
-export type SubjectsActions = typeof setup.actions
-export type SubjectsMutators = typeof setup.mutators
-export interface SubjectsStore extends ViewStore, LoadBaseStore, SubjectsGetters, SubjectsActions, SubjectsMutators {
-	state: SubjectsState
-}
 const subjectsSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface SubjectsStore extends StoreOf<typeof subjectsSetup> {}
+export type SubjectsState = SubjectsStore["state"]
 export default subjectsSetup

@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { createStore } from "@priolo/jon"
 
-// Use the same ESM entry as the application.
-vi.mock("@priolo/jon", () => import("@priolo/jon/dist/index.es.js"))
-
 vi.mock("@/stores/connections", () => ({ default: {} }))
 vi.mock("@/stores/docs/utils/factory", () => ({ buildMessageDetail: vi.fn() }))
 vi.mock("@/stores/stacks/viewBase", () => ({ default: { state: {}, actions: {}, getters: {} } }))
@@ -46,7 +43,7 @@ describe("SUBJECTS requests", () => {
 		const s = store()
 		const pending = deferred<typeof catalog>()
 		vi.mocked(api.watch).mockReturnValue(pending.promise)
-		const start = s.watchCore()
+		const start = s.watchCore(s.state.filter)
 		await Promise.resolve()
 		const stop = s.stopWatch()
 		expect(api.unwatch).not.toHaveBeenCalled()
@@ -148,7 +145,7 @@ describe("SUBJECTS requests", () => {
 		s.state.jetstreamEnabled = false
 		const pending = deferred<typeof catalog>()
 		vi.mocked(api[source]).mockReturnValue(pending.promise)
-		const listener = source == "watch" ? s.watchCore() : s.readWatch()
+		const listener = source == "watch" ? s.watchCore(s.state.filter) : s.readWatch()
 		await Promise.resolve()
 		s.state.filter = "devices.>"
 		const sample = { ...catalog, filter: "devices.>", watching: false, subjects: [{ subject: "devices.room", count: 1 }] }
@@ -187,7 +184,7 @@ describe("SUBJECTS requests", () => {
 		vi.mocked(api.core).mockReturnValue(pending.promise)
 		vi.mocked(api.watch).mockResolvedValue(catalog)
 		const fetch = s.fetchCore()
-		await s[action]()
+		await s[action](s.state.filter)
 		const current = s.state.core
 		expect(vi.mocked(api.core).mock.calls[0][4].signal.aborted).toBe(true)
 		pending.resolve({ ...catalog, subjects: [{ subject: "orders.old", count: 99 }] })
@@ -226,11 +223,38 @@ describe("SUBJECTS requests", () => {
 	it("refreshes previously expanded stored names", async () => {
 		const s = store()
 		const key = occupiedKey("ORDERS", "orders.>")
-		s.state.occupied = { [key]: { stream: "ORDERS", subjects: [{ subject: "orders.old", kind: "occupied" }] } }
+		s.state.occupied = {
+			[key]: { stream: "ORDERS", subjects: [{ subject: "orders.old", kind: "occupied" }] },
+			[occupiedKey("REMOVED", "removed.>")]: { stream: "REMOVED", subjects: [{ subject: "removed.old", kind: "occupied" }] },
+		}
 		vi.mocked(api.jetstream).mockResolvedValue({ streams: [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.>", pattern: "orders.>", kind: "pattern" }] }] })
-		vi.mocked(api.occupied).mockResolvedValue({ stream: "ORDERS", subjects: [{ subject: "orders.new", kind: "occupied" }] })
-		await s.fetchJetStream()
-		expect(s.state.occupied[key].subjects[0].subject).toBe("orders.new")
+		const pending = deferred<any>()
+		const current = { stream: "ORDERS", subjects: [{ subject: "orders.new", kind: "occupied" }] }
+		vi.mocked(api.occupied).mockReturnValue(pending.promise)
+		const refresh = s.fetchJetStream()
+		await Promise.resolve()
+		expect(s.state.occupied[occupiedKey("REMOVED", "removed.>")]).toBeUndefined()
+		pending.resolve(current)
+		await refresh
+		expect(s.state.occupied).toEqual({ [key]: current })
+	})
+
+	it.each([true, false])("keeps a pending expansion only if its pattern remains after Refresh: %s", async retained => {
+		const s = store()
+		const catalog = deferred<any>(), occupied = deferred<any>()
+		const hit = { subject: "orders.>", streams: [{ name: "ORDERS", pattern: "orders.>" }] }
+		const current = { stream: "ORDERS", subjects: [{ subject: "orders.created", kind: "occupied" }] }
+		vi.mocked(api.jetstream).mockReturnValue(catalog.promise)
+		vi.mocked(api.occupied).mockReturnValue(occupied.promise)
+		const refresh = s.fetchJetStream()
+		const expand = s.loadOccupied(hit)
+		catalog.resolve({ streams: retained ? [{ name: "ORDERS", kind: "stream", subjects: [{ subject: "orders.>", pattern: "orders.>", kind: "pattern" }] }] : [] })
+		await refresh
+		occupied.resolve(current)
+		await expand
+		expect(s.state.occupied).toEqual(retained ? { [occupiedKey("ORDERS", "orders.>")]: current } : {})
+		expect(s.state.occupiedLoading).toEqual({})
+		expect(api.occupied).toHaveBeenCalledOnce()
 	})
 
 	it("deduplicates each stored expansion while other names are loading", async () => {

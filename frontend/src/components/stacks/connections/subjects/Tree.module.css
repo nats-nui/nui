@@ -23,6 +23,10 @@
 	background-color: rgba(255, 255, 255, .08);
 }
 
+.node:focus-within :global(.jack-hover-hide) {
+	display: flex;
+}
+
 .selected {
 	background-color: var(--cmp-select-bg);
 	color: var(--cmp-select-fg);
