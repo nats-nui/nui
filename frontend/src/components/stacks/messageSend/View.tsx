@@ -3,15 +3,14 @@ import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import SendIcon from "@/icons/SendIcon"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
-import { LOAD_STATE } from "@/stores/stacks/utils"
+import { cardCls } from "@/themes"
+import { Button, CircularLoadingCmp, EditList, FloatButton, LOAD_STATE, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import StreamsIcon from "../../../icons/cards/StreamsIcon"
 import FormatDialog from "../../editor/FormatDialog"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import { cardCls } from "@/themes"
 import SubjectsDialog from "./SubjectsDialog"
-import { Button, CircularLoadingCmp, EditList, FloatButton, TextInput, TitleAccordion } from "@priolo/jack"
 
 
 

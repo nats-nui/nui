@@ -1,0 +1,28 @@
+[data-theme="mint"] {
+	--app-bg-color: #06161a;
+	--accent: #07ff77;
+}
+
+[data-theme="mint"] .jack-framework {
+
+	--card-fg: #a8f2ff;
+	--card-bg: #003a32;
+
+	/* button icon button */
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button */
+	--dialog-fg: #393939;
+	--dialog-bg: var(--accent);
+
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="mint"] .jack-framework {
+	border-radius: 0px;
+}
+

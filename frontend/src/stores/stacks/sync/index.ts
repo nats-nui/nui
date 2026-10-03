@@ -4,12 +4,12 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { About } from "@/types/About"
 import { Message } from "@/types/Message"
+import { LOAD_STATE } from "@priolo/jack"
 import { mixStores, StoreOf } from "@priolo/jon"
 import { MSG_FORMAT, toPayload } from "../../../utils/editor"
 import { binaryStringToString } from "../../../utils/string"
 import editorSetup from "../editorBase"
 import { MessageStore } from "../message"
-import { LOAD_STATE } from "../utils"
 
 
 

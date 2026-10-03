@@ -2,19 +2,18 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import EditorCode from "@/components/editor"
 import FormatDialog from "@/components/editor/FormatDialog"
 import HeadersCmp from "@/components/stacks/message/HeadersCmp.tsx"
+import OptionsDialog from "@/components/stacks/sync/OptionsDialog.tsx"
 import ArrowRightIcon from "@/icons/ArrowRightIcon"
 import FormatIcon from "@/icons/FormatIcon"
 import SendIcon from "@/icons/SendIcon"
-import sync, { SyncStore } from "@/stores/stacks/sync"
-import { LOAD_STATE } from "@/stores/stacks/utils"
+import { SyncStore } from "@/stores/stacks/sync"
+import { cardCls } from "@/themes"
+import { Button, CircularLoadingCmp, EditList, FloatButton, IconButton, LOAD_STATE, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import SyncIcon from "../../../icons/SyncIcon"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import { cardCls } from "@/themes"
 import cls from "./View.module.css"
-import { Button, CircularLoadingCmp, EditList, FloatButton, IconButton, TextInput, TitleAccordion, TooltipWrapCmp } from "@priolo/jack"
-import OptionsDialog from "@/components/stacks/sync/OptionsDialog.tsx";
 
 
 

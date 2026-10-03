@@ -1,11 +1,11 @@
-import cnnSo, { ConnectionState } from "@/stores/connections";
+import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
 import { CnnDetailState, CnnDetailStore } from "@/stores/stacks/connection/detail";
 import { MessagesState, MessagesStore } from "@/stores/stacks/connection/messages";
-import { AUTH_MODE, Connection, DOC_TYPE, EDIT_STATE } from "@/types";
-import { VIEW_SIZE } from "../../utils";
-import { MessageSendState, MessageSendStore } from "../messageSend";
+import { DOC_TYPE, EDIT_STATE } from "@/types";
+import { VIEW_SIZE } from "@priolo/jack";
 import { SyncState, SyncStore } from "../../sync";
+import { MessageSendState, MessageSendStore } from "../messageSend";
 import { CnnMetricsState, CnnMetricsStore } from "../metrics";
 
 

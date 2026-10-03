@@ -1,0 +1,30 @@
+[data-theme="sole"] {
+	--app-bg-color: #646464;
+	--accent: #F7963E;
+
+ 	--title-font-family: 'roboto condensed';
+	/* --text-font-family: arial, sans-serif; */
+}
+
+[data-theme="sole"] .jack-framework {
+
+	--card-fg: #333333;
+	--card-bg: #F4EADC;
+
+	/* button icon button */
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button */
+	--dialog-fg: #393939;
+	--dialog-bg: var(--accent);
+
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="sole"] .jack-framework {
+	border-radius: 0px;
+}

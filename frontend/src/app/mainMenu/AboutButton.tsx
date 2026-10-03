@@ -24,7 +24,7 @@ const AboutButton: FunctionComponent<Props> = ({
 	// RENDER
 	if (!store) return null
 	const icon = store.state.about?.shouldUpdate 
-		? <ArrowUpIcon style={{color: "var(--accent-streams)"}}/> 
+		? <ArrowUpIcon style={{color: "var(--accent)"}}/> 
 		: null
 
 	return (

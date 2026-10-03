@@ -1,23 +1,36 @@
 [data-theme="zero"] {
-	--theme-card-fg: #dedede;
+	--theme-card-fg: #c9c9c9;
 	--theme-card-bg: #222222;
 	--theme-on-accent: #393939;
-	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
-
-	--accent-streams: #ffc107;
-	--accent-messages: #ffc107;
-	--accent-buckets: #ffc107;
-	--accent-connections: #ffc107;
-	--accent-consumers: #ffc107;
-	--accent-metrics: #ffc107;
-	--accent-neutral: #ffc107;
+	--theme-cmp-bg: #0000000d;
 
 	--app-bg-color: rgba(0, 0, 0, 0.8);
+	--accent: #ffc107;
 }
 
-[data-theme="zero"] .card {
+[data-theme="zero"] .jack-framework {
+
+	--card-fg: #dddddd;
+	--card-bg: #222222;
+
+	/* button icon button */
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button */
+	--dialog-fg: #393939;
+	--dialog-bg: var(--accent);
+
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="zero"] .jack-framework {
 	border-radius: 15px;
 }
-[data-theme="zero"] .card.jack-framework-linked {
+
+[data-theme="zero"] .jack-framework-linked {
 	border-radius: 5px 15px 15px 5px;
 }

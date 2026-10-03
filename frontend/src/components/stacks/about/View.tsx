@@ -78,7 +78,7 @@ const AboutView: FunctionComponent<Props> = ({
 			</div>
 
 			{aboutSa.about?.shouldUpdate && <>
-				<Button className={`${cls.btt} jack-focus-5`}
+				<Button className={`card-streams ${cls.btt} jack-focus-5`}
 					onClick={handleUpdateClick}
 				>UPDATE</Button>
 			</>}

@@ -4,7 +4,6 @@ html {
 }
 
 body {
-  font-family: 'Inter Variable', sans-serif;
   background: #000;
   margin: 0;
   padding: 0;
@@ -24,15 +23,15 @@ body {
   --color-yellow: #EBFB35;
 
   --color-primary-fg: #393939;
-  --color-primary-bg: var(--color-green);
-  
+    
   --color-element-fg: var(--color-white);
   --color-element-bg: #393939;
+
 }
 
 
 input, textarea,  button {
-  font-family: 'Inter Variable', sans-serif;
+  font-family: var(--text-font-family);
 }
 
 .small-icon {

@@ -3,7 +3,7 @@ import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { AckPolicy, ConsumerConfig, DeliverPolicy, ReplayPolicy, StreamConsumer } from "@/types/Consumer";
 import { StreamInfo } from "@/types/Stream";
 import { ConsumersState, ConsumersStore } from "..";
-import { VIEW_SIZE } from "../../utils";
+import { VIEW_SIZE } from "@priolo/jack"
 import { ConsumerState, ConsumerStore } from "../detail";
 
 

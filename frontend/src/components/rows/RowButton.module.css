@@ -31,7 +31,7 @@
 .label {
 	font-size: 14px;
 	font-weight: 800;
-	font-family: "Darker Grotesque";
+	font-family: var(--title-font-family);
 	flex: 1;
 	margin-left: 5px;
 }

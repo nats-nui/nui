@@ -4,23 +4,36 @@
 	--theme-on-accent: #393939;
 	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
 
-	/* monocromatico: tutti i ruoli sullo stesso colore */
-	--accent-streams: #96a6eb;
-	--accent-messages: #96a6eb;
-	--accent-buckets: #96a6eb;
-	--accent-connections: #96a6eb;
-	--accent-consumers: #96a6eb;
-	--accent-metrics: #96a6eb;
-	--accent-neutral: #96a6eb;
 
-	--color-primary-bg: #96a6eb;
 	--app-bg-color: #02131c;
+	--accent: #96a6eb;
 }
 
 /* focus neutro */
 [data-theme="boring"] .card {
 	--cmp-focus: #dedede38;
 }
+
+[data-theme="boring"] .jack-framework {
+
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+
+	/* button icon button */
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button */
+	--dialog-fg: #393939;
+	--dialog-bg: var(--accent);
+
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+
 
 /* le card "piene" restano scure */
 [data-theme="boring"] .card--filled {

@@ -1,14 +1,17 @@
 import "./base.css"
-import "./card.css"
 import "./redeye.css"
 import "./boring.css"
 import "./zero.css"
+import "./mint.css"
+import "./sole.css"
 
 
 export const THEMES = [
 	{ label: "RED EYE", value: "redeye" },
 	{ label: "BORING", value: "boring" },
 	{ label: "ZERO", value: "zero" },
+	{ label: "MINT", value: "mint" },
+	{ label: "SOLE", value: "sole" },
 ] as const
 
 export type ThemeType = typeof THEMES[number]["value"]
@@ -20,11 +23,10 @@ export function applyTheme(theme: ThemeType) {
 
 /** 
  * ruolo di colore di una card: il tema decide il colore effettivo.
- * Ogni valore ha una classe `.accent-<ruolo>` in card.css e una variabile `--accent-<ruolo>` in base.css
  */
 export type CardAccent = "streams" | "messages" | "buckets" | "connections" | "consumers" | "metrics" | "neutral"
 
 /** classi CSS di una card */
 export function cardCls(accent: CardAccent, filled = false): string {
-	return `card accent-${accent}${filled ? " card--filled" : ""}`
+	return `${!!accent?"card-"+accent:""}${filled ? " card--filled" : ""}`
 }

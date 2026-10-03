@@ -4,15 +4,82 @@
 	--theme-on-accent: #393939;
 	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
 
-	--accent-streams: #EBFB35;
-	--accent-messages: #10F3F3;
-	--accent-buckets: #6AFFAB;
-	--accent-connections: #BBFB35;
-	--accent-consumers: #F374E6;
-	--accent-metrics: #9E7CF5;
-	--accent-neutral: #DEDEDE;
-
 	--app-bg-color: rgba(0, 0, 0, 0.8);
 	--app-bg-image: url(../assets/bg4.jpg);
 	--app-bg-blend: darken;
+	--accent: #EBFB35;
+}
+
+[data-theme="redeye"] .card-streams {
+	--accent: #EBFB35;
+}
+
+[data-theme="redeye"] .card-messages {
+	--accent: #10F3F3;
+}
+
+[data-theme="redeye"] .card-buckets {
+	--accent: #6AFFAB;
+}
+
+[data-theme="redeye"] .card-connections {
+	--accent: #BBFB35;
+}
+
+[data-theme="redeye"] .card-consumers {
+	--accent: #F374E6;
+}
+
+[data-theme="redeye"] .card-metrics {
+	--accent: #9E7CF5;
+}
+
+[data-theme="redeye"] .card-neutral {
+	--accent: #DEDEDE;
+}
+
+[data-theme="redeye"] .jack-framework {
+
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+
+	/* button icon button */
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	/* ombra perimetrale inputtext buttton */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/* tooltip drag dialog float-button */
+	--dialog-fg: #393939;
+	--dialog-bg: var(--accent);
+
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+/* card "piena": lo sfondo e' il colore di accento */
+[data-theme="redeye"] .card--filled {
+	--card-fg: #393939;
+	--card-bg: var(--accent);
+	--cmp-select-fg: var(--accent);
+	--cmp-select-bg: #393939;
+	--cmp-focus: color-mix(in srgb, #393939; 54%, transparent);
+}
+
+[data-theme="redeye"] .card--filled .jack-framework-actions {
+	--cmp-select-fg: var(--theme-on-accent);
+	--cmp-select-bg: var(--accent);
+}
+
+[data-theme="zero"] .jack-framework ::-webkit-scrollbar-thumb:hover {
+	background: var(--accent);
+}
+
+
+[data-theme="redeye"] .jack-framework {
+	border-radius: 5px;
+}
+
+[data-theme="redeye"] .jack-framework.jack-framework-linked {
+	border-radius: 0px 5px 5px 0px;
 }

@@ -2,7 +2,7 @@
 .root {
 	display: flex;
 
-	color: var(--accent-streams);
+	color: var(--accent);
 	background-color: var(--color-element-bg);
 	z-index: 2;
 }
@@ -28,7 +28,7 @@
 
 .btt {
 	color: var(--color-primary-fg);
-	background-color: var(--accent-streams);
+	background-color: var(--accent);
 }
 
 .handle_label {
