@@ -20,5 +20,5 @@
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #BBFB35;
+	background: var(--accent);
 }

@@ -1,9 +1,4 @@
 [data-theme="redeye"] {
-	--theme-card-fg: #dedede;
-	--theme-card-bg: #3E3E3E;
-	--theme-on-accent: #393939;
-	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
-
 	--app-bg-color: rgba(0, 0, 0, 0.8);
 	--app-bg-image: url(../assets/bg4.jpg);
 	--app-bg-blend: darken;
@@ -71,7 +66,7 @@
 	--cmp-select-bg: var(--accent);
 }
 
-[data-theme="zero"] .jack-framework ::-webkit-scrollbar-thumb:hover {
+[data-theme="redeye"] .jack-framework ::-webkit-scrollbar-thumb:hover {
 	background: var(--accent);
 }
 
