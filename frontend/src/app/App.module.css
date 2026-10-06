@@ -3,9 +3,6 @@
 	height: 100%;
 	display: flex;
 	color: var(--text);
-	background-color: var(--app-bg-color);
-	background-image: var(--app-bg-image);
-	background-blend-mode: var(--app-bg-blend);
 }
 
 .content {

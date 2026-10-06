@@ -2,8 +2,8 @@
 .root {
 	display: flex;
 
-	color: var(--accent);
-	background-color: var(--color-element-bg);
+	color: var(--app-cmp-fg);
+	background-color: var(--app-cmp-bg);
 	z-index: 2;
 }
 .bottom.root {
@@ -27,7 +27,7 @@
 }
 
 .btt {
-	color: var(--color-primary-fg);
+	color: var(--app-cmp-bg);
 	background-color: var(--accent);
 }
 

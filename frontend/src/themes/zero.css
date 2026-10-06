@@ -1,11 +1,10 @@
 [data-theme="zero"] {
-	--theme-card-fg: #c9c9c9;
-	--theme-card-bg: #222222;
-	--theme-on-accent: #393939;
-	--theme-cmp-bg: #0000000d;
-
 	--app-bg-color: rgba(0, 0, 0, 0.8);
 	--accent: #ffc107;
+}
+
+[data-theme="zero"] #main-panel {
+	background-color: rgba(0, 0, 0, 0.8);
 }
 
 [data-theme="zero"] .jack-framework {
@@ -20,9 +19,6 @@
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
-	/* tooltip drag dialog float-button */
-	--dialog-fg: #393939;
-	--dialog-bg: var(--accent);
 
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
@@ -33,4 +29,8 @@
 
 [data-theme="zero"] .jack-framework-linked {
 	border-radius: 5px 15px 15px 5px;
+}
+
+[data-theme="zero"] .jack-framework.card--filled {
+	--card-bg: #333333;
 }

@@ -1,8 +1,11 @@
 [data-theme="redeye"] {
-	--app-bg-color: rgba(0, 0, 0, 0.8);
-	--app-bg-image: url(../assets/bg4.jpg);
-	--app-bg-blend: darken;
 	--accent: #EBFB35;
+}
+
+[data-theme="redeye"] #main-panel {
+	background-color: rgba(0, 0, 0, 0.8);
+	background-image: url(../assets/bg4.png);
+	background-blend-mode: darken;
 }
 
 [data-theme="redeye"] .card-streams {
@@ -43,17 +46,14 @@
 	--cmp-select-bg: var(--accent);
 
 	/* ombra perimetrale inputtext buttton */
-	--cmp-bg: rgba(0, 0, 0, 0.05);
+	--cmp-bg: rgb(0 0 0 / 15%);
 
-	/* tooltip drag dialog float-button */
-	--dialog-fg: #393939;
-	--dialog-bg: var(--accent);
 
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
 
 /* card "piena": lo sfondo e' il colore di accento */
-[data-theme="redeye"] .card--filled {
+[data-theme="redeye"] .jack-framework.card--filled {
 	--card-fg: #393939;
 	--card-bg: var(--accent);
 	--cmp-select-fg: var(--accent);
@@ -61,8 +61,8 @@
 	--cmp-focus: color-mix(in srgb, #393939; 54%, transparent);
 }
 
-[data-theme="redeye"] .card--filled .jack-framework-actions {
-	--cmp-select-fg: var(--theme-on-accent);
+[data-theme="redeye"] .jack-framework.card--filled .jack-framework-actions {
+	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 }
 

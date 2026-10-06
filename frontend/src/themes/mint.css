@@ -1,6 +1,12 @@
 [data-theme="mint"] {
-	--app-bg-color: #06161a;
 	--accent: #07ff77;
+}
+
+[data-theme="mint"] #main-panel {
+	background-color: #06161a;
+	background-image: url(../assets/bg7.png);
+	background-blend-mode: darken;
+	background-size: 250px 250px;
 }
 
 [data-theme="mint"] .jack-framework {
@@ -15,9 +21,6 @@
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
-	/* tooltip drag dialog float-button */
-	--dialog-fg: #393939;
-	--dialog-bg: var(--accent);
 
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
@@ -26,3 +29,6 @@
 	border-radius: 0px;
 }
 
+[data-theme="mint"] .jack-framework.card--filled {
+	--card-bg: #002920;
+}

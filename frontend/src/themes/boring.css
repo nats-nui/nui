@@ -1,12 +1,9 @@
 [data-theme="boring"] {
-	--theme-card-fg: #dedede;
-	--theme-card-bg: #3E3E3E;
-	--theme-on-accent: #393939;
-	--theme-cmp-bg: rgba(0, 0, 0, 0.05);
-
-
-	--app-bg-color: #02131c;
 	--accent: #96a6eb;
+}
+
+[data-theme="sole"] #main-panel {
+	background-color: #02131c;
 }
 
 /* focus neutro */
@@ -26,10 +23,6 @@
 	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
 
-	/* tooltip drag dialog float-button */
-	--dialog-fg: #393939;
-	--dialog-bg: var(--accent);
-
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
 
@@ -37,8 +30,8 @@
 
 /* le card "piene" restano scure */
 [data-theme="boring"] .card--filled {
-	--card-fg: var(--theme-card-fg);
-	--card-bg: var(--theme-card-bg);
-	--cmp-select-fg: var(--theme-on-accent);
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 }
