@@ -10,14 +10,13 @@
 	--cmp-table-header-bg: #F7963E;
 	/** bg per le righe pari della tabella */
 	--cmp-table-row-even-bg: rgba(0, 0, 0, 0.15);
-
 }
 
 [data-theme="sole"] #main-panel {
-	background-color: #dfc79f;
-	background-image: url(../assets/bg7.png);
+	background-color: #fff1d9;
+	background-image: url(../assets/bg8.png);
 	background-blend-mode: overlay;
-	background-size: 300px 300px;
+	/* background-size: 300px 300px; */
 }
 
 [data-theme="sole"] .jack-framework {
