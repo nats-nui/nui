@@ -1,12 +1,18 @@
 package nui
 
 import (
+	"context"
 	"errors"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
 )
+
+type consumerWithInfo interface {
+	Info(context.Context) (*jetstream.ConsumerInfo, error)
+	CachedInfo() *jetstream.ConsumerInfo
+}
 
 func (a *App) HandleIndexStreamConsumers(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
@@ -50,11 +56,7 @@ func (a *App) handleShowStreamConsumer(c *fiber.Ctx) error {
 	if streamName == "" {
 		return c.Status(422).JSON("stream_name is required")
 	}
-	stream, err := js.Stream(c.Context(), streamName)
-	if err != nil {
-		return a.logAndFiberError(c, err, 422)
-	}
-	consumer, err := stream.Consumer(c.Context(), c.Params("consumer_name"))
+	consumer, err := getConsumer(c.Context(), js, streamName, c.Params("consumer_name"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
@@ -106,7 +108,7 @@ func (a *App) handleUpdateStreamConsumer(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	consumer, err := stream.Consumer(c.Context(), c.Params("consumer_name"))
+	consumer, err := getConsumer(c.Context(), js, streamName, c.Params("consumer_name"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
@@ -115,7 +117,7 @@ func (a *App) handleUpdateStreamConsumer(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	consumer, err = stream.UpdateConsumer(c.Context(), config)
+	consumer, err = updateConsumer(c.Context(), stream, config)
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
@@ -139,10 +141,7 @@ func (a *App) handleDeleteStreamConsumer(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	_, err = stream.Consumer(c.Context(), c.Params("consumer_name"))
-	if errors.Is(err, jetstream.ErrNotPullConsumer) {
-		_, err = stream.PushConsumer(c.Context(), c.Params("consumer_name"))
-	}
+	_, err = getConsumer(c.Context(), js, streamName, c.Params("consumer_name"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
@@ -196,7 +195,7 @@ func (a *App) handlePauseAndResumeConsumer(c *fiber.Ctx) error {
 			return a.logAndFiberError(c, err, 500)
 		}
 	}
-	consumer, err := js.Consumer(ctx, streamName, consumerName)
+	consumer, err := getConsumer(ctx, js, streamName, consumerName)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -205,4 +204,19 @@ func (a *App) handlePauseAndResumeConsumer(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	return c.JSON(info)
+}
+
+func getConsumer(ctx context.Context, js jetstream.JetStream, streamName, name string) (consumerWithInfo, error) {
+	consumer, err := js.Consumer(ctx, streamName, name)
+	if errors.Is(err, jetstream.ErrNotPullConsumer) {
+		return js.PushConsumer(ctx, streamName, name)
+	}
+	return consumer, err
+}
+
+func updateConsumer(ctx context.Context, stream jetstream.Stream, config jetstream.ConsumerConfig) (consumerWithInfo, error) {
+	if config.DeliverSubject == "" {
+		return stream.UpdateConsumer(ctx, config)
+	}
+	return stream.UpdatePushConsumer(ctx, config)
 }
