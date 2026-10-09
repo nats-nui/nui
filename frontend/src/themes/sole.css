@@ -2,13 +2,9 @@
 	--accent: #F7963E;
 	--app-cmp-fg: #dedede;
 	--app-cmp-bg: #00464b;
-	/* --app-cmp-bg: #005c63; */
 
  	--title-font-family: 'roboto condensed';
-	/* --text-font-family: arial, sans-serif; */
-	/** colore dello sfodo dell'header della tabella */
 	--cmp-table-header-bg: #F7963E;
-	/** bg per le righe pari della tabella */
 	--cmp-table-row-even-bg: rgba(0, 0, 0, 0.15);
 }
 
@@ -16,7 +12,6 @@
 	background-color: #fff1d9;
 	background-image: url(../assets/bg8.png);
 	background-blend-mode: overlay;
-	/* background-size: 300px 300px; */
 }
 
 [data-theme="sole"] .jack-framework {
@@ -24,14 +19,10 @@
 	--card-fg: #333333;
 	--card-bg: #F4EADC;
 
-	/* button icon button */
 	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 
-	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
-
-
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 
 	border-radius: 0px;

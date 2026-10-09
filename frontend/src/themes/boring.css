@@ -6,7 +6,6 @@
 	background-color: #02131c;
 }
 
-/* focus neutro */
 [data-theme="boring"] .card {
 	--cmp-focus: #dedede38;
 }
@@ -16,19 +15,13 @@
 	--card-fg: #dedede;
 	--card-bg: #3E3E3E;
 
-	/* button icon button */
 	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 
-	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
-
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
 
-
-
-/* le card "piene" restano scure */
 [data-theme="boring"] .card--filled {
 	--card-fg: #dedede;
 	--card-bg: #3E3E3E;

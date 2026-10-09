@@ -8,18 +8,13 @@
 }
 
 [data-theme="zero"] .jack-framework {
-
 	--card-fg: #dddddd;
 	--card-bg: #222222;
 
-	/* button icon button */
 	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 
-	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgba(0, 0, 0, 0.05);
-
-
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
 

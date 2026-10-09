@@ -16,17 +16,17 @@ export const THEMES = [
 
 export type ThemeType = typeof THEMES[number]["value"]
 
-/** applica il tema al documento: il resto lo fa il CSS */
+/** Apply the theme to the document: CSS handles the rest. */
 export function applyTheme(theme: ThemeType) {
 	document.documentElement.dataset.theme = theme
 }
 
 /** 
- * ruolo di colore di una card: il tema decide il colore effettivo.
+ * A card's color role: the theme determines the actual color.
  */
 export type CardAccent = "streams" | "messages" | "buckets" | "connections" | "consumers" | "metrics" | "neutral"
 
-/** classi CSS di una card */
+/** CSS classes of a card */
 export function cardCls(accent: CardAccent, filled = false): string {
 	return `${!!accent?"card-"+accent:""}${filled ? " card--filled" : ""}`
 }

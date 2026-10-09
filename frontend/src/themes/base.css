@@ -11,8 +11,8 @@
 	--app-cmp-fg: #dedede;
 	--app-cmp-bg: #393939;
 
-	--app-error: #F374E6;
-	--app-warning: #F7963E;
+	--app-error: #da0505;
+	--app-warning: #EBFB35;
 	--app-success: #6AFFAB;
 	--app-info: #10F3F3;
 	--app-neutral: #DEDEDE;
@@ -57,6 +57,23 @@
 	background-color: rgba(0, 0, 0, 0.8);
 	background-image: none;
 	background-blend-mode: none;
+}
+
+.jack-cmp-snackbar.error {
+	background: var(--app-error);
+	color: #dedede;
+}
+.jack-cmp-snackbar.warn {
+	background: var(--app-warning);
+	color: #393939;
+}
+.jack-cmp-snackbar.success {
+	background: var(--app-success);
+	color: #393939;
+}
+.jack-cmp-snackbar.info {
+	background: var(--app-info);
+	color: #393939;
 }
 
 /* 

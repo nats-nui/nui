@@ -41,18 +41,13 @@
 	--card-fg: #dedede;
 	--card-bg: #3E3E3E;
 
-	/* button icon button */
 	--cmp-select-fg: #393939;
 	--cmp-select-bg: var(--accent);
 
-	/* ombra perimetrale inputtext buttton */
 	--cmp-bg: rgb(0 0 0 / 15%);
-
-
 	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
 }
 
-/* card "piena": lo sfondo e' il colore di accento */
 [data-theme="redeye"] .jack-framework.card--filled {
 	--card-fg: #393939;
 	--card-bg: var(--accent);
