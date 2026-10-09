@@ -3,6 +3,7 @@ import FrameworkCard from "@/components/cards/FrameworkCard"
 import RowButton from "@/components/rows/RowButton"
 import BucketIcon from "@/icons/cards/BucketIcon"
 import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
+import StreamIcon from "@/icons/cards/StreamIcon"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { EDIT_STATE } from "@/types"
 import { useStore } from "@priolo/jon"
@@ -32,6 +33,7 @@ const BucketDetailView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleKVEntriesClick = () => bucketSo.openKVEntries()
+	const handleStreamClick = () => bucketSo.openStream()
 
 	// RENDER
 	const inRead = bucketSa.editState == EDIT_STATE.READ
@@ -51,6 +53,12 @@ const BucketDetailView: FunctionComponent<Props> = ({
 					selected={isKVEntriesSelect}
 					onClick={handleKVEntriesClick}
 				/>
+				<LinkButton
+					icon={<StreamIcon />}
+					tooltip="STREAM"
+					className="jack-focus-2"
+					onClick={handleStreamClick}
+				/>
 			</div>
 		}
 	>
@@ -61,6 +69,12 @@ const BucketDetailView: FunctionComponent<Props> = ({
 				className="jack-focus-1"
 				selected={isKVEntriesSelect}
 				onClick={handleKVEntriesClick}
+			/>
+			<RowButton
+				icon={<StreamIcon className="small-icon"/>}
+				label="STREAM"
+				className="jack-focus-2"
+				onClick={handleStreamClick}
 			/>
 		</>}
 
