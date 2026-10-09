@@ -1,16 +1,14 @@
-//import srcBg from "@/assets/bg4.jpg"
 import MainMenu from "@/app/mainMenu/MainMenu"
-import docsSo from "@/stores/docs"
 import { ProtobufSchemaProvider } from "@/contexts/ProtobufSchemaContext"
 import cddlSo from "@/stores/cddl"
+import docsSo from "@/stores/docs"
+import { DragCmp, TooltipCmp } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import cls from "./App.module.css"
 import DeckGroup from "./DeckGroup"
 import DrawerGroup from "./DrawerGroup"
 import ZenCard from "./ZenCard"
-import { TooltipCmp, DragCmp } from "@priolo/jack"
-import layoutSo from "@/stores/layout"
 
 
 
@@ -18,7 +16,6 @@ const App: FunctionComponent = () => {
 
 	// STORES
 	const docsSa = useStore(docsSo)
-	useStore(layoutSo)
 
 	// HOOKS
 	useEffect(() => {
@@ -32,7 +29,7 @@ const App: FunctionComponent = () => {
 
 	return (
 		<ProtobufSchemaProvider>
-			<div className={`${cls.root} ${cls[layoutSo.state.theme]}`}>
+			<div id="main-panel" className={cls.root}>
 
 				<ZenCard />
 

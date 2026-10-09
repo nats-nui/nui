@@ -3,17 +3,14 @@ import EditorCode, { EditorRefProps } from "@/components/editor"
 import FormatAction from "@/components/editor/FormatAction"
 import SendIcon from "@/icons/SendIcon"
 import { MessageSendState, MessageSendStore } from "@/stores/stacks/connection/messageSend"
-import { LOAD_STATE } from "@/stores/stacks/utils"
+import { cardCls } from "@/themes"
+import { Button, CircularLoadingCmp, EditList, FloatButton, LOAD_STATE, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import React, { FunctionComponent } from "react"
 import StreamsIcon from "../../../icons/cards/StreamsIcon"
 import FormatDialog from "../../editor/FormatDialog"
 import EditMetadataRow from "../../rows/EditMetadataRow"
-import clsCardRedeye from "../CardCyanDef.module.css"
-import clsCardBoring from "../CardBoringDef.module.css"
 import SubjectsDialog from "./SubjectsDialog"
-import { Button, CircularLoadingCmp, EditList, FloatButton, TextInput, TitleAccordion } from "@priolo/jack"
-import layoutSo from "@/stores/layout"
 
 
 
@@ -27,7 +24,6 @@ const MessageSendView: FunctionComponent<Props> = ({
 
 	// STORE
 	const sendSa = useStore(sendSo) as MessageSendState
-	useStore(layoutSo)
 
 	// HOOKs
 
@@ -46,10 +42,9 @@ const MessageSendView: FunctionComponent<Props> = ({
 	const inLoading = sendSa.loadingState == LOAD_STATE.LOADING
 	const autoFormat = sendSa.autoFormat
 	const refEditor = (ref: EditorRefProps) => sendSa.editorRef = ref
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("messages")}
 		icon={<StreamsIcon />}
 		store={sendSo}
 		actionsRender={<>

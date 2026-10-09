@@ -2,8 +2,8 @@
 .root {
 	display: flex;
 
-	color: var(--color-primary-bg);
-	background-color: var(--color-element-bg);
+	color: var(--app-cmp-fg);
+	background-color: var(--app-cmp-bg);
 	z-index: 2;
 }
 .bottom.root {
@@ -19,6 +19,7 @@
 	flex-direction: column;
 	gap: 8px;
 	margin: 10px;
+	color: var(--accent);
 }
 .bottom .handle {
 	cursor: row-resize;
@@ -26,8 +27,8 @@
 }
 
 .btt {
-	color: var(--color-primary-fg);
-	background-color: var(--color-primary-bg);
+	color: var(--app-cmp-bg);
+	background-color: var(--accent);
 }
 
 .handle_label {

@@ -1,7 +1,7 @@
 {
   "name": "nats-client",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,10 +15,11 @@
   },
   "dependencies": {
     "@cbortech/cbor": "^0.26.8",
-    "@fontsource-variable/inter": "^5.2.6",
-    "@fontsource/darker-grotesque": "^5.2.6",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/darker-grotesque": "^5.3.0",
+    "@fontsource/roboto-condensed": "^5.3.0",
     "@monaco-editor/react": "^4.7.0",
-    "@priolo/jack": "^0.2.17",
+    "@priolo/jack": "^0.3.17",
     "@priolo/jon": "^1.1.2",
     "@types/protobufjs": "^6.0.0",
     "cross-env": "^7.0.3",

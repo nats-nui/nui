@@ -4,14 +4,13 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketConfig, BucketState } from "@/types/Bucket"
-import { focusSo, utils } from "@priolo/jack"
+import { focusSo, utils, VIEW_SIZE } from "@priolo/jack"
 import { mixStores, StoreOf } from "@priolo/jon"
 import { BucketsStore } from "."
 import { buildStore } from "../../docs/utils/factory"
 import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseStore } from "../loadBase"
-import { VIEW_SIZE } from "../utils"
 
 
 

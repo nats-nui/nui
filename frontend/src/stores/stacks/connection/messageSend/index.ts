@@ -2,10 +2,10 @@ import messagesApi from "@/api/messages"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import { LOAD_STATE } from "@priolo/jack"
 import { mixStores, StoreOf } from "@priolo/jon"
-import editorSetup from "../../editorBase"
-import { LOAD_STATE } from "../../utils"
 import { toPayload } from "../../../../utils/editor"
+import editorSetup from "../../editorBase"
 
 
 

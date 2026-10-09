@@ -1,20 +1,19 @@
 import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
+import { DOC_TYPE, EDIT_STATE } from "@/types";
 import {
 	DISCARD,
 	RETENTION,
 	STORAGE,
 	Source,
 	StreamConfig,
-	StreamInfo,
 	StreamState as StreamEntityState,
-	SubjectTransform, ConsumerLimit
+	StreamInfo
 } from "@/types/Stream";
+import { VIEW_SIZE } from "@priolo/jack";
 import { StreamsState, StreamsStore } from "..";
-import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { StreamState, StreamStore } from "../detail";
 import { StreamMessagesStore } from "../messages";
-import { VIEW_SIZE } from "../../utils";
 
 
 

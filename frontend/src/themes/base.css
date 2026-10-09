@@ -1,0 +1,85 @@
+:root {
+
+	/** Font used for headings */
+	--title-font-family: 'Darker Grotesque', sans-serif;
+	/** Font used for body text */
+	--text-font-family: 'Inter Variable', sans-serif;
+
+	/* Applies to the application background */
+	
+	/* For app-wide components such as the Main Menu and Drawer */
+	--app-cmp-fg: #dedede;
+	--app-cmp-bg: #393939;
+
+	--app-error: #da0505;
+	--app-warning: #EBFB35;
+	--app-success: #6AFFAB;
+	--app-info: #10F3F3;
+	--app-neutral: #DEDEDE;
+
+	/** Accent color used for selections and interactive components */
+	--accent: #EBFB35;
+	--accent-text: #393939;
+
+	/** Card text/content color */
+	--card-fg: #dedede;
+	/** Card background color */
+	--card-bg: #3E3E3E;
+	/* Text/content color of a selected component */
+	--cmp-select-fg: #393939;
+	/* Background color of a selected component */
+	--cmp-select-bg: var(--accent);
+
+	/* Decorative shadow for components, typically a dark translucent overlay on components that require clicks or text input */
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+
+	/** Table header background color */
+	--cmp-table-header-bg: #5b5b5b;
+	/** Background for even table rows */
+	--cmp-table-row-even-bg: rgba(0, 0, 0, 0.5);
+
+	/* Border color for focused components */
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+
+
+
+	/* Background color of the ACTION bar in Framework */
+	--jack-framework-actions-bg: rgb(0 0 0 / 50%);
+	/* Foreground color of the ACTION bar in Framework */
+	--jack-framework-actions-fg: #dedede;
+
+
+}
+
+/** Main panel used to set the background */
+#main-panel {
+	font-family: var(--text-font-family);
+	background-color: rgba(0, 0, 0, 0.8);
+	background-image: none;
+	background-blend-mode: none;
+}
+
+.jack-cmp-snackbar.error {
+	background: var(--app-error);
+	color: #dedede;
+}
+.jack-cmp-snackbar.warn {
+	background: var(--app-warning);
+	color: #393939;
+}
+.jack-cmp-snackbar.success {
+	background: var(--app-success);
+	color: #393939;
+}
+.jack-cmp-snackbar.info {
+	background: var(--app-info);
+	color: #393939;
+}
+
+/* 
+.jack-framework {}
+
+.jack-framework-actions{}
+
+.jack-framework-header (.jack-title, .jack-subtitle) {}
+ */

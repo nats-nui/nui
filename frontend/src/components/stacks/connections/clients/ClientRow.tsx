@@ -49,7 +49,7 @@ const ClientRow: FunctionComponent<ClientRowProps> = ({ cnn }) => {
 					width: "8px",
 					height: "8px",
 					borderRadius: "50%",
-					backgroundColor: isRecentActivity ? "var(--color-mint)" : "#575757ff",
+					backgroundColor: isRecentActivity ? "var(--app-success)" : "#575757ff",
 					marginRight: "4px",
 				}} />
 				<div style={{ flex: 1, ...elipsisStyle }}> <span style={{ fontWeight: 700 }}>{cnn.cid}</span> / {cnn.ip}:{cnn.port}</div>

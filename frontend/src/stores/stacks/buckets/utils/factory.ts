@@ -4,7 +4,7 @@ import { BucketsStore } from "@/stores/stacks/buckets";
 import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { BucketConfig, BucketState } from "@/types/Bucket";
 import { STORAGE } from "@/types/Stream";
-import { VIEW_SIZE } from "../../utils";
+import { VIEW_SIZE } from "@priolo/jack";
 import { BucketStore } from "../detail";
 
 
