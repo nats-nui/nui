@@ -56,6 +56,11 @@ const StreamsListView: FunctionComponent<Props> = ({
 				value={streamsSa.textSearch}
 				onChange={text => streamsSo.setTextSearch(text)}
 			/>
+			<Button
+				children="KV"
+				select={streamsSa.showKv}
+				onClick={() => streamsSo.setShowKv(!streamsSa.showKv)}
+			/>
 			{!!nameSelected && <Button
 				children="DELETE"
 				onClick={handleDelete}

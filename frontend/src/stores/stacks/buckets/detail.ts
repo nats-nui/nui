@@ -11,6 +11,8 @@ import { buildStore } from "../../docs/utils/factory"
 import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
 import { buildKVEntries } from "../kventry/utils/factory"
 import loadBaseSetup, { LoadBaseStore } from "../loadBase"
+import strApi from "@/api/streams"
+import { buildStream } from "../streams/utils/factory"
 
 
 
@@ -141,6 +143,14 @@ const setup = {
 			const isOpen = store.getKVEntriesOpen()
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
+		/** apertura della CARD STREAM associata al BUCKET */
+		async openStream(_: void, store?: BucketStore) {
+			const bucket = store.state.bucket?.bucket
+			if (!bucket) return
+			const stream = await strApi.get(store.state.connectionId, `KV_${bucket}`, { store, manageAbort: true })
+			const view = buildStream(store.state.connectionId, stream, null)
+			store.state.group.addLink({ view, parent: store, anim: true })
 		},
 
 	},
