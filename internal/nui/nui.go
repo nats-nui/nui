@@ -3,10 +3,10 @@ package nui
 import (
 	"path/filepath"
 
-	"github.com/nats-nui/nui/internal/cddlschema"
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
-	"github.com/nats-nui/nui/internal/protoschema"
+	cddlschema2 "github.com/nats-nui/nui/internal/schemas/cddlschema"
+	protoschema2 "github.com/nats-nui/nui/internal/schemas/protoschema"
 	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"
@@ -15,8 +15,8 @@ import (
 type Nui struct {
 	ConnRepo         connection.ConnRepo
 	ConnPool         connection.Pool[*connection.NatsConn]
-	ProtoRepo        protoschema.ProtoRepo
-	CddlRepo         cddlschema.CddlRepo
+	ProtoRepo        protoschema2.ProtoRepo
+	CddlRepo         cddlschema2.CddlRepo
 	CliConnImporter  clicontext.Importer[clicontext.ImportedContextEntry]
 	MetricsCollector metrics.MetricsCollector
 	Hub              ws.IHub
@@ -58,20 +58,20 @@ func New(opts ...Option) (*Nui, error) {
 	}, nil
 }
 
-func newProtoRepo(path string) (protoschema.ProtoRepo, error) {
+func newProtoRepo(path string) (protoschema2.ProtoRepo, error) {
 	dir, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
 	}
-	return protoschema.NewFileSystemProtoRepo(dir)
+	return protoschema2.NewFileSystemProtoRepo(dir)
 }
 
-func newCddlRepo(path string, logger logging.Slogger) (cddlschema.CddlRepo, error) {
+func newCddlRepo(path string, logger logging.Slogger) (cddlschema2.CddlRepo, error) {
 	dir, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
 	}
-	return cddlschema.NewFileSystemCddlRepo(dir, logger)
+	return cddlschema2.NewFileSystemCddlRepo(dir, logger)
 }
 
 func Setup(dbPath, protoschemasPath, cddlschemasPath string, logger logging.Slogger) (*Nui, error) {
