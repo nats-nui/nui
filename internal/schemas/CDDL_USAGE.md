@@ -13,7 +13,7 @@ Read and write CBOR in NATS UI, optionally checked against your CDDL schemas.
 
    **Docker / server:** `/cddlschemas/default` (or `--cddl-schemas-path=...`)
 
-2. **Add `.cddl` files** (UI demos: `person.cddl`, `order.cddl` in [`tests/cddlschemas/default`](tests/cddlschemas/default); `simple` / `simple2` are API test fixtures):
+2. **Add `.cddl` files** (UI demos: `person.cddl`, `order.cddl` in [`../../tests/cddlschemas/default`](../../tests/cddlschemas/default); `simple` / `simple2` are API test fixtures):
 
 ```
 default/
@@ -44,10 +44,10 @@ One type at a time is intentional. Helpers in the file (`uuid`, `line`) stay in 
 
 | | |
 |-|-|
-| Simple send + decode | ![person](docs/images/cbor-simple.gif) |
-| Nested order (bytes, arrays, optionals, integer keys) | ![order](docs/images/cbor-advanced.gif) |
+| Simple send + decode | ![person](../../docs/images/cbor-simple.gif) |
+| Nested order (bytes, arrays, optionals, integer keys) | ![order](../../docs/images/cbor-advanced.gif) |
 
-GIFs are under [`docs/images/`](docs/images/). Schemas used: `person.cddl`, `order.cddl`.
+GIFs are under [`../../docs/images`](docs/images/). Schemas used: `person.cddl`, `order.cddl`.
 
 ### Form behaviour
 
@@ -69,11 +69,11 @@ GIFs are under [`docs/images/`](docs/images/). Schemas used: `person.cddl`, `ord
 
 ## Testing
 
-`make dev-web` loads the demo schemas from `tests/cddlschemas/default` (`person.cddl`, `order.cddl`). For your own files, point `--cddl-schemas-path` at your directory (or use the desktop app paths above).
+`make dev-web` loads the demo schemas from `../../tests/cddlschemas/default` (`person.cddl`, `order.cddl`). For your own files, point `--cddl-schemas-path` at your directory (or use the desktop app paths above).
 
 ```bash
 cd frontend && npx vitest run src/utils/cbor src/utils/editor.test.ts src/components/formatters/cbor
-go test ./internal/cddlschema/...
+go test ./internal/schemas/cddlschema/...
 go test ./tests/ -run 'TestNuiTestSuite/TestCddlschemas'
 ```
 
