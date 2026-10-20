@@ -202,6 +202,7 @@ const EditorCodeBase: ForwardRefRenderFunction<EditorRefProps, Props> = ({
 	if (format == MSG_FORMAT.PROTOBUF) {
 		return <ProtobufCmp style={{ flex: 1, overflowY: "auto" }}
 			text={value}
+			subject={subject}
 		/>
 	}
 	if (format == MSG_FORMAT.CBOR) {

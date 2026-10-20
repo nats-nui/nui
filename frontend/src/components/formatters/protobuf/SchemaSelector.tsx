@@ -8,7 +8,6 @@ interface SchemaSelectorProps {
   selectedMessageType: string
   availableMessageTypes: string[]
   isLoadingSchemas: boolean
-  isAutoDetecting: boolean
   onSchemaChange: (schemaId: string) => void
   onMessageTypeChange: (messageType: string) => void
   onRefreshSchemas: () => void
@@ -23,7 +22,6 @@ const SchemaSelector: FunctionComponent<SchemaSelectorProps> = ({
   selectedMessageType,
   availableMessageTypes,
   isLoadingSchemas,
-  isAutoDetecting,
   onSchemaChange,
   onMessageTypeChange,
   onRefreshSchemas,
@@ -34,11 +32,9 @@ const SchemaSelector: FunctionComponent<SchemaSelectorProps> = ({
   return (
     <div style={styles.controls}>
       {/* Status message */}
-      {(isAutoDetecting || isLoadingSchemas) && (
+      {isLoadingSchemas && (
         <div style={styles.statusMessage}>
-          {isLoadingSchemas 
-            ? 'Loading proto schemas...' 
-            : 'Auto-detecting best proto file + message type combination...'}
+          Loading proto schemas...
         </div>
       )}
       
@@ -93,10 +89,9 @@ const SchemaSelector: FunctionComponent<SchemaSelectorProps> = ({
           </select>
           <button 
             onClick={onAutoDetect} 
-            disabled={isAutoDetecting}
             style={styles.buttonSmall}
           >
-            {isAutoDetecting ? 'Detecting...' : 'Auto-detect'}
+            Auto-detect
           </button>
           {showDoneButton && onDone && (
             <button 

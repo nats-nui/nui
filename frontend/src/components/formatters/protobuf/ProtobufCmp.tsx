@@ -23,7 +23,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
     selectedMessageType,
     decodedData,
     isLoadingSchemas,
-    isAutoDetecting,
     showSchemaControls,
     availableMessageTypes,
     selectedSchema,
@@ -56,7 +55,6 @@ const ProtobufCmp: FunctionComponent<Props> = ({
           selectedMessageType={selectedMessageType}
           availableMessageTypes={availableMessageTypes}
           isLoadingSchemas={isLoadingSchemas}
-          isAutoDetecting={isAutoDetecting}
           onSchemaChange={setSelectedSchemaId}
           onMessageTypeChange={setSelectedMessageType}
           onRefreshSchemas={refreshSchemas}

@@ -1,5 +1,6 @@
 import { FunctionComponent, useMemo, memo } from "react"
-import { useProtobufSchema } from "@/hooks/useProtobufSchema"
+import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
+import { useProtobufResolution } from "@/hooks/useProtobufResolution"
 import JsonRow from "../json/JsonRow"
 import TextRow from "../text/TextRow"
 
@@ -14,12 +15,11 @@ const ProtobufRow: FunctionComponent<Props> = ({
   style,
   subject,
 }) => {
-  const {
-    selectedSchema,
-    selectedMessageType,
-    decodedData,
-    showSchemaControls,
-  } = useProtobufSchema(text, subject)
+  const { schemas } = useProtobufSchemas()
+  const resolution = useProtobufResolution(text, subject, schemas)
+  const selectedSchema = resolution?.schema
+  const selectedMessageType = resolution?.messageType
+  const decodedData = resolution?.decoded
 
   const schemaInfo = useMemo(() => {
     if (!selectedSchema || !selectedMessageType) return null
@@ -57,7 +57,7 @@ const ProtobufRow: FunctionComponent<Props> = ({
     )
   }
 
-  if (showSchemaControls || !selectedSchema || !selectedMessageType) {
+  if (!selectedSchema || !selectedMessageType) {
     return (
       <div style={style}>
         <TextRow text="Protobuf: Schema selection required" error />
