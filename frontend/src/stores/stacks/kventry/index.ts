@@ -1,13 +1,13 @@
 import kventryApi from "@/api/kventries"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { ViewState, ViewStore, default as viewSetup } from "@/stores/stacks/viewBase"
+import { ViewStore, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { KVEntry } from "@/types/KVEntry"
 import { docsSo, utils } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 import { buildKVEntry, buildKVEntryNew } from "./utils/factory"
 
 
@@ -156,12 +156,7 @@ const setup = {
 	},
 }
 
-export type KVEntriesState = typeof setup.state & ViewState & LoadBaseState
-export type KVEntriesGetters = typeof setup.getters
-export type KVEntriesActions = typeof setup.actions
-export type KVEntriesMutators = typeof setup.mutators
-export interface KVEntriesStore extends ViewStore, LoadBaseStore, KVEntriesGetters, KVEntriesActions, KVEntriesMutators {
-	state: KVEntriesState
-}
 const kventriesSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface KVEntriesStore extends StoreOf<typeof kventriesSetup> {}
+export type KVEntriesState = KVEntriesStore["state"]
 export default kventriesSetup

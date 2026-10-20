@@ -1,10 +1,10 @@
 import cnnSo from "@/stores/connections"
 import viewSetup from "@/stores/stacks/viewBase"
-import { focusSo, VIEW_SIZE, ViewState, ViewStore } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { focusSo, VIEW_SIZE, ViewStore } from "@priolo/jack"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { DOC_TYPE } from "../../docs/types"
 import { buildStore } from "../../docs/utils/factory"
-import { CnnImportState, CnnImportStore, IMPORT_STATUS } from "../cnnImport"
+import { CnnImportStore, IMPORT_STATUS } from "../cnnImport"
 import { buildStreams } from "../streams/utils/factory"
 import { CnnDetailStore } from "./detail"
 import { buildConnection, buildConnectionMessages, buildConnectionNew } from "./utils/factory"
@@ -110,12 +110,12 @@ const setup = {
 				store.state.group.addLink({ view: null, parent: store, anim: true })
 				return
 			}
-			const configStore = buildStore({
+			const configStore = buildStore<CnnImportStore>({
 				type: DOC_TYPE.CNN_LOADER,
 				path: "",
 				imports: [],
 				status: IMPORT_STATUS.INIT,
-			} as CnnImportState) as CnnImportStore;
+			})
 			store.state.group.addLink({ view: configStore, parent: store, anim: true })
 		},
 	},
@@ -126,12 +126,7 @@ const setup = {
 	},
 }
 
-export type CnnListState = typeof setup.state & ViewState
-export type CnnListGetters = typeof setup.getters
-export type CnnListActions = typeof setup.actions
-export type CnnListMutators = typeof setup.mutators
-export interface CnnListStore extends ViewStore, CnnListGetters, CnnListActions, CnnListMutators {
-	state: CnnListState
-}
 const cnnSetup = mixStores(viewSetup, setup)
+export interface CnnListStore extends StoreOf<typeof cnnSetup> {}
+export type CnnListState = CnnListStore["state"]
 export default cnnSetup

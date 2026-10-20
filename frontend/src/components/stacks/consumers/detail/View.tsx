@@ -6,11 +6,9 @@ import { EDIT_STATE } from "../../../../types"
 import ActionsCmp from "./Actions"
 import Form from "./Form"
 import ConsumerIcon from "@/icons/cards/ConsumerIcon"
-import clsCardRedeye from "../../CardFuchsia.module.css"
-import clsCardBoring from "../../CardBoringDef.module.css"
+import { cardCls } from "@/themes"
 import { AlertDialog } from "@priolo/jack"
 import PauseDialog from "./PauseDialog"
-import layoutSo from "@/stores/layout"
 
 
 interface Props {
@@ -24,7 +22,6 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 	// STORE
 	const state = useStore(store)
 	useStore(store.state.group)
-	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -35,10 +32,9 @@ const ConsumerDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const inRead = state.editState == EDIT_STATE.READ
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("consumers", true)}
 		icon={<ConsumerIcon />}
 		store={store}
 		actionsRender={<ActionsCmp store={store} />}

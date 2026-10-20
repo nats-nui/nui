@@ -119,19 +119,19 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 
 
 const cssNull: React.CSSProperties = {
-	color: "var(--color-fuchsia)",
+	color: "#F374E6",
 }
 const cssString: React.CSSProperties = {
-	color: "var(--color-green)",
+	color: "#BBFB35",
 }
 const cssNumber: React.CSSProperties = {
-	color: "var(--color-cyan)",
+	color: "#10F3F3",
 }
 const cssTrue: React.CSSProperties = {
-	color: "var(--color-green)",
+	color: "#BBFB35",
 }
 const cssFalse: React.CSSProperties = {
-	color: "var(--color-fuchsia)",
+	color: "#F374E6",
 }
 const cssArrayInfo: React.CSSProperties = {
 	opacity: .5
@@ -140,9 +140,9 @@ const cssBrackets = (deep: number): React.CSSProperties => {
 	return {
 		color: [
 			null,
-			"var(--color-cyan)",
-			"var(--color-fuchsia)",
-			"var(--color-yellow)",
+			"#10F3F3",
+			"#F374E6",
+			"#EBFB35",
 		][deep % 4]
 	}
 }

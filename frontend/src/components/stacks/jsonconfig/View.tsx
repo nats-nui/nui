@@ -4,7 +4,7 @@ import { useStore } from "@priolo/jon"
 import { FunctionComponent } from "react"
 import { JsonConfigStore } from "../../../stores/stacks/jsonconfig"
 import { MSG_FORMAT } from "../../../utils/editor"
-import clsCard from "../CardCyanDef.module.css"
+import { cardCls } from "@/themes"
 import ActionsCmp from "./Actions"
 import cls from "./View.module.css"
 import ConfigIcon from "../../../icons/cards/ConfigIcon"
@@ -31,7 +31,7 @@ const JsonConfigView: FunctionComponent<Props> = ({
 	// RENDER
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("messages")}
 		icon={<ConfigIcon />}
 		store={jsonSo}
 		actionsRender={<ActionsCmp store={jsonSo} />}

@@ -42,46 +42,28 @@ export function dateShow(date?: any): string {
 	return dayjs(date).isValid() ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "--"
 }
 
-let throttleIDs = {};
-/**
- * esegue la funzione con un frame rate differente
- */
-export function throttle(name: string, callback?: () => void, delay?: number): void {
-	if (delay == 0) {
-		callback?.apply(this, null);
-	} else {
-		let toId = throttleIDs[name];
-		// se è già in esecuzione non faccio nulla
-		if (!!toId) return;
-		callback.apply(this, null);
-		throttleIDs[name] = setTimeout(() => {
-			delete throttleIDs[name];
-		}, delay);
-	}
-}
-
-
 let throttle2IDs = {};
 /**
  * esegue la funzione con un frame rate differente
  */
-export async function throttle2(name: string, callback: () => Promise<void>, delay?: number) {
+export async function throttle(name: string, callback: () => void | Promise<void>, delay?: number) {
+	// se è già in esecuzione non faccio nulla
+	if (throttle2IDs[name] != null) return
+
+	throttle2IDs[name] = 999
+	try {
+		await callback()
+	} catch (error) {
+		delete throttle2IDs[name]
+		throw error
+	}
 
 	if (delay == 0) {
-		throttleIDs[name] = 999
-		await callback()
-		delete throttle2IDs[name];
-	} else {
-
-		// se è già in esecuzione non faccio nulla
-		let toId = throttle2IDs[name];
-		if (!!toId) return;
-		throttleIDs[name] = 999
-
-		await callback()
-
-		throttleIDs[name] = setTimeout(() => {
-			delete throttle2IDs[name];
-		}, delay);
+		delete throttle2IDs[name]
+		return
 	}
+
+	throttle2IDs[name] = setTimeout(() => {
+		delete throttle2IDs[name]
+	}, delay)
 }

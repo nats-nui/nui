@@ -1,7 +1,7 @@
 import { buildStore } from "@/stores/docs/utils/factory";
 import { BucketConfig } from "@/types/Bucket";
 import { VIEW_SIZE } from "@priolo/jack";
-import { BucketStatus, BucketStore } from "../../../stores/stacks/buckets/detail";
+import { BucketStore } from "../../../stores/stacks/buckets/detail";
 import { DOC_TYPE, EDIT_STATE } from "../../../types";
 import { STORAGE } from "../../../types/Stream";
 
@@ -9,7 +9,7 @@ import { STORAGE } from "../../../types/Stream";
 
 export function buildBucketNew(connectionId: string, allStreams: string[]) {
 	if (!connectionId) { console.error("no param"); return null; }
-	const store = buildStore({
+	const store = buildStore<BucketStore>({
 		type: DOC_TYPE.BUCKET,
 		editState: EDIT_STATE.NEW,
 		size: VIEW_SIZE.NORMAL,
@@ -17,7 +17,7 @@ export function buildBucketNew(connectionId: string, allStreams: string[]) {
 
 		connectionId: connectionId,
 		bucket: null,
-	} as BucketStatus) as BucketStore;
+	})
 	return store;
 }
 
@@ -32,7 +32,7 @@ export function buildNewConfig(): BucketConfig {
 		storage: STORAGE.MEMORY,
 		replicas: 0,
 		placement: null,
-		rePublish: null,
+		republish: null,
 		mirror: null,
 		sources: [],
 		compression: false,

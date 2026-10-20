@@ -1,7 +1,7 @@
 import connectionApi from "@/api/connection"
 import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
 import { CliImport } from "@/types"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import cnnSo from "../../connections"
 import { MESSAGE_TYPE } from "@priolo/jack"
 
@@ -37,8 +37,8 @@ const setup = {
 
 		//#region VIEWBASE
 
-		getTitle: (_: void, store?: ViewStore) => (<CnnImportState>store?.state).title,
-		getSubTitle: (_: void, store?: ViewStore): string => (<CnnImportState>store?.state).subtitle,
+		getTitle: (_: void, store?: CnnImportStore) => store?.state.title,
+		getSubTitle: (_: void, store?: CnnImportStore): string => store?.state.subtitle,
 
 		//#endregion
 
@@ -74,14 +74,8 @@ const setup = {
 	},
 }
 
-export type CnnImportState = typeof setup.state & ViewState
-export type CnnImportGetters = typeof setup.getters
-export type CnnImportActions = typeof setup.actions
-export type CnnImportMutators = typeof setup.mutators
-export interface CnnImportStore extends ViewStore, CnnImportGetters, CnnImportActions, CnnImportMutators {
-	state: CnnImportState
-}
 const cnnImportSetup = mixStores(viewSetup, setup)
+export interface CnnImportStore extends StoreOf<typeof cnnImportSetup> {}
 export default cnnImportSetup
 
 export type Dialog = {

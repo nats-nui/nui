@@ -1,4 +1,4 @@
-import docsSo, { FIXED_CARD } from "@/stores/docs"
+import docsSo, { FIXED_CARD, fixedViews } from "@/stores/docs"
 import { menuSo } from "@/stores/docs/links"
 import { ClearSession, LoadSession, SaveSession } from "@/utils/session/startup"
 import { useStore } from "@priolo/jon"
@@ -27,14 +27,14 @@ const MainMenu: FunctionComponent<Props> = ({
 	// HANDLERS
 
 	// RENDER
-	if (!docsSo.state?.fixedViews) return null
+	if (!fixedViews || fixedViews.length == 0) return null
 	const views = menuSa.all
 
 	return <div style={style} className={cls.root}>
 
 		<StoreButton
 			label="ALL"
-			store={docsSo.state.fixedViews[FIXED_CARD.CONNECTIONS]}
+			store={fixedViews[FIXED_CARD.CONNECTIONS]}
 		/>
 
 		{views.map((view) => (
@@ -68,7 +68,7 @@ const MainMenu: FunctionComponent<Props> = ({
 
 		<StoreButton
 			label="LOG"
-			store={docsSo.state.fixedViews[FIXED_CARD.LOGS]}
+			store={fixedViews[FIXED_CARD.LOGS]}
 		/>
 
 		{/* <MenuButton 

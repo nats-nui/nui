@@ -6,7 +6,7 @@ import { default as docSetup, default as viewSetup, ViewState, ViewStore } from 
 import { DOC_TYPE } from "@/types"
 import { BucketState } from "@/types/Bucket"
 import { docsSo, utils } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
 import { buildBucket, buildBucketNew } from "./utils/factory"
 
@@ -34,8 +34,8 @@ const setup = {
         //#region VIEWBASE
         getTitle: (_: void, store?: ViewStore) => "BUCKETS",
         getSubTitle: (_: void, store?: ViewStore) => cnnSo.getById((<BucketsStore>store).state.connectionId)?.name,
-        getSerialization: (_: void, store?: ViewStore) => {
-            const state = store.state as BucketsState
+        getSerialization: (_: void, store?: BucketsStore) => {
+            const state = store.state
             return {
                 ...viewSetup.getters.getSerialization(null, store),
                 connectionId: state.connectionId,
@@ -65,9 +65,9 @@ const setup = {
     actions: {
 
         //#region OVERWRITE
-        setSerialization: (data: any, store?: ViewStore) => {
+        setSerialization: (data: any, store?: BucketsStore) => {
             viewSetup.actions.setSerialization(data, store)
-            const state = store.state as BucketsState
+            const state = store.state
             state.connectionId = data.connectionId
             state.select = data.select
         },
@@ -154,14 +154,15 @@ const setup = {
     },
 }
 
-export type BucketsState = typeof setup.state & ViewState & LoadBaseState
-export type BucketsGetters = typeof setup.getters
-export type BucketsActions = typeof setup.actions
-export type BucketsMutators = typeof setup.mutators
+// export type BucketsState = typeof setup.state & ViewState & LoadBaseState
+// export type BucketsGetters = typeof setup.getters
+// export type BucketsActions = typeof setup.actions
+// export type BucketsMutators = typeof setup.mutators
 
-export interface BucketsStore extends ViewStore, LoadBaseStore, BucketsGetters, BucketsActions, BucketsMutators {
-    state: BucketsState
-}
+// export interface BucketsStore extends ViewStore, LoadBaseStore, BucketsGetters, BucketsActions, BucketsMutators {
+//     state: BucketsState
+// }
 
 const bucketsSetup = mixStores(docSetup, loadBaseSetup, setup)
+export interface BucketsStore extends StoreOf<typeof bucketsSetup> {}
 export default bucketsSetup

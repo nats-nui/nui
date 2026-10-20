@@ -28,17 +28,19 @@ const HeadersCmp: FunctionComponent<Props> = ({
 	// 			return acc.concat(values.map(v => [key, v]))
 	// 		}, [])
 	// }, [msgSa.message.headers])
-	if ( !headers ) return null
+	if (!headers) return null
 
 	return <div className={cls.root}>
 		{Object.entries(headers).map(([key, values]) => <div className={cls.header}>
 			<div className={cls.key}>{key}</div>
 			<div>:</div>
 			<div className={cls.row}>
-				{values.map(value => <div className={`${cls.header} jack-hover-container`}>
-					<div className={cls.values}>{value}</div>
-					<CopyButton absolute value={value} />
-				</div>)}
+				{values.map((value, i) =>
+					<div key={i} className={`${cls.header} jack-hover-container`}>
+						<div className={cls.values}>{value}</div>
+						<CopyButton absolute value={value} />
+					</div>
+				)}
 			</div>
 		</div>)}
 	</div>

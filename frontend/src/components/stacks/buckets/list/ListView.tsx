@@ -3,12 +3,12 @@ import { BucketsStore } from "@/stores/stacks/buckets"
 import { BucketStore } from "@/stores/stacks/buckets/detail"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketState } from "@/types/Bucket"
+import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useEffect } from "react"
 import BucketsIcon from "../../../../icons/cards/BucketsIcon"
-import clsCard from "../../CardMintDef.module.css"
-import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priolo/jack"
 import { formatNumber } from "../../../../utils/string"
+import { cardCls } from "@/themes"
 
 
 
@@ -43,7 +43,7 @@ const BucketsListView: FunctionComponent<Props> = ({
 		&& (bucketsSa.linked as BucketStore).state.editState == EDIT_STATE.NEW
 
 	return <FrameworkCard styleBody={{ padding: 0 }}
-		className={clsCard.root}
+		className={cardCls("buckets")}
 		icon={<BucketsIcon />}
 		store={bucketsSo}
 		actionsRender={<>

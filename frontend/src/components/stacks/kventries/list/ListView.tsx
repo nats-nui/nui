@@ -10,9 +10,7 @@ import { AlertDialog, Button, FindInputHeader, OptionsCmp, VTable } from "@priol
 import { useStore } from "@priolo/jon"
 import dayjs from "dayjs"
 import { FunctionComponent, useEffect } from "react"
-import clsCardRedeye from "../../CardMintDef.module.css"
-import clsCardBoring from "../../CardBoringDef.module.css"
-import layoutSo from "@/stores/layout"
+import { cardCls } from "@/themes"
 
 
 
@@ -27,7 +25,6 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	// STORE
 	const kventriesSa = useStore(kventriesSo)
 	useStore(kventriesSo.state.group)
-	useStore(layoutSo)
 
 	// HOOKs
 	useEffect(() => {
@@ -45,10 +42,9 @@ const KVEntryListView: FunctionComponent<Props> = ({
 	const kventries = kventriesSo.getFiltered() ?? []
 	const selected = kventriesSa.select
 	const isNewSelect = kventriesSa.linked?.state.type == DOC_TYPE.KVENTRY && (kventriesSa.linked as KVEntryStore).state.editState == EDIT_STATE.NEW
-	const clsCard = layoutSo.state.theme == "redeye" ? clsCardRedeye : clsCardBoring
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("buckets")}
 		icon={<KvEntriesIcon />}
 		styleBody={{ padding: 0 }}
 		store={kventriesSo}

@@ -1,8 +1,8 @@
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
-import { mixStores } from "@priolo/jon"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { toEditorText } from "../../../utils/editor"
-import editorSetup, { EditorState, EditorStore } from "../editorBase"
+import editorSetup from "../editorBase"
 
 
 
@@ -71,14 +71,9 @@ const setup = {
 	},
 }
 
-export type MessageState = typeof setup.state & ViewState & EditorState
-export type MessageGetters = typeof setup.getters
-export type MessageActions = typeof setup.actions
-export type MessageMutators = typeof setup.mutators
-export interface MessageStore extends ViewStore, EditorStore, MessageGetters, MessageActions, MessageMutators {
-	state: MessageState
-}
 const msgSetup = mixStores(viewSetup, editorSetup, setup)
+export interface MessageStore extends StoreOf<typeof msgSetup> {}
+export type MessageState = MessageStore["state"]
 export default msgSetup
 
 

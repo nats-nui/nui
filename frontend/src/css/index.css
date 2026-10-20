@@ -4,7 +4,6 @@ html {
 }
 
 body {
-  font-family: 'Inter Variable', sans-serif;
   background: #000;
   margin: 0;
   padding: 0;
@@ -15,24 +14,8 @@ body {
   height: 100%;
 }
 
-:root {
-  --color-cyan: #10F3F3;
-  --color-fuchsia: #F374E6;
-  --color-green:#BBFB35;
-  --color-mint:#6AFFAB;
-  --color-white: #DEDEDE;
-  --color-yellow: #EBFB35;
-
-  --color-primary-fg: #393939;
-  --color-primary-bg: var(--color-green);
-  
-  --color-element-fg: var(--color-white);
-  --color-element-bg: #393939;
-}
-
-
 input, textarea,  button {
-  font-family: 'Inter Variable', sans-serif;
+  font-family: var(--text-font-family);
 }
 
 .small-icon {

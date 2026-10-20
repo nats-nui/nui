@@ -34,7 +34,7 @@
 }
 
 .list .icon.error {
-	color: var(--color-fuchsia);
+	color: var(--app-error);
 }
 
 .list .first {

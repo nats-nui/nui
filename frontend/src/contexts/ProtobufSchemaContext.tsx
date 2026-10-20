@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { ProtoSchema } from '@/types/Protobuf'
-import { createUnifiedProtoRoot } from '@/utils/protobuf'
+import { createUnifiedProtoRoot, parseProtoSchema } from '@/utils/protobuf'
 import { schemaDiscovery } from '@/services/ProtoSchemaDiscovery'
 import protoApi from '@/api/proto'
 
@@ -35,18 +35,19 @@ export function ProtobufSchemaProvider({ children }: ProtobufSchemaProviderProps
       const unifiedRoot = createUnifiedProtoRoot(backendSchemas)
       
       const parsedSchemas = backendSchemas.map(schema => {
-        try {
-          return {
-            ...schema,
-            root: unifiedRoot,
-            error: undefined
-          }
-        } catch (error) {
+        const parsedSchema = parseProtoSchema(schema.content, schema.name)
+        if (!parsedSchema.root) {
           return {
             ...schema,
             root: null,
-            error: `Failed to parse: ${error instanceof Error ? error.message : 'Unknown error'}`
+            error: parsedSchema.error ?? 'Failed to parse schema'
           }
+        }
+
+        return {
+          ...schema,
+          root: unifiedRoot,
+          error: undefined
         }
       })
 

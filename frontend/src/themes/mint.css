@@ -1,0 +1,29 @@
+[data-theme="mint"] {
+	--accent: #07ff77;
+}
+
+[data-theme="mint"] #main-panel {
+	background-color: #06161a;
+	background-image: url(../assets/bg15.png);
+	background-blend-mode: overlay;
+}
+
+[data-theme="mint"] .jack-framework {
+
+	--card-fg: #a8f2ff;
+	--card-bg: #004d42;
+
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="mint"] .jack-framework {
+	border-radius: 3px;
+}
+
+[data-theme="mint"] .jack-framework.card--filled {
+	--card-bg: #003529;
+}

@@ -1,12 +1,12 @@
 import strApi from "@/api/streams"
 import cnnSo from "@/stores/connections"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import { ViewState, ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
+import { ViewStore, default as docSetup, default as viewSetup } from "@/stores/stacks/viewBase"
 import { DOC_TYPE } from "@/types"
 import { StreamInfo } from "@/types/Stream"
 import { docsSo, utils } from "@priolo/jack"
-import { mixStores } from "@priolo/jon"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
 import { buildStream, buildStreamNew } from "./utils/factory"
 
 
@@ -20,6 +20,8 @@ const setup = {
 		select: <string>null,
 		all: <StreamInfo[]>null,
 		textSearch: <string>null,
+		/** se true mostra anche gli STREAM "KV_" (che sono i KV BUCKETS) */
+		showKv: false,
 
 		purgeOpen: false,
 
@@ -59,10 +61,13 @@ const setup = {
 		/** gli STREAM filtrati e da visualizzare in lista */
 		getFiltered(_: void, store?: StreamsStore) {
 			const text = store.state.textSearch?.toLocaleLowerCase()?.trim()
-			if (!text || text.trim().length == 0 || !store.state.all) return store.state.all
-			return store.state.all.filter(stream =>
-				stream.config.name.toLowerCase().includes(text)
-			)
+			if (!store.state.all) return store.state.all
+			const showKv = store.state.showKv
+			return store.state.all.filter(stream => {
+				const name = stream.config.name
+				if (!showKv && name.startsWith("KV_")) return false
+				return !text || name.toLowerCase().includes(text)
+			})
 		}
 	},
 
@@ -150,16 +155,12 @@ const setup = {
 		setAll: (all: StreamInfo[]) => ({ all }),
 		setSelect: (select: string) => ({ select }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
+		setShowKv: (showKv: boolean) => ({ showKv }),
 		setPurgeOpen: (purgeOpen: boolean) => ({ purgeOpen }),
 	},
 }
 
-export type StreamsState = typeof setup.state & ViewState & LoadBaseState
-export type StreamsGetters = typeof setup.getters
-export type StreamsActions = typeof setup.actions
-export type StreamsMutators = typeof setup.mutators
-export interface StreamsStore extends ViewStore, LoadBaseStore, StreamsGetters, StreamsActions, StreamsMutators {
-	state: StreamsState
-}
 const streamsSetup = mixStores(docSetup, loadBaseSetup, setup)
+export interface StreamsStore extends StoreOf<typeof streamsSetup> {}
+export type StreamsState = StreamsStore["state"]
 export default streamsSetup

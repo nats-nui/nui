@@ -4,16 +4,15 @@ import { MESSAGE_TYPE } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { Message } from "@/types/Message"
 import { StreamInfo } from "@/types/Stream"
-import { StoreCore, mixStores } from "@priolo/jon"
-import editorSetup, { EditorState, EditorStore } from "../editorBase"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { MessageStore } from "../message"
-import { ViewState } from "../viewBase"
-import { StreamMessagesFilter } from "./utils/filter"
-import { DOC_TYPE } from "../../docs/types"
-import { debounce } from "../../../utils/time"
-import { getStreamFormat, setStreamFormat } from "@/utils/streamFormatCache"
 import { MSG_FORMAT } from "@/utils/editor"
+import { getStreamFormat, setStreamFormat } from "@/utils/streamFormatCache"
+import { mixStores, StoreOf } from "@priolo/jon"
+import { debounce } from "../../../utils/time"
+import { DOC_TYPE } from "../../docs/types"
+import editorSetup from "../editorBase"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
+import { MessageStore } from "../message"
+import { StreamMessagesFilter } from "./utils/filter"
 
 
 
@@ -54,8 +53,8 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "STREAM MESSAGES",
 		getSubTitle: (_: void, store?: ViewStore) => (<StreamMessagesStore>store).state.stream?.config?.name ?? "--",
-		getSerialization: (_: void, store?: ViewStore) => {
-			const state = store.state as StreamMessagesState
+		getSerialization: (_: void, store?: StreamMessagesStore) => {
+			const state = store.state
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
@@ -83,9 +82,9 @@ const setup = {
 
 		//#region OVERWRITE
 
-		setSerialization: (data: any, store?: ViewStore) => {
+		setSerialization: (data: any, store?: StreamMessagesStore) => {
 			viewSetup.actions.setSerialization(data, store)
-			const state = store.state as StreamMessagesState
+			const state = store.state
 			state.connectionId = data.connectionId
 			state.stream = data.stream
 			
@@ -273,13 +272,14 @@ const setup = {
 	},
 }
 
-export type StreamMessagesState = typeof setup.state & ViewState & LoadBaseState & EditorState
-export type StreamMessagesGetters = typeof setup.getters
-export type StreamMessagesActions = typeof setup.actions
-export type StreamMessagesMutators = typeof setup.mutators
-export interface StreamMessagesStore extends ViewStore, LoadBaseStore, EditorStore, StoreCore<StreamMessagesState>, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
-	state: StreamMessagesState
-}
+// export type StreamMessagesState = typeof setup.state & ViewState & LoadBaseState & EditorState
+// export type StreamMessagesGetters = typeof setup.getters
+// export type StreamMessagesActions = typeof setup.actions
+// export type StreamMessagesMutators = typeof setup.mutators
+// export interface StreamMessagesStore extends ViewStore, LoadBaseStore, Omit<EditorStore, "setFormat">, StreamMessagesGetters, StreamMessagesActions, StreamMessagesMutators {
+// 	state: StreamMessagesState
+// }
 const streamMessagesSetup = mixStores(viewSetup, loadBaseSetup, editorSetup, setup)
+export interface StreamMessagesStore extends StoreOf<typeof streamMessagesSetup> {}
 export default streamMessagesSetup
 

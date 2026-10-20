@@ -1,7 +1,7 @@
 import cnnSo from "@/stores/connections"
 import metricsSo from "@/stores/connections/metrics"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
-import { mixStores } from "@priolo/jon"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
+import { mixStores, StoreOf } from "@priolo/jon"
 import { SORTABLE_PROPERTIES } from "./types"
 
 
@@ -69,12 +69,7 @@ const setup = {
 	},
 }
 
-export type ClientMetricsState = typeof setup.state & ViewState
-export type ClientMetricsGetters = typeof setup.getters
-export type ClientMetricsActions = typeof setup.actions
-export type ClientMetricsMutators = typeof setup.mutators
-export interface ClientMetricsStore extends ViewStore, ClientMetricsGetters, ClientMetricsActions, ClientMetricsMutators {
-	state: ClientMetricsState
-}
 const clientMetricsSetup = mixStores(viewSetup, setup)
+export interface ClientMetricsStore extends StoreOf<typeof clientMetricsSetup> {}
+export type ClientMetricsState = ClientMetricsStore["state"]
 export default clientMetricsSetup

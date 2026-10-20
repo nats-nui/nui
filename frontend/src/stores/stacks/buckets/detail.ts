@@ -1,17 +1,18 @@
 import bucketApi from "@/api/buckets"
 import docSo from "@/stores/docs"
-import { focusSo, utils } from "@priolo/jack"
 import { MESSAGE_TYPE } from "@/stores/log/utils"
-import viewSetup, { ViewState, ViewStore } from "@/stores/stacks/viewBase"
+import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
 import { DOC_TYPE, EDIT_STATE } from "@/types"
 import { BucketConfig, BucketState } from "@/types/Bucket"
-import { StoreCore, mixStores } from "@priolo/jon"
-import { BucketsState, BucketsStore } from "."
-import { buildKVEntries } from "../kventry/utils/factory"
-import loadBaseSetup, { LoadBaseState, LoadBaseStore } from "../loadBase"
-import { VIEW_SIZE } from "../utils"
+import { focusSo, utils, VIEW_SIZE } from "@priolo/jack"
+import { mixStores, StoreOf } from "@priolo/jon"
+import { BucketsStore } from "."
 import { buildStore } from "../../docs/utils/factory"
 import { JsonConfigState, JsonConfigStore } from "../jsonconfig"
+import { buildKVEntries } from "../kventry/utils/factory"
+import loadBaseSetup, { LoadBaseStore } from "../loadBase"
+import strApi from "@/api/streams"
+import { buildStream } from "../streams/utils/factory"
 
 
 
@@ -36,8 +37,8 @@ const setup = {
 		//#region VIEWBASE
 		getTitle: (_: void, store?: ViewStore) => "BUCKET DETAIL",
 		getSubTitle: (_: void, store?: ViewStore) => (<BucketStore>store).state.bucket?.bucket ?? "--",
-		getSerialization: (_: void, store?: ViewStore) => {
-			const state = store.state as BucketStatus
+		getSerialization: (_: void, store?: BucketStore) => {
+			const state = store.state
 			return {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
@@ -50,7 +51,7 @@ const setup = {
 		getParentList: (_: void, store?: BucketStore): BucketsStore => utils.findInRoot(store.state.group.state.all, {
 			type: DOC_TYPE.BUCKETS,
 			connectionId: store.state.connectionId,
-		} as Partial<BucketsState>) as BucketsStore,
+		} as Partial<BucketsStore["state"]>) as BucketsStore,
 
 		getKVEntriesOpen: (_: void, store?: BucketStore) => store.state.linked?.state.type == DOC_TYPE.KVENTRIES,
 	},
@@ -58,9 +59,9 @@ const setup = {
 	actions: {
 
 		//#region OVERWRITE
-		setSerialization: (data: any, store?: ViewStore) => {
+		setSerialization: (data: any, store?: BucketStore) => {
 			viewSetup.actions.setSerialization(data, store)
-			const state = store.state as BucketStatus
+			const state = store.state
 			state.connectionId = data.connectionId
 			state.bucket = data.bucket
 			state.editState = data.editState
@@ -143,6 +144,14 @@ const setup = {
 			const view = !isOpen ? buildKVEntries(store.state.connectionId, store.state.bucket) : null
 			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
 		},
+		/** apertura della CARD STREAM associata al BUCKET */
+		async openStream(_: void, store?: BucketStore) {
+			const bucket = store.state.bucket?.bucket
+			if (!bucket) return
+			const stream = await strApi.get(store.state.connectionId, `KV_${bucket}`, { store, manageAbort: true })
+			const view = buildStream(store.state.connectionId, stream, null)
+			store.state.group.addLink({ view, parent: store, anim: true })
+		},
 
 	},
 
@@ -155,12 +164,14 @@ const setup = {
 	},
 }
 
-export type BucketStatus = typeof setup.state & ViewState & LoadBaseState
-export type BucketGetters = typeof setup.getters
-export type BucketActions = typeof setup.actions
-export type BucketMutators = typeof setup.mutators
-export interface BucketStore extends ViewStore, LoadBaseStore, BucketGetters, BucketActions, BucketMutators {
-	state: BucketStatus
-}
+// export type BucketStatus = typeof setup.state & ViewState & LoadBaseState
+// export type BucketGetters = typeof setup.getters
+// export type BucketActions = typeof setup.actions
+// export type BucketMutators = typeof setup.mutators
+// export interface BucketStore extends ViewStore, LoadBaseStore, BucketGetters, BucketActions, BucketMutators {
+// 	state: BucketStatus
+// }
+
 const bucketSetup = mixStores(viewSetup, loadBaseSetup, setup)
+export interface BucketStore extends StoreOf<typeof bucketSetup> {}
 export default bucketSetup

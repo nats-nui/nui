@@ -1,0 +1,30 @@
+[data-theme="boring"] {
+	--accent: #96a6eb;
+}
+
+[data-theme="sole"] #main-panel {
+	background-color: #02131c;
+}
+
+[data-theme="boring"] .card {
+	--cmp-focus: #dedede38;
+}
+
+[data-theme="boring"] .jack-framework {
+
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="boring"] .card--filled {
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+}

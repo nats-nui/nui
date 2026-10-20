@@ -25,12 +25,13 @@ import { createStore } from "@priolo/jon";
 import cnnImportSetup from "../../stacks/cnnImport";
 import jsonConfigSetup from "../../stacks/jsonconfig";
 import shortcutSetup from "../../stacks/shortcut";
-import { ViewState, ViewStore } from "../../stacks/viewBase";
+import { ViewStore } from "../../stacks/viewBase";
 
 
 
 /** crea lo STORE adeguato */
-export function buildStore(state: Partial<ViewState>, stateSerializzation?: Partial<ViewState>): ViewStore {
+export function buildStore<T extends ViewStore>(state: any, stateSerializzation?: any): T {
+
 	const setup = {
 		[DOC_TYPE.CONNECTIONS]: cnnSetup,
 		[DOC_TYPE.CONNECTION]: servicesSetup,
@@ -61,15 +62,16 @@ export function buildStore(state: Partial<ViewState>, stateSerializzation?: Part
 		[DOC_TYPE.SYNC]: syncSetup,
 		[DOC_TYPE.JSON_CONFIG]: jsonConfigSetup,
 		[DOC_TYPE.SHORTCUT]: shortcutSetup,
-	}[state?.type]
+	}[state.type]
+
 	if (!setup) return
-	const store: ViewStore = <ViewStore>createStore(setup)
+	const store: ViewStore = createStore(setup) as unknown as ViewStore
 	store.state = { ...store.state, ...state };
 	// se non c'e' l'uuid lo creo IO!
 	//if (store.state.uuid == null) store.state.uuid = createUUID()
 	if (stateSerializzation) store.setSerialization(stateSerializzation);
 	(<any>store).onCreated?.()
-	return store
+	return store as T
 }
 
 //#region MESSAGES

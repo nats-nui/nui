@@ -5,7 +5,7 @@ import { ClientMetricsStore } from "@/stores/stacks/connection/clients"
 import { filterClientsByText, sortClients } from "@/stores/stacks/connection/clients/utils"
 import { useStore } from "@priolo/jon"
 import { FunctionComponent, useMemo } from "react"
-import clsCard from "../../CardPurpleDef.module.css"
+import { cardCls } from "@/themes"
 import ClientRow from "./ClientRow"
 import ClientsActions from "./ClientsAction"
 import SortDialog from "./SortDialog"
@@ -42,7 +42,7 @@ const ClientMetricsView: FunctionComponent<Props> = ({
 	const isVoid = !clients || clients.length == 0
 
 	return <FrameworkCard
-		className={clsCard.root}
+		className={cardCls("metrics")}
 		icon={<MetricClientIcon />}
 		store={store}
 		actionsRender={<ClientsActions store={store} />}

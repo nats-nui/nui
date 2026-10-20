@@ -1,5 +1,6 @@
 import BigEyeIcon from "@/icons/BigEyeIcon"
-import layoutSo, { THEMES } from "@/stores/layout"
+import layoutSo from "@/stores/layout"
+import { THEMES } from "@/themes"
 import { AboutStore } from "@/stores/stacks/about"
 import { ElementDialog, List } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
@@ -35,7 +36,7 @@ const ThemeDialog: FunctionComponent<Props> = ({
 	const indexSelect = THEMES.findIndex(t => t.value === layoutSa.theme)
 
 	return <>
-		<div className={`${cls.link} jack-focus-4`}
+		<div className={`card-streams ${cls.link} jack-focus-4`}
 			onClick={handleThemeClick}
 		><BigEyeIcon style={{ width: 24, height: 24 }} />Theme</div>
 

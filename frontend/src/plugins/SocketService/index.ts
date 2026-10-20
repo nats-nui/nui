@@ -155,7 +155,17 @@ export class SocketService {
 
 	/** ricevo un messaggio dal BE */
 	handleMessage(e: MessageEvent) {
-		const message: SocketMessage = JSON.parse(e.data) as SocketMessage
+		let message: SocketMessage
+		try {
+			message = JSON.parse(e.data) as SocketMessage
+		} catch (error) {
+			logSo.add({
+				type: MESSAGE_TYPE.ERROR,
+				title: "WS-CONNECTIONS",
+				body: `invalid message: ${error instanceof Error ? error.message : String(error)}`,
+			})
+			return
+		}
 		const type = message.type
 
 		this.emitter.emit(type, message.payload)

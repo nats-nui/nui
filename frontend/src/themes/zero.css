@@ -1,0 +1,31 @@
+[data-theme="zero"] {
+	--app-bg-color: rgba(0, 0, 0, 0.8);
+	--accent: #ffc107;
+}
+
+[data-theme="zero"] #main-panel {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="zero"] .jack-framework {
+	--card-fg: #dddddd;
+	--card-bg: #222222;
+
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="zero"] .jack-framework {
+	border-radius: 15px;
+}
+
+[data-theme="zero"] .jack-framework-linked {
+	border-radius: 5px 15px 15px 5px;
+}
+
+[data-theme="zero"] .jack-framework.card--filled {
+	--card-bg: #333333;
+}

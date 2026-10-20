@@ -1,7 +1,7 @@
 import { Log } from "@/stores/log/utils"
 import viewSetup, { ViewStore } from "@/stores/stacks/viewBase"
-import { StoreCore, mixStores } from "@priolo/jon"
-import { ViewState } from "../viewBase"
+import { mixStores, StoreOf } from "@priolo/jon"
+import { focusSo } from "@priolo/jack"
 
 
 
@@ -34,7 +34,7 @@ const setup = {
 		//#endregion
 
 		select (log:Log, store?:ViewLogStore ) {
-			store.state.group.focus(store.state.group.getById(log.targetId))
+			focusSo.focus(store.state.group.getById(log.targetId))
 		},
 	},
 
@@ -42,14 +42,9 @@ const setup = {
 	},
 }
 
-export type ViewLogState = typeof setup.state & ViewState
-export type ViewLogGetters = typeof setup.getters
-export type ViewLogActions = typeof setup.actions
-export type ViewLogMutators = typeof setup.mutators
-export interface ViewLogStore extends ViewStore, ViewLogGetters, ViewLogActions, ViewLogMutators {
-	state: ViewLogState
-}
 const msgSetup = mixStores(viewSetup, setup)
+export interface ViewLogStore extends StoreOf<typeof msgSetup> {}
+export type ViewLogState = ViewLogStore["state"]
 export default msgSetup
 
 

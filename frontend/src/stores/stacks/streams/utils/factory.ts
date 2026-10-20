@@ -1,20 +1,19 @@
 import cnnSo from "@/stores/connections";
 import { buildStore } from "@/stores/docs/utils/factory";
+import { DOC_TYPE, EDIT_STATE } from "@/types";
 import {
 	DISCARD,
 	RETENTION,
 	STORAGE,
 	Source,
 	StreamConfig,
-	StreamInfo,
 	StreamState as StreamEntityState,
-	SubjectTransform, ConsumerLimit
+	StreamInfo
 } from "@/types/Stream";
+import { VIEW_SIZE } from "@priolo/jack";
 import { StreamsState, StreamsStore } from "..";
-import { DOC_TYPE, EDIT_STATE } from "@/types";
 import { StreamState, StreamStore } from "../detail";
-import { StreamMessagesState, StreamMessagesStore } from "../messages";
-import { VIEW_SIZE } from "../../utils";
+import { StreamMessagesStore } from "../messages";
 
 
 
@@ -58,11 +57,11 @@ export function buildStreamNew(connectionId: string, allStreams: string[]) {
 
 export function buildStreamMessages(connectionId: string, stream: Partial<StreamInfo>) {
 	if (!stream?.config?.name || !connectionId) { console.error("no param"); return null; }
-	const streamMessagesStore = buildStore({
+	const streamMessagesStore = buildStore<StreamMessagesStore>({
 		type: DOC_TYPE.STREAM_MESSAGES,
 		connectionId,
 		stream,
-	} as StreamMessagesState) as StreamMessagesStore;
+	})
 	return streamMessagesStore;
 }
 

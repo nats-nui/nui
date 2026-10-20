@@ -1,5 +1,5 @@
 import cnnSo from "@/stores/connections"
-import docsSo from "@/stores/docs"
+import docsSo, { fixedViews } from "@/stores/docs"
 import { deckCardsSo, drawerCardsSo } from "@/stores/docs/cards"
 import { menuSo } from "@/stores/docs/links"
 import { buildStore } from "@/stores/docs/utils/factory"
@@ -42,7 +42,7 @@ export async function SaveSession() {
 	}
 	saveLocalStorage(session)
 }
- 
+
 export async function LoadSession() {
 
 	// altrimenti MSW non funziona
@@ -113,5 +113,5 @@ function buildFixedCards(allStores: ViewStore[]) {
 	const fixedLogs = (allStores.find(s => s.state.type == DOC_TYPE.LOGS) ?? buildStore({ type: DOC_TYPE.LOGS })) as ViewLogStore
 	const fixedAbout = (allStores.find(s => s.state.type == DOC_TYPE.ABOUT) ?? buildStore({ type: DOC_TYPE.ABOUT })) as AboutStore
 	const fixedHelp = buildStore({ type: DOC_TYPE.HELP }) as HelpStore
-	docsSo.setFixedViews([fixedCnn, fixedLogs, fixedAbout, fixedHelp])
+	fixedViews.push(fixedCnn, fixedLogs, fixedAbout, fixedHelp)
 }

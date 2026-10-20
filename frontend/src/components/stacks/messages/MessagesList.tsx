@@ -114,8 +114,8 @@ const MessagesList: FunctionComponent<Props> = ({
 				onDelete={onMessageDelete}
 			/>}
 			components={{
-				Header: !!header && (() => header),
-				Footer: !!footer && (() => footer),
+				Header: !!header ? (() => header) : null,
+				Footer: !!footer ? (() => footer) : null,
 				EmptyPlaceholder: () => <div className="jack-lbl-empty color-fg">EMPTY LIST</div>,
 			}}
 		/>

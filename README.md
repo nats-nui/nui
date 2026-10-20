@@ -47,9 +47,9 @@ Easily manage your NATS core, streams and buckets, both from Desktop App or Web 
 - If the app installs to`/Users/runner/work/nui/nui/build/bin/nui-app.app`, move it to your **Applications** folder.
 ---
 
-# Documentation
-- **[Protobuf Message Decoding Guide](PROTOBUF_USAGE.md)** - How to decode protobuf messages with your own schemas
-- **[CBOR + CDDL Message Guide](CDDL_USAGE.md)** — Read and send CBOR with optional CDDL schemas
+# Schema handling
+- **[Protobuf Message Guide](internal/schemas/PROTOBUF_USAGE.md)** - How to decode protobuf messages with your own schemas
+- **[CBOR + CDDL Message Guide](internal/schemas/CDDL_USAGE.md)** — Read and send CBOR with optional CDDL schemas
 
 # Build and run Locally
 The projects uses Go and Wails.io as to run the BE and React on Vite on FE.

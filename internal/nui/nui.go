@@ -3,10 +3,10 @@ package nui
 import (
 	"path/filepath"
 
-	"github.com/nats-nui/nui/internal/cddlschema"
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
-	"github.com/nats-nui/nui/internal/protoschema"
+	"github.com/nats-nui/nui/internal/schemas/cddlschema"
+	"github.com/nats-nui/nui/internal/schemas/protoschema"
 	"github.com/nats-nui/nui/internal/ws"
 	"github.com/nats-nui/nui/pkg/clicontext"
 	"github.com/nats-nui/nui/pkg/logging"

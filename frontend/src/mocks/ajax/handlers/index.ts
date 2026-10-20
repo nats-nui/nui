@@ -5,6 +5,7 @@ import consumer from "./consumer"
 import kventry from "./kventry"
 import bucket from "./bucket"
 import about from "./about"
+import proto from "./proto"
 
 
 export const handlers = [
@@ -15,4 +16,5 @@ export const handlers = [
 	...kventry,
 	...bucket,
 	...about,
+	...proto,
 ]

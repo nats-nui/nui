@@ -1,0 +1,33 @@
+[data-theme="sole"] {
+	--accent: #F7963E;
+	--app-cmp-fg: #dedede;
+	--app-cmp-bg: #00464b;
+
+ 	--title-font-family: 'roboto condensed';
+	--cmp-table-header-bg: #F7963E;
+	--cmp-table-row-even-bg: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="sole"] #main-panel {
+	background-color: #fff1d9;
+	background-image: url(../assets/bg8.png);
+	background-blend-mode: overlay;
+}
+
+[data-theme="sole"] .jack-framework {
+
+	--card-fg: #333333;
+	--card-bg: #F4EADC;
+
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	--cmp-bg: rgba(0, 0, 0, 0.05);
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+
+	border-radius: 0px;
+}
+
+[data-theme="sole"] .jack-framework.card--filled {
+	--card-bg: #f7d9c1;
+}

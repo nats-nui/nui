@@ -7,7 +7,7 @@ import { useStore } from "@priolo/jon"
 import React, { FunctionComponent, useRef } from "react"
 import { Virtuoso } from "react-virtuoso"
 import LogIcon from "../../../icons/LogIcon"
-import clsCard from "../CardWhiteDef.module.css"
+import { cardCls } from "@/themes"
 import ItemRow from "./ItemRow"
 
 
@@ -39,7 +39,7 @@ const LogsView: FunctionComponent<Props> = ({
 
 	return <FrameworkCard
 		icon={<LogIcon />}
-		className={clsCard.root}
+		className={cardCls("neutral")}
 		store={viewLogSo}
 		actionsRender={<>
 			<Button

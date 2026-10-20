@@ -1,4 +1,4 @@
-import { StoreCore, createStore } from "@priolo/jon"
+import { StoreOf, createStore } from "@priolo/jon"
 import { deckCardsSo, drawerCardsSo } from "../docs/cards"
 import { Log, MESSAGE_TYPE } from "./utils"
 
@@ -48,12 +48,6 @@ const setup = {
 	},
 }
 
-export type LogState = typeof setup.state
-export type LogGetters = typeof setup.getters
-export type LogActions = typeof setup.actions
-export type LogMutators = typeof setup.mutators
-export interface LogStore extends StoreCore<LogState>, LogGetters, LogActions, LogMutators {
-	state: LogState
-}
+export interface LogStore extends StoreOf<typeof setup> {}
 const logStore = createStore(setup) as LogStore
 export default logStore

@@ -1,0 +1,75 @@
+[data-theme="redeye"] {
+	--accent: #EBFB35;
+}
+
+[data-theme="redeye"] #main-panel {
+	background-color: rgba(0, 0, 0, 0.8);
+	background-image: url(../assets/bg4.jpg);
+	background-blend-mode: darken;
+}
+
+[data-theme="redeye"] .card-streams {
+	--accent: #EBFB35;
+}
+
+[data-theme="redeye"] .card-messages {
+	--accent: #10F3F3;
+}
+
+[data-theme="redeye"] .card-buckets {
+	--accent: #6AFFAB;
+}
+
+[data-theme="redeye"] .card-connections {
+	--accent: #BBFB35;
+}
+
+[data-theme="redeye"] .card-consumers {
+	--accent: #F374E6;
+}
+
+[data-theme="redeye"] .card-metrics {
+	--accent: #9E7CF5;
+}
+
+[data-theme="redeye"] .card-neutral {
+	--accent: #DEDEDE;
+}
+
+[data-theme="redeye"] .jack-framework {
+
+	--card-fg: #dedede;
+	--card-bg: #3E3E3E;
+
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+
+	--cmp-bg: rgb(0 0 0 / 15%);
+	--cmp-focus: color-mix(in srgb, var(--accent) 54%, transparent);
+}
+
+[data-theme="redeye"] .jack-framework.card--filled {
+	--card-fg: #393939;
+	--card-bg: var(--accent);
+	--cmp-select-fg: var(--accent);
+	--cmp-select-bg: #393939;
+	--cmp-focus: color-mix(in srgb, #393939; 54%, transparent);
+}
+
+[data-theme="redeye"] .jack-framework.card--filled .jack-framework-actions {
+	--cmp-select-fg: #393939;
+	--cmp-select-bg: var(--accent);
+}
+
+[data-theme="redeye"] .jack-framework ::-webkit-scrollbar-thumb:hover {
+	background: var(--accent);
+}
+
+
+[data-theme="redeye"] .jack-framework {
+	border-radius: 5px;
+}
+
+[data-theme="redeye"] .jack-framework.jack-framework-linked {
+	border-radius: 0px 5px 5px 0px;
+}
