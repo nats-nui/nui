@@ -1,162 +1,73 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
-import { ProtoSchema, ProtobufDecodedData } from "@/types/Protobuf"
-import { 
-  decodeProtobufMessage, 
-  getMessageTypesFromSchema
-} from "@/utils/protobuf"
-import { detectProtobufMessage, getTopicCache } from "@/utils/protobuf/resolve"
-import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { decodeProtobufMessage, getMessageTypesFromSchema } from '@/utils/protobuf'
+import { detectProtobufMessage, getTopicCache, hasRecognizedFields } from '@/utils/protobuf/resolve'
+import { useProtobufSchemas } from '@/contexts/ProtobufSchemaContext'
+import { useProtobufResolution } from './useProtobufResolution'
 
-const CACHE_CONFIDENCE_THRESHOLD = 0.5
-
-
-interface UseProtobufSchemaReturn {
-  schemas: ProtoSchema[]
-  selectedSchemaId: string
-  selectedMessageType: string
-  decodedData: ProtobufDecodedData | null
-  isLoadingSchemas: boolean
-  isAutoDetecting: boolean
-  showSchemaControls: boolean
-  availableMessageTypes: string[]
-  selectedSchema: ProtoSchema | undefined
-  setSelectedSchemaId: (id: string) => void
-  setSelectedMessageType: (type: string) => void
-  setShowSchemaControls: (show: boolean) => void
-  autoDetectMessageType: () => Promise<void>
-  resetSelection: () => void
-  cacheStats?: { nodes: number, terminals: number, patterns: number }
+interface ManualSelection {
+  binaryData?: string
+  subject?: string
+  schemaId: string
+  messageType: string
 }
 
-export function useProtobufSchema(binaryData?: string, subject?: string): UseProtobufSchemaReturn {
-  const { schemas, isLoading: isLoadingSchemas } = useProtobufSchemas()
-  
-  const [selectedSchemaId, setSelectedSchemaId] = useState<string>("")
-  const [selectedMessageType, setSelectedMessageType] = useState<string>("")
-  const [decodedData, setDecodedData] = useState<ProtobufDecodedData | null>(null)
-  const [isAutoDetecting, setIsAutoDetecting] = useState(false)
+export function useProtobufSchema(binaryData?: string, subject?: string) {
+  const { schemas, isLoading: isLoadingSchemas, refreshSchemas } = useProtobufSchemas()
+  const [manual, setManual] = useState<ManualSelection | null>(null)
   const [showSchemaControls, setShowSchemaControls] = useState(false)
-  const [isFromCache, setIsFromCache] = useState(false)
-
+  // Scope the override during rendering, before effects can run for a new message.
+  const chosen = manual?.binaryData === binaryData && manual?.subject === subject ? manual : null
+  const automatic = useProtobufResolution(binaryData, subject, schemas, !chosen)
+  const selectedSchemaId = chosen ? chosen.schemaId
+    : automatic?.schema ? automatic.schema.id || automatic.schema.name
+    : !binaryData && schemas.length ? schemas[0].id || schemas[0].name : ''
   const selectedSchema = useMemo(
-    () => schemas.find(s => s.id === selectedSchemaId || s.name === selectedSchemaId),
-    [schemas, selectedSchemaId]
+    () => schemas.find(schema => schema.id === selectedSchemaId || schema.name === selectedSchemaId),
+    [schemas, selectedSchemaId],
   )
-
   const availableMessageTypes = useMemo(
     () => selectedSchema ? getMessageTypesFromSchema(selectedSchema) : [],
-    [selectedSchema]
+    [selectedSchema],
   )
+  const selectedMessageType = chosen ? chosen.messageType
+    : automatic?.messageType ?? (!binaryData ? availableMessageTypes[0] ?? '' : '')
+  const decodedData = useMemo(() => {
+    if (!chosen) return automatic?.decoded ?? null
+    return binaryData && selectedSchema && selectedMessageType
+      ? decodeProtobufMessage(binaryData, selectedSchema, selectedMessageType) : null
+  }, [chosen, automatic, binaryData, selectedSchema, selectedMessageType])
 
   useEffect(() => {
-    if (schemas.length > 0 && !binaryData && !selectedSchemaId) {
-      const firstSchema = schemas[0]
-      setSelectedSchemaId(firstSchema.id || firstSchema.name)
-      
-      if (!firstSchema.error) {
-        const messageTypes = getMessageTypesFromSchema(firstSchema)
-        if (messageTypes.length > 0) {
-          setSelectedMessageType(messageTypes[0])
-        }
-      }
-    }
-  }, [schemas, binaryData, selectedSchemaId])
+    setManual(previous => previous?.binaryData === binaryData && previous?.subject === subject ? previous : null)
+    setShowSchemaControls(false)
+  }, [binaryData, subject])
 
+  useEffect(() => {
+    if (!chosen || !subject || !selectedSchema || !selectedMessageType || !hasRecognizedFields(decodedData)) return
+    getTopicCache().preferCandidate(subject, selectedSchema.id || selectedSchema.name, selectedMessageType)
+  }, [chosen, subject, selectedSchema, selectedMessageType, decodedData])
+
+  const setSelectedSchemaId = useCallback((schemaId: string) => {
+    // A schema change is incomplete until the user chooses its message type.
+    setManual({ binaryData, subject, schemaId, messageType: '' })
+  }, [binaryData, subject])
+  const setSelectedMessageType = useCallback((messageType: string) => {
+    setManual({ binaryData, subject, schemaId: selectedSchemaId, messageType })
+  }, [binaryData, subject, selectedSchemaId])
   const autoDetectMessageType = useCallback(async () => {
-    if (!binaryData || schemas.length === 0) return
-    
-    setIsAutoDetecting(true)
-    try {
-      const match = detectProtobufMessage(binaryData, schemas)
-      if (match) {
-        setSelectedSchemaId(match.schema.id || match.schema.name)
-        setSelectedMessageType(match.messageType)
-      }
-    } finally {
-      setIsAutoDetecting(false)
-    }
-  }, [binaryData, schemas])
-
+    if (!binaryData) return
+    const match = detectProtobufMessage(binaryData, schemas)
+    if (match) setManual({ binaryData, subject, schemaId: match.schema.id || match.schema.name, messageType: match.messageType })
+  }, [binaryData, subject, schemas])
   const resetSelection = useCallback(() => {
-    setSelectedSchemaId("")
-    setSelectedMessageType("")
+    setManual({ binaryData, subject, schemaId: '', messageType: '' })
     setShowSchemaControls(false)
-    setDecodedData(null)
-  }, [])
-
-  useEffect(() => {
-    setSelectedSchemaId("")
-    setSelectedMessageType("")
-    setShowSchemaControls(false)
-    setDecodedData(null)
-    
-    if (binaryData && schemas.length > 0) {
-      if (subject) {
-        const cache = getTopicCache()
-        const cached = cache.lookup(subject)
-        if (cached && cached.confidence > CACHE_CONFIDENCE_THRESHOLD) {
-          const cachedSchema = schemas.find(s => 
-            (s.id === cached.schema) || (s.name === cached.schema)
-          )
-          
-          if (cachedSchema) {
-            setSelectedSchemaId(cachedSchema.id || cachedSchema.name)
-            setSelectedMessageType(cached.messageType)
-            setIsFromCache(true)
-            return
-          }
-        }
-      }
-      
-      setIsFromCache(false)
-      autoDetectMessageType()
-    }
-  }, [binaryData, schemas.length, subject])
-  
-  useEffect(() => {
-    if (!binaryData || !selectedSchema || !selectedMessageType) {
-      setDecodedData(null)
-      return
-    }
-
-    const result = decodeProtobufMessage(binaryData, selectedSchema, selectedMessageType)
-    setDecodedData(result)
-    
-    if (subject && !isFromCache) {
-      const cache = getTopicCache()
-      const schemaIdentifier = selectedSchema.id || selectedSchema.name
-      
-      if (result.success) {
-        cache.onSuccessfulDecode(subject, schemaIdentifier, selectedMessageType)
-      } else {
-        cache.onDecodeFailed(subject)
-      }
-    }
-  }, [binaryData, selectedSchema, selectedMessageType, subject, isFromCache])
-
-  const cacheStats = useMemo(() => {
-    try {
-      return getTopicCache().getStats()
-    } catch {
-      return undefined
-    }
-  }, [selectedSchemaId, selectedMessageType])
+  }, [binaryData, subject])
 
   return {
-    schemas,
-    selectedSchemaId,
-    selectedMessageType,
-    decodedData,
-    isLoadingSchemas,
-    isAutoDetecting,
-    showSchemaControls,
-    availableMessageTypes,
-    selectedSchema,
-    cacheStats,
-    setSelectedSchemaId,
-    setSelectedMessageType,
-    setShowSchemaControls,
-    autoDetectMessageType,
-    resetSelection,
+    schemas, selectedSchemaId, selectedMessageType, decodedData, isLoadingSchemas,
+    showSchemaControls, availableMessageTypes, selectedSchema,
+    setSelectedSchemaId, setSelectedMessageType, setShowSchemaControls,
+    refreshSchemas, autoDetectMessageType, resetSelection,
   }
 }

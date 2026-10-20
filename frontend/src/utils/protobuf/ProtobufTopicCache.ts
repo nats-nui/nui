@@ -1,33 +1,23 @@
-import { TopicTrie, TrieNode, SchemaMapping } from './TopicTrie'
-import { ProtobufValidator, MAX_TOPIC_LENGTH, MAX_SCHEMA_LENGTH, MAX_MESSAGE_TYPE_LENGTH } from './validation'
+import { CandidateTopicTrie, CandidateTrieNode } from './CandidateTopicTrie'
+import type { SchemaMapping } from './TopicTrie'
 
-const STORAGE_KEY = 'nats-protobuf-patterns'
-const STORAGE_VERSION = 1
+const STORAGE_KEY = 'nats-protobuf-patterns-v2'
+const LEGACY_STORAGE_KEY = 'nats-protobuf-patterns'
 
-const CLEANUP_MIN_CONFIDENCE = 0.2
-
-const MIN_TERMINALS_FOR_PATTERN_LEARNING = 5
-const MAX_PATTERN_TO_TERMINAL_RATIO = 0.3  
-const MIN_SIMILAR_TOPICS_FOR_PATTERN = 1
-
-interface SerializedTrie {
-  version: number
-  root: SerializedNode
+interface SerializedMapping {
+  s: string
+  t: string
+  c: number
+  e?: string[]
 }
-
 interface SerializedNode {
-  c?: { [segment: string]: SerializedNode }
+  c?: Record<string, SerializedNode>
   w?: SerializedNode
-  m?: {
-    s: string
-    t: string
-    c: number
-    e?: string[]
-  }
+  m?: SerializedMapping[] | SerializedMapping
 }
 
 export class ProtobufTopicCache {
-  private trie = new TopicTrie()
+  private trie = new CandidateTopicTrie()
   private dirty = false
   private revision = 0
   private listeners = new Set<() => void>()
@@ -37,30 +27,27 @@ export class ProtobufTopicCache {
   }
   private saveOnUnload = () => this.save()
   private onStorageChange = (event: StorageEvent) => {
-    // Re-sync if another tab cleared or modified our key, so the unload
-    // handler does not silently overwrite that change.
-    if (event.storageArea !== localStorage) return
-    if (event.key !== null && event.key !== STORAGE_KEY) return
-    this.trie = new TopicTrie()
+    if (event.storageArea !== localStorage || (event.key !== null && event.key !== STORAGE_KEY)) return
+    this.trie = new CandidateTopicTrie()
     this.dirty = false
-    this.load()
+    this.load(false)
     this.notify()
   }
-  
+
   constructor() {
-    this.load()
-    
+    this.load(true)
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', this.saveOnUnload)
       window.addEventListener('storage', this.onStorageChange)
     }
   }
-  
+
   dispose(): void {
     if (typeof window !== 'undefined') {
       window.removeEventListener('beforeunload', this.saveOnUnload)
       window.removeEventListener('storage', this.onStorageChange)
     }
+    this.listeners.clear()
   }
 
   subscribe(listener: () => void): () => void {
@@ -68,269 +55,120 @@ export class ProtobufTopicCache {
     return () => { this.listeners.delete(listener) }
   }
 
-  getRevision(): number {
-    return this.revision
+  getRevision(): number { return this.revision }
+  lookup(topic: string): SchemaMapping[] | null { return this.trie.lookup(topic) }
+
+  /** Only structural changes are persisted/broadcast, not every decoded message. */
+  learnCandidate(topic: string, schema: string, messageType: string): void {
+    this.remember(topic, schema, messageType, false)
   }
-  
-  lookup(topic: string): SchemaMapping | null {
-    return this.trie.lookup(topic)
+
+  preferCandidate(topic: string, schema: string, messageType: string): void {
+    this.remember(topic, schema, messageType, true)
   }
-  
-  onSuccessfulDecode(topic: string, schema: string, messageType: string): void {
-    const validation = ProtobufValidator.validateAndSanitizeAll(topic, schema, messageType)
-    if (!validation.isValid) {
-      console.warn('Invalid input for onSuccessfulDecode:', validation.error, { topic, schema, messageType })
-      return
-    }
-    
-    if (!validation.sanitized) {
-      console.error('Validation passed but sanitized data is missing for onSuccessfulDecode')
-      return
-    }
-    
-    const { topic: sanitizedTopic, schema: sanitizedSchema, messageType: sanitizedMessageType } = validation.sanitized
-    
+
+  private remember(topic: string, schema: string, messageType: string, prefer: boolean): void {
     try {
-      this.trie.insert(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
-      this.learnPatterns(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
+      if (!this.trie.insert(topic, schema, messageType, prefer)) return
+      this.learnPatterns(topic, schema, messageType)
       this.dirty = true
       this.save()
       this.notify()
     } catch (error) {
-      console.warn('Failed to cache successful decode:', error)
+      console.warn('Failed to cache protobuf candidate:', error)
     }
   }
-  
-  onDecodeFailed(topic: string): void {
-    const validation = ProtobufValidator.validateTopic(topic)
-    if (!validation.isValid) {
-      console.warn('Invalid topic for onDecodeFailed:', validation.error, { topic })
-      return
-    }
-    
-    this.trie.updateConfidence(topic, false)
-    this.dirty = true
-    this.save()
-    this.notify()
-  }
-  
-  handleConflict(topic: string, correctSchema: string, correctType: string): void {
-    const validation = ProtobufValidator.validateAndSanitizeAll(topic, correctSchema, correctType)
-    if (!validation.isValid) {
-      console.warn('Invalid input for handleConflict:', validation.error, { topic, correctSchema, correctType })
-      return
-    }
-    
-    if (!validation.sanitized) {
-      console.error('Validation passed but sanitized data is missing for onSuccessfulDecode')
-      return
-    }
-    
-    const { topic: sanitizedTopic, schema: sanitizedSchema, messageType: sanitizedMessageType } = validation.sanitized
-    
-    this.trie.updateConfidence(sanitizedTopic, false)
-    this.trie.insert(sanitizedTopic, sanitizedSchema, sanitizedMessageType)
-    
-    this.dirty = true
-    this.save()
-    this.notify()
-  }
-  
+
   private learnPatterns(topic: string, schema: string, messageType: string): void {
     const stats = this.trie.getStats()
-    
-    if (stats.terminals < MIN_TERMINALS_FOR_PATTERN_LEARNING || stats.patterns / stats.terminals > MAX_PATTERN_TO_TERMINAL_RATIO) {
-      return
-    }
-    
-    const similarTopics = this.findSimilarTopics(topic, schema, messageType)
-    
-    if (similarTopics.length >= MIN_SIMILAR_TOPICS_FOR_PATTERN) {
-      const allTopics = [...similarTopics, topic]
-      
-      this.trie.createPattern(allTopics, schema, messageType)
-      
-    }
-  }
-  
-  private findSimilarTopics(currentTopic: string, schema: string, messageType: string): string[] {
-    const similarTopics: string[] = []
-    const root = this.trie.getRoot()
-    
-    // Traverse the entire trie to find all topics with same schema/messageType
-    const traverseNode = (node: any, path: string[] = []) => {
-      if (node.isTerminal && node.mapping) {
-        const mapping = node.mapping
-        if (mapping.schema === schema && 
-            mapping.messageType === messageType && 
-            mapping.confidence === 1.0) {
-          const topicPath = path.join('.')
-          if (topicPath !== currentTopic && topicPath.length > 0) {
-            similarTopics.push(topicPath)
-          }
-        }
+    if (stats.terminals < 5 || stats.patterns / stats.terminals > 0.3) return
+    const similar: string[] = []
+    const visit = (node: CandidateTrieNode, path: string[]) => {
+      if (node.mappings.some(mapping => mapping.schema === schema && mapping.messageType === messageType && mapping.confidence === 1)) {
+        const other = path.join('.')
+        if (other !== topic) similar.push(other)
       }
-      
-      if (node.children) {
-        for (const [segment, childNode] of node.children) {
-          traverseNode(childNode, [...path, segment])
-        }
-      }
-      
-      if (node.wildcard) {
-        traverseNode(node.wildcard, [...path, '*'])
-      }
+      for (const [segment, child] of node.children) visit(child, [...path, segment])
+      // Only exact subjects teach patterns; patterns themselves are not observations.
     }
-    
-    traverseNode(root)
-    
-    return similarTopics
+    visit(this.trie.getRoot(), [])
+    if (similar.length) this.trie.createPattern([...similar, topic], schema, messageType)
   }
-  
-  getStats() {
-    return this.trie.getStats()
-  }
-  
+
+  getStats() { return this.trie.getStats() }
+
   clear(): void {
-    this.trie = new TopicTrie()
-    this.dirty = false
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY)
-    }
+    this.trie = new CandidateTopicTrie()
+    // Keep a v2 tombstone so old browser data cannot be imported again.
+    this.dirty = true
+    this.save()
     this.notify()
   }
-  
+
   private save(): void {
-    if (typeof localStorage === 'undefined') return
-    if (!this.dirty) return
-    
+    if (!this.dirty || typeof localStorage === 'undefined') return
     try {
-      const data = this.serialize(this.trie.getRoot())
-      localStorage.setItem(STORAGE_KEY, data)
+      localStorage.setItem(STORAGE_KEY, this.serialize())
       this.dirty = false
     } catch (error) {
-      if (error instanceof Error && error.name === 'QuotaExceededError') {
-        this.handleStorageOverflow()
-      } else {
-        console.warn('Failed to save protobuf cache:', error)
-      }
+      // Retain the in-memory candidates. A later change or unload can retry;
+      // recursively retrying a full localStorage would overflow the call stack.
+      console.warn('Failed to save protobuf candidates:', error)
     }
   }
-  
-  private load(): void {
+
+  private load(migrate: boolean): void {
     if (typeof localStorage === 'undefined') return
-    
     try {
-      const data = localStorage.getItem(STORAGE_KEY)
-      if (data) {
-        const root = this.deserialize(data)
-        this.trie.setRoot(root)
+      const current = localStorage.getItem(STORAGE_KEY)
+      const legacy = current === null && migrate ? localStorage.getItem(LEGACY_STORAGE_KEY) : null
+      const data = current ?? legacy
+      if (data === null) return
+      this.trie.setRoot(this.deserialize(data, legacy !== null ? 1 : 2))
+      if (legacy !== null) {
+        this.dirty = true
+        this.save()
       }
     } catch (error) {
-      localStorage.removeItem(STORAGE_KEY)
-    }
-  }
-  
-  private handleStorageOverflow(): void {
-    
-    try {
-      this.reduceExamples(this.trie.getRoot())
+      // Recover with a v2 tombstone, without deleting data still used by old tabs.
+      this.trie = new CandidateTopicTrie()
+      this.dirty = true
       this.save()
-    } catch {
-      try {
-        this.trie.cleanup(CLEANUP_MIN_CONFIDENCE)
-        this.save()
-      } catch {
-      }
     }
   }
-  
-  private reduceExamples(node: TrieNode): void {
-    if (node.mapping?.examples) {
-      node.mapping.examples = node.mapping.examples.slice(0, 1)
+
+  private serialize(): string {
+    const toJSON = (node: CandidateTrieNode): SerializedNode => {
+      const result: SerializedNode = {}
+      if (node.mappings.length) result.m = node.mappings.map(mapping => ({
+        s: mapping.schema, t: mapping.messageType, c: mapping.confidence,
+        ...(mapping.examples?.length ? { e: mapping.examples } : {}),
+      }))
+      if (node.children.size) result.c = Object.fromEntries([...node.children].map(([key, child]) => [key, toJSON(child)]))
+      if (node.wildcard) result.w = toJSON(node.wildcard)
+      return result
     }
-    
-    for (const [, child] of node.children) {
-      this.reduceExamples(child)
-    }
-    
-    if (node.wildcard) {
-      this.reduceExamples(node.wildcard)
-    }
+    return JSON.stringify({ version: 2, root: toJSON(this.trie.getRoot()) })
   }
-  
-  private serialize(root: TrieNode): string {
-    const toJSON = (node: TrieNode): SerializedNode => {
-      const obj: SerializedNode = {}
-      
-      if (node.mapping) {
-        obj.m = {
-          s: node.mapping.schema,
-          t: node.mapping.messageType,
-          c: node.mapping.confidence
-        }
-        
-        if (node.mapping.examples && node.mapping.examples.length > 0) {
-          obj.m.e = node.mapping.examples
+
+  private deserialize(data: string, version: number): CandidateTrieNode {
+    const parsed = JSON.parse(data)
+    if (parsed.version !== version || !parsed.root) throw new Error('Invalid protobuf cache version')
+    const fromJSON = (obj: SerializedNode): CandidateTrieNode => {
+      const entries = obj.m ? (Array.isArray(obj.m) ? obj.m : [obj.m]) : []
+      const mappings: SchemaMapping[] = []
+      for (const entry of entries) {
+        if (typeof entry.s !== 'string' || typeof entry.t !== 'string' || !Number.isFinite(entry.c)) throw new Error('Invalid protobuf candidate')
+        if (!mappings.some(mapping => mapping.schema === entry.s && mapping.messageType === entry.t)) {
+          mappings.push({ schema: entry.s, messageType: entry.t, confidence: entry.c, ...(entry.e ? { examples: entry.e } : {}) })
         }
       }
-      
-      if (node.children.size > 0) {
-        obj.c = {}
-        for (const [key, child] of node.children) {
-          obj.c[key] = toJSON(child)
-        }
+      return {
+        children: new Map(Object.entries(obj.c ?? {}).map(([key, child]) => [key, fromJSON(child)])),
+        wildcard: obj.w ? fromJSON(obj.w) : undefined,
+        mappings, isTerminal: mappings.length > 0, useCount: 0,
       }
-      
-      if (node.wildcard) {
-        obj.w = toJSON(node.wildcard)
-      }
-      
-      return obj
     }
-    
-    const serialized: SerializedTrie = {
-      version: STORAGE_VERSION,
-      root: toJSON(root)
-    }
-    
-    return JSON.stringify(serialized)
-  }
-  
-  private deserialize(data: string): TrieNode {
-    const parsed: SerializedTrie = JSON.parse(data)
-    
-    if (parsed.version !== STORAGE_VERSION) {
-      throw new Error('Version mismatch')
-    }
-    
-    const fromJSON = (obj: SerializedNode): TrieNode => {
-      const node: TrieNode = {
-        children: new Map(),
-        wildcard: undefined,
-        mapping: obj.m ? {
-          schema: obj.m.s,
-          messageType: obj.m.t,
-          confidence: obj.m.c,
-          examples: obj.m.e
-        } : undefined,
-        isTerminal: !!obj.m,
-        useCount: 0
-      }
-      
-      if (obj.c) {
-        for (const [key, child] of Object.entries(obj.c)) {
-          node.children.set(key, fromJSON(child))
-        }
-      }
-      
-      if (obj.w) {
-        node.wildcard = fromJSON(obj.w)
-      }
-      
-      return node
-    }
-    
     return fromJSON(parsed.root)
   }
 }

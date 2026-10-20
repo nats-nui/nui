@@ -187,6 +187,14 @@ export function decodeProtobufMessage(
       }
     }
 
+    const recognizedFieldCount = messageType.fieldsArray.filter(field => {
+      if (!Object.prototype.hasOwnProperty.call(decoded, field.name)) return false
+      const value = decoded[field.name]
+      if (field.repeated) return value.length > 0
+      if (field.map) return Object.keys(value).length > 0
+      return true
+    }).length
+
     const object = messageType.toObject(decoded, {
       longs: String,
       enums: String,
@@ -199,6 +207,7 @@ export function decodeProtobufMessage(
     const objectJsonString = JSON.stringify(object, null, 2)
     return {
       success: true,
+      recognizedFieldCount,
       data: object,
       dataJson: objectJsonString,
       schemaUsed: schema.name,

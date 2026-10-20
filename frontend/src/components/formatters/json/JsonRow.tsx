@@ -1,5 +1,5 @@
 import { toJson } from "@/utils/editor"
-import { FunctionComponent, useMemo } from "react"
+import { Children, FunctionComponent, useMemo } from "react"
 import TextRow from "../text/TextRow"
 import { binaryStringToString } from "../../../utils/string"
 
@@ -111,7 +111,7 @@ const FormatObj: FunctionComponent<ObjPros> = ({ json, deep = 0 }) => {
 	return (
 		<span style={{ wordBreak: "break-all" }}>
 			<span style={cssBrackets(deep)}>{isArray ? "[" : "{"}</span>
-			{ret}
+			{Children.toArray(ret)}
 			<span style={cssBrackets(deep)}>{isArray ? "]" : "}"}</span>
 		</span>
 	)

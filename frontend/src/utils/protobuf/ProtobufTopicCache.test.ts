@@ -1,240 +1,151 @@
-/**
- * Tests for ProtobufTopicCache implementation
- */
-
-import { describe, test, expect, beforeEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { ProtobufTopicCache } from './ProtobufTopicCache'
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {}
-  
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value
-    }),
-    removeItem: vi.fn((key: string) => {
-      delete store[key]
-    }),
-    clear: vi.fn(() => {
-      store = {}
-    })
-  }
-})()
+const KEY = 'nats-protobuf-patterns-v2'
+const LEGACY = 'nats-protobuf-patterns'
+let values: Record<string, string> = {}
+const storage = {
+  getItem: vi.fn((key: string) => values[key] ?? null),
+  setItem: vi.fn((key: string, value: string) => { values[key] = value }),
+  removeItem: vi.fn((key: string) => { delete values[key] }),
+}
+Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true })
+const caches: ProtobufTopicCache[] = []
+const create = () => {
+  const cache = new ProtobufTopicCache()
+  caches.push(cache)
+  return cache
+}
+let cache: ProtobufTopicCache
+beforeEach(() => {
+  values = {}
+  vi.clearAllMocks()
+  cache = create()
+})
+afterEach(() => { caches.splice(0).forEach(cache => cache.dispose()) })
+const types = (cache: ProtobufTopicCache, subject = 'events.created') => cache.lookup(subject)?.map(candidate => candidate.messageType)
+const legacy = { version: 1, root: { c: { events: { c: { created: { m: { s: 'schema', t: 'A', c: 0.9 } } } } } } }
 
-Object.defineProperty(globalThis, 'localStorage', {
-  value: localStorageMock
+describe('ordered subject candidates', () => {
+  test('appends learned types and promotes manual choices without dropping alternatives', () => {
+    cache.learnCandidate('events.created', 'schema', 'A')
+    cache.learnCandidate('events.created', 'schema', 'B')
+    expect(types(cache)).toEqual(['A', 'B'])
+    cache.preferCandidate('events.created', 'schema', 'B')
+    expect(types(cache)).toEqual(['B', 'A'])
+    cache.learnCandidate('events.created', 'schema', 'A')
+    expect(types(cache)).toEqual(['B', 'A'])
+  })
+
+  test('repeated learning or preference causes no writes or notifications', () => {
+    cache.learnCandidate('events.created', 'schema', 'A')
+    const revision = cache.getRevision()
+    const changed = vi.fn()
+    cache.subscribe(changed)
+    storage.setItem.mockClear()
+    for (let i = 0; i < 20; i++) {
+      cache.learnCandidate('events.created', 'schema', 'A')
+      cache.preferCandidate('events.created', 'schema', 'A')
+    }
+    expect(storage.setItem).not.toHaveBeenCalled()
+    expect(changed).not.toHaveBeenCalled()
+    expect(cache.getRevision()).toBe(revision)
+  })
+
+  test('candidate identity includes the schema', () => {
+    cache.learnCandidate('events.created', 'one.proto', 'Event')
+    cache.learnCandidate('events.created', 'two.proto', 'Event')
+    expect(cache.lookup('events.created')).toHaveLength(2)
+  })
+
+  test('patterns accumulate candidates without overriding exact preferences', () => {
+    for (let i = 0; i < 5; i++) cache.learnCandidate(`user.${i}.created`, 'schema', 'A')
+    cache.learnCandidate('user.0.created', 'schema', 'B')
+    cache.learnCandidate('user.1.created', 'schema', 'B')
+    expect(types(cache, 'user.new.created')).toEqual(['A', 'B'])
+    cache.preferCandidate('user.new.created', 'schema', 'C')
+    expect(types(cache, 'user.new.created')).toEqual(['C'])
+    expect(types(cache, 'user.another.created')).toEqual(['A', 'B'])
+  })
 })
 
-describe('ProtobufTopicCache', () => {
-  let cache: ProtobufTopicCache
-
-  beforeEach(() => {
-    localStorageMock.clear()
-    vi.clearAllMocks()
-    cache = new ProtobufTopicCache()
+describe('persistence and migration', () => {
+  test('round-trips ordered candidates in the v2 document', () => {
+    cache.learnCandidate('events.created', 'schema', 'A')
+    cache.preferCandidate('events.created', 'schema', 'B')
+    expect(JSON.parse(values[KEY]).version).toBe(2)
+    expect(types(create())).toEqual(['B', 'A'])
+    expect(values[LEGACY]).toBeUndefined()
   })
 
-  describe('Basic Cache Operations', () => {
-    test('should store and retrieve successful decodes', () => {
-      cache.onSuccessfulDecode('user.123.events.created', 'UserSchema', 'CreateEvent')
-      
-      const result = cache.lookup('user.123.events.created')
-      expect(result).toEqual({
-        schema: 'UserSchema',
-        messageType: 'CreateEvent',
-        confidence: 1.0
-      })
-    })
-
-    test('should return null for unknown topics', () => {
-      const result = cache.lookup('unknown.topic')
-      expect(result).toBeNull()
-    })
-
-    test('should handle failed decodes', () => {
-      cache.onSuccessfulDecode('test.topic', 'TestSchema', 'TestType')
-      cache.onDecodeFailed('test.topic')
-      
-      const result = cache.lookup('test.topic')
-      expect(result?.confidence).toBeLessThan(1.0)
-    })
+  test('migrates legacy exact mappings and wildcard confidence once', () => {
+    const data = structuredClone(legacy)
+    ;(data.root.c.events as any).w = { m: { s: 'schema', t: 'Fallback', c: 0.7, e: ['events.one', 'events.two'] } }
+    values[LEGACY] = JSON.stringify(data)
+    const migrated = create()
+    expect(migrated.lookup('events.created')).toEqual([{ schema: 'schema', messageType: 'A', confidence: 0.9 }])
+    expect(migrated.lookup('events.other')).toEqual([{ schema: 'schema', messageType: 'Fallback', confidence: 0.7, examples: ['events.one', 'events.two'] }])
+    expect(values[KEY]).toBeDefined()
+    expect(values[LEGACY]).toBe(JSON.stringify(data))
+    migrated.preferCandidate('events.created', 'schema', 'B')
+    expect(types(create())).toEqual(['B', 'A'])
   })
 
-  describe('Persistence', () => {
-    test('should save to localStorage on successful decode', () => {
-      cache.onSuccessfulDecode('persist.test', 'PersistSchema', 'PersistType')
-      
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'nats-protobuf-patterns',
-        expect.any(String)
-      )
-    })
-
-    test('should load from localStorage on initialization', () => {
-      // Pre-populate localStorage
-      const mockData = JSON.stringify({
-        version: 1,
-        root: {
-          c: {
-            'loaded': {
-              c: {
-                'topic': {
-                  m: {
-                    s: 'LoadedSchema',
-                    t: 'LoadedType',
-                    c: 0.9
-                  }
-                }
-              }
-            }
-          }
-        }
-      })
-      localStorageMock.setItem('nats-protobuf-patterns', mockData)
-      
-      // Create new cache instance
-      const newCache = new ProtobufTopicCache()
-      const result = newCache.lookup('loaded.topic')
-      
-      expect(result).toMatchObject({
-        schema: 'LoadedSchema',
-        messageType: 'LoadedType',
-        confidence: 0.9
-      })
-    })
-
-    test('should handle corrupt localStorage data gracefully', () => {
-      localStorageMock.setItem('nats-protobuf-patterns', 'invalid json')
-      
-      // Should not throw and should remove corrupt data
-      const newCache = new ProtobufTopicCache()
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('nats-protobuf-patterns')
-    })
-
-    test('should handle version mismatches', () => {
-      const oldVersionData = JSON.stringify({
-        version: 999,
-        root: {}
-      })
-      localStorageMock.setItem('nats-protobuf-patterns', oldVersionData)
-      
-      const newCache = new ProtobufTopicCache()
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('nats-protobuf-patterns')
-    })
-
-    test('notifies readers when another tab changes or clears the mapping', () => {
-      const previousWindow = (globalThis as any).window
-      const fakeWindow = new EventTarget()
-      Object.defineProperty(globalThis, 'window', { value: fakeWindow, configurable: true })
-      const reader = new ProtobufTopicCache()
-      const writer = new ProtobufTopicCache()
-      const onChange = vi.fn()
-      const unsubscribe = reader.subscribe(onChange)
-      const initialRevision = reader.getRevision()
-      const storageEvent = (key: string | null) => {
-        const event = new Event('storage')
-        Object.defineProperties(event, {
-          key: { value: key },
-          storageArea: { value: localStorageMock },
-        })
-        fakeWindow.dispatchEvent(event)
-      }
-
-      try {
-        writer.onSuccessfulDecode('external.topic', 'ExternalSchema', 'ExternalType')
-        storageEvent('nats-protobuf-patterns')
-        expect(reader.lookup('external.topic')?.schema).toBe('ExternalSchema')
-        expect(reader.getRevision()).toBe(initialRevision + 1)
-        expect(onChange).toHaveBeenCalledTimes(1)
-
-        localStorageMock.clear()
-        storageEvent(null)
-        expect(reader.lookup('external.topic')).toBeNull()
-        expect(onChange).toHaveBeenCalledTimes(2)
-      } finally {
-        unsubscribe()
-        reader.dispose()
-        writer.dispose()
-        Object.defineProperty(globalThis, 'window', { value: previousWindow, configurable: true })
-      }
-    })
+  test('clearing saves a tombstone so legacy candidates do not reappear', () => {
+    values[LEGACY] = JSON.stringify(legacy)
+    const migrated = create()
+    migrated.clear()
+    expect(create().lookup('events.created')).toBeNull()
+    expect(JSON.parse(values[KEY])).toEqual({ version: 2, root: {} })
   })
 
-  describe('Conflict Handling', () => {
-    test('should handle schema conflicts', () => {
-      // Initial mapping
-      cache.onSuccessfulDecode('conflict.topic', 'OriginalSchema', 'OriginalType')
-      
-      // Verify initial state
-      let result = cache.lookup('conflict.topic')
-      expect(result?.schema).toBe('OriginalSchema')
-      expect(result?.messageType).toBe('OriginalType')
-      expect(result?.confidence).toBe(1.0)
-      
-      // Conflict with different schema
-      cache.handleConflict('conflict.topic', 'NewSchema', 'NewType')
-      
-      // Should now return the new schema with exact match priority
-      result = cache.lookup('conflict.topic')
-      expect(result?.schema).toBe('NewSchema')
-      expect(result?.messageType).toBe('NewType')
-      expect(result?.confidence).toBe(1.0) // New exact mapping should have full confidence
-    })
+  test.each(['bad json', JSON.stringify({ version: 999, root: {} })])('recovers from invalid data: %s', data => {
+    values[KEY] = data
+    expect(create().lookup('events.created')).toBeNull()
+    expect(JSON.parse(values[KEY]).version).toBe(2)
   })
 
-  describe('Cache Statistics', () => {
-    test('should provide cache statistics', () => {
-      cache.onSuccessfulDecode('stats.topic1', 'Schema1', 'Type1')
-      cache.onSuccessfulDecode('stats.topic2', 'Schema2', 'Type2')
-      
-      const stats = cache.getStats()
-      expect(stats.terminals).toBeGreaterThanOrEqual(2)
-      expect(stats.nodes).toBeGreaterThan(0)
-    })
+  test('a storage error keeps candidates in memory without recursive retries', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    storage.setItem.mockImplementationOnce(() => { throw new Error('QuotaExceededError') })
+    cache.learnCandidate('events.created', 'schema', 'A')
+    expect(types(cache)).toEqual(['A'])
+    expect(storage.setItem).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
   })
 
-  describe('Cache Clearing', () => {
-    test('should clear all cached data', () => {
-      cache.onSuccessfulDecode('clear.test', 'ClearSchema', 'ClearType')
-      
-      cache.clear()
-      
-      const result = cache.lookup('clear.test')
-      expect(result).toBeNull()
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('nats-protobuf-patterns')
-    })
-  })
-
-  describe('Serialization', () => {
-    test('should use compact JSON format', () => {
-      cache.onSuccessfulDecode('compact.test', 'CompactSchema', 'CompactType')
-      
-      const setItemCall = localStorageMock.setItem.mock.calls[0]
-      const serializedData = setItemCall[1]
-      const parsed = JSON.parse(serializedData)
-      
-      // Should use short keys
-      expect(parsed.root.c).toBeDefined() // children
-      expect(parsed.root.c.compact.c.test.m).toBeDefined() // mapping
-      expect(parsed.root.c.compact.c.test.m.s).toBe('CompactSchema') // schema
-      expect(parsed.root.c.compact.c.test.m.t).toBe('CompactType') // messageType
-      expect(parsed.root.c.compact.c.test.m.c).toBe(1.0) // confidence
-    })
-
-    test('should handle storage overflow gracefully', () => {
-      // Mock QuotaExceededError
-      localStorageMock.setItem.mockImplementationOnce(() => {
-        const error = new Error('Storage quota exceeded')
-        error.name = 'QuotaExceededError'
-        throw error
-      })
-
-      // Should not crash
-      expect(() => {
-        cache.onSuccessfulDecode('overflow.test', 'OverflowSchema', 'OverflowType')
-      }).not.toThrow()
-    })
+  test('another tab can learn, promote and clear; legacy events are ignored', () => {
+    const previous = (globalThis as any).window
+    const fakeWindow = new EventTarget()
+    Object.defineProperty(globalThis, 'window', { value: fakeWindow, configurable: true })
+    const reader = create()
+    const writer = create()
+    const changed = vi.fn()
+    reader.subscribe(changed)
+    const dispatch = (key: string | null) => {
+      const event = new Event('storage')
+      Object.defineProperties(event, { key: { value: key }, storageArea: { value: storage } })
+      fakeWindow.dispatchEvent(event)
+    }
+    try {
+      writer.learnCandidate('events.created', 'schema', 'A')
+      dispatch(KEY)
+      expect(types(reader)).toEqual(['A'])
+      writer.preferCandidate('events.created', 'schema', 'B')
+      dispatch(KEY)
+      expect(types(reader)).toEqual(['B', 'A'])
+      dispatch(LEGACY)
+      expect(changed).toHaveBeenCalledTimes(2)
+      writer.clear()
+      dispatch(KEY)
+      expect(reader.lookup('events.created')).toBeNull()
+      values = {}
+      dispatch(null)
+      expect(reader.lookup('events.created')).toBeNull()
+    } finally {
+      reader.dispose()
+      writer.dispose()
+      Object.defineProperty(globalThis, 'window', { value: previous, configurable: true })
+    }
   })
 })

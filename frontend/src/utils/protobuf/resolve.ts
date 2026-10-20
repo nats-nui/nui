@@ -33,10 +33,9 @@ export function getTopicCacheRevision(): number {
   return getTopicCache().getRevision()
 }
 
-const resolved = new Map<string, ProtobufResolution>()
+const resolved = new Map<string, { signature: string, answer: ProtobufResolution }>()
 let resolvedFor: ProtoSchema[] | null = null
 let resolvedSignature: string | null = null
-let resolvedRevision = -1
 
 export function forgetProtobufResolutions(): void {
   resolved.clear()
@@ -53,17 +52,21 @@ function stillFor(schemas: ProtoSchema[]): boolean {
   return same
 }
 
-/** Read a remembered mapping, without teaching or changing the topic cache. */
-function rememberedFor(subject: string | undefined, schemas: ProtoSchema[]): Pick<ProtobufSelection, 'schema' | 'messageType'> | undefined {
-  if (!subject) return undefined
-  const cached = getTopicCache().lookup(subject)
-  if (!cached || cached.confidence <= CACHE_CONFIDENCE_THRESHOLD) return undefined
-  const schema = schemas.find(candidate =>
-    !candidate.error && candidate.root &&
-    (candidate.id === cached.schema || candidate.name === cached.schema),
-  )
-  if (!schema) return undefined
-  return { schema, messageType: cached.messageType }
+/** Stable primitive snapshot: unrelated subject changes do not update a row. */
+export function getTopicCandidatesSignature(subject?: string): string {
+  return JSON.stringify((subject ? getTopicCache().lookup(subject) ?? [] : [])
+    .filter(candidate => candidate.confidence > CACHE_CONFIDENCE_THRESHOLD)
+    .map(candidate => [candidate.schema, candidate.messageType]))
+}
+
+export function hasRecognizedFields(decoded?: ProtobufDecodedData): boolean {
+  return !!decoded?.success && (decoded.recognizedFieldCount ?? 0) > 0
+}
+
+/** Call after React commits, never during rendering. Duplicate learning is a no-op. */
+export function learnProtobufResolution(subject: string | undefined, answer?: ProtobufResolution): void {
+  if (!subject || !answer?.schema || !answer.messageType || !hasRecognizedFields(answer.decoded)) return
+  getTopicCache().learnCandidate(subject, answer.schema.id || answer.schema.name, answer.messageType)
 }
 
 /** Keep the card's quick-detection scoring in one place. */
@@ -76,7 +79,7 @@ export function detectProtobufMessage(binaryData: string, schemas: ProtoSchema[]
       for (const messageType of getAllMessageTypes(schema)) {
         try {
           const decoded = decodeProtobufMessage(binaryData, schema, messageType)
-          if (!decoded.success || !decoded.data) continue
+          if (!hasRecognizedFields(decoded)) continue
           const dataStr = JSON.stringify(decoded.data)
           const fieldCount = (dataStr.match(/":"/g) || []).length + (dataStr.match(/":\d/g) || []).length
           const score = 50 + Math.min(30, fieldCount * 2) + Math.min(20, dataStr.length / 50)
@@ -97,29 +100,32 @@ export function detectProtobufMessage(binaryData: string, schemas: ProtoSchema[]
 
 /** Share row answers by subject and payload; reading never writes topic mappings. */
 export function resolveProtobuf(binaryData: string, schemas: ProtoSchema[], subject?: string): ProtobufResolution {
-  const revision = getTopicCacheRevision()
-  const sameSchemas = stillFor(schemas)
-  if (revision !== resolvedRevision || !sameSchemas) resolved.clear()
-  resolvedRevision = revision
+  if (!stillFor(schemas)) resolved.clear()
+  const signature = getTopicCandidatesSignature(subject)
   const key = `${subject ?? ''}\u0000${binaryData}`
   const kept = resolved.get(key)
-  if (kept) return kept
+  if (kept?.signature === signature) return kept.answer
 
-  const remembered = rememberedFor(subject, schemas)
-  const detected = remembered ? undefined : detectProtobufMessage(binaryData, schemas)
-  const selected = remembered ?? detected
-  const answer: ProtobufResolution = selected ? {
-    schema: selected.schema,
-    messageType: selected.messageType,
-    decoded: remembered
-      ? decodeProtobufMessage(binaryData, selected.schema, selected.messageType)
-      : detected?.decoded,
-  } : {}
+  let answer: ProtobufResolution | undefined
+  let failure: ProtobufResolution | undefined
+  for (const candidate of subject ? getTopicCache().lookup(subject) ?? [] : []) {
+    if (candidate.confidence <= CACHE_CONFIDENCE_THRESHOLD) continue
+    const schema = schemas.find(schema => !schema.error && schema.root &&
+      (schema.id === candidate.schema || schema.name === candidate.schema))
+    if (!schema) continue
+    const decoded = decodeProtobufMessage(binaryData, schema, candidate.messageType)
+    if (hasRecognizedFields(decoded)) {
+      answer = { schema, messageType: candidate.messageType, decoded }
+      break
+    }
+    if (!decoded.success) failure ??= { schema, messageType: candidate.messageType, decoded }
+  }
+  answer ??= detectProtobufMessage(binaryData, schemas) ?? failure ?? {}
 
-  if (resolved.size >= RESOLVED_CACHE_SIZE) {
+  if (!resolved.has(key) && resolved.size >= RESOLVED_CACHE_SIZE) {
     const oldest = resolved.keys().next().value
     if (oldest != null) resolved.delete(oldest)
   }
-  resolved.set(key, answer)
+  resolved.set(key, { signature, answer })
   return answer
 }

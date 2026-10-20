@@ -1,0 +1,14 @@
+/* CYBERPUNK theme card — dark neon aesthetic inspired by Cyberpunk 2077 */
+.root {
+--card-fg: #e8e8ff;
+--card-bg: #0f0f1e;
+/* button / icon button — electric yellow accent */
+--cmp-select-fg: #0f0f1e;
+--cmp-select-bg: #FFE600;
+/* subtle inner glow for inputs & buttons */
+--cmp-bg: rgba(255, 230, 0, 0.04);
+/* tooltip / drag / dialog / float-button */
+--dialog-fg: #0f0f1e;
+--dialog-bg: #FFE600;
+--cmp-focus: #FFE60066;
+}

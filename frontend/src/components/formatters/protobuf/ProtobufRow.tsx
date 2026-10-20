@@ -1,6 +1,6 @@
-import { FunctionComponent, useMemo, memo, useSyncExternalStore } from "react"
+import { FunctionComponent, useMemo, memo } from "react"
 import { useProtobufSchemas } from "@/contexts/ProtobufSchemaContext"
-import { getTopicCacheRevision, resolveProtobuf, subscribeToTopicCache } from "@/utils/protobuf/resolve"
+import { useProtobufResolution } from "@/hooks/useProtobufResolution"
 import JsonRow from "../json/JsonRow"
 import TextRow from "../text/TextRow"
 
@@ -16,11 +16,7 @@ const ProtobufRow: FunctionComponent<Props> = ({
   subject,
 }) => {
   const { schemas } = useProtobufSchemas()
-  const cacheRevision = useSyncExternalStore(subscribeToTopicCache, getTopicCacheRevision, getTopicCacheRevision)
-  const resolution = useMemo(
-    () => text ? resolveProtobuf(text, schemas, subject) : undefined,
-    [text, schemas, subject, cacheRevision],
-  )
+  const resolution = useProtobufResolution(text, subject, schemas)
   const selectedSchema = resolution?.schema
   const selectedMessageType = resolution?.messageType
   const decodedData = resolution?.decoded
