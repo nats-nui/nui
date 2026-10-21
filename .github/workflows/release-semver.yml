@@ -101,6 +101,7 @@ jobs:
           wails-build-webview2: embed
           package: false
           go-version: '1.21'
+          node-version: '22'
           nsis: ${{ matrix.build.nsis }}
       - name: rename artifacts linux
         if : ${{ matrix.build.platform_name == 'linux-amd64' }}
