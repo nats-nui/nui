@@ -56,7 +56,7 @@ The projects uses Go and Wails.io as to run the BE and React on Vite on FE.
 
 ### Prerequisites
 - Go 1.21
-- Node 18
+- Node 22
 - Wails.io
 
 To build and run the project locally:
