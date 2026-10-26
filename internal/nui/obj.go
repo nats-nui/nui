@@ -1,6 +1,7 @@
 package nui
 
 import (
+	"errors"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -137,6 +138,68 @@ func (a *App) HandleDeleteObjStore(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	err = os.Delete(c.Context(), bucket)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.SendStatus(200)
+}
+
+func (a *App) HandleListObjInfos(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucket := c.Params("bucket")
+	os, err := js.ObjectStore(c.Context(), bucket)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	opts := []jetstream.ListObjectsOpt{}
+	if c.Query("show_deleted") == "true" {
+		opts = append(opts, jetstream.ListObjectsShowDeleted())
+	}
+	objInfos, err := os.List(c.Context(), opts...)
+	if err != nil {
+		a.logAndFiberError(c, err, 500)
+	}
+	return c.JSON(objInfos)
+}
+
+func (a *App) HandleGetObjInfo(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucket := c.Params("bucket")
+	os, err := js.ObjectStore(c.Context(), bucket)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	opts := []jetstream.GetObjectInfoOpt{}
+	if c.Query("show_deleted") == "true" {
+		opts = append(opts, jetstream.GetObjectInfoShowDeleted())
+	}
+	objInfo, err := os.GetInfo(c.Context(), c.Params("object"), opts...)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.JSON(objInfo)
+}
+
+func (a *App) DeleteObj(c *fiber.Ctx) error {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return a.logAndFiberError(c, err, 500)
+	}
+	bucket := c.Params("bucket")
+	os, err := js.ObjectStore(c.Context(), bucket)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	if c.Params("object") == "" {
+		return a.logAndFiberError(c, errors.New("object name is required"), 400)
+	}
+	err = os.Delete(c.Context(), c.Params("object"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}

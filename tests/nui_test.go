@@ -725,11 +725,16 @@ func (s *NuiTestSuite) TestObjRest() {
 	// list bucket objects
 	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect()
 	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
-	r.JSON().Array().Value(0).Object().Value("name").IsEqual("obj1")
-	r.JSON().Array().Value(0).Object().Value("payload").IsNull()
-	r.JSON().Array().Value(0).Object().Value("mtime").String().NotEqual("0001-01-01T00:00:00Z")
-	r.JSON().Array().Value(0).Object().Value("size").Number().IsEqual(6)
-	r.JSON().Array().Value(0).Object().Value("deleted").Boolean().IsFalse()
+	obj1 := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	obj1.Value("bucket").String().IsEqual("bucket1")
+	obj1.Value("size").Number().IsEqual(6)
+	obj1.Value("chunks").Number().IsEqual(1)
+	obj1.Value("digest").String().NotEmpty()
+	obj1.Value("nuid").String().NotEmpty()
+	obj1.Value("mtime").String().NotEqual("0001-01-01T00:00:00Z")
+	obj1.NotContainsKey("deleted")
 }
 
 func (s *NuiTestSuite) TestObjEntriesRest() {
@@ -737,25 +742,57 @@ func (s *NuiTestSuite) TestObjEntriesRest() {
 	connId := s.defaultConn()
 	s.filledObjs("bucket1")
 
-	// get object
-	r := e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
-	r.JSON().Object().Value("name").String().IsEqual("obj1")
-	r.JSON().Object().Value("payload").String().IsEqual("dmFsdWUx")
-	r.JSON().Object().Value("size").Number().IsEqual(6)
-	r.JSON().Object().Value("deleted").Boolean().IsFalse()
+	// list objects
+	r := e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(10)
+	listed := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	listed.Value("bucket").String().IsEqual("bucket1")
+	listed.Value("size").Number().IsEqual(6)
+	listed.Value("chunks").Number().IsEqual(1)
+	listed.NotContainsKey("deleted")
 
-	// put object
-	r = e.POST("/api/connection/" + connId + "/obj/bucket1/object/obj1").
-		WithBytes([]byte(`{"payload": "dmFsdWUy"}`)).Expect().Status(http.StatusOK)
-	r.JSON().Object().Value("payload").String().IsEqual("dmFsdWUy")
+	// show object
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("name").String().IsEqual("obj1")
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
 	r.JSON().Object().Value("size").Number().IsEqual(6)
-	r.JSON().Object().Value("deleted").Boolean().IsFalse()
+	r.JSON().Object().Value("chunks").Number().IsEqual(1)
+	r.JSON().Object().Value("digest").String().NotEmpty()
+	r.JSON().Object().Value("nuid").String().NotEmpty()
+	r.JSON().Object().Value("mtime").String().NotEqual("0001-01-01T00:00:00Z")
+	r.JSON().Object().NotContainsKey("deleted")
 
 	// delete object
-	e.DELETE("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusNoContent)
-	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
+	e.DELETE("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
+
+	// deleted object is hidden unless show_deleted is set
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(9)
+	names := make([]string, 0)
+	for _, v := range r.JSON().Array().Iter() {
+		names = append(names, v.Object().Value("name").String().Raw())
+	}
+	s.NotContains(names, "obj1")
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusInternalServerError)
+
+	r = e.GET("/api/connection/"+connId+"/obj/bucket1/object").
+		WithQuery("show_deleted", "true").
+		Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(10)
+	deleted := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	deleted.Value("deleted").Boolean().IsTrue()
+	deleted.Value("size").Number().IsEqual(0)
+
+	r = e.GET("/api/connection/"+connId+"/obj/bucket1/object/obj1").
+		WithQuery("show_deleted", "true").
+		Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("name").String().IsEqual("obj1")
 	r.JSON().Object().Value("deleted").Boolean().IsTrue()
-	r.JSON().Object().Value("payload").IsNull()
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {
