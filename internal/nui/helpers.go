@@ -2,6 +2,7 @@ package nui
 
 import (
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
 )
@@ -31,6 +32,36 @@ func (a *App) streamOrFail(c *fiber.Ctx, stream string) (jetstream.Stream, bool,
 		return nil, false, a.logAndFiberError(c, err, 500)
 	}
 	return str, true, nil
+}
+
+func (a *App) objStoreOrFail(c *fiber.Ctx, bucket string) (jetstream.ObjectStore, bool, error) {
+	js, ok, err := a.jsOrFail(c)
+	if !ok {
+		return nil, false, err
+	}
+	objStore, err := js.ObjectStore(c.Context(), bucket)
+	if err != nil {
+		if errors.Is(err, jetstream.ErrBucketNotFound) {
+			return nil, false, a.logAndFiberError(c, err, 404)
+		}
+		return nil, false, a.logAndFiberError(c, err, 500)
+	}
+	return objStore, true, nil
+}
+
+func (a *App) objInfoOrFail(c *fiber.Ctx, os jetstream.ObjectStore, object string, deleted bool) (*jetstream.ObjectInfo, bool, error) {
+	opts := []jetstream.GetObjectInfoOpt{}
+	if deleted {
+		opts = append(opts, jetstream.GetObjectInfoShowDeleted())
+	}
+	objInfo, err := os.GetInfo(c.Context(), object, opts...)
+	if err != nil {
+		if errors.Is(err, jetstream.ErrObjectNotFound) {
+			return nil, false, a.logAndFiberError(c, err, 404)
+		}
+		return nil, false, a.logAndFiberError(c, err, 500)
+	}
+	return objInfo, true, nil
 }
 
 func (a *App) bucketOrFail(c *fiber.Ctx, bucket string) (jetstream.KeyValue, bool, error) {

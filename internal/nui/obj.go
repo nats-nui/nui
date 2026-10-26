@@ -1,7 +1,6 @@
 package nui
 
 import (
-	"errors"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -58,13 +57,9 @@ func (a *App) HandleIndexObjStores(c *fiber.Ctx) error {
 }
 
 func (a *App) HandleShowObjStore(c *fiber.Ctx) error {
-	js, ok, err := a.jsOrFail(c)
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
 	if !ok {
 		return err
-	}
-	os, err := js.ObjectStore(c.Context(), c.Params("bucket"))
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
 	}
 	status, err := os.Status(c.Context())
 	if err != nil {
@@ -74,7 +69,7 @@ func (a *App) HandleShowObjStore(c *fiber.Ctx) error {
 	// retrieve config from the related stream cause no direct api available for get obj store config
 	stream, ok, err := a.streamOrFail(c, OBJ_STREAM_PREFIX+c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	streamInfo, err := stream.Info(c.Context())
 	if err != nil {
@@ -88,7 +83,7 @@ func (a *App) HandleShowObjStore(c *fiber.Ctx) error {
 func (a *App) HandleCreateObjStore(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	objStoreConfig := jetstream.ObjectStoreConfig{}
 	err = c.BodyParser(&objStoreConfig)
@@ -109,7 +104,7 @@ func (a *App) HandleCreateObjStore(c *fiber.Ctx) error {
 func (a *App) HandleUpdateObjStore(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	objStoreConfig := jetstream.ObjectStoreConfig{}
 	err = c.BodyParser(&objStoreConfig)
@@ -130,12 +125,12 @@ func (a *App) HandleUpdateObjStore(c *fiber.Ctx) error {
 func (a *App) HandleDeleteObjStore(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	bucket := c.Params("bucket")
-	_, err = js.ObjectStore(c.Context(), bucket)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
+	_, ok, err = a.objStoreOrFail(c, c.Params("bucket"))
+	if !ok {
+		return err
 	}
 	err = js.DeleteObjectStore(c.Context(), bucket)
 	if err != nil {
@@ -145,14 +140,9 @@ func (a *App) HandleDeleteObjStore(c *fiber.Ctx) error {
 }
 
 func (a *App) HandleListObjInfos(c *fiber.Ctx) error {
-	js, ok, err := a.jsOrFail(c)
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
-	}
-	bucket := c.Params("bucket")
-	os, err := js.ObjectStore(c.Context(), bucket)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	opts := []jetstream.ListObjectsOpt{}
 	if c.Query("show_deleted") == "true" {
@@ -166,39 +156,25 @@ func (a *App) HandleListObjInfos(c *fiber.Ctx) error {
 }
 
 func (a *App) HandleGetObjInfo(c *fiber.Ctx) error {
-	js, ok, err := a.jsOrFail(c)
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
-	bucket := c.Params("bucket")
-	object := c.Params("object")
-	os, err := js.ObjectStore(c.Context(), bucket)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
-	}
-	opts := []jetstream.GetObjectInfoOpt{}
-	if c.Query("show_deleted") == "true" {
-		opts = append(opts, jetstream.GetObjectInfoShowDeleted())
-	}
-	objInfo, err := os.GetInfo(c.Context(), object, opts...)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
+	objInfo, ok, err := a.objInfoOrFail(c, os, c.Params("object"), c.Query("show_deleted") == "true")
+	if !ok {
+		return err
 	}
 	return c.JSON(objInfo)
 }
 
 func (a *App) DeleteObj(c *fiber.Ctx) error {
-	js, ok, err := a.jsOrFail(c)
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
-	bucket := c.Params("bucket")
-	os, err := js.ObjectStore(c.Context(), bucket)
-	if err != nil {
-		return a.logAndFiberError(c, err, 500)
-	}
-	if c.Params("object") == "" {
-		return a.logAndFiberError(c, errors.New("object name is required"), 400)
+	_, ok, err = a.objInfoOrFail(c, os, c.Params("object"), c.Query("show_deleted") == "true")
+	if !ok {
+		return err
 	}
 	err = os.Delete(c.Context(), c.Params("object"))
 	if err != nil {
