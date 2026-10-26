@@ -133,11 +133,11 @@ func (a *App) HandleDeleteObjStore(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	bucket := c.Params("bucket")
-	os, err := js.ObjectStore(c.Context(), bucket)
+	_, err = js.ObjectStore(c.Context(), bucket)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	err = os.Delete(c.Context(), bucket)
+	err = js.DeleteObjectStore(c.Context(), bucket)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -171,6 +171,7 @@ func (a *App) HandleGetObjInfo(c *fiber.Ctx) error {
 		return a.logAndFiberError(c, err, 500)
 	}
 	bucket := c.Params("bucket")
+	object := c.Params("object")
 	os, err := js.ObjectStore(c.Context(), bucket)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
@@ -179,7 +180,7 @@ func (a *App) HandleGetObjInfo(c *fiber.Ctx) error {
 	if c.Query("show_deleted") == "true" {
 		opts = append(opts, jetstream.GetObjectInfoShowDeleted())
 	}
-	objInfo, err := os.GetInfo(c.Context(), c.Params("object"), opts...)
+	objInfo, err := os.GetInfo(c.Context(), object, opts...)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
