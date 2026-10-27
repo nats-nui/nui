@@ -619,6 +619,11 @@ func (s *NuiTestSuite) TestKvRest() {
 	// get deleted bucket gives 404
 	e.GET("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusNotFound)
 
+	// list and delete of a missing bucket stay 404
+	e.GET("/api/connection/" + connId + "/kv/bucket3/key").Expect().Status(http.StatusNotFound)
+	e.DELETE("/api/connection/" + connId + "/kv/bucket3").Expect().Status(http.StatusNotFound)
+	e.GET("/api/connection/no-such-connection/kv/bucket1/key").Expect().Status(http.StatusUnprocessableEntity)
+
 	// list bucket keys
 	r = e.GET("/api/connection/" + connId + "/kv/bucket1/key").Expect()
 	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
