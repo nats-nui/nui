@@ -161,6 +161,24 @@ func (s *NuiTestSuite) emptyKvs(name string) jetstream.KeyValue {
 	return kv
 }
 
+func (s *NuiTestSuite) filledObjs(name string) jetstream.ObjectStore {
+	os := s.emptyObjs(name)
+	for i := 1; i <= 10; i++ {
+		_, err := os.PutBytes(s.ctx, "obj"+strconv.Itoa(i), []byte("value"+strconv.Itoa(i)))
+		s.NoError(err)
+	}
+	return os
+}
+
+func (s *NuiTestSuite) emptyObjs(name string) jetstream.ObjectStore {
+	os, err := s.js.CreateObjectStore(s.ctx, jetstream.ObjectStoreConfig{
+		Bucket:  name,
+		Storage: jetstream.MemoryStorage,
+	})
+	s.NoError(err)
+	return os
+}
+
 func (s *NuiTestSuite) ensureNoNuiConsumersPending(connId, stream string) {
 	time.Sleep(200 * time.Millisecond)
 	s.e.GET("/api/connection/" + connId + "/stream/" + stream + "/consumer").

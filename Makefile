@@ -1,4 +1,4 @@
-.PHONY: dev dev-web build docker docker-multiarch docker-run
+.PHONY: dev dev-web build test docker docker-multiarch docker-run
 
 DOCKER_IMAGE ?= nui
 DOCKER_TAG ?= local
@@ -13,6 +13,9 @@ dev-web:
 
 build:
 	wails build -tags webkit2_41
+
+test:
+	go test -v ./...
 
 docker:
 	docker buildx build --load \
