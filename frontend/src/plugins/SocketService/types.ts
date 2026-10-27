@@ -19,6 +19,10 @@ export enum MSG_TYPE {
     METRICS_REQ = "metrics_req",
     /** METRICS - server*/
     METRICS_RESP = "metrics_resp",
+    /** CONSUMER CLIENTS - client */
+    CONSUMER_CLIENTS_REQ = "consumer_clients_req",
+    /** CONSUMER CLIENTS - server */
+    CONSUMER_CLIENTS_RESP = "consumer_clients_resp",
     /** ERROR MESSAGE - client server */
     ERROR = "error",
 }
@@ -50,5 +54,19 @@ export type PayloadError = {
 
 export type PayloadMetrics = any
 
+/** CONSUMER CLIENTS REQUEST - client */
+export type PayloadConsumerClientsReq = {
+    stream_name: string
+    consumer_name: string
+    deliver_subject: string
+    filter_subject: string
+}
+/** CONSUMER CLIENTS RESPONSE - server */
+export type PayloadConsumerClientsResp = {
+    stream_name: string
+    consumer_name: string
+    clients: any[]
+    error: string
+}
 
-export type Payload = PayloadSub | PayloadMessage | PayloadStatus | PayloadError | PayloadMetrics
+export type Payload = PayloadSub | PayloadMessage | PayloadStatus | PayloadError | PayloadMetrics | PayloadConsumerClientsReq | PayloadConsumerClientsResp

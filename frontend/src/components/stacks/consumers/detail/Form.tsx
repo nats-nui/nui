@@ -13,7 +13,8 @@ import { TIME } from "@/utils/conversion"
 import { dateShow } from "@/utils/time"
 import { Button, DateTimeInput, EditList, EditStringRow, IconButton, IconToggle, ListDialog, NumberInput, StringUpRow, TextInput, TitleAccordion } from "@priolo/jack"
 import { useStore } from "@priolo/jon"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
+import ClientInfoSection from "./ClientInfoSection"
 
 
 
@@ -59,6 +60,10 @@ const Form: FunctionComponent<Props> = ({
 	if (!consumer?.config) return null
 	const inRead = state.editState == EDIT_STATE.READ
 	const inNew = state.editState == EDIT_STATE.NEW
+
+	// Smart default: expand CLIENT INFO if there might be clients
+	const hasDeliverySubject = !!consumer.config?.deliverSubject || !!consumer.config?.filterSubject || (consumer.config?.filterSubjects?.length > 0)
+	const [clientInfoExpanded, setClientInfoExpanded] = useState(hasDeliverySubject)
 
 	return <div className="jack-lyt-form var-dialog">
 
@@ -137,6 +142,14 @@ const Form: FunctionComponent<Props> = ({
 					<div className="jack-lbl-readonly">{consumer.numRedelivered ?? "-"}</div>
 				</div>
 
+			</TitleAccordion>
+
+			<TitleAccordion
+				title="CLIENT INFO"
+				open={clientInfoExpanded}
+				onOpenChange={setClientInfoExpanded}
+			>
+				<ClientInfoSection store={store} />
 			</TitleAccordion>
 
 			<TitleAccordion title="LAST DELIVERED">
