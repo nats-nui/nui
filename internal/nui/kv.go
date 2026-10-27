@@ -90,7 +90,7 @@ func (a *App) HandleShowBucket(c *fiber.Ctx) error {
 	// retrieve config from the related stream cause no direct api available for get bucket config
 	stream, ok, err := a.streamOrFail(c, KV_STREAM_PREFIX+c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	streamInfo, err := stream.Info(c.Context())
 	if err != nil {
@@ -122,7 +122,7 @@ func parseStreamConfigToKeyValueConfig(scfg jetstream.StreamConfig) jetstream.Ke
 func (a *App) HandleCreateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	bucketConfig := jetstream.KeyValueConfig{}
 	if err := c.BodyParser(&bucketConfig); err != nil {
@@ -142,12 +142,12 @@ func (a *App) HandleCreateBucket(c *fiber.Ctx) error {
 func (a *App) HandleUpdateBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	bucketName := c.Params("bucket")
 	_, ok, err = a.bucketOrFail(c, bucketName)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	bucketConfig := jetstream.KeyValueConfig{}
 
@@ -170,11 +170,11 @@ func (a *App) HandleUpdateBucket(c *fiber.Ctx) error {
 func (a *App) HandleDeleteBucket(c *fiber.Ctx) error {
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	_, ok, err = a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	err = js.DeleteKeyValue(c.Context(), c.Params("bucket"))
 	if err != nil {
@@ -186,7 +186,7 @@ func (a *App) HandleDeleteBucket(c *fiber.Ctx) error {
 func (a *App) HandleIndexKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 500)
+		return err
 	}
 	watcher, err := kv.WatchAll(c.Context(), jetstream.MetaOnly())
 
@@ -222,7 +222,7 @@ watch:
 func (a *App) HandlePurgeDeletedKeys(c *fiber.Ctx) error {
 	kv, ok, err := a.bucketOrFail(c, c.Params("bucket"))
 	if !ok {
-		return a.logAndFiberError(c, err, 404)
+		return err
 	}
 	err = kv.PurgeDeletes(c.Context(), jetstream.DeleteMarkersOlderThan(-1))
 	if err != nil {

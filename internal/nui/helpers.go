@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
+	"net/http"
 )
 
 func (a *App) jsOrFail(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
@@ -49,6 +50,9 @@ func (a *App) bucketOrFail(c *fiber.Ctx, bucket string) (jetstream.KeyValue, boo
 }
 
 func (a *App) logAndFiberError(c *fiber.Ctx, err error, status int, args ...any) error {
+	if err == nil {
+		err = errors.New(http.StatusText(status))
+	}
 	a.l.Error(err.Error(), args...)
 	return c.Status(status).JSON(NewError(err.Error()))
 }
