@@ -15,7 +15,7 @@ const (
 	keyVarz       = "varz"
 	endpointVarz  = "/varz"
 	keyConnz      = "connz"
-	endpointConnz = "/connz?limit=10000&sort=last"
+	endpointConnz = "/connz?limit=10000&sort=last&subs=detail"
 )
 
 var AllEndpoints = map[string]string{keyVarz: endpointVarz, keyConnz: endpointConnz}
