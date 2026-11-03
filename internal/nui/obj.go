@@ -1,6 +1,8 @@
 package nui
 
 import (
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -194,6 +196,48 @@ func (a *App) HandleUpdateObjInfo(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(objInfo)
+}
+
+func (a *App) HandleDownloadObj(c *fiber.Ctx) error {
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
+	if !ok {
+		return err
+	}
+	objResult, ok, err := a.objResultOrFail(c, os, c.Params("object"), c.Query("show_deleted") == "true")
+	if !ok {
+		return err
+	}
+	objInfo, ok, err := a.objInfoOrFail(c, os, c.Params("object"), c.Query("show_deleted") == "true")
+	if !ok {
+		_ = objResult.Close()
+		return err
+	}
+	// fasthttp reads and closes the stream after the handler returns.
+	c.Set("Content-Length", strconv.FormatUint(objInfo.Size, 10))
+	return c.SendStream(objResult, int(objInfo.Size))
+}
+
+func (a *App) HandleUploadObj(c *fiber.Ctx) error {
+	os, ok, err := a.objStoreOrFail(c, c.Params("bucket"))
+	if !ok {
+		return err
+	}
+	objMeta := jetstream.ObjectMeta{}
+	objMeta.Name = c.Params("object")
+	fh, err := c.FormFile("payload")
+	if err != nil {
+		return a.logAndFiberError(c, err, 422)
+	}
+	f, err := fh.Open()
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	defer f.Close()
+	_, err = os.Put(c.Context(), objMeta, f)
+	if err != nil {
+		return a.logAndFiberError(c, err, 500)
+	}
+	return c.SendStatus(http.StatusOK)
 }
 
 func (a *App) DeleteObj(c *fiber.Ctx) error {

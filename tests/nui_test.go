@@ -876,6 +876,58 @@ func (s *NuiTestSuite) TestUpdateObjInfoRest() {
 		Expect().Status(http.StatusUnprocessableEntity)
 }
 
+func (s *NuiTestSuite) TestObjContentRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledObjs("bucket1")
+
+	// Download the content of an existing object
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1/content").
+		Expect().Status(http.StatusOK).Body().IsEqual("value1")
+
+	// create a new object with a multipart upload
+	payload := []byte{0x00, 0x01, 0xff, 'h', 'i'}
+	s.uploadObj(connId, "bucket1", "note", payload).Status(http.StatusOK)
+
+	// check that the object info is correct and the content matches
+	info := e.GET("/api/connection/" + connId + "/obj/bucket1/object/note").
+		Expect().Status(http.StatusOK).JSON().Object()
+	info.Value("name").String().IsEqual("note")
+	info.Value("bucket").String().IsEqual("bucket1")
+	info.Value("size").Number().IsEqual(len(payload))
+
+	// check that the uploaded content matches
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/note/content").
+		Expect().Status(http.StatusOK).Body().IsEqual(string(payload))
+
+	// a later upload replaces the bytes
+	s.uploadObj(connId, "bucket1", "note", []byte("replaced")).Status(http.StatusOK)
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/note/content").
+		Expect().Status(http.StatusOK).Body().IsEqual("replaced")
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/note").
+		Expect().Status(http.StatusOK).JSON().Object().Value("size").Number().IsEqual(8)
+
+	// test that missing buckets and objects return 404
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/missing/content").
+		Expect().Status(http.StatusNotFound)
+	e.GET("/api/connection/" + connId + "/obj/missing/object/obj1/content").
+		Expect().Status(http.StatusNotFound)
+	s.uploadObj(connId, "missing", "note", payload).Status(http.StatusNotFound)
+	s.uploadObj(connId, "bucket1", "note", nil).Status(http.StatusUnprocessableEntity)
+}
+
+// uploadObj posts a multipart body. A nil payload sends no file field.
+// The suite client locks Content-Type to application/json, so this uses its own client.
+func (s *NuiTestSuite) uploadObj(connId, bucket, object string, payload []byte) *httpexpect.Response {
+	req := httpexpect.Default(s.T(), s.nuiHost()).
+		POST("/api/connection/" + connId + "/obj/" + bucket + "/object/" + object + "/content").
+		WithMultipart()
+	if payload != nil {
+		req = req.WithFileBytes("payload", object, payload)
+	}
+	return req.Expect()
+}
+
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
 
