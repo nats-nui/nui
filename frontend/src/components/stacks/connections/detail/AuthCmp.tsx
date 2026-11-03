@@ -1,6 +1,44 @@
 import { AUTH_MODE, Auth } from "@/types"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useRef } from "react"
 import { PasswordInput, TextInput, TooltipWrapCmp } from "@priolo/jack"
+
+/** placeholder the server sends instead of a stored secret (see internal/connection/redact.go) */
+const REDACTED = "__nui_redacted__"
+const isRedacted = (value?: string) => !!value?.startsWith(REDACTED)
+
+interface SecretInputProps {
+	value?: string
+	onChange: (value: string) => void
+	readOnly?: boolean
+	password?: boolean
+}
+
+/**
+ * Input for a secret the server never sends back: a stored secret shows as empty
+ * with a hint, and leaving the field empty keeps the stored value.
+ */
+const SecretInput: FunctionComponent<SecretInputProps> = ({
+	value,
+	onChange,
+	readOnly,
+	password,
+}) => {
+	const placeholder = useRef<string>(null)
+	if (isRedacted(value)) placeholder.current = value
+	const Input = password ? PasswordInput : TextInput
+	return <>
+		<Input
+			value={isRedacted(value) ? "" : value}
+			onChange={v => onChange(v === "" && placeholder.current ? placeholder.current : v)}
+			readOnly={readOnly}
+		/>
+		{isRedacted(value) && (
+			<div className="jack-lbl-prop" style={{ opacity: 0.6 }}>
+				{readOnly ? "stored on server" : "stored on server, type to replace"}
+			</div>
+		)}
+	</>
+}
 
 interface Props {
 	auth: Auth
@@ -23,7 +61,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 				onChange={username => onPropChange({ username })}
 				readOnly={readOnly}
 			/></div>
-			<div className="jack-lyt-form"><div className="jack-lbl-prop">PASSWORD</div><PasswordInput
+			<div className="jack-lyt-form"><div className="jack-lbl-prop">PASSWORD</div><SecretInput password key="password"
 				value={auth.password}
 				onChange={password => onPropChange({ password })}
 				readOnly={readOnly}
@@ -36,7 +74,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 						content="Client token string specified in authorization config of the server"
 					/>
 				</div>
-				<TextInput
+				<SecretInput key="token"
 					value={auth.token}
 					onChange={token => onPropChange({ token })}
 					readOnly={readOnly}
@@ -61,7 +99,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 						content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 					/>
 				</div>
-				<PasswordInput
+				<SecretInput password key="nkey-seed"
 					value={auth.nKeySeed}
 					onChange={nKeySeed => onPropChange({ nKeySeed })}
 					readOnly={readOnly}
@@ -74,7 +112,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 						content="User JWT string to couple with private NKEY"
 					/>
 				</div>
-				<TextInput
+				<SecretInput key="jwt"
 					value={auth.jwt}
 					onChange={jwt => onPropChange({ jwt })}
 					readOnly={readOnly}
@@ -86,7 +124,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 						content="Private NKEY seed used to sign server challenge. It starts with 'S'"
 					/>
 				</div>
-				<TextInput
+				<SecretInput password key="jwt-nkey-seed"
 					value={auth.nKeySeed}
 					onChange={nKeySeed => onPropChange({ nKeySeed })}
 					readOnly={readOnly}
@@ -100,7 +138,7 @@ const AuthCmp: FunctionComponent<Props> = ({
 						content="NATS user JWT as bearer token (with no nuance)"
 					/>
 				</div>
-				<TextInput
+				<SecretInput key="bearer-jwt"
 					value={auth.jwt}
 					onChange={jwt => onPropChange({ jwt })}
 					readOnly={readOnly}

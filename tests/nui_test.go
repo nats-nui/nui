@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"testing"
 	"time"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/pkg/testserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -96,6 +98,102 @@ func (s *NuiTestSuite) TestConnectionImport() {
 		Expect().Status(http.StatusOK)
 	r.JSON().Object().Value("connections").Array().Length().IsEqual(2)
 	r.JSON().Object().Value("imports").Array().Length().IsEqual(3)
+
+	// secrets of ./clicontext/ctx1.json never reach the client
+	body := r.Body().Raw()
+	for _, secret := range []string{`:"token"`, `"pass1"`, `"SKEYSEED"`, `"bearer_jwt"`} {
+		s.NotContains(body, secret)
+	}
+	body = e.GET("/api/connection").Expect().Status(http.StatusOK).Body().Raw()
+	for _, secret := range []string{`:"token"`, `"pass1"`, `"SKEYSEED"`, `"bearer_jwt"`} {
+		s.NotContains(body, secret)
+	}
+}
+
+func (s *NuiTestSuite) TestConnectionSecretsAreRedacted() {
+	e := s.e
+	connPayload := `{
+		"name": "secured",
+		"hosts": ["%s"],
+		"auth": [
+			{ "active": false, "mode": "auth_token", "token": "s3cr3t-token" },
+			{ "active": true, "mode": "auth_user_password", "username": "sys", "password": "sys" },
+			{ "active": false, "mode": "auth_nkey", "username": "UPUBLIC", "n_key_seed": "SUSEED" },
+			{ "active": false, "mode": "auth_jwt", "jwt": "user-jwt", "n_key_seed": "SUJWTSEED" }
+		],
+		"metrics": { "nats_source": { "active": true, "auth": {
+			"active": true, "mode": "auth_user_password", "username": "sys", "password": "sys"
+		} } }
+	}`
+	id := s.newConnection(connPayload)
+
+	assertRedacted := func(conn *httpexpect.Object) {
+		auth := conn.Value("auth").Array()
+		auth.Value(0).Object().Value("token").String().HasPrefix(connection.Redacted)
+		auth.Value(1).Object().Value("username").IsEqual("sys")
+		auth.Value(1).Object().Value("password").String().HasPrefix(connection.Redacted)
+		auth.Value(2).Object().Value("username").IsEqual("UPUBLIC")
+		auth.Value(2).Object().Value("n_key_seed").String().HasPrefix(connection.Redacted)
+		auth.Value(3).Object().Value("jwt").String().HasPrefix(connection.Redacted)
+		auth.Value(3).Object().Value("n_key_seed").String().HasPrefix(connection.Redacted)
+		conn.Path("$.metrics.nats_source.auth.password").String().HasPrefix(connection.Redacted)
+		raw := conn.Raw()
+		s.NotContains(fmt.Sprint(raw), "s3cr3t-token")
+		s.NotContains(fmt.Sprint(raw), "SUSEED")
+	}
+
+	assertRedacted(e.GET("/api/connection").Expect().Status(http.StatusOK).JSON().Array().Value(0).Object())
+	got := e.GET("/api/connection/" + id).Expect().Status(http.StatusOK).JSON().Object()
+	assertRedacted(got)
+
+	// the client sends the redacted connection back with the token entry deleted:
+	// untouched placeholders must resolve to the stored secrets
+	update := got.Raw()
+	auths := update["auth"].([]any)
+	update["auth"] = auths[1:]
+	update["name"] = "secured_updated"
+	res := e.POST("/api/connection/" + id).WithJSON(update).Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("name").IsEqual("secured_updated")
+	res.Value("auth").Array().Length().IsEqual(3)
+	res.Path("$.auth[0].password").String().HasPrefix(connection.Redacted)
+
+	stored, err := s.NuiService.ConnRepo.GetById(id)
+	s.Require().NoError(err)
+	s.Equal("sys", stored.Auth[0].Password)
+	s.Equal("SUSEED", stored.Auth[1].NKeySeed)
+	s.Equal("user-jwt", stored.Auth[2].Jwt)
+	s.Equal("SUJWTSEED", stored.Auth[2].NKeySeed)
+	s.Equal("sys", stored.Metrics.NatsSource.Auth.Password)
+
+	// end to end: the metrics source authenticates as the sys user with the
+	// restored password, varz is only served to the system account
+	ws := s.ws("/ws/sub", "id="+id)
+	defer ws.Disconnect()
+	ws.WithReadTimeout(2 * time.Second).Expect().Body().Contains("connected")
+	time.Sleep(10 * time.Millisecond)
+	ws.WriteText(`{"type": "metrics_req", "payload": {"enabled": true}}`)
+	ws.WithReadTimeout(2 * time.Second).Expect().Body().Contains("varz")
+
+	// a placeholder is never used as a credential: on create there is nothing
+	// to restore, so it is cleared
+	copyId := e.POST("/api/connection").WithJSON(map[string]any{
+		"name":  "copy",
+		"hosts": []string{"localhost:" + strconv.Itoa(s.natsServerOpts.Port)},
+		"auth": []map[string]any{{
+			"active": true, "mode": "auth_user_password", "username": "sys", "password": connection.Redacted + ":auth/0",
+		}},
+	}).Expect().Status(http.StatusOK).JSON().Object().Value("id").String().Raw()
+	stored, err = s.NuiService.ConnRepo.GetById(copyId)
+	s.Require().NoError(err)
+	s.Equal("", stored.Auth[0].Password)
+
+	// a new secret replaces the stored one
+	update["auth"].([]any)[0].(map[string]any)["password"] = "new-pass"
+	e.POST("/api/connection/" + id).WithJSON(update).Expect().Status(http.StatusOK)
+	stored, err = s.NuiService.ConnRepo.GetById(id)
+	s.Require().NoError(err)
+	s.Equal("new-pass", stored.Auth[0].Password)
+	s.Equal("SUSEED", stored.Auth[1].NKeySeed)
 }
 
 func (s *NuiTestSuite) TestMessagesSubscriptionRest() {
