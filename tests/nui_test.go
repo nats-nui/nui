@@ -780,7 +780,7 @@ func (s *NuiTestSuite) TestObjEntriesRest() {
 		names = append(names, v.Object().Value("name").String().Raw())
 	}
 	s.NotContains(names, "obj1")
-	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusInternalServerError)
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusNotFound)
 
 	r = e.GET("/api/connection/"+connId+"/obj/bucket1/object").
 		WithQuery("show_deleted", "true").
@@ -798,6 +798,82 @@ func (s *NuiTestSuite) TestObjEntriesRest() {
 	r.JSON().Object().Value("name").String().IsEqual("obj1")
 	r.JSON().Object().Value("deleted").Boolean().IsTrue()
 	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+}
+
+func (s *NuiTestSuite) TestUpdateObjInfoRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledObjs("bucket1")
+
+	before := e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").
+		Expect().Status(http.StatusOK).JSON().Object()
+	digest := before.Value("digest").String().Raw()
+	nuid := before.Value("nuid").String().Raw()
+
+	updated := e.POST("/api/connection/" + connId + "/obj/bucket1/object/obj1").
+		WithBytes([]byte(`{
+			"name": "obj1",
+			"description": "updated description",
+			"metadata": {"env": "test"},
+			"headers": {"X-Custom": ["a"]}
+		}`)).
+		Expect().Status(http.StatusOK).JSON().Object()
+	updated.Value("name").String().IsEqual("obj1")
+	updated.Value("bucket").String().IsEqual("bucket1")
+	updated.Value("description").String().IsEqual("updated description")
+	updated.Value("metadata").Object().Value("env").String().IsEqual("test")
+	updated.Value("headers").Object().Value("X-Custom").Array().Value(0).String().IsEqual("a")
+	updated.Value("size").Number().IsEqual(6)
+	updated.Value("chunks").Number().IsEqual(1)
+	updated.Value("digest").String().IsEqual(digest)
+	updated.Value("nuid").String().IsEqual(nuid)
+
+	got := e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").
+		Expect().Status(http.StatusOK).JSON().Object()
+	got.Value("description").String().IsEqual("updated description")
+	got.Value("metadata").Object().Value("env").String().IsEqual("test")
+	got.Value("headers").Object().Value("X-Custom").Array().Value(0).String().IsEqual("a")
+	got.Value("digest").String().IsEqual(digest)
+	got.Value("nuid").String().IsEqual(nuid)
+
+	renamed := e.POST("/api/connection/" + connId + "/obj/bucket1/object/obj1").
+		WithBytes([]byte(`{
+			"name": "obj1-renamed",
+			"description": "renamed",
+			"metadata": {"env": "test"}
+		}`)).
+		Expect().Status(http.StatusOK).JSON().Object()
+	renamed.Value("name").String().IsEqual("obj1-renamed")
+	renamed.Value("description").String().IsEqual("renamed")
+	renamed.Value("nuid").String().IsEqual(nuid)
+	renamed.Value("digest").String().IsEqual(digest)
+	renamed.NotContainsKey("headers")
+
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").
+		Expect().Status(http.StatusNotFound)
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1-renamed").
+		Expect().Status(http.StatusOK).JSON().Object().
+		Value("description").String().IsEqual("renamed")
+
+	listed := e.GET("/api/connection/" + connId + "/obj/bucket1/object").
+		Expect().Status(http.StatusOK).JSON().Array()
+	listed.Length().IsEqual(10)
+	names := make([]string, 0)
+	for _, v := range listed.Iter() {
+		names = append(names, v.Object().Value("name").String().Raw())
+	}
+	s.NotContains(names, "obj1")
+	s.Contains(names, "obj1-renamed")
+
+	e.POST("/api/connection/" + connId + "/obj/bucket1/object/missing").
+		WithBytes([]byte(`{"name":"missing"}`)).
+		Expect().Status(http.StatusNotFound)
+	e.POST("/api/connection/" + connId + "/obj/missing/object/obj2").
+		WithBytes([]byte(`{"name":"obj2"}`)).
+		Expect().Status(http.StatusNotFound)
+	e.POST("/api/connection/" + connId + "/obj/bucket1/object/obj2").
+		WithBytes([]byte(`{`)).
+		Expect().Status(http.StatusUnprocessableEntity)
 }
 
 func (s *NuiTestSuite) TestRequestResponseRest() {

@@ -111,6 +111,7 @@ func (a *App) registerHandlers() {
 	a.Delete("/api/connection/:connection_id/obj/:bucket", a.HandleDeleteObjStore)
 	a.Get("/api/connection/:connection_id/obj/:bucket/object", a.HandleListObjInfos)
 	a.Get("/api/connection/:connection_id/obj/:bucket/object/:object", a.HandleGetObjInfo)
+	a.Post("/api/connection/:connection_id/obj/:bucket/object/:object", a.HandleUpdateObjInfo)
 	a.Delete("/api/connection/:connection_id/obj/:bucket/object/:object", a.DeleteObj)
 
 	// Proto schema read-only routes (schemas are loaded from filesystem)
