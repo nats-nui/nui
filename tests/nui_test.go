@@ -678,6 +678,128 @@ func (s *NuiTestSuite) TestKvEntriesRest() {
 	}, 5*time.Second, 100*time.Millisecond)
 }
 
+func (s *NuiTestSuite) TestObjRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledObjs("bucket1")
+	s.filledObjs("bucket2")
+
+	// get existing buckets
+	r := e.GET("/api/connection/" + connId + "/obj").Expect()
+	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(2)
+	r.JSON().Array().Value(0).Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Array().Value(0).Object().Value("storage_type").String().IsEqual("memory")
+	r.JSON().Array().Value(0).Object().Value("replicas").Number().IsEqual(1)
+	r.JSON().Array().Value(0).Object().Value("sealed").Boolean().IsFalse()
+	r.JSON().Array().Value(0).Object().Value("compressed").Boolean().IsFalse()
+	r.JSON().Array().Value(0).Object().Value("backing_store").String().IsEqual("JetStream")
+	r.JSON().Array().Value(0).Object().Value("size").Number().Gt(0)
+	r.JSON().Array().Value(0).Object().Value("ttl").Number().IsEqual(0)
+	r.JSON().Array().Value(0).Object().Value("config").IsNull()
+
+	// get existing bucket
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1").Expect()
+	r.Status(http.StatusOK)
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Object().Value("config").NotNull()
+	r.JSON().Object().Value("config").Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Object().Value("config").Object().Value("storage").String().IsEqual("memory")
+
+	// create a new bucket
+	e.POST("/api/connection/" + connId + "/obj").
+		WithBytes([]byte(`{"bucket": "bucket3", "storage": "memory"}`)).
+		Expect().Status(http.StatusOK).JSON().Object().Value("bucket").String().IsEqual("bucket3")
+
+	// get new bucket
+	e.GET("/api/connection/" + connId + "/obj/bucket3").Expect().
+		JSON().Object().Value("bucket").String().IsEqual("bucket3")
+
+	// update the new bucket
+	r = e.POST("/api/connection/" + connId + "/obj/bucket3").
+		WithBytes([]byte(`{"bucket": "bucket3", "storage": "memory", "max_age": 2000000000}`)).
+		Expect()
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket3")
+	r.JSON().Object().Value("ttl").Number().IsEqual(2000000000)
+
+	// delete new bucket
+	e.DELETE("/api/connection/" + connId + "/obj/bucket3").Expect().Status(http.StatusOK)
+
+	// get deleted bucket gives 404
+	e.GET("/api/connection/" + connId + "/obj/bucket3").Expect().Status(http.StatusNotFound)
+
+	// list bucket objects
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect()
+	r.Status(http.StatusOK).JSON().Array().Length().IsEqual(10)
+	obj1 := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	obj1.Value("bucket").String().IsEqual("bucket1")
+	obj1.Value("size").Number().IsEqual(6)
+	obj1.Value("chunks").Number().IsEqual(1)
+	obj1.Value("digest").String().NotEmpty()
+	obj1.Value("nuid").String().NotEmpty()
+	obj1.Value("mtime").String().NotEqual("0001-01-01T00:00:00Z")
+	obj1.NotContainsKey("deleted")
+}
+
+func (s *NuiTestSuite) TestObjEntriesRest() {
+	e := s.e
+	connId := s.defaultConn()
+	s.filledObjs("bucket1")
+
+	// list objects
+	r := e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(10)
+	listed := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	listed.Value("bucket").String().IsEqual("bucket1")
+	listed.Value("size").Number().IsEqual(6)
+	listed.Value("chunks").Number().IsEqual(1)
+	listed.NotContainsKey("deleted")
+
+	// show object
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("name").String().IsEqual("obj1")
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+	r.JSON().Object().Value("size").Number().IsEqual(6)
+	r.JSON().Object().Value("chunks").Number().IsEqual(1)
+	r.JSON().Object().Value("digest").String().NotEmpty()
+	r.JSON().Object().Value("nuid").String().NotEmpty()
+	r.JSON().Object().Value("mtime").String().NotEqual("0001-01-01T00:00:00Z")
+	r.JSON().Object().NotContainsKey("deleted")
+
+	// delete object
+	e.DELETE("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusOK)
+
+	// deleted object is hidden unless show_deleted is set
+	r = e.GET("/api/connection/" + connId + "/obj/bucket1/object").Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(9)
+	names := make([]string, 0)
+	for _, v := range r.JSON().Array().Iter() {
+		names = append(names, v.Object().Value("name").String().Raw())
+	}
+	s.NotContains(names, "obj1")
+	e.GET("/api/connection/" + connId + "/obj/bucket1/object/obj1").Expect().Status(http.StatusInternalServerError)
+
+	r = e.GET("/api/connection/"+connId+"/obj/bucket1/object").
+		WithQuery("show_deleted", "true").
+		Expect().Status(http.StatusOK)
+	r.JSON().Array().Length().IsEqual(10)
+	deleted := r.JSON().Array().Find(func(_ int, v *httpexpect.Value) bool {
+		return v.Object().Value("name").String().Raw() == "obj1"
+	}).Object()
+	deleted.Value("deleted").Boolean().IsTrue()
+	deleted.Value("size").Number().IsEqual(0)
+
+	r = e.GET("/api/connection/"+connId+"/obj/bucket1/object/obj1").
+		WithQuery("show_deleted", "true").
+		Expect().Status(http.StatusOK)
+	r.JSON().Object().Value("name").String().IsEqual("obj1")
+	r.JSON().Object().Value("deleted").Boolean().IsTrue()
+	r.JSON().Object().Value("bucket").String().IsEqual("bucket1")
+}
+
 func (s *NuiTestSuite) TestRequestResponseRest() {
 	connId := s.defaultConn()
 

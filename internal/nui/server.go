@@ -104,6 +104,15 @@ func (a *App) registerHandlers() {
 	a.Delete("/api/connection/:connection_id/kv/:bucket/key/:key", a.HandleDeleteKey)
 	a.Post("/api/connection/:connection_id/kv/:bucket/key/:key/purge", a.HandlePurgeKey)
 
+	a.Get("/api/connection/:connection_id/obj", a.HandleIndexObjStores)
+	a.Get("/api/connection/:connection_id/obj/:bucket", a.HandleShowObjStore)
+	a.Post("/api/connection/:connection_id/obj", a.HandleCreateObjStore)
+	a.Post("/api/connection/:connection_id/obj/:bucket", a.HandleUpdateObjStore)
+	a.Delete("/api/connection/:connection_id/obj/:bucket", a.HandleDeleteObjStore)
+	a.Get("/api/connection/:connection_id/obj/:bucket/object", a.HandleListObjInfos)
+	a.Get("/api/connection/:connection_id/obj/:bucket/object/:object", a.HandleGetObjInfo)
+	a.Delete("/api/connection/:connection_id/obj/:bucket/object/:object", a.DeleteObj)
+
 	// Proto schema read-only routes (schemas are loaded from filesystem)
 	a.Get("/api/proto", a.HandleIndexProtoSchemas)
 	a.Get("/api/proto/:id", a.HandleGetProtoSchema)
