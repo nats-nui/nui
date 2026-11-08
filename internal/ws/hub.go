@@ -3,13 +3,14 @@ package ws
 import (
 	"context"
 	"errors"
+	"sync"
+
 	"github.com/mitchellh/mapstructure"
 	"github.com/nats-io/nats.go"
 	natsConn "github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
 	"github.com/nats-nui/nui/pkg/channels"
 	"github.com/nats-nui/nui/pkg/logging"
-	"sync"
 )
 
 type Pool[S Subscription, T Conn[S]] interface {
@@ -125,10 +126,10 @@ func (h *Hub[S, T]) sendErr(messages chan<- Payload, err error) chan<- Payload {
 	return messages
 }
 
-func (h *Hub[S, T]) HandleSubRequest(_ context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
+func (h *Hub[S, T]) HandleSubRequest(ctx context.Context, clientId string, subReq *SubsReq, messages chan<- Payload) {
 	h.l.Info("registering new client ws subscription to subjects", "client-id", clientId, "subjects", subReq.Subjects)
 	h.purgeSubscriptions(clientId)
-	err := h.registerSubscriptions(clientId, subReq)
+	err := h.registerSubscriptions(ctx, clientId, subReq)
 	if err != nil {
 		h.sendErr(messages, err)
 	}
@@ -176,7 +177,7 @@ func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan
 	return nil
 }
 
-func (h *Hub[S, T]) registerSubscriptions(clientId string, req *SubsReq) error {
+func (h *Hub[S, T]) registerSubscriptions(ctx context.Context, clientId string, req *SubsReq) error {
 	clientConn, ok := h.reg[clientId]
 	if !ok {
 		return errors.New("no client connection found")
@@ -196,7 +197,7 @@ func (h *Hub[S, T]) registerSubscriptions(clientId string, req *SubsReq) error {
 		chans = append(chans, s.Messages)
 		clientConn.AddSubscription(s)
 	}
-	go parseToClientMessage(channels.FanIn(10, chans...), clientConn.Messages)
+	go parseToClientMessage(ctx, channels.FanIn(ctx, 10, chans...), clientConn.Messages)
 	return nil
 }
 
@@ -307,9 +308,11 @@ func (h *Hub[S, T]) disableMetricsLocked(id string) {
 	}
 }
 
-func parseToClientMessage(natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
+func parseToClientMessage(ctx context.Context, natsMsg <-chan *nats.Msg, clientMgs chan<- Payload) {
 	for {
 		select {
+		case <-ctx.Done():
+			return
 		case msg, ok := <-natsMsg:
 			if !ok {
 				return
