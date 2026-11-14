@@ -3,9 +3,10 @@ package nui
 import (
 	"errors"
 
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-io/nats.go/jetstream"
-	"net/http"
 )
 
 func (a *App) jsOrFail(c *fiber.Ctx) (jetstream.JetStream, bool, error) {
@@ -63,6 +64,21 @@ func (a *App) objInfoOrFail(c *fiber.Ctx, os jetstream.ObjectStore, object strin
 		return nil, false, a.logAndFiberError(c, err, 500)
 	}
 	return objInfo, true, nil
+}
+
+func (a *App) objResultOrFail(c *fiber.Ctx, os jetstream.ObjectStore, object string, deleted bool) (jetstream.ObjectResult, bool, error) {
+	opts := []jetstream.GetObjectOpt{}
+	if deleted {
+		opts = append(opts, jetstream.GetObjectShowDeleted())
+	}
+	objResult, err := os.Get(c.Context(), object, opts...)
+	if err != nil {
+		if errors.Is(err, jetstream.ErrObjectNotFound) {
+			return nil, false, a.logAndFiberError(c, err, 404)
+		}
+		return nil, false, a.logAndFiberError(c, err, 500)
+	}
+	return objResult, true, nil
 }
 
 func (a *App) bucketOrFail(c *fiber.Ctx, bucket string) (jetstream.KeyValue, bool, error) {
