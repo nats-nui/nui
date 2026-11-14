@@ -198,7 +198,7 @@ export function decodeProtobufMessage(
 
     const object = messageType.toObject(decoded, {
       longs: String,
-      enums: String,
+      enums: Number,
       bytes: String,
       arrays: true,
       objects: true,
