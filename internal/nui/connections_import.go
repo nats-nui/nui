@@ -33,7 +33,7 @@ func (a *App) HandleImportCliContextsFromPath(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(response)
+	return c.JSON(response.redacted())
 }
 
 func (a *App) ImportCliContextsFromPath(ctx context.Context, path string) (CliConnImportResponse, error) {
@@ -159,4 +159,26 @@ func parseFromCliContext(name string, cliContext clicontext.CliConnectionContext
 			HandshakeFirst: cliContext.TLSFirst,
 		},
 	}
+}
+
+// redacted returns a copy of the response safe to send to clients: secrets of
+// both the imported connections and the raw CLI contexts are replaced.
+func (r CliConnImportResponse) redacted() CliConnImportResponse {
+	out := CliConnImportResponse{
+		Connections: make([]connection.Connection, len(r.Connections)),
+		CliContexts: make([]clicontext.ImportedContextEntry, len(r.CliContexts)),
+	}
+	for i := range r.Connections {
+		out.Connections[i] = *r.Connections[i].Redacted()
+	}
+	for i, entry := range r.CliContexts {
+		ctx := &entry.ImportedContext
+		for _, f := range []*string{&ctx.Token, &ctx.Password, &ctx.NKey, &ctx.UserJWT} {
+			if *f != "" {
+				*f = connection.Redacted
+			}
+		}
+		out.CliContexts[i] = entry
+	}
+	return out
 }

@@ -12,7 +12,7 @@ func (a *App) HandleIndexConnections(c *fiber.Ctx) error {
 	}
 	connArray := make([]*connection.Connection, 0)
 	for _, conn := range connections {
-		connArray = append(connArray, conn)
+		connArray = append(connArray, conn.Redacted())
 	}
 	return c.JSON(connArray)
 }
@@ -25,7 +25,7 @@ func (a *App) HandleGetConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	return c.JSON(conn)
+	return c.JSON(conn.Redacted())
 }
 
 func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
@@ -34,14 +34,19 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
+	// secrets are sent to clients redacted: restore the stored value of any
+	// secret the client sent back untouched. On create there is nothing to
+	// restore, so placeholders are cleared.
+	var connToUpdate *connection.Connection
 	if c.Params("id") != "" {
-		connToUpdate, err := a.nui.ConnRepo.GetById(c.Params("id"))
+		connToUpdate, err = a.nui.ConnRepo.GetById(c.Params("id"))
 		if err != nil {
 			return a.logAndFiberError(c, err, 404)
 		}
 		conn.Id = c.Params("id")
 		conn.Subscriptions = connToUpdate.Subscriptions
 	}
+	conn.RestoreSecrets(connToUpdate)
 	conn, err = a.nui.ConnRepo.Save(conn)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
@@ -50,7 +55,7 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
-	return c.JSON(conn)
+	return c.JSON(conn.Redacted())
 }
 
 func (a *App) HandleDeleteConnection(ctx *fiber.Ctx) error {
