@@ -22,7 +22,12 @@ const DetailForm: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleKeyChange = (key: string) => kventrySo.setKVEntry({ ...kventrySo.state.kventry, key })
-	const handlePayloadChange = (payload: string) => kventrySo.setEditorText(payload)
+	// a read-only editor still reports the text it auto-formats: that is not an edit,
+	// and keeping it would hand the binary viewers a UTF-8 decoded copy of the value
+	const handlePayloadChange = (payload: string) => {
+		if (kventrySo.state.editState == EDIT_STATE.READ) return
+		kventrySo.setEditorText(payload)
+	}
 
 	// RENDER
 	const kventry = kventrySo.getKVSelect()
