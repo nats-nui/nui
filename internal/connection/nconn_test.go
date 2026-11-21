@@ -2,51 +2,82 @@ package connection
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"sync"
 	"testing"
 	"time"
+
+	"github.com/nats-io/nats.go"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNatsConn_ObserveConnectionEvents(t *testing.T) {
-	nconn, _ := newMocked()
+	nconn, err := newMocked()
+	require.NoError(t, err)
+	t.Cleanup(nconn.Close)
 
-	status, _ := nconn.LastEvent()
-	assert.Equal(t, "disconnected", status)
+	status, err := nconn.LastEvent()
+	require.NoError(t, err)
+	require.Equal(t, StatusDisconnected, status)
 
-	events1 := []string{}
-	events2 := []string{}
-	ch1 := nconn.ObserveConnectionEvents(context.Background())
-	ctx2, cancel := context.WithCancel(context.Background())
-	ch2 := nconn.ObserveConnectionEvents(ctx2)
-
-	go func() {
-		for e := range ch1 {
-			events1 = append(events1, e.Status)
-		}
-	}()
-
-	go func() {
-		for e := range ch2 {
-			events2 = append(events2, e.Status)
-		}
-	}()
+	first := nconn.ObserveConnectionEvents(t.Context())
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	second := nconn.ObserveConnectionEvents(ctx)
 
 	nconn.DisconnectErrHandler()(nconn.Conn, nil)
 	nconn.ReconnectHandler()(nconn.Conn)
+	for _, events := range []<-chan ConnStatusChanged{first, second} {
+		require.Len(t, events, 2)
+		require.Equal(t, StatusDisconnected, (<-events).Status)
+		require.Equal(t, StatusConnected, (<-events).Status)
+	}
 
 	cancel()
-	time.Sleep(1 * time.Second)
-	nconn.ReconnectHandler()(nconn.Conn)
-
+	requireObserverClosed(t, second)
 	nconn.ClosedHandler()(nconn.Conn)
+	require.Len(t, first, 1)
+	require.Equal(t, StatusDisconnected, (<-first).Status)
 	nconn.Close()
+	requireObserverClosed(t, first)
+	requireObserverClosed(t, nconn.ObserveConnectionEvents(t.Context()))
+}
 
-	nconn.ReconnectHandler()(nconn.Conn)
+func requireObserverClosed(t *testing.T, events <-chan ConnStatusChanged) {
+	t.Helper()
+	select {
+	case _, ok := <-events:
+		require.False(t, ok)
+	case <-time.After(time.Second):
+		t.Fatal("connection event channel did not close")
+	}
+}
 
-	require.EventuallyWithT(t, func(c *assert.CollectT) {
-		assert.Equal(t, []string{"disconnected", "connected", "connected", "disconnected"}, events1)
-		assert.Equal(t, []string{"disconnected", "connected"}, events2)
-	}, 1*time.Second, time.Millisecond*20)
+func TestNatsConn_StatusHandlerUsesCallbackConnection(t *testing.T) {
+	// ConnectHandler can run before the builder returns the connection.
+	nconn := &NatsConn{}
+	nconn.buildStatusHandler(StatusConnected)(&nats.Conn{})
+	status, err := nconn.LastEvent()
+	require.NoError(t, err)
+	require.Equal(t, StatusConnected, status)
+}
 
+func TestNatsConn_ConcurrentConnectionEvents(t *testing.T) {
+	nconn, err := newMocked()
+	require.NoError(t, err)
+	t.Cleanup(nconn.Close)
+
+	var workers sync.WaitGroup
+	workers.Go(func() {
+		for range 100 {
+			nconn.handleEvent(StatusConnected, nil)
+		}
+	})
+	for range 100 {
+		ctx, cancel := context.WithCancel(t.Context())
+		nconn.ObserveConnectionEvents(ctx)
+		nconn.LastEvent()
+		cancel()
+	}
+	nconn.Close()
+	workers.Wait()
 }
