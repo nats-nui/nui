@@ -15,29 +15,34 @@ type NatsConn struct {
 	*nats.Conn
 	connectionEventsSubs []*subscriber
 	subsMutex            sync.Mutex
-	eventHandleMutex     sync.Mutex
 	mockMode             bool
+	closed               bool
 	lastStatus           string
 	lastError            error
 }
 
 type subscriber struct {
 	events chan<- ConnStatusChanged
-	stop   context.CancelFunc
+	stop   func() bool
 }
 
 func (n *NatsConn) ObserveConnectionEvents(ctx context.Context) <-chan ConnStatusChanged {
-	ctx, stop := context.WithCancel(ctx)
 	events := make(chan ConnStatusChanged, 5)
-	sub := &subscriber{events: events, stop: stop}
 	n.subsMutex.Lock()
+	defer n.subsMutex.Unlock()
+	if n.closed {
+		close(events)
+		return events
+	}
+	sub := &subscriber{events: events}
+	sub.stop = context.AfterFunc(ctx, func() { n.removeListener(sub) })
 	n.connectionEventsSubs = append(n.connectionEventsSubs, sub)
-	n.subsMutex.Unlock()
-	go n.listenForStop(ctx, sub)
 	return events
 }
 
 func (n *NatsConn) LastEvent() (string, error) {
+	n.subsMutex.Lock()
+	defer n.subsMutex.Unlock()
 	return n.lastStatus, n.lastError
 }
 
@@ -50,16 +55,16 @@ func (n *NatsConn) buildStatusHandlerWithErr(status string) nats.ConnErrHandler 
 func (n *NatsConn) buildStatusHandler(status string) nats.ConnHandler {
 	return func(conn *nats.Conn) {
 		var err error
-		if n.Conn.Status() != nats.CONNECTED {
-			err = n.Conn.LastError()
+		if conn.Status() != nats.CONNECTED {
+			err = conn.LastError()
 		}
 		n.handleEvent(status, err)
 	}
 }
 
 func (n *NatsConn) handleEvent(status string, err error) {
-	n.eventHandleMutex.Lock()
-	defer n.eventHandleMutex.Unlock()
+	n.subsMutex.Lock()
+	defer n.subsMutex.Unlock()
 	n.lastStatus = status
 	n.lastError = err
 	for _, s := range n.connectionEventsSubs {
@@ -67,13 +72,6 @@ func (n *NatsConn) handleEvent(status string, err error) {
 		case s.events <- ConnStatusChanged{status, err}:
 		default:
 		}
-	}
-}
-
-func (n *NatsConn) listenForStop(ctx context.Context, s *subscriber) {
-	select {
-	case <-ctx.Done():
-		n.removeListener(s)
 	}
 }
 
@@ -91,14 +89,20 @@ func (n *NatsConn) removeListener(toRemove *subscriber) {
 
 func (n *NatsConn) Close() {
 	n.subsMutex.Lock()
-	defer n.subsMutex.Unlock()
+	if n.closed {
+		n.subsMutex.Unlock()
+		return
+	}
+	n.closed = true
+	for _, s := range n.connectionEventsSubs {
+		s.stop()
+		close(s.events)
+	}
+	n.connectionEventsSubs = nil
+	n.subsMutex.Unlock()
 	if !n.mockMode {
 		n.Conn.Close()
 	}
-	for _, s := range n.connectionEventsSubs {
-		s.stop()
-	}
-	n.connectionEventsSubs = nil
 }
 
 func NewNatsConn(hosts string, options ...nats.Option) (*NatsConn, error) {
