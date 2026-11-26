@@ -229,7 +229,11 @@ func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string,
 				Status: msg.Status,
 				Error:  errorString(msg.Err),
 			}
-			clientMgs <- cm
+			select {
+			case clientMgs <- cm:
+			case <-ctx.Done():
+				return nil
+			}
 		}
 	}
 }
@@ -322,7 +326,11 @@ func parseToClientMessage(ctx context.Context, natsMsg <-chan *nats.Msg, clientM
 				Payload: msg.Data,
 				Headers: msg.Header,
 			}
-			clientMgs <- cm
+			select {
+			case clientMgs <- cm:
+			case <-ctx.Done():
+				return
+			}
 		}
 	}
 }
