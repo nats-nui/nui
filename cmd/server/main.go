@@ -35,7 +35,7 @@ func main() {
 
 	logger.Info("Starting up...")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	webApp, err := app.NewApp(
 		app.WithTarget(app.TargetWeb),
 		app.WithVersion(Version),
@@ -50,16 +50,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	go func() {
-		webApp.Startup(ctx)
-	}()
-
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		sig := <-sigCh
-		logger.Info("Shutting down...", "signal", sig.String())
-		cancel()
-	}()
+	webApp.Startup(ctx)
 	<-ctx.Done()
+	stop() // Restore the default signal handler while waiting for the server.
+	webApp.Shutdown()
 }

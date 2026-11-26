@@ -2,7 +2,10 @@ package nui
 
 import (
 	"context"
+	"errors"
 	"log/slog"
+	"net"
+	"time"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
@@ -11,6 +14,8 @@ import (
 	"github.com/nats-nui/nui/pkg/logging"
 	slogfiber "github.com/samber/slog-fiber"
 )
+
+const ShutdownTimeout = 5 * time.Second
 
 type App struct {
 	*fiber.App
@@ -141,14 +146,30 @@ func (a *App) registerHandlers() {
 }
 
 func (a *App) Start(ctx context.Context) error {
+	if ctx.Err() != nil {
+		return nil
+	}
 	a.ctx = ctx
-	go func() {
-		select {
-		case <-ctx.Done():
-			_ = a.Shutdown()
-		}
-	}()
-	return a.Listen(":" + a.Port)
+	listener, err := net.Listen(a.Config().Network, ":"+a.Port)
+	if err != nil {
+		return err
+	}
+	stop := context.AfterFunc(ctx, func() { _ = listener.Close() })
+	defer stop()
+	if err := a.Listener(listener); err != nil {
+		_ = listener.Close()
+		return err
+	}
+	if ctx.Err() == nil {
+		return nil
+	}
+
+	// Closing the listener stops Accept. Shutdown also waits for active HTTP requests.
+	err = a.ShutdownWithTimeout(ShutdownTimeout)
+	if errors.Is(err, net.ErrClosed) {
+		return nil // The cancellation callback already closed the listener.
+	}
+	return err
 }
 
 func (a *App) handleHealth(c *fiber.Ctx) error {
