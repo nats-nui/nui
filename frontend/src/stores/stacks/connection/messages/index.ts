@@ -1,4 +1,5 @@
 import messagesApi from "@/api/messages"
+import { SS_EVENTS } from "@/plugins/SocketService"
 import { socketPool } from "@/plugins/SocketService/pool"
 import { MSG_TYPE, PayloadMessage } from "@/plugins/SocketService/types"
 import cnnSo from "@/stores/connections"
@@ -50,6 +51,7 @@ const setup = {
 		formatsOpen: false,
 
 		pause: false,
+		detachSocketListeners: <() => void>null,
 
 		//#region VIEWBASE
 		//#endregion
@@ -113,24 +115,33 @@ const setup = {
 		//#endregion
 
 
-		async connect(_: void, store?: MessagesStore) {
-			const ss = await socketPool.getOrCreate(store.getSocketServiceId(), store.state.connectionId)
-			//ss.onOpen = () => store.sendSubscriptions()
-			//ss.onMessage = message => store.addMessage(message)
-			// remove existing handlers and adds the new one
-			ss.emitter.off(MSG_TYPE.NATS_MESSAGE, null)
-			ss.emitter.on(MSG_TYPE.NATS_MESSAGE, msg => {
+		connect(_: void, store?: MessagesStore) {
+			const ss = socketPool.getOrConnect(store.getSocketServiceId(), store.state.connectionId)
+			store.state.detachSocketListeners?.()
+			store.state.detachSocketListeners = null
+			if (!ss) return
+			const onMessage = msg => {
 				const payload = msg.payload as PayloadMessage
 				store.addMessage({
 					headers: payload.headers,
 					subject: payload.subject,
 					payload: atob(payload.payload),
 				})
-			})
+			}
+			const onConnection = ({ payload }) => {
+				if (payload == WebSocket.OPEN) store.sendSubscriptions()
+			}
+			ss.emitter.on(MSG_TYPE.NATS_MESSAGE, onMessage)
+			ss.emitter.on(SS_EVENTS.WS_CONNECTION, onConnection)
+			store.state.detachSocketListeners = () => {
+				ss.emitter.off(MSG_TYPE.NATS_MESSAGE, onMessage)
+				ss.emitter.off(SS_EVENTS.WS_CONNECTION, onConnection)
+			}
 			store.sendSubscriptions()
 		},
 		disconnect(_: void, store?: MessagesStore) {
-			socketPool.getById(store.getSocketServiceId())?.emitter.off(MSG_TYPE.NATS_MESSAGE, null)
+			store.state.detachSocketListeners?.()
+			store.state.detachSocketListeners = null
 			socketPool.destroy(store.getSocketServiceId())
 		},
 
@@ -176,12 +187,14 @@ const setup = {
 				: store.state.subscriptions
 					?.filter(s => !!s?.subject && !s.disabled)
 					.map(s => s.subject) ?? []
-			socketPool.getById(store.getSocketServiceId())?.sendSubjects(subjWS)
+			const ss = socketPool.getById(store.getSocketServiceId())
+			if (ss?.websocket?.readyState != WebSocket.OPEN) return
+			ss.sendSubjects(subjWS)
 
 			// messaggio in lista di cambio subs
 			const msgChangeSubj: Message = {
 				type: subjWS.length > 0 ? MESSAGE_TYPE.INFO : MESSAGE_TYPE.WARN,
-				subject: store.state.pause ? "IN PAUSE" : subjWS.length > 0 ? "LISTENING ON SUBJECTS" : "NO SUBJECTS",
+				subject: store.state.pause ? "IN PAUSE" : subjWS.length > 0 ? "SUBSCRIPTION REQUESTED" : "NO SUBJECTS",
 				payload: subjWS.join(", "),
 				receivedAt: Date.now(),
 			}

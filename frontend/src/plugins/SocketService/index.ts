@@ -75,9 +75,9 @@ export class SocketService {
 	 * libera tutte le risorse
 	 */
 	clear(newCnnId: string = null) {
-		if (!this.websocket) return
-		this.websocket.close()
+		const socket = this.websocket
 		this.websocket = null
+		socket?.close()
 		if (newCnnId) this.cnnId = newCnnId
 		this.emitter.offAll()
 	}
@@ -145,10 +145,11 @@ export class SocketService {
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
 
-	handleClose(_: CloseEvent) {
+	handleClose(e: CloseEvent) {
+		if (e.currentTarget != this.websocket) return
+		this.websocket = null
 		//console.log("socket:close")
 		this.emitter.emit(SS_EVENTS.WS_CONNECTION, WebSocket.CLOSED)
-		this.clear()
 		this.reconnect.start()
 		changeConnectionStatus(this.cnnId, CNN_STATUS.RECONNECTING)
 	}
