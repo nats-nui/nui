@@ -100,6 +100,7 @@ func main() {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
+	defer desktopApp.Shutdown()
 	// Create application with options
 	err = wails.Run(&options.App{
 		Title:            "NUI",
