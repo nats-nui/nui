@@ -49,10 +49,15 @@ const setup = {
 		import: async (_: void, store?: CnnImportStore) => {
 			store.setStatus(IMPORT_STATUS.LOADING)
 			try {
-				const { connections, imports } = await connectionApi.importFromNatsCli(store.state.path, { store })
+				try {
+					const { connections, imports } = await connectionApi.importFromNatsCli(store.state.path, { store })
+					for (const connection of connections) cnnSo.update(connection)
+					store.setImports(imports)
+				} finally {
+					// Earlier profiles may have been saved before a later one failed.
+					await cnnSo.fetch()
+				}
 				store.setStatus(IMPORT_STATUS.DONE)
-				store.setImports(imports)
-				cnnSo.fetch()
 				store.setSnackbar({
 					open: true, type: MESSAGE_TYPE.SUCCESS, timeout: 5000,
 					title: "IMPORTED",

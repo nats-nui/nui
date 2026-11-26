@@ -18,16 +18,17 @@ name of the STREAM to retrieve messages from
 
 ### QUERY
 
-- `seq_start`  
-message sequence number to fetch from
-- `start_time`
-datetime (in RCF3339) to fetch from. it takes precendence over the `seq_start` parameter 
-- `interval`  
-number of messages to retrieve (to allow pagination). if the fetch is by seq_number, 
-also negative interval are permitted
-- `subjects`  
-filter messages by subject.  
-concatenated into a single string divided with ","
+- `interval` sets the number of matching messages to return. Without a start
+  position, a negative count reads the latest matches. For example,
+  `?subject=orders.created&interval=-1` returns the last stored message for
+  `orders.created`. A positive count reads from the beginning of the stream.
+- `seq_start` is an inclusive stream sequence. A positive count reads at or
+  after that sequence. A negative count reads at or before it.
+- `start_time` is an RFC 3339 timestamp. It takes precedence over `seq_start`
+  and reads forward from the first match at or after that time.
+- `subjects` accepts a comma-separated list of subjects.
+- Repeat `subject` to pass names containing commas, for example
+  `?seq_start=1&subject=orders.a%2Cb&subject=orders.c`.
 
 
 ### BODY

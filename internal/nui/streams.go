@@ -41,6 +41,12 @@ func (a *App) HandleShowStream(c *fiber.Ctx) error {
 	if streamName == "" {
 		return c.Status(422).JSON("stream_name is required")
 	}
+	subject := c.Query("subject")
+	if subject == "" {
+		subject = ">"
+	} else if !isLiteralSubject(subject) {
+		return c.Status(422).JSON(NewError("a subject name is required"))
+	}
 	js, ok, err := a.jsOrFail(c)
 	if !ok {
 		return err
@@ -49,7 +55,7 @@ func (a *App) HandleShowStream(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
-	info, err := stream.Info(c.Context(), jetstream.WithSubjectFilter(">"))
+	info, err := stream.Info(c.Context(), jetstream.WithSubjectFilter(subject))
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -213,7 +219,14 @@ func (a *App) HandleIndexStreamMessages(c *fiber.Ctx) error {
 	}
 
 	// Subjects to filter on. An empty filter matches every subject (">").
-	subjects := strings.Split(c.Query("subjects"), ",")
+	var subjects []string
+	for _, value := range c.Context().QueryArgs().PeekMulti("subject") {
+		subjects = append(subjects, string(value))
+	}
+	if len(subjects) == 0 {
+		// Older clients send a comma-separated list.
+		subjects = strings.Split(c.Query("subjects"), ",")
+	}
 	if len(subjects) == 0 || subjects[0] == "" {
 		subjects = []string{">"}
 	}

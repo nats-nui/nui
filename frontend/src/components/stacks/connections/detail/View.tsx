@@ -8,6 +8,7 @@ import ConnectionIcon from "@/icons/cards/ConnectionIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
 import MetricsIcon from "@/icons/cards/MetricsIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
+import FindIcon from "@/icons/FindIcon"
 import { CnnDetailStore } from "@/stores/stacks/connection/detail"
 import { EDIT_STATE } from "@/types"
 import { IconButton, TooltipWrapCmp } from "@priolo/jack"
@@ -36,6 +37,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// HANDLER
 	const handleMessagesClick = () => cnnDetailSo.openMessages()
+	const handleSubjectsClick = () => cnnDetailSo.openSubjects()
 	const handleSyncClick = () => cnnDetailSo.openSync()
 	const handleStreamsClick = () => cnnDetailSo.openStreams()
 	const handleBucketsClick = () => cnnDetailSo.openBuckets()
@@ -47,6 +49,7 @@ const CnnDetailView: FunctionComponent<Props> = ({
 
 	// RENDER
 	const isMessageOpen = cnnDetailSo.getMessagesOpen()
+	const isSubjectsOpen = !!cnnDetailSo.getSubjectsCard()
 	const isSyncOpen = cnnDetailSo.getSyncOpen()
 	const isStreamsOpen = cnnDetailSo.getStreamsOpen()
 	const isBucketsOpen = cnnDetailSo.getBucketsOpen()
@@ -101,6 +104,13 @@ const CnnDetailView: FunctionComponent<Props> = ({
 					selected={isMetricsOpen}
 					onClick={handleMetricsClick}
 				/>
+				<LinkButton
+					className="jack-focus-6"
+					icon={<FindIcon width={24} height={24} />}
+					tooltip="SUBJECTS"
+					selected={isSubjectsOpen}
+					onClick={handleSubjectsClick}
+				/>
 			</div>
 		}
 	>
@@ -134,12 +144,19 @@ const CnnDetailView: FunctionComponent<Props> = ({
 				selected={isBucketsOpen}
 				onClick={handleBucketsClick}
 			/>
-			<RowButton style={{ marginBottom: 12 }}
+			<RowButton
 				className="jack-focus-5"
 				icon={<MetricsIcon className="small-icon" />}
 				label="METRICS"
 				selected={isMetricsOpen}
 				onClick={handleMetricsClick}
+			/>
+			<RowButton style={{ marginBottom: 12 }}
+				className="jack-focus-6"
+				icon={<FindIcon className="small-icon" />}
+				label="SUBJECTS"
+				selected={isSubjectsOpen}
+				onClick={handleSubjectsClick}
 			/>
 		</>}
 

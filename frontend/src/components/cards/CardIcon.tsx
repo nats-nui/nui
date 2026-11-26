@@ -10,6 +10,7 @@ import KvEntriesIcon from "@/icons/cards/KvEntriesIcon"
 import KvEntryIcon from "@/icons/cards/KvEntryIcon"
 import MessageIcon from "@/icons/cards/MessageIcon"
 import MessagesIcon from "@/icons/cards/MessagesIcon"
+import FindIcon from "@/icons/FindIcon"
 import StreamIcon from "@/icons/cards/StreamIcon"
 import StreamsIcon from "@/icons/cards/StreamsIcon"
 import { DOC_TYPE } from "@/types"
@@ -48,6 +49,8 @@ const CardIcon: FunctionComponent<Props> = ({
 
 		case DOC_TYPE.MESSAGES:
 			return <MessagesIcon className={className} style={style} />
+		case DOC_TYPE.SUBJECTS:
+			return <FindIcon width={24} height={24} className={className} style={style} />
 		case DOC_TYPE.MESSAGE:
 			return <MessageIcon className={className} style={style} />
 		case DOC_TYPE.MESSAGE_SEND:

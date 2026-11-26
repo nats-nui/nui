@@ -79,6 +79,7 @@ const setup = {
 				...viewSetup.getters.getSerialization(null, store),
 				connectionId: state.connectionId,
 				subscriptions: state.subscriptions,
+				noSysMessages: state.noSysMessages,
 				textSearch: state.textSearch,
 				format: state.format,
 			}
@@ -90,10 +91,12 @@ const setup = {
 	actions: {
 
 		async fetch(_: void, store?: MessagesStore) {
+			const current = store.state.subscriptions
 			const subscriptions = await messagesApi.subscriptionIndex(
 				store.state.connectionId,
 				{ store, manageAbort: true }
 			)
+			if (store.state.subscriptions !== current) return
 			subscriptions.forEach(s => s.favorite = s.disabled = true)
 			store.setSubscriptions(subscriptions)
 		},
@@ -107,6 +110,7 @@ const setup = {
 			const state = store.state as MessagesState
 			state.connectionId = data.connectionId
 			state.subscriptions = data.subscriptions
+			state.noSysMessages = data.noSysMessages ?? true
 			state.textSearch = data.textSearch
 			state.format = data.format
 		},

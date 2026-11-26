@@ -5,9 +5,8 @@ import { Connection, DOC_TYPE, EDIT_STATE } from "@/types"
 import { mixStores, StoreOf } from "@priolo/jon"
 import { buildBuckets } from "../buckets/utils/factory"
 import { buildStreams } from "../streams/utils/factory"
-import { VIEW_SIZE } from "@priolo/jack"
-import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSync } from "./utils/factory"
-import { focusSo, MESSAGE_TYPE } from "@priolo/jack"
+import { focusSo, MESSAGE_TYPE, utils, VIEW_SIZE } from "@priolo/jack"
+import { buildConnectionMessageSend, buildConnectionMessages, buildConnectionMetrics, buildConnectionSubjects, buildConnectionSync } from "./utils/factory"
 import { cloneDeep } from "@/utils/object"
 
 
@@ -51,6 +50,10 @@ const setup = {
 		},
 
 		getMessagesOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.MESSAGES,
+		getSubjectsCard: (_: void, store?: CnnDetailStore) => utils.findInRoot(store.state.group.state.all, {
+			type: DOC_TYPE.SUBJECTS,
+			connectionId: store.state.connection?.id,
+		}),
 		getSyncOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.SYNC,
 		getStreamsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.STREAMS,
 		getBucketsOpen: (_: void, store?: CnnDetailStore) => store.state.linked?.state.type == DOC_TYPE.BUCKETS,
@@ -93,6 +96,17 @@ const setup = {
 			const isOpen = store.getMessagesOpen()
 			const view = !isOpen || detached ? buildConnectionMessages(store.state.connection?.id) : null
 			store.state.group[detached ? "add" : "addLink"]({ view, parent: store, anim: true })
+		},
+		openSubjects(_: void, store?: CnnDetailStore) {
+			const existing = store.getSubjectsCard()
+			if (existing) {
+				focusSo.focus(existing)
+				return
+			}
+			const view = buildConnectionSubjects(store.state.connection?.id)
+			if (!view) return
+			const group = store.state.group
+			group.add({ view, index: group.getIndexByView(utils.getRoot(store)) + 1, anim: true })
 		},
 		openSync(_: void, store?: CnnDetailStore) {
 			const detached = focusSo.state.shiftKey
