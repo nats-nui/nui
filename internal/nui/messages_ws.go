@@ -55,7 +55,6 @@ func HandleWsRequest(c *websocket.Conn, ctx context.Context, reqCh chan *ws.Requ
 		case <-ctx.Done():
 			return
 		case reqCh <- req:
-		default:
 		}
 	}
 }
