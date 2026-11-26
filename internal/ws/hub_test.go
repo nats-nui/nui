@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"
+	"testing/synctest"
 	"time"
 )
 
@@ -280,4 +281,41 @@ func (s *HubSuite) TestHub_HandleMetricsOnContextDone() {
 
 func TestHubSuite(t *testing.T) {
 	suite.Run(t, new(HubSuite))
+}
+
+func TestParseToClientMessageCancelBlockedSend(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		ctx, cancel := context.WithCancel(t.Context())
+		in := make(chan *nats.Msg)
+		out := make(chan Payload)
+		go parseToClientMessage(ctx, in, out)
+
+		in <- &nats.Msg{Subject: "orders.created"}
+		synctest.Wait()
+		require.Equal(t, "orders.created", (<-out).(*NatsMsg).Subject)
+
+		in <- &nats.Msg{Subject: "orders.shipped"}
+		synctest.Wait()
+		cancel()
+	})
+}
+
+func TestHandleConnectionEventsCancelBlockedSend(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		ctx, cancel := context.WithCancel(t.Context())
+		pool := &mockPool{}
+		hub := NewHub[*mockSubscription, *mockConnection](pool, nil, &logging.NullLogger{})
+		messages := make(chan Payload)
+		require.NoError(t, hub.registerConnection("client", "connection", nil, messages))
+		go hub.HandleConnectionEvents(ctx, "client", messages)
+		synctest.Wait()
+		events := pool.Conn.StatusChangedCh[0]
+		events <- connection.ConnStatusChanged{Status: Disconnected}
+		synctest.Wait()
+		require.Equal(t, Disconnected, (<-messages).(*ConnectionStatus).Status)
+
+		events <- connection.ConnStatusChanged{Status: Reconnected}
+		synctest.Wait()
+		cancel()
+	})
 }
