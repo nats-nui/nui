@@ -15,6 +15,12 @@ class SocketPool {
 
 	/** cerca oppure crea una connessione e gli affibbbia questo ID */
 	async getOrCreate(key: string, cnnId: string): Promise<SocketService | undefined> {
+		const ss = this.getOrConnect(key, cnnId)
+		if (ss) await this.waitForConnection(ss)
+		return ss
+	}
+
+	getOrConnect(key: string, cnnId: string): SocketService | undefined {
 		if (!key || !cnnId) return
 		debounce(`ss::destroy::${key}`)
 		let ss = this.getById(key)
@@ -23,8 +29,6 @@ class SocketPool {
 			this.sockets[key] = ss
 			ss.connect(cnnId)
 		}
-		// Wait for the WebSocket to be connected
-		await this.waitForConnection(ss)
 		return ss
 	}
 
