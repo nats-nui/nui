@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/pkg/clicontext"
+	"slices"
 	"strings"
 	"time"
 )
@@ -43,6 +44,8 @@ func (a *App) ImportCliContextsFromPath(ctx context.Context, path string) (CliCo
 		return CliConnImportResponse{}, err
 	}
 
+	a.nui.connWriteMu.Lock()
+	defer a.nui.connWriteMu.Unlock()
 	allConnections, err := a.nui.ConnRepo.All()
 	if err != nil {
 		return CliConnImportResponse{}, err
@@ -65,6 +68,7 @@ func (a *App) ImportCliContextsFromPath(ctx context.Context, path string) (CliCo
 			if err != nil {
 				return response, err
 			}
+			allConnections[newConn.Id] = &newConn
 			response.Connections = append(response.Connections, newConn)
 		}
 	}
@@ -84,6 +88,13 @@ func (a *App) importConnFromCliContext(cliContext clicontext.ImportedContextEntr
 	_, err := a.nui.ConnRepo.Save(&newOne)
 	if err != nil {
 		return connection.Connection{}, err
+	}
+	if isAlreadyImported && (alreadyImported.Name != newOne.Name ||
+		!slices.Equal(alreadyImported.Hosts, newOne.Hosts) ||
+		alreadyImported.InboxPrefix != newOne.InboxPrefix ||
+		!slices.Equal(alreadyImported.Auth, newOne.Auth) ||
+		alreadyImported.TLSAuth != newOne.TLSAuth) {
+		a.nui.ConnPool.Invalidate(newOne.Id)
 	}
 	return newOne, nil
 }

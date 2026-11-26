@@ -24,17 +24,20 @@ func (a *App) HandleUpdateSubscriptions(c *fiber.Ctx) error {
 	if c.Params("id") == "" {
 		return c.Status(422).JSON("id is required")
 	}
+	var subs []connection.Subscription
+	parseErr := c.BodyParser(&subs)
+	a.nui.connWriteMu.Lock()
+	defer a.nui.connWriteMu.Unlock()
 	conn, err := a.nui.ConnRepo.GetById(c.Params("id"))
 	if err != nil {
 		return a.logAndFiberError(c, err, 404)
 	}
-	var subs []connection.Subscription
-	err = c.BodyParser(&subs)
-	if err != nil {
-		return a.logAndFiberError(c, err, 422)
+	if parseErr != nil {
+		return a.logAndFiberError(c, parseErr, 422)
 	}
-	conn.Subscriptions = subs
-	conn, err = a.nui.ConnRepo.Save(conn)
+	updated := *conn
+	updated.Subscriptions = subs
+	conn, err = a.nui.ConnRepo.Save(&updated)
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}

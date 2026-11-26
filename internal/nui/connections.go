@@ -34,15 +34,18 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 	if err != nil {
 		return a.logAndFiberError(c, err, 422)
 	}
+	a.nui.connWriteMu.Lock()
 	if c.Params("id") != "" {
 		connToUpdate, err := a.nui.ConnRepo.GetById(c.Params("id"))
 		if err != nil {
+			a.nui.connWriteMu.Unlock()
 			return a.logAndFiberError(c, err, 404)
 		}
 		conn.Id = c.Params("id")
 		conn.Subscriptions = connToUpdate.Subscriptions
 	}
 	conn, err = a.nui.ConnRepo.Save(conn)
+	a.nui.connWriteMu.Unlock()
 	if err != nil {
 		return a.logAndFiberError(c, err, 500)
 	}
@@ -54,13 +57,16 @@ func (a *App) HandleSaveConnection(c *fiber.Ctx) error {
 }
 
 func (a *App) HandleDeleteConnection(ctx *fiber.Ctx) error {
-	if ctx.Params("id") == "" {
+	id := ctx.Params("id")
+	if id == "" {
 		return ctx.Status(422).JSON("id is required")
 	}
-	err := a.nui.ConnRepo.Remove(ctx.Params("id"))
+	a.nui.connWriteMu.Lock()
+	defer a.nui.connWriteMu.Unlock()
+	err := a.nui.ConnRepo.Remove(id)
 	if err != nil {
 		return ctx.Status(500).JSON(err.Error())
 	}
-	a.nui.ConnPool.Purge()
+	a.nui.ConnPool.Invalidate(id)
 	return ctx.SendStatus(200)
 }
