@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"
+	"testing/synctest"
 	"time"
 )
 
@@ -115,6 +116,31 @@ func (s *HubSuite) SetupTest() {
 func (s *HubSuite) TestHub_Register() {
 	require.NotPanics(s.T(), func() {
 		_ = s.hub.Register(context.Background(), "test", "connection", make(chan *Request), make(chan Payload))
+	})
+}
+
+func TestHubClientRegistry(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		pool := &mockPool{Conn: &mockConnection{LastEventData: Connected}}
+		hub := NewHub[*mockSubscription, *mockConnection](pool, nil, &logging.NullLogger{})
+		connect := func(id string) context.CancelFunc {
+			ctx, cancel := context.WithCancel(t.Context())
+			messages := make(chan Payload, 1)
+			require.NoError(t, hub.Register(ctx, id, "broker", nil, messages))
+			require.Equal(t, &ConnectionStatus{Status: Connected}, <-messages)
+			return cancel
+		}
+
+		disconnectFirst := connect("first")
+		disconnectFirst()
+		disconnectSecond := connect("second")
+		synctest.Wait()
+		_, ok := hub.clientConnection("first")
+		require.False(t, ok)
+		hub.HandleMetricsRequest(t.Context(), "first", &MetricsReq{Enabled: true}, nil)
+		_, ok = hub.clientConnection("second")
+		require.True(t, ok)
+		disconnectSecond()
 	})
 }
 

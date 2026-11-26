@@ -173,12 +173,22 @@ func (h *Hub[S, T]) registerConnection(clientId, connectionId string, req <-chan
 	if err != nil {
 		return err
 	}
-	h.reg[clientId] = NewWClientConn[S](connectionId, req, messages)
+	clientConn := NewWClientConn[S](connectionId, req, messages)
+	h.connectionMutex.Lock()
+	h.reg[clientId] = clientConn
+	h.connectionMutex.Unlock()
 	return nil
 }
 
-func (h *Hub[S, T]) registerSubscriptions(ctx context.Context, clientId string, req *SubsReq) error {
+func (h *Hub[S, T]) clientConnection(clientId string) (*ClientConn[S], bool) {
+	h.connectionMutex.Lock()
+	defer h.connectionMutex.Unlock()
 	clientConn, ok := h.reg[clientId]
+	return clientConn, ok
+}
+
+func (h *Hub[S, T]) registerSubscriptions(ctx context.Context, clientId string, req *SubsReq) error {
+	clientConn, ok := h.clientConnection(clientId)
 	if !ok {
 		return errors.New("no client connection found")
 	}
@@ -202,7 +212,7 @@ func (h *Hub[S, T]) registerSubscriptions(ctx context.Context, clientId string, 
 }
 
 func (h *Hub[S, T]) HandleConnectionEvents(ctx context.Context, clientId string, clientMgs chan<- Payload) error {
-	clientConn, ok := h.reg[clientId]
+	clientConn, ok := h.clientConnection(clientId)
 	if !ok {
 		return errors.New("no client connection found")
 	}
@@ -252,11 +262,11 @@ func (h *Hub[S, T]) enableMetrics(ctx context.Context, id string, messages chan<
 
 func (h *Hub[S, T]) enableMetricsLocked(ctx context.Context, id string, messages chan<- Payload) {
 	clientConn, ok := h.reg[id]
-	if clientConn.MetricsCancel != nil {
-		return
-	}
 	if !ok {
 		h.l.Error("no client connection found for metrics", "client-id", id)
+		return
+	}
+	if clientConn.MetricsCancel != nil {
 		return
 	}
 	ctx, cancel := context.WithCancel(ctx)
