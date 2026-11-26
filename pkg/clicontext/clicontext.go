@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/nats-nui/nui/pkg/logging"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -40,8 +41,7 @@ type Importer[T any] interface {
 }
 
 type CliImporter struct {
-	l    logging.Slogger
-	path string
+	l logging.Slogger
 }
 
 type ImportedContextEntry struct {
@@ -65,9 +65,8 @@ func NewImporter(l logging.Slogger) *CliImporter {
 }
 
 func (i *CliImporter) Import(uri string) ([]ImportedContextEntry, error) {
-	i.path = uri
-	i.l.Info("searching NATS contexts in " + i.path)
-	filePaths, err := i.findContextFiles(i.path)
+	i.l.Info("searching NATS contexts in " + uri)
+	filePaths, err := i.findContextFiles(uri)
 	if err != nil {
 		return nil, fmt.Errorf("%v: %w", PathImportError, err)
 	}
@@ -95,7 +94,7 @@ func (i *CliImporter) findContextFiles(dir string) ([]string, error) {
 }
 
 func (i *CliImporter) parseContextJson(filePath string) ImportedContextEntry {
-	nameFromPath := strings.TrimSuffix(strings.TrimPrefix(filePath, i.path+string(os.PathSeparator)), ".json")
+	nameFromPath := strings.TrimSuffix(filepath.Base(filePath), ".json")
 	importedContext := ImportedContextEntry{Name: nameFromPath, Path: filePath}
 	data, err := os.ReadFile(filePath)
 	if err != nil {

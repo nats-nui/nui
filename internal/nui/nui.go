@@ -2,6 +2,7 @@ package nui
 
 import (
 	"path/filepath"
+	"sync"
 
 	"github.com/nats-nui/nui/internal/connection"
 	"github.com/nats-nui/nui/internal/metrics"
@@ -13,6 +14,7 @@ import (
 )
 
 type Nui struct {
+	connWriteMu      sync.Mutex
 	ConnRepo         connection.ConnRepo
 	ConnPool         connection.Pool[*connection.NatsConn]
 	ProtoRepo        protoschema.ProtoRepo

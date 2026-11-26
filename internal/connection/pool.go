@@ -1,7 +1,6 @@
 package connection
 
 import (
-	"errors"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nkeys"
 	"sync"
@@ -14,14 +13,18 @@ type Conn interface {
 type Pool[T Conn] interface {
 	Get(id string) (T, error)
 	Refresh(id string) error
-	Purge()
+	Invalidate(id string)
 }
 
 type ConnPool[T Conn] struct {
-	m     sync.Mutex
-	conns map[string]T
-	repo  ConnRepo
-	build func(connection *Connection) (T, error)
+	dialMu  sync.Mutex
+	cacheMu sync.Mutex
+	conns   map[string]T
+	// dialMu permits one build at a time. Invalidate clears its ID under
+	// cacheMu so a superseded result cannot enter the cache.
+	pending *string
+	repo    ConnRepo
+	build   func(connection *Connection) (T, error)
 }
 
 func NewConnPool[T Conn](repo ConnRepo, builder ConnBuilder[T]) *ConnPool[T] {
@@ -37,50 +40,67 @@ func NewNatsConnPool(repo ConnRepo) *ConnPool[*NatsConn] {
 }
 
 func (p *ConnPool[T]) Get(id string) (T, error) {
-	p.m.Lock()
-	defer p.m.Unlock()
-	if t, ok := p.conns[id]; !ok {
-		err := p.refreshLocked(id)
-		if err != nil {
-			return t, err
-		}
-	}
-	c, ok := p.conns[id]
-	if ok {
-		return c, nil
-	}
-	return c, errors.New("cannot find connection in pool")
+	return p.get(id, false)
 }
 
 func (p *ConnPool[T]) Refresh(id string) error {
-	p.m.Lock()
-	defer p.m.Unlock()
-	return p.refreshLocked(id)
+	_, err := p.get(id, true)
+	return err
 }
 
-func (p *ConnPool[T]) Purge() {
-	for k, c := range p.conns {
-		if _, err := p.repo.GetById(k); err != nil {
-			c.Close()
-			delete(p.conns, k)
+func (p *ConnPool[T]) Invalidate(id string) {
+	p.cacheMu.Lock()
+	defer p.cacheMu.Unlock()
+	if p.pending != nil && *p.pending == id {
+		p.pending = nil
+	}
+	p.closeCachedLocked(id)
+}
+
+func (p *ConnPool[T]) closeCachedLocked(id string) {
+	if conn, ok := p.conns[id]; ok {
+		delete(p.conns, id)
+		conn.Close()
+	}
+}
+
+func (p *ConnPool[T]) get(id string, refresh bool) (T, error) {
+	p.dialMu.Lock()
+	defer p.dialMu.Unlock()
+	var zero T
+	for {
+		p.cacheMu.Lock()
+		if conn, ok := p.conns[id]; ok && !refresh {
+			p.cacheMu.Unlock()
+			return conn, nil
+		}
+		cfg, err := p.repo.GetById(id)
+		if err != nil {
+			p.cacheMu.Unlock()
+			return zero, err
+		}
+		p.closeCachedLocked(id)
+		dialID := id // Only a cache miss or refresh needs an addressable ID.
+		p.pending = &dialID
+		p.cacheMu.Unlock()
+
+		conn, err := p.build(cfg)
+		p.cacheMu.Lock()
+		if p.pending != nil {
+			p.pending = nil
+			if err == nil {
+				p.conns[id] = conn
+			} else {
+				conn = zero
+			}
+			p.cacheMu.Unlock()
+			return conn, err
+		}
+		p.cacheMu.Unlock()
+		if err == nil {
+			conn.Close()
 		}
 	}
-}
-
-func (p *ConnPool[T]) refreshLocked(id string) error {
-	c, err := p.repo.GetById(id)
-	if err != nil {
-		return err
-	}
-	if currentConn, ok := p.conns[id]; ok {
-		currentConn.Close()
-	}
-	conn, err := p.build(c)
-	if err != nil {
-		return err
-	}
-	p.conns[id] = conn
-	return nil
 }
 
 func appendTLSAuthOptions(connection *Connection, options []nats.Option) []nats.Option {
