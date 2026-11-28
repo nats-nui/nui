@@ -119,10 +119,11 @@ const setup = {
 
 			store.state.rangeTop = null
 			store.state.filter.interval = globalInterval
-			store.state.filter.startSeq = store.state.stream.state.lastSeq
+			store.state.filter.startSeq = null
+			store.state.filter.byTime = false
 			await store.fetchWithFilter({
 				interval: -globalInterval,
-				startSeq: store.state.stream.state.lastSeq,
+				subjects: [...(store.state.filter.subjects ?? []), ...store.state.subjectsCustom],
 			})
 			await loadBaseSetup.actions.fetch(_, store)
 		},
@@ -150,14 +151,6 @@ const setup = {
 			store?: StreamMessagesStore
 		) => {
 			const name = store.state.stream?.config?.name
-			let pre = filter.interval < 0
-
-			if (filter.startSeq < store.state.stream.state.firstSeq) return 0
-			if (filter.startSeq + filter.interval < store.state.stream.state.firstSeq) {
-				filter.interval = filter.startSeq - store.state.stream.state.firstSeq + 1
-				filter.startSeq = store.state.stream.state.firstSeq
-				pre = true
-			}
 			if (filter.interval == 0) return 0
 
 			// FETCH
@@ -165,7 +158,7 @@ const setup = {
 
 			// ADD
 			let all = store.state.messages ?? []
-			if (pre) {
+			if (filter.interval < 0) {
 				store.setMessages(msgs.concat(all))
 			} else {
 				// se ho un link del dettaglio MESSAGE e questo vuole sempre l'ultimo allora lo cambio
@@ -180,19 +173,21 @@ const setup = {
 		},
 
 		fetchPrev: async (_?: void, store?: StreamMessagesStore) => {
+			if (!store.state.messages?.length) return 0
 			const startSeq = store.state.messages[0].seqNum - 1
-			const interval = -store.state.filter.interval
-			if (interval == 0 || startSeq <= store.state.stream.state.firstSeq) return 0
+			const interval = -Math.abs(store.state.filter.interval)
+			if (interval == 0 || startSeq < store.state.stream.state.firstSeq) return 0
 			const subjects = [...store.state.filter.subjects, ...store.state.subjectsCustom]
 			return store.fetchWithFilter({ startSeq, interval, subjects })
 		},
 
 		fetchNext: async (_?: void, store?: StreamMessagesStore) => {
-			const startSeq = store.state.messages[store.state.messages.length - 1].seqNum + 1
-			const interval = store.state.filter.interval
-			if (interval == 0 /*|| startSeq >= store.state.stream.state.lastSeq*/) return 0
-			const subjects = [...store.state.filter.subjects, ...store.state.subjectsCustom]
-			return store.fetchWithFilter({ startSeq, interval, subjects })
+			const { messages, filter, subjectsCustom } = store.state
+			if (!messages || !filter.interval) return 0
+			const subjects = [...(filter.subjects ?? []), ...subjectsCustom]
+			if (!messages.length) return store.fetchWithFilter({ ...filter, subjects })
+			const startSeq = messages[messages.length - 1].seqNum + 1
+			return store.fetchWithFilter({ startSeq, interval: Math.abs(filter.interval), subjects })
 		},
 
 		/** applico il filtro ricaricando completamente tutti i messages */
@@ -200,9 +195,6 @@ const setup = {
 
 			// normalizzo e setto il filtro
 			if (!filter.interval) filter.interval = 200
-			if (filter.startSeq == null && !filter.byTime) {
-				filter.startSeq = store.state.stream.state.lastSeq - filter.interval
-			}
 			store.setFilter(filter)
 
 			const filterToSend = { ...filter }
@@ -257,7 +249,7 @@ const setup = {
 		setMessages: (messages: Message[]) => ({ messages }),
 		setTextSearch: (textSearch: string) => ({ textSearch }),
 		setFilter: (filter: StreamMessagesFilter) => {
-			globalInterval = filter.interval
+			globalInterval = Math.abs(filter.interval) || globalInterval
 			return { filter }
 		},
 		setSubjectsCustom: (subjectsCustom: string[]) => ({ subjectsCustom }),

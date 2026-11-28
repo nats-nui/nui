@@ -13,9 +13,9 @@ function index(connectionId: string, opt?: CallOptions): Promise<StreamInfo[]> {
 }
 
 /** GET */
-async function get(connectionId: string, streamName: string, opt?: CallOptions): Promise<StreamInfo> {
-	opt.noCamel = true
-	const resSnake = await ajax.get(`connection/${connectionId}/stream/${streamName}`, null, opt)
+async function get(connectionId: string, streamName: string, opt?: CallOptions, subject?: string): Promise<StreamInfo> {
+	const query = subject ? `?subject=${encodeURIComponent(subject)}` : ""
+	const resSnake = await ajax.get(`connection/${connectionId}/stream/${streamName}${query}`, null, { ...opt, noCamel: true })
 	const resCamel: StreamInfo = snakeToCamel(resSnake)
 	if ( !!resCamel ) resCamel.state.subjects = resSnake.state.subjects
 	return resCamel
@@ -49,24 +49,33 @@ function update(connectionId: string, stream: StreamConfig, opt?: CallOptions): 
 async function messages(connectionId: string, streamName: string, filter: StreamMessagesFilter, opt?: CallOptions): Promise<Message[]> {
 	if (!connectionId || !streamName || !filter
 		|| (filter.byTime && filter.startTime == null)
-		|| (!filter.byTime && filter.startSeq == null)
 	) return
 
 	let query = ""
+	let interval = filter.interval
 	if ( filter.byTime ) {
 		const dateTime = dayjs(filter.startTime)
 		if ( !dateTime.isValid()) return
 		query = `start_time=${dateTime.toISOString()}&`
-	} else {
+	} else if (filter.startSeq != null) {
 		query = `seq_start=${filter.startSeq.toString()}&`
+	} else if (interval) {
+		// A negative interval without a sequence reads from the current stream tail.
+		interval = -Math.abs(interval)
+	} else {
+		return
 	}
-	query += filter.interval != null ? `interval=${filter.interval.toString()}&` : ""
-	query += (!!filter.subjects && filter.subjects.length > 0) 
-		? `subjects=${filter.subjects.join(",")}` 
-		: ""
+	query += interval != null ? `interval=${interval}&` : ""
+	if (filter.subjects?.length) {
+		if (filter.subjects.some(subject => subject.includes(","))) {
+			query += filter.subjects.map(subject => `subject=${encodeURIComponent(subject)}`).join("&")
+		} else {
+			query += `subjects=${encodeURIComponent(filter.subjects.join(","))}`
+		}
+	}
 
 	const messages: Message[] = await ajax.get(`connection/${connectionId}/stream/${streamName}/messages?${query}`, null, opt)
-	return messages.map(m => {
+	return (messages ?? []).map(m => {
 		m.payload = atob(m.payload)
 		return m
 	})

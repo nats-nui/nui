@@ -1,0 +1,114 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	padding: 0 0 8px;
+	font-family: monospace;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.node {
+	position: relative;
+	display: flex;
+	align-items: center;
+	border-radius: 5px;
+}
+
+.node:hover {
+	background-color: rgba(255, 255, 255, .08);
+}
+
+.node:focus-within :global(.jack-hover-hide) {
+	display: flex;
+}
+
+.node.selected {
+	background-color: var(--cmp-select-bg);
+	color: var(--cmp-select-fg);
+}
+
+.twist, .entry {
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.twist {
+	flex: 0 0 27px;
+	align-self: stretch;
+}
+
+.entry {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+	min-height: 22px;
+	padding: 3px 5px 3px 27px;
+	text-align: left;
+}
+
+.twist + .entry {
+	padding-left: 0;
+}
+
+.segment {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.chip {
+	font: inherit;
+	padding: 0 4px;
+	border-radius: 3px;
+	max-width: 16ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.core {
+	background-color: rgba(16, 243, 243, .22);
+	color: inherit;
+}
+
+.js {
+	background-color: rgba(235, 251, 53, .28);
+	color: inherit;
+}
+
+.count {
+	font: inherit;
+	opacity: .75;
+}
+
+.remainder {
+	padding: 3px 5px 3px 27px;
+	opacity: .65;
+}
+
+.empty {
+	white-space: normal;
+	line-height: 1.45;
+	padding: 8px 2px 12px;
+}
+
+.children {
+	margin-left: 14px;
+	border-left: 2px solid rgba(255, 255, 255, .22);
+	padding-left: 8px;
+}
+
+.source {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 5px;
+}

@@ -1,10 +1,10 @@
-import CheckRadioOnIcon from "@/icons/CheckRadioOnIcon"
 import { StreamMessagesStore } from "@/stores/stacks/streams/messages"
 import { StreamMessagesFilter } from "@/stores/stacks/streams/utils/filter"
 import { useStore } from "@priolo/jon"
+import dayjs from "dayjs"
 import { FunctionComponent, useEffect, useMemo, useState } from "react"
 import cls from "./FllterDialog.module.css"
-import { Button, DateTimeInput, Dialog, EditList, EditStringRow, IconToggle, ListMultiWithFilter, NumberInput, TitleAccordion } from "@priolo/jack"
+import { Button, DateTimeInput, Dialog, EditList, EditStringRow, ListMultiWithFilter, NumberInput, TitleAccordion } from "@priolo/jack"
 
 
 
@@ -46,12 +46,12 @@ const FilterDialog: FunctionComponent<Props> = ({
 	const hadleFirstSeqClick = () => {
 		const first = strMsgSa.stream.state?.firstSeq
 		if (first == null) return
-		setFilter({ ...filter, startSeq: first })
+		handleFilterPropChange({ byTime: false, startSeq: first })
 	}
 	const hadleLastSeqClick = () => {
 		const last = strMsgSa.stream.state?.lastSeq
 		if (last == null) return
-		setFilter({ ...filter, startSeq: last })
+		handleFilterPropChange({ byTime: false, startSeq: last })
 	}
 
 	// RENDER
@@ -77,13 +77,17 @@ const FilterDialog: FunctionComponent<Props> = ({
 		>
 			<div className="jack-lyt-form var-dialog">
 
+				<label className="jack-cmp-h jack-lbl-prop">
+					<input type="radio" name={strMsgSa.uuid} checked={!filter.byTime && filter.startSeq == null}
+						onChange={() => handleFilterPropChange({ byTime: false, startSeq: null })} />
+					LATEST MATCHING MESSAGES
+				</label>
 				<div className="jack-cmp-h">
-					<IconToggle
-						check={!filter.byTime}
-						onChange={select => handleFilterPropChange({ byTime: false })}
-						trueIcon={<CheckRadioOnIcon />}
-					/>
-					<div className="jack-lbl-prop">START</div>
+					<label className="jack-cmp-h jack-lbl-prop">
+						<input type="radio" name={strMsgSa.uuid} checked={!filter.byTime && filter.startSeq != null}
+							onChange={() => handleFilterPropChange({ byTime: false, startSeq: filter.startSeq ?? firstSeq })} />
+						START SEQUENCE
+					</label>
 					<div style={{ flex: 1 }} />
 					<div style={{ display: "flex", alignItems: "center", gap: 2 }}>
 						[<Button onClick={hadleFirstSeqClick}>{firstSeq}</Button>
@@ -95,30 +99,28 @@ const FilterDialog: FunctionComponent<Props> = ({
 				<NumberInput
 					style={{ flex: 1 }}
 					value={filter.startSeq}
-					onChange={(startSeq: number) => handleFilterPropChange({ startSeq })}
+					onChange={(startSeq: number) => handleFilterPropChange({ byTime: false, startSeq })}
 				/>
 
-				<div className="jack-cmp-h">
-					<IconToggle
-						check={filter.byTime}
-						onChange={select => handleFilterPropChange({ byTime: true })}
-						trueIcon={<CheckRadioOnIcon />}
-					/>
-					<div className="jack-lbl-prop">TIME START</div>
-				</div>
+				<label className="jack-cmp-h jack-lbl-prop">
+					<input type="radio" name={strMsgSa.uuid} checked={!!filter.byTime}
+						onChange={() => handleFilterPropChange({ byTime: true, startSeq: null })} />
+					START TIME (LOCAL)
+				</label>
 				<DateTimeInput
 					style={{ flex: 1 }}
 					value={filter.startTime}
-					onChange={(startTime: string) => handleFilterPropChange({ startTime })}
+					onChange={(startTime: string) => handleFilterPropChange({ byTime: true, startTime, startSeq: null })}
 				/>
 
 				<div className="lyt-v">
-					<div className="jack-lbl-prop">INTERVAL</div>
+					<div className="jack-lbl-prop">MESSAGE COUNT</div>
 					<NumberInput
 						style={{ flex: 1 }}
 						value={filter.interval}
 						onChange={(interval: number) => handleFilterPropChange({ interval })}
 					/>
+					{!filter.byTime && filter.startSeq == null && <small>Use 1 for the last matching message.</small>}
 				</div>
 
 				<TitleAccordion title="SUBJECTS OF THE STREAM">
@@ -146,7 +148,7 @@ const FilterDialog: FunctionComponent<Props> = ({
 				</TitleAccordion>
 
 				<div className="cmp-footer">
-					<Button children="OK" onClick={handleApply} />
+					<Button children="OK" disabled={filter.byTime && (!filter.startTime || !dayjs(filter.startTime).isValid())} onClick={handleApply} />
 					<Button children="CANCEL" onClick={handleCancel} />
 				</div>
 

@@ -1204,6 +1204,40 @@ func (s *NuiTestSuite) TestProtoschemas() {
 	s.Contains(content, "package simple;")
 }
 
+func (s *NuiTestSuite) TestSubjectsDiscovery() {
+	path := "/api/connection/" + s.defaultConn() + "/subjects"
+	_, err := s.emptyStream("ORDERS", "orders.>")
+	s.Require().NoError(err)
+	for _, subject := range []string{"orders.created", "orders.shipped"} {
+		_, err := s.js.Publish(s.ctx, subject, []byte("data"))
+		s.Require().NoError(err)
+	}
+
+	streams := s.e.GET(path + "/jetstream").Expect().Status(http.StatusOK).
+		JSON().Object().Value("streams").Array()
+	streams.Length().IsEqual(1)
+	stream := streams.Value(0).Object()
+	stream.Value("name").String().IsEqual("ORDERS")
+	patterns := stream.Value("subjects").Array()
+	patterns.Length().IsEqual(1)
+	pattern := patterns.Value(0).Object()
+	pattern.Value("subject").String().IsEqual("orders.>")
+	pattern.NotContainsKey("count")
+
+	subjects := s.e.GET(path+"/jetstream/ORDERS/occupied").WithQuery("filter", "orders.shipped").
+		Expect().Status(http.StatusOK).JSON().Object().Value("subjects").Array()
+	subjects.Length().IsEqual(1)
+	subject := subjects.Value(0).Object()
+	subject.Value("subject").String().IsEqual("orders.shipped")
+	subject.Value("count").Number().IsEqual(1)
+
+	s.e.GET(path + "/core").Expect().Status(http.StatusUnprocessableEntity)
+	sample := s.e.GET(path+"/core").WithQuery("filter", "quiet.>").WithQuery("listen_ms", "200").
+		Expect().Status(http.StatusOK).JSON().Object()
+	sample.Value("filter").String().IsEqual("quiet.>")
+	sample.Value("subjects").Array().IsEmpty()
+}
+
 func (s *NuiTestSuite) TestCddlschemas() {
 	e := s.e
 	r := e.GET("/api/cddl").Expect().Status(http.StatusOK)

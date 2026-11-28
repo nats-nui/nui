@@ -85,6 +85,9 @@ func (a *App) importConnFromCliContext(cliContext clicontext.ImportedContextEntr
 	if err != nil {
 		return connection.Connection{}, err
 	}
+	if isAlreadyImported {
+		a.coreListens.stopIfChanged(&newOne)
+	}
 	return newOne, nil
 }
 
